@@ -765,10 +765,13 @@ void TMonster::checkMobStats(tinyfileTypeT forReal)
   if (hasClass(CLASS_SHAMAN))
     vlogf(LOG_LOW, "shaman mob: %s:%d", getName(), mobVnum());
 
+  /*
+  // Leave this disabled.  With the new tBorn code it is now outdated.
   if (!IS_SET(specials.act, ACT_SENTINEL) && max_exist > 100) {
     vlogf(LOG_LOW,"non-sentinel mob (%s : %d) with excessive max exist (%d)",
        getName(), mobVnum(), max_exist);
   }
+  */
   if (spec == SPEC_SHOPKEEPER && !IS_SET(specials.act, ACT_IMMORTAL)) {
     // have a lot of gold, and otherwise might get killed
     vlogf(LOG_LOW, "Shopkeeper (%s:%d) needs to be set immortal(%d).",

@@ -46,7 +46,7 @@ void TBeing::doZonefile(const string & tStArg)
   }
 }
 
-const char SAVEZONEFILE_REPLYTO[] = "mithros@spasm.stanford.edu";
+const char SAVEZONEFILE_REPLYTO[] = "damescena@spasm.stanford.edu";
 
 void doSaveZoneFile(TBeing *ch, const string & tArg)
 {

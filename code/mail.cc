@@ -579,7 +579,25 @@ void TBeing::postmasterReceiveMail(TMonster *me)
 
     *this += *note;
 
-    act("$n gives you a piece of mail.", FALSE, me, 0, this, TO_VICT);
+    // parse the action_desc and get the "from"
+    char namebuf[24];
+    *namebuf = '\0';
+    char *c = strstr(note->action_description, "From: ");
+    if (c) {
+      c += 6;
+      char *d = strchr(c, '\n');
+      if (d) {
+        int len = d - c;
+        strncpy(namebuf, c, len);
+        namebuf[len] = '\0';
+      }
+    }
+
+    sprintf(buf, "$n gives you a piece of mail%s%s%s.", 
+        *namebuf ? " (from " : "",
+        *namebuf ? namebuf : "",
+        *namebuf ? ")" : "");
+    act(buf, FALSE, me, 0, this, TO_VICT);
     act("$N gives $n a piece of mail.", FALSE, this, 0, me, TO_ROOM);
   }
 }

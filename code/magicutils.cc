@@ -918,6 +918,8 @@ int TThing::genericTeleport(silentTypeT silent, bool keepZone)
       continue;
     if (rp->isRoomFlag(ROOM_HAVE_TO_WALK))
       continue;
+    if (rp->isRoomFlag(ROOM_DEATH))
+      continue;
     if (rp->isFlyingSector())
       continue;
     if (zone_table[rp->getZone()].enabled == FALSE)

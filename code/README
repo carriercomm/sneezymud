@@ -135,6 +135,9 @@
   person.  Pretty much anyone wearing anything above low hardness armor will
   kill their ass goodbye if quaffing and growing beyond their armor's max
   size.  The effect is Not Perm.  It is only a temp change.
+- Add an immortal specific logset to the code.  This documents login/logout
+  and all entered commands done by immortals and is stored in their immortal
+  Directory.  This should make monitoring alot easier.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

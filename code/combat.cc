@@ -3426,11 +3426,9 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
 
       if (!weapon && equipment[which_hand] && equipment[which_hand]->spec) {
   	  rc = equipment[which_hand]->checkSpec(vict, CMD_OBJ_HIT, (const char *) part_hit, this);
-	  if (IS_SET_ONLY(rc, DELETE_VICT)) 
-	    retCode |= DELETE_THIS;
-	  if (IS_SET_ONLY(rc, DELETE_ITEM))
+	  if (IS_SET_ONLY(rc, DELETE_THIS))
 	    retCode |= DELETE_ITEM;
-	  if (IS_SET_ONLY(rc, DELETE_THIS)){
+	  if (IS_SET_ONLY(rc, DELETE_VICT)){
 	    retCode |= DELETE_VICT;
 	    return retCode;
 	  }

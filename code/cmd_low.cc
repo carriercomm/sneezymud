@@ -1125,6 +1125,93 @@ void TPerson::doLow(const char *arg)
     }
 
     mysql_free_result(res);
+  } else if (is_abbrev(buf, "statcharts")) {
+    Stats st;
+    string buf;
+    char tmpbuf[256];
+    race_t races[6]={RACE_HUMAN, RACE_GNOME, RACE_ELVEN, RACE_OGRE,
+		     RACE_DWARF, RACE_HOBBIT};
+    int i;
+
+    sendTo(COLOR_BASIC, "        <c>[STR] [BRA] [CON] [DEX] [AGI] [INT] [WIS] [FOC] [PER] [CHA] [KAR] [SPE]<1>\n\r");
+
+
+    for(i=0;i<6;++i){
+      sprintf(tmpbuf, "%-8s", Races[races[i]]->getProperName().c_str());
+      buf += tmpbuf;
+      st=Races[races[i]]->getBaseStats();
+      for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	sprintf(tmpbuf, " %3d  ", st.get(stat));
+	buf += tmpbuf;
+      }
+      buf += "\n\r";
+    }
+    sendTo(COLOR_BASIC, "%s\n\r", buf.c_str());
+
+    for(territoryT terr=HOME_TER_NONE;terr<MAX_HOME_TERS;terr++){
+      switch(terr){
+	case HOME_TER_HUMAN_VILLAGER:
+	  sendTo("Villager");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	case HOME_TER_HUMAN_URBAN:
+	  sendTo("Urban   ");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	case HOME_TER_HUMAN_PLAINS:
+	  sendTo("Plains  ");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	case HOME_TER_HUMAN_RECLUSE:
+	  sendTo("Recluse ");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	case HOME_TER_HUMAN_HILL:
+	  sendTo("Hill    ");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	case HOME_TER_HUMAN_MOUNTAIN:
+	  sendTo("Mountain");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	case HOME_TER_HUMAN_FOREST:
+	  sendTo("Forest  ");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	case HOME_TER_HUMAN_MARINER:
+	  sendTo("Marine  ");
+	  for(statTypeT stat=MIN_STAT; stat<MAX_STATS_USED; stat++) {
+	    sendTo("%4d  ", territory_adjustment(terr, stat));
+	  }
+	  sendTo("\n\r");
+	  break;
+	default:
+	  break;
+      }
+    }
+    
+
   } else {
     sendTo("Syntax: low <mob | obj | weapon> ...\n\r");
     return;

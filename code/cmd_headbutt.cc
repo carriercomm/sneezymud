@@ -2,16 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_headbutt.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+// cmd_headbutt.cc : The headbutt command
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -84,7 +75,7 @@ bool TBeing::canHeadbutt(TBeing *victim, silentTypeT silent)
       sendTo("You can't get close enough to them to headbutt!\n\r");
     return FALSE;
   }
-  if (getPosHeight() > (victim->getPosHeight() + 7)) {
+  if ((int) (getPosHeight() * 0.9) > victim->getPosHeight()) {
     if (victim->getPosition() < POSITION_STANDING) {
       if (!silent)
         sendTo("That might work, but your victim seems to be on the %s.\n\r", roomp->describeGround().c_str());

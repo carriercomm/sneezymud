@@ -928,7 +928,7 @@ void calcNewSunRise()
 
   // at solstices, there are +-3 hours of daylight
   // so move sunrise back by HALF that amount
-  x *= -3/2;
+  x *= -1.5;
   
   // 6am  + seasonal value
   // the 0.5 is for proper rounding
@@ -949,7 +949,7 @@ void calcNewSunSet()
 
   // at solstices, there are +-3 hours of daylight
   // so move sunset ahead by HALF that amount
-  x *= 3/2;
+  x *= 1.5;
   
   // 6pm  + seasonal value
   // the 0.5 is for proper rounding

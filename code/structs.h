@@ -146,9 +146,6 @@ const int MAX_BAN_HOSTS = 15;
 
 const int LIM_ITEM_COST_MIN =  1499;   /* mininum rent cost of a lim. item */
 
-const int TICK_WRAP_COUNT = 3;   /*  PULSE_MOBILE / PULSE_TELEPORT */
-const int PLR_TICK_WRAP   = 24;  /*  this should be a divisor of 24 (hours) */
-
 struct show_room_zone_struct {
   int blank;
   int startblank, lastblank;

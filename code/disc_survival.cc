@@ -782,6 +782,11 @@ int TBeing::doEncamp()
 
 int encamp(TBeing * caster)
 {
+  if (!caster || !caster->isPc()) {
+    vlogf(1, "Non-PC in encamp() call.  %s", caster->getName());
+    return FALSE;
+  }
+
   affectedData aff;
   int level = caster->getSkillLevel(SKILL_ENCAMP);
   int bKnown = caster->getSkillValue(SKILL_ENCAMP);

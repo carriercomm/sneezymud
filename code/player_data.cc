@@ -893,7 +893,7 @@ void do_the_player_stuff(const char *name)
       charFile tChar;
 
       if (!tPowers[POWER_WIZARD] && load_char(longbuf, &tChar)) {
-        double tMIdle = (60.0 * 60.0 * 24.0 * 30.0);
+        double tMIdle = (SECS_PER_REAL_DAY * 30.0);
         int tCount = 0;
         wizPowerT tWiz = MIN_POWER_INDEX;
 

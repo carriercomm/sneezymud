@@ -447,7 +447,7 @@ void TBeing::affectModify(applyTypeT loc, long mod, long mod2, unsigned long bit
       setWeight(getWeight() + mod);
       return;
     case APPLY_CHAR_HEIGHT:
-      setHeight(getHeight() + mod);
+      //    setHeight(getHeight() + mod);
       return;
     case APPLY_MANA:
       points.maxMana += mod;

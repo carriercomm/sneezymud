@@ -191,7 +191,8 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
          strcmp(ch->name, "Spawn") &&
          strcmp(ch->name, "Lapsos") &&
          strcmp(ch->name, "Brutius") &&
-	 strcmp(ch->name, "Peel"))) { 
+	 strcmp(ch->name, "Peel") &&
+	 strcmp(ch->name, "Damescena"))) { 
 
         if (ch == this)
           vlogf(LOG_SILENT, "%s:%s %s", name, commandArray[cmd]->name, newarg);

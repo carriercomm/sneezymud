@@ -2807,7 +2807,7 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
 	  buf2[ptr2++]='\'';
       } else {
 	if(buf[ptr-1]=='=' || !strncmp(&buf[ptr-5], "like", 4) || 
-	   (buf[ptr-1]==' ' && buf[ptr-2]==','))
+	   (buf[ptr-1]==' ' && buf[ptr-2]==',') || buf[ptr-1]=='(')
 	  onstring=1;
 	else {
 	  // serious klugery

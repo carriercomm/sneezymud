@@ -94,8 +94,14 @@ int TBeing::reconcileDamage(TBeing *v, int dam, spellNumT how)
 
   rc = applyDamage(v, dam, how);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
-    if (desc);
+//    if (desc);
+//    this doesnt look right 10/99 cos
+    if (v->desc)
       v->reformGroup();
+// TESTing getting rid of pc lag after person dies.
+    if (desc && getWait()) {
+      setWait(combatRound(1));
+    }
     return -1;
   }
   return rc;

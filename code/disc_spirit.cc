@@ -1464,7 +1464,7 @@ void senseLife(TBeing *caster, TBeing *victim, TMagicItem * obj)
 
   ret = senseLife(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
   if (ret == SPELL_SUCCESS) {
-    victim->sendTo("You feel more aware of The World about you.\n\r");
+    victim->sendTo("You feel more aware of the world about you.\n\r");
     act("$n's eyes flicker a faint aqua blue.", FALSE, victim, NULL, NULL, TO_ROOM, ANSI_CYAN);
   } else { 
     caster->nothingHappens();
@@ -1494,7 +1494,7 @@ int castSenseLife(TBeing *caster, TBeing *victim)
 
   ret = senseLife(caster,victim,level,bKnown);
   if (ret == SPELL_SUCCESS) {
-    victim->sendTo("You feel more aware of The World about you.\n\r");
+    victim->sendTo("You feel more aware of the world about you.\n\r");
     act("$n's eyes flicker a faint aqua blue.", FALSE, victim, NULL, NULL, TO_ROOM, ANSI_CYAN);
   } else 
     caster->nothingHappens();

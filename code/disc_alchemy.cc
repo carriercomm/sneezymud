@@ -436,7 +436,7 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
         break;
     }
 
-    caster->sendTo("The eyes of Fertuman look far and wide across The World and find:\n\r");
+    caster->sendTo("The eyes of Fertuman look far and wide across the world and find:\n\r");
     for (obj = object_list; obj && j; obj = obj->next) {
       if (isname(mod_to_find.c_str(), obj->name)) {
       /* this should randomize display a bit */
@@ -454,7 +454,6 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
 	  continue;
 	if (obj->objVnum() == YOUTH_POTION ||
             obj->objVnum() == STATS_POTION ||
-            obj->objVnum() == MYSTERY_POTION ||
             obj->parent    == caster       ||
             (tMon && mob_index[tMon->getMobIndex()].spec == SPEC_SHOPKEEPER))
 	  continue;
@@ -1009,10 +1008,11 @@ int detectMagic(TBeing *caster, TBeing * victim, int level, byte bKnown)
 {
   affectedData aff;
 // COMMENTED OUT FOR DURATIONS
-//  if (victim->affectedBySpell(SPELL_DETECT_MAGIC)) {
-//    caster->nothingHappens();
-//    return SPELL_FAIL;
-//  }
+  // to make compile uncommented 4 lines below
+  if (victim->affectedBySpell(SPELL_DETECT_MAGIC)) {
+    caster->nothingHappens();
+    return SPELL_FAIL;
+  }
 
   aff.type = SPELL_DETECT_MAGIC;
   aff.duration = level * 2 * UPDATES_PER_MUDHOUR;
@@ -1036,14 +1036,20 @@ int detectMagic(TBeing *caster, TBeing * victim, int level, byte bKnown)
     victim->sendTo("Your eyes tingle.\n\r");
     act("$n's eyes twinkle for a brief moment.",
               FALSE, victim, NULL, NULL, TO_ROOM);
-    victim->affectTo(&aff);
+    if (!victim->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES)) {
+      caster->nothingHappens();
+      return SPELL_FALSE;
+    }
+    // to make compile uncommented 2 lines below
     return SPELL_SUCCESS;
+    victim->affectTo(&aff);
   } else {
+    // to make compile uncommented 2 lines below
     caster->nothingHappens();
     return SPELL_FAIL;
   }
 }
-
+// XXX
 void detectMagic(TBeing *caster, TBeing * victim, TMagicItem *obj)
 {
   detectMagic(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());

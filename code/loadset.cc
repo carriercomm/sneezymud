@@ -498,8 +498,8 @@ void TBeing::loadSetEquipment(int num, char *arg, int tChance)
 
       if ((tCount % 3) != 0)
         StString += "\n\r";
-
-      sprintf(tString, "Ogre[%d] Human[%d] Elf[%d] Dwarf[%d] Gnome[%d] Hobbit[%d]",
+        StString += "\n\r";
+      sprintf(tString, "Total Suits: Ogre[%d] Human[%d] Elf[%d] Dwarf[%d] Gnome[%d] Hobbit[%d]",
               suitRaces[5], suitRaces[0], suitRaces[1],
               suitRaces[2], suitRaces[4], suitRaces[3]);
       StString += tString;

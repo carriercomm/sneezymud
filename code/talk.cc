@@ -261,13 +261,13 @@ void Descriptor::sendShout(TBeing *ch, const char *arg)
       continue;
     if (b == ch)
       continue;
-    if (b->checkSoundProof())
+    if (b->checkSoundproof())
       continue;
     if (b->isPlayerAction(PLR_MAILING | PLR_BUGGING))
       continue;
 
     // don't use awake(), paralyzed should hear, asleep should not
-    if (b->getPosition() <= POS_SLEEPING)
+    if (b->getPosition() <= POSITION_SLEEPING)
       continue;
 
     // polys and switched always hear everything
@@ -691,7 +691,6 @@ int TBeing::doTell(const char *arg, bool visible)
 {
   TBeing *vict;
   char name[100], capbuf[256], message[MAX_INPUT_LENGTH + 40];
-  char garbed[256];
   int rc;
 
   if (isAffected(AFF_SILENT)) {
@@ -783,7 +782,7 @@ int TBeing::doTell(const char *arg, bool visible)
 
   if ((roomp->isUnderwaterSector() || hasDisease(DISEASE_DROWNING)) &&
        !isImmortal() && !vict->isImmortal())
-    strcpy(garbed, "Glub glub glub.");
+    garbed = "Glub glub glub.";
 
   strcpy(capbuf, vict->pers(this));  // Use Someone for tells (invis gods, etc)
 
@@ -816,7 +815,7 @@ int TBeing::doTell(const char *arg, bool visible)
         colorString(vict, vict->desc, garbedBuf, NULL, COLOR_NONE, FALSE).c_str());
   }
 
-  sendTo(COLOR_COMM, "<G>You tell %s<z>, \"%s\"\n\r", vict->getName(), colorString(this, desc, garbed, NULL, COLOR_BASIC, FALSE).c_str());
+  sendTo(COLOR_COMM, "<G>You tell %s<z>, \"%s\"\n\r", vict->getName(), colorString(this, desc, garbed.c_str(), NULL, COLOR_BASIC, FALSE).c_str());
 
   // set up last teller for reply's use
   // If it becomes a "someone tells you", ignore
@@ -840,7 +839,6 @@ int TBeing::doWhisper(const char *arg)
   TBeing *vict, *bOther = NULL;
   TThing *bThing;
   char name[100], message[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH];
-  char garbed[256];
   int rc;
 
   if (isAffected(AFF_SILENT)) {
@@ -856,49 +854,56 @@ int TBeing::doWhisper(const char *arg)
   }
   half_chop(arg, name, message);
 
-  if (!*name || !*message)
+  if (!*name || !*message) {
     sendTo("Whom do you want to whisper to.. and what??\n\r");
-  else if (!(vict = get_char_room_vis(this, name)))
+    return FALSE;
+  }
+  if (!(vict = get_char_room_vis(this, name))) {
     sendTo("No-one by that name here..\n\r");
-  else if (vict == this) {
+    return FALSE;
+  }
+  if (vict == this) {
     act("$n whispers quietly to $mself.", TRUE, this, 0, 0, TO_ROOM);
     sendTo("You can't seem to get your mouth close enough to your ear...\n\r");
-  } else {
-    strcpy(garbed, garble(message, getCond(DRUNK)).c_str());
+    return FALSE;
+  }
 
-    sprintf(buf, "$n whispers to you, \"%s\"", colorString(this, vict->desc, garbed, NULL, COLOR_COMM, TRUE).c_str());
+  char garbed[256];
+  strcpy(garbed, garble(message, getCond(DRUNK)).c_str());
 
-    act(buf, TRUE, this, 0, vict, TO_VICT);
-    sendTo(COLOR_MOBS, "You whisper to %s, \"%s\"\n\r", vict->getName(), colorString(this, desc,garbed, NULL, COLOR_BASIC, FALSE).c_str());
-    act("$n whispers something to $N.", TRUE, this, 0, vict, TO_NOTVICT);
+  sprintf(buf, "$n whispers to you, \"%s\"", colorString(this, vict->desc, garbed, NULL, COLOR_COMM, TRUE).c_str());
 
-    // Lets check the room for any thives we might have using spy.
-    // If it's a pc with spy, then they must be equal/greater than the speaker
-    // level or they don't get the message.  And messages to/from immorts are
-    // not overheard and immortals won't overhear messages either.
-    for (bThing = roomp->stuff; bThing; bThing = bThing->nextThing)
-      if ((bOther = dynamic_cast<TPerson *>(bThing)) &&
-          bOther->desc && bOther->isPc() &&
-          bOther->affectedBySpell(SKILL_SPY) &&
-          bOther->GetMaxLevel() >= GetMaxLevel() &&
-          bOther != this && bOther != vict &&
-          !bOther->isImmortal() && !isImmortal() && !vict->isImmortal()) {
-        sprintf(buf, "$n whispers to %s, \"%s\"",
-                vict->getName(),
-                colorString(this, bOther->desc, garbed, NULL, COLOR_COMM, TRUE).c_str());
-        act(buf, TRUE, this, 0, bOther, TO_VICT);
-      }
+  act(buf, TRUE, this, 0, vict, TO_VICT);
+  sendTo(COLOR_MOBS, "You whisper to %s, \"%s\"\n\r", vict->getName(), colorString(this, desc,garbed, NULL, COLOR_BASIC, FALSE).c_str());
+  act("$n whispers something to $N.", TRUE, this, 0, vict, TO_NOTVICT);
 
-    disturbMeditation(vict);
+  // Lets check the room for any thives we might have using spy.
+  // If it's a pc with spy, then they must be equal/greater than the speaker
+  // level or they don't get the message.  And messages to/from immorts are
+  // not overheard and immortals won't overhear messages either.
+  for (bThing = roomp->stuff; bThing; bThing = bThing->nextThing) {
+    if ((bOther = dynamic_cast<TPerson *>(bThing)) &&
+        bOther->desc && bOther->isPc() &&
+        bOther->affectedBySpell(SKILL_SPY) &&
+        bOther->GetMaxLevel() >= GetMaxLevel() &&
+        bOther != this && bOther != vict &&
+        !bOther->isImmortal() && !isImmortal() && !vict->isImmortal()) {
+      sprintf(buf, "$n whispers to %s, \"%s\"",
+              vict->getName(),
+              colorString(this, bOther->desc, garbed, NULL, COLOR_COMM, TRUE).c_str());
+      act(buf, TRUE, this, 0, bOther, TO_VICT);
+    }
+  }
 
-    if (!vict->isPc()) {
-      rc = dynamic_cast<TMonster *>(vict)->checkResponses( this, NULL, garbed, CMD_WHISPER);
-      if (IS_SET_DELETE(rc, DELETE_THIS)) {
-        delete vict;
-        vict = NULL;
-      } else if (IS_SET_DELETE(rc, DELETE_VICT)) {
-        return DELETE_THIS;
-      }
+  disturbMeditation(vict);
+
+  if (!vict->isPc()) {
+    rc = dynamic_cast<TMonster *>(vict)->checkResponses( this, NULL, garbed, CMD_WHISPER);
+    if (IS_SET_DELETE(rc, DELETE_THIS)) {
+      delete vict;
+      vict = NULL;
+    } else if (IS_SET_DELETE(rc, DELETE_VICT)) {
+      return DELETE_THIS;
     }
   }
   return FALSE;

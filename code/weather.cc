@@ -112,6 +112,48 @@ const char *describeTime(void)
     return "evening";
 }
 
+void fixSunlight()
+{
+  int hmt = hourminTime();
+
+  if (hmt == moonTime(MOON_TIME_SET)) {
+   sendToOutdoor(COLOR_BASIC, "<b>The moon sets.<1>\n\r","<b>The moon sets.<1>\n\r");
+  }
+  if (hmt == moonTime(MOON_TIME_RISE)) {
+    sprintf(buf, "<b>The %s moon rises in the east.<1>\n\r", moonType());
+    sendToOutdoor(COLOR_BASIC, buf, buf);
+  }
+  if (hmt == sunTime(SUN_TIME_DAWN)) {
+    weather_info.sunlight = SUN_DAWN;
+    sendToOutdoor(COLOR_BASIC, "<Y>Dawn begins to break.<1>\n\r",
+          "<Y>Dawn begins to break.<1>\n\r");
+  }
+  if (hmt == sunTime(SUN_TIME_RISE)) {
+    weather_info.sunlight = SUN_RISE;
+    sendToOutdoor(COLOR_BASIC, "<y>The sun rises in the east.<1>\n\r",
+  "<y>The sun rises in the east.<1>\n\r");
+  }
+  if (hmt == sunTime(SUN_TIME_DAY)) {
+    weather_info.sunlight = SUN_LIGHT;
+    sendToOutdoor(COLOR_BASIC, "<W>The day has begun.<1>\n\r",
+                      "<W>The day has begun.<1>\n\r");
+  }
+  if (hmt == sunTime(SUN_TIME_SINK)) {
+    weather_info.sunlight = SUN_SET;
+    sendToOutdoor(COLOR_BASIC, "<y>The sun slowly sinks in the west.<1>\n\r",
+                      "<y>The sun slowly sinks in the west.<1>\n\r");
+  }
+  if (hmt == sunTime(SUN_TIME_SET)) {
+    weather_info.sunlight = SUN_TWILIGHT;
+    sendToOutdoor(COLOR_BASIC, "<k>The sun sets as twilight begins.<1>\n\r",
+                      "<k>The sun sets as twilight begins.<1>\n\r");
+  }
+  if (hmt == sunTime(SUN_TIME_NIGHT)) {
+    weather_info.sunlight = SUN_DARK;
+    sendToOutdoor(COLOR_BASIC, "<k>The night has begun.<1>\n\r","<k>The night has begun.<1>\n\r");
+  }
+}
+
 void anotherHour()
 {
   char buf[100];
@@ -163,45 +205,7 @@ void anotherHour()
       calcNewSunSet();
     }
   }
-
-  int hmt = hourminTime();
-
-  if (hmt == moonTime(MOON_TIME_SET)) {
-   sendToOutdoor(COLOR_BASIC, "<b>The moon sets.<1>\n\r","<b>The moon sets.<1>\n\r");
-  }
-  if (hmt == moonTime(MOON_TIME_RISE)) {
-    sprintf(buf, "<b>The %s moon rises in the east.<1>\n\r", moonType());
-    sendToOutdoor(COLOR_BASIC, buf, buf);
-  }
-  if (hmt == sunTime(SUN_TIME_DAWN)) {
-    weather_info.sunlight = SUN_DAWN;
-    sendToOutdoor(COLOR_BASIC, "<Y>Dawn begins to break.<1>\n\r",
-          "<Y>Dawn begins to break.<1>\n\r");
-  }
-  if (hmt == sunTime(SUN_TIME_RISE)) {
-    weather_info.sunlight = SUN_RISE;
-    sendToOutdoor(COLOR_BASIC, "<y>The sun rises in the east.<1>\n\r",
-  "<y>The sun rises in the east.<1>\n\r");
-  }
-  if (hmt == sunTime(SUN_TIME_DAY)) {
-    weather_info.sunlight = SUN_LIGHT;
-    sendToOutdoor(COLOR_BASIC, "<W>The day has begun.<1>\n\r",
-                      "<W>The day has begun.<1>\n\r");
-  }
-  if (hmt == sunTime(SUN_TIME_SINK)) {
-    weather_info.sunlight = SUN_SET;
-    sendToOutdoor(COLOR_BASIC, "<y>The sun slowly sinks in the west.<1>\n\r",
-                      "<y>The sun slowly sinks in the west.<1>\n\r");
-  }
-  if (hmt == sunTime(SUN_TIME_SET)) {
-    weather_info.sunlight = SUN_TWILIGHT;
-    sendToOutdoor(COLOR_BASIC, "<k>The sun sets as twilight begins.<1>\n\r",
-                      "<k>The sun sets as twilight begins.<1>\n\r");
-  }
-  if (hmt == sunTime(SUN_TIME_NIGHT)) {
-    weather_info.sunlight = SUN_DARK;
-    sendToOutdoor(COLOR_BASIC, "<k>The night has begun.<1>\n\r","<k>The night has begun.<1>\n\r");
-  }
+  fixSunlight();
 }
 
 enum weatherMessT {

@@ -20,6 +20,9 @@ static bool genericDamCheck(int susc, int sharp)
     return false;
 #endif
 
+  if (::number(0,999) < 500)
+    return false;
+
   // num is the hardness of what i a hitting
   // susc is the hardness of the hitter
   // for the NPC vs PC situation, sharp comes from sharpness[] which

@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_disarm.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:24:11  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -257,7 +243,7 @@ int TBeing::doDisarm(const char *argument, TThing *v)
     sendTo("You know nothing about how to disarm someone.\n\r");
     return FALSE;
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

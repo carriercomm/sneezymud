@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
 //
-//      SneezyMUD 4.0 - All rights reserved, SneezyMUD Coding Team
+//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
 //////////////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
         // An example in this case.  We start to track, fail, mob were tracking moves into
         // our room, we Don't do a look to trigger track(), and the task pulse hits causeing
         // this bit of code to become active.
-        if ((ch->specials.hunting && ch->sameRoom(ch->specials.hunting)) ||
+        if ((ch->specials.hunting && ch->sameRoom(*ch->specials.hunting)) ||
             (targetRm != -1 && targetRm == ch->inRoom())) {
           ch->sendTo("%s###You have found %s!%s\n\r", ch->orange(),
                      (isSW ? "some water" : "your target"), ch->norm());

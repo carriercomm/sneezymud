@@ -274,7 +274,7 @@ int TBeing::doCharge(const char *arg, TBeing *victim)
   if (noHarmCheck(vict))
     return FALSE;
 
-  if (!sameRoom(vict)) {
+  if (!sameRoom(*vict)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

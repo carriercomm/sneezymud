@@ -2,19 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_rescue.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:33:27  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+// cmd_rescue.cc
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -149,7 +137,7 @@ int TBeing::doRescue(const char *argument)
     sendTo("Whom do you want to rescue?\n\r");
     return FALSE;
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

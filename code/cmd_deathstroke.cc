@@ -150,7 +150,7 @@ static int deathstroke(TBeing *caster, TBeing *victim)
        caster->setCharFighting(victim);
      if (!vfight)
        caster->setVictFighting(victim);
-  } else if (!vfight && caster->sameRoom(victim)) {
+  } else if (!vfight && caster->sameRoom(*victim)) {
     // check sameRoom since may have fled from the damage
     if (victim->getPosition() > POSITION_STUNNED) {
       act("You begin fighting $n.", TRUE, caster, 0, victim, TO_VICT);
@@ -177,7 +177,7 @@ static int deathstroke(TBeing *caster, TBeing *victim)
       caster->setVictFighting(victim);
       // do nothing here cept set victim fighting
     }
-  } else if (caster->sameRoom(victim)) { 
+  } else if (caster->sameRoom(*victim)) { 
     // again, check sameRoom in case victim fled when he was hit
     if (!cfight) {
       if (caster->getPosition() > POSITION_STUNNED) {
@@ -253,7 +253,7 @@ int TBeing::doDeathstroke(const char *argument, TBeing *vict)
       }
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

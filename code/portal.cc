@@ -358,7 +358,7 @@ int TPortal::enterMe(TBeing *ch)
       return FALSE;
 
     // if we got teleported, go no further
-    if (!ch->sameRoom(this))
+    if (!sameRoom(*ch))
       return FALSE;
   }
   int orig_room = ch->inRoom();

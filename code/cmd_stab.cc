@@ -501,7 +501,7 @@ int TBeing::doStab(const char * argument, TBeing *vict)
       }
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

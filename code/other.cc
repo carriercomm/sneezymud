@@ -376,7 +376,7 @@ void TBeing::doSplit(const char *argument, bool tell)
     if (!(k = master))
       k = this;
 
-    if (inGroup(k) && sameRoom(k))
+    if (inGroup(k) && sameRoom(*k))
       no_members = ((k->desc) ? k->desc->session.group_share : 
             ((k->isPet() || k->isMount() || dynamic_cast<TMonster *>(k)) ? 0 : 1));
     else
@@ -384,7 +384,7 @@ void TBeing::doSplit(const char *argument, bool tell)
 
 
     for (f = k->followers; f; f = f->next)
-      if (inGroup(f->follower) && sameRoom(f->follower))
+      if (inGroup(f->follower) && sameRoom(*f->follower))
         no_members += (f->follower->desc ? f->follower->desc->session.group_share : ((f->follower->isPet() || f->follower->isMount() || dynamic_cast<TMonster *>(f->follower)) ? 0 : 1));
 
     if ((no_members <= 1) || !isAffected(AFF_GROUP)) {
@@ -412,7 +412,7 @@ void TBeing::doSplit(const char *argument, bool tell)
       addToMoney(-tmp_amount, GOLD_XFER);
     }
 
-    if (k->isAffected(AFF_GROUP) && sameRoom(k) && k != this) {
+    if (k->isAffected(AFF_GROUP) && sameRoom(*k) && k != this) {
       if (k->desc)
         tmp_amount = amount * (k->desc->session.group_share) / no_members;
       else if (k->isPet() || k->isMount() || dynamic_cast<TMonster *>(k))
@@ -432,7 +432,7 @@ void TBeing::doSplit(const char *argument, bool tell)
                     getName(), amount, tmp_amount);
     }
     for (f = k->followers; f; f = f->next) {
-      if (f->follower->isAffected(AFF_GROUP) && sameRoom(f->follower) && f->follower != this) {
+      if (f->follower->isAffected(AFF_GROUP) && sameRoom(*f->follower) && f->follower != this) {
         if (f->follower->desc)
           tmp_amount = amount * (f->follower->desc->session.group_share) / no_members;
         else if (f->follower->isPet() || f->follower->isMount() || dynamic_cast<TMonster *>(f->follower))
@@ -1576,7 +1576,7 @@ void TBeing::doGroup(const char *argument)
 
       sprintf(namebuf, "%s", (k != this ? k->getNameNOC(this).c_str() : "You"));
       if (k->isAffected(AFF_GROUP)) {// && canSee(k)) {  I changed this on 010398 Russ
-        if (sameRoom(k)) {
+        if (sameRoom(*k)) {
           if (k->desc)
             tmp_share = k->desc->session.group_share;
           else if (k->isPet() || k->isMount() || dynamic_cast<TMonster
@@ -1619,7 +1619,7 @@ void TBeing::doGroup(const char *argument)
             tmp_share = 0;
           else
             tmp_share = 1;
-          if (sameRoom(f->follower)) { 
+          if (sameRoom(*f->follower)) { 
             if (f->follower->hasClass(CLASS_CLERIC) || 
                 f->follower->hasClass(CLASS_DEIKHAN))
               sendTo("%s%-15.15s%s [%s%.1f%%hp %.1f%%p. %s look%s %s.%s]\n\r\t%s%2d share%s talens, %.1f%% shares XP%s\n\r", cyan(), cap(namebuf), norm(), red(),
@@ -2532,7 +2532,7 @@ int TScroll::reciteMe(TBeing *ch, const char * argument)
   bits = generic_find(argument, FIND_CHAR_ROOM | FIND_OBJ_INV | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, ch, &victim, &obj);
 
   if (!bits) {
-    if (!ch->fight() || !ch->sameRoom(ch->fight())) {
+    if (!ch->fight() || !ch->sameRoom(*ch->fight())) {
       ch->sendTo("No such thing around to recite the scroll on.\n\r");
       return FALSE;
     }

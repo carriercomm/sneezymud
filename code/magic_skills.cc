@@ -2,24 +2,8 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: magic_skills.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//
 //   File containing all skills for spell casters, and classes with
-//    casting derivatives. - Russ Russell  Last Updated 03/15/94
+//    casting derivatives. - Russ Russell
 //
 ///////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +36,7 @@ int TBeing::doTurn(const char *argument, TBeing *vict)
       }
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

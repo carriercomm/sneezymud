@@ -2,34 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_water.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.6  1999/09/26 17:16:21  lapsos
-// Added spec-fountain check to elemental water create.
-//
-// Revision 1.5  1999/09/19 20:42:10  peel
-// Can conjure water elemental in rain now.
-//
-// Revision 1.4  1999/09/16 04:49:41  peel
-// Fixed typo.
-//
-// Revision 1.3  1999/09/16 04:48:23  peel
-// Tsunami will create pools of water now.
-// Conjure water elemental requires water to be in the room (either water
-// sector or a pool of water >= 100 units large)
-//
-// Revision 1.2  1999/09/15 21:41:52  peel
-// Gusher now creates pools of water after casting.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -727,7 +699,7 @@ void spell_geyser(byte level, TBeing *ch, TBeing *, int)
 
   for (tmp_victim = ch->roomp->people; tmp_victim; tmp_victim = temp) {
     temp = tmp_victim->next_in_room;
-    if ((ch != tmp_victim) && ch->sameRoom(tmp_victim)) {
+    if ((ch != tmp_victim) && ch->sameRoom(*tmp_victim)) {
       if ((tmp_victim->GetMaxLevel() < LOW_IMMORTAL) || (tmp_victim->isNpc())) {
         ch->getActualDamage(tmp_victim, NULL, dam, SPELL_GEYSER);
         act("You are seared by the boiling water!!", FALSE, ch, 0, tmp_victim, TO_VICT);

@@ -738,7 +738,7 @@ int TBeing::doFlee(const char *arg)
          TRUE, this, NULL, NULL, TO_ROOM);
     return FALSE;
   }
-  if (isAffected(AFF_CHARM) && master && sameRoom(master)) {
+  if (isAffected(AFF_CHARM) && master && sameRoom(*master)) {
     if (!::number(0, 5))
       act("$n bursts into tears.", TRUE, this, 0, 0, TO_ROOM);
     act("You burst into tears at  the thought of leaving $N.", 

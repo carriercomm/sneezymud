@@ -3,8 +3,7 @@
 //      SneezyMUD  - All rights reserved, SneezyMUD Coding Team
 //      "range.cc" - All functions and routines related to ranged combat
 //
-//      Ranged systems coded by Russ Russell and Benjamin Youngdahl,
-//          Summer 1993. Last revision : August 1996
+//      Ranged systems coded by Russ Russell and Benjamin Youngdahl
 //
 /////////////////////////////////////////////////////////////////////////
 
@@ -348,13 +347,13 @@ bool hitInnocent(const TBeing *ch, const TThing *thing, const TThing *vict)
  
   // presume anyone in group and near thrower, is safely out of the way
   const TBeing * tbc = dynamic_cast<const TBeing *>(vict);
-  if (tbc && tbc->inGroup(ch) && tbc->sameRoom(ch)) 
+  if (tbc && tbc->inGroup(ch) && tbc->sameRoom(*ch)) 
     return false;
 
   // protect the mounts of group members too
   if (tbc && tbc->rider) {
     TBeing *temp = dynamic_cast<TBeing *>(tbc->horseMaster());
-    if (temp && temp->inGroup(ch) && temp->sameRoom(ch))
+    if (temp && temp->inGroup(ch) && temp->sameRoom(*ch))
       return false;
   }
 
@@ -429,7 +428,7 @@ int TThing::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int mdis
            tbt->awake() && tbt->canGet(this, SILENT_YES)) {
         resCode = TRUE;
         act("$n catches $p.", FALSE, tbt, this, NULL, TO_ROOM);
-        if (!ch->sameRoom(tbt))
+        if (!ch->sameRoom(*tbt))
           act("In the distance, $N catches your $o.",TRUE,ch,this,tbt,TO_CHAR);
  
         if (!tbt->heldInPrimHand()) {
@@ -458,7 +457,7 @@ int TThing::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int mdis
                    i == GUARANTEED_FAILURE)) {
         act("$n dodges out of the way of $p.", FALSE, tbt, this, NULL, TO_ROOM);
         tbt->sendTo("You dodge out of its way.\n\r");
-        if (!ch->sameRoom(tbt))
+        if (!ch->sameRoom(*tbt))
           act("In the distance, $N dodges out of the way of $p.",
                  TRUE,ch,this,tbt,TO_CHAR);
         resCode = FALSE;
@@ -475,7 +474,7 @@ int TThing::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int mdis
           act("$n is accidentally smacked by $p!", FALSE, tbt, this, NULL, TO_ROOM);
         act("You are unable to dodge being hit by $p!",
                   FALSE, tbt, this, NULL, TO_CHAR);
-        if (!ch->sameRoom(tbt))
+        if (!ch->sameRoom(*tbt))
           act("In the distance, $N is hit by $p.",TRUE,ch,this,tbt,TO_CHAR);
         resCode = TRUE;
         d = min(max(0, (int) (getWeight() - 5)), 10);
@@ -498,7 +497,7 @@ int TThing::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int mdis
               tbt->roomp && !tbt->roomp->isRoomFlag(ROOM_ARENA)) {
             tobj->addToStructPoints(-1);
             if (tobj->getStructPoints() <= 0) {
-              if (!ch->sameRoom(tbt))
+              if (!ch->sameRoom(*tbt))
                 act("In the distance, $p is destroyed.",TRUE,ch,tobj,0,TO_CHAR);
               tobj->makeScraps();
               ADD_DELETE(resCode, DELETE_ITEM);

@@ -357,7 +357,7 @@ int TBeing::rawKill(spellNumT dmg_type)
   if (fight())  {
     followData *f;
     for (f = fight()->followers;f;f = f->next) {
-      if (f->follower->desc && f->follower->sameRoom(fight())) {
+      if (f->follower->desc && f->follower->sameRoom(*fight())) {
         if (IS_SET(f->follower->desc->autobits, AUTO_LIMBS))
           f->follower->doLimbs(fname(fight()->name));
       }
@@ -2955,7 +2955,7 @@ bool TBeing::invalidTarget(const TBeing *target) const
       return TRUE;
   }
 
-  if (!sameRoom(target))
+  if (!sameRoom(*target))
     return TRUE;
 
   return FALSE;
@@ -4118,7 +4118,7 @@ bool TBeing::canFight(TBeing *target)
   if (tooTired())
     return FALSE;
 
-  if (!sameRoom(target)) {
+  if (!sameRoom(*target)) {
     vlogf(LOG_COMBAT, "NOT in same room when fighting : %s, %s", name, target->name);
     if (fight())
       stopFighting();
@@ -4211,7 +4211,7 @@ bool TBeing::damDetailsOk(const TBeing *v, int dam, bool ranged) const
   if (dam < 0)
     return FALSE;
 
-  if (!ranged && !sameRoom(v))
+  if (!ranged && !sameRoom(*v))
     return FALSE;
 
   return TRUE;
@@ -4367,7 +4367,7 @@ int TBeing::tellStatus(int dam, int same, int flying)
     if (dam > (max_hit / 5))
       sendTo("That really did %sHURT%s!\n\r", red(), norm());
     if ((isCharm() || isPet()) && !same) {
-      if ((getHit() <= (hitLimit() * 4 / 10)) || (master && !sameRoom(master))) {
+      if ((getHit() <= (hitLimit() * 4 / 10)) || (master && !sameRoom(*master))) {
         if (fight() && !isCombatMode(ATTACK_BERSERK)) {
           if (!fleeCheck(this)) {
             if (addCommandToQue("flee") == DELETE_THIS)
@@ -4869,7 +4869,7 @@ void perform_violence(int pulse)
       if (ch == vict) 
         ch->stopFighting();
       else {
-        if (ch->awake() && ch->sameRoom(vict)) {
+        if (ch->awake() && ch->sameRoom(*vict)) {
           vict = ch->fight();
           if (vict) {
             rc = ch->hit(vict, pulse + tmp_pulse);
@@ -5110,13 +5110,13 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
   if (!(real_master = master))
     real_master = this;
 
-  if (inGroup(real_master) && sameRoom(real_master))
+  if (inGroup(real_master) && sameRoom(*real_master))
     no_levels = real_master->getExpShare();
   else
     no_levels = 0;
 
   for (f = real_master->followers; f; f = f->next) {
-    if (inGroup(f->follower) && sameRoom(f->follower))
+    if (inGroup(f->follower) && sameRoom(*f->follower))
         no_levels += f->follower->getExpShare();
   }
 
@@ -5134,7 +5134,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
 #endif
 
   // Gain exp for master if in room with ch
-  if (sameRoom(real_master) && inGroup(real_master)) {
+  if (sameRoom(*real_master) && inGroup(real_master)) {
     exp_received = (tmp_exp * real_master->getExpShare());
     gain_exp(real_master, exp_received * fract/ 100);
 #if EXP_DEBUG
@@ -5143,7 +5143,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
   }
   // Gain exp for followers if in room with ch
   for (f = real_master->followers; f; f = f->next) {
-    if (inGroup(f->follower) && sameRoom(f->follower)) {
+    if (inGroup(f->follower) && sameRoom(*f->follower)) {
       exp_received = (tmp_exp * f->follower->getExpShare());
       gain_exp(f->follower, exp_received * fract/ 100);
 #if EXP_DEBUG

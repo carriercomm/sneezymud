@@ -331,7 +331,7 @@ int start_cast(TBeing *ch, TBeing *victim, TThing *obj, TRoom *rp, spellNumT spe
   } else if (victim) {
     act("You concentrate intensely on $N.", 
         FALSE, ch, NULL, victim, TO_CHAR);
-    if (ch->sameRoom(victim)) {
+    if (ch->sameRoom(*victim)) {
       act("$n gazes intensely at $N.", 
           TRUE, ch, NULL, victim, TO_NOTVICT);
       act("$n gazes intensely at you.",
@@ -1345,13 +1345,13 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
       ok = TRUE;
   } else {
     if ((discArray[which]->targets & TAR_FIGHT_SELF)) {
-      if (fight() && sameRoom(fight())) {
+      if (fight() && sameRoom(*fight())) {
         victim = this;
         ok = TRUE;
       }
     }
     if (!ok && (discArray[which]->targets & TAR_FIGHT_VICT)) {
-      if (fight() && sameRoom(fight())) {
+      if (fight() && sameRoom(*fight())) {
         victim = fight();
         ok = TRUE;
       }

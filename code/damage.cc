@@ -118,7 +118,7 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
 
   // ranged damage comes through here via reconcileDamage
   // lets not set them fighting unless we need to
-  if (sameRoom(v)) {
+  if (sameRoom(*v)) {
     if (setCharFighting(v, 0) == -1)    // immortal being attacked
       return 0;
 
@@ -658,7 +658,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
         k = this;
 
       if (k->isAffected(AFF_GROUP)) {
-        if (sameRoom(k)) {
+        if (sameRoom(*k)) {
           if (k->desc) {
             k->desc->session.groupKills++;
             k->desc->career.group_kills++;
@@ -667,7 +667,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
       }
       for (f = k->followers; f; f = f->next) {
         if (f->follower->isAffected(AFF_GROUP) && canSee(f->follower)) {
-          if (sameRoom(f->follower)) { 
+          if (sameRoom(*f->follower)) { 
             if (f->follower->desc) {
               f->follower->desc->session.groupKills++;
               f->follower->desc->career.group_kills++;
@@ -717,7 +717,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
         }
       }
     }
-    if (sameRoom(v)) {
+    if (sameRoom(*v)) {
       // use auto-bit settings to do appropriate looting
       // let masters loot the kills of a follower
       if (desc && (desc->autobits & AUTO_LOOT_MONEY) && 

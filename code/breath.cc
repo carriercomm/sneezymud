@@ -228,7 +228,7 @@ int DragonBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 
   if (!myself || (cmd != CMD_MOB_COMBAT))
     return FALSE;
-  if (!myself->fight() || !myself->fight()->sameRoom(myself))
+  if (!myself->fight() || !myself->fight()->sameRoom(*myself))
     return FALSE;
   if (!myself->awake())
     return FALSE;

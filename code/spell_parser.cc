@@ -1211,7 +1211,7 @@ int TBeing::parseTarget(spellNumT which, char *n, TThing **ret)
       ok = TRUE;
     }
     if (!ok && (discArray[which]->targets & TAR_FIGHT_VICT)) {
-      if (fight() && sameRoom(fight())) {
+      if (fight() && sameRoom(*fight())) {
         ch = fight();
         ok = TRUE;
       }

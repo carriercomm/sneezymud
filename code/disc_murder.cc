@@ -165,11 +165,11 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
     else
       GLeader = this;
 
-    if (GLeader != this && sameRoom(GLeader) && GLeader->fight())
+    if (GLeader != this && sameRoom(*GLeader) && GLeader->fight())
       victim = GLeader->fight();
     else {
       for (FDt = GLeader->followers; FDt; FDt = FDt->next) {
-        if (!sameRoom(FDt->follower))
+        if (!sameRoom(*FDt->follower))
           continue;
 
         if (FDt->follower == this)
@@ -182,7 +182,7 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
           break;
       }
 
-      if (victim && !sameRoom(victim))
+      if (victim && !sameRoom(*victim))
         victim = NULL;
     }
   }
@@ -201,7 +201,7 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
     victim = vict;
   // *** End of Test Tank-Target Backstab Code  -Lapsos
 
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
@@ -475,7 +475,7 @@ int TBeing::doGarrotte(const char * argument, TBeing *vict)
       return FALSE;
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
@@ -629,7 +629,7 @@ int TBeing::doCudgel(const char * argument, TBeing *vict)
       return FALSE;
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

@@ -1527,7 +1527,7 @@ void TBeing::checkCharmMana()
     if (!ch->isCharm() && !ch->isZombie())
       continue;
  
-    if (!sameRoom(ch)) {
+    if (!sameRoom(*ch)) {
       ch->stopFollower(TRUE);
       continue;
     }

@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_kneestrike.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:32:42  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -471,7 +457,7 @@ int TBeing::doKneestrike(const char *argument, TBeing *vict)
       }
     }
   }
-  if (!sameRoom(v)) {
+  if (!sameRoom(*v)) {
     sendTo("That person doesn't seem to be around.\n\r");
     return FALSE;
   }

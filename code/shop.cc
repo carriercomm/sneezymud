@@ -831,7 +831,7 @@ bool TContainer::fitsSellType(tObjectManipT tObjectManip,
     for (tThing = stuff; tThing; tThing = tThingTemp) {
       tThingTemp = tThing->nextThing;
 
-      if (!ch->sameRoom(tKeeper) || !ch->awake())
+      if (!ch->sameRoom(*tKeeper) || !ch->awake())
         break;
 
       if (!(tObj = dynamic_cast<TObj *>(tThing)))
@@ -894,7 +894,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
 
     if (tObjectManip != OBJMAN_NONE)
       for (tWear = MIN_WEAR; tWear < MAX_WEAR; tWear++) {
-        if (!ch->sameRoom(tKeeper) || !ch->awake())
+        if (!ch->sameRoom(*tKeeper) || !ch->awake())
           break;
 
         if (!(tThing = ch->equipment[tWear]) ||
@@ -908,7 +908,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
     for (tThing = ch->stuff; tThing; tThing = tThingTemp) {
       tThingTemp = tThing->nextThing;
 
-      if (!ch->sameRoom(tKeeper) || !ch->awake())
+      if (!ch->sameRoom(*tKeeper) || !ch->awake())
         break;
 
       if (!(tObj = dynamic_cast<TObj *>(tThing)))
@@ -926,7 +926,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
     if (is_abbrev(argm, "all.commodity")) {
       for (i = MIN_WEAR; i < MAX_WEAR; i++) {
         // there's a chance to be moved (teleport moneypouch) so this is here
-        if (!ch->sameRoom(tKeeper))
+        if (!ch->sameRoom(*tKeeper))
           break;
         // check for sleep pouches
         if (!ch->awake())
@@ -945,7 +945,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
       }
       for (t = ch->stuff; t; t = t2) {
         t2 = t->nextThing;
-        if (!ch->sameRoom(tKeeper))
+        if (!ch->sameRoom(*tKeeper))
           break;
         // check for sleep pouches
         if (!ch->awake())
@@ -965,7 +965,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
       for (i = MIN_WEAR; i < MAX_WEAR; i++) {
         if (!(t = ch->equipment[i]))
           continue;
-        if (!ch->sameRoom(tKeeper))
+        if (!ch->sameRoom(*tKeeper))
           break;
         // check for sleep pouches
         if (!ch->awake())
@@ -981,7 +981,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
       }
       for (t = ch->stuff; t; t = t2) {
         t2 = t->nextThing;
-        if (!ch->sameRoom(tKeeper))
+        if (!ch->sameRoom(*tKeeper))
           break;
         // check for sleep pouches
         if (!ch->awake())
@@ -1000,7 +1000,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
       for (i = MIN_WEAR; i < MAX_WEAR; i++) {
         if (!(t = ch->equipment[i]))
           continue;
-        if (!ch->sameRoom(tKeeper))
+        if (!ch->sameRoom(*tKeeper))
           break;
         // check for sleep pouches
         if (!ch->awake())
@@ -1016,7 +1016,7 @@ int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_n
       }
       for (t = ch->stuff; t; t = t2) {
         t2 = t->nextThing;
-        if (!ch->sameRoom(tKeeper))
+        if (!ch->sameRoom(*tKeeper))
           break;
         // check for sleep pouches
         if (!ch->awake())

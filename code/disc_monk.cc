@@ -163,7 +163,7 @@ int TBeing::doSpringleap(const char *argument, bool should_lag, TBeing *vict)
       return FALSE;
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
@@ -481,7 +481,7 @@ int TBeing::doChi(const char *argument, TThing *target)
     bits = generic_find(argument, FIND_CHAR_ROOM | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, this, &victim, &obj);
 
     if (!bits) {
-      if (!fight() || !sameRoom(fight())) {
+      if (!fight() || !sameRoom(*fight())) {
 	sendTo("Use your chi on what?\n\r");
 	return FALSE;
       }

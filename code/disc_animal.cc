@@ -95,7 +95,7 @@ int TBeing::doSoothBeast(const char *argument)
     return FALSE;
   }
 
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
@@ -144,7 +144,7 @@ int TBeing::doBefriendBeast(const char *argument)
     return FALSE;
   }
 
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
@@ -179,7 +179,7 @@ int TBeing::doCharmBeast(const char *argument)
     return FALSE;
   }
 
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
@@ -289,7 +289,7 @@ int TBeing::doTransfix(const char *argument)
     return FALSE;
   }
 
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

@@ -229,7 +229,7 @@ int TBeing::doSmite(const char *arg, TBeing *victim)
     }
   }
 
-  if (!sameRoom(vict)) {
+  if (!sameRoom(*vict)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

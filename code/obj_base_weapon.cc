@@ -1306,7 +1306,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
             i == GUARANTEED_FAILURE)) {
         act("$n dodges out of the way of $p.", FALSE, tb, this, NULL, TO_ROOM);
         tb->sendTo("You dodge out of its way.\n\r");
-        if (!ch->sameRoom(tb))
+        if (!ch->sameRoom(*tb))
           act("In the distance, $N dodges out of the way of $p.",
                  TRUE,ch,this,tb,TO_CHAR);
         resCode = FALSE;
@@ -1330,11 +1330,11 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
           --(*this);
           rc = tb->stickIn(this, phit);
           if (rc) {
-            if (!ch->sameRoom(tb))
+            if (!ch->sameRoom(*tb))
               act("In the distance, $p embeds itself in $N.",
                    TRUE,ch,this,tb,TO_CHAR);
           } else {
-            if (!ch->sameRoom(tb))
+            if (!ch->sameRoom(*tb))
               act("In the distance, $N is hit by $p.",TRUE,ch,this,tb,TO_CHAR);
           }
           if (IS_SET_DELETE(rc, DELETE_THIS)) {
@@ -1349,7 +1349,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
         } else {
           --(*this);
           *(tb->roomp) += *this;
-          if (!ch->sameRoom(c))
+          if (!ch->sameRoom(*c))
             act("In the distance, $N is hit by $p.",TRUE,ch,this,tb,TO_CHAR);
         }
 
@@ -1361,7 +1361,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
           if (::number(1, d) <= getStructPoints()) {
             addToStructPoints(-1);
             if (getStructPoints() <= 0) {
-              if (!ch->sameRoom(tb))
+              if (!ch->sameRoom(*tb))
                 act("In the distance, $p is destroyed.",TRUE,ch,this,0,TO_CHAR);
               makeScraps();
               ADD_DELETE(resCode, DELETE_ITEM);

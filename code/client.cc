@@ -125,13 +125,13 @@ void Descriptor::send_client_prompt(int, int update)
   if (connected || !(ch = character))
     return;
 
-  if (ch->fight() && ch->awake() && ch->sameRoom(ch->fight())) {
+  if (ch->fight() && ch->awake() && ch->sameRoom(*ch->fight())) {
     ratio=min(10, max(0, ((ch->fight()->getHit() * 9) / ch->fight()->hitLimit())));
     strcpy(c_name, ch->persfname(ch->fight()).c_str());
     strcpy(cond, prompt_mesg[ratio]);
     tank = ch->fight()->fight();
     if (tank) {
-      if (ch->sameRoom(tank)) {
+      if (ch->sameRoom(*tank)) {
         strcpy(t_name, ch->persfname(tank).c_str());
         ratio = min(10, max(0, ((tank->getHit() * 9) / tank->hitLimit())));
         strcpy(t_cond, prompt_mesg[ratio]);

@@ -307,7 +307,7 @@ int task_skinning(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TO
       ch->nobrainerTaskCommand(cmd))
     return FALSE;
 
-  if (!obj || !ch->sameRoom(obj) ||
+  if (!obj || !ch->sameRoom(*obj) ||
       !(corpse = dynamic_cast<TBaseCorpse *>(obj))) {
     act("Hey, where'd that corpse go?", FALSE, ch, 0, 0, TO_CHAR);
     stop_skin(ch);

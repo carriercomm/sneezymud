@@ -311,7 +311,7 @@ int TBeing::doHeadbutt(const char *argument, TBeing *vict)
       }
     }
   }
-  if (!sameRoom(v)) {
+  if (!sameRoom(*v)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

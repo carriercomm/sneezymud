@@ -1433,7 +1433,7 @@ int TBeing::parseCommand(const char *orig_arg, bool typedIn)
     return FALSE;
 
   if (riding) {
-    if (!sameRoom(riding))
+    if (!sameRoom(*riding))
       dismount(POSITION_STANDING);
   }
 

@@ -697,7 +697,7 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
         if (fight() == ch)
           strcat(buffer, " YOU!");
         else {
-          if (sameRoom(fight())) {
+          if (sameRoom(*fight())) {
             strcat(buffer, ch->pers(fight()));
             strcat(buffer, ".");
           } else
@@ -1147,7 +1147,7 @@ void TBeing::show_me_mult_to_char(TBeing *ch, showModeT, unsigned int num) const
       if (fight() == ch)
         strcat(buffer, " YOU!");
       else {
-        if (sameRoom(fight())) {
+        if (sameRoom(*fight())) {
           strcat(buffer, ch->pers(fight()));
           strcat(buffer, ".");
         } else

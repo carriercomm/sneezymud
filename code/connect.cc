@@ -4355,7 +4355,7 @@ void setPrompts(fd_set out)
             }
             bool bracket_used = false;
             if (IS_SET(d->prompt_d.type, PROMPT_OPPONENT))
-              if (ch->fight() && ch->fight()->sameRoom(ch)) {
+              if (ch->fight() && ch->fight()->sameRoom(*ch)) {
                 int ratio = min(10, max(0, ((ch->fight()->getHit() * 9) /
                                 ch->fight()->hitLimit())));
 
@@ -4372,11 +4372,11 @@ void setPrompts(fd_set out)
             bool isOther = false;
             if ((isOther = IS_SET(d->prompt_d.type, PROMPT_TANK_OTHER)) ||
                 IS_SET(d->prompt_d.type, PROMPT_TANK))
-              if (ch->fight() && ch->awake() && ch->fight()->sameRoom(ch)) {
+              if (ch->fight() && ch->awake() && ch->fight()->sameRoom(*ch)) {
                 tank = ch->fight()->fight();
 
                 if (tank && (!isOther || tank != ch)) {
-                  if (ch->sameRoom(tank)) {
+                  if (ch->sameRoom(*tank)) {
                     int ratio = min(10, max(0, ((tank->getHit() * 9) / tank->hitLimit())));
 
                     sprintf(promptbuf + strlen(promptbuf),

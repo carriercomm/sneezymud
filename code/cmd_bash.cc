@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_bash.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:19:05  cosmo
-// Recuding lag.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -34,7 +20,7 @@ bool TBeing::canBash(TBeing *victim, silentTypeT silent)
     return FALSE;
   }
 
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     if (!silent)
       sendTo("That person isn't around.\n\r");
     return FALSE;

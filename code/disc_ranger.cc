@@ -236,7 +236,7 @@ int TBeing::track(TBeing *vict)
     else
       code = choose_exit_global(in_room, vict->in_room, hunt_dist);
   }
-  if ((vict && sameRoom(vict)) ||
+  if ((vict && sameRoom(*vict)) ||
       (targetRm != -1 && targetRm == inRoom())) {
     sendTo("%s###You have found %s!%s\n\r", orange(), isSW ? "some water" :
            "your quarry", norm());
@@ -311,7 +311,7 @@ dirTypeT TBeing::dirTrack(TBeing *vict)
           act("You have successfully concealed your path from $N.",
                     FALSE, vict, 0, this, TO_CHAR, ANSI_GREEN);
           return DIR_NONE;
-        } else if (vict->sameRoom(aff->be)) {
+        } else if (vict->sameRoom(*aff->be)) {
           act("$N has successfully concealed your path from $P.",
                     FALSE, vict, this, aff->be, TO_CHAR, ANSI_GREEN);
           act("You have successfully concealed $n's path from $P.",
@@ -329,7 +329,7 @@ dirTypeT TBeing::dirTrack(TBeing *vict)
     code = choose_exit_in_zone(in_room, vict->in_room, hunt_dist);
 
   if (code == DIR_NONE) {
-    if (sameRoom(vict))
+    if (sameRoom(*vict))
       sendTo("%s##You have found your target!%s\n\r", orange(), norm());
     else
       sendTo("%s##You have lost the trail.%s\n\r", orange(), norm());

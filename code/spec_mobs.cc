@@ -777,7 +777,7 @@ int vampire(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if (ch->spelltask)
     return FALSE;
 
-  if (ch->fight() && ch->sameRoom(ch->fight())) {
+  if (ch->fight() && ch->sameRoom(*ch->fight())) {
     act("$n touches $N!", TRUE, ch, 0, ch->fight(), TO_NOTVICT);
     act("$n touches you in an attempt to suck away your energy!",
         TRUE, ch, 0, ch->fight(), TO_VICT);
@@ -897,7 +897,7 @@ int TMonster::findMyHorse()
     act("$n pops into being.", FALSE, horse, 0, 0, TO_ROOM);
     return TRUE;
   }
-  if (!sameRoom(horse)) {
+  if (!sameRoom(*horse)) {
     if ((dir = find_path(in_room, is_target_room_p, (void *) horse->in_room, 
               trackRange(), 0)) < 0) {
       // unable to find a path 
@@ -934,7 +934,7 @@ int kraken(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if ((cmd != CMD_MOB_COMBAT) || !ch->awake())
     return FALSE;
 
-  if ((opp = ch->fight()) && opp->sameRoom(ch)) {
+  if ((opp = ch->fight()) && opp->sameRoom(*ch)) {
     act("$n sprays $N with an inky black cloud!", 
            1, ch, 0, opp, TO_NOTVICT);
     act("$n sprays you with an inky black cloud!", 1, ch, 0, opp, TO_VICT);
@@ -992,7 +992,7 @@ int ascallion(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     return FALSE;
   if (!(vict = me->fight()))
     return FALSE;
-  if (!vict->sameRoom(me))
+  if (!vict->sameRoom(*me))
     return FALSE;
   if (::number(0,10))
     return FALSE;
@@ -1019,7 +1019,7 @@ int electricEel(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
     return FALSE;
   if (!(vict = myself->fight()))
     return FALSE;
-  if (!vict->sameRoom(myself))
+  if (!vict->sameRoom(*myself))
     return FALSE;
   if (::number(0,10))
     return FALSE;
@@ -1045,7 +1045,7 @@ int poisonHit(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
     return FALSE;
   if (!(vict = myself->fight()))
     return FALSE;
-  if (!vict->sameRoom(myself))
+  if (!vict->sameRoom(*myself))
     return FALSE;
   if (vict->isImmune(IMMUNE_POISON, 20))
     return FALSE;
@@ -1095,7 +1095,7 @@ int belimus(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if (!(vict = myself->fight()))
     return FALSE;
 
-  if (!vict->sameRoom(myself))
+  if (!vict->sameRoom(*myself))
     return FALSE;
 
   for (int swallowerIndex = 0; swallowerIndex < MAX_SWALLOWER_TO_ROOM; swallowerIndex++)
@@ -1304,7 +1304,7 @@ int ram(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if (!vict)
     return FALSE;
 
-  if (!vict->sameRoom(myself))
+  if (!vict->sameRoom(*myself))
     return FALSE;
   if (vict->riding)
     return FALSE;
@@ -1350,7 +1350,7 @@ int moss(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if ((cmd != CMD_MOB_COMBAT) || !myself->awake())
     return FALSE;
 
-  if (!(v = myself->fight()) || !v->sameRoom(myself)) 
+  if (!(v = myself->fight()) || !v->sameRoom(*myself)) 
     return FALSE;
 
   if (v->isAffected(AFF_PARALYSIS) || 
@@ -1387,7 +1387,7 @@ int ghoul(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if ((cmd != CMD_MOB_COMBAT) || !myself->awake())
     return FALSE;
 
-  if (!(v = myself->fight()) || !v->sameRoom(myself))
+  if (!(v = myself->fight()) || !v->sameRoom(*myself))
     return FALSE;
 
   if (v->isAffected(AFF_PARALYSIS) || 
@@ -1424,7 +1424,7 @@ int arch_vampire(TBeing *ch, cmdTypeT cmd, const char *, TMonster *, TObj *)
   if (ch->spelltask)
     return FALSE;
 
-  if (ch->fight() && ch->fight()->sameRoom(ch)) {
+  if (ch->fight() && ch->fight()->sameRoom(*ch)) {
     act("$n bites $N!", 1, ch, 0, ch->fight(), TO_NOTVICT);
     act("$n bites you!", 1, ch, 0, ch->fight(), TO_VICT);
     if (!ch->doesKnowSkill(SPELL_ENERGY_DRAIN))
@@ -1434,7 +1434,7 @@ int arch_vampire(TBeing *ch, cmdTypeT cmd, const char *, TMonster *, TObj *)
 
 #if 0
 // energyDrain goes through spelltask stuff, so can't double cast it anymore
-    if (ch->fight() && ch->fight()->sameRoom(ch)) {
+    if (ch->fight() && ch->fight()->sameRoom(*ch)) {
       energyDrain(ch,ch->fight());
     }
 #endif
@@ -1539,7 +1539,7 @@ int Summoner(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
       rc = ch->doDiscipline(SPELL_SUMMON, fname(targ->name).c_str());
       if (IS_SET_DELETE(rc, DELETE_THIS))
         return DELETE_THIS;
-      if (targ->sameRoom(ch)) {
+      if (targ->sameRoom(*ch)) {
         rc = ch->hit(targ);
         if (IS_SET_DELETE(rc, DELETE_VICT)) {
           delete targ;
@@ -1611,7 +1611,7 @@ static bool okForJanitor(TMonster *myself, TObj *obj)
           return false;
 
         // keep this from happening for clutter-search
-        if (myself->sameRoom(corpse))
+        if (myself->sameRoom(*corpse))
           get(myself, obj2, corpse, GETOBJOBJ, true);
       }
     }
@@ -4614,7 +4614,7 @@ int war(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     for (t = character_list;t;t = next_tar) {
       next_tar = t->next;
       if (t->mobVnum() == APOC_WARRIOR) {
-        if (!t->sameRoom(me)) {
+        if (!t->sameRoom(*me)) {
           --(*t);
           *me->roomp += *t;
           act("$n summons $s minions from across the ether!",0, me, 0, 0, TO_ROOM);
@@ -5290,7 +5290,7 @@ int Fireballer(TBeing *ch, cmdTypeT cmd, const char *, TMonster *me, TObj *)
 
   for (tmp = character_list; tmp; tmp = temp) {
     temp = tmp->next;
-    if (me->sameRoom(tmp) && (me != tmp) &&
+    if (me->sameRoom(*tmp) && (me != tmp) &&
         !tmp->isImmortal() ) {
       if (!me->inGroup(tmp)) {
         dam = dice(me->GetMaxLevel(), 4);
@@ -5306,7 +5306,7 @@ int Fireballer(TBeing *ch, cmdTypeT cmd, const char *, TMonster *me, TObj *)
           tmp = NULL;
         }
       }
-    } else if (tmp->isImmortal() && me->sameRoom(tmp)) {
+    } else if (tmp->isImmortal() && me->sameRoom(*tmp)) {
       act("The Djinn chokes on a hairball.",TRUE,tmp,0,0,TO_CHAR);
       act("$n causes the Djinn to choke on a hairball before it can breathe at $m.",TRUE,tmp,0,0,TO_ROOM);
     } else if ((me != tmp) && (tmp->in_room != ROOM_NOWHERE) && (rp->getZone() == tmp->roomp->getZone())) {
@@ -5753,7 +5753,7 @@ int hobbitEmissary(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj 
     if (!(targ = get_char(job->hunted_victim, EXACT_YES))) {
       return FALSE;
     }
-    if (targ->sameRoom(myself)) {
+    if (targ->sameRoom(*myself)) {
       if (!strcmp(job->hunted_victim, "ambassador hobbit Grimhaven")) {
         sprintf(buf,"Good %s, your excellency.",describeTime());
         myself->doSay(buf);
@@ -5867,7 +5867,7 @@ int paralyzeGaze(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if ((cmd != CMD_MOB_COMBAT) || !myself->awake())
     return FALSE;
 
-  if (!(v = myself->fight()) || !v->sameRoom(myself)) 
+  if (!(v = myself->fight()) || !v->sameRoom(*myself)) 
     return FALSE;
 
   if (::number(0,10))
@@ -6068,7 +6068,7 @@ int grimhavenHooker(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TO
   // Make sure our john is still alive and in the same room
   found=0;
   if(job->john){
-    if(!myself->sameRoom(job->john)){
+    if(!myself->sameRoom(*job->john)){
       myself->doAction("", CMD_FROWN);
       job->john=NULL;
       job->state=STATE_NONE;

@@ -482,7 +482,7 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
                 act("You have successfully concealed your path from $N.",
                           FALSE, targ, 0, myself, TO_CHAR);
                 return FALSE;
-              } else if (targ->sameRoom(aff->be)) {
+              } else if (targ->sameRoom(*aff->be)) {
                 act("$N has successfully concealed your path from $P.",
                         FALSE, targ, myself, aff->be, TO_CHAR);
                 act("You have successfully concealed $n's path from $P.",
@@ -676,7 +676,7 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
                       myself->throwChar(targ, dir, FALSE, SILENT_NO, true);
 
                       // verify throw succeeded
-                      if (!myself->sameRoom(targ)) {
+                      if (!myself->sameRoom(*targ)) {
                         rc = myself->goDirection(dir);
                         if (IS_SET_DELETE(rc, DELETE_THIS))
                           return DELETE_THIS;
@@ -730,7 +730,7 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
   } else if (job->hunted_victim != NULL) {
     if (!(targ = char_with_name(job->hunted_victim)))
       return FALSE;
-    if (targ->sameRoom(myself)) {
+    if (targ->sameRoom(*myself)) {
      myself->doWake(targ->name);
       if (!myself->circleFollow(targ)) {
         if (myself->master != targ) {

@@ -1762,7 +1762,7 @@ int daggerOfHunting(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
   act("$n rotates quickly as if seeking something.",
              TRUE, me, 0, 0, TO_ROOM);
 
-  while (!me->sameRoom(target)) {
+  while (!me->sameRoom(*target)) {
     int answer;
     dirTypeT dir = find_path(me->in_room, is_target_room_p, (void *) target->in_room, 5000, false, &answer);
     if (dir < 0) {

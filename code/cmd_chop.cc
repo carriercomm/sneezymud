@@ -2,24 +2,10 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_chop.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:20:42  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+// chop.cc
 //
 //////////////////////////////////////////////////////////////////////////
 
-
-// chop.cc
 
 #include "stdsneezy.h"
 #include "combat.h"
@@ -257,7 +243,7 @@ int TBeing::doChop(const char *arg, TBeing *vict)
       }
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

@@ -1041,7 +1041,7 @@ void Descriptor::updateScreenVt100(unsigned int update)
     sprintf(buf + strlen(buf), "%s", ch->displayExp().c_str());
   }
   if ((f = ch->fight()) != NULL) {
-    if (f->sameRoom(ch)) {
+    if (f->sameRoom(*ch)) {
       int maxh = max(1, (int) f->hitLimit());
       int ratio = min(10, max(0, ((f->getHit() * 9) / maxh)));
       sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 3);
@@ -1188,7 +1188,7 @@ void Descriptor::updateScreenAnsi(unsigned int update)
     sprintf(buf + strlen(buf), "%s%s", ANSI_GREEN, ch->displayExp().c_str());
   }
   if ((f = ch->fight()) != NULL) {
-    if (f->sameRoom(ch)) {
+    if (f->sameRoom(*ch)) {
       int ratio = min(10, max(0, ((f->getHit() * 9) / f->hitLimit())));
       sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 3);
       sprintf(buf + strlen(buf), "%s<%s=%s>%s", ch->purple(), fname(f->name).c_str(),

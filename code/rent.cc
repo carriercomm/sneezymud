@@ -988,7 +988,7 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
       continue;
 
     // don't save if not around
-    if (!ch->sameRoom(this))
+    if (!ch->sameRoom(*this))
       continue;
 
     actual_cost = ch->petPrice() / 4;
@@ -2134,7 +2134,7 @@ void TBeing::makeRentNote(TBeing *recip)
       continue;
 
     // don't save if not around
-    if (!ch->sameRoom(this))
+    if (!ch->sameRoom(*this))
       continue;
 
     temp = ch->petPrice() / 4;
@@ -3367,7 +3367,7 @@ bool TBeing::saveFollowers(bool rent_time)
       continue;
 
     // don't save if not around
-    if (!mob->sameRoom(this))
+    if (!mob->sameRoom(*this))
       continue;
 
     // we need to strip the affects off while we save stats

@@ -2,28 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_fire.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.5  1999/09/16 05:06:44  peel
-// more typo's, dammit
-//
-// Revision 1.4  1999/09/16 05:05:12  peel
-// Typo
-//
-// Revision 1.3  1999/09/16 05:04:16  peel
-// Conjure fire elemental now extinguishes the fire source.
-//
-// Revision 1.2  1999/09/16 05:01:10  peel
-// Conjure fire elemental requires a lit light in the room to work.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -1032,7 +1010,7 @@ int fireball(TBeing *caster, int level, byte bKnown, int adv_learn)
     caster->flameRoom();
     for (tmp_victim = character_list; tmp_victim; tmp_victim = temp) {
       temp = tmp_victim->next;
-      if (caster->sameRoom(tmp_victim) && (caster != tmp_victim) &&
+      if (caster->sameRoom(*tmp_victim) && (caster != tmp_victim) &&
           (!tmp_victim->isImmortal())) {
         if (!caster->inGroup(tmp_victim)) {
           caster->reconcileHurt(tmp_victim, discArray[SPELL_FIREBALL]->alignMod);

@@ -592,7 +592,7 @@ int earthquake(TBeing *caster, int level, byte bKnown, spellNumT spell, int adv_
       int act_dam = dam;
       temp = tmp_victim->next;
 
-      if (caster->sameRoom(tmp_victim) && (caster != tmp_victim)) {
+      if (caster->sameRoom(*tmp_victim) && (caster != tmp_victim)) {
 	if (tmp_victim->isImmortal())
 	  act("As an immortal, of course you aren't bothered by a measly little earthquake!", FALSE, caster, NULL, tmp_victim, TO_VICT);
 	else if (tmp_victim->isFlying())

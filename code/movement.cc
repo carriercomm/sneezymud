@@ -140,7 +140,7 @@ bool TBeing::validMove(dirTypeT cmd)
       sendTo("Your mount must be standing!\n\r");
       return FALSE;
     }
-    if (!sameRoom(riding) && (riding->horseMaster() == this)) {
+    if (!sameRoom(*riding) && (riding->horseMaster() == this)) {
       vlogf(LOG_BUG, "mount/rider in different rooms: (%s, %s) %d %d", 
             getName(), riding->getName(), inRoom(), riding->inRoom());
       dismount(POSITION_STANDING);
@@ -360,7 +360,7 @@ int TBeing::rawMove(dirTypeT dir)
   if (!validMove(dir))
     return FALSE;
 
-  if (isAffected(AFF_CHARM) && master && sameRoom(master)) {
+  if (isAffected(AFF_CHARM) && master && sameRoom(*master)) {
     if (!::number(0, 5))
       act("$n bursts into tears.", TRUE, this, 0, 0, TO_ROOM);
     act("You burst into tears at the thought of leaving $N.", FALSE, this, 0, master, TO_CHAR);

@@ -17,14 +17,14 @@ void TBeing::disturbMeditation(TBeing *vict) const
     if (vict->task->task == TASK_PENANCE) {
       act("$n disturbs your penance!", FALSE, this, NULL, vict, TO_VICT);
 
-      if (sameRoom(vict))
+      if (sameRoom(*vict))
         act("You disturb $S penance!", TRUE, this, NULL, vict, TO_CHAR);
 
       vict->stopTask();
     } else if (vict->task->task == TASK_MEDITATE) {
       act("$n disturbs your meditation!", FALSE, this, NULL, vict, TO_VICT);
 
-      if (sameRoom(vict))
+      if (sameRoom(*vict))
         act("You disturb $S meditation!", TRUE, this, NULL, vict, TO_CHAR);
  
       vict->stopTask();

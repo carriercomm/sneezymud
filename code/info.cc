@@ -5141,7 +5141,7 @@ void TBeing::doLimbs(const string & argument)
 	return;
       }
     }
-    if (!sameRoom(v)) {
+    if (!sameRoom(*v)) {
       sendTo("That person doesn't seem to be around.\n\r");
       return;
     }

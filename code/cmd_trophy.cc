@@ -11,10 +11,10 @@
 
 float trophy_exp_mod(float count)
 {
-  float min_mod=0.6;
+  float min_mod=0.3;
   float max_mod=1.0; // shouldn't ever be above 1.0
   float free_kills=8; // how many kills you get before trophy kicks in
-  float step_mod=0.4; // mod per step
+  float step_mod=0.5; // mod per step
   float num_steps=14.0; // number of steps
 
   float t1, t2, t3, t4, t5;
@@ -47,7 +47,7 @@ void TBeing::doTrophy(const char *arg)
 {
   MYSQL_ROW row;
   MYSQL_RES *res;
-  int rc;
+  int rc, mcount=0;
   float count;
   char buf[256];
   string sb;
@@ -61,7 +61,7 @@ void TBeing::doTrophy(const char *arg)
   for (; isspace(*arg); arg++);
 
 
-  rc=dbquery(&res, "sneezy", "doTrophy", "select mobvnum, count from trophy where name='%s'", getName());
+  rc=dbquery(&res, "sneezy", "doTrophy", "select mobvnum, count from trophy where name='%s' order by count", getName());
 
   while((row=mysql_fetch_row(res))){
     if(atoi(row[0])==0){
@@ -81,9 +81,18 @@ void TBeing::doTrophy(const char *arg)
     sprintf(buf, "You will gain %s experience when fighting %s.\n\r", 
 	    describe_trophy_exp(count),
 	    mob_index[rnum].short_desc);
-
+    ++mcount;
     sb += buf;
   }
+
+  sprintf(buf, "Total mobs: %i\n\r", mcount);
+  sb += buf;
+  if(mcount>0){
+    sprintf(buf, "You have killed %i%% of all mobs.\n\r",
+	    (int)((float)((float)mcount/(float)mob_index.size())*100));
+    sb += buf;
+  }
+
   if (desc)
     desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
     

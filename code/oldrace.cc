@@ -12,7 +12,6 @@
 #include <fstream.h>
 
 /* remove these races
-    case RACE_MYTHIC:
     case RACE_MAMMAL:
     case RACE_UNIDENT:
     case RACE_UNCERT:
@@ -130,7 +129,6 @@ void TBeing::setRacialStuff()
       setMaxMove(getMaxMove() + 150);
       setMove(moveLimit());
       break;
-    case RACE_MYTHIC:
     case RACE_MAMMAL:
     case RACE_UNIDENT:
     case RACE_UNCERT:
@@ -216,6 +214,7 @@ void TBeing::setRacialStuff()
     case RACE_SIMAL:
     case RACE_HIPPOPOTAMUS:
     case RACE_ANGEL:
+    case RACE_BANSHEE:
     case MAX_RACIAL_TYPES:
       break;
   }
@@ -3602,7 +3601,7 @@ spellNumT TBeing::getFormType() const
     case RACE_DINOSAUR:
     case RACE_RODENT:
     case RACE_REPTILE:
-    case RACE_MYTHIC:
+    case RACE_BANSHEE:
     case RACE_FELINE:
     case RACE_TURTLE:
     case RACE_LION:

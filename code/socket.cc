@@ -577,8 +577,12 @@ int TSocket::gameLoop()
 	    rc = (*(tasks[tmp_ch->task->task].taskf))
       (tmp_ch, CMD_TASK_CONTINUE, "", pulse, tmp_ch->task->room, tmp_ch->task->obj);
 	    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-	      delete tmper_obj;
-	      tmper_obj = NULL;
+	      if (tmper_obj) {
+	        delete tmper_obj;
+	        tmper_obj = NULL;
+	      } else {
+	        vlogf(LOG_BUG, "bad temper object in taskorbash (2)");
+	      }
 	    }
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
               temp = tmp_ch->next;

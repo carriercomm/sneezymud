@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_testcode.cc,v $
+// Revision 5.1.1.2  1999/10/18 17:49:14  batopr
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -40,7 +43,7 @@ void TBeing::doTestCode(const char *arg)
 
   act("test code", FALSE, this, 0, 0, TO_CHAR, "\033[1;30m");
 
-#if 1
+#if 0
   unsigned int shopPos = getPosGoldShops();
   int shopNet = getNetGoldShops();
   int shopDrain = shopPos - shopNet;

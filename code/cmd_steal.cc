@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_steal.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/12 00:33:00  lapsos
-// Added block to prevent stealing from shopkeepers.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -251,7 +237,7 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
     modifier -= dynamic_cast<TMonster *>(victim)->susp()/2;
 
 
-  TThing *tt = searchLinkedListVis(victim, obj_name, victim->stuff);
+  TThing *tt = searchLinkedListVis(thief, obj_name, victim->stuff);
   TObj *obj = dynamic_cast<TObj *>(tt);
   if (!obj) {
     for (eq_pos = MIN_WEAR; (eq_pos < MAX_WEAR); eq_pos++) {

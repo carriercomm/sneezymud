@@ -1735,9 +1735,8 @@ bool is_number(char *str)
   return (1);
 }
 
-const char *one_argument(const char *arg, char *first_arg)
+const char *one_argument(const char *argument, char *first_arg)
 {
-  char * argument = arg;
   char * temp;
   string s;
   string tmp_fa;

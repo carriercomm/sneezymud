@@ -161,12 +161,12 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
 {
   int learning;
   int rc; 
-  TRealContainer *cont = NULL;
+  TOpenContainer *cont = NULL;
 
   if (ch->isLinkdead() || (ch->in_room != ch->task->wasInRoom) ||
       !ch->hasTrapComps(ch->task->orig_arg, TRAP_TARG_CONT, 0) ||
       !obj ||
-      !(cont = dynamic_cast<TRealContainer *>(obj)) ||
+      !(cont = dynamic_cast<TOpenContainer *>(obj)) ||
       !cont->isClosed() ||
       (ch->getPosition() <= POSITION_SITTING) ||
       !ch->getDiscipline(DISC_LOOTING)) {

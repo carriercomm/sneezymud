@@ -3428,59 +3428,14 @@ void TObj::closeMe(TBeing *ch)
   ch->sendTo("That's not a container.\n\r");
 }
 
-void TRealContainer::closeMe(TBeing *ch)
-{
-  if (isClosed())
-    ch->sendTo("But it's already closed!\n\r");
-  else if (!isCloseable())
-    ch->sendTo("That's impossible.\n\r");
-  else {
-    addContainerFlag(CONT_CLOSED);
-    act("You close $p.", TRUE, ch, this, 0, TO_CHAR);
-    act("$n closes $p.", TRUE, ch, this, 0, TO_ROOM);
-  }
-}
-
 void TObj::lockMe(TBeing *ch)
 {
   ch->sendTo("That's not a container.\n\r");
 }
 
-void TRealContainer::lockMe(TBeing *ch)
-{
-  if (!isClosed())
-    ch->sendTo("Maybe you should close it first...\n\r");
-  else if (getKeyNum() < 0)
-    ch->sendTo("That thing can't be locked.\n\r");
-  else if (!has_key(ch, getKeyNum()))
-    ch->sendTo("You don't seem to have the proper key.\n\r");
-  else if (isContainerFlag(CONT_LOCKED))
-    ch->sendTo("It is locked already.\n\r");
-  else {
-    addContainerFlag(CONT_LOCKED);
-    ch->sendTo("*Click*\n\r");
-    act("$n locks $p - 'cluck', it says.", TRUE, ch, this, 0, TO_ROOM);
-  }
-}
-
 void TObj::unlockMe(TBeing *ch)
 {
   ch->sendTo("That's not a container.\n\r");
-}
-
-void TRealContainer::unlockMe(TBeing *ch)
-{
-  if (getKeyNum() < 0)
-    ch->sendTo("Odd - you can't seem to find a keyhole.\n\r");
-  else if (!has_key(ch, getKeyNum()))
-    ch->sendTo("You don't seem to have the proper key.\n\r");
-  else if (!isContainerFlag(CONT_LOCKED))
-    ch->sendTo("Oh.. it wasn't locked, after all.\n\r");
-  else {
-    remContainerFlag(CONT_LOCKED);
-    ch->sendTo("*Click*\n\r");
-    act("$n unlocks $p.",TRUE, ch, this, 0, TO_ROOM);
-  }
 }
 
 int TObj::enterMe(TBeing *ch)

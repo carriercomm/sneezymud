@@ -40,41 +40,6 @@ void TObj::lookObj(TBeing *ch, int bits) const
   ch->sendTo("That is not a container.\n\r");
 }
 
-void TRealContainer::lookObj(TBeing *ch, int bits) const
-{
-  if (isClosed()) {
-    ch->sendTo("It is closed.\n\r");
-    return;
-  }
-
-  ch->sendTo(fname(name).c_str());
-  switch (bits) {
-    case FIND_OBJ_INV:
-      ch->sendTo(" (carried) : ");
-      break;
-    case FIND_OBJ_ROOM:
-      ch->sendTo(" (here) : ");
-      break;
-    case FIND_OBJ_EQUIP:
-      ch->sendTo(" (used) : ");
-      break;
-  }
-  if (carryVolumeLimit() && carryWeightLimit()) {
-    // moneypouches are occasionally overfilled, so we will just force the
-    // info to look right...
-    ch->sendTo("%d%% full, %d%% loaded.\n\r",
-      min(100, getCarriedVolume() * 100 / carryVolumeLimit()),
-      min(100, (int) (getCarriedWeight() * 100.0 / carryWeightLimit())));
-  } else {
-    vlogf(LOG_BUG, "Problem in look in for object: (%s:%d), check vol/weight limit", getName(), objVnum());
-  }
-  list_in_heap(stuff, ch, 0, 100);
-
-  // list_in_heap uses sequential sendTo's, so lets string it to them for
-  // easier browsing
-  ch->makeOutputPaged();
-}
-
 void TThing::lookAtObj(TBeing *ch, const char *, showModeT x) const
 {
   ch->showTo(this, x);        // Show no-description 

@@ -2,35 +2,13 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_compare.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+//  "cmd_compare.cc"
+//  All functions and routins related to the compare command.
 //
 //////////////////////////////////////////////////////////////////////////
 
-
-/*****************************************************************************
-
-  SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
-
-  "cmd_compare.cc"
-  All functions and routins related to the compare command.
-
-  Created 5/ 2/99 - Lapsos(William A. Perrotto III)
-
-******************************************************************************/
-
 #include "stdsneezy.h"
 #include "shop.h"
-
-extern bool is_ok(TMonster *, TBeing *, int);
 
 TObj * findShopObjForCompare(TBeing *ch, string StObject)
 {
@@ -655,67 +633,6 @@ string TOpal::compareMeAgainst(TBeing *ch, TObj *tObj)
   StString += good_cap(getName()).c_str();
   StString += chargeLevels[tMessage];
   StString += tOpal->getName();
-  StString += ".\n\r";
-
-  return StString;
-}
-
-string TRealContainer::compareMeAgainst(TBeing *ch, TObj *tObj)
-{
-  const char * sizeLevels[] =
-  {
-    " has a great amount of space more than ",
-    " has a lot more space than ",
-    " has a little bit more space than ",
-    " has the same amount of space as ",
-    " has a little less space than ",
-    " has a lot less space than ",
-    " has a great amount less space compared to "
-  };
-
-  const char *weightLevels[] = 
-  {
-    " can hold a great amount of weight over ",
-    " can hold a lot more weight than ",
-    " can hold a little more weight than ",
-    " can hold the same amount of weight as ",
-    " can hold less weight than ",
-    " can hold a lot less weight than ",
-    " can hold a great amount less weight compared to ",
-  };
-
-  TRealContainer *tRealContainer = NULL;
-
-  if (!tObj)
-    return "Could not find other item to compare.\n\r";
-
-  if ((itemType() != tObj->itemType()) ||
-      !(tRealContainer = dynamic_cast<TRealContainer *>(tObj)))
-    return "These two items cannot be compared against one another.\n\r";
-
-  int    tSize1   = carryVolumeLimit(),
-         tSize2   = tRealContainer->carryVolumeLimit(),
-         tSizeDiff,
-         tMessage1,
-         tWeight1 = (int)carryWeightLimit(),
-         tWeight2 = (int)tRealContainer->carryWeightLimit(),
-         tWeightDiff,
-         tMessage2;
-  string StString("");
-
-  tSizeDiff   = (tSize1 - tSize2);
-  tMessage1   = compareDetermineMessage(15, tSizeDiff);
-  tWeightDiff = (tWeight1 - tWeight2);
-  tMessage2   = compareDetermineMessage(15, tWeightDiff);
-
-  StString += good_cap(getName()).c_str();
-  StString += sizeLevels[tMessage1];
-  StString += tRealContainer->getName();
-  StString += ".\n\r";
-
-  StString += good_cap(getName()).c_str();
-  StString += weightLevels[tMessage2];
-  StString += tRealContainer->getName();
   StString += ".\n\r";
 
   return StString;

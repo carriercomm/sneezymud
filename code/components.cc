@@ -2052,7 +2052,7 @@ void TComponent::findComp(TComponent **best, spellNumT spell)
   }
 }
 
-int TComponent::putMeInto(TBeing *, TRealContainer *)
+int TComponent::putMeInto(TBeing *, TOpenContainer *)
 {
   // components can only be put into spellbags
   return FALSE;
@@ -2220,7 +2220,7 @@ bool TComponent::splitMe(TBeing *ch, const char *tString)
   return true;
 }
 
-int TComponent::putSomethingIntoContainer(TBeing *ch, TRealContainer *cont)
+int TComponent::putSomethingIntoContainer(TBeing *ch, TOpenContainer *cont)
 {
   int rc = TObj::putSomethingIntoContainer(ch, cont);
   if (rc != TRUE)

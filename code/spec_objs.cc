@@ -2385,7 +2385,7 @@ int stoneAltar(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *obj, TObj *)
   char buf[256];
   one_argument(arg, buf);
   if (is_abbrev(buf, "eye") || is_abbrev(buf, "diamond")) {
-    TRealContainer *trc = dynamic_cast<TRealContainer *>(obj);
+    TOpenContainer *trc = dynamic_cast<TOpenContainer *>(obj);
     if (!trc)
       return FALSE;
     if (trc->isClosed()) {

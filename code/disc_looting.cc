@@ -151,49 +151,6 @@ int TObj::disarmMe(TBeing *thief)
   return FALSE;
 }
 
-int TRealContainer::disarmMe(TBeing *thief)
-{
-  int learnedness;
-  int rc;
-  char buf[256], trap_type_buf[80];
-  int bKnown = thief->getSkillValue(SKILL_DISARM_TRAP);
-
-  if (isContainerFlag(CONT_GHOSTTRAP)) {
-    act("$p isn't trapped after all, must have made a mistake...",
-        FALSE, thief, this, 0, TO_CHAR);
-    remContainerFlag(CONT_GHOSTTRAP);
-    addContainerFlag(CONT_EMPTYTRAP);
-
-    return TRUE;
-  }
-
-  if (!isContainerFlag(CONT_TRAPPED)) {
-    act("$p is not trapped.", FALSE, thief, this, 0, TO_CHAR);
-    return TRUE;
-  }
-
-  strcpy(trap_type_buf, trap_types[getContainerTrapType()]);
-  learnedness = min((int) MAX_SKILL_LEARNEDNESS, 3*bKnown/2);
-  addContainerFlag(CONT_EMPTYTRAP);
-
-  if (bSuccess(thief, learnedness, SKILL_DISARM_TRAP)) {
-    sprintf(buf, "Click.  You disarm the %s trap in the $o.", trap_type_buf);
-    act(buf, FALSE, thief, this, 0, TO_CHAR);
-    act("$n disarms $p.", FALSE, thief, this, 0, TO_ROOM);
-    remContainerFlag( CONT_TRAPPED);
-
-    return TRUE;
-  } else {
-    thief->sendTo("Click. (whoops)\n\r");
-    act("$n tries to disarm $p.", FALSE, thief, this, 0, TO_ROOM);
-    rc = thief->triggerContTrap(this);
-    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      return DELETE_VICT;
-    }
-    return TRUE;
-  }
-}
-
 int TTrap::disarmMe(TBeing *thief)
 {
   int rc;
@@ -279,30 +236,6 @@ int disarmTrapDoor(TBeing * thief, dirTypeT door)
 int TThing::detectMe(TBeing *thief) const
 {
   return FALSE;
-}
-
-int TRealContainer::detectMe(TBeing *thief) const
-{
-  int bKnown =  thief->getSkillValue(SKILL_DETECT_TRAP);
-
-  if (!isContainerFlag( CONT_TRAPPED))
-    return FALSE;
-
-#if 0
-// this is apparently legit.  ghost traps.
-
-  // to track down reports that detect is turning up "none traps"
-  mud_assert(getContainerTrapType() != DOOR_TRAP_NONE, "Bad trap type in detectMe");
-#endif
-
-  // opening a trapped item
-  if (bSuccess(thief, bKnown, SKILL_DETECT_TRAP)) {
-    CS(SKILL_DETECT_TRAP);
-    return TRUE;
-  } else {
-    CF(SKILL_DETECT_TRAP);
-    return FALSE;
-  }
 }
 
 int TPortal::detectMe(TBeing *thief) const

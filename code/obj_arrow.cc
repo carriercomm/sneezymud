@@ -186,7 +186,7 @@ string TArrow::statObjInfo() const
   return a;
 }
 
-int TArrow::putMeInto(TBeing *, TRealContainer *)
+int TArrow::putMeInto(TBeing *, TOpenContainer *)
 {
   return FALSE;
 }

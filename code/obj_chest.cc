@@ -10,19 +10,19 @@
 #include "stdsneezy.h"
 
 TChest::TChest() :
-  TRealContainer()
+  TOpenContainer()
 {
 }
 
 TChest::TChest(const TChest &a) :
-  TRealContainer(a)
+  TOpenContainer(a)
 {
 }
 
 TChest & TChest::operator=(const TChest &a)
 {
   if (this == &a) return *this;
-  TRealContainer::operator=(a);
+  TOpenContainer::operator=(a);
   return *this;
 }
 
@@ -32,17 +32,17 @@ TChest::~TChest()
 
 void TChest::assignFourValues(int x1, int x2, int x3, int x4)
 {
-  TRealContainer::assignFourValues(x1, x2, x3, x4);
+  TOpenContainer::assignFourValues(x1, x2, x3, x4);
 }
 
 void TChest::getFourValues(int *x1, int *x2, int *x3, int *x4) const
 {
-  TRealContainer::getFourValues(x1, x2, x3, x4);
+  TOpenContainer::getFourValues(x1, x2, x3, x4);
 }
 
 string TChest::statObjInfo() const
 {
-  return TRealContainer::statObjInfo();
+  return TOpenContainer::statObjInfo();
 }
 
 bool TChest::objectRepair(TBeing *ch, TMonster *repair, silentTypeT silent)
@@ -63,5 +63,5 @@ void TChest::lowCheck()
            getName(), objVnum());                             
     remObjStat(ITEM_TAKE);
   }                                                           
-  TRealContainer::lowCheck();                                     
+  TOpenContainer::lowCheck();                                     
 }

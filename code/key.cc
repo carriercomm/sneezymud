@@ -70,7 +70,7 @@ int TKey::stealModifier()
   return 77;   // make keys tough to steal
 }
 
-int TKey::putMeInto(TBeing *ch, TRealContainer *container)
+int TKey::putMeInto(TBeing *ch, TOpenContainer *container)
 {
   TObj *o;
   TThing *t;

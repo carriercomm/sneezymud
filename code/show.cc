@@ -1809,7 +1809,7 @@ void TPerson::doShow(const char *argument)
     sb += "Trapped Containers\n\r";
     sb += "-------------------------------------\n\r";
     for (obj = object_list; obj; obj = obj->next) {
-      TRealContainer *tc = dynamic_cast<TRealContainer *>(obj);
+      TOpenContainer *tc = dynamic_cast<TOpenContainer *>(obj);
       if (tc && tc->isContainerFlag(CONT_TRAPPED)) {
         do_where_thing(this, tc, FALSE, sb);
       }

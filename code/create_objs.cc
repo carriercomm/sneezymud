@@ -2123,7 +2123,7 @@ static void change_obj_spec(TBeing *ch, TObj *obj, const char *arg, editorEnterT
   ch->sendTo("Select a new special procedure (0 = no procedure).\n\r--> ");
 }
 
-void change_chest_value2(TBeing *ch, TRealContainer *o, const char *arg, editorEnterTypeT type)
+void change_chest_value2(TBeing *ch, TOpenContainer *o, const char *arg, editorEnterTypeT type)
 {
   unsigned int loc_update;
   int row;
@@ -2770,7 +2770,7 @@ void obj_edit(TBeing *ch, const char *arg)
     case CHANGE_CHEST_CONT_FLAGS:
     case CHANGE_CHEST_TRAP_TYPE:
     case CHANGE_CHEST_TRAP_DAM:
-      change_chest_value2(ch, dynamic_cast<TRealContainer *>(ch->desc->obj), arg, ENTER_REENTRANT);
+      change_chest_value2(ch, dynamic_cast<TOpenContainer *>(ch->desc->obj), arg, ENTER_REENTRANT);
       return;
     case CHANGE_TRAP_VALUE2:
       change_trap_value2(ch, ch->desc->obj, arg, ENTER_REENTRANT);

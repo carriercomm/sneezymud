@@ -231,3 +231,85 @@ int TBaseContainer::putSomethingIntoContainer(TBeing *ch, TOpenContainer *cont)
   return FALSE;
 }
 
+void TBaseContainer::findSomeDrink(TDrinkCon **last_good, TBaseContainer **last_cont, TBaseContainer *)
+{
+  TThing *t;
+
+  for (t = stuff; t; t = t->nextThing)
+    t->findSomeDrink(last_good, last_cont, this);
+}
+
+void TBaseContainer::findSomeFood(TFood **last_good, TBaseContainer **last_cont, TBaseContainer *)
+{
+  TThing *t;
+                                                              
+  for (t = stuff; t; t = t->nextThing)                        
+    t->findSomeFood(last_good, last_cont, this);              
+}                                                             
+
+void TBaseContainer::powerstoneCheck(TOpal **topMax)
+{
+  TThing *t;
+
+  for (t = stuff; t; t = t->nextThing) {
+    t->powerstoneCheck(topMax);
+  }
+}
+
+void TBaseContainer::powerstoneCheckCharged(TOpal **topMax)
+{
+  TThing *t;
+                                                              
+  for (t = stuff; t; t = t->nextThing) {                      
+    t->powerstoneCheckCharged(topMax);                        
+  }                                                           
+}                                                             
+                                                              
+void TBaseContainer::powerstoneMostMana(int *topMax)
+{
+  TThing *t;
+
+  for (t = stuff; t; t = t->nextThing) {
+    t->powerstoneMostMana(topMax);
+  }
+}
+
+bool TBaseContainer::fitsSellType(tObjectManipT tObjectManip,
+                              TBeing *ch, TMonster *tKeeper,
+                              string tStString, itemTypeT tItemType,
+                              int & tCount, int tShop)
+{
+  TThing         *tThing,
+                 *tThingTemp;
+  TObj           *tObj;
+  TOpenContainer *tContainer = dynamic_cast<TOpenContainer *>(this);
+
+  if ((tObjectManip == OBJMAN_FIT ||
+       tObjectManip == OBJMAN_NOFIT ||
+       tObjectManip == OBJMAN_TYPE) &&
+      (!tContainer || !tContainer->isClosed())) {
+    for (tThing = stuff; tThing; tThing = tThingTemp) {
+      tThingTemp = tThing->nextThing;
+
+      if (!ch->sameRoom(*tKeeper) || !ch->awake())
+        break;
+
+      if (!(tObj = dynamic_cast<TObj *>(tThing)))
+        continue;
+      if (tObj->fitsSellType(tObjectManip, ch, tKeeper, tStString, tItemType, tCount, tShop)) {
+        --(*tObj);
+        *ch += *tObj;
+        generic_sell(ch, tKeeper, tObj, tShop);
+      }
+    }
+  }
+
+  // This is sort of a kludge but we don't really want to weight this. It is
+  // better to not try and sell bags/containers with 'all' instead of picking
+  // out all the ones that we should/shouln't.
+  if (tObjectManip == OBJMAN_FIT)
+    return false;
+  else
+    return TObj::fitsSellType(tObjectManip, ch, tKeeper, tStString, tItemType, tCount, tShop);
+}
+

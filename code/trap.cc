@@ -479,7 +479,7 @@ int TBeing::triggerPortalTrap(TPortal *o)
 // returns DELETE_THIS or FALSE
 // DELETE_ITEM may be |= with above.
 // triggers when obj is opened
-int TBeing::triggerContTrap(TRealContainer *obj)
+int TBeing::triggerContTrap(TOpenContainer *obj)
 {
   int rc = 0;
   TThing *t, *t2;
@@ -3802,84 +3802,5 @@ int TBeing::getGrenadeTrapLearn(doorTrapT)
 int TObj::trapMe(TBeing *ch, const char *trap_type)
 {
   act("$p is not trappable.", FALSE, ch, this, 0, TO_CHAR);
-  return FALSE;
-}
-
-int TRealContainer::trapMe(TBeing *ch, const char *trap_type)
-{
-  char buf[256];
-
-  if (!isCloseable()) {
-    act("$p must be closeable to be trapped.", FALSE, ch, this, 0, TO_CHAR);
-    return FALSE;
-  }
-  if (!isClosed()) {
-    act("$p must be closed before you may trap it.", FALSE, ch, this, 0, TO_CHAR);
-    return FALSE;
-  }
-  if (isContainerFlag(CONT_TRAPPED)) {
-    if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
-      if (detectTrapObj(ch, this)) {
-        sprintf(buf, "You start to trap $p, but then notice an insidious %s trap already present.", 
-           good_uncap(trap_types[getContainerTrapType()]).c_str());
-        act(buf, TRUE, ch, this, NULL, TO_CHAR);
-        return FALSE;
-      }
-    }
- 
-    int rc = ch->triggerContTrap(this);
-    if (IS_SET_DELETE(rc, DELETE_ITEM | DELETE_THIS)) {
-      return DELETE_THIS | DELETE_VICT;
-    }
-    if (IS_SET_DELETE(rc, DELETE_ITEM)) {
-      return DELETE_THIS;
-    }
-    if (IS_SET_DELETE(rc, DELETE_THIS))
-      return DELETE_VICT;
-  }
-
-  doorTrapT type;
-  if (is_abbrev(trap_type, "fire")) {
-    type = DOOR_TRAP_FIRE;
-  } else if (is_abbrev(trap_type, "explosive")) {
-    type = DOOR_TRAP_TNT;
-  } else if (is_abbrev(trap_type, "poison")) {
-    type = DOOR_TRAP_POISON;
-  } else if (is_abbrev(trap_type, "sleep")) {
-    type = DOOR_TRAP_SLEEP;
-  } else if (is_abbrev(trap_type, "acid")) {
-    type = DOOR_TRAP_ACID;
-  } else if (is_abbrev(trap_type, "spore")) {
-    type = DOOR_TRAP_DISEASE;
-  } else if (is_abbrev(trap_type, "spike")) {
-    type = DOOR_TRAP_SPIKE;
-  } else if (is_abbrev(trap_type, "blade")) {
-    type = DOOR_TRAP_BLADE;
-  } else if (is_abbrev(trap_type, "pebble")) {
-    type = DOOR_TRAP_PEBBLE;
-  } else if (is_abbrev(trap_type, "frost")) {
-    type = DOOR_TRAP_FROST;
-  } else if (is_abbrev(trap_type, "teleport")) {
-    type = DOOR_TRAP_TELEPORT;
-  } else if (is_abbrev(trap_type, "power")) {
-    type = DOOR_TRAP_ENERGY;
-  } else {
-    ch->sendTo("No such container trap-type.\n\r");
-    ch->sendTo("Syntax: trap container <item> <trap-type>\n\r");
-    return FALSE;
-  }
-  if (!ch->hasTrapComps(trap_type, TRAP_TARG_CONT, 0)) {
-    ch->sendTo("You need more items to make that trap.\n\r");
-    return FALSE;
-  }
-  if (ch->getContainerTrapLearn(type) <= 0) {
-    ch->sendTo("You need more training before setting a container trap.\n\r");
-    return FALSE;
-  }
- 
-
-  ch->sendTo("You start working on your trap.\n\r");
-  act("$n starts fiddling with $p.", TRUE, ch, this, 0, TO_ROOM);
-  start_task(ch, this, NULL, TASK_TRAP_CONT, trap_type, 3, ch->inRoom(), type, 0, 5);
   return FALSE;
 }

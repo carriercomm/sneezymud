@@ -681,48 +681,6 @@ int TThing::sellCommod(TBeing *ch, TMonster *keeper, int shop_nr, TThing *)
   return FALSE;
 }
 
-// THIS, VICT(ch), ITEM(bag)
-int TRealContainer::sellCommod(TBeing *ch, TMonster *keeper, int shop_nr, TThing *)
-{
-  TThing *t, *t2;
-  int rc;
-  bool wasClosed = false;
-
-  if (isClosed()) {
-    wasClosed = true;
-    rc = ch->rawOpen(this);
-    if (IS_SET_DELETE(rc, DELETE_ITEM)) 
-      return DELETE_THIS;
-    
-    if (IS_SET_DELETE(rc, DELETE_THIS))
-      return DELETE_VICT;
-  }
-  if (isClosed()) {
-    // if its still closed, we errored, or it was locked or something
-    return FALSE;
-  }
-  for (t = stuff; t; t = t2) {
-    t2 = t->nextThing;
-    rc = t->sellCommod(ch, keeper, shop_nr, this);
-    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      delete t;
-      t = NULL;
-      continue;
-    }
-    if (IS_SET_DELETE(rc, DELETE_ITEM)) {
-      return DELETE_THIS;
-    }
-    if (IS_SET_DELETE(rc, DELETE_VICT)) {
-      return DELETE_VICT;
-    }
-  }
-
-  if (wasClosed)
-    closeMe(ch);
-
-  return FALSE;
-}
-
 tObjectManipT ObjectManipType(string tStString, string & tStBuffer, itemTypeT & tItem)
 {
   if (tStString.empty()) {

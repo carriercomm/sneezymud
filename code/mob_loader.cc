@@ -27,7 +27,7 @@ static void treasureCreate(int prob, int cost, int &wealth, int vnum, const char
 
 void TMonster::createWealth(void)
 {
-  TRealContainer *bag;
+  TOpenContainer *bag;
 
   if (isPc())
     return;
@@ -901,7 +901,7 @@ void TMonster::buffMobLoader()
   return;
 }
 
-void TMonster::genericMobLoader(TRealContainer **bag)
+void TMonster::genericMobLoader(TOpenContainer **bag)
 {
   int wealth = getMoney();
   int amount;
@@ -922,7 +922,7 @@ void TMonster::genericMobLoader(TRealContainer **bag)
  
   TObj *obj;
   if (!(obj = read_object(GENERIC_MONEYPOUCH, VIRTUAL)) ||
-      !(*bag = dynamic_cast<TRealContainer *>(obj)))
+      !(*bag = dynamic_cast<TOpenContainer *>(obj)))
     return;
 
   amount = ::number(1, wealth);

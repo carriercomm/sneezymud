@@ -279,7 +279,7 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
 
   // mostly here for spellbags, but applies to other containers too...
   // too simplistic a means of getting all their wealth fast
-  if(!is_imp && dynamic_cast<TRealContainer *>(obj)){
+  if(!is_imp && dynamic_cast<TOpenContainer *>(obj)){
     thief->sendTo("You can't seem to distract your victim enough to steal that.\n\r");
     return FALSE;
   }

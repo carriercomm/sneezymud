@@ -1216,7 +1216,7 @@ int TObj::burnObject(TBeing *ch, int perc)
       return DELETE_VICT;
     }
   }
-  TRealContainer *trc = dynamic_cast<TRealContainer *>(this);
+  TOpenContainer *trc = dynamic_cast<TOpenContainer *>(this);
   for (t = stuff; t; t = t2) {
     int perc2;
     t2 = t->nextThing;
@@ -1356,7 +1356,7 @@ int TObj::freezeObject(TBeing *ch, int perc)
     if (IS_SET_DELETE(rc, DELETE_VICT))
       return DELETE_VICT;
   }
-  TRealContainer *trc = dynamic_cast<TRealContainer *>(this);
+  TOpenContainer *trc = dynamic_cast<TOpenContainer *>(this);
   for (t = stuff; t; t = t2) {
     int perc2;
     t2 = t->nextThing;
@@ -1501,7 +1501,7 @@ int TObj::meltObject(TBeing *ch, int perc)
   if (::number(1,100) > perc)
     return FALSE;
 
-  TRealContainer *trc = dynamic_cast<TRealContainer *>(this);
+  TOpenContainer *trc = dynamic_cast<TOpenContainer *>(this);
   for (t = stuff; t; t = t2) {
     int perc2;
     t2 = t->nextThing;

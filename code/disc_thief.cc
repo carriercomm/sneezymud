@@ -568,7 +568,6 @@ int disguise(TBeing *caster, char * buffer)
   REMOVE_BIT(mob->specials.act, ACT_NOCTURNAL);
 
   if (!awesom) {
-#if 1
     // remake some of the strings on the player 
     // disassociate the mob from global memory 
     mob->swapToStrung();
@@ -594,8 +593,6 @@ int disguise(TBeing *caster, char * buffer)
       sprintf(buf, "%s is here.", caster->name);
       mob->player.longDescr = mud_str_dup(cap(buf));
     }
-
-#endif
   }
   return TRUE;
 }
@@ -603,40 +600,4 @@ int disguise(TBeing *caster, char * buffer)
 void TObj::pickMe(TBeing *thief)
 {
   act("$p: That's not a container.", false, thief, this, 0, TO_CHAR);
-}
-
-void TRealContainer::pickMe(TBeing *thief)
-{
-  if (!isContainerFlag( CONT_CLOSED)) {
-    act("$p: Silly - it ain't even closed!", false, thief, this, 0, TO_CHAR);
-    return;
-  }
-  if (getKeyNum() < 0) {
-    thief->sendTo("Odd - you can't seem to find a keyhole.\n\r");
-    return;
-  }
-  if (!isContainerFlag( CONT_LOCKED)) {
-    thief->sendTo("Oho! This thing is NOT locked!\n\r");
-    return;
-  }
-  if (isContainerFlag( CONT_PICKPROOF)) {
-    thief->sendTo("It resists your attempts at picking it.\n\r");
-    return;
-  }
-
-  int bKnown = thief->getSkillValue(SKILL_PICK_LOCK);
-
-  if (bSuccess(thief, bKnown, SKILL_PICK_LOCK)) {
-    remContainerFlag( CONT_LOCKED);
-    thief->sendTo("*Click*\n\r");
-    act("$n fiddles with $p.", FALSE, thief, this, 0, TO_ROOM);
-  } else {
-    if (critFail(thief, SKILL_PICK_LOCK)) {
-      act("Uhoh.  $n seems to have jammed the lock!", TRUE, thief, 0, 0, TO_ROOM);
-      thief->sendTo("Uhoh.  You seemed to have jammed the lock!\n\r");
-      addContainerFlag(CONT_PICKPROOF);
-    } else {
-      thief->sendTo("You fail to pick the lock.\n\r");
-    }
-  }
 }

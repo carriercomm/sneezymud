@@ -10,7 +10,7 @@
 #include "statistics.h"
 
 const char WP_OPMAN[] = "Damescena";
-const char WP_LOW[]   = "Mithros";
+const char WP_LOW[]   = "Damescena";
 
 void TBeing::doSet(const char *)
 {

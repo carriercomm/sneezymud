@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: multiclass.cc,v $
+// Revision 5.1.1.2  2000/10/19 22:51:17  jesus
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -360,8 +363,8 @@ void TPerson::startLevels()
     // Major Office Holders
   } else if (!strcmp(name, "Damescena") ||
              !strcmp(name, "Kriebly") ||
-             !strcmp(name, "Lapsos") ||
-             !strcmp(name, "Mithros")) {
+             !strcmp(name, "Peel") ||
+             !strcmp(name, "Jesus")) {
     setLevel(MAGE_LEVEL_IND, MAX_IMMORT - 1);
     setLevel(CLERIC_LEVEL_IND, MAX_IMMORT - 1);
     setLevel(THIEF_LEVEL_IND, MAX_IMMORT - 1);
@@ -378,8 +381,7 @@ void TPerson::startLevels()
     calcMaxLevel();
 
     // Other Mudadmin
-  } else if (!strcmp(name, "Dolgan") ||
-             !strcmp(name, "Peel")) {
+  } else if (!strcmp(name, "Dolgan")) {
     setLevel(MAGE_LEVEL_IND, MAX_IMMORT - 3);
     setLevel(CLERIC_LEVEL_IND, MAX_IMMORT - 3);
     setLevel(THIEF_LEVEL_IND, MAX_IMMORT - 3);

@@ -290,10 +290,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
          strcmp(ch->name, "Cosmo") &&
          strcmp(ch->name, "Dolgan") &&
          strcmp(ch->name, "Kriebly") &&
-         strcmp(ch->name, "Mithros") &&
+         strcmp(ch->name, "Jesus") &&
          strcmp(ch->name, "Marsh") &&
          strcmp(ch->name, "Spawn") &&
-         strcmp(ch->name, "Lapsos") &&
          strcmp(ch->name, "Brutius") &&
 	 strcmp(ch->name, "Peel") &&
 	 strcmp(ch->name, "Damescena"))) {

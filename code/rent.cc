@@ -476,15 +476,20 @@ bool raw_write_item(FILE * fp, TObj *o, unsigned char /* version */)
         return FALSE;
       }
     } else
-      vlogf(10, "Object %d has no name!", obj_index[o->getItemIndex()].virt);
+      vlogf(10, "Object %d has no name!", o->objVnum());
 
     if (fwrite(o->shortDescr, strlen(o->shortDescr) + 1, 1, fp) != 1) {
       vlogf(10, "Error writing object short description to rent.");
       return FALSE;
     }
-    if (fwrite(o->getDescr(), strlen(o->getDescr()) + 1, 1, fp) != 1) {
-      vlogf(10, "Error writing object description to rent.");
-      return FALSE;
+
+    if (o->getDescr()) {
+      if (fwrite(o->getDescr(), strlen(o->getDescr()) + 1, 1, fp) != 1) {
+        vlogf(10, "Error writing object description to rent.");
+        return FALSE;
+      }
+    } else {
+      vlogf(10, "object %d has no descr", o->objVnum());
     }
     if (o->action_description) {
       if (fwrite(o->action_description, strlen(o->action_description) + 1, 1, fp) != 1) {

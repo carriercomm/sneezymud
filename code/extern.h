@@ -440,6 +440,8 @@ extern void stSpaceOut(string &);
 extern bool has_key(TBeing *ch, int key);
 extern int bogusAccountName(const char *arg);
 extern const char *LimbHealth(double a);
+extern doorTrapT mapFileToDoorTrap(int);
+extern int mapDoorTrapToFile(doorTrapT);
 }
 
 // these needs C++ linkage to avoid conflict with functions in stdlib

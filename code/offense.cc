@@ -733,6 +733,7 @@ int TBeing::doFlee(const char *arg)
   TBeing *vict;
 
   spellNumT skill = getSkillNum(SKILL_RETREAT);
+  spellNumT skill2 = getSkillNum(SKILL_RIDE);
 
   // automatic flee attempts should fail if lagging
   // remember that wait comes in as 1 naturaly i think
@@ -804,15 +805,15 @@ int TBeing::doFlee(const char *arg)
   }
   if (riding) {
     // Let's make retreat skill have some chance of keeping you on the mount - Brutius 07/26/1999
-    if (!doesKnowSkill(skill) || !bSuccess(this, getSkillValue(skill)/2, skill)) { 
+    if (!(doesKnowSkill(skill) && doesKnowSkill(skill2)) || 
+	!(bSuccess(this, getSkillValue(skill), skill) && bSuccess(this, getSkillValue(skill2), skill2))) { 
       sendTo("Your panic causes you to fall.\n\r");
       rc = fallOffMount(riding, POSITION_SITTING);
       panic = TRUE;
       if (IS_SET_DELETE(rc, DELETE_THIS)) 
         return DELETE_THIS;
     }
-  }
-  if (getPosition() <= POSITION_SITTING) {
+  } else if (getPosition() <= POSITION_SITTING) {
     addToMove(-10);
     act("$n scrambles madly to $s feet!", TRUE, this, 0, 0, TO_ROOM);
     act("Panic-stricken, you scramble to your feet.", TRUE, this, 0, 0, TO_CHAR);
@@ -820,8 +821,7 @@ int TBeing::doFlee(const char *arg)
     addToWait(combatRound(1));
 
     panic = TRUE;
-  }
-  if ((t = rider)) {
+  } else if ((t = rider)) {
     t->sendTo("Your mount panics and attempts to flee.\n\r");
     rc = t->fallOffMount(this, POSITION_SITTING);
     panic = TRUE;
@@ -833,7 +833,8 @@ int TBeing::doFlee(const char *arg)
       t = NULL;
     }
   }
-
+   
+  
   dirTypeT chosenDir = getDirFromChar(arg);
 
   soundNumT snd = pickRandSound(SOUND_FLEE_01, SOUND_FLEE_03);
@@ -842,18 +843,17 @@ int TBeing::doFlee(const char *arg)
   if (!(vict = fight())) {
     for (i = 0; i < 20; i++) {
       dirTypeT attempt = dirTypeT(::number(MIN_DIR, MAX_DIR-1));        // Select a random direction 
-
+      
       // not fighting, so encourage flight to be in dir PC selected
-      if (chosenDir != DIR_NONE && !panic &&
-          ::number(0,4))
-          attempt = chosenDir;
-
+      if (chosenDir != DIR_NONE && !panic) {
+	attempt = chosenDir;
+      }
       if (canFleeThisWay(this, attempt)) {
         act("$n panics, and attempts to flee.", TRUE, this, 0, 0, TO_ROOM);
         TBeing *tbt = dynamic_cast<TBeing *>(rider);
         if (tbt) {
           act("You turn tail and attempt to run away.", 
-                TRUE, this, 0, 0, TO_CHAR);
+	      TRUE, this, 0, 0, TO_CHAR);
           loseSneak();
           iDie = tbt->moveOne(attempt);
           if (IS_SET_DELETE(iDie, DELETE_THIS)) {
@@ -871,16 +871,16 @@ int TBeing::doFlee(const char *arg)
           }
         } else {
           act("You turn tail and attempt to run away.", 
-                TRUE, this, 0, 0, TO_CHAR);
+	      TRUE, this, 0, 0, TO_CHAR);
           loseSneak();
           iDie = moveOne(attempt);
           if (IS_SET_DELETE(iDie, DELETE_THIS))
             return DELETE_THIS;
-
+	  
           if (iDie == TRUE) {
             sendTo("You nearly hurt yourself as you fled madly %swards.\n\r", dirs[attempt]);
             REMOVE_BIT(specials.affectedBy, AFF_ENGAGER);
-
+	    
             return TRUE;
           } else {
             fleeFail(this);
@@ -895,12 +895,11 @@ int TBeing::doFlee(const char *arg)
   }
   for (i = 0; i < 20; i++) {
     dirTypeT attempt = dirTypeT(::number(MIN_DIR, MAX_DIR-1));        // Select a random direction 
-
+    
     // fighting, so give slight chance of letting PC direct the direction
-    if (chosenDir != DIR_NONE && !panic &&
-        !::number(0,2))
-        attempt = chosenDir;
-
+    if (chosenDir != DIR_NONE && !panic && !::number(0,99) < (30+getSkillValue(skill)/2))
+      attempt = chosenDir;
+    
     if (canFleeThisWay(this, attempt)) {
       if (panic || !doesKnowSkill(skill) || 
           !bSuccess(this, getSkillValue(skill), skill)) {

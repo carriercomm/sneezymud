@@ -1443,6 +1443,9 @@ void TBeing::doReset(const char *arg)
     return;
   }
   if (is_abbrev(buf, "practices")) {
+#if 0
+    
+#else
     // THIS WORKS but restricts choice.  People only get prac as though
     // they delayed practicing weapon specialties till after basic was done
     // This means that they will get less than they might otherwise have gotten
@@ -1501,6 +1504,7 @@ void TBeing::doReset(const char *arg)
 
     affectTo(&af);
     return;
+#endif
   } else if (is_abbrev(buf, "gold") && isImmortal()) {
     if (!hasWizPower(POWER_RESET)) {
       sendTo("You lack the power to reset.\n\r");

@@ -1156,7 +1156,7 @@ int belimus(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
     thing_to_room(tmp, SWALLOWER_TO_ROOM_PROC[targetSwallower][1]);
     act("$n's mawed corpse arrives tumbling down $N's throat!",
         FALSE, tmp, 0, myself, TO_ROOM);
-    tmp->rawKill(DAMAGE_EATTEN);
+    tmp->rawKill(DAMAGE_EATTEN, myself);
     delete tmp;
     tmp = NULL;
   }
@@ -4597,7 +4597,7 @@ int death(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     if (!t->isPc() || !::number(0,5)) {
       act("$N is dead!  R.I.P.",TRUE,me,0,t,TO_NOTVICT);
       act("$n's skeletal gaze falls upon you!",TRUE,me,0,t,TO_VICT);
-      t->rawKill(DAMAGE_NORMAL);
+      t->rawKill(DAMAGE_NORMAL, me);
       delete t;
       t = NULL;
     } else {

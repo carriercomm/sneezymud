@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: rent.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/24 02:08:58  batopr
-// put Ilogs for iradel in ifdef for later use
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // Rent for SneezyMUD, by Ben Youngdahl. Additions by Russ Russell
 
 #include <unistd.h>
@@ -2284,7 +2263,7 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
     act("$e isn't able to talk to you...", FALSE, recep, 0, ch, TO_VICT);
     return TRUE;
   }
-  if (!recep->canSee(ch)) {
+  if (!recep->canSee(ch) && !ch->isImmortal()) {
     act("$n says, 'I don't deal with people I can't see!'", FALSE, recep, 0, 0, TO_ROOM);
     return TRUE;
   }

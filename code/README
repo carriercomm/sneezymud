@@ -114,6 +114,9 @@
   attack skill.
 - If a thief is being stolen from, and he/she/it is perceptive.  They will
   get a vague message telling them something occured, not what but something.
+- Setup a new function in parse.cc: willBreakHide that controls when hide
+  should be removed.  In general it doesn't trigger on utility commands, such
+  as look/help/who/ect...
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

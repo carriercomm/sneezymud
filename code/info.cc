@@ -2898,7 +2898,7 @@ void TBeing::doWorld()
   dbquery(&res, "sneezy", "doWorld(1)", 
 	  "select pingtime from pings where host='%s'", desc->host);
   if((row=mysql_fetch_row(res))){
-    sprintf(buf, "%sNetwork Lag: Yours/Avg/High/Low     %s",
+    sprintf(buf, "%sNetwork Lag: Yours/Avg/High/Low      %s",
 	    blue(), row[0]);
     str += buf;
     dbquery(&res, "sneezy", "doWorld(2)", 

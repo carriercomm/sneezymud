@@ -1684,6 +1684,8 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_DUAL_WIELD_WARRIOR;
     case 667:
       return SKILL_POWERMOVE;
+    case 668:
+      return SKILL_ALCOHOLISM;
     case 2500:
       return AFFECT_DISEASE;
     case 2501:

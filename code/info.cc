@@ -1781,15 +1781,15 @@ void TBeing::doTime(const char *argument)
            numberAsString(day).c_str(),
            month_name[time_info.month], time_info.year);
 
-  tmp2 = sunRise();
-  tmp_num = tmp2 / 2;
+  tmp2 = sunTime(SUN_TIME_RISE);
+  tmp_num = tmp2 / 4;
   sprintf(buf, "The sun will rise today at:   %d:%s %s.\n\r",
           (!(tmp_num % 12) ? 12 : (tmp_num % 12)),
           (!(tmp2 % 2) ? "00" : "30"),
           ((tmp2 >= 24) ? "PM" : "AM"));
   sendTo(buf);
 
-  tmp2 = sunSet();
+  tmp2 = sunTime(SUN_TIME_SET);
   tmp_num = tmp2 / 2;
   sprintf(buf, "The sun will set today at:    %d:%s %s.\n\r",
           (!(tmp_num % 12) ? 12 : (tmp_num % 12)),
@@ -1797,7 +1797,7 @@ void TBeing::doTime(const char *argument)
           ((tmp2 >= 24) ? "PM" : "AM"));
   sendTo(buf);
 
-  tmp2 = moonRise();
+  tmp2 = moonTime(MOON_TIME_RISE);
   tmp_num = tmp2 / 2;
   sprintf(buf, "The moon will rise today at:  %d:%s %s    (%s).\n\r",
           (!(tmp_num % 12) ? 12 : (tmp_num % 12)),
@@ -1805,7 +1805,7 @@ void TBeing::doTime(const char *argument)
           ((tmp2 >= 24) ? "PM" : "AM"), moonType());
   sendTo(buf);
 
-  tmp2 = moonSet();
+  tmp2 = moonTime(MOON_TIME_SET);
   tmp_num = tmp2 / 2;
   sprintf(buf, "The moon will set today at:   %d:%s %s.\n\r",
           (!(tmp_num % 12) ? 12 : (tmp_num % 12)),

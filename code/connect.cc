@@ -5908,14 +5908,34 @@ int Descriptor::doAccountStuff(char *arg)
           return DELETE_THIS;
         break;
       }
+#if 0
+      strcpy(delname, lower(arg).c_str());
+
+      char charname[20];
+   
+      for (ch = character_list; ch; ch = ch->next) {
+        strcpy(charname, lower(ch->name).c_str());
+	if (!strcmp(charname, delname)) {
+	  
+	  writeToQ("That character is still connected, so you'll have to\n\r");
+	  writeToQ("reconnect and log off before you can delete.\n\r");
+	  go_back_menu(connected);
+	  break;
+
+        }
+      }
+      
+#endif      
+      
       writeToQ("Deleting a character will result in total deletion and\n\r");
-      writeToQ("equipment loss. Enter your password to verify or hit enter\n\r"); 
+      writeToQ("equipment loss. Enter your password to verify or hit enter\n\r");
       writeToQ("to return to the account menu system\n\r-> ");
       EchoOff();
-
       strcpy(delname, lower(arg).c_str());
+      
       connected = CON_CHARDELCNF;
       break;
+    
     case CON_CHARDELCNF:
       EchoOn();
       if (!*pwd) {
@@ -5937,9 +5957,10 @@ int Descriptor::doAccountStuff(char *arg)
         connected = CON_DELETE;
         break;
       }
+#if 1
       // it's possible that char is in game (link-dead), check for this
       for (ch = character_list; ch; ch = ch->next) {
-        if (!strcmp(ch->name, delname)) {
+        if (!strcmp(lower(ch->name).c_str(), delname)) {
           writeToQ("Character is still connected.  Disconnect before deleting.\n\r");
           writeToQ("Which do you want to do?\n\r");
           writeToQ("1) Delete your account\n\r");
@@ -5951,11 +5972,20 @@ int Descriptor::doAccountStuff(char *arg)
       }
       if (ch)
         break;
+#endif
 
       writeToQ("Character deleted.\n\r");
       vlogf(LOG_PIO, "Character %s self-deleted. (%s account)", delname, account->name);
       DeleteHatreds(NULL, delname);
       autobits = 0;
+      // remove trophy entries so they do not carry over if the character is recreated
+    
+
+      //if((rc=dbquery(NULL, "sneezy", "doTrophy", "delete * from trophy where name='%s'", ch->getName()))==-1){
+      //vlogf(LOG_BUG, "Database error for trophy character delete");
+      //}
+
+
 
       wipePlayerFile(delname);  // handles corpses too
       wipeRentFile(delname);

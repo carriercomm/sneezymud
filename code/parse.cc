@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: parse.cc,v $
+// Revision 5.1.1.9  1999/11/04 20:20:35  peel
+// Added CMD_RESP_MOVETO
+//
 // Revision 5.1.1.8  1999/11/01 07:07:18  lapsos
 // Added doJump.
 //
@@ -1392,6 +1395,7 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_RESP_PULSE:
         case CMD_RESP_CHECKROOM:
         case CMD_RESP_CHECKZONE:
+	case CMD_RESP_MOVETO:
         case CMD_GENERIC_PULSE:
         case CMD_GENERIC_CREATED:
         case CMD_GENERIC_RESET:

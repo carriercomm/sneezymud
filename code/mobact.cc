@@ -3187,8 +3187,9 @@ int TMonster::factionAggroCheck()
 	return TRUE;
       }
 
-      if((isCult() && (tmp_ch->isBrother() || tmp_ch->isSnake())) ||
-	 (isBrother() && tmp_ch->isCult())){
+      if(((isCult() && (tmp_ch->isBrother() || tmp_ch->isSnake())) ||
+	  (isBrother() && tmp_ch->isCult())) &&
+	 !::number(0,3)){
 	
 	if(isCult() && tmp_ch->isBrother()){
 	  switch(::number(0,3)){

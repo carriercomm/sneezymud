@@ -1391,6 +1391,7 @@ class TBeing : public TThing {
     bool isHitableAggr(TBeing *);
     void normalHitMessage(TBeing *, TThing *, spellNumT, int, wearSlotT);
     int monkDodge(TBeing *, TThing *, int *, int, wearSlotT);
+    int thiefDodge(TBeing *, TThing *, int *, int, wearSlotT);
     int damageItem(TBeing *, wearSlotT, spellNumT, TThing *, int, const char * = NULL);
     int damageWeapon(TBeing *, wearSlotT, TThing **);
     void damageArm(bool, int);

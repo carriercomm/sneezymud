@@ -923,6 +923,24 @@ void checkGoldStats()
   // so we don't need to leave tremendous slack in the system
   const float target_drain = 0.90;
 
+#if 1
+  // We will have the rent modifier self-adjust in order to drive the
+  // economy to the desired value
+  int good_drain = (pos_gold_budget - net_gold_budget);
+
+  int total_drain = pos_gold - net_gold;
+  if (good_drain < (int) ((target_drain - .05) * total_drain)) {
+    // rent is too small a drain
+    gold_modifier[GOLD_RENT] += 0.01;
+//    vlogf(LOG_BUG, "ECONOMY: rent modifier raised. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_RENT]);
+    should_reset = true;
+  } else if (good_drain > (int) ((target_drain + .05) * total_drain)) {
+    // rent is too large a drain
+    gold_modifier[GOLD_RENT] -= 0.01;
+//    vlogf(LOG_BUG, "ECONOMY: rent modifier lowered. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_RENT]);
+    should_reset = true;
+  }
+#else
   // We will have the repair modifier self-adjust in order to drive the
   // economy to the desired value
   int good_drain = (pos_gold_budget - net_gold_budget);
@@ -939,6 +957,7 @@ void checkGoldStats()
 //    vlogf(LOG_BUG, "ECONOMY: repair modifier lowered. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_REPAIR]);
     should_reset = true;
   }
+#endif
 
   // desire money from eq be no more than 25% of total
   // that is, most money comes from raw loads on mobs (commods, gold, etc)

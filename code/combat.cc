@@ -3101,12 +3101,33 @@ void TBeing::updateStatistics()
   }
 }
 
-// DELETE_VICT, v is dead, delete
+static void critKillCheck(TBeing *ch, TBeing *vict, int mess_sent)
+{
+  // there's an oddball case we need to watch for here.
+  // if the person hit for a crit (extra damage), and the dam
+  // is now high enough to kill the victim, we want to register this as
+  // a critical blow.
+  // for this scenario, mess_sent == ONEHIT_MESS_CRIT_S
+  // we only get into this scenario if we already said vict should die...
+
+  if (IS_SET_DELETE(mess_sent, ONEHIT_MESS_CRIT_S)) {
+    // we killed them, so increment crit-kill counter
+    if (ch->desc)
+      ch->desc->career.crit_kills++;
+    if (vict->desc)
+      vict->desc->career.crit_kills_suff++;
+
+    ch->saveCareerStats();
+    vict->saveCareerStats();
+  }
+}
+
+// DELETE_VICT, vict is dead, delete
 // DELETE_THIS, this is dead, delete
 // DELETE_ITEM : weapon is destroyed, delete   (this may be |= with the above)
 // return true if further hits should cease
 // otherwise, returns 0
-int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, double f)
+int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod, double f)
 {
   int dam = 0, result;
   wearSlotT part_hit;
@@ -3117,16 +3138,16 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
   bool found = FALSE;
 
   // Can I even attack the target?
-  if (invalidTarget(v)) {
-    if (v->desc && v->desc->connected != CON_PLYNG) {
+  if (invalidTarget(vict)) {
+    if (vict->desc && vict->desc->connected != CON_PLYNG) {
       // potentially they have gone linkdead or something
       // lets check for the obvious cheat
-      if (v->desc->connected == CON_WRITING) {
+      if (vict->desc->connected == CON_WRITING) {
         vlogf(LOG_COMBAT, "%s using editing trick to prevent combat with %s at room %d",
-              v->getName(), getName(), v->in_room);
+              vict->getName(), getName(), vict->in_room);
 
         // grab their stuff if they were REALLY cheating
-        catchLostLink(v);
+        catchLostLink(vict);
       }
     }
     
@@ -3156,7 +3177,7 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
 
   // handle a weapon's spec_proc 
   if (weapon && weapon->spec) {
-    rc = weapon->checkSpec(v, CMD_OBJ_HITTING, NULL, NULL);
+    rc = weapon->checkSpec(vict, CMD_OBJ_HITTING, NULL, NULL);
     if (IS_SET_ONLY(rc, DELETE_THIS))
       retCode |= DELETE_ITEM;
     if (IS_SET_ONLY(rc, DELETE_VICT)) {
@@ -3167,7 +3188,7 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
       return retCode;
   }
   // Handle faction affiliation
-  reconcileHurt(v, 0.005);
+  reconcileHurt(vict, 0.005);
 
   // Update combat stats here.
   updateStatistics();
@@ -3179,34 +3200,34 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
   int myLevel = 0;
   myLevel = GetMaxLevel();
   int tarLevel = 0;
-  tarLevel = v->GetMaxLevel();
+  tarLevel = vict->GetMaxLevel();
   bool victimCanAttack = FALSE;
 
-  if (v->isPc() && v->desc) {
-    if ((v->canAttack(HAND_PRIMARY) || v->canAttack(HAND_SECONDARY)) &&
-        ((!v->heldInPrimHand() || dynamic_cast<TBaseWeapon *>(v->heldInPrimHand())) || (!v->heldInSecHand() || dynamic_cast<TBaseWeapon *>(v->heldInSecHand())))) {
+  if (vict->isPc() && vict->desc) {
+    if ((vict->canAttack(HAND_PRIMARY) || vict->canAttack(HAND_SECONDARY)) &&
+        ((!vict->heldInPrimHand() || dynamic_cast<TBaseWeapon *>(vict->heldInPrimHand())) || (!vict->heldInSecHand() || dynamic_cast<TBaseWeapon *>(vict->heldInSecHand())))) {
        victimCanAttack = TRUE;
     }
 
     if (victimCanAttack && ((tarLevel - myLevel) < (10 + (tarLevel / 5)))) {
       if (canAttack(isprimary)) {
-        if (v->hasClass(CLASS_WARRIOR)) 
-          v->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (120 - (2 * myLevel)));
+        if (vict->hasClass(CLASS_WARRIOR)) 
+          vict->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (120 - (2 * myLevel)));
         else 
-          v->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (170 - (2 * myLevel)));
+          vict->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (170 - (2 * myLevel)));
       }
     }
   }
 
 // 1.  First check hitting vs missing outright
-  result = hits(v, mod);
+  result = hits(vict, mod);
   if (!result) {
     found = TRUE;
-    rc = missVictim(v, weapon, w_type);
+    rc = missVictim(vict, weapon, w_type);
     if (IS_SET_DELETE(rc, DELETE_ITEM | DELETE_VICT | DELETE_THIS)) {
       combatFatigue(weapon);
       updatePos();
-      v->updatePos();
+      vict->updatePos();
       if (IS_SET_DELETE(rc, DELETE_ITEM))
         retCode |= DELETE_ITEM;
       if (IS_SET_DELETE(rc, DELETE_VICT))
@@ -3218,7 +3239,7 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
   } else if (result == GUARANTEED_FAILURE) {
     found = TRUE;
 
-    tmp = critFailureChance(v, weapon, w_type);
+    tmp = critFailureChance(vict, weapon, w_type);
     if (IS_SET_DELETE(tmp, DELETE_THIS))
       return retCode | DELETE_THIS;
     else if (tmp == SENT_MESS && retCode)
@@ -3226,11 +3247,11 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
     else if (tmp == SENT_MESS)
       return TRUE;
 
-    rc = missVictim(v, weapon, w_type);
+    rc = missVictim(vict, weapon, w_type);
     if (IS_SET_DELETE(rc, DELETE_ITEM | DELETE_VICT | DELETE_THIS)) {
       combatFatigue(weapon);
       updatePos();
-      v->updatePos();
+      vict->updatePos();
       if (IS_SET_DELETE(rc, DELETE_ITEM))
         retCode |= DELETE_ITEM;
       if (IS_SET_DELETE(rc, DELETE_VICT))
@@ -3254,12 +3275,12 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
 // temporary for coding purposes, found isnt there for any purpose
    // miss
 
-  } else if ((dam = getWeaponDam(v, weapon,isprimary)) < 1) {
-    rc = missVictim(v, weapon, w_type);
+  } else if ((dam = getWeaponDam(vict, weapon,isprimary)) < 1) {
+    rc = missVictim(vict, weapon, w_type);
     if (IS_SET_DELETE(rc, DELETE_ITEM | DELETE_VICT | DELETE_THIS)) {
       combatFatigue(weapon);
       updatePos();
-      v->updatePos();
+      vict->updatePos();
       if (IS_SET_DELETE(rc, DELETE_ITEM))
         retCode |= DELETE_ITEM;
       if (IS_SET_DELETE(rc, DELETE_VICT))
@@ -3269,34 +3290,34 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
       return retCode;
     }
   } else {
-    if (v->isPc() && v->desc) {
+    if (vict->isPc() && vict->desc) {
       if ((tarLevel - myLevel) < (10 + (tarLevel / 5))) {
         if (canAttack(isprimary)) {
           if (victimCanAttack) {
-            v->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (200 - (2 * myLevel)));
+            vict->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (200 - (2 * myLevel)));
           } else {
-            if (v->hasClass(CLASS_WARRIOR)) 
-              v->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (300 - (2 * myLevel)));
+            if (vict->hasClass(CLASS_WARRIOR)) 
+              vict->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (300 - (2 * myLevel)));
             else 
-              v->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (450 - (2 * myLevel)));
+              vict->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_DEFENSE, (450 - (2 * myLevel)));
           }
         }
       }
     }
-    if (v->getHit() <= 0)
-      part_hit = v->getCritPartHit();
+    if (vict->getHit() <= 0)
+      part_hit = vict->getCritPartHit();
     else
-      part_hit = v->getPartHit(this, TRUE);
+      part_hit = vict->getPartHit(this, TRUE);
 
-    if (!v->hasPart(part_hit))
-      part_hit = v->getCritPartHit();
+    if (!vict->hasPart(part_hit))
+      part_hit = vict->getCritPartHit();
 
     if (part_hit == HOLD_LEFT || part_hit == HOLD_RIGHT) {
-      rc = checkShield(v, weapon, part_hit, w_type, dam);
+      rc = checkShield(vict, weapon, part_hit, w_type, dam);
       if (rc) {
         combatFatigue(weapon);
         updatePos();
-        v->updatePos();
+        vict->updatePos();
         if (IS_SET_DELETE(rc, DELETE_ITEM))
           retCode |= DELETE_ITEM;
         if (IS_SET_DELETE(rc, DELETE_VICT))
@@ -3305,7 +3326,7 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
           retCode |= DELETE_THIS;
         return retCode;
       } else
-        part_hit = v->getCritPartHit();
+        part_hit = vict->getCritPartHit();
     }
 
     stats.combat_hits[isPc() ? PC_STAT : MOB_STAT]++;
@@ -3315,43 +3336,45 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
       desc->session.hits[amt]++;
       desc->session.potential_dam_done[amt] += dam;
     }
-    if (v->desc) {
-      attack_mode_t amt = v->getCombatMode();
-      v->desc->session.hits_received[amt]++;
-      v->desc->session.potential_dam_received[amt] += dam;
+    if (vict->desc) {
+      attack_mode_t amt = vict->getCombatMode();
+      vict->desc->session.hits_received[amt]++;
+      vict->desc->session.potential_dam_received[amt] += dam;
     }
 
 
     if (result == GUARANTEED_SUCCESS)
-      mess_sent = critSuccessChance(v, weapon, &part_hit, w_type, &dam, -1);
+      mess_sent = critSuccessChance(vict, weapon, &part_hit, w_type, &dam, -1);
 
     if (IS_SET_DELETE(mess_sent, DELETE_VICT)) {
       // we killed them, so increment crit-kill counter
       if (desc)
         desc->career.crit_kills++;
-      if (v->desc)
-        v->desc->career.crit_kills_suff++;
+      if (vict->desc)
+        vict->desc->career.crit_kills_suff++;
 
-      v->saveCareerStats();
+      ch->saveCareerStats();
+      vict->saveCareerStats();
 
       return retCode | DELETE_VICT;
     }
 
-    dam = getActualDamage(v, weapon, dam, w_type);
-    absorb_damage(v, part_hit, &dam);
+    dam = getActualDamage(vict, weapon, dam, w_type);
+    absorb_damage(vict, part_hit, &dam);
 
-    if (!v->isImmortal())
+    if (!vict->isImmortal())
       dam = max(dam, 1);
 #if 0
     vlogf(LOG_COMBAT, "DAMAGE %d (%s) After getActualDamage and absorb.", dam, getName());  
 #endif
-    if (mess_sent != SENT_MESS && v->awake()) {
-      if (monkDodge(v, weapon, &dam, w_type, part_hit))
-        mess_sent = SENT_MESS;
+    if (!IS_SET_DELETE(mess_sent, ONEHIT_MESS_CRIT_S) &&
+        vict->awake()) {
+      if (monkDodge(vict, weapon, &dam, w_type, part_hit))
+        mess_sent |= ONEHIT_MESS_MONK;
     }
     loseSneak();
 
-    if(mess_sent != SENT_MESS){
+    if (mess_sent == 0){
       if(hasClass(CLASS_MONK) && doesKnowSkill(SKILL_ADVANCED_KICKING) &&
          !weapon && isPc()) {
         // switch some "hits" to "kicks"
@@ -3363,16 +3386,16 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
 	iskick*=(isprimary?0.6:0.4);
 
 	if(f <= iskick)
-	  normalHitMessage(v, NULL, TYPE_KICK, dam, part_hit);
+	  normalHitMessage(vict, NULL, TYPE_KICK, dam, part_hit);
 	else 
-	  normalHitMessage(v, NULL, w_type, dam, part_hit);
+	  normalHitMessage(vict, NULL, w_type, dam, part_hit);
       } else
-	normalHitMessage(v, weapon, w_type, dam, part_hit);
+	normalHitMessage(vict, weapon, w_type, dam, part_hit);
 
       // we've now hit, so do some post hit stuff
       // handle a weapon's spec_proc 
       if (weapon && weapon->spec) {
-        rc = weapon->checkSpec(v, CMD_OBJ_HIT, (const char *) part_hit, this);
+        rc = weapon->checkSpec(vict, CMD_OBJ_HIT, (const char *) part_hit, this);
         if (IS_SET_ONLY(rc, DELETE_THIS))
           retCode |= DELETE_ITEM;
         if (IS_SET_ONLY(rc, DELETE_VICT)) {
@@ -3381,8 +3404,8 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
         }
       }
       // handle proc on the eq being hit
-      if (v->equipment[part_hit] && v->equipment[part_hit]->spec){
-	rc = v->equipment[part_hit]->checkSpec(this, CMD_OBJ_BEEN_HIT, NULL, weapon);
+      if (vict->equipment[part_hit] && vict->equipment[part_hit]->spec){
+	rc = vict->equipment[part_hit]->checkSpec(this, CMD_OBJ_BEEN_HIT, NULL, weapon);
 	if (IS_SET_ONLY(rc, DELETE_VICT)) 
 	  retCode |= DELETE_THIS;
 	if (IS_SET_ONLY(rc, DELETE_ITEM))
@@ -3401,19 +3424,19 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
         for (int j = 0; j < MAX_SWING_AFFECT; j++) {
           if (tow->oneSwing[j].type != TYPE_UNDEFINED) {
             if (tow->oneSwing[j].renew == -1)
-              v->affectTo(&(tow->oneSwing[j]), -1);
+              vict->affectTo(&(tow->oneSwing[j]), -1);
             else
-              v->affectJoin(this, &(tow->oneSwing[j]), AVG_DUR_NO, AVG_EFF_NO);
+              vict->affectJoin(this, &(tow->oneSwing[j]), AVG_DUR_NO, AVG_EFF_NO);
 
             act("There was something nasty on that $o!",
-                  FALSE, this, tow, v, TO_VICT, ANSI_RED);
+                  FALSE, this, tow, vict, TO_VICT, ANSI_RED);
             act("You inflict something nasty on $N!",
-                  FALSE, this, tow, v, TO_CHAR, ANSI_RED);
+                  FALSE, this, tow, vict, TO_CHAR, ANSI_RED);
             act("There was something nasty on that $o!",
-                  FALSE, this, tow, v, TO_NOTVICT, ANSI_RED);
+                  FALSE, this, tow, vict, TO_NOTVICT, ANSI_RED);
   
             if (tow->oneSwing[j].type == AFFECT_DISEASE)
-              disease_start(v, &(tow->oneSwing[j]));
+              disease_start(vict, &(tow->oneSwing[j]));
   
             // kill the affect on the weapon
             tow->oneSwing[j].type = TYPE_UNDEFINED;
@@ -3429,15 +3452,15 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
     
       // more absorbtion stuff..
       affectedData *af;
-      for (af = v->affected; af; af = af->next) {
+      for (af = vict->affected; af; af = af->next) {
         if (af->type == SPELL_PLASMA_MIRROR) {
           int dam_blocked = min(dam-1, 3);
           dam_blocked = max(dam_blocked, 0);
           dam -= dam_blocked;
           if (dam_blocked) {
-            act("The swirls of plasma surrounding $n soak up energy, sending it back toward $N!", FALSE, v, 0, this, TO_NOTVICT);
-            act("The swirls of plasma surrounding you soak up energy, sending it back toward $N!", FALSE, v, 0, this, TO_CHAR);
-            act("The swirls of plasma surrounding $n soak up energy, sending it back toward you!", FALSE, v, 0, this, TO_VICT);
+            act("The swirls of plasma surrounding $n soak up energy, sending it back toward $N!", FALSE, vict, 0, this, TO_NOTVICT);
+            act("The swirls of plasma surrounding you soak up energy, sending it back toward $N!", FALSE, vict, 0, this, TO_CHAR);
+            act("The swirls of plasma surrounding $n soak up energy, sending it back toward you!", FALSE, vict, 0, this, TO_VICT);
          
             int rc = reconcileDamage(this, dam_blocked, SPELL_PLASMA_MIRROR);
             if (rc == -1) 
@@ -3445,22 +3468,25 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
           }
         }
       }
+    }  // end check for SENT_MESS
+
+    if (vict->equipment[part_hit])
+      vict->damageItem(this, part_hit, w_type, weapon, dam);
+
+    damaged_limb = damageLimb(vict, part_hit, weapon, &dam);
+    if (IS_SET_DELETE(damaged_limb, DELETE_VICT)) {
+      critKillCheck(this, vict, mess_sent);
+      return retCode | DELETE_VICT;
     }
 
-    if (v->equipment[part_hit])
-      v->damageItem(this, part_hit, w_type, weapon, dam);
-
-    damaged_limb = damageLimb(v, part_hit, weapon, &dam);
-    if (IS_SET_DELETE(damaged_limb, DELETE_VICT))
-      return retCode | DELETE_VICT;
-
-    rc = damageWeapon(v, part_hit, &weapon);
+    rc = damageWeapon(vict, part_hit, &weapon);
     if (IS_SET_ONLY(rc, DELETE_ITEM))
       retCode |= DELETE_ITEM;
 
     if (!damaged_limb) {
-      rc = applyDamage(v, dam, w_type);
+      rc = applyDamage(vict, dam, w_type);
       if (IS_SET_DELETE(rc, DELETE_VICT)) {
+        critKillCheck(this, vict, mess_sent);
         combatFatigue(weapon);
         updatePos();
         return (retCode | DELETE_VICT);
@@ -3469,18 +3495,18 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
   }
   combatFatigue(weapon);
   updatePos();
-  v->updatePos();
+  vict->updatePos();
   return retCode;;
 }
 
-bool TBeing::isHitableAggr(TBeing *v)
+bool TBeing::isHitableAggr(TBeing *vict)
 {
-  if (canSee(v) &&
-      !v->isPlayerAction(PLR_NOHASSLE) &&
-      (this != v) &&
-      (!(specials.act & ACT_WIMPY) || !v->awake()) &&
-      (dynamic_cast<TPerson *>(v) || (v->specials.act & ACT_ANNOYING)) &&
-      (!isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) || (master != v)))
+  if (canSee(vict) &&
+      !vict->isPlayerAction(PLR_NOHASSLE) &&
+      (this != vict) &&
+      (!(specials.act & ACT_WIMPY) || !vict->awake()) &&
+      (dynamic_cast<TPerson *>(vict) || (vict->specials.act & ACT_ANNOYING)) &&
+      (!isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) || (master != vict)))
     return TRUE;
 
   return FALSE;
@@ -3500,7 +3526,7 @@ int TBeing::preProcDam(spellNumT type, int dam) const
   return (dam);
 }
 
-int TBeing::weaponCheck(TBeing *v, TThing *o, spellNumT type, int dam)
+int TBeing::weaponCheck(TBeing *vict, TThing *o, spellNumT type, int dam)
 {
   int total = 0;
   immuneTypeT imm_type = getTypeImmunity(type);
@@ -3530,22 +3556,22 @@ int TBeing::weaponCheck(TBeing *v, TThing *o, spellNumT type, int dam)
   
 
   if (total == 1) {
-    imm_num=v->getImmunity(IMMUNE_PLUS1);
+    imm_num=vict->getImmunity(IMMUNE_PLUS1);
     dam *= (100 - (int) imm_num);
     dam /= 100;
     return dam;
   } else if (total == 2) {
-    imm_num=v->getImmunity(IMMUNE_PLUS2);
+    imm_num=vict->getImmunity(IMMUNE_PLUS2);
     dam *= (100 - (int) imm_num);
     dam /= 100;
     return dam;
   } else if (total == 3) {
-    imm_num=v->getImmunity(IMMUNE_PLUS3);
+    imm_num=vict->getImmunity(IMMUNE_PLUS3);
     dam *= (100 - (int) imm_num);
     dam /= 100;
     return dam;
   } else {
-    imm_num=v->getImmunity(IMMUNE_NONMAGIC);
+    imm_num=vict->getImmunity(IMMUNE_NONMAGIC);
     dam *= (100 - (int) imm_num);
     dam /= 100;
     return dam;
@@ -3704,84 +3730,84 @@ bool TBeing::canFight(TBeing *target)
   return TRUE;
 }
 
-bool TBeing::damCheckDeny(const TBeing *v, spellNumT type) const
+bool TBeing::damCheckDeny(const TBeing *vict, spellNumT type) const
 {
   TRoom *rp;
 
 #if 0
-  if (IS_DIURNAL(v))
+  if (IS_DIURNAL(vict))
     return TRUE;
-  if (IS_NOCTURNAL(v))
+  if (IS_NOCTURNAL(vict))
     return TRUE;
 #endif
 
   rp = roomp;
   if (rp && rp->isRoomFlag(ROOM_PEACEFUL) &&
-      type != SPELL_POISON && type != SPELL_POISON_DEIKHAN && (this != v)) 
+      type != SPELL_POISON && type != SPELL_POISON_DEIKHAN && (this != vict)) 
     return TRUE;                // true, they are denied from fighting 
   
   return FALSE;
 }
 
 
-bool TBeing::damDetailsOk(const TBeing *v, int dam, bool ranged) const
+bool TBeing::damDetailsOk(const TBeing *vict, int dam, bool ranged) const
 {
   if (dam < 0)
     return FALSE;
 
-  if (!ranged && !sameRoom(*v))
+  if (!ranged && !sameRoom(*vict))
     return FALSE;
 
   return TRUE;
 }
 
 
-int TBeing::setCharFighting(TBeing *v, int dam)
+int TBeing::setCharFighting(TBeing *vict, int dam)
 {
-  if (!v) {
+  if (!vict) {
     forceCrash("No victim in call to setCharFighting! (%s)", getName());
     sendTo("Something bad happened, tell a god what you did!\n\r");
     return -1;
   }
 
   if ((getPosition() > POSITION_STUNNED) && !fight()) {
-    if (v->isImmortal() && v->isPc() && (v != this) &&
-        (v->isPlayerAction(PLR_NOHASSLE) || isPc())) {
-      act("You can't attack $M, $E's immortal.",TRUE,this,0,v,TO_CHAR);
+    if (vict->isImmortal() && vict->isPc() && (vict != this) &&
+        (vict->isPlayerAction(PLR_NOHASSLE) || isPc())) {
+      act("You can't attack $M, $E's immortal.",TRUE,this,0,vict,TO_CHAR);
       act("$n just tried to attack you.  What a weenie.",
-         TRUE,this,0,v,TO_VICT);
+         TRUE,this,0,vict,TO_VICT);
       return -1;
     }
-    TMonster *tmons = dynamic_cast<TMonster *>(v);
+    TMonster *tmons = dynamic_cast<TMonster *>(vict);
     if (tmons && (tmons->specials.act & ACT_IMMORTAL)) {
       sendTo("Attack an immortal?!?  Don't we have an ego...\n\r");
       tmons->doAction(fname(name),CMD_GROWL);
       return -1;
     }
-    setFighting(v, dam, FALSE);
+    setFighting(vict, dam, FALSE);
     return 1;
   }
   return 0;
 }
 
-int TBeing::setVictFighting(TBeing *v, int dam)
+int TBeing::setVictFighting(TBeing *vict, int dam)
 {
-  if (v == this)
+  if (vict == this)
     return FALSE;
 
-  if ((v->getPosition() > POSITION_STUNNED) && !v->fight()) {
-    if (v->isImmortal() && v->isPc() && (v != this) &&
-        (v->isPlayerAction(PLR_NOHASSLE) || isPc())) {
+  if ((vict->getPosition() > POSITION_STUNNED) && !vict->fight()) {
+    if (vict->isImmortal() && vict->isPc() && (vict != this) &&
+        (vict->isPlayerAction(PLR_NOHASSLE) || isPc())) {
       return -1;
     }
-    TMonster *tmons = dynamic_cast<TMonster *>(v);
+    TMonster *tmons = dynamic_cast<TMonster *>(vict);
     if (tmons && (tmons->specials.act & ACT_IMMORTAL)) 
       return -1;
     
-    if (!desc && v->desc && !v->fight()) // aggro mob against a non fighting pc
-      v->setFighting(this, dam, 1);
+    if (!desc && vict->desc && !vict->fight()) // aggro mob against a non fighting pc
+      vict->setFighting(this, dam, 1);
     else 
-      v->setFighting(this, dam, FALSE);
+      vict->setFighting(this, dam, FALSE);
 
     return TRUE;
   }
@@ -3789,12 +3815,12 @@ int TBeing::setVictFighting(TBeing *v, int dam)
 
 }
 
-int TBeing::damageTrivia(TBeing *v, TThing *o, int dam, spellNumT type)
+int TBeing::damageTrivia(TBeing *vict, TThing *o, int dam, spellNumT type)
 {
-  dam = v->preProcDam(type, dam);
+  dam = vict->preProcDam(type, dam);
 
   if (dam > -1) {
-    dam = weaponCheck(v, o, type, dam);
+    dam = weaponCheck(vict, o, type, dam);
     dam = max(dam, 0);
   }
 
@@ -3967,7 +3993,7 @@ int TBeing::tellStatus(int dam, bool same, bool flying)
   return TRUE;
 }
 
-void TBeing::catchLostLink(TBeing *v)
+void TBeing::catchLostLink(TBeing *vict)
 {
   char buf[1024];
   TObj *note, *bag;
@@ -3977,36 +4003,36 @@ void TBeing::catchLostLink(TBeing *v)
   char *tmstr;
   TRoom *rp;
 
-  if(v->affectedBySpell(AFFECT_PLAYERKILL)){
+  if(vict->affectedBySpell(AFFECT_PLAYERKILL)){
     return;
   }
 
   *buf = '\0';
 
-  act("$n is rescued by divine forces.", TRUE, v, 0, 0, TO_ROOM);
-  vlogf(LOG_COMBAT, "%s lost link while fighting %s (%d)", v->getName(), getName(), in_room);
+  act("$n is rescued by divine forces.", TRUE, vict, 0, 0, TO_ROOM);
+  vlogf(LOG_COMBAT, "%s lost link while fighting %s (%d)", vict->getName(), getName(), in_room);
 
-  v->specials.was_in_room = v->in_room;
-  if (v->in_room != ROOM_NOWHERE)
-    --(*v);
+  vict->specials.was_in_room = vict->in_room;
+  if (vict->in_room != ROOM_NOWHERE)
+    --(*vict);
   rp = real_roomp(ROOM_STORAGE);
-  *rp += *v;
+  *rp += *vict;
 
-  if (((v->getHit() < (v->hitLimit() / 2)) ||
-     v->isCombatMode(ATTACK_BERSERK)) && (v->GetMaxLevel() <= MAX_MORT)) {
-    vlogf(LOG_COMBAT, "Creating link-loss bag for %s", v->getName());
+  if (((vict->getHit() < (vict->hitLimit() / 2)) ||
+     vict->isCombatMode(ATTACK_BERSERK)) && (vict->GetMaxLevel() <= MAX_MORT)) {
+    vlogf(LOG_COMBAT, "Creating link-loss bag for %s", vict->getName());
     ct = time(0);
     tmstr = asctime(localtime(&ct));
     *(tmstr + strlen(tmstr) - 1) = '\0';
     sprintf(buf, "Current time is: %s (PST)\n\r", tmstr);
 
-    sprintf(buf + strlen(buf), "%s hp when link lost : %d/%d\n\r", v->getName(), v->getHit(), v->hitLimit());
-    if (v->isCombatMode(ATTACK_BERSERK))
-      sprintf(buf + strlen(buf), "%s was berserking (link loss is only way to flee)\n\r", v->getName());
-    if (v->eitherArmHurt())
-      sprintf(buf + strlen(buf), "%s had at least one busted arm.\n\r", v->getName());
-    if (v->eitherLegHurt())
-      sprintf(buf + strlen(buf), "%s had at least one busted leg.\n\r", v->getName());
+    sprintf(buf + strlen(buf), "%s hp when link lost : %d/%d\n\r", vict->getName(), vict->getHit(), vict->hitLimit());
+    if (vict->isCombatMode(ATTACK_BERSERK))
+      sprintf(buf + strlen(buf), "%s was berserking (link loss is only way to flee)\n\r", vict->getName());
+    if (vict->eitherArmHurt())
+      sprintf(buf + strlen(buf), "%s had at least one busted arm.\n\r", vict->getName());
+    if (vict->eitherLegHurt())
+      sprintf(buf + strlen(buf), "%s had at least one busted leg.\n\r", vict->getName());
 
     sprintf(buf + strlen(buf), "Opponent (%s) hp when link lost : %d/%d.\n\r", getName(), getHit(), hitLimit());
     sprintf(buf + strlen(buf), "Time was %s when this happened.\n\r", tmstr);
@@ -4031,31 +4057,31 @@ void TBeing::catchLostLink(TBeing *v)
     delete [] note->name;
     note->name = mud_str_dup("note check link lost");
 
-    sprintf(buf, "A linkbag containing %s's belongings sits here.", v->getName());
+    sprintf(buf, "A linkbag containing %s's belongings sits here.", vict->getName());
     delete [] bag->getDescr();
     bag->setDescr(mud_str_dup(buf));
-    sprintf(buf, "linkbag %s", lower(v->getName()).c_str());
+    sprintf(buf, "linkbag %s", lower(vict->getName()).c_str());
     delete [] bag->name;
     bag->name = mud_str_dup(buf);
 
-    while ((o = v->stuff)) {
+    while ((o = vict->stuff)) {
       (*o)--;
       *bag += *o;
     }
   
-    if (v->getMoney() > 0) {
-      money = create_money(v->getMoney());
-      v->setMoney(0);
+    if (vict->getMoney() > 0) {
+      money = create_money(vict->getMoney());
+      vict->setMoney(0);
       *bag += *money;
     }
     wearSlotT ij;
     for (ij = MIN_WEAR; ij < MAX_WEAR; ij++) {
-      if (v->equipment[ij])
-        *bag += *(v->unequip(ij));
+      if (vict->equipment[ij])
+        *bag += *(vict->unequip(ij));
     }
-    v->setCarriedWeight(0.0);
-    v->setCarriedVolume(0);
-    v->removeRent();
+    vict->setCarriedWeight(0.0);
+    vict->setCarriedVolume(0);
+    vict->removeRent();
     *bag += *note;
     *rp += *bag;
 
@@ -4083,7 +4109,7 @@ void TBeing::catchLostLink(TBeing *v)
     sprintf(buf + strlen(buf), "If you have questions or comments regarding this policy, please contact a god.\n\r");
     sprintf(buf + strlen(buf), "Type WHO -G to see if any gods are presently connected.\n\r");
     sprintf(buf + strlen(buf), "\n\r\n\rThis message was automatically generated.\n\r");
-    autoMail(v, NULL, buf);
+    autoMail(vict, NULL, buf);
 
   }
 }

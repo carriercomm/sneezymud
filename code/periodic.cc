@@ -392,7 +392,7 @@ int TBeing::updateAffects()
 
     if ((af->duration == PERMANENT_DURATION) &&
           (af->type == AFFECT_DISEASE)) {
-      rc = (DiseaseInfo[DISEASE_INDEX(af->modifier)].code) (this, DISEASE_PULSE, af);
+      rc = (DiseaseInfo[affToDisease(*af)].code) (this, DISEASE_PULSE, af);
       if (IS_SET_DELETE(rc, DELETE_THIS))
         return DELETE_THIS;
       continue;
@@ -434,7 +434,7 @@ int TBeing::updateAffects()
       }
 
       if (af->type == AFFECT_DISEASE) {
-        rc = (DiseaseInfo[DISEASE_INDEX(af->modifier)].code) 
+        rc = (DiseaseInfo[affToDisease(*af)].code) 
                     (this, DISEASE_PULSE, af);
         if (IS_SET_DELETE(rc, DELETE_THIS))
           return DELETE_THIS;

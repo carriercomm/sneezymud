@@ -15,7 +15,9 @@ class TPerson : public TBeing {
   private:
     ush_int base_age;
     TPerson();  // made private to make it uncallable
+
   public:
+    FILE *tLogFile;
     char lastHost[40];
     char *title; 
     int last_rent;
@@ -126,6 +128,7 @@ class TPerson : public TBeing {
     virtual void doStat(const char *);
     virtual void doShow(const char *);
     virtual bool isPc() const { return TRUE; }
+    virtual void logf(const char *, ...);
     virtual int manaGain();
     virtual int hitGain();
     virtual int doQuit2();

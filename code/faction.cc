@@ -2,33 +2,9 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: faction.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/07 19:27:25  batopr
-// Leader's name show first 20 chars now
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+//      faction.cc : Functions related to factions
 //
 //////////////////////////////////////////////////////////////////////////
-
-
-/************************************************************************
-
-      SneezyMUD - All rights reserved, SneezyMUD Coding Team
-      faction.cc : Functions and routines related to factions
-      modified from ideas:
-      c. July 1994, Russ Russell and Wes Neal
-
-      March 1995, Jeffrey Bennett
-
-*************************************************************************/
 
 extern "C" {
 #include <unistd.h>

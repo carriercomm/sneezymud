@@ -3554,6 +3554,16 @@ void chargeRent(const char *who)
   } else {   // this person was rented as normal 
     total = (h.total_cost * days_passed);
 
+#if 1
+    if (!noteLimitedItems(fp, who, h.version, immortal)) {
+      vlogf(LOG_BUG, "cannot count (2) limited items for %s", h.owner);
+      fclose(fp);
+      return;
+    }
+    fclose(fp);
+#else
+
+
     // note, use of float required
     // 20K rent/day * 80K secs/day > max(long)
     total += (int) (h.total_cost * ((float) secs_lost / (float) SECS_PER_REAL_DAY));
@@ -3605,6 +3615,7 @@ void chargeRent(const char *who)
 
       vlogf(LOG_PIO, "   charged %s %d talens rent.  (%d per day)(left: %d)(bank: %d)", h.owner, total, h.total_cost, h.gold_left, pd.points.bankmoney);
     }
+#endif
   }
   chargeMobileRent(who);
 }

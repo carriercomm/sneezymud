@@ -241,5 +241,5 @@ int TThing::chiMe(TBeing *tLunatic)
       FALSE, tLunatic, this, NULL, TO_CHAR);
   tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
 
-  return FALSE;
+  return true;
 }

@@ -416,7 +416,7 @@ int TLight::chiMe(TBeing *tLunatic)
   if (!bSuccess(tLunatic, bKnown, SKILL_CHI)) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   if (isLit()) {
@@ -442,5 +442,5 @@ int TLight::chiMe(TBeing *tLunatic)
     lightMe(tLunatic, SILENT_YES);
   }
 
-  return FALSE;
+  return true;
 }

@@ -475,7 +475,7 @@ int TPortal::chiMe(TBeing *tLunatic)
   if (!bSuccess(tLunatic, bKnown, SKILL_CHI) | obj_flags.decay_time <= 0) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   act("You focus upon $p causing it to shimmer out of existance!",

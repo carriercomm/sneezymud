@@ -227,7 +227,7 @@ int TOpal::chiMe(TBeing *tLunatic)
   if (!bSuccess(tLunatic, bKnown, SKILL_CHI) || psGetMana() >= psGetMaxMana()) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   act("You focus upon $p causing it to glow violently!",
@@ -237,5 +237,5 @@ int TOpal::chiMe(TBeing *tLunatic)
 
   psSetMana(min(psGetMaxMana(), (psGetMana() + ::number(1, 4))));
 
-  return FALSE;
+  return true;
 }

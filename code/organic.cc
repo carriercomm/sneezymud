@@ -712,7 +712,7 @@ int TOrganic::chiMe(TBeing *tLunatic)
   if (!bSuccess(tLunatic, bKnown, SKILL_CHI) || !getOType() == ORGANIC_WOOD) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   act("You focus upon $p, causing it to burst into flames!",

@@ -341,5 +341,5 @@ int TSymbol::chiMe(TBeing *tLunatic)
     setSymbolCurStrength(min(getSymbolMaxStrength(), (getSymbolCurStrength() + ::number(1, 4))));
   }
 
-  return FALSE;
+  return true;
 }

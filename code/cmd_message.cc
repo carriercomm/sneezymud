@@ -19,39 +19,9 @@ messageTypeT & operator++ (messageTypeT &c, int)
 }
 
 const char * messageCommandFormat =
-"Syntax: message <field> <message>  Where field is one of:
-\r\t        title -  - Immortal Title, special [] text.
-\r\t        purge -n - When you do a general purge.
-\r\t purge-target -nN- When purge a specific being.
-\r\t        rload -  - Message people get when you rload a room there in.
-\r\t  load-object -nN- When you load an object.
-\r\t  load-mobile -nN- When you load a mobile.
-\r\t        medit -nN- When you medit load a mobile.
-\r\t        oedit -nN- When you oedit load an object.
-\r\tswitch-target -nN- When you use the 'switch load <mobile>' syntax.
-\r\t      move-in -d - When you move in: north, southeast, up, down
-\r\t         ***What people see when you Leave a room by walking.
-\r\t     move-out -d - When you move out: the north, the southeast, above, below
-\r\t         ***What people see when you Enter a room by walking.
-\r\t         slay -nN- When you slay a creature. (what others see)
-\r\t  slay-target -n - When you slay a creature. (what They see)
-\r\t        force -na- What a person sees when you force them to do something.
-\r\t       bamfin -  - What people see when you goto their room.
-\r\t      bamfout -  - What people see when you leave their room with goto.
-\r\t    longdescr -  - What people see when they 'look' in a room you are in.
-\r\tmessage <field> <default>   -   will reset the type to the standard.
+"Syntax: message <field> <message>
+\r\tmessage <field> default   -   will reset the type to the standard.
 \r\tmessage <field>  -  will display that fields current setting.
-\r\t---------------^^- Required Items:
-\r\t<n> = Your name.  (can be substituted with such)
-\r\t<N> = Object/Mobile/Player name.
-\r\t<a> = Arguments associated with the command in question.
-\r\t<d> = Direction of movement.
-\r\t<m> = Your sex. (him/her/it)
-\r\t<M> = Targets sex. (him/her/it)
-\r\t<e> = Your sex. (he/she/it)
-\r\t<E> = Targets sex. (he/she/it)
-\r\t<s> = Your sex. (his/her/its)
-\r\t<S> = Targets sex. (his/her/its)
 ";
 
 const unsigned short int messageCommandSwitches[][3] =

@@ -643,7 +643,7 @@ int newbieEquipper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj
         me->doTell(tmp_buf);
         found = 2;
         if (ch->hasClass(CLASS_CLERIC))
-          duration = max(1, (ch->GetMaxLevel() / 3)) * 48 * UPDATES_PER_TICK;
+          duration = max(1, (ch->GetMaxLevel() / 3)) * 48 * UPDATES_PER_MUDHOUR;
       }
       break;
     case 3:
@@ -685,7 +685,7 @@ int newbieEquipper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj
         sprintf(tmp_buf, "%s May it serve you well. Be more careful next time!", ch->getName());
         me->doTell(tmp_buf);
         found = 2;
-        duration = max(1, (ch->GetMaxLevel() / 3)) * 48 * UPDATES_PER_TICK;
+        duration = max(1, (ch->GetMaxLevel() / 3)) * 48 * UPDATES_PER_MUDHOUR;
       }
       break;
     default:
@@ -696,11 +696,11 @@ int newbieEquipper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj
     if (!ch->affectedBySpell(AFFECT_NEWBIE)) {
       af.type = AFFECT_NEWBIE;
       af.level = 0;
-      // roughly 4 hours (48 ticks per hour)
+      // roughly 4 hours
       if (duration)
         af.duration = duration; 
       else
-        af.duration = 4 * 48 * UPDATES_PER_TICK;
+        af.duration = 4 * UPDATES_PER_MUDHOUR;
       ch->affectTo(&af);
     }
     vlogf(LOG_MISC,"%s was given newbie gear by %s case %d", ch->getName(), me->getName(), request);
@@ -758,7 +758,7 @@ int librarian(TBeing *ch, cmdTypeT cmd, const char * arg, TMonster *myself, TObj
       act("$n smiles with satisfaction!", TRUE, myself, 0, ch, TO_VICT);
       aff.type = SPELL_SILENCE;
       aff.level = 0;
-      aff.duration =  12 * UPDATES_PER_TICK;
+      aff.duration =  12 * UPDATES_PER_MUDHOUR;
       aff.modifier = 0;
       aff.location = APPLY_NONE;
       aff.bitvector = AFF_SILENT;
@@ -942,7 +942,7 @@ int kraken(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
       opp->sendTo("You have been BLINDED!\n\r");
 
       opp->rawBlind(myself->GetMaxLevel(), 
-                    myself->GetMaxLevel() * UPDATES_PER_TICK,
+                    myself->GetMaxLevel() * UPDATES_PER_MUDHOUR,
                     SAVE_YES);
     }
     return TRUE;
@@ -1058,7 +1058,7 @@ int poisonHit(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   affectedData aff;
   aff.type = SPELL_POISON;
   aff.level = myself->GetMaxLevel();
-  aff.duration = (aff.level) * UPDATES_PER_TICK;
+  aff.duration = (aff.level) * UPDATES_PER_MUDHOUR;
   aff.modifier = -20;
   aff.location = APPLY_STR;
   aff.bitvector = AFF_POISON;
@@ -1288,7 +1288,7 @@ int siren(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_CHARM;
-    aff.duration  =  8 * level * UPDATES_PER_TICK;
+    aff.duration  =  8 * level * UPDATES_PER_MUDHOUR;
 
     vict->affectTo(&aff);
   }

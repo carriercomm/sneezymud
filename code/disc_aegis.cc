@@ -14,7 +14,7 @@ int cureBlindness(TBeing *c, TBeing * victim, int level, byte learn)
     return FALSE;
   }
 
-  duration = level * UPDATES_PER_TICK;
+  duration = level * UPDATES_PER_MUDHOUR;
   duration = (int) (c->percModifier() * duration);
 
   if (bSuccess(c, learn, c->getPerc(), SPELL_CURE_BLINDNESS)) {
@@ -254,7 +254,7 @@ int curePoison(TBeing *c, TBeing * victim, int level, byte learn, spellNumT spel
         CF(spell);
         aff.type = SPELL_POISON;
         aff.level = level;
-        aff.duration = (aff.level << 1) * UPDATES_PER_TICK;
+        aff.duration = (aff.level << 1) * UPDATES_PER_MUDHOUR;
         aff.modifier = -20;
         aff.location = APPLY_STR;
         aff.bitvector = AFF_POISON;
@@ -745,7 +745,7 @@ int TBeing::removeCurseBeing(TBeing * victim, int level, byte learn, spellNumT s
 
       aff.type = SPELL_CURSE;
       aff.level = level;
-      aff.duration = 24 * 7 * UPDATES_PER_TICK; // 3 Days 
+      aff.duration = 24 * 3 * UPDATES_PER_MUDHOUR; // 3 Days 
       aff.modifier = -10;
       aff.location = APPLY_SPELL_HITROLL;
       aff.bitvector = AFF_CURSE;
@@ -802,7 +802,7 @@ int armor(TBeing *c, TBeing * victim, int level, byte learn, spellNumT spell)
 
   aff.type = SPELL_ARMOR;
   aff.level = level;
-  aff.duration = (3 + (aff.level / 2)) * UPDATES_PER_TICK;
+  aff.duration = (3 + (aff.level / 2)) * UPDATES_PER_MUDHOUR;
   aff.location = APPLY_ARMOR;
   aff.bitvector = 0;
 
@@ -941,7 +941,7 @@ int sanctuary(TBeing *c, TBeing *victim, int level, byte learn)
 
   aff.type = SPELL_SANCTUARY;
   aff.level = level;
-  aff.duration = ((level <= MAX_MORT) ? 3 : level) * UPDATES_PER_TICK;
+  aff.duration = ((level <= MAX_MORT) ? 3 : level) * UPDATES_PER_MUDHOUR;
   aff.location = APPLY_PROTECTION;
   aff.modifier = min(level, 50);
   aff.bitvector = AFF_SANCTUARY;
@@ -956,7 +956,7 @@ int sanctuary(TBeing *c, TBeing *victim, int level, byte learn)
       case CRIT_S_KILL:
       case CRIT_S_DOUBLE:
         CS(SPELL_SANCTUARY);
-        aff.duration = ((level <= MAX_MORT) ? 5 : level) * UPDATES_PER_TICK;
+        aff.duration = ((level <= MAX_MORT) ? 5 : level) * UPDATES_PER_MUDHOUR;
         if (!victim->affectJoin(c, &aff, AVG_DUR_NO, AVG_EFF_YES))
           return SPELL_FAIL;
         return SPELL_CRIT_SUCCESS;

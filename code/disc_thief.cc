@@ -374,7 +374,7 @@ int spy(TBeing *thief)
   // not set the AFF_SCRYING bit so check for isAff(scry) in code to
   // see if spying
   aff.type = SKILL_SPY;
-  aff.duration = (((int) bKnown/ 10) + 1) * UPDATES_PER_TICK;
+  aff.duration = (((int) bKnown/ 10) + 1) * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
 
@@ -475,7 +475,7 @@ int disguise(TBeing *caster, char * buffer)
 
   aff.type = AFFECT_SKILL_ATTEMPT;
   aff.location = APPLY_NONE;
-  aff.duration = (2 + (level/5)) * UPDATES_PER_TICK;
+  aff.duration = (2 + (level/5)) * UPDATES_PER_MUDHOUR;
   aff.bitvector = 0;
   aff.modifier = SKILL_DISGUISE;
 
@@ -493,21 +493,21 @@ int disguise(TBeing *caster, char * buffer)
     case CRIT_S_KILL:
       CS(SKILL_DISGUISE);
       awesom= TRUE;
-      duration = 20 * UPDATES_PER_TICK;
+      duration = 20 * UPDATES_PER_MUDHOUR;
     case CRIT_S_TRIPLE:
       if (caster->getSkillLevel(SKILL_DISGUISE) > 20) {
         awesom= TRUE;
         CS(SKILL_DISGUISE);
       }
-      duration = 15 * UPDATES_PER_TICK;
+      duration = 15 * UPDATES_PER_MUDHOUR;
     case CRIT_S_DOUBLE:
       if (caster->getSkillLevel(SKILL_DISGUISE) > 40) {
         awesom= TRUE;
         CS(SKILL_DISGUISE);
       }
-      duration = 15 * UPDATES_PER_TICK;
+      duration = 15 * UPDATES_PER_MUDHOUR;
     default:
-      duration = 10 * UPDATES_PER_TICK;
+      duration = 10 * UPDATES_PER_MUDHOUR;
       break;
   }
   act("You apply your skills and make yourself look like $N.", 
@@ -516,12 +516,12 @@ int disguise(TBeing *caster, char * buffer)
        TRUE, caster, NULL, mob, TO_ROOM);
 
 // first add the attempt -- used to regulate attempts
-  aff.duration = duration + ((2 + (level/5)) * UPDATES_PER_TICK);
+  aff.duration = duration + ((2 + (level/5)) * UPDATES_PER_MUDHOUR);
   caster->affectTo(&aff, -1);
 
   aff3.type = AFFECT_SKILL_ATTEMPT;
   aff3.location = APPLY_NONE;
-  aff3.duration = duration + ((2 + (level/5)) * UPDATES_PER_TICK);
+  aff3.duration = duration + ((2 + (level/5)) * UPDATES_PER_MUDHOUR);
   aff3.bitvector = 0;
   aff3.modifier = SKILL_DISGUISE;
   mob->affectTo(&aff3, -1);

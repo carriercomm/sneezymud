@@ -713,14 +713,14 @@ int livingVines(TBeing *caster, TBeing *victim,int level, byte bKnown)
   aff1.bitvector = AFF_WEB;
   aff1.location = APPLY_ARMOR;
   aff1.modifier = (level / 2) + 5;
-  aff1.duration = level * UPDATES_PER_TICK;
+  aff1.duration = level * UPDATES_PER_MUDHOUR;
  
   aff2.type = SPELL_LIVING_VINES;
   aff2.level = level;
   aff2.bitvector = AFF_WEB;
   aff2.location = APPLY_SPELL_HITROLL;
   aff2.modifier = (-level*2);
-  aff2.duration = level * UPDATES_PER_TICK;
+  aff2.duration = level * UPDATES_PER_MUDHOUR;
    
   if (bSuccess(caster, bKnown, SPELL_LIVING_VINES)) {
     act("$n summons the vines to hold $N!", FALSE, caster, NULL, victim, TO_NOTVICT);

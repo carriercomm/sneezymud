@@ -816,7 +816,7 @@ void featheryDescent(TBeing * caster, TBeing *victim, TMagicItem * obj)
   aff.type = SPELL_FEATHERY_DESCENT;
   aff.level = level;
   // duration from the obj is 1/3 that of naturally cast
-  aff.duration = (aff.level / 3) * UPDATES_PER_TICK;
+  aff.duration = (aff.level / 3) * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = 0;
@@ -856,7 +856,7 @@ int castFeatheryDescent(TBeing * caster, TBeing * victim)
 
   aff.type = SPELL_FEATHERY_DESCENT;
   aff.level = level;
-  aff.duration = aff.level * UPDATES_PER_TICK;
+  aff.duration = aff.level * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = 0;
@@ -912,7 +912,7 @@ void fly(TBeing * caster, TBeing *victim,  TMagicItem * obj)
 
   aff.type = SPELL_FLY;
   aff.level = level;
-  aff.duration = 1 * UPDATES_PER_TICK * level;
+  aff.duration = 1 * UPDATES_PER_MUDHOUR * level;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = AFF_FLYING;
@@ -954,7 +954,7 @@ int castFly(TBeing * caster, TBeing * victim)
 
   aff.type = SPELL_FLY;
   aff.level = level;
-  aff.duration = 3 * UPDATES_PER_TICK * level;
+  aff.duration = 3 * UPDATES_PER_MUDHOUR * level;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = AFF_FLYING;
@@ -1042,7 +1042,7 @@ int castAntigravity(TBeing * caster)
 
   aff.type = SPELL_LEVITATE;
   aff.level = level;
-  aff.duration = (caster->isImmortal() ? caster->GetMaxLevel() : 3) * UPDATES_PER_TICK;
+  aff.duration = (caster->isImmortal() ? caster->GetMaxLevel() : 3) * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = AFF_LEVITATING;
@@ -1175,7 +1175,7 @@ int levitate(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
   aff.type = SPELL_LEVITATE;
   aff.level = level;
-  aff.duration = 3 * UPDATES_PER_TICK;
+  aff.duration = 3 * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = AFF_LEVITATING;
@@ -1258,7 +1258,7 @@ int falconWings(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
   aff.type = SPELL_FALCON_WINGS;
   aff.level = level;
-  aff.duration = 3 * UPDATES_PER_TICK;
+  aff.duration = 3 * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = AFF_FLYING;
@@ -1348,7 +1348,7 @@ int protectionFromAir(TBeing *caster, TBeing *victim, int level, byte bKnown)
  
   aff.type = SPELL_PROTECTION_FROM_AIR;
   aff.level = level;
-  aff.duration = (3 + (level / 2)) * UPDATES_PER_TICK;
+  aff.duration = (3 + (level / 2)) * UPDATES_PER_MUDHOUR;
   aff.location = APPLY_IMMUNITY;
   aff.modifier = IMMUNE_AIR;
   aff.modifier2 = ((level * 2) / 3);
@@ -1362,7 +1362,7 @@ int protectionFromAir(TBeing *caster, TBeing *victim, int level, byte bKnown)
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
         CS(SPELL_PROTECTION_FROM_AIR);
-        aff.duration = (10 + (level / 2)) * UPDATES_PER_TICK;
+        aff.duration = (10 + (level / 2)) * UPDATES_PER_MUDHOUR;
         aff.modifier2 = (level * 2);
         break;
       case CRIT_S_NONE:

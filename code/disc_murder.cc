@@ -404,7 +404,7 @@ int TTool::poisonMePoison(TBeing *ch, TBaseWeapon *weapon)
 
   addToToolUses(-1);
 
-  duration = (level << 2) * UPDATES_PER_TICK;
+  duration = (level << 2) * UPDATES_PER_MUDHOUR;
   if (bSuccess(ch, bKnown, SKILL_POISON_WEAPON)) {
     for (j= 0; j < MAX_SWING_AFFECT; j++) {
       if (weapon->oneSwing[j].type == TYPE_UNDEFINED) {
@@ -716,7 +716,7 @@ int cudgel(TBeing *thief, TBeing *victim)
 
       affectedData aff;
       aff.type = SKILL_CUDGEL;
-      aff.duration = UPDATES_PER_TICK / 3;
+      aff.duration = UPDATES_PER_MUDHOUR / 3;
       aff.bitvector = AFF_STUNNED;
 
       victim->affectTo(&aff, -1);

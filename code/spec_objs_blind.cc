@@ -2,16 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: spec_objs_blind.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -69,7 +59,7 @@ int weaponBlinder(TBeing *tVictim, cmdTypeT tCmd, const char *, TObj *tObj, TObj
     act("The world goes white then black as a seering light shines from $n's $p.",
         FALSE, ch, tObj, tVictim, TO_VICT);
 
-    int       tDuration = (int)(tWeap->weaponLevel() * UPDATES_PER_TICK);
+    int       tDuration = (int)(tWeap->weaponLevel() * UPDATES_PER_MUDHOUR);
     saveTypeT tSave     = SAVE_NO;
 
     tVictim->rawBlind(tWeap->weaponLevel(), tDuration, tSave);

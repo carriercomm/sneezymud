@@ -1618,7 +1618,7 @@ int TBeing::chlorineEngulfed()
 
   af.type = SPELL_POISON;
   af.level = 51;
-  af.duration = (60) * UPDATES_PER_TICK;
+  af.duration = (60) * UPDATES_PER_MUDHOUR;
   af.modifier = -20;
   af.location = APPLY_STR;
   af.bitvector = AFF_POISON;

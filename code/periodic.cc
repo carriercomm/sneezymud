@@ -438,7 +438,7 @@ int TBeing::updateAffects()
                     (this, DISEASE_PULSE, af);
         if (IS_SET_DELETE(rc, DELETE_THIS))
           return DELETE_THIS;
-      } else if (af->duration == 1 * UPDATES_PER_TICK) {
+      } else if (af->duration == 1 * UPDATES_PER_MUDHOUR) {
         // some spells have > 1 effect, do not show 2 messages
         if (af->shouldGenerateText())
           spellWearOffSoon(af->type);

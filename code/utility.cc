@@ -1172,10 +1172,7 @@ bool TBeing::tooManyFollowers(const TBeing *pet, newFolTypeT type) const
 
 int TBeing::followTime() const
 {
-  if (!strcmp("cosmo", name)) 
-    return UPDATES_PER_TICK;
-
-  return (plotStat(STAT_CURRENT, STAT_CHA, 6, 36, 22) * UPDATES_PER_TICK);
+  return (plotStat(STAT_CURRENT, STAT_CHA, 6, 36, 22) * UPDATES_PER_MUDHOUR);
 }
 
 // a higher value = harder to see

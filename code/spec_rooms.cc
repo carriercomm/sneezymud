@@ -430,7 +430,7 @@ int pools_of_chaos_and_cleansing(TBeing *ch, cmdTypeT cmd, const char *arg, TRoo
 	ch->sendTo("As you step into the pool, you feel your vision disappear.\n\r");
 	act("$n looks around blindly as $e steps into the pool.", TRUE, ch, NULL, NULL, TO_ROOM);
 
-        ch->rawBlind(50, 25 * UPDATES_PER_TICK, SAVE_YES);
+        ch->rawBlind(50, 25 * UPDATES_PER_MUDHOUR, SAVE_YES);
 	return TRUE;
       case 3:
 	ch->sendTo("As you step into the pool, you feel yourself magically moved.\n\r");

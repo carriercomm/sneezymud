@@ -109,7 +109,7 @@ int icyGrip(TBeing * caster, TBeing * victim, int level, byte bKnown, int adv_le
 
   if (bSuccess(caster, bKnown, SPELL_ICY_GRIP)) {
     aff.type = SPELL_ICY_GRIP;
-    aff.duration = 12 * UPDATES_PER_TICK;
+    aff.duration = 12 * UPDATES_PER_MUDHOUR;
     aff.location = APPLY_STR;
     aff.modifier = -20;
     aff.bitvector = 0;
@@ -881,7 +881,7 @@ int gillsOfFlesh(TBeing * caster, TBeing * victim, int level, byte bKnown)
     caster->reconcileHelp(victim,discArray[SPELL_GILLS_OF_FLESH]->alignMod);
     aff.type = SPELL_GILLS_OF_FLESH;
     aff.level = level;
-    aff.duration = 6 * UPDATES_PER_TICK;
+    aff.duration = 6 * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_WATERBREATH;
@@ -958,7 +958,7 @@ int breathOfSarahage(TBeing * caster, int level, byte bKnown)
   if (bSuccess(caster, bKnown, SPELL_BREATH_OF_SARAHAGE)) {
     aff.type = SPELL_GILLS_OF_FLESH;
     aff.level = level;
-    aff.duration = 6 * UPDATES_PER_TICK;
+    aff.duration = 6 * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_WATERBREATH;
@@ -1023,7 +1023,7 @@ int protectionFromWater(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   aff.type = SPELL_PROTECTION_FROM_WATER;
   aff.level = level;
-  aff.duration = (3 + (level / 2)) * UPDATES_PER_TICK;
+  aff.duration = (3 + (level / 2)) * UPDATES_PER_MUDHOUR;
   aff.location = APPLY_IMMUNITY;
   aff.modifier = IMMUNE_WATER;
   aff.modifier2 = ((level * 2) / 3);
@@ -1037,7 +1037,7 @@ int protectionFromWater(TBeing *caster, TBeing *victim, int level, byte bKnown)
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
         CS(SPELL_PROTECTION_FROM_WATER);
-        aff.duration = (10 + (level / 2)) * UPDATES_PER_TICK;
+        aff.duration = (10 + (level / 2)) * UPDATES_PER_MUDHOUR;
         aff.modifier2 = (level * 2);
         break;
       case CRIT_S_NONE:
@@ -1297,7 +1297,7 @@ int plasmaMirror(TBeing *caster, int level, byte bKnown)
   }
 
   aff.type = SPELL_PLASMA_MIRROR;
-  aff.duration = max(min(level/10, 5), 1) * UPDATES_PER_TICK;
+  aff.duration = max(min(level/10, 5), 1) * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = 0;
@@ -1369,7 +1369,7 @@ int garmulsTail(TBeing *caster, TBeing *victim, int level, byte bKnown)
   if (bSuccess(caster, bKnown, SPELL_GARMULS_TAIL)) {
     aff.type = SPELL_GARMULS_TAIL;
     aff.level = level;
-    aff.duration = (aff.level / 3) * UPDATES_PER_TICK;
+    aff.duration = (aff.level / 3) * UPDATES_PER_MUDHOUR;
     aff.location = APPLY_SPELL;
     aff.modifier = SKILL_SWIM;
     aff.modifier2 = bKnown/2;

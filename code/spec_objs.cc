@@ -391,7 +391,7 @@ int poisonWhip(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   if (!::number(0,49)) {
     aff.type = SPELL_POISON;
     aff.level = 10;
-    aff.duration = (20) * UPDATES_PER_TICK;
+    aff.duration = (20) * UPDATES_PER_MUDHOUR;
     aff.modifier = -20;
     aff.location = APPLY_STR;
     aff.bitvector = AFF_POISON;
@@ -433,7 +433,7 @@ int poisonSap(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   if (!::number(0,49)) {
     aff.type = SPELL_POISON;
     aff.level = 10;
-    aff.duration = (20) * UPDATES_PER_TICK;
+    aff.duration = (20) * UPDATES_PER_MUDHOUR;
     aff.modifier = -20;
     aff.location = APPLY_STR;
     aff.bitvector = AFF_POISON;
@@ -1668,7 +1668,7 @@ int lightning_hammer(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
 #endif
     if (!ch->isImmortal()) {
       af.type = SPELL_LIGHTNING_BOLT;
-      af.duration = 168 * UPDATES_PER_TICK;
+      af.duration = 168 * UPDATES_PER_MUDHOUR;
       af.modifier = 0;
       af.location = APPLY_NONE;
       af.bitvector = 0;

@@ -106,7 +106,7 @@ void TBeing::stopFollower(bool remove, stopFollowerT textLimits) // default argu
 // make pet retrainable 
     aff.type = AFFECT_ORPHAN_PET;
     aff.level = 0;
-    aff.duration  = 80 * UPDATES_PER_TICK;
+    aff.duration  = 80 * UPDATES_PER_MUDHOUR;
     aff.location = APPLY_NONE;
     aff.modifier = 0;   
     aff.bitvector = 0;

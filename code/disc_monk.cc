@@ -606,7 +606,7 @@ int chiMe(TBeing *c)
     
     aff.type = SKILL_CHI;
     aff.level = level;
-    aff.duration = (3 + (level / 2)) * UPDATES_PER_TICK;
+    aff.duration = (3 + (level / 2)) * UPDATES_PER_MUDHOUR;
     aff.location = APPLY_IMMUNITY;
     aff.modifier = IMMUNE_COLD;
     aff.modifier2 = ((level * 2) / 3);

@@ -171,7 +171,7 @@ spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSl
       // limb bleeding == poison victim
       // not bleeding  == infect limb
       for (int tSwingIndex = 0; tSwingIndex < MAX_SWING_AFFECT; tSwingIndex++) {
-        int tDuration = (tThief->GetMaxLevel() * UPDATES_PER_TICK);
+        int tDuration = (tThief->GetMaxLevel() * UPDATES_PER_MUDHOUR);
 
         if (tWeapon->oneSwing[tSwingIndex].bitvector == AFF_POISON)
           if (tSucker->isLimbFlags(tLimb, PART_BLEEDING) &&

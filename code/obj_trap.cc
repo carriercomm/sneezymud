@@ -1586,7 +1586,7 @@ int TBeing::trapSleep(int amt)
   }
 
   if (!isLucky(levelLuckModifier(GetMaxLevel()))) {
-    rc = rawSleep(0, (6 * UPDATES_PER_TICK), 1, SAVE_YES);
+    rc = rawSleep(0, (6 * UPDATES_PER_MUDHOUR), 1, SAVE_YES);
   } else
     sendTo("You feel sleepy, but you recover.\n\r");
 
@@ -1602,7 +1602,7 @@ void TBeing::trapDisease(int amt)
   aff.level = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = 0;
-  aff.duration = 4 * UPDATES_PER_TICK;
+  aff.duration = 4 * UPDATES_PER_MUDHOUR;
 
   if (isImmortal() ||
       isImmune(IMMUNE_DISEASE, amt)) {
@@ -1631,7 +1631,7 @@ void TBeing::trapPoison(int amt)
   affectedData af, af2;
 
   af.type = SPELL_POISON;
-  af.duration = 12 * UPDATES_PER_TICK;
+  af.duration = 12 * UPDATES_PER_MUDHOUR;
   af.modifier = -20;
   af.location = APPLY_STR;
   af.bitvector = AFF_POISON;

@@ -487,7 +487,7 @@ int conceal(TBeing *caster, TBeing *vict)
   }
 
   aff.type = SKILL_CONCEALMENT;
-  aff.duration = (level/2 + 1) * UPDATES_PER_TICK;
+  aff.duration = (level/2 + 1) * UPDATES_PER_MUDHOUR;
   aff.be = caster;
 
   if (bSuccess(caster, lnd, SKILL_CONCEALMENT)) {

@@ -5771,7 +5771,7 @@ int TBeing::applyRentBenefits(int secs)
 
     if (af->duration == PERMANENT_DURATION)
       continue;
-    if ((af->duration - (local_tics * UPDATES_PER_TICK)) <= 0) {
+    if ((af->duration - (local_tics * UPDATES_PER_MUDHOUR)) <= 0) {
       if (((af->type >= MIN_SPELL) && (af->type < MAX_SKILL)) ||
           ((af->type >= FIRST_TRANSFORMED_LIMB) && (af->type < LAST_TRANSFORMED_LIMB)) ||
           ((af->type >= FIRST_BREATH_WEAPON) && (af->type < LAST_BREATH_WEAPON)) ||
@@ -5796,7 +5796,7 @@ int TBeing::applyRentBenefits(int secs)
         affectRemove(af);
       }
     } else 
-      af->duration -= local_tics * UPDATES_PER_TICK;
+      af->duration -= local_tics * UPDATES_PER_MUDHOUR;
   }
   if (transFound)
     transformLimbsBack("", MAX_WEAR, FALSE);

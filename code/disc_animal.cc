@@ -234,7 +234,7 @@ int transfix(TBeing * caster, TBeing * victim, int level, byte bKnown)
     aff.level = level;
     aff.location = APPLY_NONE;
     aff.modifier = 0;
-    aff.duration = (level/10)* UPDATES_PER_TICK;
+    aff.duration = (level/10)* UPDATES_PER_MUDHOUR;
     aff.bitvector = 0;
 
     if (critSuccess(caster, SKILL_TRANSFIX)) {
@@ -492,7 +492,7 @@ int shapeShift(TBeing *caster, const char * buffer, int level, byte bKnown)
     caster->desc->snoop.snoop_by->doSnoop(caster->desc->snoop.snoop_by->name);
   aff.type = AFFECT_SKILL_ATTEMPT;
   aff.location = APPLY_NONE;
-  aff.duration = (2 + (level/5)) * UPDATES_PER_TICK;
+  aff.duration = (2 + (level/5)) * UPDATES_PER_MUDHOUR;
   aff.bitvector = 0;
   aff.modifier = SPELL_SHAPESHIFT;
 
@@ -543,12 +543,12 @@ int shapeShift(TBeing *caster, const char * buffer, int level, byte bKnown)
     caster->polyed = POLY_TYPE_SHAPESHIFT;
 
 // first add the attempt -- used to regulate attempts
-    aff.duration = duration + ((2 + (level/5)) * UPDATES_PER_TICK);
+    aff.duration = duration + ((2 + (level/5)) * UPDATES_PER_MUDHOUR);
     caster->affectTo(&aff);
 
     aff2.type = AFFECT_SKILL_ATTEMPT;
     aff2.location = APPLY_NONE;
-    aff2.duration = duration + ((2 + (level/5)) * UPDATES_PER_TICK);
+    aff2.duration = duration + ((2 + (level/5)) * UPDATES_PER_MUDHOUR);
     aff2.bitvector = 0;
     aff2.modifier = SPELL_SHAPESHIFT;
     mob->affectTo(&aff2);

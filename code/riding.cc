@@ -224,7 +224,7 @@ TThing * TThing::dismount(positionTypeT pos)
   if (isPc() && tmons) {
     affectedData aff;
     aff.type = AFFECT_HORSEOWNED;
-    aff.duration = 1 * UPDATES_PER_TICK;
+    aff.duration = 1 * UPDATES_PER_MUDHOUR;
 
     tmons->affectTo(&aff);
   }

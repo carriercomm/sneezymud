@@ -285,7 +285,7 @@ int TBeing::doSmoke(const char *argument)
   potency=drugTypes[tdc->getDrugType()].potency;
   if(consumed>potency) consumed=potency;
 
-  aff.duration = drugTypes[tdc->getDrugType()].duration * UPDATES_PER_TICK;
+  aff.duration = drugTypes[tdc->getDrugType()].duration * UPDATES_PER_MUDHOUR;
   aff.renew=aff.duration;
 
 

@@ -1384,8 +1384,8 @@ void TBeing::doReset(const char *arg)
     affectedData af;
     af.type = AFFECT_DUMMY;
     af.level = 0;
-    // roughly 12 hours (48 ticks per hour)
-    af.duration = 12 * 48 * UPDATES_PER_TICK;
+    // roughly 12 hours
+    af.duration = 12 * UPDATES_PER_MUDHOUR;
 
     affectTo(&af);
     return;

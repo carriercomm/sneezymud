@@ -317,7 +317,7 @@ int faerieFire(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   aff.type = SPELL_FAERIE_FIRE;
   aff.level = level;
-  aff.duration = (aff.level * UPDATES_PER_TICK / 4);
+  aff.duration = (aff.level * UPDATES_PER_MUDHOUR / 4);
   aff.location = APPLY_ARMOR;
   aff.modifier = 100;
   aff.bitvector = 0;
@@ -1143,7 +1143,7 @@ int flamingFlesh(TBeing *caster, TBeing *victim, int level, byte bKnown)
     // ARMOR APPLY
     aff1.type = SPELL_FLAMING_FLESH;
     aff1.level = level;
-    aff1.duration = aff1.level * UPDATES_PER_TICK;
+    aff1.duration = aff1.level * UPDATES_PER_MUDHOUR;
     aff1.location = APPLY_ARMOR;
     aff1.modifier = -75;
 
@@ -1612,7 +1612,7 @@ int infravision(TBeing *caster, TBeing *victim, int level, byte bKnown)
   if (bSuccess(caster, bKnown, SPELL_INFRAVISION)) {
     ret = SPELL_SUCCESS;
     aff.type = SPELL_INFRAVISION;
-    aff.duration = (level * UPDATES_PER_TICK)+level;
+    aff.duration = (level * UPDATES_PER_MUDHOUR)+level;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_INFRAVISION;
@@ -1795,7 +1795,7 @@ int protectionFromFire(TBeing *caster, TBeing *v,int level, byte bKnown)
  
   aff.type = SPELL_PROTECTION_FROM_FIRE;
   aff.level = level;
-  aff.duration = (3 + (level / 2)) * UPDATES_PER_TICK;
+  aff.duration = (3 + (level / 2)) * UPDATES_PER_MUDHOUR;
   aff.location = APPLY_IMMUNITY;
   aff.modifier = IMMUNE_HEAT; 
   aff.modifier2 = ((level * 2)/3);
@@ -1809,7 +1809,7 @@ int protectionFromFire(TBeing *caster, TBeing *v,int level, byte bKnown)
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
         CS(SPELL_PROTECTION_FROM_FIRE);
-        aff.duration = (10 + (level / 2)) * UPDATES_PER_TICK;
+        aff.duration = (10 + (level / 2)) * UPDATES_PER_MUDHOUR;
         aff.modifier2 = (level * 2);
         break;
       case CRIT_S_NONE:

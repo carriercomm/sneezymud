@@ -27,7 +27,7 @@ int silence(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   aff.type = SPELL_SILENCE;
   aff.level = level;
-  aff.duration =  aff.level * UPDATES_PER_TICK;
+  aff.duration =  aff.level * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = AFF_SILENT;
@@ -126,7 +126,7 @@ int slumber(TBeing *caster, TBeing *victim, int level, byte bKnown)
       }
       vlogf(LOG_MISC, "Sleep Tag Staff: %s just got slept by %s",
                victim->getName(), caster->getName());
-      rc = victim->rawSleep(level, (4 + level/2) * UPDATES_PER_TICK, crit, save);
+      rc = victim->rawSleep(level, (4 + level/2) * UPDATES_PER_MUDHOUR, crit, save);
       if (IS_SET_DELETE(rc, DELETE_THIS)) {
         return SPELL_SUCCESS | VICTIM_DEAD;
       }
@@ -194,7 +194,7 @@ int slumber(TBeing *caster, TBeing *victim, int level, byte bKnown)
         return SPELL_FAIL;
     }
   }
-  rc = victim->rawSleep(level, (4 + level/2) * UPDATES_PER_TICK, crit, save);
+  rc = victim->rawSleep(level, (4 + level/2) * UPDATES_PER_MUDHOUR, crit, save);
   if (IS_SET_DELETE(rc, DELETE_THIS)) {
     if (victim == caster)
       ret |= CASTER_DEAD;
@@ -345,7 +345,7 @@ int ensorcer(TBeing *caster, TBeing *victim, int level, byte bKnown)
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_CHARM;
-    aff.duration  =  3 * level * UPDATES_PER_TICK;
+    aff.duration  =  3 * level * UPDATES_PER_MUDHOUR;
 
     if (victim->getImmunity(IMMUNE_CHARM)) {
       aff.duration *= 100 - victim->getImmunity(IMMUNE_CHARM);
@@ -501,7 +501,7 @@ int cloudOfConcealment(TBeing *caster, int level, byte bKnown)
 
     aff.type = SPELL_INVISIBILITY;
     aff.level = level;
-    aff.duration = 24 * UPDATES_PER_TICK;
+    aff.duration = 24 * UPDATES_PER_MUDHOUR;
     aff.modifier = -40;
     aff.location = APPLY_ARMOR;
     aff.bitvector = AFF_INVISIBLE;
@@ -771,7 +771,7 @@ int polymorph(TBeing *caster, int level, byte bKnown)
   // first add the attempt -- used to regulate attempts
   aff.type = AFFECT_SKILL_ATTEMPT;
   aff.location = APPLY_NONE;
-  aff.duration = (1 + (level/15)) * UPDATES_PER_TICK;
+  aff.duration = (1 + (level/15)) * UPDATES_PER_MUDHOUR;
   aff.bitvector = 0;
   aff.modifier = SPELL_POLYMORPH;
   caster->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES);
@@ -822,7 +822,7 @@ int polymorph(TBeing *caster, int level, byte bKnown)
 #if 0
     aff2.type = AFFECT_SKILL_ATTEMPT;
     aff2.location = APPLY_NONE;
-    aff2.duration = duration + ((2 + (level/5)) * UPDATES_PER_TICK);
+    aff2.duration = duration + ((2 + (level/5)) * UPDATES_PER_MUDHOUR);
     aff2.bitvector = 0;
     aff2.modifier = SPELL_POLYMORPH;
     mob->affectJoin(caster, &aff2, AVG_DUR_NO, AVG_EFF_YES);
@@ -919,7 +919,7 @@ int stealth(TBeing *caster, TBeing *victim, int level, byte bKnown)
   if (bSuccess(caster, bKnown, SPELL_STEALTH)) {
     aff.type = SPELL_STEALTH;
     aff.level = level;
-    aff.duration = (aff.level / 3) * UPDATES_PER_TICK;
+    aff.duration = (aff.level / 3) * UPDATES_PER_MUDHOUR;
     aff.modifier = - aff.level;
     aff.location = APPLY_NOISE;
     aff.bitvector = 0;
@@ -1003,7 +1003,7 @@ int accelerate(TBeing *caster, TBeing *victim, int level, byte bKnown)
   if (bSuccess(caster, bKnown, SPELL_ACCELERATE)) {
     aff.type = SPELL_ACCELERATE;
     aff.level = level;
-    aff.duration = (aff.level / 3) * UPDATES_PER_TICK;
+    aff.duration = (aff.level / 3) * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = 0;
@@ -1081,7 +1081,7 @@ int haste(TBeing *caster, TBeing *victim, int level, byte bKnown)
   if (bSuccess(caster, bKnown, SPELL_HASTE)) {
     aff.type = SPELL_HASTE;
     aff.level = level;
-    aff.duration = (aff.level / 3) * UPDATES_PER_TICK;
+    aff.duration = (aff.level / 3) * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = 0;
@@ -1175,7 +1175,7 @@ int calm(TBeing *caster, TBeing *victim, int, byte bKnown)
 
     aff.type = SPELL_CALM;
     aff.level = caster->getSkillLevel(SPELL_CALM);
-    aff.duration =  aff.level * UPDATES_PER_TICK / 3;
+    aff.duration =  aff.level * UPDATES_PER_MUDHOUR / 3;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
 
@@ -1340,7 +1340,7 @@ int invisibility(TBeing *caster, TBeing *victim, int level, byte bKnown)
   if (bSuccess(caster, bKnown, SPELL_INVISIBILITY)) {
     aff.type = SPELL_INVISIBILITY;
     aff.level = level;
-    aff.duration = 24 * UPDATES_PER_TICK;
+    aff.duration = 24 * UPDATES_PER_MUDHOUR;
     aff.modifier = -40;
     aff.location = APPLY_ARMOR;
     aff.bitvector = AFF_INVISIBLE;
@@ -1350,7 +1350,7 @@ int invisibility(TBeing *caster, TBeing *victim, int level, byte bKnown)
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
         CS(SPELL_INVISIBILITY);
-        aff.duration = 36 * UPDATES_PER_TICK;
+        aff.duration = 36 * UPDATES_PER_MUDHOUR;
         aff.modifier = -60;
         break;
       case CRIT_S_NONE:
@@ -1430,7 +1430,7 @@ int senseLife(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   if (bSuccess(caster, bKnown, SPELL_SENSE_LIFE)) {
     aff.type = SPELL_SENSE_LIFE;
-    aff.duration = level * UPDATES_PER_TICK;
+    aff.duration = level * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_SENSE_LIFE;
@@ -1507,7 +1507,7 @@ int detectInvisibility(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   if (bSuccess(caster, bKnown, SPELL_DETECT_INVISIBLE)) {
     aff.type = SPELL_DETECT_INVISIBLE;
-    aff.duration = level * 3 * UPDATES_PER_TICK;
+    aff.duration = level * 3 * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_DETECT_INVISIBLE;
@@ -1579,7 +1579,7 @@ int trueSight(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   if (bSuccess(caster, bKnown, SPELL_TRUE_SIGHT)) {
     aff.type = SPELL_TRUE_SIGHT;
-    aff.duration = level / 2 * UPDATES_PER_TICK;
+    aff.duration = level / 2 * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_TRUE_SIGHT;
@@ -1741,7 +1741,7 @@ int fear(TBeing *caster, TBeing *victim, int level, byte bKnown)
       // we need a way to make the fear last a little while....
       affectedData aff;
       aff.type = SPELL_FEAR;
-      aff.duration = level * UPDATES_PER_TICK / 2;
+      aff.duration = level * UPDATES_PER_MUDHOUR / 2;
       aff.renew = aff.duration;  // renewable immediately
 
       victim->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES);

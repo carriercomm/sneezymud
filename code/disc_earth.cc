@@ -635,14 +635,14 @@ int stoneSkin(TBeing * caster, TBeing * victim, int level, byte bKnown)
     // ARMOR APPLY
     aff1.type = SPELL_STONE_SKIN;
     aff1.level = level;
-    aff1.duration = aff1.level * UPDATES_PER_TICK;
+    aff1.duration = aff1.level * UPDATES_PER_MUDHOUR;
     aff1.location = APPLY_ARMOR;
     aff1.modifier = -75;
 
     // PIERCE IMMUNITY
     aff2.type = SPELL_STONE_SKIN;
     aff2.level = level;
-    aff2.duration = aff2.level * UPDATES_PER_TICK;
+    aff2.duration = aff2.level * UPDATES_PER_MUDHOUR;
     aff2.location = APPLY_IMMUNITY;
     aff2.modifier = IMMUNE_PIERCE;
     aff2.modifier2 = 15;
@@ -728,7 +728,7 @@ int trailSeek(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
     aff.type = SPELL_TRAIL_SEEK;
     aff.level = level;
-    aff.duration = aff.level * UPDATES_PER_TICK / 3;   /* short lived */
+    aff.duration = aff.level * UPDATES_PER_MUDHOUR / 3;   /* short lived */
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = 0;
@@ -929,7 +929,7 @@ int protectionFromEarth(TBeing *caster, TBeing *victim, int level, byte bKnown)
  
   aff.type = SPELL_PROTECTION_FROM_EARTH;
   aff.level = level;
-  aff.duration = (3 + (level / 2)) * UPDATES_PER_TICK;
+  aff.duration = (3 + (level / 2)) * UPDATES_PER_MUDHOUR;
   aff.location = APPLY_IMMUNITY;
   aff.modifier = IMMUNE_EARTH;
   aff.modifier2 = ((level * 2) / 3);
@@ -943,7 +943,7 @@ int protectionFromEarth(TBeing *caster, TBeing *victim, int level, byte bKnown)
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
         CS(SPELL_PROTECTION_FROM_EARTH);
-        aff.duration = (10 + (level / 2)) * UPDATES_PER_TICK;
+        aff.duration = (10 + (level / 2)) * UPDATES_PER_MUDHOUR;
         aff.modifier2 = (level * 2);
         break;
       case CRIT_S_NONE:

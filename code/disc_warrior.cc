@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_warrior.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -96,7 +85,7 @@ int berserk(TBeing * caster)
 
     af.type = SKILL_BERSERK;
     af.level = level;
-    af.duration = 6 * UPDATES_PER_TICK;
+    af.duration = 6 * UPDATES_PER_MUDHOUR;
     af.location = APPLY_NONE;
     af.modifier = 0;
     af.bitvector = 0;

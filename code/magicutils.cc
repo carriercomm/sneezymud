@@ -1550,23 +1550,23 @@ bool genericBless(TBeing *c, TBeing *v, int level, bool crit)
 
   aff1.type = SPELL_BLESS;
   aff1.level = level;
-  aff1.duration = (1 + level) * UPDATES_PER_TICK;
+  aff1.duration = (1 + level) * UPDATES_PER_MUDHOUR;
   aff1.location = APPLY_SPELL_HITROLL;
   aff1.modifier = 10;
   aff1.bitvector = 0;
 
   aff2.type = aff1.type;
   aff2.level = level;
-  aff2.duration = (1 + level) * UPDATES_PER_TICK;
+  aff2.duration = (1 + level) * UPDATES_PER_MUDHOUR;
   aff2.location = APPLY_IMMUNITY;
   aff2.modifier = IMMUNE_NONMAGIC;
   aff2.modifier2 = 5;
   aff2.bitvector = 0;
 
   if (crit) {
-    aff1.duration += 9 * UPDATES_PER_TICK;
+    aff1.duration += 9 * UPDATES_PER_MUDHOUR;
     aff1.modifier = 2;
-    aff2.duration += 9 * UPDATES_PER_TICK;
+    aff2.duration += 9 * UPDATES_PER_MUDHOUR;
     aff2.modifier2 *= 2;
   }
 
@@ -1596,19 +1596,19 @@ void genericDisease(TBeing *v, int level)
 
   if (level < 30) {
     if (50 + level < ::number(0,99)) {
-      aff.duration = level * UPDATES_PER_TICK / 3;
+      aff.duration = level * UPDATES_PER_MUDHOUR / 3;
       aff.modifier = DISEASE_FLU;
     } else {
       aff.modifier = DISEASE_COLD;
-      aff.duration = level * UPDATES_PER_TICK / 3;
+      aff.duration = level * UPDATES_PER_MUDHOUR / 3;
     }
   } else {
     if (20 + level < ::number(0,99)) {
-      aff.duration = level * UPDATES_PER_TICK / 3;
+      aff.duration = level * UPDATES_PER_MUDHOUR / 3;
       aff.modifier = DISEASE_LEPROSY;
     } else {
       aff.modifier = DISEASE_FLU;
-      aff.duration = level * UPDATES_PER_TICK / 3;
+      aff.duration = level * UPDATES_PER_MUDHOUR / 3;
     }
   }
   v->affectTo(&aff);
@@ -1621,7 +1621,7 @@ void genericCurse(TBeing *c, TBeing *v, int level, spellNumT spell)
 
   aff1.type = spell;
   aff1.level = level;
-  aff1.duration = 24 * UPDATES_PER_TICK;    /* 1/2 mud day */
+  aff1.duration = 12 * UPDATES_PER_MUDHOUR;
   aff1.bitvector = AFF_CURSE;
   aff1.location = APPLY_SPELL_HITROLL;
   aff1.modifier = - min(5, level/3);

@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_monk.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:39:36  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -426,7 +412,7 @@ int TBeing::doChi(const char *argument, TThing *target)
 	return FALSE;
       }
       chiMe(this);
-      addSkillLag(SKILL_CHI);
+      addSkillLag(SKILL_CHI, rc);
       return TRUE;
     }
 

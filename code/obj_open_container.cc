@@ -11,8 +11,8 @@
 #include "stdsneezy.h"
 #include "create.h"
 
-TRealContainer::TRealContainer() :
-  TContainer(),
+TOpenContainer::TOpenContainer() :
+  TBaseContainer(),
   max_weight(0.0),
   container_flags(0),
   trap_type(DOOR_TRAP_NONE),
@@ -22,8 +22,8 @@ TRealContainer::TRealContainer() :
 {
 }
 
-TRealContainer::TRealContainer(const TRealContainer &a) :
-  TContainer(a),
+TOpenContainer::TOpenContainer(const TOpenContainer &a) :
+  TBaseContainer(a),
   max_weight(a.max_weight),
   container_flags(a.container_flags),
   trap_type(a.trap_type),
@@ -33,10 +33,10 @@ TRealContainer::TRealContainer(const TRealContainer &a) :
 {
 }
 
-TRealContainer & TRealContainer::operator=(const TRealContainer &a)
+TOpenContainer & TOpenContainer::operator=(const TOpenContainer &a)
 {
   if (this == &a) return *this;
-  TContainer::operator=(a);
+  TBaseContainer::operator=(a);
   max_weight = a.max_weight;
   container_flags = a.container_flags;
   trap_type = a.trap_type;
@@ -46,11 +46,11 @@ TRealContainer & TRealContainer::operator=(const TRealContainer &a)
   return *this;
 }
 
-TRealContainer::~TRealContainer()
+TOpenContainer::~TOpenContainer()
 {
 }
 
-void TRealContainer::assignFourValues(int x1, int x2, int x3, int x4)
+void TOpenContainer::assignFourValues(int x1, int x2, int x3, int x4)
 {
   setCarryWeightLimit((float) x1);
   setContainerFlags(GET_BITS(x2, 7, 8));
@@ -60,7 +60,7 @@ void TRealContainer::assignFourValues(int x1, int x2, int x3, int x4)
   setCarryVolumeLimit(x4);
 }
 
-void TRealContainer::getFourValues(int *x1, int *x2, int *x3, int *x4) const
+void TOpenContainer::getFourValues(int *x1, int *x2, int *x3, int *x4) const
 {
   *x1 = (int) carryWeightLimit();
 
@@ -73,7 +73,7 @@ void TRealContainer::getFourValues(int *x1, int *x2, int *x3, int *x4) const
   *x4 = carryVolumeLimit();
 }
 
-string TRealContainer::statObjInfo() const
+string TOpenContainer::statObjInfo() const
 {
   char buf[256];
 
@@ -90,105 +90,105 @@ string TRealContainer::statObjInfo() const
   return a;
 }
 
-bool TRealContainer::isCloseable() const
+bool TOpenContainer::isCloseable() const
 {
   return (isContainerFlag(CONT_CLOSEABLE));
 }
 
-bool TRealContainer::isClosed() const
+bool TOpenContainer::isClosed() const
 {
   return (isContainerFlag(CONT_CLOSED));
 }
 
-void TRealContainer::setCarryWeightLimit(float r)
+void TOpenContainer::setCarryWeightLimit(float r)
 {
   max_weight = r;
 }
 
-float TRealContainer::carryWeightLimit() const
+float TOpenContainer::carryWeightLimit() const
 {
   return max_weight;
 }
 
-unsigned char TRealContainer::getContainerFlags() const
+unsigned char TOpenContainer::getContainerFlags() const
 {
   return container_flags;
 }
 
-void TRealContainer::setContainerFlags(unsigned char r)
+void TOpenContainer::setContainerFlags(unsigned char r)
 {
   container_flags = r;
 }
 
-void TRealContainer::addContainerFlag(unsigned char r)
+void TOpenContainer::addContainerFlag(unsigned char r)
 {
   container_flags |= r;
 }
 
-void TRealContainer::remContainerFlag(unsigned char r)
+void TOpenContainer::remContainerFlag(unsigned char r)
 {
   container_flags &= ~r;
 }
 
-bool TRealContainer::isContainerFlag(unsigned char r) const
+bool TOpenContainer::isContainerFlag(unsigned char r) const
 {
   return ((container_flags & r) != 0);
 }
 
-doorTrapT TRealContainer::getContainerTrapType() const
+doorTrapT TOpenContainer::getContainerTrapType() const
 {
   return trap_type;
 }
 
-void TRealContainer::setContainerTrapType(doorTrapT r)
+void TOpenContainer::setContainerTrapType(doorTrapT r)
 {
   trap_type = r;
 }
 
-char TRealContainer::getContainerTrapDam() const
+char TOpenContainer::getContainerTrapDam() const
 {
   return trap_dam;
 }
 
-void TRealContainer::setContainerTrapDam(char r)
+void TOpenContainer::setContainerTrapDam(char r)
 {
   trap_dam = r;
 }
 
-void TRealContainer::setKeyNum(int r)
+void TOpenContainer::setKeyNum(int r)
 {
   key_num = r;
 }
 
-int TRealContainer::getKeyNum() const
+int TOpenContainer::getKeyNum() const
 {
   return key_num;
 }
 
-int TRealContainer::carryVolumeLimit() const
+int TOpenContainer::carryVolumeLimit() const
 {
   return max_volume;
 }
 
-void TRealContainer::setCarryVolumeLimit(int r)
+void TOpenContainer::setCarryVolumeLimit(int r)
 {
   max_volume = r;
 }
 
-void TRealContainer::changeObjValue2(TBeing *ch)
+void TOpenContainer::changeObjValue2(TBeing *ch)
 {
   ch->specials.edit = CHANGE_CHEST_VALUE2;
   change_chest_value2(ch, this, "", ENTER_CHECK);
   return;
 }
 
-void TRealContainer::describeContains(const TBeing *ch) const
+void TOpenContainer::describeContains(const TBeing *ch) const
 {
   if (stuff && !isClosed())
     ch->sendTo(COLOR_OBJECTS, "%s seems to have something in it...\n\r", good_cap(getName()).c_str());
 }
 
-void TRealContainer::lowCheck()
+void TOpenContainer::lowCheck()
 {
   if (carryWeightLimit() <= 0.0) {
     vlogf(LOG_LOW, "Container (%s) with bad weight limit (%5.2f).",
@@ -206,10 +206,10 @@ void TRealContainer::lowCheck()
       remContainerFlag(CONT_TRAPPED);
     }
   }
-  TContainer::lowCheck();
+  TBaseContainer::lowCheck();
 }
 
-void TRealContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tShop)
+void TOpenContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tShop)
 {
   TObj::purchaseMe(ch, tKeeper, tCost, tShop);
 
@@ -220,10 +220,10 @@ void TRealContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tS
     addContainerFlag(CONT_EMPTYTRAP);
 }
 
-string TRealContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
+string TOpenContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
 {
   // recurse if necessary
-  string tString = TContainer::showModifier(tMode, tBeing);
+  string tString = TBaseContainer::showModifier(tMode, tBeing);
 
   if (isCloseable()) {
     tString += " (";                                          

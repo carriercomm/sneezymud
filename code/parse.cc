@@ -2393,6 +2393,7 @@ void buildCommandArray(void)
   commandArray[CMD_DEATHSTROKE] = new commandInfo("deathstroke", POSITION_FIGHTING, 0);
   commandArray[CMD_PIMP] = new commandInfo("pimp", POSITION_STANDING, 0);
   commandArray[CMD_LIGHT] = new commandInfo("light", POSITION_RESTING, 0);
+  commandArray[CMD_FISH] = new commandInfo("fish", POSITION_RESTING, 0);
   commandArray[CMD_BELITTLE] = new commandInfo("belittle", POSITION_RESTING, 0);
   commandArray[CMD_PILEDRIVE]=new commandInfo("piledrive",POSITION_STANDING, 0);
   commandArray[CMD_TAP] = new commandInfo("tap", POSITION_CRAWLING, 0);

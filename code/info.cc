@@ -3006,7 +3006,8 @@ void TBeing::describeAffects(TBeing *ch)
       sendTo("Free deaths remaining: %d\n\r",
                aff->modifier);
     } else if (aff->type == AFFECT_PLAYERKILL) {
-      sendTo("PLAYER KILLER!\n\r");
+      sendTo("Player Killer:\t Time Left : %s\n\r",
+	     describeDuration(this, aff->duration).c_str());
     } else if (aff->type == AFFECT_TEST_FIGHT_MOB) {
       sendTo("Test Fight Mob: %d\n\r",
                aff->modifier);

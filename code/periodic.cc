@@ -783,14 +783,14 @@ int TBeing::updateHalfTickStuff()
         if (is_daytime()) {
           if (loadRoom == ROOM_NOCTURNAL_STORAGE) {
             return DELETE_THIS;
-            vlogf(5, "%s has oldRoom equal to %d", getName(), loadRoom);
+            vlogf(5, "NOC:DIU: %s has oldRoom equal to %d", getName(), loadRoom);
           }
           if (!loadRoom || (loadRoom == ROOM_NOWHERE)) {
-            vlogf(0, "%s was without loadRoom or was in room NOWHERE.", getName());
+            vlogf(0, "NOC:DIU: %s was without loadRoom or was in room NOWHERE.", getName());
             return DELETE_THIS;
           }
           if (!(room = real_roomp(loadRoom))) {
-            vlogf(0, "%s was in a room that no longer exists.", getName());
+            vlogf(0, "NOC:DIU: %s was in a room that no longer exists.", getName());
             return DELETE_THIS;
           }
           --(*this);
@@ -855,12 +855,14 @@ int TBeing::updateHalfTickStuff()
         } else {
           if (loadRoom == ROOM_NOCTURNAL_STORAGE) {
             return DELETE_THIS;
-            vlogf(5, "%s has oldRoom equal to %d", getName(), loadRoom);
+            vlogf(5, "NOC:DIU: %s has oldRoom equal to %d", getName(), loadRoom);
           }
           if (!loadRoom || (loadRoom == ROOM_NOWHERE)) {
+            vlogf(0, "NOC:DIU: %s was without loadRoom or was in room NOWHERE.", getName());
             return DELETE_THIS;
           }
           if (!(room = real_roomp(loadRoom))) {
+            vlogf(0, "NOC:DIU: %s was in a room that no longer exists.", getName());
             return DELETE_THIS;
           }
           --(*this);

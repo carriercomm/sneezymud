@@ -2776,7 +2776,7 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
   while(buf[ptr]){
     if(buf[ptr]=='\''){
       if(onstring){
-	if(buf[ptr+1]==',' || buf[ptr+1]=='\0')
+	if(buf[ptr+1]==',' || buf[ptr+1]=='\0' || buf[ptr+1]==' ')
 	  onstring=0;
 	else
 	  buf2[ptr2++]='\'';

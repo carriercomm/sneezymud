@@ -124,7 +124,7 @@ void TBeing::doMessage(const char *tArg)
   else {
     bisect_arg(tStCommand.c_str(), &tValue, tString, messageCommandTypes);
 
-    if (tValue < 1 || tValue > 14)
+    if (tValue < 1 || tValue >= MSG_TYPE_MAX)
       sendTo("Incorrect message type.\n\r");
     else if (messageCommandSwitches[tValue][2] &&
              !hasWizPower(wizPowerT(messageCommandSwitches[tValue][2])))

@@ -119,7 +119,7 @@ int TBeing::doSetTraps(const char *arg)
       if (IS_SET(exitp->condition, EX_TRAPPED)) {
 	sendTo("When you try to trap the %s, you set off the trap that is already there!\n\r", uncap(doorbuf));
 	rc = triggerDoorTrap(door);
-        if (IS_SET_ONLY(rc, DELETE_THIS))
+        if (IS_SET_DELETE(rc, DELETE_THIS))
 	  return DELETE_THIS;
         return FALSE;
       }
@@ -391,7 +391,7 @@ int TBeing::triggerPortalTrap(TPortal *o)
           act("You are hit by shrapnel!", TRUE, tbt, 0, 0, TO_CHAR);
           act("$n is hit by shrapnel.", TRUE, tbt, 0, 0, TO_ROOM);
           rc = tbt->objDamage(DAMAGE_TRAP_TNT, amnt/2, o);
-          if (IS_SET_ONLY(rc, DELETE_THIS)) {
+          if (IS_SET_DELETE(rc, DELETE_THIS)) {
             delete tbt;
             tbt = NULL;
           }
@@ -515,7 +515,7 @@ int TBeing::triggerContTrap(TRealContainer *obj)
           act("You are hit by shrapnel!", TRUE, tbt, 0, 0, TO_CHAR);
           act("$n is hit by shrapnel.", TRUE, tbt, 0, 0, TO_ROOM);
           rc = tbt->objDamage(DAMAGE_TRAP_TNT, amnt/2, obj);
-          if (IS_SET_ONLY(rc, DELETE_THIS)) {
+          if (IS_SET_DELETE(rc, DELETE_THIS)) {
             delete tbt;
             tbt = NULL;
           }
@@ -713,7 +713,7 @@ int TTrap::moveTrapCheck(TBeing *ch, dirTypeT dir)
         act(buf, TRUE, ch, 0, 0, TO_CHAR);
 
         rc = ch->triggerTrap(this);
-        if (IS_SET_ONLY(rc, DELETE_THIS))
+        if (IS_SET_DELETE(rc, DELETE_THIS))
           return DELETE_VICT;
         if (rc)
           return TRUE;
@@ -733,7 +733,7 @@ int TBeing::checkForMoveTrap(dirTypeT dir)
 
   for (t = roomp->stuff; t; t = t->nextThing) {
     rc = t->moveTrapCheck(this, dir);
-    if (IS_SET_ONLY(rc, DELETE_VICT))
+    if (IS_SET_DELETE(rc, DELETE_VICT))
       return DELETE_THIS;
     else if (rc)
       return TRUE;
@@ -754,7 +754,7 @@ int TTrap::insideTrapCheck(TBeing *ch, TThing *i)
                FALSE, this, i, 0, TO_ROOM);
 
       rc = ch->triggerTrap(this);
-      if (IS_SET_ONLY(rc, DELETE_THIS))
+      if (IS_SET_DELETE(rc, DELETE_THIS))
         return DELETE_VICT;
       if (rc)
         return TRUE;
@@ -793,7 +793,7 @@ int TTrap::anyTrapCheck(TBeing *ch)
       act("You hear a strange noise...", TRUE, ch, 0, 0, TO_CHAR);
 
       rc = ch->triggerTrap(this);
-      if (IS_SET_ONLY(rc, DELETE_THIS))
+      if (IS_SET_DELETE(rc, DELETE_THIS))
         return DELETE_VICT;
       if (rc)
         return TRUE;
@@ -1290,7 +1290,7 @@ int TBeing::trapDoorTntDamage(int amnt, dirTypeT door)
     TBeing *tbt = dynamic_cast<TBeing *>(t);
     if (tbt && this != tbt) {
       rc = tbt->objDamage(DAMAGE_TRAP_TNT, amnt/2, NULL);
-      if (IS_SET_ONLY(rc, DELETE_THIS)) {
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
         delete tbt;
         tbt = NULL;
       }
@@ -1309,7 +1309,7 @@ int TBeing::trapDoorTntDamage(int amnt, dirTypeT door)
       TBeing *tbt = dynamic_cast<TBeing *>(t);
       if (tbt && this != tbt) {
         rc = tbt->objDamage(DAMAGE_TRAP_TNT, amnt/4, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           delete tbt;
           tbt = NULL;
         }
@@ -1401,7 +1401,7 @@ int TBeing::trapDoorFrostDamage(int amnt, dirTypeT door)
       act("$n is chilled by the arctic blast.", TRUE, tbt, 0, 0, TO_ROOM);
       act("You are chilled by the arctic blast.", TRUE, tbt, 0, 0, TO_CHAR);
       rc = tbt->objDamage(DAMAGE_TRAP_FROST, amnt/2, NULL);
-      if (IS_SET_ONLY(rc, DELETE_THIS)) {
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
         delete tbt;
         tbt = NULL;
       }
@@ -1421,7 +1421,7 @@ int TBeing::trapDoorFrostDamage(int amnt, dirTypeT door)
         act("$n is chilled by the arctic blast.", TRUE, tbt, 0, 0, TO_ROOM);
         act("You are chilled by the arctic blast.", TRUE, tbt, 0, 0, TO_CHAR);
         rc = tbt->objDamage(DAMAGE_TRAP_FROST, amnt/3, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           delete tbt;
           tbt = NULL;
         }
@@ -1456,7 +1456,7 @@ int TBeing::trapDoorEnergyDamage(int amnt, dirTypeT door)
       act("$n is hit by the plasma bolts.", TRUE, tbt, 0, 0, TO_ROOM);
       act("You are hit by the plasma bolts.", TRUE, tbt, 0, 0, TO_CHAR);
       rc = tbt->objDamage(DAMAGE_TRAP_ENERGY, amnt/2, NULL);
-      if (IS_SET_ONLY(rc, DELETE_THIS)) {
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
         delete tbt;
         tbt = NULL;
       }
@@ -1476,7 +1476,7 @@ int TBeing::trapDoorEnergyDamage(int amnt, dirTypeT door)
         act("$n is hit by the plasma bolts.", TRUE, tbt, 0, 0, TO_ROOM);
         act("You are hit by the plasma bolts.", TRUE, tbt, 0, 0, TO_CHAR);
         rc = tbt->objDamage(DAMAGE_TRAP_ENERGY, amnt/3, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           delete tbt;
           tbt = NULL;
         }
@@ -1526,7 +1526,7 @@ int TBeing::trapDoorAcidDamage(int amnt, dirTypeT door)
     TBeing *tbt = dynamic_cast<TBeing *>(t);
     if (tbt && this != tbt) {
       rc = tbt->objDamage(DAMAGE_TRAP_ACID, amnt/2, NULL);
-      if (IS_SET_ONLY(rc, DELETE_THIS)) {
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
         delete tbt;
         tbt = NULL;
       }
@@ -1544,7 +1544,7 @@ int TBeing::trapDoorAcidDamage(int amnt, dirTypeT door)
       TBeing *tbt = dynamic_cast<TBeing *>(t);
       if (tbt && this != tbt) {
         rc = tbt->objDamage(DAMAGE_TRAP_ACID, amnt/3, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           delete tbt;
           tbt = NULL;
         }
@@ -1737,7 +1737,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_PIERCE, trapdamage/2, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1752,7 +1752,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_SLASH, trapdamage/2, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1767,7 +1767,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_BLUNT, trapdamage/2, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1793,7 +1793,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own teleport trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = trapTeleport(trapdamage);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1809,7 +1809,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_TNT, trapdamage/2, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1820,7 +1820,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_ACID, trapdamage/2, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1830,7 +1830,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own energy trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = objDamage(DAMAGE_TRAP_ENERGY, trapdamage/2, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1845,7 +1845,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_FROST, trapdamage/2, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1883,7 +1883,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_PIERCE, trapdamage/2, obj);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1898,7 +1898,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_SLASH, trapdamage/2, obj);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1913,7 +1913,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_BLUNT, trapdamage/2, obj);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1939,7 +1939,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own teleport trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = trapTeleport(trapdamage);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1955,7 +1955,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_TNT, trapdamage/2, obj);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1966,7 +1966,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_ACID, trapdamage/2, obj);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1976,7 +1976,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own energy trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = objDamage(DAMAGE_TRAP_ENERGY, trapdamage/2, obj);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -1991,7 +1991,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_FROST, trapdamage/2, obj);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2028,7 +2028,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_PIERCE, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2043,7 +2043,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_SLASH, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2058,7 +2058,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_BLUNT, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2084,7 +2084,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own teleport trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = trapTeleport(trapdamage);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2099,7 +2099,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_TNT, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2114,7 +2114,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_FIRE, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2125,7 +2125,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_ACID, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2135,7 +2135,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own energy trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = objDamage(DAMAGE_TRAP_ENERGY, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2150,7 +2150,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_FROST, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2186,7 +2186,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_PIERCE, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2201,7 +2201,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_SLASH, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2216,7 +2216,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_BLUNT, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2242,7 +2242,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own teleport trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = trapTeleport(trapdamage);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2257,7 +2257,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_TNT, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2272,7 +2272,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_FIRE, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2283,7 +2283,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_ACID, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2293,7 +2293,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
         act("$n slips up and is caught in $s own energy trap.",
                 FALSE, this, 0, 0, TO_ROOM);
         rc = objDamage(DAMAGE_TRAP_ENERGY, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;
@@ -2308,7 +2308,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
             FALSE, this, 0, 0, TO_ROOM);
 
         rc = objDamage(DAMAGE_TRAP_FROST, trapdamage, NULL);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
           return DELETE_THIS;
         }
         break;

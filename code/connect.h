@@ -435,7 +435,7 @@ class Descriptor
     void flushInput();
     int sendLogin(const char *);
     bool checkForMultiplay();
-    bool checkForAccount(char *);
+    bool checkForAccount(char *, bool);
     bool checkForCharacter(char *);
     int doAccountStuff(char *);
     int clientCreateAccount(char *);

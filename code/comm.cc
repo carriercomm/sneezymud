@@ -996,6 +996,11 @@ void Descriptor::updateScreenVt100(unsigned int update)
       sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen() - 2, 40);
       sprintf(buf + strlen(buf), "%.1f", ch->getPiety());
     }
+  } else if (ch->hasClass(CLASS_SHAMAN)) {
+    if (update & CHANGED_LIFEFORCE) {
+      sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen() - 2, 40);
+      sprintf(buf + strlen(buf), "%d", ch->getLifeforce());
+    }
   } else {
     if (update & CHANGED_MANA) {
       sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen() - 2, 40);
@@ -1099,12 +1104,16 @@ void Descriptor::updateScreenAnsi(unsigned int update)
   current_hit = (int) (10 * ((double) ch->getHit() / (double) ch->hitLimit()));
   if (ch->hasClass(CLASS_DEIKHAN) || ch->hasClass(CLASS_CLERIC)) 
     current_mana = (int) (10 * ch->getPiety() / 100.0);
+  else if (ch->hasClass(CLASS_SHAMAN)) 
+    current_mana = (int) (10 * ch->getLifeforce());
   else
     current_mana = (int) (10 * ((double) ch->getMana() / (double) ch->manaLimit()));
   current_moves = (int) (10 * ((double) ch->getMove() / (double) ch->moveLimit()));
   current_hit = max(0, min(10, current_hit));
   if (ch->hasClass(CLASS_DEIKHAN) || ch->hasClass(CLASS_CLERIC)) 
     current_mana = (int) max(0., min(10., (double) current_mana));
+  else if (ch->hasClass(CLASS_SHAMAN)) 
+    current_mana = max(0, min(10, current_mana));
   else
     current_mana = max(0, min(10, current_mana));
   current_moves = max(0, min(10, current_moves));
@@ -1125,10 +1134,12 @@ void Descriptor::updateScreenAnsi(unsigned int update)
     for (i = 1; i <= missing_hit; i++)
       sprintf(buf + strlen(buf), ANSI_BAR3);
   }
-  if (IS_SET(update, CHANGED_MANA) || IS_SET(update, CHANGED_PIETY)) {
+  if (IS_SET(update, CHANGED_MANA) || IS_SET(update, CHANGED_PIETY) || IS_SET(update, CHANGED_LIFEFORCE)) {
     sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen() - 2, 35);
     if (ch->hasClass(CLASS_DEIKHAN) || ch->hasClass(CLASS_CLERIC)) 
       sprintf(buf + strlen(buf), "%s%-5.1f ", current_mana ? VT_BOLDTEX : ANSI_RED, ch->getPiety());
+    else if (ch->hasClass(CLASS_SHAMAN)) 
+      sprintf(buf + strlen(buf), "%s%-5d ", current_mana ? VT_BOLDTEX : ANSI_RED, ch->getLifeforce());
     else
       sprintf(buf + strlen(buf), "%s%-5d ", current_mana ? VT_BOLDTEX : ANSI_RED, ch->getMana());
     sprintf(buf + strlen(buf), ANSI_BLUE);

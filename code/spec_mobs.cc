@@ -3505,9 +3505,32 @@ int dagger_thrower(TBeing *pch, cmdTypeT cmd, const char *, TMonster *me, TObj *
       if (tmp_ch->isPc()) {
         act("$n screams 'All intruders must die!!!'", FALSE, me, 0, tmp_ch, TO_ROOM);
         act("$n utters the words 'ssa skcik siht'", FALSE, me, 0, 0, TO_ROOM);
+
+#if 1
+// builder port uses stripped down database which was causing problems
+// hence this setup instead.
+        int robj = real_object(GENERIC_DAGGER);
+        if (robj < 0 || robj >= (signed int) obj_index.size()) {
+          vlogf(LOG_BUG, "dagger_thrower(): No object (%d) in database!",
+                GENERIC_DAGGER);
+          return FALSE;
+        }
+    
+        if (!(dagger = read_object(robj, REAL))) {
+          vlogf(LOG_BUG, "Couldn't make a dagger for dagger_thrower()!");
+          return;
+        }
+#else
         dagger = read_object(GENERIC_DAGGER, VIRTUAL);
+#endif
+
         if (!me->equipment[HOLD_RIGHT])
           me->equipChar(dagger, HOLD_RIGHT);
+        else {
+          vlogf(LOG_BUG, "Dagger_thrower problem: equipped right hand.  %s at %d", me->getName(), me->inRoom());
+          delete dagger;
+          return FALSE;
+        }
 
         sprintf(buf, "%s %s %d", fname(dagger->name).c_str(), tmp_ch->name, 5);
         me->doThrow(buf);

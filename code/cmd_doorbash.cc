@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_doorbash.cc,v $
+// Revision 5.1.1.2  1999/10/16 21:43:02  batopr
+// Decreased stunned lag from miss
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -44,7 +47,7 @@ int TBeing::slamIntoWall(roomDirData * exitp)
 
   affectedData aff;
   aff.type = SKILL_DOORBASH;
-  aff.duration = UPDATES_PER_TICK;
+  aff.duration = 2 * UPDATES_PER_TICK / 3;
   aff.bitvector = AFF_STUNNED;
   affectTo(&aff, -1);
 

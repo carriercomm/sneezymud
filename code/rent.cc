@@ -2161,9 +2161,11 @@ void TPerson::loadRent()
       timegold = 0;
     }
     vlogf(LOG_PIO, "%s ran up charges of %d since last update, %d total charges", getName(), timegold, gone + timegold);
-    sendTo("You ran up charges of %d talen%s in rent.\n\r", timegold + gone,
-      ((timegold + gone) == 1) ? "" : "s");
-    addToMoney(-(gone + timegold), GOLD_RENT);
+
+    int total_rent=(timegold + gone)>st.total_cost?st.total_cost:(timegold + gone);
+    sendTo("You ran up charges of %d talen%s in rent.\n\r", total_rent,
+      ((total_rent) == 1) ? "" : "s");
+    addToMoney(-(total_rent), GOLD_RENT);
 
    // NOTE:  I realize we can give out gold doing this, but my guess 
    // the only way barring bugs is via timeshifting.   

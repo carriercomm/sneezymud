@@ -1753,6 +1753,7 @@ class TBeing : public TThing {
     void doCls(bool);
     int doRemove(const char *, TThing *);
     void doSave(silentTypeT, const char * = NULL);
+    void doZonefile(const string &);
     void saveChar(short int);
     int doFlee(const char *);
     int doDisarm(const char *, TThing *);

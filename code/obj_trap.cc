@@ -3169,7 +3169,7 @@ void TBeing::sendTrapMessage(const char *type, trap_targ_t targ, int num)
         return;
       } else if (targ == TRAP_TARG_MINE ||
                  targ == TRAP_TARG_GRENADE) {
-        sendTo("You trace along the pentagram with the crystaline.\n\r");
+        sendTo("You trace along the pentagram with the crystalline.\n\r");
         act("$n fiddles with a crystal and $s pentagram.",
                TRUE, this, NULL, NULL, TO_ROOM);
         return;
@@ -3190,9 +3190,9 @@ void TBeing::sendTrapMessage(const char *type, trap_targ_t targ, int num)
         return;
       } else if (targ == TRAP_TARG_MINE ||
                  targ == TRAP_TARG_GRENADE) {
-        act("You snap the crystaline, activating the magical forces in the pentagram.",
+        act("You snap the crystalline, activating the magical forces in the pentagram.",
              FALSE, this, 0, 0, TO_CHAR);
-        act("As $n snaps $s crystaline in half, the pentagram glows with magic.",
+        act("As $n snaps $s crystalline in half, the pentagram glows with magic.",
              TRUE, this, NULL, NULL, TO_ROOM);
         return;
       }
@@ -3239,7 +3239,7 @@ void TBeing::sendTrapMessage(const char *type, trap_targ_t targ, int num)
         return;
       } else if (targ == TRAP_TARG_MINE ||
                  targ == TRAP_TARG_GRENADE) {
-        sendTo("You trace along the pentagram with the crystaline.\n\r");
+        sendTo("You trace along the pentagram with the crystalline.\n\r");
         act("$n fiddles with a crystal and $s pentagram.",
                TRUE, this, NULL, NULL, TO_ROOM);
         return;
@@ -3260,9 +3260,9 @@ void TBeing::sendTrapMessage(const char *type, trap_targ_t targ, int num)
         return;
       } else if (targ == TRAP_TARG_MINE ||
                  targ == TRAP_TARG_GRENADE) {
-        act("You snap the crystaline, activating the magical forces in the pentagram.",
+        act("You snap the crystalline, activating the magical forces in the pentagram.",
              FALSE, this, 0, 0, TO_CHAR);
-        act("As $n snaps $s crystaline in half, the pentagram glows with magic.",
+        act("As $n snaps $s crystalline in half, the pentagram glows with magic.",
              TRUE, this, NULL, NULL, TO_ROOM);
         return;
       }

@@ -16,6 +16,10 @@ static int grapple(TBeing *c, TBeing *victim, spellNumT skill)
   int bKnown;
   int grapple_move = 25 + ::number(1,10);
 
+  TThing *obj = NULL;
+  TBaseClothing *tbc = NULL;
+  int suitDam = 0;
+
   if (c->checkPeaceful("You feel too peaceful to contemplate violence.\n\r"))
     return FALSE;
 
@@ -113,6 +117,22 @@ static int grapple(TBeing *c, TBeing *victim, spellNumT skill)
       if (victim->fight())
         victim->stopFighting();
 #endif
+
+      // if eqipment worn on body is spiked, add a little extra 10-20-00, -dash
+      if (((obj = c->equipment[WEAR_BODY]) &&
+	   (tbc = dynamic_cast<TBaseClothing *>(obj)) &&
+	   (tbc->isSpiked()||tbc->isObjStat(ITEM_SPIKED)))) {
+	suitDam = (int)((tbc->getWeight()/10) + 1);
+
+	act("The spikes on your $o sink into $N.", FALSE, c, tbc, victim, TO_CHAR);
+	act("The spikes on $n's $o sink into $N.", FALSE, c, tbc, victim, TO_NOTVICT);
+	act("The spikes on $n's $o sink into you.", FALSE, c, tbc, victim, TO_VICT);
+
+	if (c->reconcileDamage(victim, suitDam, TYPE_STAB) == -1)
+	  return DELETE_VICT;
+
+      }
+
       rc = c->crashLanding(POSITION_SITTING);
       if (IS_SET_DELETE(rc, DELETE_THIS))
         return rc;

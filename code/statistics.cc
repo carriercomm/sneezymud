@@ -449,7 +449,7 @@ void TBeing::doGamestats(const char *arg)
   return;
 }
 
-#if 1
+#if 0
 static float goldCorrectForLevel(int gold, int level)
 {
   float fgold = gold;
@@ -875,27 +875,6 @@ void checkGoldStats()
   unsigned int pos_gold_all_shops = getPosGoldShops();
   unsigned int pos_gold_budget = getPosGoldBudget();
 
-#if 0
-  int net_gold_shop_comp = getNetGold(GOLD_SHOP_COMPONENTS);
-  int net_gold_shop_sym = getNetGold(GOLD_SHOP_SYMBOL);
-  int net_gold_shop_arm = getNetGold(GOLD_SHOP_ARMOR);
-  int net_gold_shop_weap = getNetGold(GOLD_SHOP_WEAPON);
-  int net_gold_shop_pet = getNetGold(GOLD_SHOP_PET);
-  int net_gold_shop_food = getNetGold(GOLD_SHOP_FOOD);
-  int net_gold_shop_resp = getNetGold(GOLD_SHOP_RESPONSES);
-  int net_gold_repair = getNetGold(GOLD_REPAIR);
-  int net_gold_shop = getNetGold(GOLD_SHOP);
-  int net_gold_income = getNetGold(GOLD_INCOME);
-  unsigned int pos_gold_shop_food = getPosGold(GOLD_SHOP_FOOD);
-  unsigned int pos_gold_shop_comp = getPosGold(GOLD_SHOP_COMPONENTS);
-  unsigned int pos_gold_shop_sym = getPosGold(GOLD_SHOP_SYMBOL);
-  unsigned int pos_gold_shop_pet = getPosGold(GOLD_SHOP_PET);
-  unsigned int pos_gold_shop_resp = getPosGold(GOLD_SHOP_RESPONSES);
-  unsigned int pos_gold_repair = getPosGold(GOLD_REPAIR);
-  unsigned int pos_gold_shop = getPosGold(GOLD_SHOP);
-  unsigned int pos_gold_income = getPosGold(GOLD_INCOME);
-#endif
-
   bool should_reset = false;
 
   // want shops to make money (roughly 5% of total)
@@ -946,19 +925,7 @@ void checkGoldStats()
 
   // We will have the repair modifier self-adjust in order to drive the
   // economy to the desired value
-#if 0
-  int good_drain = (pos_gold_repair - net_gold_repair);
-  good_drain += (pos_gold_income - net_gold_income);
-  good_drain += (pos_gold_shop - net_gold_shop);
-  good_drain += (pos_gold_shop_food - net_gold_shop_food);
-  good_drain += (pos_gold_shop_comp - net_gold_shop_comp);
-  good_drain += (pos_gold_shop_sym - net_gold_shop_sym);
-  good_drain += (pos_gold_shop_arm - net_gold_shop_arm);
-  good_drain += (pos_gold_shop_weap - net_gold_shop_weap);
-  good_drain += (pos_gold_shop_resp - net_gold_shop_resp);
-#else
   int good_drain = (pos_gold_budget - net_gold_budget);
-#endif
 
   int total_drain = pos_gold - net_gold;
   if (good_drain < (int) ((target_drain - .05) * total_drain)) {

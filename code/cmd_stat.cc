@@ -595,9 +595,9 @@ void TBeing::statBeing(TBeing *k)
                     k->player.time.played, 0, &playing_time);
     sprintf(buf + strlen(buf), "%sBirth :%s %s    %sLogon   :%s %s\n\r",
        cyan(), norm(), birth_buf, cyan(), norm(), logon_buf);
-    sprintf(buf + strlen(buf), "%sPlaying time :%s %d days, %d hours.     <c>Base age:<z> %d\n\r",
+    sprintf(buf + strlen(buf), "%sPlaying time :%s %d days, %d hours.     <c>Base age:<z> %d    Age Mod: %d\n\r",
         cyan(), norm(), playing_time.day, playing_time.hours,
-                k->getBaseAge());
+                k->getBaseAge(), k->age_mod);
     if (!k->desc)
       sprintf(buf + strlen(buf), "%sWARNING%s, player is offline, age will not be accurate.\n\r", red(), norm());
 

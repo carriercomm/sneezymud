@@ -2399,7 +2399,7 @@ void buildCommandArray(void)
   commandArray[CMD_CHECK] = new commandInfo("check", POSITION_CRAWLING, 0);
   commandArray[CMD_RECEIVE] = new commandInfo("receive", POSITION_CRAWLING, 0);
   commandArray[CMD_CLS] = new commandInfo("cls", POSITION_DEAD, 0);
-  commandArray[CMD_REPAIR] = new commandInfo("repair", POSITION_CRAWLING, GOD_LEVEL1);
+  commandArray[CMD_REPAIR] = new commandInfo("repair", POSITION_CRAWLING, 0);
   commandArray[CMD_TERMINAL] = new commandInfo("terminal", POSITION_DEAD, 0);
   commandArray[CMD_PROMPT] = new commandInfo("prompt", POSITION_DEAD, 0);
   commandArray[CMD_GLANCE] = new commandInfo("glance", POSITION_RESTING, 0);

@@ -165,6 +165,10 @@ void TBeing::doConsider(const char *argument)
 	   describe_trophy_exp(count),
 	    namebuf);
   }
+
+
+  mysql_free_result(res);
+
 #endif
 
 

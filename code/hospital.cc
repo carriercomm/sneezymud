@@ -138,6 +138,8 @@ int limb_wound_price(TBeing *ch, wearSlotT pos, unsigned short int wound)
       return (price * 4);
     case WEAR_NOWHERE:
     case MAX_WEAR:
+    case HOLD_RIGHT:
+    case HOLD_LEFT:
       break;
   }
   vlogf(LOG_BUG, "Bad pos (%d) in limb_wound_price!", pos);
@@ -187,6 +189,8 @@ int limb_regen_price(TBeing *ch, wearSlotT pos)
       return (price * 4);
     case WEAR_NOWHERE:
     case MAX_WEAR:
+    case HOLD_RIGHT:
+    case HOLD_LEFT:
       break;
   }
   vlogf(LOG_BUG, "Bad pos (%d) in limb_regen_price!", pos);

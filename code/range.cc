@@ -1477,15 +1477,55 @@ int TBeing::unloadBow(const char *arg)
   return TRUE;
 }
  
+TThing * TBeing::findArrow(const char *buf, silentTypeT silent) const
+{
+  TThing *arrow;
+  TQuiver *tQuiver;
+  int     curPos;
+  TThing  *tThing;
+
+  arrow = searchLinkedListVis(this, buf, stuff):
+  if (!arrow) {
+    for (curPos = MIN_WEAR; curPos < MAX_WEAR; curPos++) {
+      if ((tQuiver = dynamic_cast<TQuiver *>(equipment[curPos])) &&
+           !tQuiver->isClosed()) {
+        if ((arrow = searchLinkedListVis(this, arg2, tQuiver->stuff))) {
+          if (!silent) {
+            act("You pull $p from $N.",
+                TRUE, this, arrow, tQuiver, TO_CHAR);
+            act("$n pulls $p from $N.",
+                TRUE, this, arrow, tQuiver, TO_ROOM);
+          }
+          return arrow;
+        }
+      }
+    }
+    for (tThing = stuff; tThing; tThing = tThing->nextThing) {
+      if (!(tQuiver = dynamic_cast<TQuiver *>(tThing)) ||
+           tQuiver->isClosed())
+        continue;
+
+      if (!(arrow = searchLinkedListVis(this, arg2, tThing->stuff)))
+        continue;
+
+      if (!silent) {
+        act("You pull $p from $N.",
+            TRUE, this, arrow, tQuiver, TO_CHAR);
+      }
+      return arrow;
+    }
+
+    return NULL;
+  }
+  return arrow;
+}
+
 void TBeing::doBload(const char *arg)
 {
   char    arg1[128],
           arg2[128];
-  TThing  *bow,
-          *arrow,
-          *tThing;
-  TQuiver *tQuiver;
-  int     curPos;
+  TThing  *bow;
+  TThing  *arrow;
  
   if (sscanf(arg, "%s %s", arg1, arg2) != 2) {
     sendTo("Syntax : bload <bow> <arrow>\n\r");
@@ -1515,39 +1555,13 @@ void TBeing::doBload(const char *arg)
     sendTo("Syntax : bload <bow> <arrow>\n\r");
     return;
   }
-  if (!(arrow = searchLinkedListVis(this, arg2, stuff))) {
-    for (curPos = MIN_WEAR; curPos < MAX_WEAR; curPos++) {
-      if ((tQuiver = dynamic_cast<TQuiver *>(equipment[curPos])) &&
-           !tQuiver->isClosed()) {
-        if ((arrow = searchLinkedListVis(this, arg2, tQuiver->stuff))) {
-          act("You pull $p from $N.",
-              TRUE, this, arrow, tQuiver, TO_CHAR);
-          act("$n pulls $p from $N.",
-              TRUE, this, arrow, tQuiver, TO_ROOM);
-          arrow->bloadBowArrow(this, bow);
-          return;
-        }
-      }
-    }
-    for (tThing = stuff; tThing; tThing = tThing->nextThing) {
-      if (!(tQuiver = dynamic_cast<TQuiver *>(tThing)) ||
-           tQuiver->isClosed())
-        continue;
 
-      if (!(arrow = searchLinkedListVis(this, arg2, tThing->stuff)))
-        continue;
+  arrow = findArrow(arg2, SILENT_NO);
 
-      act("You pull $p from $N.",
-          TRUE, this, arrow, tQuiver, TO_CHAR);
-      arrow->bloadBowArrow(this, bow);
-      return;
-    }
-
+  if (arrow)
+    arrow->bloadBowArrow(this, bow);
+  else
     sendTo("You seem to have run out of '%s's.\n\r", arg2);
-    return;
-  }
-
-  arrow->bloadBowArrow(this, bow);
 }
 
 void TThing::bloadBowArrow(TBeing *ch, TThing *)

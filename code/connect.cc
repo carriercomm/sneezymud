@@ -4438,6 +4438,10 @@ void Descriptor::sendShout(TBeing *ch, const char *arg)
        !b->checkSoundproof() && 
        !b->isPlayerAction(PLR_MAILING | PLR_BUGGING)) {
       strcpy(capbuf, b->pers(ch));
+      if (!capbuf) {
+        forceCrash("No capbuf in sendShout!");
+        continue;
+      }
       string argbuf = colorString(b, i, arg, NULL, COLOR_NONE, FALSE);
       sprintf(namebuf, "<g>%s<z>", cap(capbuf));
       string nameStr = colorString(b, i, namebuf, NULL, COLOR_NONE, FALSE);

@@ -689,6 +689,8 @@ void gain_exp(TBeing *ch, double gain)
         for (i = MIN_CLASS_IND; i < MAX_CLASSES; i++) {
           double peak2 = getExpClassLevel(i,ch->getLevel(i) + 2);
           double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
+          double curr = getExpClassLevel(i,ch->getLevel(i));
+	  double gainmod = ((ch->getLevel(i) * ch->getLevel(i)) + 28);
           if (ch->getLevel(i)) {
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
@@ -711,14 +713,26 @@ void gain_exp(TBeing *ch, double gain)
                 ch->setExp(peak2- 1);
                 return;
               }
+	      if(gain > ((peak - curr) / gainmod)) {
+		vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
+		vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d ]", ch->getLevel(i), (int)gain, (int)((peak - curr) / gainmod), (int)gainmod);
+	      }  
             }
           }
         }
       }
-// with new XP scale, not sure limiting to 3K for a single hit is good idea
-// large mobs may yield MUCH more...  -Bat 12/98
-//      gain = min(gain, (3000.0 * ch->GetMaxLevel()));
-      ch->addToExp(gain);
+#ifdef SNEEZY2000
+    // Theoretically, a players peak - curr / gainmod is extremely reasonable
+    // for a veteran player hitting mobs above thier level but not too far
+    // We may need to watch for the backstabbers
+    double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
+    double curr = getExpClassLevel(i,ch->getLevel(i));
+    double gainmod = ((ch->getLevel(i) * ch->getLevel(i)) + 28);
+    gain = min(gain, ((peak - curr) / gainmod));
+    gain += (rand()%(gain*.1))-(gain*.05));
+#else
+#endif
+    ch->addToExp(gain);
       // we check mortal level here...
       // an imm can go mort to test xp gain (theoretically)
       // for level > 50, the peak would have flipped over, which is bad
@@ -916,6 +930,9 @@ void TBeing::gainCondition(condTypeT condition, int value)
 int TBeing::checkIdling()
 {
   if (desc && desc->connected >= CON_REDITING)
+    return FALSE;
+
+  if (isImmortal())
     return FALSE;
 
   if (getTimer() == 10) {

@@ -2,34 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: show.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.4  1999/10/09 05:47:56  batopr
-// Upped name display on show faction to 15 chars
-//
-// Revision 1.3  1999/10/05 23:51:58  batopr
-// efficiency: "show objs" was converting from REAL to VIRTUAL before calling
-// read_object.
-//
-// Revision 1.2  1999/09/17 17:38:45  peel
-// Added show maxed, for listing maxed objects
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//    SneezyMUD++ - All rights reserved, SneezyMUD Coding Team      //
-//                                                                      //
 //    "show.cc" - Functions related to showing something
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////
@@ -1948,31 +1920,6 @@ void TPerson::doShow(const char *argument)
       }
       sb += buf;
     }
-  } else if (is_abbrev(buf, "maxed")) {
-    if (!hasWizPower(POWER_SHOW_OBJ) || !hasWizPower(POWER_SHOW_TRUSTED)) {
-      sendTo("You lack the power to show maxed obj information.\n\r");
-      return;
-    }
-
-    sb += "VNUM  count max_exist str AC value names\n\r";
-
-    unsigned int objnx;
-    for (objnx = 0; objnx < obj_index.size(); objnx++) {
-      if(obj_index[objnx].number<obj_index[objnx].max_exist) continue;
-      obj = read_object(obj_index[objnx].virt, VIRTUAL);
-      sprintf(buf2, "%s", obj->getNameForShow(false, true, this).c_str());
-      delete obj;
-
-      sprintf(buf, "%5d %3d    %5d%c   %3d %2d %5d %s\n\r", 
-              obj_index[objnx].virt, obj_index[objnx].number,
-              obj_index[objnx].max_exist, 
-              (obj_index[objnx].value <= LIM_ITEM_COST_MIN ? ' ' : '*'), 
-	      obj_index[objnx].max_struct,
-	      max(obj_index[objnx].armor, (sh_int) 0),
-	      obj_index[objnx].value,
-              buf2);
-      sb += buf;
-    }
   } else if (is_abbrev(buf, "mobiles")) {
     if (!hasWizPower(POWER_SHOW_MOB)) {
       sendTo("You lack the power to show mob information.\n\r");
@@ -2144,6 +2091,31 @@ void TPerson::doShow(const char *argument)
                mob_index[objnx].Class, mob_index[objnx].faction,
                mob_index[objnx].name);
       }
+      sb += buf;
+    }
+  } else if (is_abbrev(buf, "maxed")) {
+    if (!hasWizPower(POWER_SHOW_OBJ) || !hasWizPower(POWER_SHOW_TRUSTED)) {
+      sendTo("You lack the power to show maxed obj information.\n\r");
+      return;
+    }
+
+    sb += "VNUM  count max_exist str AC value names\n\r";
+
+    unsigned int objnx;
+    for (objnx = 0; objnx < obj_index.size(); objnx++) {
+      if(obj_index[objnx].number<obj_index[objnx].max_exist) continue;
+      obj = read_object(obj_index[objnx].virt, VIRTUAL);
+      sprintf(buf2, "%s", obj->getNameForShow(false, true, this).c_str());
+      delete obj;
+
+      sprintf(buf, "%5d %3d    %5d%c   %3d %2d %5d %s\n\r", 
+              obj_index[objnx].virt, obj_index[objnx].number,
+              obj_index[objnx].max_exist, 
+              (obj_index[objnx].value <= LIM_ITEM_COST_MIN ? ' ' : '*'), 
+	      obj_index[objnx].max_struct,
+	      max(obj_index[objnx].armor, (sh_int) 0),
+	      obj_index[objnx].value,
+              buf2);
       sb += buf;
     }
   } else if (is_abbrev(buf, "rooms")) {

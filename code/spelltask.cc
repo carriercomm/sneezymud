@@ -781,7 +781,7 @@ your prayer.", FALSE, ch, NULL, NULL, TO_CHAR);
           }
 
           ret = ch->doSpellCast(ch, vict, obj, room, spell, typ);
-          if (vict && (IS_SET(ret, DELETE_VICT))) {
+          if (vict && (IS_SET_DELETE(ret, DELETE_VICT))) {
             delete vict;
             vict = NULL;
           }
@@ -789,7 +789,7 @@ your prayer.", FALSE, ch, NULL, NULL, TO_CHAR);
             delete obj;
             obj = NULL;
           }
-          if (IS_SET(ret, DELETE_THIS))
+          if (IS_SET_DELETE(ret, DELETE_THIS))
             ADD_DELETE(rc, DELETE_THIS);
           break;
         default:

@@ -542,9 +542,11 @@ int TBeing::updateTickStuff()
 	   ((time_info.month - desc->drugs[i].last_use.month) * 28 * 24) +
 	   ((time_info.day - desc->drugs[i].last_use.day) * 24) +
 	   time_info.hours - desc->drugs[i].last_use.hours);
-	severity=(desc->drugs[i].total_consumed / hours_first) * hours_last;
-	if(severity>0)
-	  applyAddictionAffects(this, (drugTypeT) i, severity);
+	if(hours_last && hours_first){
+	  severity=(desc->drugs[i].total_consumed / hours_first) * hours_last;
+	  if(severity>0)
+	    applyAddictionAffects(this, (drugTypeT) i, severity);
+	}
       }
     }
 

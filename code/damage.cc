@@ -629,7 +629,8 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 #endif
           total_player_kills++;
 
-	  if(this!=v && this->roomp && !this->roomp->isRoomFlag(ROOM_ARENA)){
+	  if(this!=v && this->roomp && !this->roomp->isRoomFlag(ROOM_ARENA) &&
+	     !this->inPkZone()){
 	    affectedData aff;
 	    aff.type = AFFECT_PLAYERKILL;
 	    aff.duration = 24 * UPDATES_PER_MUDHOUR;

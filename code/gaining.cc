@@ -623,7 +623,7 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
           !hasQuestBit(TOG_KILL_SHAMAN) &&
           !hasQuestBit(TOG_KILL_CHIEF) &&
           !hasQuestBit(TOG_GAVE_HEAD_CHIEF) &&
-          !hasQuestBit(TOG_ELIGABLE_WARRIOR_L41)) {
+          !hasQuestBit(TOG_ELIGIBLE_WARRIOR_L41)) {
 	if(!silent){
 	  gm->doSay("Congratulations Warrior!.");
 	  gm->doSay("I believe you are ready to obtain your scabbard.");
@@ -632,7 +632,7 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
           gm->doSay("Are you the ready to face your greatest test?");
           gm->doSay("Say 'I am ready' if you are ready to undertake this task.");
 	}
-	setQuestBit(TOG_ELIGIABLE_WARRIOR_L41);
+	setQuestBit(TOG_ELIGIBLE_WARRIOR_L41);
       }
       break;
     default:

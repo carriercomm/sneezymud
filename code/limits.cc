@@ -246,8 +246,8 @@ int TMonster::hitGain()
   
   // base1 is the % for level 1, base50 is the percent for level 50, for easy adjusting
 
-  double base1 = 0.15; // 1/6
-  double base50 = 0.05;
+  double base1 = 0.075; // yeash complain complain making this much lower etc
+  double base50 = 0.025;
 
 
   double level = (double)(min(50, (int)GetMaxLevel()));

@@ -509,7 +509,7 @@ enum spellNumT {
      SPELL_FROST_BREATH,
      SPELL_ACID_BREATH,
      SPELL_LIGHTNING_BREATH,
-  SPELL_DUST_BREATH,
+     SPELL_DUST_BREATH,
      LAST_BREATH_WEAPON,
 
      // these represent oddball affects, mostly used for affectData stuff
@@ -529,6 +529,7 @@ enum spellNumT {
      AFFECT_PLAYERKILL,
      AFFECT_PLAYERLOOT,
      AFFECT_HORSEOWNED,
+     AFFECT_GROWTH_POTION,
      LAST_ODDBALL_AFFECT
 };
 const spellNumT MIN_SPELL = spellNumT(TYPE_UNDEFINED+1);

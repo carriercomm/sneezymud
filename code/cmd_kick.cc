@@ -296,9 +296,14 @@ static int kickHit(TBeing *caster, TBeing *victim, int score, int level, spellNu
 
   item = dynamic_cast<TObj *>(caster->equipment[caster->getPrimaryFoot()]);
   if (item)
-    if (item->isSpiked())
+    if (item->isSpiked() || item->isObjStat(ITEM_SPIKED)) {
+      act("The spikes on your $o sink into $N.", FALSE, caster, item, victim, TO_CHAR);
+      act("The spikes on $n's $o sink into $N.", FALSE, caster, item, victim, TO_NOTVICT);
+      act("The spikes on $n's $o sink into you.", FALSE, caster, item, victim, TO_VICT);
+
       if(caster->reconcileDamage(victim, dam*0.15, TYPE_STAB) == -1)
 	return DELETE_VICT;
+    }
 
   if (caster->reconcileDamage(victim, dam,dam_type) == -1)
     return DELETE_VICT;

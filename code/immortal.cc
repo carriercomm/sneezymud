@@ -5849,7 +5849,7 @@ int TBeing::doCrit(const char *arg)
   }
   weap = heldInPrimHand();
   part = vict->getPartHit(this, TRUE);
-  dam = getWeaponDam(vict, weap, TRUE);
+  dam = getWeaponDam(vict, weap, HAND_PRIMARY);
 
   if (weap)
     wtype = getAttackType(weap);

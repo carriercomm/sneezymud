@@ -191,7 +191,8 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	obj_armor.o obj_armor_wand.o obj_arrow.o obj_audio.o \
 	obj_scroll.o obj_seethru.o obj_smoke.o obj_spellbag.o \
 	obj_staff.o obj_statue.o obj_symbol.o \
-	obj_table.o obj_tool.o obj_trash.o obj_treasure.o obj_tree.o \
+	obj_table.o obj_tool.o obj_trap.o \
+	obj_trash.o obj_treasure.o obj_tree.o \
 	obj_wand.o obj_window.o obj_worn.o \
 	offense.o oldlimbs.o oldrace.o \
 	opal.o opinion.o organic.o other.o other_obj.o parse.o peelpk.o \

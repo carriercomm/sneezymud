@@ -752,16 +752,15 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       break;
     }
     case CLIENT_NEWACCOUNT:
-      if (checkForAccount(arg)) {
-	output.putInQ("Please enter a login name -> ");
-        return FALSE;
+#if 0
+      account = new TAccount;
+      // Does account exist or is it a bogus name? This function will return TRUE is so
+      if (checkForAccount(arg, TRUE)) {
       } 
       if (strlen(arg) >= 10) {
-        output.putInQ("Account names must be 9 characters or less.\n\r");
-        output.putInQ("Please enter a login name -> ");
-        return FALSE;
       }
       strcpy(account->name, arg);
+#endif
 
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
       break;

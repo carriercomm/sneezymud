@@ -2,24 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_egotrip.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////// 
-//
-//      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
-//
 //      "egotrip.cc" - The egotrip command
 //  
 //////////////////////////////////////////////////////////////////////////
@@ -239,12 +221,12 @@ void TBeing::doEgoTrip(const char *arg)
 
         tBeing->sendTo("%s has cured your %s.\n\r",
                        good_cap(getName()).c_str(),
-                       DiseaseInfo[DISEASE_INDEX(tAff->modifier)].name);
+                       DiseaseInfo[affToDisease(*tAff)].name);
 
         if (!strcmp("Lapsos", getName()))
           sendTo(COLOR_BASIC, "Your cure %s of: %s.\n\r",
                  tBeing->getName(),
-                 DiseaseInfo[DISEASE_INDEX(tAff->modifier)].name);
+                 DiseaseInfo[affToDisease(*tAff)].name);
 
         if (tAff->modifier == DISEASE_POISON) {
           tBeing->affectFrom(SPELL_POISON);

@@ -2524,7 +2524,8 @@ void countAccounts(const char *arg)
     return;
   }
 
-  bool accountActive = false;
+  bool accountActive7 = false;
+  bool accountActive30 = false;
 
   while ((dp = readdir(dfd)) != NULL) {
     if (!strcmp(dp->d_name, "account") || !strcmp(dp->d_name, "comment") || 
@@ -2554,10 +2555,16 @@ void countAccounts(const char *arg)
     // since it is valid, increment the counter
     count++;
 
-    if (!accountActive) {
+    if (!accountActive7) {
       if (time(0) - theStat.st_mtime <= (7 * SECS_PER_REAL_DAY)) {
-        accountActive = true;
-        accStat.active_account++;
+        accountActive7 = true;
+        accStat.active_account7++;
+      }
+    }
+    if (!accountActive30) {
+      if (time(0) - theStat.st_mtime <= (30 * SECS_PER_REAL_DAY)) {
+        accountActive30 = true;
+        accStat.active_account30++;
       }
     }
   }

@@ -338,7 +338,7 @@ int TBaseCup::chiMe(TBeing *tLunatic)
       getDrinkUnits() <= 0 || isDrinkConFlag(DRINK_PERM)) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   act("You focus your chi, causing $p to become lighter!",
@@ -348,6 +348,6 @@ int TBaseCup::chiMe(TBeing *tLunatic)
 
   evaporate(tLunatic, SILENT_YES);
 
-  return FALSE;
+  return true;
 
 }

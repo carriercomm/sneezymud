@@ -733,6 +733,10 @@ mob->getName());
       }
       mob->setRace(race_t(parm));
       sendTo(COLOR_MOBS, "%s is now of the %s race.\n\r", mob->getName(), mob->getMyRace()->getSingularName().c_str());
+
+      // log this because changing race *may* cause some equipment problems
+      // due to wearability, etc.
+      vlogf(LOG_MISC, "%s being changed to the %s race by %s", mob->getName(), mob->getMyRace()->getSingularName().c_str(), getName());
     } else {
       sendTo("argument must be a number\n\r");
       return;

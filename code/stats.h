@@ -41,7 +41,10 @@ const int MAX_STAT_EXTS	=2;
 enum statSetT {
      STAT_CHOSEN,
      STAT_NATURAL,
-     STAT_CURRENT
+     STAT_CURRENT,
+     STAT_RACE,
+     STAT_AGE,
+     STAT_TERRITORY,
 };
 
 class Stats {

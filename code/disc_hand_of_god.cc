@@ -495,8 +495,10 @@ int summon(TBeing * caster, TBeing * victim, int level, byte bKnown)
     int tDiff = ((50 - min((short) 50, mob_index[tmon->getMobIndex()].max_exist)) +
                  (caster->GetMaxLevel() - victim->GetMaxLevel()));
 
-    if ((tDiff > 0) && ::number(0, tDiff)) {
-      caster->sendTo("Your prayer meets opposition and fails!");
+    if ((tDiff > 0) && ::number(0, tDiff) &&
+        (!tmon->master || !tmon->isAffected(AFF_CHARM) ||
+         !tmon->master->isPc())) {
+      caster->sendTo("Your prayer meets opposition and fails!\n\r");
       act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
       return SPELL_FAIL;
     }

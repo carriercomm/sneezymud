@@ -26,7 +26,7 @@ void TMonster::balanceMakeNPCLikePC()
 
   // modify damage capacity
   float daml = getDamLevel();
-  daml /= conv_num;
+  daml /= (conv_num * 1.5);
   setDamLevel(daml);
 
   // leave AC alone, should be OK

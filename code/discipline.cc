@@ -1892,7 +1892,6 @@ bool bSuccess(TBeing * caster, int ubCompetence, spellNumT spell)
 // force into range
   ubCompetence = min(max(ubCompetence, 0), (int) MAX_SKILL_LEARNEDNESS);
 
-#if 1
   // Here's the basis of this stuff:
   // At max learning, we desire the following results:
   // trivial    = 100%
@@ -1929,116 +1928,6 @@ bool bSuccess(TBeing * caster, int ubCompetence, spellNumT spell)
     logSkillFail(caster, spell, FAIL_GENERAL);
     return false;
   }
-#else
-// old formula
-  int boost = 0, num = 0; 
-  skillUseClassTyp skillType;
-  int focus;
-
-// a LOW roll means success
-// DO NOT DELETE-- COSMO
-// A low roll is better
-  roll = ::number(1,100);
-  skillType = discArray[spell]->typ;
-
-// if (roll > 98) {
-  if (roll > 99) {
-    // fail counter
-    logSkillFail(caster, spell, FAIL_GENERAL);
-#if DISC_DEBUG
-    if (caster->desc && caster->isPc()) {
-      vlogf(LOG_BUG, "%s Fail Spell %s (%d) roll > 98.", caster->getName(), discArray[spell]->name, spell);
-    }
-#endif
-    return FALSE;
-  } else if (roll <= 5) {
-    // success counter
-    if ((caster->inPraying || caster->spelltask) && (skillType == SPELL_CLERIC || skillType == SPELL_DEIKHAN)) {
-      if (!enforceHolySym(caster, spell, TRUE)) {
-        logSkillAttempts(caster, spell, ATTEMPT_REM_NORM);
-        return FALSE;
-      }
-    }
-    logSkillSuccess(caster, spell, SKILL_SUCCESS_NORMAL);
-    return TRUE;
-  }
-
-
-//if (discArray[spell]->task >= 0) { // skills set this to -1, ignore difficul ty
-//    roll += (discArray[spell]->task* 5);
-
-    // increase difficulty if limited position
-//  if (!(spell == SPELL_PENANCE) && !(spell == SKILL_ATTUNE) &&
-//      !(spell == SKILL_MEDITATE) &&
-//      !(IS_SET(discArray[spell]->comp_types, SPELL_IGNORE_POSITION))) {
-  if (!(IS_SET(discArray[spell]->comp_types, SPELL_IGNORE_POSITION))) {
-    boost = caster->plotStat(STAT_CURRENT, STAT_FOC, 1, 45, 25);
-    if (caster->getPosition() == POSITION_RESTING) {
-      roll += max(0, (50 - boost));
-    } else if (caster->getPosition() == POSITION_SITTING) {
-      roll += max(0,( 35 - boost));
-    } else if (caster->getPosition() == POSITION_CRAWLING) {
-       roll += max(0, (20 - boost));
-    }
-  }
-#if FACTIONS_IN_USE
-  // a penalty based on low getPerc()
-  if (caster->desc) {
-    int pietyNum;
-    if ((skillType == SPELL_CLERIC) || (skillType == SPELL_DEIKHAN) ||
-        (skillType == SKILL_CLERIC) || (skillType == SKILL_DEIKHAN)) {
-      pietyNum = min(95, (3 * caster->GetMaxLevel()));
-    } else {
-      pietyNum = min(75, (2 * caster->GetMaxLevel()));
-    }
-    pietyNum = min(0, (((int) caster->getPerc()) - pietyNum));
-    pietyNum = max(-64, pietyNum);
-    pietyNum /= -4;
-    roll += pietyNum;
-  }
-#endif
-
-  if (roll > ubCompetence) {
-    logSkillFail(caster, spell, FAIL_GENERAL);
-#if DISC_DEBUG
-    if (caster->desc && caster->isPc()) {
-      vlogf(LOG_BUG, "%s Fail Spell %s (%d) GenFail: roll (%d) ubComp (%d)", caster->getName(), discArray[spell]->name, spell, roll, ubCompetence);
-    }
-#endif
-    return FALSE;
-  } else {
-// FIRST FOCUS
-
-   if (discArray[spell]->task == TASK_IGNORE_DIFF) {
-      num = ::number(1, 100);
-      boost = 100;
-    } else if (discArray[spell]->task >= 0) { // skills set this to -1, ignore difficu
-      num = ::number(1, (85 + ((1 + discArray[spell]->task) * 4)));
-      boost = caster->plotStat(STAT_CURRENT, STAT_FOC, 60, 95, 85, 1);
-    } else {
-      num = ::number(1, 90);
-      boost = caster->plotStat(STAT_CURRENT, STAT_FOC, 80, 95, 88, 1);
-    }
-
-    if (caster->desc && dynamic_cast<const TPerson *> (caster)) {
-      focus = caster->plotStat(STAT_CHOSEN, STAT_FOC, -25, 25, 0, 1);
-//      focus = caster->chosenStats.values[STAT_FOC] / 2;
-      boost = min(99, (boost + focus));
-    }
-    if ((num > boost)) {
-      logSkillFail(caster, spell, FAIL_FOCUS);
-#if DISC_DEBUG
-      if (caster->desc && caster->isPc()) {
-        vlogf(LOG_BUG, "%s Fail Spell %s (%d) focFail: boost (%d) num (%d) , roll (%d)ubComp (%d)", caster->getName(), discArray[spell]->name, spell, boost, num, roll, ubCompetence);
-      }
-#endif
-      return FALSE;
-    }
-
-    // success counter
-    return bSucCounter(caster, skillType, spell, roll, ubCompetence);
-  }
-#endif
 }
 
 byte defaultProficiency(byte uLearned, byte uStart, byte uLearn)

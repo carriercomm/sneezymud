@@ -877,11 +877,6 @@ void TObj::checkObjStats()
         vlogf(LOG_LOW,"item takeable and !purge (%s)", getName());
     }
 
-  if (isObjStat(ITEM_UNUSED)) {
-      vlogf(LOG_LOW,"item (%s) has unused bit (%d)",
-          getName(), ITEM_UNUSED);
-  }
-
   lowCheckSlots(SILENT_NO);
 }
 

@@ -1,7 +1,8 @@
 03-12-00 / 03-16-00 / 03-19-00 / 03-21-00 / 03-22-00 - Lapsos
 03-23-00 / 03-25-00 / 03-26-00 / 03-29-00 / 03-30-00 - Lapsos
 04-01-00 / 04-04-00 / 04-08-00 / 04-09-00 / 04-10-00 - Lapsos
-04-11-00 / 04-12-00 / 04-13-00 / 04-14-00 - Lapsos
+04-11-00 / 04-12-00 / 04-13-00 / 04-14-00 / 04-15-00 - Lapsos
+04-17-00 / 04-18-00 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
@@ -126,6 +127,14 @@
   anything not a period, then display it to any new connections so that they
   know, immediatly, where in the boot process we are.  This helps those people
   who connect during those long processes.
+- Added a fully new spec proc for a new potion (POS: Potion of Stature)
+  When consumed it will either increase or decrease the quaffer in height and
+  weight and will perform general object checks.  If shrinking it will drop
+  any now-unusable armor.  If growing it will constrict and destroy any
+  now-unusable armor along with destroying limbs and possible killing the
+  person.  Pretty much anyone wearing anything above low hardness armor will
+  kill their ass goodbye if quaffing and growing beyond their armor's max
+  size.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

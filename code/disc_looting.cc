@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_looting.cc,v $
+// Revision 5.1.1.3  1999/11/05 12:34:38  lapsos
+// Modifications for new trap stuff.
+//
 // Revision 5.1.1.2  1999/10/29 05:38:19  cosmo
 // *** empty log message ***
 //
@@ -171,6 +174,15 @@ int TRealContainer::disarmMe(TBeing *thief)
   int rc;
   char buf[256], trap_type_buf[80];
   int bKnown = thief->getSkillValue(SKILL_DISARM_TRAP);
+
+  if (isContainerFlag(CONT_GHOSTTRAP)) {
+    act("$p isn't trapped after all, must have made a mistake...",
+        FALSE, thief, this, 0, TO_CHAR);
+    remContainerFlag(CONT_GHOSTTRAP);
+    addContainerFlag(CONT_EMPTYTRAP);
+
+    return TRUE;
+  }
 
   if (!isContainerFlag(CONT_TRAPPED)) {
     act("$p is not trapped.", FALSE, thief, this, 0, TO_CHAR);

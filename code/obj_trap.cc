@@ -468,6 +468,20 @@ int TBeing::triggerContTrap(TRealContainer *obj)
   act("You hear a strange noise...", TRUE, this, 0, 0, TO_CHAR);
   obj->remContainerFlag(CONT_TRAPPED);
   obj->remContainerFlag(CONT_CLOSED);
+  obj->addContainerFlag(CONT_EMPTYTRAP);
+
+  if (!::number(0, 100))
+    obj->addContainerFlag(CONT_DUDTRAP);
+
+  if (obj->isContainerFlag(CONT_DUDTRAP)) {
+    act("...But nothing happens...",
+        TRUE, this, 0, 0, TO_CHAR);
+    act("...But nothing happens...",
+        TRUE, this, 0, 0, TO_ROOM);
+
+    obj->remContainerFlag(CONT_DUDTRAP);
+    return FALSE;
+  }
 
   switch (obj->getContainerTrapType()) {
     case DOOR_TRAP_FIRE:

@@ -223,30 +223,50 @@ int TRealContainer::openMe(TBeing *ch)
   } else if (isContainerFlag(CONT_LOCKED)) {
     ch->sendTo("It seems to be locked.\n\r");
     return FALSE;
-  } else if (isContainerFlag(CONT_TRAPPED)) {
+  } else if (isContainerFlag(CONT_TRAPPED) ||
+             !isContainerFlag(CONT_EMPTYTRAP) ||
+             isContainerFlag(CONT_GHOSTTRAP)) {
     if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
       if (detectTrapObj(ch, this)) {
         sprintf(buf, "You start to open $p, but then notice an insideous %s trap...",
               good_uncap(trap_types[getContainerTrapType()]).c_str());
         act(buf, TRUE, ch, this, NULL, TO_CHAR);
         return FALSE;
+      } else if (!isContainerFlag(CONT_TRAPPED) &&
+                 !bSuccess(ch, ch->getSkillValue(SKILL_DETECT_TRAP), SKILL_DETECT_TRAP)) {
+        setContainerTrapType(trap_t(::number(0, (MAX_TRAP_TYPES - 1))));
+        setContainerTrapDam(0);
+        addContainerFlag(CONT_GHOSTTRAP);
+
+        sprintf(buf, "You start to open $p, but then you notice an insideous %s trap...",
+                good_uncap(trap_types[getContainerTrapType()]).c_str());
+        act(buf, TRUE, ch, this, NULL, TO_CHAR);
+
+        return FALSE;
       }
     }
     act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
     act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);
     remContainerFlag(CONT_CLOSED);
+    remContainerFlag(CONT_GHOSTTRAP);
+    addContainerFlag(CONT_EMPTYTRAP);
 
-    int rc = ch->triggerContTrap(this);
-    int res = 0;
-    if (IS_SET_DELETE(rc, DELETE_ITEM)) {
-      ADD_DELETE(res, DELETE_THIS);
+    if (isContainerFlag(CONT_TRAPPED)) {
+      int rc = ch->triggerContTrap(this);
+      int res = 0;
+      if (IS_SET_DELETE(rc, DELETE_ITEM)) {
+        ADD_DELETE(res, DELETE_THIS);
+      }
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
+        ADD_DELETE(res, DELETE_VICT);
+      }
+      return res;
     }
-    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      ADD_DELETE(res, DELETE_VICT);
-    }
-    return res;
+
+    return TRUE;
   } else {
     remContainerFlag(CONT_CLOSED);
+    addContainerFlag(CONT_EMPTYTRAP);
     act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
     act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);
     return TRUE;
@@ -868,6 +888,11 @@ int TBeing::doDrop(const char *argument, TThing *tng, bool forcedDrop)
       vlogf(9, "Problem creating money");
       return FALSE;
     }
+    TPerson *tP;
+
+    if ((tP = dynamic_cast<TPerson *>(this)))
+      money->checkOwnersList(tP);
+
     *roomp += *money;
     addToMoney(-amount, GOLD_INCOME);
 

@@ -4731,6 +4731,23 @@ void TBeing::doWorld()
         red(), mobCount, norm());
   sendTo("%sActual Mobs by level:%s\n\r",
         purple(), norm());
+#if 1
+  sendTo("%sL  1-  5  [%s%4u%s]  L  6- 10  [%s%4u%s]  L 11- 15  [%s%4u%s]  L 16- 20  [%s%4u%s]\n\r", norm(),
+         purple(), stats.act_1_5, norm(),
+         purple(), stats.act_6_10, norm(),
+         purple(), stats.act_11_15, norm(),
+         purple(), stats.act_16_20, norm());
+  sendTo("%sL 21- 25  [%s%4u%s]  L 26- 30  [%s%4u%s]  L 31- 40  [%s%4u%s]  L 41- 50  [%s%4u%s]\n\r", norm(),
+         purple(), stats.act_21_25, norm(),
+         purple(), stats.act_26_30, norm(),
+         purple(), stats.act_31_40, norm(),
+         purple(), stats.act_41_50, norm());
+  sendTo("%sL 51- 60  [%s%4u%s]  L 61- 70  [%s%4u%s]  L 71-100  [%s%4u%s]  L101-127  [%s%4u%s]\n\r", norm(),
+         purple(), stats.act_51_60, norm(),
+         purple(), stats.act_61_70, norm(),
+         purple(), stats.act_71_100, norm(),
+         purple(), stats.act_101_127, norm());
+#else
   sendTo("%sL1-5  [%s%4u%s]  L6-10 [%s%3u%s]  L11-15[%s%3u%s]  L16-20[%s%3u%s]  L21-25 [%s%3u%s] L26-30  [%s%3u%s]%s\n\r", norm(),
         purple(), stats.act_1_5, norm(),
         purple(), stats.act_6_10, norm(),
@@ -4747,6 +4764,7 @@ void TBeing::doWorld()
         purple(), stats.act_71_100, norm(),
         purple(), stats.act_101_127, norm(),
         norm());
+#endif
 }
 
 const char *DescRatio(double f)

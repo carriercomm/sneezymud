@@ -194,6 +194,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	obj_base_cup.o obj_base_light.o obj_base_weapon.o obj_bed.o \
 	obj_board.o obj_boat.o obj_book.o obj_bow.o \
 	obj_chest.o obj_corpse.o \
+	obj_open_container.o \
 	obj_scroll.o obj_seethru.o obj_smoke.o obj_spellbag.o \
 	obj_staff.o obj_statue.o obj_symbol.o \
 	obj_table.o obj_tool.o obj_trap.o \
@@ -204,7 +205,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	opal.o opinion.o organic.o other.o other_obj.o parse.o peelpk.o \
 	pen.o periodic.o pets.o physics.o player_corpse.o player_data.o \
 	poker.o pool.o portal.o posse.o potion.o quiver.o race.o range.o \
-	real_container.o rent.o repair.o response.o riding.o room.o \
+	rent.o repair.o response.o riding.o room.o \
 	shop.o show.o signals.o skill_dam.o skills.o \
 	slots.o socket.o sound.o spec_mobs.o \
 	spec_mobs_doppleganger.o spec_mobs_earthquake_digger.o \

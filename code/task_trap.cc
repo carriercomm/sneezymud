@@ -8,6 +8,38 @@
 
 #include "stdsneezy.h"
 
+// returns DELETE_THIS for ch
+// returns true if guard disrupts trap pulse
+static int trapGuardCheck(TBeing *ch)
+{
+  TThing *t, *t2;
+  for (t = ch->roomp->stuff; t; t = t2) {
+    t2 = t->nextThing;
+    TMonster *guard = dynamic_cast<TMonster *>(t);
+    if (!guard)
+      continue;
+    if (!guard->isPolice() || 
+        !guard->canSee(ch) ||
+        !guard->awake())
+      continue;
+    guard->doSay("Hey!  We don't allow any of that nonsense here!");
+
+    rc = guard->takeFirstHit(*ch);
+    if (IS_SET_DELETE(rc, DELETE_VICT))
+      return DELETE_THIS;
+    else if (IS_SET_DELETE(rc, DELETE_THIS)) {
+      delete guard;
+      guard = NULL;
+    } else if (!rc)
+      // on the outside chance that the hit fails, send a disrupt message.
+      act("$n disrupts your attempt to make a trap.", FALSE, guard, 0, ch, TO_VICT);
+    }
+
+    return true;
+  }
+  return false;
+}
+
 int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj *)
 {
   char buf1[256], buf2[256];
@@ -41,24 +73,11 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
     return FALSE;
 
   // check for guards that prevent
-  for (t = ch->roomp->stuff; t; t = t2) {
-    t2 = t->nextThing;
-    guard = dynamic_cast<TMonster *>(t);
-    if (!guard)
-      continue;
-    if (!guard->isPolice() || !guard->canSee(ch) ||
-         !guard->awake())
-      continue;
-    guard->doSay("Hey!  We don't allow any of that nonsense here!");
-
-    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
-      return DELETE_THIS;
-    else if (rc == DELETE_THIS) {
-      delete guard;
-      guard = NULL;
-    }
+  int rc = trapGuardCheck(ch);
+  if (IS_SET_DELETE(rc, DELETE_THIS))
+    return DELETE_THIS;
+  else if (rc)
     return FALSE;
-  }
 
   if (ch->task->timeLeft < 0)  {
     // Made it to end, set trap 
@@ -170,24 +189,11 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
     return FALSE;
 
   // check for guards that prevent
-  for (t = ch->roomp->stuff; t; t = t2) {
-    t2 = t->nextThing;
-    guard = dynamic_cast<TMonster *>(t);
-    if (!guard)
-      continue;
-    if (!guard->isPolice() || !guard->canSee(ch) ||
-         !guard->awake())
-      continue;
-    guard->doSay("Hey!  We don't allow any of that nonsense here!");
-
-    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
-      return DELETE_THIS;
-    else if (rc == DELETE_THIS) {
-      delete guard;
-      guard = NULL;
-    }
+  int rc = trapGuardCheck(ch);
+  if (IS_SET_DELETE(rc, DELETE_THIS))
+    return DELETE_THIS;
+  else if (rc)
     return FALSE;
-  }
 
   if (ch->task->timeLeft < 0)  {
     // Made it to end, set trap 
@@ -318,24 +324,11 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
     return FALSE;
 
   // check for guards that prevent
-  for (t = ch->roomp->stuff; t; t = t2) {
-    t2 = t->nextThing;
-    guard = dynamic_cast<TMonster *>(t);
-    if (!guard)
-      continue;
-    if (!guard->isPolice() || !guard->canSee(ch) ||
-         !guard->awake())
-      continue;
-    guard->doSay("Hey!  We don't allow any of that nonsense here!");
-
-    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
-      return DELETE_THIS;
-    else if (rc == DELETE_THIS) {
-      delete guard;
-      guard = NULL;
-    }
+  int rc = trapGuardCheck(ch);
+  if (IS_SET_DELETE(rc, DELETE_THIS))
+    return DELETE_THIS;
+  else if (rc)
     return FALSE;
-  }
 
   if (ch->task->timeLeft < 0)  {
     // Made it to end, set trap 
@@ -453,24 +446,11 @@ int task_trap_grenade(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
     return FALSE;
 
   // check for guards that prevent
-  for (t = ch->roomp->stuff; t; t = t2) {
-    t2 = t->nextThing;
-    guard = dynamic_cast<TMonster *>(t);
-    if (!guard)
-      continue;
-    if (!guard->isPolice() || !guard->canSee(ch) ||
-         !guard->awake())
-      continue;
-    guard->doSay("Hey!  We don't allow any of that nonsense here!");
-
-    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
-      return DELETE_THIS;
-    else if (rc == DELETE_THIS) {
-      delete guard;
-      guard = NULL;
-    }
+  int rc = trapGuardCheck(ch);
+  if (IS_SET_DELETE(rc, DELETE_THIS))
+    return DELETE_THIS;
+  else if (rc)
     return FALSE;
-  }
 
   if (ch->task->timeLeft < 0)  {
     // Made it to end, set trap 

@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: loadset.cc,v $
-// Revision 5.1.1.2  1999/11/02 17:11:55  lapsos
-// Loadset now accepts non-clothing as slot options.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ////////////////////////////////////////////////////////////////////////// 
 //
 //      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
@@ -439,7 +418,8 @@ void TBeing::loadSetEquipment(int num, char *arg, int tChance)
                     !(tThing = read_object(rNum, REAL)))
                   StString += " ***Not Found***\n\r";
                 else {
-                  if ((tBCloth = dynamic_cast<TBaseClothing *>(tThing)))
+                  if ((tBCloth = dynamic_cast<TBaseClothing *>(tThing)) &&
+                      tBCloth->armorLevel(ARMOR_LEV_REAL))
                     sprintf(tString, " [R:%6.2f] %s [%s] [%s]\n\r",
                             tBCloth->armorLevel(ARMOR_LEV_REAL),
                             suitClasses,
@@ -681,7 +661,8 @@ void loadSetClass::suitAdd(const char *tName, int tHelm, int tCollar,
     if (!tObj)
       newSuitStruct.equipment[suitIndex] = -1;
     else {
-      if ((tClothing = dynamic_cast<TBaseClothing *>(tObj))) {
+      if ((tClothing = dynamic_cast<TBaseClothing *>(tObj)) &&
+          tClothing->armorLevel(ARMOR_LEV_REAL)) {
         newSuitStruct.suitLevel += tClothing->armorLevel(ARMOR_LEV_REAL);
         suitCount++;
       }

@@ -617,6 +617,18 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
 	setQuestBit(TOG_ELIGIBLE_RANGER_L14);
       }
       break;
+    case WARRIOR_LEVEL_IND:
+      if (getLevel(Class)>=40) {
+	if(!silent){
+	  gm->doSay("Congratulations you faggot warrior!.");
+	  gm->doSay("You got a quest to do for one of those scarab things.");
+	  gm->doSay("Glint will add extra shit in here to make you feel special.");
+	  gm->doSay("want to attempt it?");
+	  gm->doSay("Say 'fag quest' and then glint will add something to the warrior guildmaster script to give directions.");
+	}
+	setQuestBit(TOG_GLINT);
+      }
+      break;
     default:
       break;
   }

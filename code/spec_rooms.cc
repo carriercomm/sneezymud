@@ -1672,6 +1672,8 @@ void assign_rooms(void)
     {9064, SecretDoors},
     {9390, SecretDoors},      // badlands brush
     {9391, SecretDoors},
+    {9581, SecretDoors},      // bandit camp doors
+    {9582, SecretDoors},
     {10020, monkQuestProcLand},
     {10111, SecretDoors},     // Batopr-elf doors
     {10144, SecretDoors},

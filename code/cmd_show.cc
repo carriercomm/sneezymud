@@ -812,7 +812,15 @@ void TPerson::doShow(const char *argument)
       room_iterate(room_db, print_noflee_room, sb, NULL);
     else if (is_abbrev(zonenum, "arena"))
       room_iterate(room_db, print_arena_room, sb, NULL);
-    else {
+    else if (isalpha(zonenum[0])){
+      register int i;
+      for (i = 0; i < WORLD_SIZE; i++) {
+	TRoom *temp = real_roomp(i);
+	if(temp && strstr(temp->name, zonenum)){
+	  print_room(i, temp, sb, NULL);
+	}
+      }
+    } else {
       int zone;
       if (1 != sscanf(zonenum, "%i", &zone))
         zone = roomp->getZone();

@@ -3133,7 +3133,6 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
   wearSlotT part_hit;
   int mess_sent = 0;
   int damaged_limb = FALSE;
-  int mess_sent;
   int rc = 0, retCode = 0;
   bool found = FALSE;
 
@@ -3351,7 +3350,7 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
       if (vict->desc)
         vict->desc->career.crit_kills_suff++;
 
-      ch->saveCareerStats();
+      saveCareerStats();
       vict->saveCareerStats();
 
       return retCode | DELETE_VICT;

@@ -4346,6 +4346,7 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
   CSkill *sk;
   CDiscipline *assDiscipline, *discipline;
   int discLearn, chance, chanceDisc, chanceAss;
+  char tString[256];
 
   discLearn = chance = chanceDisc = chanceAss = 0;
   if (isImmortal() || !desc) {
@@ -4499,8 +4500,6 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
 
 #if 1
   if (!silent) {
-    char tString[256];
-
     if ((discArray[sknum]->comp_types & COMP_MATERIAL))
       strcpy(tString, "feel you have more control over the powers of");
     else if (discArray[sknum]->holyStrength) {
@@ -4536,12 +4535,38 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
   sk->lastUsed = time(0);
   learnSuccessLog(this, sknum, boost);
 
-  if(hasClass(CLASS_MONK) && sknum == SKILL_KICK_MONK &&
-     getSkillValue(sknum) == 100){
-    setQuestBit(TOG_ELIGIBLE_ADVANCED_KICKING);
+  if (getSkillValue(sknum) == 100) {
+    if ((discArray[sknum]->comp_types & COMP_MATERIAL))
+      strcpy(tString, "feel you have total control over the powers of");
+    else if (discArray[sknum]->holyStrength) {
+      string tStDeity("");
 
-    act("<c>You feel that you have <g>mastered<c> the skill of <p>kicking<c>.<1>\n<c>Perhaps your guildmaster could help you with <p>advanced kicking<c>.<1>",
-	FALSE, this, NULL, NULL, TO_CHAR);
+      tStDeity = yourDeity(sknum, FIRST_PERSON);
+      sprintf(tString, "feel %s has blessed you fully with the powers of", tStDeity.c_str());
+    } else
+      strcpy(tString, "feel you have total mastery over");
+
+    if (!silent)
+      sendTo(COLOR_BASIC, "<c>You %s %s.<z>\n\r", tString, discArray[sknum]->name);
+
+    if (hasClass(CLASS_MONK) && sknum == SKILL_KICK_MONK) {
+      setQuestBit(TOG_ELIGIBLE_ADVANCED_KICKING);
+
+      sendTo(COLOR_BASIC, "<c>Perhaps your guildmaster could help you with <p>advanced kicking<c> now.<1>");
+    }
+  } else if (getNatSkillValue(sknum) == getMaxSkillValue(sknum)) {
+    if ((discArray[sknum]->comp_types & COMP_MATERIAL))
+      strcpy(tString, "feel you have all the control you can currently obtain of");
+    else if (discArray[sknum]->holyStrength) {
+      string tStDeity("");
+
+      tStDeity = yourDeity(sknum, FIRST_PERSON);
+      sprintf(tString, "feel %s refuses to bless you more, for now, in respects to", tStDeity.c_str());
+    } else
+      strcpy(tString, "feel you have all the control you can currently have over");
+
+    if (!silent)
+      sendTo(COLOR_BASIC, "<c>You %s %s.<z>\n\r", tString, discArray[sknum]->name);
   }
 
   return TRUE;

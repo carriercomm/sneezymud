@@ -939,14 +939,81 @@ int TBeing::doPray(const char *argument)
   return FALSE;
 }
 
-// returns DELETE_THIS
-int TBeing::doCast(const char *argument)
+spellNumT TBeing::parseSpellNum(char *arg)
 {
-  char arg[256];
   char *n;
   int spaces = 0;
   char kludge[256];
 
+  while (isspace(*arg))
+    strcpy(arg, &arg[1]);
+
+  if (!*arg) {
+    badCastSyntax(this, TYPE_UNDEFINED);
+    sendTo("You do NOT need to include ''s around <spell name>.\n\r");
+    return TYPE_UNDEFINED;
+  }
+  for (n = arg; *n; n++) {
+    if (isspace(*n))
+      spaces++;
+  }
+  n--;
+  while (isspace(*n)) {
+    *n = '\0';
+    spaces--;
+    n--;
+  }
+  one_argument(arg, kludge);
+  if (isname(kludge, "telepathy")) {
+    strcpy(arg, one_argument(arg, kludge));
+    if (!doesKnowSkill(SPELL_TELEPATHY)) {
+      sendTo("You don't know that spell!\n\r");
+      return TYPE_UNDEFINED;
+    }
+    return SPELL_TELEPATHY;
+  }
+  spellNumT which;
+  if (((which = searchForSpellNum(arg, EXACT_YES)) > TYPE_UNDEFINED) ||
+      ((which = searchForSpellNum(arg, EXACT_NO)) > TYPE_UNDEFINED)) {
+    if (discArray[which]->typ != SPELL_MAGE && discArray[which]->typ != SPELL_SHAMAN) {
+      sendTo("That's not a magic spell!\n\r");
+      return TYPE_UNDEFINED;
+    }
+    if (!doesKnowSkill(getSkillNum(which))) {
+      sendTo("You don't know that spell!\n\r");
+      return TYPE_UNDEFINED;
+    }
+    *arg = '\0';
+    return which;
+  } else {
+    if (!spaces) 
+      n = arg;
+    else {
+      // Parse back until we hit our space
+      for (; !isspace(*n); n--);
+      *n = '\0';
+      n++;
+    }
+    if (((which = searchForSpellNum(arg, EXACT_YES)) <= TYPE_UNDEFINED) && 
+        ((which = searchForSpellNum(arg, EXACT_NO)) <= TYPE_UNDEFINED)) {
+      sendTo("No such spell exists.\n\r");
+      return TYPE_UNDEFINED;
+    }
+    if (discArray[which]->typ != SPELL_MAGE && discArray[which]->typ != SPELL_SHAMAN) {
+      sendTo("That's not a magic spell!\n\r");
+      return TYPE_UNDEFINED;
+    }
+    if (!doesKnowSkill(getSkillNum(which))) {
+      sendTo("You don't know that spell!\n\r");
+      return TYPE_UNDEFINED;
+    }
+    strcpy(arg,n);
+    return which;
+  }
+}
+
+int TBeing::preCastCheck()
+{
   if (!isPc() && !desc)
     return FALSE;
 
@@ -983,136 +1050,38 @@ int TBeing::doCast(const char *argument)
     sendTo("You're too busy.\n\r");
     return FALSE;
   }
-  
-  strcpy(arg, argument);
-
-  // Eat spaces off the end and off the beginning
-  while (isspace(*arg))
-    strcpy(arg, &arg[1]);
-
-  if (!*arg) {
-    badCastSyntax(this, TYPE_UNDEFINED);
-    sendTo("You do NOT need to include ''s around <spell name>.\n\r");
-    return FALSE;
-  }
-  for (n = arg; *n; n++) {
-    if (isspace(*n))
-      spaces++;
-  }
-  n--;
-  while (isspace(*n)) {
-    *n = '\0';
-    spaces--;
-    n--;
-  }
-  one_argument(arg, kludge);
-  if (isname(kludge, "telepathy")) {
-    strcpy(arg, one_argument(arg, kludge));
-    if (!doesKnowSkill(SPELL_TELEPATHY)) {
-      sendTo("You don't know that spell!\n\r");
-      return FALSE;
-    }
-    return doDiscipline(SPELL_TELEPATHY, arg);
-  }
-  spellNumT which;
-  if (((which = searchForSpellNum(arg, EXACT_YES)) > TYPE_UNDEFINED) ||
-      ((which = searchForSpellNum(arg, EXACT_NO)) > TYPE_UNDEFINED)) {
-    if (discArray[which]->typ != SPELL_MAGE && discArray[which]->typ != SPELL_SHAMAN) {
-      sendTo("That's not a magic spell!\n\r");
-      return FALSE;
-    }
-    if (!doesKnowSkill(getSkillNum(which))) {
-      sendTo("You don't know that spell!\n\r");
-      return FALSE;
-    }
-    return doDiscipline(which, "");
-  } else {
-    if (!spaces) 
-      n = arg;
-    else {
-      // Parse back until we hit our space
-      for (; !isspace(*n); n--);
-      *n = '\0';
-      n++;
-    }
-    if (((which = searchForSpellNum(arg, EXACT_YES)) <= TYPE_UNDEFINED) && 
-        ((which = searchForSpellNum(arg, EXACT_NO)) <= TYPE_UNDEFINED)) {
-      sendTo("No such spell exists.\n\r");
-      return FALSE;
-    }
-    if (discArray[which]->typ != SPELL_MAGE && discArray[which]->typ != SPELL_SHAMAN) {
-      sendTo("That's not a magic spell!\n\r");
-      return FALSE;
-    }
-    if (!doesKnowSkill(getSkillNum(which))) {
-      sendTo("You don't know that spell!\n\r");
-      return FALSE;
-    }
-    return doDiscipline(which, n);
-  }
-  return FALSE;
+  return TRUE;
 }
 
 // returns DELETE_THIS
-int TBeing::doDiscipline(spellNumT which, const char *n)
+int TBeing::doCast(const char *argument)
 {
+  char arg[256];
+  spellNumT which;
+
+  if(!preCastCheck())
+    return FALSE;
+  
+  strcpy(arg, argument);
+
+  if((which=parseSpellNum(arg))==TYPE_UNDEFINED)
+    return FALSE;
+
+  return doDiscipline(which, arg);
+}
+
+// finds the target indicated in n, for spell which and sets ret to it
+int TBeing::parseTarget(spellNumT which, char *n, TThing **ret)
+{
+  TBeing *ch;
   TObj *o;
   TThing *t;
-  TBeing *ch = NULL;
   bool ok;
-  int rc = 0;
-
-  if (!discArray[which]) {
-    vlogf(LOG_BUG, "doDiscipline called with null discArray[] (%d) (%s)", which, getName());
-    return FALSE;
-  }
-
-  if (which <= TYPE_UNDEFINED) {
-    // unknown spell, so make very generic
-    if (ch) {
-      ch->sendTo("Syntax : cast/pray <spell name> <argument>\n\r");
-      ch->sendTo("See the CAST/PRAY help file for more details!\n\r");
-    }
-    return FALSE;
-  }
-
-  bool cast = (getSpellType(discArray[which]->typ) == SPELL_CASTER);
-
-  if (isCombatMode(ATTACK_BERSERK)) {
-    sendTo("You can't do that while berserking!\n\r");
-    return FALSE;
-  }
-  if ((discArray[which]->minPosition >= POSITION_CRAWLING) && fight()) {
-    sendTo("You can't concentrate enough while fighting!\n\r");
-    return FALSE;
-  } else if (getPosition() < discArray[which]->minPosition) {
-    switch (getPosition()) {
-      case POSITION_SLEEPING:
-        sendTo("You can't do that while sleeping.\n\r");
-        break;
-      case POSITION_RESTING:
-        sendTo("You can't do that while resting.\n\r");
-        break;
-      case POSITION_SITTING:
-        sendTo("You can't do that while sitting.\n\r");
-        break;
-      case POSITION_CRAWLING:
-        sendTo("You can't do that while crawling.\n\r");
-        break;
-      default:
-        sendTo("You can't do that while unconscious.\n\r");
-        break;
-    }
-    return FALSE;
-  }
 
   ok = FALSE;
   ch = NULL;
   o = NULL;
-
-  if ((discArray[which]->targets & TAR_VIOLENT) && 
-      checkPeaceful("Violent disciplines are not allowed here!\n\r"))
-    return FALSE;
+  bool cast = (getSpellType(discArray[which]->typ) == SPELL_CASTER);
 
   if (*n) {
     if (IS_SET(discArray[which]->targets, TAR_CHAR_ROOM)) {
@@ -1154,7 +1123,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
             sendTo("You seem unable to cast your spell due to the immense crowd in the room.\n\r");
           ok = FALSE;
         }
-      } 
+      }
     }
     if (!ok && (discArray[which]->targets & TAR_CHAR_VIS_WORLD) || (discArray[which]->targets & TAR_CHAR_WORLD)) {
       if ((ch = get_pc_world(this, n, EXACT_YES, INFRA_NO, (discArray[which]->targets & TAR_CHAR_VIS_WORLD))) ||
@@ -1256,6 +1225,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       ok = TRUE;
     }
   }
+
   if (!ok) {
     if (*n) {
       if ((discArray[which]->targets & TAR_CHAR_VIS_WORLD) || (discArray[which]->targets & TAR_CHAR_WORLD))
@@ -1276,6 +1246,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       badCastSyntax(this, which);
     }
     return FALSE;
+
   } else {
     if ((ch == this) && (discArray[which]->targets & TAR_SELF_NONO)) {
       if (!cast)
@@ -1295,6 +1266,48 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       return FALSE;
     }
   }
+
+  if(ch) *ret=(TThing *) ch;
+  else if (o) *ret=(TThing *) o;
+  else return FALSE;
+
+  return TRUE;
+}
+
+int TBeing::preDiscCheck(spellNumT which)
+{
+  if (isCombatMode(ATTACK_BERSERK)) {
+    sendTo("You can't do that while berserking!\n\r");
+    return FALSE;
+  }
+  if ((discArray[which]->minPosition >= POSITION_CRAWLING) && fight()) {
+    sendTo("You can't concentrate enough while fighting!\n\r");
+    return FALSE;
+  } else if (getPosition() < discArray[which]->minPosition) {
+    switch (getPosition()) {
+      case POSITION_SLEEPING:
+        sendTo("You can't do that while sleeping.\n\r");
+        break;
+      case POSITION_RESTING:
+        sendTo("You can't do that while resting.\n\r");
+        break;
+      case POSITION_SITTING:
+        sendTo("You can't do that while sitting.\n\r");
+        break;
+      case POSITION_CRAWLING:
+        sendTo("You can't do that while crawling.\n\r");
+        break;
+      default:
+        sendTo("You can't do that while unconscious.\n\r");
+        break;
+    }
+    return FALSE;
+  }
+
+  if ((discArray[which]->targets & TAR_VIOLENT) && 
+      checkPeaceful("Violent disciplines are not allowed here!\n\r"))
+    return FALSE;
+
   if (isPc() && !isImmortal()) {
     if (discArray[which]->minMana) {
       if (!preflight_mana(this, which)) {
@@ -1308,6 +1321,39 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       }
     }
   }
+  return TRUE;
+}
+
+
+// returns DELETE_THIS
+int TBeing::doDiscipline(spellNumT which, const char *n)
+{
+  TObj *o = NULL; 
+  TThing *t = NULL;
+  TBeing *ch = NULL;
+  int rc = 0;
+  char arg[256];
+
+  if (!discArray[which]) {
+    vlogf(LOG_BUG, "doDiscipline called with null discArray[] (%d) (%s)", which, getName());
+    return FALSE;
+  }
+
+  if (which <= TYPE_UNDEFINED) 
+    return FALSE;
+
+  if(!preDiscCheck(which))
+    return FALSE;
+
+  strcpy(arg, n);
+  if(!parseTarget(which, arg, &t))
+    return FALSE;
+
+  if(!(ch=dynamic_cast<TBeing *>(t)) &&
+     !(o=dynamic_cast<TObj *>(t)))
+    // uhh I don't think this should happen
+    return FALSE;
+
 #if 0
 // COSMO CASTING MARKER
 // check if this is right

@@ -2,65 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: statistics.cc,v $
-// Revision 5.1.1.2  1999/10/18 19:51:27  peel
-// Fixed a bunch of random compile bugs.  Where did these come from?
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.13  1999/10/14 03:04:51  batopr
-// Added self-adjustment of the global equipment load factor
-//
-// Revision 1.12  1999/10/14 02:28:46  batopr
-// *** empty log message ***
-//
-// Revision 1.11  1999/10/14 00:56:47  batopr
-// *** empty log message ***
-//
-// Revision 1.10  1999/10/14 00:48:50  batopr
-// minor fix
-//
-// Revision 1.9  1999/10/14 00:38:21  batopr
-// Added the saving/loading of stats.equip from file
-//
-// Revision 1.8  1999/10/12 17:06:21  batopr
-// Change gold to need 5M (from 2M) before shifting
-//
-// Revision 1.7  1999/10/12 01:12:45  batopr
-// Corrected shop stuff to exclude pets
-//
-// Revision 1.6  1999/10/07 17:39:38  batopr
-// typo fix
-//
-// Revision 1.5  1999/10/07 16:00:58  batopr
-// Shifted some gold statistics stuff to functions
-//
-// Revision 1.4  1999/10/06 23:46:50  batopr
-// Boosted target profit ratio to 2% (from 1%) for PCs
-//
-// Revision 1.3  1999/09/22 19:05:50  cosmo
-// Took out peels .3 cap on GOLD_INCOME, just made the mud not modify for it in
-// monster.cc. so it will still float but wont be used till we evaluate it
-//
-// Revision 1.2  1999/09/22 17:48:22  peel
-// Put a floor on gold_modifier[GOLD_INCOME] of .3, temporary economy 'fix'
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
-//
 //  Statisitics for the gaming system - SneezyMUD
-//
-//  Original revision - Jan 14, 1994
 //
 //////////////////////////////////////////////////////////////////////
 

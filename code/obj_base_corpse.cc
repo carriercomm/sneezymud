@@ -10,7 +10,7 @@
 #include "stdsneezy.h"
 
 TBaseCorpse::TBaseCorpse() :
-  TContainer(),
+  TBaseContainer(),
   corpse_flags(0),
   corpse_race(RACE_NORACE),
   corpse_level(0),
@@ -20,7 +20,7 @@ TBaseCorpse::TBaseCorpse() :
 }
 
 TBaseCorpse::TBaseCorpse(const TBaseCorpse &a) :
-  TContainer(a),
+  TBaseContainer(a),
   corpse_flags(a.corpse_flags),
   corpse_race(a.corpse_race),
   corpse_level(a.corpse_level),
@@ -32,7 +32,7 @@ TBaseCorpse::TBaseCorpse(const TBaseCorpse &a) :
 TBaseCorpse & TBaseCorpse::operator=(const TBaseCorpse &a)
 {
   if (this == &a) return *this;
-  TContainer::operator=(a);
+  TBaseContainer::operator=(a);
   corpse_flags = a.corpse_flags;
   corpse_race = a.corpse_race;
   corpse_level = a.corpse_level;

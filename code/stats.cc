@@ -880,6 +880,12 @@ int TBeing::getStat(statSetT fromSet, statTypeT whichStat) const
       amount += territory_adjustment(player.hometerrain, whichStat);
 
       return amount;
+    case(STAT_RACE):
+      return race->baseStats.get(whichStat);
+    case(STAT_AGE):
+      return age_mod_for_stat((age()->year - getBaseAge() + 17), whichStat);
+    case(STAT_TERRITORY):
+      return territory_adjustment(player.hometerrain, whichStat);
   }
   return 0;
 }
@@ -894,6 +900,9 @@ int TBeing::setStat(statSetT whichSet, statTypeT whichStat, int value)
       return 0;
     case(STAT_CURRENT):
       return curStats.set(whichStat,value);
+    case(STAT_RACE): case(STAT_AGE): case(STAT_TERRITORY):
+      vlogf(LOG_BUG, "something tried to set STAT_RACE, STAT_AGE or STAT_TERRITORY");
+      return 0;
   }
   return 0;
 }
@@ -908,6 +917,9 @@ int TBeing::addToStat(statSetT whichSet, statTypeT whichStat, int modifier)
     return 0;
   case(STAT_CURRENT):
     return curStats.add(whichStat,modifier);
+    case(STAT_RACE): case(STAT_AGE): case(STAT_TERRITORY):
+      vlogf(LOG_BUG, "something tried to add to STAT_RACE, STAT_AGE or STAT_TERRITORY");
+      return 0;
   }
   return 0;
 }

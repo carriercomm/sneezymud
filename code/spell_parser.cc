@@ -1382,6 +1382,12 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
   your_deity_val = which;
   inPraying = TRUE; 
 
+  if(spellstore.storing){
+    spellstore.spelltask=spelltask;
+    spelltask=NULL;
+    return TRUE;
+  }
+
   switch(which) {
     case SPELL_GUST:
       rc = gust(this,ch);

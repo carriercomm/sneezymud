@@ -1077,8 +1077,7 @@ void TMonster::aiGrowl(const TBeing *tar) const
       }
     }
     return;
-  }
-  if (getRace() == RACE_CANINE) {
+  } else if (getRace() == RACE_CANINE) {
     soundNumT snd = pickRandSound(SOUND_DOGBARK_1, SOUND_DOGBARK_2);
     roomp->playsound(snd, SOUND_TYPE_NOISE);
     if (tar) {
@@ -1103,20 +1102,67 @@ void TMonster::aiGrowl(const TBeing *tar) const
       }
     }
     return;
-  }
-
-  // generic case
-  if (tar) {
-    act("$n growls at $N.",TRUE,this,0,tar,TO_ROOM);
+  } else if (getRace() == RACE_BIRD) {
+    if (tar) {
+      int tmp = ::number(0,5);
+      switch(tmp) {
+        case 0:
+          act("$n squawks noisily at $N.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+        case 1:
+          act("$n squawks angrily at $N.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+        case 2:
+          act("$n chirps noisily at $N.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+        case 3:
+          act("$n chirps angrily at $N, and flaps $s wings menicingly.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+        case 4:
+          act("$n chirps noisily at $N, and flaps $s wings menicingly.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+        case 5:
+          act("$n chirps angrily at $N.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+      }
+    } else {
+      int tmp = ::number(0,5);
+      switch(tmp) {
+        case 0:
+          act("$n squawks noisily.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+        case 1:
+          act("$n squawks angrily.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+        case 2:
+          act("$n chirps noisily.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+        case 3:
+          act("$n chirps angrily.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+        case 4:
+          act("$n chirps noisily, and flaps $s wings meanicingly.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+        case 5:
+          act("$n chirps angrily, and flaps $s wings meanicingly.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+      }
+    }
+    return;
   } else {
-    int tmp = ::number(0,1);
-    switch (tmp) {
-      case 0:
-        act("$n growls angrily!", FALSE, this, 0, 0, TO_ROOM);
-        return;
-      case 1:
-        act("$n growls impatiently!", FALSE, this, 0, 0, TO_ROOM);
-        return;
+    // generic case
+    if (tar) {
+      act("$n growls at $N.",TRUE,this,0,tar,TO_ROOM);
+    } else {
+      int tmp = ::number(0,1);
+      switch (tmp) {
+        case 0:
+          act("$n growls angrily!", FALSE, this, 0, 0, TO_ROOM);
+          return;
+        case 1:
+          act("$n growls impatiently!", FALSE, this, 0, 0, TO_ROOM);
+          return;
+      }
     }
   }
 }

@@ -625,7 +625,7 @@ const char * const extra_bits[] =
   "Magic",
   "Nodrop",
   "Bless",
-  "Martial Weapon",
+  "*Do Not Use*",
   "Hover",
   "Rusty",
   "Anti-CLERIC",
@@ -641,9 +641,9 @@ const char * const extra_bits[] =
   "Float",
   "No purge",
   "Newbie",
-  "", // now unused
-  "", // now unused
-  "", // now unused
+  "*Do Not Use*", // now unused
+  "*Do Not Use*", // now unused
+  "*Do Not Use*", // now unused
   "Item Attached",
   "Burning",
   "Charred",

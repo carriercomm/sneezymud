@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spell_info.cc,v $
+// Revision 5.1.1.2  1999/12/26 21:11:41  lapsos
+// Upped range prof learn rate
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1088,7 +1091,7 @@ discArray[SPELL_RESURRECTION] = new spellInfo(SPELL_SHAMAN, DISC_SHAMAN, DISC_UN
 
   discArray[SKILL_SLASH_PROF] = new spellInfo(SKILL_GENERAL, DISC_COMBAT, DISC_COMBAT, "slash proficiency", TASK_NORMAL, LAG_0, POSITION_DEAD, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "", "", "", "", START_1, LEARN_1, START_DO_1, LEARN_DO_1, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_UNUSUAL, 0.0, 0, 0);
 
-  discArray[SKILL_BOW] = new spellInfo(SKILL_GENERAL, DISC_COMBAT, DISC_COMBAT, "ranged proficiency", TASK_NORMAL, LAG_0, POSITION_DEAD, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "", "", "", "", START_51, LEARN_3, START_DO_1, LEARN_DO_3, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_UNUSUAL, 0.0, 0, 0);
+  discArray[SKILL_BOW] = new spellInfo(SKILL_GENERAL, DISC_COMBAT, DISC_COMBAT, "ranged proficiency", TASK_NORMAL, LAG_0, POSITION_DEAD, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "", "", "", "", START_51, LEARN_3, START_DO_1, LEARN_DO_5, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_UNUSUAL, 0.0, 0, 0);
 
   discArray[SKILL_PIERCE_PROF] = new spellInfo(SKILL_GENERAL, DISC_COMBAT, DISC_COMBAT, "pierce proficiency", TASK_NORMAL, LAG_0, POSITION_DEAD, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "", "", "", "", START_1, LEARN_1, START_DO_1, LEARN_DO_1, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_UNUSUAL, 0.0, 0, 0);
 

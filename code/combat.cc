@@ -3366,7 +3366,9 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
     if (!IS_SET_DELETE(mess_sent, ONEHIT_MESS_CRIT_S) &&
         vict->awake()) {
       if (monkDodge(vict, weapon, &dam, w_type, part_hit))
-        mess_sent |= ONEHIT_MESS_MONK;
+        mess_sent |= ONEHIT_MESS_DODGE;
+      else if (thiefDodge(vict, weapon, &dam, w_type, part_hit))
+	mess_sent |= ONEHIT_MESS_DODGE;
     }
     loseSneak();
 

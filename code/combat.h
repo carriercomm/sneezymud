@@ -12,7 +12,7 @@
 // these ONEHIT_MESS may be used with DELETE's, use caution!
 const int ONEHIT_MESS_CRIT_S    = (1<<0);
 const int ONEHIT_MESS_LIMB      = (1<<1);
-const int ONEHIT_MESS_MONK      = (1<<2);
+const int ONEHIT_MESS_DODGE     = (1<<2);
 
 const int MAX_NPC_CORPSE_TIME = 5;
 const int MAX_PC_CORPSE_EMPTY_TIME = 10;

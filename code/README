@@ -103,6 +103,9 @@
   to players whom have linkbags to let them know it is there.
 - Fixed the bug that popped up with my fix to prevent attacking with full
   hands.
+- Changed the Cheating log to not report on things which have a value of
+  100 or less or are not rentable.  Most of the stuff that falls in this
+  area is pointless and shouldn't be reported.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

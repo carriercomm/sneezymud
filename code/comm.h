@@ -56,14 +56,14 @@ const int PULSE_NOISES      =ONE_SECOND * 12;
 // Altering PULSE_UPDATES will speed up ticks, but also causes "mud time"
 // to totally recalculate (making it shorter will age people).
 // use caution!
-const int PULSE_UPDATES     =ONE_SECOND * 36;
-const int PULSE_TICKS       =PULSE_UPDATES * 4;
+const int PULSE_UPDATE      =ONE_SECOND * 36;
+const int PULSE_MUDHOUR     =PULSE_UPDATE * 4;
 
-// this "hour" is really the number of seconds between "partial-tick calls"
-const int SECS_PER_MUD_HOUR  = PULSE_UPDATES/ONE_SECOND;
+const int SECS_PER_UPDATE  = PULSE_UPDATE/ONE_SECOND;
+const int SECS_PER_MUDHOUR  = PULSE_MUDHOUR/ONE_SECOND;
 
 // currently, there are 4 partial calls per hour
-const int SECS_PER_MUD_DAY   = (24*SECS_PER_MUD_HOUR * 4);
+const int SECS_PER_MUD_DAY   = (24*SECS_PER_MUDHOUR);
 const int SECS_PER_MUD_MONTH = (28*SECS_PER_MUD_DAY);
 const int SECS_PER_MUD_YEAR  = (12*SECS_PER_MUD_MONTH);
 
@@ -71,7 +71,8 @@ const int SECS_PER_MUD_YEAR  = (12*SECS_PER_MUD_MONTH);
 // this will tell us how many combat-calls needed to simulate a "tick"
 // The reason for this is that we sometimes want to say "it takes a mud-hour"
 // and the mud-hour must be represented as a number of combat-pulse calls
-const int UPDATES_PER_TICK    = (PULSE_TICKS/PULSE_COMBAT);
+const int UPDATES_PER_TICK = (PULSE_UPDATE/PULSE_COMBAT);
+const int UPDATES_PER_MUDHOUR = (PULSE_MUDHOUR/PULSE_COMBAT);
 
 extern const char * const prompt_mesg[];
 extern void signalSetup(void);

@@ -1,23 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: mob_loader.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //   SneezyMUD           (c) 1993 SneezyMUD Coding Team.   All Rights Reserved.
 //
 //   mob_loader.cc : loader functions for mobs
@@ -335,7 +317,8 @@ bool isMobComponentSeller(int comp, int mvn)
 void TMonster::mageComponentLoader(void)
 {
   int wealth = getMoney();
-  TObj *obj, *bag;
+  TObj *obj,
+       *bag = NULL;
   int num = -1, iters = 0;
   spellNumT spell;
   int comp = 0;

@@ -614,7 +614,7 @@ int TBeing::pourWaterOnMe(TBeing *ch, TObj *sObj)
   TDrinkCon *dContainer;
 
   if (!(dContainer = dynamic_cast<TDrinkCon *>(sObj)))
-    return false; // let doPour continue it's run, we don't do this.
+    return false; // let doPour continue its run, we don't do this.
 
   if ((size = dContainer->getDrinkUnits()) <= 0) {
     ch->sendTo("I'm afraid that container is empty.\n\r");

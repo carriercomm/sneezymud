@@ -491,9 +491,8 @@ int summon(TBeing * caster, TBeing * victim, int level, byte bKnown)
    *
    * The higher the result, the harder it is to summon
    */
-  if (tmon && !caster->isImmortal()) {
-    int tDiff = ((50 - min((short) 50, mob_index[tmon->getMobIndex()].max_exist)) +
-                 (caster->GetMaxLevel() - victim->GetMaxLevel()));
+  if (tmon && !caster->isImmortal() && mob_index[tmon->getMobIndex()].max_exist < 10) {
+    int tDiff = ((50 - min((short) 10, mob_index[tmon->getMobIndex()].max_exist)) + (caster->GetMaxLevel() - victim->GetMaxLevel()));
 
     if ((tDiff > 0) && ::number(0, tDiff) &&
         (!tmon->master || !tmon->isAffected(AFF_CHARM) ||

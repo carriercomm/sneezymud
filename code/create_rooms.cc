@@ -2603,13 +2603,13 @@ static void DeleteExit(TRoom *rp, TBeing *ch, const char *arg, editorEnterTypeT 
       update_room_menu(ch);
       return;
     }
-  }
-  update = atoi(arg);
-  update--;
-  if (update < MIN_DIR || update >= MAX_DIR)
-    return; 
 
-  if (type != ENTER_CHECK) {
+    update = atoi(arg);
+    update--;
+
+    if (update < MIN_DIR || update >= MAX_DIR)
+      return; 
+
     if (rp->dir_option[update]) {
       rp->dir_option[update] = 0;
       delete rp->dir_option[update];
@@ -2622,6 +2622,8 @@ static void DeleteExit(TRoom *rp, TBeing *ch, const char *arg, editorEnterTypeT 
       ch->sendTo("Enter another direction, or press <ENTER> to exit.\n\r");
       return;
     }
+
+    return;
   }
   ch->sendTo(VT_HOMECLR);
   ch->describeWeather(ch->in_room);

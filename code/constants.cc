@@ -1338,8 +1338,9 @@ const struct material_type_numbers material_nums[200] =
   {0, 47, 0, 3, 47, 101, 101, 0, 35, 1, 1, 0, 70,   0,   0, repairMetal,"Tungstan"},
   {0, 50, 0, 20, 65, 101, 101, 0, 10, 1, 1, 0, 70,   0,   0, repairMetal,"Admintite"},
   {0, 25, 0,  0, 50,   0,  25, 0, 10, 1, 0, 0, 89,   0,   0, repairMetal, "Terbium"},
-  {0, 80, 5, 30, 43, 5, 5, 0, 34, 1, 1, 0, 70,   0,   0, NULL,"Elven Mail"},
-  {0, 65, 10, 40, 40, 5, 5, 0, 34, 1, 1, 0, 70,   0,   0, NULL,"Elven Steel"},
+  {0, 40, 0, 0,  65, 101, 101, 0, 23, 1, 1, 0, 50,   0,   0, repairMetal,"Mithril"},
+  {0, 45, 0, 0,  63, 101, 101, 0, 33, 1, 1, 0, 70,   0,   0, repairMetal,"Steel"},
+  //these previous two types are duplicates, of previous metals. Smile and nod.
   {0, 0, 0, 0, 55, 0, 0, 0, 0, 1, 0, 0, 0,   0,   0, NULL,""},
 // slash susc, blunt susc, fire susc, pierce susc,
 // hardness, water susc, fall susc, float weight, noise, vol_mult, conduct

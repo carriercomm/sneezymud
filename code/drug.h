@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: drug.h,v $
+// Revision 5.1.1.3  2000/02/16 20:07:41  peel
+// many changes
+//
 // Revision 5.1.1.2  2000/01/31 23:29:27  peel
 // added applyDrugAffects prototype
 //
@@ -61,6 +64,6 @@ class drugData {
 
 
 void applyDrugAffects(TBeing *, drugTypeT, bool);
-
+void applyAddictionAffects(TBeing *, drugTypeT, int);
 
 #endif

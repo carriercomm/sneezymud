@@ -57,6 +57,7 @@
 #include "body.h"
 #include "race.h"
 #include "skills.h"
+#include "disease.h"
 #include "trap.h"
 #include "task.h"
 #include "weather.h"

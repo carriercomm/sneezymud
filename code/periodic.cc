@@ -2,47 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: periodic.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.9  1999/10/07 03:53:16  batopr
-// *** empty log message ***
-//
-// Revision 1.8  1999/10/07 03:25:44  batopr
-// *** empty log message ***
-//
-// Revision 1.7  1999/09/29 07:46:14  lapsos
-// Added code for the Mobile Strings stuff.
-//
-// Revision 1.6  1999/09/26 17:04:13  lapsos
-// Fixed problem with elementals not draining mana from enthral.
-//
-// Revision 1.5  1999/09/22 17:08:49  peel
-// Minor changes to smoke
-//
-// Revision 1.4  1999/09/17 06:36:23  peel
-// changed burn message frequency
-//
-// Revision 1.3  1999/09/17 06:23:35  peel
-// tidied up soome of the burning code
-//
-// Revision 1.2  1999/09/17 04:53:59  peel
-// Added smoke clouds to burning things
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//  
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      periodic.cc : functions that are called periodically by the game
 //  
 ///////////////////////////////////////////////////////////////////////////
@@ -758,7 +717,7 @@ int TBeing::updateHalfTickStuff()
   int loadRoom = 0;
   int vnum = mobVnum();
   affectedData *af;
-  int berserk_noheal=0;
+  bool berserk_noheal=0;
   TBeing *trider=NULL;
 
   if (isAffected(AFF_SLEEP) && (getPosition() > POSITION_SLEEPING)) {

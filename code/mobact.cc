@@ -12,10 +12,6 @@
 #include "statistics.h"
 #include "components.h"
 
-// Change this to increase or decrease the chance of mobs moving about
-// each check.
-#define DEF_MOBILE_WANDER_CHANCE 10
-
 // returns DELETE_THIS if this has to be deleted
 int TMonster::mobileGuardian()
 {
@@ -2684,6 +2680,10 @@ int TMonster::notFightingMove(int pulse)
   }
 
   if (!IS_SET(specials.act, ACT_SENTINEL)) {
+    // Change this to increase or decrease the chance of mobs moving about
+    // each check.
+    const int DEF_MOBILE_WANDER_CHANCE = 10;
+    
     if (!::number(0,DEF_MOBILE_WANDER_CHANCE)) {
       rc = wanderAround();
       if (IS_SET_DELETE(rc, DELETE_THIS))

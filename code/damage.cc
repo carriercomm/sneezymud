@@ -576,7 +576,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 	  if(this!=v){
 	    affectedData aff;
 	    aff.type = AFFECT_PLAYERKILL;
-	    aff.duration = 12 * UPDATES_PER_TICK;
+	    aff.duration = 24 * UPDATES_PER_TICK;
 	    affectTo(&aff);
 	  }
         }

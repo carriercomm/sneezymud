@@ -162,10 +162,25 @@ int TThing::dropSmoke(int amt)
 
   if (!smoke) {
     // create new smoke
+#if 1
+// builder port uses stripped down database which was causing problems
+// hence this setup instead.
+    int robj = real_object(GENERIC_SMOKE);
+    if (robj < 0 || robj >= (signed int) obj_index.size()) {
+      vlogf(LOG_BUG, "dropSmoke(): No object (%d) in database!", GENERIC_SMOKE);
+      return false;
+    }
+
+    if (!(obj = read_object(robj, REAL))) {
+      vlogf(LOG_LOW, "Error, No GENERIC_SMOKE  (%d)", GENERIC_SMOKE);
+      return FALSE;
+    }
+#else
     if (!(obj = read_object(GENERIC_SMOKE, VIRTUAL))) {
       vlogf(LOG_LOW, "Error, No GENERIC_SMOKE  (%d)", GENERIC_SMOKE);
       return FALSE;
     }
+#endif
     if (!(smoke = dynamic_cast<TSmoke *>(obj))) {
       vlogf(LOG_BUG, "Error, unable to cast object to smoke: smoke.cc:TThing::dropSmoke");
       return FALSE;

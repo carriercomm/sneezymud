@@ -534,7 +534,9 @@ enum logTypeT
   LOG_BRUTIUS = 25, // Brutius only logs
   LOG_COSMO   = 26, // Cosmo only logs
   LOG_LAPSOS  = 27, // Lapsos only logs
-  LOG_PEEL    = 28  // Peel only logs
+  LOG_PEEL    = 28,  // Peel only logs
+  LOG_JESUS   = 29,  // Jesus only
+  LOG_DASH    = 30  // Dash only
 };
 
 enum checkFallingT

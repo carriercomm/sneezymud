@@ -495,6 +495,10 @@ int TBeing::doGarrotte(const char * argument, TBeing *vict)
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
+  if (victim->isImmortal()) {
+    sendTo("Sorry....that shit don't fly anymore.\n\r");
+    return FALSE;
+  }
   if (victim->isUndead()) {
     sendTo("You can't garrotte the undead.\n\r");
     return FALSE;

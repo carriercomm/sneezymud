@@ -639,15 +639,10 @@ if (version >= 7 ||
 
 static bool shouldRecycle(int robj)
 {
-#if 0
-  // nuke based on total number available
+  // nuke only if item is highly-limited and at its max
   return (obj_index[robj].max_exist &&
-          obj_index[robj].max_exist <= MIN_EXIST_IMMORTAL);
-#else
-  // nuke only if item is at its max
-  return (obj_index[robj].max_exist &&
+          obj_index[robj].max_exist <= MIN_EXIST_IMMORTAL &&
           obj_index[robj].number >= obj_index[robj].max_exist);
-#endif
 }
 
 static bool immortalityNukeCheck(TBeing *ch, TObj * new_obj, bool corpse)

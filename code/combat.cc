@@ -1442,7 +1442,7 @@ int TBeing::extraDam(const TBeing *vict, const TBaseWeapon *weap) const
   return plus;
 }
 
-static int getMonkWeaponDam(const TBeing *ch, const TBeing *v, bool isprimary, int rollDam)
+static int getMonkWeaponDam(const TBeing *ch, const TBeing *v, primaryTypeT isprimary, int rollDam)
 {
   int wepDam;
 
@@ -1523,7 +1523,7 @@ static int getMonkWeaponDam(const TBeing *ch, const TBeing *v, bool isprimary, i
 // Please note that these numbers are NOT arbitrary, but are part of the
 // balance discussion, so do not change them lightly !!!!
 // -Batopr 12/12/98
-int TBeing::getWeaponDam(const TBeing *v, const TThing *wielded, bool isprimary) const
+int TBeing::getWeaponDam(const TBeing *v, const TThing *wielded, primaryTypeT isprimary) const
 {
   int bonusDam = 0;
   int rollDam = 0;
@@ -2987,7 +2987,7 @@ bool TBeing::invalidTarget(const TBeing *target) const
 
 // canAttack() checks for "per attack" conditions where the person attacking
 // is unable to. Reasons include combat lag and effects of limb damage.
-bool TBeing::canAttack(bool isprimary)
+bool TBeing::canAttack(primaryTypeT isprimary)
 {
   // Am I lagged?
   if (checkBusy(NULL)) {
@@ -3105,7 +3105,7 @@ void TBeing::updateStatistics()
 // DELETE_ITEM : weapon is destroyed, delete   (this may be |= with the above)
 // return true if further hits should cease
 // otherwise, returns 0
-int TBeing::oneHit(TBeing *v, bool isprimary, TThing *weapon, int mod, double f)
+int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, double f)
 {
   int dam = 0, result;
   wearSlotT part_hit;

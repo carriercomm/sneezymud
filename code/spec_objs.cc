@@ -3102,41 +3102,41 @@ int squirtGun(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TObj *)
     return FALSE;
   if (((o->equippedBy != ch) && (o->parent != ch)))
     return FALSE;
-Parg = one_argument(Parg, Target);
-if (!(cmd == CMD_SHOOT))
-  return FALSE;
-if (!gun) {
-  vlogf(LOG_PROC, "Squirt Gun proc on an object that isn't a drink container.");
-  return FALSE;
-}
+  Parg = one_argument(Parg, Target);
+  if (!(cmd == CMD_SHOOT))
+    return FALSE;
+  if (!gun) {
+    vlogf(LOG_PROC, "Squirt Gun proc on an object that isn't a drink container.");
+    return FALSE;
+  }
   
-if(gun->getDrinkUnits() < 1) {
-  act("<1>You squeeze the trigger with all your might, but $p appears to be empty.",TRUE,ch,o,vict,TO_CHAR,NULL);  
-  act("<1>$n squeezes the trigger on $s $p, but nothing happens.",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-  return TRUE;
-}
-else {
-  TBeing *squirtee;
-  int bits = generic_find(Target, FIND_CHAR_ROOM, ch, &squirtee, &o);
-  if(!bits) {
-    ch->sendTo("You don't see them here.\n\r");
+  if(gun->getDrinkUnits() < 1) {
+    act("<1>You squeeze the trigger with all your might, but $p appears to be empty.",TRUE,ch,o,vict,TO_CHAR,NULL);  
+    act("<1>$n squeezes the trigger on $s $p, but nothing happens.",TRUE,ch,o,vict,TO_NOTVICT,NULL);
     return TRUE;
-  } else {
-    const char *liqname =DrinkInfo[gun->getDrinkType()]->name;
-    int shot = (::number(1,min(5,gun->getDrinkUnits())));
-    gun->addToDrinkUnits(-shot);
-    ch->dropPool(shot, gun->getDrinkType());
-    
-    /*act("<1>You squeeze the trigger on your $p.",TRUE,ch,gun,squirtee,TO_CHAR,NULL);
-    ch->sendTo(COLOR_OBJECTS, "A deadly stream of %s squirts at %s!\n\r",liqname, squirtee->getName());
-    act("<1>$n squeezes the trigger on $s $p, shooting a deadly stream of liquid at $N!"
+  }
+  else {
+    TBeing *squirtee;
+    int bits = generic_find(Target, FIND_CHAR_ROOM, ch, &squirtee, &o);
+    if(!bits) {
+      ch->sendTo("You don't see them here.\n\r");
+      return TRUE;
+    } else {
+      const char *liqname =DrinkInfo[gun->getDrinkType()]->name;
+      int shot = (::number(1,min(5,gun->getDrinkUnits())));
+      gun->addToDrinkUnits(-shot);
+      ch->dropPool(shot, gun->getDrinkType());
+      
+      /*act("<1>You squeeze the trigger on your $p.",TRUE,ch,gun,squirtee,TO_CHAR,NULL);
+	ch->sendTo(COLOR_OBJECTS, "A deadly stream of %s squirts at %s!\n\r",liqname, squirtee->getName());
+	act("<1>$n squeezes the trigger on $s $p, shooting a deadly stream of liquid at $N!"
 	,TRUE,ch,gun,squirtee,TO_NOTVICT,NULL);
-    
-    act("<1>$n squeezes the trigger on $s $p.",TRUE,ch,gun,squirtee,TO_VICT,NULL);
-    squirtee->sendTo(COLOR_OBJECTS, "A deadly stream of %s squirts at you!\n\r",liqname);
-    */
-    char Buf[256];
-    sprintf(Buf, "You squeeze the trigger on $p, squirting a deadly stream of %s at $N!", liqname);
+	
+	act("<1>$n squeezes the trigger on $s $p.",TRUE,ch,gun,squirtee,TO_VICT,NULL);
+	squirtee->sendTo(COLOR_OBJECTS, "A deadly stream of %s squirts at you!\n\r",liqname);
+      */
+      char Buf[256];
+      sprintf(Buf, "You squeeze the trigger on $p, squirting a deadly stream of %s at $N!", liqname);
     act(Buf, TRUE, ch, gun, squirtee, TO_CHAR);
     sprintf(Buf, "$n squeezes the trigger on $p, squirting a deadly stream of %s at $N!", liqname);
     act(Buf, TRUE, ch, gun, squirtee, TO_NOTVICT);
@@ -3717,8 +3717,10 @@ int lifeLeechGlove(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
   int bits = generic_find(target, FIND_CHAR_ROOM | FIND_OBJ_ROOM, ch, &victim, &corpse);
   if(!bits)
     return FALSE;
-  if(victim == ch) 
+  if(victim == ch) {
     act("Dude... like, no.",TRUE,ch,o,victim,TO_CHAR,NULL);
+    return FALSE;
+  }
 
   if(victim) {
     int chance = 0,roll = 0;

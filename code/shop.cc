@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: shop.cc,v $
+// Revision 5.1.1.2  1999/10/18 18:36:49  batopr
+// fixed compiler warning
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1744,8 +1747,6 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
     load_shop_file(myself, shop_nr);
     return FALSE;
   } else if (cmd == CMD_MOB_VIOLENCE_PEACEFUL) {
-    roomDirData *exitp;
-
     myself->doSay("Hey!  Take it outside.");
     // o is really a being, so downcast, and then bring it back up
     TThing *ttt = o;

@@ -616,7 +616,7 @@ int age_mod_for_stat(int age_num, statTypeT whichStat)
   return 0;
 }
 
-static int territory_adjustment(territoryT ter, statTypeT whichStat)
+int territory_adjustment(territoryT ter, statTypeT whichStat)
 {
   // This function defines how territorial choice affects natural stats.
   // I'm loosely grouping stats into 3 groups

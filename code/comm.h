@@ -54,7 +54,7 @@ const int PULSE_DROWNING    =ONE_SECOND * 9;
 const int PULSE_SPEC_PROCS  =ONE_SECOND * 9;
 const int PULSE_NOISES      =ONE_SECOND * 12;
 const int PULSE_UPDATES     =ONE_SECOND * 36;
-const int PULSE_TICKS       =PULSE_UPDATE * 2;
+const int PULSE_TICKS       =PULSE_UPDATES * 2;
 
 // there are 2 ticks per "hour"
 const int SECS_PER_MUD_HOUR  = PULSE_UPDATES/ONE_SECOND;

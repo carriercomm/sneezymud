@@ -1248,7 +1248,7 @@ class TTrap : public TObj {
   private:
     int trap_level;
     int trap_effect;
-    trap_t trap_dam_type;
+    doorTrapT trap_dam_type;
     int trap_charges;
   public:
     virtual void assignFourValues(int, int, int, int);
@@ -1287,8 +1287,8 @@ class TTrap : public TObj {
     bool isTrapEffectType(unsigned int r);
     void remTrapEffectType(unsigned int r);
     void addTrapEffectType(unsigned int r);
-    trap_t getTrapDamType() const;
-    void setTrapDamType(trap_t r);
+    doorTrapT getTrapDamType() const;
+    void setTrapDamType(doorTrapT r);
     int getTrapCharges() const;
     void setTrapCharges(int r);
     int getTrapDamAmount() const;

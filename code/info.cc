@@ -1579,114 +1579,574 @@ void TBeing::describeAffects(TBeing *ch)
   for (aff = ch->affected; aff; aff = af2) {
     af2 = aff->next;
 
-    if (aff->type == AFFECT_DISEASE) {
-      if (ch == this)
-        sendTo("Disease: '%s'\n\r",
-                DiseaseInfo[affToDisease(*aff)].name);
-    } else if (aff->type == AFFECT_DUMMY) {
-      if (this == ch)
-        sendTo("Dummy Affect: \n\r");
-      else
-        sendTo("Affected : '%s'\t: Time Left : %s %s\n\r",
-               "DUMMY",
-               describeDuration(this, aff->duration).c_str(),
-               (aff->canBeRenewed() ? "(Renewable)" : "(Not Yet Renewable)"));
-    } else if (aff->type == AFFECT_FREE_DEATHS) {
-      sendTo("Free deaths remaining: %d\n\r",
-               aff->modifier);
-    } else if (aff->type == AFFECT_HORSEOWNED) {
-      sendTo("Horseowned:\t Time Left : %s\n\r",
-	     describeDuration(this, aff->duration).c_str());
-    } else if (aff->type == AFFECT_PLAYERKILL) {
-      sendTo("Player Killer:\t Time Left : %s\n\r",
-	     describeDuration(this, aff->duration).c_str());
-    } else if (aff->type == AFFECT_TEST_FIGHT_MOB) {
-      sendTo("Test Fight Mob: %d\n\r",
-               aff->modifier);
-    } else if (aff->type == AFFECT_SKILL_ATTEMPT) {
-      if (isImmortal()) {
-        sendTo("Skill Attempt:(%d) '%s'\t: Time Left : %s\n\r", aff->modifier, (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
-      } else if (aff->modifier != getSkillNum(SKILL_SNEAK)) {
-        sendTo("Skill Attempt: '%s'\t: Time Left : %s\n\r", (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
-      }
-    } else if (aff->type == AFFECT_NEWBIE) {
-      if (this == ch)
-        sendTo("Donation Recipient: \n\r");
-    } else if (aff->type == SKILL_TRACK || aff->type == SKILL_SEEKWATER) {
-      sendTo("Tracking: %s\n\r", (aff->type == SKILL_TRACK ?
-             ch->specials.hunting->getName() : "seeking water"));
-    } else if (aff->type == AFFECT_COMBAT || aff->type == AFFECT_PET) {
-      // no display
-    } else if (aff->type == AFFECT_TRANSFORMED_ARMS) {
-      if (ch == this)
-        sendTo("Affected: Transformed Limb: falcon wings: approx. duration : %s\n\r",
-               describeDuration(this, aff->duration).c_str());
-      else
-        sendTo("Affected: Transformed Limb: falcon wings: \n\r");
-    } else if (aff->type == AFFECT_TRANSFORMED_HANDS) {
-      if (ch == this)
-        sendTo("Affected: Transformed Limb: bear claws: approx. duration : %s\n\r",
-               describeDuration(this, aff->duration).c_str());
-      else
-        sendTo("Affected: Transformed Limb: bear claws \n\r");
-    } else if (aff->type == AFFECT_TRANSFORMED_LEGS) {
-      if (ch == this)
-        sendTo("Affected: Transformed Limb: dolphin tail: approx. duration : %s\n\r",
-               describeDuration(this, aff->duration).c_str());
-      else
-        sendTo("Affected: Transformed Limb: dolphin tail: \n\r");
-    } else if (aff->type == AFFECT_TRANSFORMED_HEAD) {
-      if (ch == this)
-        sendTo("Affected: Transformed Limb: eagle's head: approx. duration : %s\n\r",
-               describeDuration(this, aff->duration).c_str());
-      else
-        sendTo("Affected: Transformed Limb: eagle's head: \n\r");
-    } else if (aff->type == AFFECT_TRANSFORMED_NECK) {
-      if (ch == this)
-        sendTo("Affected: Transformed Limb: fish gills: approx. duration : %s\n\r",
-               describeDuration(this, aff->duration).c_str());
-      else
-        sendTo("Affected: Transformed Limb: fish gills: \n\r");
-    } else if (aff->type == AFFECT_DRUNK) {
-      if (ch == this)
-        sendTo("Affected: Drunken Slumber: approx. duration : %s\n\r",
-               describeDuration(this, aff->duration).c_str());
-      else
-        sendTo("Affected: Drunken Slumber: \n\r");
-    } else if (aff->type == AFFECT_DRUG) {
-      if (!aff->shouldGenerateText())
-	continue;
-      if (ch == this)
-	sendTo("Affected: %s: approx. duration : %s\n\r",
-	       drugTypes[aff->modifier2].name,
-	       describeDuration(this, aff->duration).c_str());
-      else
-	sendTo("Affected: %s: \n\r", drugTypes[aff->modifier2].name);
-    } else if (aff->type >= MIN_SPELL && aff->type < MAX_SKILL) {
-      // some spells have 2 effects, skip over one of them
-      if (!aff->shouldGenerateText())
-        continue;
-      else if (discArray[aff->type]) {
-        if ((ch == this) && strcmp(discArray[aff->type]->name, "sneak")) {
-          if (aff->renew < 0) {
-            sendTo("Affected : '%s'\t: Approx. Duration : %s\n\r",
+    switch (aff->type) {
+      case SKILL_TRACK:
+      case SKILL_SEEKWATER:
+        sendTo("Tracking: %s\n\r", (aff->type == SKILL_TRACK ?
+               ch->specials.hunting->getName() : "seeking water"));
+        break;
+      case SPELL_GUST:
+      case SPELL_DUST_STORM:
+      case SPELL_TORNADO:
+      case SKILL_QUIV_PALM:
+      case SKILL_SHOULDER_THROW:
+      case SPELL_CALL_LIGHTNING_DEIKHAN:
+      case SPELL_CALL_LIGHTNING:
+      case SPELL_LIGHTNING_BREATH:
+      case SPELL_GUSHER:
+      case SPELL_ICY_GRIP:
+      case SPELL_ARCTIC_BLAST:
+      case SPELL_ICE_STORM:
+      case SPELL_FROST_BREATH:
+      case SPELL_WATERY_GRAVE:
+      case SPELL_TSUNAMI:
+      case SPELL_CHLORINE_BREATH:
+      case SPELL_POISON_DEIKHAN:
+      case SPELL_POISON:
+      case SPELL_ACID_BREATH:
+      case SPELL_ACID_BLAST:
+      case SKILL_BODYSLAM:
+      case SKILL_CHARGE:
+      case SKILL_SMITE:
+      case SPELL_METEOR_SWARM:
+      case SPELL_EARTHQUAKE_DEIKHAN:
+      case SPELL_EARTHQUAKE:
+      case SPELL_PILLAR_SALT:
+      case SPELL_FIREBALL:
+      case SPELL_HANDS_OF_FLAME:
+      case SPELL_INFERNO:
+      case SPELL_HELLFIRE:
+      case SPELL_RAIN_BRIMSTONE_DEIKHAN:
+      case SPELL_RAIN_BRIMSTONE:
+      case SPELL_FLAMESTRIKE:
+      case SPELL_FIRE_BREATH:
+      case SPELL_SPONTANEOUS_COMBUST:
+      case SPELL_FLAMING_SWORD:
+      case SPELL_FLARE:
+      case SPELL_MYSTIC_DARTS:
+      case SPELL_STUNNING_ARROW:
+      case SPELL_COLOR_SPRAY:
+      case SPELL_SAND_BLAST:
+      case SPELL_PEBBLE_SPRAY:
+      case SPELL_LAVA_STREAM:
+      case SPELL_SLING_SHOT:
+      case SPELL_GRANITE_FISTS:
+      case SPELL_ENERGY_DRAIN:
+      case SPELL_SYNOSTODWEOMER:
+      case SPELL_HARM_DEIKHAN:
+      case SPELL_HARM:
+      case SPELL_HARM_LIGHT_DEIKHAN:
+      case SPELL_HARM_SERIOUS_DEIKHAN:
+      case SPELL_HARM_CRITICAL_DEIKHAN:
+      case SPELL_HARM_LIGHT:
+      case SPELL_HARM_SERIOUS:
+      case SPELL_HARM_CRITICAL:
+      case SPELL_WITHER_LIMB:
+      case SPELL_BLEED:
+      case SKILL_KICK_DEIKHAN:
+      case SKILL_KICK_THIEF:
+      case SKILL_KICK_MONK:
+      case SKILL_KICK_RANGER:
+      case SKILL_KICK:
+      case SKILL_SPRINGLEAP:
+      case SKILL_DEATHSTROKE:
+      case SKILL_BASH_DEIKHAN:
+      case SKILL_BASH_RANGER:
+      case SKILL_BASH:
+      case SPELL_BONE_BREAKER:
+      case SPELL_PARALYZE:
+      case SPELL_PARALYZE_LIMB:
+      case SPELL_INFECT_DEIKHAN:
+      case SPELL_INFECT:
+      case SKILL_CHOP:
+      case SPELL_DISEASE:
+      case SPELL_SUFFOCATE:
+      case SKILL_GARROTTE:
+      case SKILL_STABBING:
+      case SKILL_BACKSTAB:
+      case SKILL_HEADBUTT:
+      case SKILL_STOMP:
+      case SPELL_BLAST_OF_FURY:
+      case SKILL_CHI:
+      case SPELL_FUMBLE:
+      case SPELL_BLINDNESS:
+      case SPELL_GARMULS_TAIL:
+      case SPELL_SORCERERS_GLOBE:
+      case SPELL_FAERIE_FIRE:
+      case SPELL_ILLUMINATE:
+      case SPELL_DETECT_MAGIC:
+      case SPELL_MATERIALIZE:
+      case SPELL_PROTECTION_FROM_EARTH:
+      case SPELL_PROTECTION_FROM_AIR:
+      case SPELL_PROTECTION_FROM_FIRE:
+      case SPELL_PROTECTION_FROM_WATER:
+      case SPELL_PROTECTION_FROM_ELEMENTS:
+      case SPELL_INFRAVISION:
+      case SPELL_IDENTIFY:
+      case SPELL_POWERSTONE:
+      case SPELL_FAERIE_FOG:
+      case SPELL_TELEPORT:
+      case SPELL_SENSE_LIFE:
+      case SPELL_CALM:
+      case SPELL_ACCELERATE:
+      case SPELL_LEVITATE:
+      case SPELL_FEATHERY_DESCENT:
+      case SPELL_STEALTH:
+      case SPELL_GILLS_OF_FLESH:
+      case SPELL_TELEPATHY:
+      case SPELL_FEAR:
+      case SPELL_SLUMBER:
+      case SPELL_CONJURE_EARTH:
+      case SPELL_CONJURE_AIR:
+      case SPELL_CONJURE_FIRE:
+      case SPELL_CONJURE_WATER:
+      case SPELL_DISPEL_MAGIC:
+      case SPELL_ENHANCE_WEAPON:
+      case SPELL_GALVANIZE:
+      case SPELL_DETECT_INVISIBLE:
+      case SPELL_DISPEL_INVISIBLE:
+      case SPELL_FARLOOK:
+      case SPELL_FALCON_WINGS:
+      case SPELL_INVISIBILITY:
+      case SPELL_ENSORCER:
+      case SPELL_EYES_OF_FERTUMAN:
+      case SPELL_COPY:
+      case SPELL_HASTE:
+      case SPELL_IMMOBILIZE:
+      case SPELL_FLY:
+      case SPELL_ANTIGRAVITY:
+      case SPELL_DIVINATION:
+      case SPELL_SHATTER:
+      case SKILL_SCRIBE:
+      case SPELL_SPONTANEOUS_GENERATION:
+      case SPELL_STONE_SKIN:
+      case SPELL_TRAIL_SEEK:
+      case SPELL_FLAMING_FLESH:
+      case SPELL_ATOMIZE:
+      case SPELL_ANIMATE:
+      case SPELL_BIND:
+      case SPELL_TRUE_SIGHT:
+      case SPELL_CLOUD_OF_CONCEALMENT:
+      case SPELL_POLYMORPH:
+      case SPELL_SILENCE:
+      case SPELL_BREATH_OF_SARAHAGE:
+      case SPELL_PLASMA_MIRROR:
+      case SPELL_ETHER_GATE:
+      case SPELL_HEAL_LIGHT:
+      case SPELL_CREATE_FOOD:
+      case SPELL_CREATE_WATER:
+      case SPELL_ARMOR:
+      case SPELL_BLESS:
+      case SPELL_CLOT:
+      case SPELL_HEAL_SERIOUS:
+      case SPELL_STERILIZE:
+      case SPELL_EXPEL:
+      case SPELL_CURE_DISEASE:
+      case SPELL_CURSE:
+      case SPELL_REMOVE_CURSE:
+      case SPELL_CURE_POISON:
+      case SPELL_HEAL_CRITICAL:
+      case SPELL_SALVE:
+      case SPELL_REFRESH:
+      case SPELL_NUMB:
+      case SPELL_PLAGUE_LOCUSTS:
+      case SPELL_CURE_BLINDNESS:
+      case SPELL_SUMMON:
+      case SPELL_HEAL:
+      case SPELL_WORD_OF_RECALL:
+      case SPELL_SANCTUARY:
+      case SPELL_CURE_PARALYSIS:
+      case SPELL_SECOND_WIND:
+      case SPELL_HEROES_FEAST:
+      case SPELL_ASTRAL_WALK:
+      case SPELL_PORTAL:
+      case SPELL_HEAL_FULL:
+      case SPELL_HEAL_CRITICAL_SPRAY:
+      case SPELL_HEAL_SPRAY:
+      case SPELL_HEAL_FULL_SPRAY:
+      case SPELL_RESTORE_LIMB:
+      case SPELL_KNIT_BONE:
+      case SKILL_RESCUE:
+      case SKILL_SMYTHE:
+      case SKILL_DISARM:
+      case SKILL_BERSERK:
+      case SKILL_SWITCH_OPP:
+      case SKILL_KNEESTRIKE:
+      case SKILL_SHOVE:
+      case SKILL_RETREAT:
+      case SKILL_GRAPPLE:
+      case SKILL_DOORBASH:
+      case SKILL_HIKING:
+      case SKILL_FORAGE:
+      case SKILL_TRANSFORM_LIMB:
+      case SKILL_BEAST_SOOTHER:
+      case SPELL_ROOT_CONTROL:
+      case SKILL_RESCUE_RANGER:
+      case SKILL_BEFRIEND_BEAST:
+      case SKILL_TRANSFIX:
+      case SKILL_SKIN:
+      case SKILL_DUAL_WIELD:
+      case SPELL_LIVING_VINES:
+      case SKILL_BEAST_SUMMON:
+      case SKILL_BARKSKIN:
+      case SKILL_SWITCH_RANGER:
+      case SKILL_RETREAT_RANGER:
+      case SPELL_STICKS_TO_SNAKES:
+      case SPELL_STORMY_SKIES:
+      case SPELL_TREE_WALK:
+      case SKILL_BEAST_CHARM:
+      case SPELL_SHAPESHIFT:
+      case SKILL_CONCEALMENT:
+      case SKILL_APPLY_HERBS:
+      case SKILL_DIVINATION:
+      case SKILL_ENCAMP:
+      case SPELL_HEAL_LIGHT_DEIKHAN:
+      case SKILL_CHIVALRY:
+      case SPELL_ARMOR_DEIKHAN:
+      case SPELL_BLESS_DEIKHAN:
+      case SPELL_EXPEL_DEIKHAN:
+      case SPELL_CLOT_DEIKHAN:
+      case SPELL_STERILIZE_DEIKHAN:
+      case SPELL_REMOVE_CURSE_DEIKHAN:
+      case SPELL_CURSE_DEIKHAN:
+      case SKILL_RESCUE_DEIKHAN:
+      case SPELL_CURE_DISEASE_DEIKHAN:
+      case SPELL_CREATE_FOOD_DEIKHAN:
+      case SPELL_HEAL_SERIOUS_DEIKHAN:
+      case SPELL_CURE_POISON_DEIKHAN:
+      case SKILL_DISARM_DEIKHAN:
+      case SPELL_HEAL_CRITICAL_DEIKHAN:
+      case SKILL_SWITCH_DEIKHAN:
+      case SKILL_RETREAT_DEIKHAN:
+      case SKILL_SHOVE_DEIKHAN:
+      case SKILL_RIDE:
+      case SKILL_CALM_MOUNT:
+      case SKILL_TRAIN_MOUNT:
+      case SKILL_ADVANCED_RIDING:
+      case SKILL_RIDE_DOMESTIC:
+      case SKILL_RIDE_NONDOMESTIC:
+      case SKILL_RIDE_WINGED:
+      case SPELL_CREATE_WATER_DEIKHAN:
+      case SKILL_RIDE_EXOTIC:
+      case SPELL_HEROES_FEAST_DEIKHAN:
+      case SPELL_REFRESH_DEIKHAN:
+      case SPELL_SALVE_DEIKHAN:
+      case SKILL_LAY_HANDS:
+      case SPELL_NUMB_DEIKHAN:
+      case SKILL_YOGINSA:
+      case SKILL_CINTAI:
+      case SKILL_OOMLAT:
+      case SKILL_ADVANCED_KICKING:
+      case SKILL_DISARM_MONK:
+      case SKILL_GROUNDFIGHTING:
+      case SKILL_DUFALI:
+      case SKILL_RETREAT_MONK:
+      case SKILL_SNOFALTE:
+      case SKILL_COUNTER_MOVE:
+      case SKILL_SWITCH_MONK:
+      case SKILL_JIRIN:
+      case SKILL_KUBO:
+      case SKILL_CATFALL:
+      case SKILL_WOHLIN:
+      case SKILL_VOPLAT:
+      case SKILL_BLINDFIGHTING:
+      case SKILL_CRIT_HIT:
+      case SKILL_FEIGN_DEATH:
+      case SKILL_BLUR:
+      case SKILL_HURL:
+      case SKILL_SWINDLE:
+      case SKILL_SNEAK:
+      case SKILL_RETREAT_THIEF:
+      case SKILL_PICK_LOCK:
+      case SKILL_SEARCH:
+      case SKILL_SPY:
+      case SKILL_SWITCH_THIEF:
+      case SKILL_STEAL:
+      case SKILL_DETECT_TRAP:
+      case SKILL_SUBTERFUGE:
+      case SKILL_DISARM_TRAP:
+      case SKILL_CUDGEL:
+      case SKILL_HIDE:
+      case SKILL_POISON_WEAPON:
+      case SKILL_DISGUISE:
+      case SKILL_DODGE_THIEF:
+      case SKILL_SET_TRAP_CONT:
+      case SKILL_SET_TRAP_DOOR:
+      case SKILL_SET_TRAP_MINE:
+      case SKILL_SET_TRAP_GREN:
+      case SKILL_DUAL_WIELD_THIEF:
+      case SKILL_DISARM_THIEF:
+      case SKILL_COUNTER_STEAL:
+      case SPELL_CACAODEMON:
+      case SPELL_CREATE_GOLEM:
+      case SPELL_DANCING_BONES:
+      case SPELL_CONTROL_UNDEAD:
+      case SPELL_RESURRECTION:
+      case SPELL_VOODOO:
+      case SKILL_BREW:
+      case SPELL_VAMPIRIC_TOUCH:
+      case SPELL_LIFE_LEECH:
+      case SKILL_TURN:
+      case SKILL_SIGN:
+      case SKILL_SWIM:
+      case SKILL_CONS_UNDEAD:
+      case SKILL_CONS_VEGGIE:
+      case SKILL_CONS_DEMON:
+      case SKILL_CONS_ANIMAL:
+      case SKILL_CONS_REPTILE:
+      case SKILL_CONS_PEOPLE:
+      case SKILL_CONS_GIANT:
+      case SKILL_CONS_OTHER:
+      case SKILL_READ_MAGIC:
+      case SKILL_BANDAGE:
+      case SKILL_CLIMB:
+      case SKILL_FAST_HEAL:
+      case SKILL_EVALUATE:
+      case SKILL_TACTICS:
+      case SKILL_DISSECT:
+      case SKILL_DEFENSE:
+      case SKILL_OFFENSE:
+      case SKILL_WHITTLE:
+      case SKILL_WIZARDRY:
+      case SKILL_MEDITATE:
+      case SKILL_DEVOTION:
+      case SKILL_PENANCE:
+      case SKILL_SLASH_PROF:
+      case SKILL_PIERCE_PROF:
+      case SKILL_BLUNT_PROF:
+      case SKILL_BAREHAND_PROF:
+      case SKILL_SLASH_SPEC:
+      case SKILL_BLUNT_SPEC:
+      case SKILL_PIERCE_SPEC:
+      case SKILL_BAREHAND_SPEC:
+      case SKILL_RANGED_SPEC:
+      case SKILL_BOW:
+      case SKILL_FAST_LOAD:
+      case SKILL_SHARPEN:
+      case SKILL_DULL:
+      case SKILL_ATTUNE:
+      case SKILL_STAVECHARGE:
+        // some spells have 2 effects, skip over one of them
+        if (!aff->shouldGenerateText())
+          continue;
+        else if (discArray[aff->type]) {
+          if ((ch == this) && strcmp(discArray[aff->type]->name, "sneak")) {
+            if (aff->renew < 0) {
+              sendTo("Affected : '%s'\t: Approx. Duration : %s\n\r",
+                   discArray[aff->type]->name,
+                   describeDuration(this, aff->duration).c_str());
+  
+            } else {
+              sendTo("Affected : '%s'\t: Time Left : %s %s\n\r",
                  discArray[aff->type]->name,
-                 describeDuration(this, aff->duration).c_str());
-
-          } else {
-            sendTo("Affected : '%s'\t: Time Left : %s %s\n\r",
-               discArray[aff->type]->name,
-               describeDuration(this, aff->duration).c_str(), 
-               (aff->canBeRenewed() ? "(Renewable)" : "(Not Yet Renewable)"));
+                 describeDuration(this, aff->duration).c_str(), 
+                 (aff->canBeRenewed() ? "(Renewable)" : "(Not Yet Renewable)"));
+            }
           }
+        } else {
+          forceCrash("BOGUS AFFECT (%d) on %s.", aff->type, ch->getName());
+          ch->affectRemove(aff);
         }
-      } else {
+        break;
+      case AFFECT_DISEASE:
+        if (ch == this)
+          sendTo("Disease: '%s'\n\r",
+                  DiseaseInfo[affToDisease(*aff)].name);
+        break;
+      case AFFECT_DUMMY:
+        if (this == ch)
+          sendTo("Dummy Affect: \n\r");
+        else
+          sendTo("Affected : '%s'\t: Time Left : %s %s\n\r",
+                 "DUMMY",
+                 describeDuration(this, aff->duration).c_str(),
+                 (aff->canBeRenewed() ? "(Renewable)" : "(Not Yet Renewable)"));
+        break;
+      case AFFECT_FREE_DEATHS:
+        sendTo("Free deaths remaining: %d\n\r",
+               aff->modifier);
+        break;
+      case AFFECT_HORSEOWNED:
+        sendTo("Horseowned:\t Time Left : %s\n\r",
+  	     describeDuration(this, aff->duration).c_str());
+        break;
+      case AFFECT_PLAYERKILL:
+        sendTo("Player Killer:\t Time Left : %s\n\r",
+	     describeDuration(this, aff->duration).c_str());
+        break;
+      case AFFECT_TEST_FIGHT_MOB:
+        sendTo("Test Fight Mob: %d\n\r",
+               aff->modifier);
+        break;
+      case AFFECT_SKILL_ATTEMPT:
+        if (isImmortal()) {
+          sendTo("Skill Attempt:(%d) '%s'\t: Time Left : %s\n\r", aff->modifier, (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
+        } else if (aff->modifier != getSkillNum(SKILL_SNEAK)) {
+          sendTo("Skill Attempt: '%s'\t: Time Left : %s\n\r", (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
+        }
+        break;
+      case AFFECT_NEWBIE:
+        if (this == ch)
+          sendTo("Donation Recipient: \n\r");
+        break;
+      case AFFECT_DRUNK:
+        if (ch == this)
+          sendTo("Affected: Drunken Slumber: approx. duration : %s\n\r",
+                 describeDuration(this, aff->duration).c_str());
+        else
+          sendTo("Affected: Drunken Slumber: \n\r");
+        break;
+      case AFFECT_DRUG:
+        if (!aff->shouldGenerateText())
+          continue;
+        if (ch == this)
+          sendTo("Affected: %s: approx. duration : %s\n\r",
+  	       drugTypes[aff->modifier2].name,
+	       describeDuration(this, aff->duration).c_str());
+        else
+          sendTo("Affected: %s: \n\r", drugTypes[aff->modifier2].name);
+        break;
+      case AFFECT_TRANSFORMED_ARMS:
+        if (ch == this)
+          sendTo("Affected: Transformed Limb: falcon wings: approx. duration : %s\n\r",
+                 describeDuration(this, aff->duration).c_str());
+        else
+          sendTo("Affected: Transformed Limb: falcon wings: \n\r");
+        break;
+      case AFFECT_TRANSFORMED_HANDS:
+        if (ch == this)
+          sendTo("Affected: Transformed Limb: bear claws: approx. duration : %s\n\r",
+                 describeDuration(this, aff->duration).c_str());
+        else
+          sendTo("Affected: Transformed Limb: bear claws \n\r");
+        break;
+      case AFFECT_TRANSFORMED_LEGS:
+        if (ch == this)
+          sendTo("Affected: Transformed Limb: dolphin tail: approx. duration : %s\n\r",
+                 describeDuration(this, aff->duration).c_str());
+        else
+          sendTo("Affected: Transformed Limb: dolphin tail: \n\r");
+        break;
+      case AFFECT_TRANSFORMED_HEAD:
+        if (ch == this)
+          sendTo("Affected: Transformed Limb: eagle's head: approx. duration : %s\n\r",
+                 describeDuration(this, aff->duration).c_str());
+        else
+          sendTo("Affected: Transformed Limb: eagle's head: \n\r");
+        break;
+      case AFFECT_TRANSFORMED_NECK:
+        if (ch == this)
+          sendTo("Affected: Transformed Limb: fish gills: approx. duration : %s\n\r",
+                 describeDuration(this, aff->duration).c_str());
+        else
+          sendTo("Affected: Transformed Limb: fish gills: \n\r");
+        break;
+      case AFFECT_COMBAT:
+      case AFFECT_PET:
+      case AFFECT_THRALL:
+      case AFFECT_ORPHAN_PET:
+        // no display
+        break;
+
+      // cases beyond here are considered BOGUS
+      case LAST_ODDBALL_AFFECT:
+      case LAST_TRANSFORMED_LIMB:
+      case LAST_BREATH_WEAPON:
+      case DAMAGE_GUST:
+      case DAMAGE_TRAP_TNT:
+      case DAMAGE_ELECTRIC:
+      case DAMAGE_TRAP_FROST:
+      case DAMAGE_FROST:
+      case DAMAGE_DROWN:
+      case DAMAGE_WHIRLPOOL:
+      case DAMAGE_HEMORRAGE:
+      case DAMAGE_IMPALE:
+      case DAMAGE_TRAP_POISON:
+      case DAMAGE_ACID:
+      case DAMAGE_TRAP_ACID:
+      case DAMAGE_COLLISION:
+      case DAMAGE_FALL:
+      case DAMAGE_TRAP_BLUNT:
+      case DAMAGE_TRAP_FIRE:
+      case DAMAGE_FIRE:
+      case DAMAGE_DISRUPTION:
+      case DAMAGE_DRAIN:
+      case DAMAGE_TRAP_ENERGY:
+      case DAMAGE_KICK_HEAD:
+      case DAMAGE_KICK_SHIN:
+      case DAMAGE_KICK_SIDE:
+      case DAMAGE_KICK_SOLAR:
+      case DAMAGE_TRAP_DISEASE:
+      case DAMAGE_SUFFOCATION:
+      case DAMAGE_TRAP_SLASH:
+      case DAMAGE_ARROWS:
+      case DAMAGE_TRAP_PIERCE:
+      case DAMAGE_DISEMBOWLED:
+      case DAMAGE_EATTEN:
+      case DAMAGE_HACKED:
+      case DAMAGE_KNEESTRIKE_FOOT:
+      case DAMAGE_HEADBUTT_FOOT:
+      case DAMAGE_KNEESTRIKE_SHIN:
+      case DAMAGE_KNEESTRIKE_KNEE:
+      case DAMAGE_KNEESTRIKE_THIGH:
+      case DAMAGE_HEADBUTT_LEG:
+      case DAMAGE_KNEESTRIKE_SOLAR:
+      case DAMAGE_HEADBUTT_BODY:
+      case DAMAGE_KNEESTRIKE_CROTCH:      
+      case DAMAGE_HEADBUTT_CROTCH:
+      case DAMAGE_HEADBUTT_THROAT:
+      case DAMAGE_KNEESTRIKE_CHIN:
+      case DAMAGE_HEADBUTT_JAW:
+      case DAMAGE_KNEESTRIKE_FACE:
+      case DAMAGE_CAVED_SKULL:
+      case DAMAGE_HEADBUTT_SKULL:
+      case DAMAGE_STARVATION:
+      case DAMAGE_STOMACH_WOUND:
+      case DAMAGE_RAMMED:
+      case DAMAGE_BEHEADED:
+      case DAMAGE_NORMAL:
+      case DAMAGE_TRAP_SLEEP:
+      case DAMAGE_TRAP_TELEPORT:
+      case MAX_SKILL:
+      case TYPE_WATER:
+      case TYPE_AIR:
+      case TYPE_EARTH:
+      case TYPE_FIRE:
+      case TYPE_KICK:
+      case TYPE_CLAW:
+      case TYPE_SLASH:
+      case TYPE_CLEAVE:
+      case TYPE_SLICE:
+      case TYPE_BEAR_CLAW:
+      case TYPE_MAUL:
+      case TYPE_SMASH:
+      case TYPE_WHIP:
+      case TYPE_CRUSH:
+      case TYPE_BLUDGEON:
+      case TYPE_SMITE:
+      case TYPE_HIT:
+      case TYPE_FLAIL:
+      case TYPE_PUMMEL:
+      case TYPE_THRASH:
+      case TYPE_THUMP:
+      case TYPE_WALLOP:
+      case TYPE_BATTER:
+      case TYPE_BEAT:
+      case TYPE_STRIKE:
+      case TYPE_POUND:
+      case TYPE_CLUB:
+      case TYPE_PIERCE:
+      case TYPE_STAB:
+      case TYPE_STING:
+      case TYPE_THRUST:
+      case TYPE_SPEAR:
+      case TYPE_BEAK:
+      case TYPE_BITE:
+      case TYPE_UNDEFINED:
+      case TYPE_MAX_HIT:
         forceCrash("BOGUS AFFECT (%d) on %s.", aff->type, ch->getName());
         ch->affectRemove(aff);
-      }
-    } else {
-      forceCrash("BOGUS AFFECT (%d) on %s.", aff->type, ch->getName());
-      ch->affectRemove(aff);
+        break;
     }
   }
 }

@@ -958,6 +958,10 @@ mob->getName());
     sscanf(parmstr, "%d", &parm);
     mob->setMana(parm);
     sendTo(COLOR_MOBS, "You set %s's mana to %d.\n\r", mob->getName(), mob->getMana());
+  } else if (is_abbrev(field, "lifeforce")) {
+    sscanf(parmstr, "%d", &parm);
+    mob->setLifeforce(parm);
+    sendTo(COLOR_MOBS, "You set %s's lifeforce to %d.\n\r", mob->getName(), mob->getLifeforce());
   } else if (is_abbrev(field, "mmove")) {
     sscanf(parmstr, "%d", &parm);
     mob->setMaxMove(parm);

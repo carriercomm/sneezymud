@@ -1607,22 +1607,10 @@ void waste_shop_file(int shop_nr)
 
 int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
 {
-  // this is the most called cmd, so let's just have it return since unused
-  // avoids massive over determination of shop_nr
-  if (cmd == CMD_GENERIC_PULSE)
-    return FALSE;
-
   int rc;
   dirTypeT dir = DIR_NONE;
   unsigned int shop_nr;
   TBeing *tbt = NULL;
-
-  for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != (myself)->number); shop_nr++);
-
-  if (shop_nr >= shop_index.size()) {
-    vlogf(LOG_BUG, "Warning... shop # for mobile %d (real nr) not found.", (myself)->number);
-    return FALSE;
-  }
 
   if (cmd == CMD_GENERIC_PULSE) {
     TThing *t;
@@ -1652,7 +1640,19 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
       }
     }
     return TRUE;
-  } else if (cmd == CMD_GENERIC_INIT) {
+  }  
+
+  // determine shop_nr here to avoid overhead before CMD_GENERIc_PULSE
+  for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != (myself)->number); shop_nr++);
+
+  if (shop_nr >= shop_index.size()) {
+    vlogf(LOG_BUG, "Warning... shop # for mobile %d (real nr) not found.", (myself)->number);
+    return FALSE;
+  }
+
+
+
+  if (cmd == CMD_GENERIC_INIT) {
     if (!myself->isUnique()) {
       vlogf(LOG_BUG, "Warning!  %s attempted to be loaded, when not unique.", myself->getName());
       return TRUE;

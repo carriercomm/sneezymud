@@ -3640,7 +3640,11 @@ void TObj::describeMe(const TBeing *ch) const
   if (ch->isImmortal() || canWear(ITEM_TAKE)) {
 
     if (ch->desc && IS_SET(ch->desc->account->flags, ACCOUNT_IMMORTAL)){
-      if(obj_index[getItemIndex()].max_exist <= MIN_EXIST_IMMORTAL)
+#if 1
+      if (obj_index[getItemIndex()].max_exist < 9999)
+#else
+      if (obj_index[getItemIndex()].max_exist <= MIN_EXIST_IMMORTAL)
+#endif
         ch->sendTo("It is limited for immortals and there is %i out of %i in existence.\n\r", 
                    obj_index[getItemIndex()].number,
                    obj_index[getItemIndex()].max_exist);

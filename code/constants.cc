@@ -2,30 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: constants.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/03 15:04:04  lapsos
-// Added materials elvenmail/elvensteel
-//
-// Revision 1.2  1999/09/17 06:39:20  peel
-// Added a few more flammability values to material types
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//  SneezyMUD : constants.cc
-// 
 //  Constant integer and string arrays
 //
 //////////////////////////////////////////////////////////////////////////

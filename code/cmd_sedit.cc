@@ -547,10 +547,8 @@ void seditSave(TBeing *ch, TMonster *tMonster, bool isSilent = false)
     sprintf(tValue, "# Created by %s\n", good_cap(ch->getNameNOC(ch)).c_str());
     fputs(tValue, tFile);
 
-    // This makes it correct up until the year 2090.  If that isn't long enough
-    // for this to get replaced by something Much better then we got big probs.
-    sprintf(tValue, "# Copyright %s%d, SneezyMUD Dev Team.  All rights reserved.\n\n",
-            (localtime(&tTime)->tm_year > 90 ? "19" : "20"), localtime(&tTime)->tm_year);
+    sprintf(tValue, "# Copyright %d, SneezyMUD Dev Team.  All rights reserved.\n\n",
+            localtime(&tTime)->tm_year + 1900);
     fputs(tValue, tFile);
 
     for (resp *respIndex = tMonster->resps->respList; respIndex; respIndex = respIndex->next)

@@ -3872,8 +3872,8 @@ int TRealContainer::trapMe(TBeing *ch, const char *trap_type)
     ch->sendTo("You need more items to make that trap.\n\r");
     return FALSE;
   }
-  if (getContainerTrapLearn(type) <= 0) {
-    sendTo("You need more training before setting a container trap.\n\r");
+  if (ch->getContainerTrapLearn(type) <= 0) {
+    ch->sendTo("You need more training before setting a container trap.\n\r");
     return FALSE;
   }
  

@@ -218,8 +218,9 @@ int Descriptor::read_client(char *str2)
   }
   switch (type) {
     case CLIENT_INIT:
+      m_bIsClient = TRUE;
+
       if (!Clients) {
-        m_bIsClient = TRUE;
         clientf("%d|Clients not allowed at this time. Try later!|%d", 
                 CLIENT_ERROR, ERR_NOT_ALLOWED);
         outputProcessing();
@@ -227,7 +228,6 @@ int Descriptor::read_client(char *str2)
       }
       if (WizLock) {
         // this may need better handling to let wizs in, but, oh well
-        m_bIsClient = TRUE;
         clientf("%d|The mud is presently Wizlocked.|%d", 
                 CLIENT_ERROR, ERR_NOT_ALLOWED);
         if (!lockmess.empty())
@@ -237,7 +237,6 @@ int Descriptor::read_client(char *str2)
       }
       strcpy(buf, nextToken('|', 255, str2).c_str());
       vers = atoi(buf);
-      m_bIsClient = TRUE;
       if (vers <= BAD_VERSION) {
         clientf("%d|Your client is an old version. The latest version is %d. Please upgrade! You can upgrade from http://sneezy.stanford.edu/client/client.html.|%d", CLIENT_ERROR, CURRENT_VERSION, ERR_BAD_VERSION);
         outputProcessing();

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: ai_responses.cc,v $
+// Revision 5.1.1.4  1999/11/05 17:24:56  peel
+// Added checknroom response
+//
 // Revision 5.1.1.3  1999/11/04 22:38:57  peel
 // *** empty log message ***
 //
@@ -324,6 +327,13 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
       value = atoi(arg);
 
       if ((in_room != value) && !inImperia())
+        return RET_STOP_PARSING;
+
+      break;
+    case CMD_RESP_CHECKNROOM:
+      value = atoi(arg);
+
+      if ((in_room == value))
         return RET_STOP_PARSING;
 
       break;
@@ -1202,6 +1212,8 @@ resp * TMonster::readCommand( FILE *fp)
       newCmd = new command( CMD_RESP_CODE_SEGMENT, args);
     else if (is_abbrev(buf, "checkroom"))
       newCmd = new command(CMD_RESP_CHECKROOM, args);
+    else if (is_abbrev(buf, "checknroom"))
+      newCmd = new command(CMD_RESP_CHECKNROOM, args);
     else if (is_abbrev(buf, "checkzone"))
       newCmd = new command(CMD_RESP_CHECKZONE, args);
     else if (is_abbrev(buf, "moveto"))

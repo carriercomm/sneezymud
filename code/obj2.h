@@ -149,6 +149,7 @@ class TSpellBag : public TExpandableContainer {
     virtual int componentSell(TBeing *, TMonster *, int, TThing *);
     virtual int componentValue(TBeing *, TMonster *, int, TThing *);
     virtual bool lowCheckSlots(silentTypeT);
+    virtual void getObjFromMeText(TBeing *, TThing *, getTypeT, bool);
 
     TSpellBag();
     TSpellBag(const TSpellBag &a);
@@ -202,6 +203,7 @@ class TBaseCorpse : public TContainer {
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual string statObjInfo() const = 0;
 
+    virtual int chiMe(TBeing *);
     virtual void peeOnMe(const TBeing *);
     virtual int dissectMe(TBeing *);
     virtual void update(int);
@@ -264,7 +266,7 @@ class TTable : public TObj {
     virtual int getObjFrom(TBeing *, const char *, const char *);
     virtual int putSomethingInto(TBeing *, TThing *);
     virtual int putSomethingIntoTable(TBeing *, TTable *);
-    virtual void getObjFromMeText(TBeing *, TThing *);
+    virtual void getObjFromMeText(TBeing *, TThing *, getTypeT, bool);
     virtual bool isSimilar(const TThing *t) const;
 
     TTable();
@@ -313,6 +315,7 @@ class TPortal : public TSeeThru {
     virtual string statObjInfo() const;
     virtual itemTypeT itemType() const { return ITEM_PORTAL; }
 
+    virtual int chiMe(TBeing *);
     virtual void changeObjValue1(TBeing *);
     virtual void changeObjValue3(TBeing *);
     virtual void changeObjValue4(TBeing *);
@@ -920,7 +923,8 @@ class TSymbol : public TObj {
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual string statObjInfo() const;
     virtual itemTypeT itemType() const { return ITEM_HOLY_SYM; }
-    
+
+    virtual int chiMe(TBeing *);
     virtual bool lowCheckSlots(silentTypeT);
     virtual void purchaseMe(TBeing *, TMonster *, int, int);
     virtual void sellMeMoney(TBeing *, TMonster *, int, int);
@@ -1461,6 +1465,7 @@ class TOrganic : public TObj {
     virtual string statObjInfo() const;
     virtual itemTypeT itemType() const {return ITEM_RAW_ORGANIC; }
 
+    virtual int  chiMe(TBeing *);
     virtual int  objectSell(TBeing *, TMonster *);
     virtual void describeObjectSpecifics(const TBeing *) const;
     virtual bool splitMe(TBeing *, const char *);
@@ -1523,6 +1528,7 @@ class TOpal : public TObj {
     int psMana;
     int psFails;
   public:
+    virtual int chiMe(TBeing *);
     virtual void assignFourValues(int, int, int, int);
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual int objectSell(TBeing *, TMonster *);
@@ -1579,6 +1585,7 @@ class TFuel : public TObj {
     int curFuel;
     int maxFuel;
   public:
+    virtual int chiMe(TBeing *);
     virtual void assignFourValues(int, int, int, int);
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual void lowCheck();
@@ -1647,6 +1654,7 @@ class TLight : public TBaseLight {
     virtual string statObjInfo() const;
     virtual itemTypeT itemType() const { return ITEM_LIGHT; }
 
+    virtual int chiMe(TBeing *);
     virtual int illuminateMe(TBeing *, int, byte);
     virtual void refuelMeLight(TBeing *, TThing*);
     virtual int objectDecay();
@@ -1766,6 +1774,7 @@ class TFFlame : public TBaseLight {
     virtual string statObjInfo() const;
     virtual itemTypeT itemType() const { return ITEM_FLAME; }
 
+    virtual int    chiMe(TBeing *);
     virtual void   addFlameToMe(TBeing *, const char *, TThing *, bool);
     virtual void   peeOnMe(const TBeing *);
     virtual void   updateFlameInfo();
@@ -1773,16 +1782,16 @@ class TFFlame : public TBaseLight {
     virtual void   decayMe();
     virtual int    objectDecay();
     virtual int    getMe(TBeing *, TThing *);
-    virtual void lightMe(TBeing *, silentTypeT);
+    virtual void   lightMe(TBeing *, silentTypeT);
     virtual void   extinguishMe(TBeing *);
     virtual int    pourWaterOnMe(TBeing *, TObj *);
     virtual string showModifier(showModeT, const TBeing *) const;
     virtual void   refuelMeLight(TBeing *, TThing *);
     virtual void   describeObjectSpecifics(const TBeing *) const;
     virtual void   assignFourValues(int, int, int, int);
-    virtual bool isLit() const;
+    virtual bool   isLit() const;
     virtual void   getFourValues(int *, int *, int *, int *) const;
-    virtual void putLightOut();
+    virtual void   putLightOut();
 
     int  igniteMessage(TBeing *) const;
     void setMagBV(int);
@@ -1822,6 +1831,7 @@ class TFood : public TObj {
     unsigned int foodFlags;
     int foodFill;
   public:
+    virtual int chiMe(TBeing *);
     virtual void assignFourValues(int, int, int, int);
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual int objectSell(TBeing *, TMonster *);
@@ -1874,6 +1884,7 @@ class TBaseCup : public TObj {
     virtual bool waterSource();
     virtual string statObjInfo() const;
 
+    virtual int chiMe(TBeing *);
     virtual bool poisonObject();
     virtual int freezeObject(TBeing *, int);
     virtual void nukeFood();
@@ -1887,7 +1898,7 @@ class TBaseCup : public TObj {
     virtual void spill(const TBeing *);
     virtual void fillMe(const TBeing *, liqTypeT);
     virtual void weightCorrection();
-    virtual void evaporate(TBeing *);
+    virtual void evaporate(TBeing *, silentTypeT);
     virtual void weightChangeObject(float);
     virtual void setEmpty();
     virtual void lookObj(TBeing *, int) const;

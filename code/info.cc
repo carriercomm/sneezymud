@@ -2472,11 +2472,76 @@ void TBeing::doWhere(const char *argument)
   string sb;
   bool dash = FALSE;
   bool gods = FALSE;
+  unsigned int tot_found = 0;
+  string tStString(argument),
+         tStName(""),
+         tStArg("");
 
   if (powerCheck(POWER_WHERE))
     return;
 
   only_argument(argument, namebuf);
+  two_arg(tStString, tStArg, tStName);
+
+  if (hasWizPower(POWER_WIZARD) && (GetMaxLevel() > MAX_MORT) &&
+      (is_abbrev(tStArg, "engraved") || is_abbrev(tStArg, "owners"))) {
+    count = 0;
+
+    for (k = object_list; k; k = k->next) {
+      if (!k->name) {
+        vlogf(LOG_BUG, "Item without a name in object_list (doWhere) looking for %s", namebuf);
+        continue;
+      }
+
+      if (is_abbrev(tStArg, "owners")) {
+        if (!k->owners)
+          continue;
+
+        const char * tTmpBuffer = k->owners;
+	char tTmpString[256];
+
+        while (tTmpBuffer && *tTmpBuffer) {
+          tTmpBuffer = one_argument(tTmpBuffer, tTmpString);
+
+          if (!tTmpString || !*tTmpString)
+            continue;
+
+          if (!is_abbrev(tStName, tTmpString))
+            continue;
+
+          break;
+        }
+
+        if (!tTmpString || !*tTmpString || !is_abbrev(tStName, tTmpString))
+          continue;
+      }
+
+      if (is_abbrev(tStArg, "engraved"))
+        if (!k->action_description)
+          continue;
+        else if ((sscanf(k->action_description, "This is the personalized object of %s.", buf)) != 1)
+          continue;
+        else if (!is_abbrev(tStName, buf))
+          continue;
+
+      sprintf(buf, "[%2d] ", ++count);
+      sb += buf;
+
+      if (++tot_found == 100) {
+        sb += "Too many objects found.\n\r";
+        break;
+      }
+
+      do_where_thing(this, k, 0, sb);
+    }
+
+    if (sb.empty())
+      sendTo("Couldn't find any such object.\n\r");
+    else if (desc)
+      desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
+
+    return;
+  }
 
   if (!*namebuf || (dash = (*namebuf == '-'))) {
     if (GetMaxLevel() <= MAX_MORT) {
@@ -2520,7 +2585,6 @@ void TBeing::doWhere(const char *argument)
 
   *buf = '\0';
 
-  unsigned int tot_found = 0;
   for (i = character_list; i; i = i->next) {
     if (!i->name) {
       vlogf(LOG_BUG, "Being without a name in character_list (doWhere) looking for %s", namebuf);
@@ -2578,7 +2642,6 @@ void TBeing::doWhere(const char *argument)
     if (desc)
       desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
   }
-
 }
 
 extern void comify(char *);

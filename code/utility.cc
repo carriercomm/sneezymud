@@ -575,50 +575,28 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
           this_time->tm_year + 1900, this_time->tm_mon + 1, this_time->tm_mday,
           this_time->tm_hour, this_time->tm_min, this_time->tm_sec, buf);
 
-  if (tError >= 0)
-    for (i = descriptor_list; i; i = i->next)
-      if (!i->connected && i->character &&
-          ((i->character->hasWizPower(POWER_WIZNET_ALWAYS)) ||
-           ((i->character->GetMaxLevel() >= GOD_LEVEL1) &&
-            i->character->hasQuestBit(TOG_IMMORTAL_LOGS))) &&
-          (i->severity & (1 << tError)) &&
-          !(i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING)))
-        if (i->client)
-          i->clientf("%d|%d|%s", CLIENT_LOG, tError, buf);
-        else
-          i->character->sendTo(COLOR_LOGS, "// %s\n\r", buf);
-
-#if 0
-  if (severity == LOW_ERROR) {
-    sprintf(buf, "// L.O.W. Error:   %s \n\r", message); 
-    severity = 5;
-
-    fprintf(stderr,  "%4.4d|%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: L.O.W. Error: %s\n",
-         this_time->tm_year +1900, this_time->tm_mon + 1, this_time->tm_mday,
-         this_time->tm_hour, this_time->tm_min, this_time->tm_sec, message);
-  } else {
-    sprintf(buf, "// %s", message);
-
-    fprintf(stderr,  "%4.4d|%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
-         this_time->tm_year + 1900, this_time->tm_mon + 1, this_time->tm_mday,
-         this_time->tm_hour, this_time->tm_min, this_time->tm_sec, message);
-  }
-
-  for (i = descriptor_list; i; i = i->next) {
-    if (!i->connected && i->character &&
-        ((i->character->hasWizPower(POWER_WIZNET_ALWAYS)) ||
-            ((i->character->GetMaxLevel() >= GOD_LEVEL1) && 
-            i->character->hasQuestBit(TOG_IMMORTAL_LOGS))) &&
-        (i->severity & (1 << tError)) &&
-        !(i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING))) {
-
-      if (i->client) 
-        i->clientf("%d|%d|%s", CLIENT_LOG, severity, buf);
-      else 
-        i->character->sendTo(COLOR_LOGS, "%s\n\r", buf);
+  if (tError >= 0) {
+    for (i = descriptor_list; i; i = i->next) {
+      if (i->connected)
+        continue;
+      if (!i->character)
+        continue;
+      if (!i->character->hasWizPower(POWER_SETSEV))
+        continue;
+      if (tError != LOG_LOW &&
+          !i->character->hasWizPower(POWER_SETSEV_IMM))
+        continue;
+      if (!IS_SET(i->severity, 1<<tError))
+        continue;
+      if (i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING))
+        continue;
+ 
+      if (i->client)
+        i->clientf("%d|%d|%s", CLIENT_LOG, tError, buf);
+      else
+        i->character->sendTo(COLOR_LOGS, "// %s\n\r", buf);
     }
   }
-#endif
 }
 
 void dirwalk(const char *dir, void (*fcn) (const char *))

@@ -1,6 +1,8 @@
 #ifndef __CONNECT_H
 #define __CONNECT_H
 
+#include "drug.h"
+
 const unsigned short int PROMPT_HIT               = (1<<0);
 const unsigned short int PROMPT_MANA              = (1<<1);
 const unsigned short int PROMPT_MOVE              = (1<<2);

@@ -8,6 +8,8 @@
 #ifndef __OBJ2_H
 #define __OBJ2_H
 
+#include "drug.h"
+
 class TContainer : public TObj {
   private:
   public:

@@ -1527,6 +1527,9 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
   return FALSE;
 }
 
+extern struct PolyType DisguiseList[];
+static const int MaxDisguiseType = 18; // Non-Race Specific Ones
+
 int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset, int pracs) const
 {
   int j;
@@ -1535,7 +1538,7 @@ int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset,
   discNumT discipline = DISC_NONE;
   int final, initial;
   int value;
-
+  int tOldSL = ch->getDiscipline(getDisciplineNumber(SKILL_DISGUISE, FALSE))->getLearnedness();
 
   if (pracs <= 0) {
     vlogf(LOG_BUG, "Bogus pracs used %s (%d)", ch->getName(), ch->in_room);
@@ -1703,7 +1706,48 @@ int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset,
     else if (wiz <= DEV_LEV_SYMB_PRIM_OTHER_FREE)
       ch->sendTo("Symbols must be in your primary hand, and the other hand must be free.\n\r");
   }
+  if (TrainerInfo[offset].disc == DISC_STEALTH) {
+    if (ch->doesKnowSkill(SKILL_DISGUISE)) {
+      int tNewSL = ch->getDiscipline(getDisciplineNumber(SKILL_DISGUISE, FALSE))->getLearnedness();
 
+      for (int tType = 0; tType < MaxDisguiseType; tType++) {
+        // Can not use right now, regardless.
+        if (DisguiseList[tType].learning > tNewSL ||
+            DisguiseList[tType].level    > ch->GetMaxLevel())
+          continue;
+
+        // Already been told, so skip it.
+        if (DisguiseList[tType].learning < tOldSL &&
+            DisguiseList[tType].level    < (ch->GetMaxLevel() - 1))
+          continue;
+
+        // Shouldn't happen, but you never know.
+        // Thing is here we ONLY express the general disguises.
+        if ((signed) DisguiseList[tType].tRace != RACE_NORACE)
+          continue;
+
+        if ((isname("male", DisguiseList[tType].name) &&
+             ch->getSex() != SEX_MALE) ||
+            (isname("female", DisguiseList[tType].name) &&
+             ch->getSex() != SEX_FEMALE))
+          continue;
+
+        char tString[256];
+        string tStArg(DisguiseList[tType].name),
+               tStRes("");
+
+        one_argument(tStArg, tStRes);
+
+        vlogf(LOG_LAPSOS, "%s: %d-[%d]-%d / %d-%d", tStRes.c_str(),
+              tOldSL, DisguiseList[tType].learning, tNewSL,
+              ch->GetMaxLevel(), DisguiseList[tType].level);
+
+        sprintf(tString, "%s you can now use the '%s' disguise.",
+                ch->getNameNOC(ch).c_str(), tStRes.c_str());
+        me->doWhisper(tString);
+      }
+    }
+  }
   act ("$n smiles as $e removes $s hands from your head.",
             FALSE, me, 0, ch, TO_VICT);
   act ("$n removes $s hands from $N's head and smiles.", FALSE, me, 0, ch, TO_NOTVICT);
@@ -1838,8 +1882,11 @@ static int GenericGuildMaster(TBeing *ch, TMonster *me, cmdTypeT cmd, classIndT 
   }
   if (ch->getLevel(cit) < (me->GetMaxLevel()/2))
     dynamic_cast<TPerson *>(ch)->raiseLevel(cit, me);
-  else
+  else if (ch->getLevel(cit) < MAX_MORT)
     act("$n sighs, \"I cannot teach you, $N.  You MUST find your next guildmaster.\"", FALSE, me, 0, ch, TO_ROOM);
+  else
+    act("$n beams, \"No one can teach you anymore in this, $N\"",
+        FALSE, me, NULL, ch, TO_ROOM);
   return TRUE;
 }
 

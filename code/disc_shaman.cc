@@ -756,6 +756,7 @@ int dancingBones(TBeing * caster, TObj * obj, int level, byte bKnown)
   if (!(corpse = dynamic_cast<TBaseCorpse *>(obj))) {
     caster->sendTo("You're invoking that on something that isn't a corpse!?\n\r");
     act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
+    vlogf(LOG_JESUS, "Someone tried to invoke dancing bones on a non-corpse object.");
     return SPELL_FAIL;
   }
  
@@ -763,23 +764,27 @@ int dancingBones(TBeing * caster, TObj * obj, int level, byte bKnown)
     // a corpse that can't be res'd  (body-part or something)
     caster->sendTo("You can't do that.  Nothing happens.\n\r");
     act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
+    vlogf(LOG_JESUS, "Someone tried to invoke dancing bones on a corpse object flagged NO_REGEN.");
     return SPELL_FAIL;
   }
   if (corpse->getCorpseLevel() > (unsigned int) (3 * level / 5)) {
     caster->sendTo("Your invokation lacks the power.  Nothing happens.\n\r");
     act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
+    vlogf(LOG_JESUS, "Someone tried to invoke dancing bones on a corpse of > 3*lev / 5.");
     return SPELL_FAIL;
   }
   if (corpse->getCorpseVnum() <= 0) {
     // med mobs == -1, pcs == -2
     caster->sendTo("A strange power prevents anything from occurring.\n\r");
     act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
+    vlogf(LOG_JESUS, "Someone tried to invoke dancing bones on a corpse with vnum less than or 0.");
     return SPELL_FAIL;
   }
   if (!(mob = read_mobile(corpse->getCorpseVnum(), VIRTUAL))) {
     vlogf(LOG_BUG, "FAILED Load!!  No mob (%d)", corpse->getCorpseVnum());
     caster->sendTo("Something screwed up.  Tell a god.\n\r");
     act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
+    vlogf(LOG_JESUS, "Dancing Bones: FAILED Load!!  No mob (%d)", corpse->getCorpseVnum());
     return SPELL_FAIL;
   }
   
@@ -821,7 +826,7 @@ int dancingBones(TBeing * caster, TObj * obj, int level, byte bKnown)
   delete [] mob->shortDescr;
   mob->shortDescr = mud_str_dup(buf);
   strcpy(capbuf, mob->getName());
-  sprintf(buf, "%s is here, obediently following its master.\n\r", cap(capbuf));
+  sprintf(buf, "%s is here, enthralled by it's master.\n\r", cap(capbuf));
   delete [] mob->player.longDescr;
   mob->player.longDescr = mud_str_dup(buf);
 
@@ -863,6 +868,7 @@ int dancingBones(TBeing * caster, TObj * obj, int level, byte bKnown)
     mob->affectTo(&aff);
 
     return SPELL_SUCCESS + VICTIM_DEAD;
+    vlogf(LOG_JESUS, "Someone succesfully casted Dancing Bones.");
   } else {
     act("You've created a monster; $N hates you!",
             FALSE, caster, NULL, mob, TO_CHAR);

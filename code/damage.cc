@@ -961,3 +961,6 @@ int TBeing::damageEm(int dam, string log, spellNumT dmg_type)
   }
   return FALSE;
 }
+
+
+

@@ -24,7 +24,7 @@ static int trapGuardCheck(TBeing *ch)
       continue;
     guard->doSay("Hey!  We don't allow any of that nonsense here!");
 
-    rc = guard->takeFirstHit(*ch);
+    int rc = guard->takeFirstHit(*ch);
     if (IS_SET_DELETE(rc, DELETE_VICT))
       return DELETE_THIS;
     else if (IS_SET_DELETE(rc, DELETE_THIS)) {
@@ -47,8 +47,6 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
   TRoom *rp2;
   roomDirData *back = NULL, *exitp = NULL;
   int rc; 
-  TThing *t, *t2;
-  TMonster *guard;
 
   half_chop(ch->task->orig_arg, buf1, buf2);
 
@@ -73,7 +71,7 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
     return FALSE;
 
   // check for guards that prevent
-  int rc = trapGuardCheck(ch);
+  rc = trapGuardCheck(ch);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
   else if (rc)
@@ -163,8 +161,6 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
 {
   int learning;
   int rc; 
-  TThing *t, *t2;
-  TMonster *guard;
   TRealContainer *cont = NULL;
 
   if (ch->isLinkdead() || (ch->in_room != ch->task->wasInRoom) ||
@@ -189,7 +185,7 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
     return FALSE;
 
   // check for guards that prevent
-  int rc = trapGuardCheck(ch);
+  rc = trapGuardCheck(ch);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
   else if (rc)
@@ -301,8 +297,6 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
 {
   int learning;
   int rc; 
-  TThing *t, *t2;
-  TMonster *guard;
   TObj *obj;
 
   if (ch->isLinkdead() || (ch->in_room != ch->task->wasInRoom) ||
@@ -324,7 +318,7 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
     return FALSE;
 
   // check for guards that prevent
-  int rc = trapGuardCheck(ch);
+  rc = trapGuardCheck(ch);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
   else if (rc)
@@ -423,8 +417,6 @@ int task_trap_grenade(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
 {
   int learning;
   int rc; 
-  TThing *t, *t2;
-  TMonster *guard;
   TObj *obj;
 
   if (ch->isLinkdead() || (ch->in_room != ch->task->wasInRoom) ||
@@ -446,7 +438,7 @@ int task_trap_grenade(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
     return FALSE;
 
   // check for guards that prevent
-  int rc = trapGuardCheck(ch);
+  rc = trapGuardCheck(ch);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
   else if (rc)

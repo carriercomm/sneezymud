@@ -65,8 +65,8 @@ void TBaseCup::weightChangeObject(float wgt_amt)
     addToWeight(wgt_amt);
     mount(tmp);
   } else {
-    vlogf(LOG_BUG, "Unknown attempt to subtract weight from an object. (weightChangeObject)");
-    vlogf(LOG_BUG, "OBJ: %s", getName());
+    forceCrash("Unknown attempt to subtract weight from an object. (weightChangeObject) obj=%s", getName());
+    // vlogf(LOG_BUG, "Unknown attempt to subtract weight from an object. (weightChangeObject) obj=%s", getName());
   }
 
   // weight debug: check if greater then max units

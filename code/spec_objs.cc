@@ -2309,7 +2309,42 @@ int daySword(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
     return DELETE_VICT;
 
   return TRUE;
+}
 
+int nightBlade(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  // it used to do magic-missile every round
+  // this is a reasonable facsimile
+
+  TBeing *ch;
+  int rc;
+
+  ch = genericWeaponProcCheck(vict, cmd, o, 6);
+  if (!ch)
+    return FALSE;
+
+  if (!ch->outside())
+    return false;
+  if (!is_nighttime())
+    return false;
+
+  act("A pulse of darkness as black as the new moon travels up the blade of $p.",
+      FALSE, ch, o, NULL, TO_CHAR, ANSI_BLACK);
+  act("A pulse of darkness as black as the new moon travels up the blade of $p.",
+      FALSE, ch, o, NULL, TO_ROOM, ANSI_BLACK);
+
+  act("<p>WOOMPF!!<z>", FALSE, ch, NULL, NULL, TO_CHAR);
+  act("<p>WOOMPF!!<z>", FALSE, ch, NULL, NULL, TO_ROOM);
+
+  act("$p discharges its energy into $n.", false, vict, o, NULL, TO_ROOM);
+  act("$p discharges its energy into you!", false, vict, o, NULL, TO_CHAR);
+
+  int dam = ::number(5,8);
+  rc = ch->reconcileDamage(vict, dam, DAMAGE_NORMAL);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    return DELETE_VICT;
+
+  return TRUE;
 }
 
 int bloodDrain(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
@@ -2736,7 +2771,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "mana drain weapon", weaponManaDrainer}, // 45
   {FALSE, "potion of characteristics", statPotion},  
   {FALSE, "daySword", daySword},  
-  {FALSE, "BOGUS", bogusObjProc},  
+  {FALSE, "nightBlade", nightBlade},  
   {FALSE, "BOGUS", bogusObjProc},  
   {FALSE, "BOGUS", bogusObjProc},  // 50
 };

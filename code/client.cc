@@ -806,8 +806,17 @@ new account.|%d", CLIENT_ERROR, account->name, ERR_BAD_NAME);
   }
   account->status = TRUE;
 
+#if 1
+  // the non-client side presumes that character is ALWAYS newed and then
+  // loadFromSt done.  Some events (especially if swapping from one char
+  // to another) rely on this.  So...
+  delete character;
+  
+  character = new TPerson(this);
+#else
   if (!character) 
     character = new TPerson(this);
+#endif
   
   if (_parse_name(charname, tmp_name)) {
     clientf("%d|No such character exists! Reenter character name or create a new character.|%d", CLIENT_ERROR, tmp_name, ERR_BAD_NAME);

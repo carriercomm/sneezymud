@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj_spellbag.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -107,3 +96,20 @@ void TSpellBag::findSomeComponent(TComponent **comp_gen, TComponent **comp_spell
     t->findSomeComponent(comp_gen, comp_spell, comp_brew, which, type);
 }
 
+void TSpellBag::getObjFromMeText(TBeing *tBeing, TThing *tThing, getTypeT tType, bool tFirst)
+{
+  --(*tThing);
+  *tBeing += *tThing;
+
+  if (tType == GETNULL || tType == GETALL || tType == GETOBJ || tType == GETOBJOBJ) {
+    act("You take $p from $P.",
+        FALSE, tBeing, tThing, this, TO_CHAR);
+    act("$n takes $p from $P.",
+        TRUE, tBeing, tThing, this, TO_ROOM);
+  } else if (tFirst) {
+    act("You begin to take from $p.",
+        FALSE, tBeing, this, NULL, TO_CHAR);
+    act("$n begins to take things from $p.",
+        FALSE, tBeing, this, NULL, TO_CHAR);
+  }
+}

@@ -638,10 +638,14 @@ int TBeing::doEmote(const char *argument)
         sprintf(tmpbuf, "%s", nameColorString(ch, ch->desc, buf, NULL, COLOR_COMM, FALSE).c_str());
         act(tmpbuf, TRUE, this, 0, ch, TO_VICT);
       }
+#if 0
 // Commented out..cosmo..we dont break it for say we shouldnt for emote
 // cept the caster shouldnt be able to
-//      disturbMeditation(ch);
+      disturbMeditation(ch);
+#endif
 
+#if 0
+// commented out since polymorph isn't overused/abused
       TMonster *tmons = dynamic_cast<TMonster *>(ch);
       if (tmons && IS_SET(specials.act, ACT_POLYSELF)) {
         if ((tmons->getPosition() <= POSITION_SLEEPING) || !tmons->canSee(this))
@@ -657,6 +661,7 @@ int TBeing::doEmote(const char *argument)
         }
         tmons->aiSay(this, 0);
       }
+#endif
     }
   }
   return TRUE;

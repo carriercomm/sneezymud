@@ -837,11 +837,6 @@ void gain_exp(TBeing *ch, double gain, int dam)
                     ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
                     (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, gain,
                     newgain, (gain/newgain));
-              vlogf(LOG_JESUS, "%s(L%d) vs %s(L%d) cap: Dam: %d, Exp: %d, Cap: %d (%dx), MK: %d, %d classes",
-                    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
-                    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, (int)gain,
-                    (int)newgain, (int)(gain/newgain), (int)gainmod, ch->howManyClasses());
-
 	      gain = newgain;
 
 
@@ -880,11 +875,6 @@ void gain_exp(TBeing *ch, double gain, int dam)
 		    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a", 
 		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, gain,	
 		    newgain, (gain/newgain), gainmod, ch->howManyClasses());
-	      vlogf(LOG_JESUS, "%s(L%d) vs %s(L%d) cap: Dam: %d, Exp: %d, Cap: %d (%dx), MK: %d, %d classes",
-		    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
-		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, (int)gain,
-		    (int)newgain, (int)(gain/newgain), (int)gainmod, ch->howManyClasses());
-
 
 	    }  
 #endif
@@ -1326,6 +1316,10 @@ double TBeing::hpGainForLevel(classIndT Class) const
     vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
 	  hpgain*(double)getConHpModifier() - hpgain,
 	  (int)(hpgain*(double)getConHpModifier()));
+    vlogf(LOG_JESUS,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
+	  hpgain*(double)getConHpModifier() - hpgain,
+	  (int)(hpgain*(double)getConHpModifier()));
+    // added a log for myself out of curiosity
   }
   double raw = hpgain;
   
@@ -1340,14 +1334,14 @@ double TBeing::hpGainForLevel(classIndT Class) const
   double roundoff = hpgain - (int)(hpgain);
   hpgain = (int)hpgain;
   
-  if(100*roundoff < ::num(1,100)) {
+  if(100*roundoff < ::number(1,100)) {
     hpgain += 1.0;
   }
   
 
   if(isPc()) {
     vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),raw,
-          bonus, (int)(hpgain);
+          bonus, (int)(hpgain));
   }
 
 

@@ -447,9 +447,13 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
           continue;
         }
 
-	if (obj->objVnum()==YOUTH_POTION || obj->objVnum()==STATS_POTION) {
+        TMonster * tMon = dynamic_cast<TMonster *>(obj->parent);
+
+	if (obj->objVnum() == YOUTH_POTION ||
+            obj->objVnum() == STATS_POTION ||
+            obj->parent    == caster       ||
+            (tMon && mob_index[tMon->getMobIndex()].spec == SPEC_SHOPKEEPER))
 	  continue;
-	}
 
         if (dynamic_cast<TBeing *>(obj->parent)) {
           if (strlen(caster->pers(obj->parent)) > 0) {

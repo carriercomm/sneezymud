@@ -1170,6 +1170,48 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
         return TRUE;
       }
       break;
+    case 9581:
+      if ((cmd != CMD_PULL))
+        return FALSE;
+      if (!strcasecmp(buf, "tape")) {
+        act("You pull on the tape, revealing a rip in the back of the tent.",
+            TRUE,ch,0,0,TO_CHAR);
+        act("$n fiddles with something at the back of the tent, revealing a small rip.",
+            TRUE,ch,0,0,TO_ROOM);
+        ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
+            "",
+            "",
+            "",
+            "$n pulls the rip open, revealing a clearing behind the tent.",
+            "Someone fiddles with something on the back of the tent.",
+            "A rip in the back of the tent is revealed as someone outside opens it.",
+            "$n closes the rip in the back of the tent.",
+            "$n fiddles with something, completely concealing the rip."
+        );
+	return TRUE;
+      }
+      break;
+    case 9582:
+      if ((cmd != CMD_PULL))
+        return FALSE;
+      if (!strcasecmp(buf, "tape")) {
+        act("You pull on the tape, revealing a rip in the back of the tent.",
+            TRUE,ch,0,0,TO_CHAR);
+        act("$n fiddles with something at the back of the tent, revealing a small rip.",
+            TRUE,ch,0,0,TO_ROOM);
+        ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
+            "",
+            "",
+            "",
+            "$n pulls the rip open, revealing the inside of  the tent.",
+            "Someone fiddles with something on the inside of the tent.",
+            "A rip in the back of the tent is revealed as someone inside opens it.",
+            "$n closes the rip in the back of the tent.",
+            "$n fiddles with something, completely concealing the rip."
+        );
+        return TRUE;
+      }
+      break;
     case 10111:
       if ((cmd != CMD_PULL) && (cmd != CMD_PRESS) && (cmd != CMD_PUSH))
         return FALSE;

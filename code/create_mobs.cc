@@ -2817,7 +2817,10 @@ static void change_mob_string_enter(TBeing *ch, TMonster *tMob, const char *tStr
         break;
       }
 
-    tExLast = tExDesc;
+    if ((tExLast = tExDesc)) {
+      vlogf(1, "Fell off end of mobile string entry.");
+      break;
+    }
   }
 
   ch->specials.edit = CHANGE_MOB_STRINGS;

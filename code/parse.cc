@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: parse.cc,v $
+// Revision 5.1.1.2  1999/10/29 04:34:14  cosmo
+// Getting rid of a lot of lag on a pc death.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1420,6 +1423,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
       return rc;
     }
     if (IS_SET_DELETE(rc, DELETE_VICT)) {
+      if (desc && getWait()) {
+        setWait(combatRound(1));
+      }
       return rc;
     }
     return FALSE;

@@ -156,6 +156,7 @@ void TPerson::doEdit(const char *arg)
   sectorTypeT sectype;
   string tStr;
   long r_flags;
+  string tStString("");
   char string[512],
        Buf[256],
        tString[256],
@@ -828,6 +829,17 @@ void TPerson::doEdit(const char *arg)
       return;
       break;
     case  9: // Name
+      tStString = string;
+      stSpaceOut(tStString);
+
+      if (!tStString.empty()) {
+        delete [] roomp->name;
+        sendTo("New Room Title: %s\n\r", tStString.c_str());
+        roomp->name = mud_str_dup(tStString.c_str());
+
+        return;
+      }
+
       desc->str = &roomp->name;
       break;
     case 10: // River
@@ -2613,7 +2625,25 @@ static void DeleteExit(TRoom *rp, TBeing *ch, const char *arg, editorEnterTypeT 
   ch->describeWeather(ch->in_room);
   ch->listExits(ch->roomp);
   ch->sendTo("\n\r");
+
+#if 1
+  dirTypeT     tExit;
+  roomDirData *tData;
+
+  for (tExit = MIN_DIR; tExit < MAX_DIR; tExit++)
+    if ((tData = rp->exitDir(tExit)) && tData->to_room != ROOM_NOWHERE) {
+      if ((tExit % 2))
+        ch->sendTo("                  ");
+
+      ch->sendTo("  %2d) %-9s     ", tExit, dirs[tExit]);
+
+      if (!(tExit % 2))
+        ch->sendTo("\n\r");
+    }
+#else
   ch->sendTo(exit_menu);
+#endif
+
   ch->sendTo("Choose exit to delete.\n\r--> ");
   return;
 }

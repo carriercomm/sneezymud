@@ -166,7 +166,7 @@ void mudTimePassed(time_t t2, time_t t1, struct time_info_data *now)
   now->minutes *= 15;
 
   now->hours = (secs / SECS_PER_MUDHOUR) % 24;	
-  secs -= SECS_PER_MUD_HOUR * now->hours;
+  secs -= SECS_PER_MUDHOUR * now->hours;
 
   now->day = (secs / SECS_PER_MUD_DAY) % 28;	
   secs -= SECS_PER_MUD_DAY * now->day;

@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: sound.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -165,7 +154,7 @@ int noise(const TBeing *ch)
 
 int TBeing::applySoundproof() const
 {
-  if (checkSoundproof()) {
+  if (checkSoundproof() && !isImmortal()) {
     sendTo("You are in a silence zone, you can't make a sound!\n\r");
     return TRUE;		/* for shouts, emotes, etc */
   }

@@ -102,19 +102,19 @@ bool TBeing::canUseLimb(wearSlotT slot) const
 bool TBeing::bothLegsHurt() const
 {
   if (!isFourLegged())
-    return (!canUseLeg(TRUE) && !canUseLeg(FALSE));
+    return (!canUseLeg(LEG_PRIMARY) && !canUseLeg(LEG_SECONDARY));
   else
-    return (!canUseLeg(TRUE) && !canUseLeg(FALSE) &&
-            !canUseLeg(3) && !canUseLeg(4));
+    return (!canUseLeg(LEG_PRIMARY) && !canUseLeg(LEG_SECONDARY) &&
+            !canUseLeg(LEG_PRIMARY_BACK) && !canUseLeg(LEG_SECONDARY_BACK));
 }
 
 bool TBeing::eitherLegHurt() const
 {
   if (!isFourLegged())
-    return (!canUseLeg(TRUE) || !canUseLeg(FALSE));
+    return (!canUseLeg(LEG_PRIMARY) || !canUseLeg(LEG_SECONDARY));
   else
-    return (!canUseLeg(TRUE) || !canUseLeg(FALSE) || 
-            !canUseLeg(3) || !canUseLeg(4));
+    return (!canUseLeg(LEG_PRIMARY) || !canUseLeg(LEG_SECONDARY) || 
+            !canUseLeg(LEG_PRIMARY_BACK) || !canUseLeg(LEG_SECONDARY_BACK));
 }
 
 bool TBeing::eitherArmHurt() const
@@ -127,25 +127,26 @@ bool TBeing::eitherHandHurt() const
   return (!canUseHand(TRUE) || !canUseHand(FALSE));
 }
 
-bool TBeing::canUseLeg(int primary) const
+bool TBeing::canUseLeg(primLegT primary) const
 {
-  if (primary == TRUE) 
-    return (canUseLimb(getPrimaryLeg()) && 
-            canUseLimb(getPrimaryFoot()) && 
-            (canUseLimb(WEAR_WAISTE) || isFourLegged()));
-  else if (primary == FALSE)
-    return (canUseLimb(getSecondaryLeg()) &&
-            canUseLimb(getSecondaryFoot()) &&
-            (canUseLimb(WEAR_WAISTE) || isFourLegged()));
-  else if (primary == 3)
-    return (canUseLimb(WEAR_EX_LEG_R) &&
-            canUseLimb(WEAR_EX_FOOT_R) &&
-            (canUseLimb(WEAR_WAISTE) || isFourLegged()));
-  else if (primary == 4)
-    return (canUseLimb(WEAR_EX_LEG_L) &&
-            canUseLimb(WEAR_EX_FOOT_L) &&
-            (canUseLimb(WEAR_WAISTE) || isFourLegged()));
-
+  switch (primary) {
+    case LEG_SECONDARY:
+      return (canUseLimb(getSecondaryLeg()) &&
+              canUseLimb(getSecondaryFoot()) &&
+              (canUseLimb(WEAR_WAISTE) || isFourLegged()));
+    case LEG_PRIMARY:
+      return (canUseLimb(getPrimaryLeg()) && 
+              canUseLimb(getPrimaryFoot()) && 
+              (canUseLimb(WEAR_WAISTE) || isFourLegged()));
+    case LEG_SECONDARY_BACK:
+      return (canUseLimb(WEAR_EX_LEG_R) &&
+              canUseLimb(WEAR_EX_FOOT_R) &&
+              (canUseLimb(WEAR_WAISTE) || isFourLegged()));
+    case LEG_PRIMARY_BACK:
+      return (canUseLimb(WEAR_EX_LEG_L) &&
+              canUseLimb(WEAR_EX_FOOT_L) &&
+              (canUseLimb(WEAR_WAISTE) || isFourLegged()));
+  }
   return TRUE;
 }
 

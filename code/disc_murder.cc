@@ -406,7 +406,12 @@ int TTool::poisonMePoison(TBeing *ch, TBaseWeapon *weapon)
 
   duration = (level << 2) * UPDATES_PER_MUDHOUR;
   if (bSuccess(ch, bKnown, SKILL_POISON_WEAPON)) {
-    for (j= 0; j < MAX_SWING_AFFECT; j++) {
+    for (j = 0; j < MAX_SWING_AFFECT; j++) {
+      if (weapon->oneSwing[j].type == SPELL_POISON) {
+        ch->sendTo("That weapon is already affected by poison!\n\r");
+        break;
+      }
+
       if (weapon->oneSwing[j].type == TYPE_UNDEFINED) {
         weapon->oneSwing[j].type = SPELL_POISON;
         weapon->oneSwing[j].bitvector = AFF_POISON;

@@ -2691,7 +2691,7 @@ void TBeing::doFollow(const char *argument)
     return;
 
   if (*caName) {
-    if (!strcmp(caName,"me")) {
+    if (!strcmp(caName,"me") || !strcmp(caName, "self")) {
       leader = this;
     } else if (!(leader = get_best_char_room(this, caName))) {
       sendTo("I see no person by that name here!\n\r");

@@ -21,6 +21,7 @@ extern "C" {
 #include "mail.h"
 #include "drug.h"
 #include "skillsort.h"
+#include "board.h"
 
 #include "disc_air.h"
 #include "disc_alchemy.h"
@@ -3666,6 +3667,20 @@ void Descriptor::add_comment(const char *who, const char *msg)
   fputs(buf, fp);
   fputs("\n", fp);
   fclose(fp);
+
+
+
+  i=0;
+  while(buf[i++]!='\n');
+
+  char *notebuf=(char *)malloc(strlen(&buf[i]));
+  strcpy(notebuf, &buf[i]);
+  TNote *mynote=createNote(notebuf);
+
+  sprintf(buf, "****** Comment on %s", lower(who).c_str());
+  
+  mynote->postMe(character, buf, FindBoardInRoom(8, "board"));
+
 }
 
 void Descriptor::send_bug(const char *type, const char *msg) 

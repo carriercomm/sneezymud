@@ -106,6 +106,8 @@
 - Changed the Cheating log to not report on things which have a value of
   100 or less or are not rentable.  Most of the stuff that falls in this
   area is pointless and shouldn't be reported.
+- Modified the donate stuff.  Now if an object has no value or is no rent
+  it will junk the item instead of donating it.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

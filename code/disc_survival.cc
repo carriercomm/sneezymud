@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_survival.cc,v $
+// Revision 5.1.1.3  1999/10/21 23:59:46  mithros
+// Added some new skins for specific mobs, Simal Zone
+//
 // Revision 5.1.1.2  1999/10/21 23:51:21  lapsos
 // Added race-simal skin.
 //
@@ -131,6 +134,26 @@ int determineSkinningItem(TBaseCorpse * corpse, int * amount, char * msg, char *
   if (num == -1) {
     // base on specific vnum here if needed
     switch(corpse->getCorpseVnum()) {
+      case 7032:  // othora
+      case 20611:
+      case 20612:
+      case 20613:
+      case 20621:
+      case 20622:
+      case 20623:
+        num = 20643;
+        break;
+      case 20625:  // kelk
+      case 20626:
+      case 20627:
+        num = 20644;
+        break;
+      case 20628:  // ganthi
+        num = 20645;
+        break;
+      case 20629:  // prarie digger
+        num = 20646;
+        break;
       case 122:  // fuzzy mouse
         num = 2400;
         break;

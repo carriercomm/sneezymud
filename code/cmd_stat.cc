@@ -454,7 +454,7 @@ void TBeing::statObj(const TObj *j)
   return;
 }
 
-void TBeing::statBeing(const TBeing *k)
+void TBeing::statBeing(TBeing *k)
 {
   affectedData *aff, *af2;
   char buf[MAX_STRING_LENGTH];

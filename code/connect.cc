@@ -2407,6 +2407,8 @@ int TPerson::genericLoadPC()
         rp = real_roomp(31);
       else if (!strcmp(name, "Custer"))
         rp = real_roomp(32);
+      else if (!strcmp(name, "Connovar"))
+        rp = real_roomp(33);
       else if (!strcmp(name, "Smyrke"))
         rp = real_roomp(34);
       else if (!strcmp(name, "Shota"))

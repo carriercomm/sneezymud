@@ -42,8 +42,8 @@ const int FORCE_LOW_INVSTE = 1;
 
 static const char * const WIZLOCK_PASSWORD           = "motelvi";
 const char * const MUD_NAME      = "Grimhaven";
-const char * const MUD_NAME_VERS = "Grimhaven v5.1";
-static const char * const WELC_MESSG = "\n\rWelcome to Grimhaven 5.1! May your journeys be interesting!\n\r\n\r";
+const char * const MUD_NAME_VERS = "Grimhaven v5.2";
+static const char * const WELC_MESSG = "\n\rWelcome to Grimhaven 5.2! May your journeys be interesting!\n\r\n\r";
 
 static const char * const TER_HUMAN_HELP = "help/territory help human";
 static const char * const TER_ELF_HELP = "help/territory help elf";

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: inventory.cc,v $
+// Revision 5.1.1.3  1999/11/03 20:26:59  lapsos
+// Modified get() to gag component from spellbag getting.
+//
 // Revision 5.1.1.2  1999/10/17 05:31:54  batopr
 // genericGiveDrop now has a check to verify drop worked (otherwise, item
 // is moved the hard way)
@@ -335,7 +338,7 @@ int TTrap::getMe(TBeing *ch, TThing *sub)
 // might return DELETE_ITEM for obj
 // might return DELETE_VICT for sub
 // returns FALSE if get failed
-int get(TBeing *ch, TThing *ttt, TThing *sub)
+int get(TBeing *ch, TThing *ttt, TThing *sub, getTypeT tType, bool isFirst)
 {
   int rc = 0;
 
@@ -421,7 +424,7 @@ int get(TBeing *ch, TThing *ttt, TThing *sub)
     if (rc)
       return FALSE;
   
-    sub->getObjFromMeText(ch, ttt);
+    sub->getObjFromMeText(ch, ttt, tType, isFirst);
 
     ch->logItem(ttt, CMD_GET);
     ch->aiGet(ttt);
@@ -497,15 +500,6 @@ int TBeing::doGet(const char *argument)
   TThing *t;
   bool found = FALSE, autoloot = FALSE;
   int rc;
-  enum getTypeT {
-      GETNULL  ,
-      GETALL   ,
-      GETOBJ   ,
-      GETALLALL,
-      GETALLOBJ,
-      GETOBJALL,
-      GETOBJOBJ
-  };
 
   int p;
   getTypeT type = GETALLALL;
@@ -659,7 +653,7 @@ int TBeing::doGet(const char *argument)
       }
       if ((t = searchLinkedListVis(this, arg1, roomp->stuff))) {
         if (canGet(t, SILENT_NO)) {
-          rc = get(this,t, NULL);
+          rc = get(this,t, NULL, GETOBJ, found);
           // get all has no lag, is this needed?
           // addToWait(ONE_SECOND);
           if (IS_SET_DELETE(rc, DELETE_ITEM)) {
@@ -728,7 +722,7 @@ int TBeing::doGet(const char *argument)
       }
       if ((t = searchLinkedListVis(this, arg1, sub->stuff))) {
         if (canGet(t, SILENT_NO)) {
-          rc = get(this, t, sub);
+          rc = get(this, t, sub, GETOBJOBJ, found);
           addToWait(ONE_SECOND);
           if (IS_SET_DELETE(rc, DELETE_ITEM)) {
             delete t;
@@ -745,7 +739,7 @@ int TBeing::doGet(const char *argument)
         }
       } else if ((t = get_thing_on_list_vis(this, arg1, sub->rider))) {
         if (canGet(t, SILENT_NO)) {
-          rc = get(this, t, sub);
+          rc = get(this, t, sub, GETOBJOBJ, found);
           addToWait(ONE_SECOND);
           if (IS_SET_DELETE(rc, DELETE_ITEM)) {
             delete t;
@@ -2298,7 +2292,7 @@ bool TRealContainer::getObjFromMeCheck(TBeing *ch)
   return FALSE;
 }
 
-void TTable::getObjFromMeText(TBeing *ch, TThing *obj)
+void TTable::getObjFromMeText(TBeing *ch, TThing *obj, getTypeT, bool)
 {
   TBeing *tbt = dynamic_cast<TBeing *>(obj);
   positionTypeT new_pos = POSITION_DEAD;
@@ -2318,7 +2312,7 @@ void TTable::getObjFromMeText(TBeing *ch, TThing *obj)
   }
 }
 
-void TThing::getObjFromMeText(TBeing *ch, TThing *obj)
+void TThing::getObjFromMeText(TBeing *ch, TThing *obj, getTypeT, bool)
 {
   --(*obj);
   *ch += *obj;

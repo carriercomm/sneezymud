@@ -165,7 +165,7 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
           break;
       }
 
-      if (!sameRoom(victim))
+      if (victim && !sameRoom(victim))
         victim = NULL;
     }
   }

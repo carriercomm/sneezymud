@@ -751,19 +751,23 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       }
       break;
     }
-    case CLIENT_NEWACCOUNT:
-#if 0
+    case CLIENT_NEWACCOUNT: {
+      char aname[256];
+      char apassword[256];
+      char buf2[256];
+      strcpy(aname, nextToken('|', 255, str2).c_str());
+
       account = new TAccount;
       // Does account exist or is it a bogus name? This function will return TRUE is so
-      if (checkForAccount(arg, TRUE)) {
+      if (checkForAccount(aname, TRUE)) {
       } 
-      if (strlen(arg) >= 10) {
+      if (strlen(aname) >= 10) {
       }
-      strcpy(account->name, arg);
-#endif
+      strcpy(account->name, aname);
 
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
       break;
+    } 
     default:
       vlogf(LOG_CLIENT, "Bad type in read_client (%d)", type);
       break;

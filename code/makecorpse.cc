@@ -792,18 +792,21 @@ void TBeing::makeCorpse(spellNumT dmg_type)
       logItem(obo, CMD_SOUTH);
     }
   }
+
   //load a herald and put on corpse - Russ 010298
   // Grimhaven Newsboy, chance to put herald in corpse
   if (mobVnum() == MOB_NEWSBOY) { 
     if (!::number(0, 10)) 
       *gen_corpse += *(read_object(OBJ_HERALD, VIRTUAL));
   } 
+
   // banshee loading banshee larynx (shatter comp)
   // would be better as dissect, but banshee=undead=dustpile=no-dissect
   if (mobVnum() == MOB_BANSHEE) { 
     if (!::number(0, 1)) 
       *gen_corpse += *(read_object(COMP_SHATTER, VIRTUAL));
   } 
+
   while (stuff) {
     TThing * obo = stuff;
     *gen_corpse += (*obo)--;

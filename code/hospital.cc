@@ -2,26 +2,10 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: hospital.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+//   "hospital.cc" - Special procedures for hospitals and doctors.
 //
 //////////////////////////////////////////////////////////////////////////
 
-
-/*************************************************************************
-
-      SneezyMUD - All rights reserved, SneezyMUD Coding Team
-      "hospital.cc" - Special procedures for hospitals and doctors.
-
-*************************************************************************/
 
 #include "stdsneezy.h"
 #include "combat.h"
@@ -254,23 +238,23 @@ int doctor(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)
             if (ch->GetMaxLevel() < 3) {
               sprintf(buf, "%s %d) You have %s (%d talens).\n\r",
                     ch->getName(), ++count,
-                    DiseaseInfo[DISEASE_INDEX(aff->modifier)].name,
+                    DiseaseInfo[affToDisease(*aff)].name,
                     DISEASE_PRICE_3);
             } else if (ch->GetMaxLevel() < 6) {
               sprintf(buf, "%s %d) You have %s (%d talens).\n\r",
                     ch->getName(), ++count,
-                    DiseaseInfo[DISEASE_INDEX(aff->modifier)].name,
+                    DiseaseInfo[affToDisease(*aff)].name,
                     DISEASE_PRICE_6);
             } else if (ch->GetMaxLevel() < 12) {
               sprintf(buf, "%s %d) You have %s (%d talens).\n\r",
                     ch->getName(), ++count,
-                    DiseaseInfo[DISEASE_INDEX(aff->modifier)].name,
+                    DiseaseInfo[affToDisease(*aff)].name,
                     DISEASE_PRICE_12);
             } else {
               sprintf(buf, "%s %d) You have %s (%d talens).\n\r",
                     ch->getName(), ++count, 
-                    DiseaseInfo[DISEASE_INDEX(aff->modifier)].name,
-                    DiseaseInfo[DISEASE_INDEX(aff->modifier)].cure_cost);
+                    DiseaseInfo[affToDisease(*aff)].name,
+                    DiseaseInfo[affToDisease(*aff)].cure_cost);
             }
             me->doTell(buf);
           }
@@ -474,12 +458,12 @@ int doctor(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)
               else if (ch->GetMaxLevel() < 12) 
                 cost = DISEASE_PRICE_12;
               else 
-                cost = DiseaseInfo[DISEASE_INDEX(aff->modifier)].cure_cost;
+                cost = DiseaseInfo[affToDisease(*aff)].cure_cost;
               
               if ((ch->getMoney() + ch->getBank()) < cost) {
                 sprintf(buf, "%s You don't have enough money to cure %s!",
                          fname(ch->name).c_str(),
-                         DiseaseInfo[DISEASE_INDEX(aff->modifier)].name);
+                         DiseaseInfo[affToDisease(*aff)].name);
                 me->doTell(buf);
                 return TRUE;
               } else {

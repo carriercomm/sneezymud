@@ -529,6 +529,13 @@ int TBeing::numClasses() const
 
 void vlogf(const char * errorMsg, ...)
 {
+  va_list ap;
+  char tString[256];
+
+  va_start(ap, errorMsg);
+  vsprintf(tString, errorMsg, ap);
+  va_end(ap);
+
   vlogf(LOG_MISC, errorMsg);
 }
 

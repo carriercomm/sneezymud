@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spell_parser.cc,v $
+// Revision 5.1.1.2  1999/10/29 03:24:45  cosmo
+// just took out some commented code
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -191,22 +194,6 @@ void TBeing::dieFollower()
 
   for (k = followers; k; k = j) {
     j = k->next;
-#if 0
-// PET CHANGE
-// Done above in stopFollower. Delete if code is working right
-    if (k->affectedBySpell(AFFECT_PET)) {
-      affectedData aff;
-      aff.type = AFFECT_ORPHAN_PET;
-      aff.level = 0;
-      aff.duration  = 60 * UPDATES_PER_TICK;
-      aff.location = APPLY_NONE;
-      aff.modifier = 0;   
-      aff.bitvector = 0;
-      char * tmp = mud_str_dup(ch->name);
-      aff.be = (TThing *) tmp;
-      k->affectTo(&aff, -1);
-    }
-#endif
     k->follower->stopFollower(TRUE);
   }
 }

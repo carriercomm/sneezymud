@@ -460,7 +460,8 @@ enum spellNumT {
      SKILL_DULL,
      SKILL_ATTUNE,
      SKILL_STAVECHARGE,
-  
+     SKILL_ALCOHOLISM,
+
      // end of generic
 
      // keep this as the last of the true skills

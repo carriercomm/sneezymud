@@ -6146,6 +6146,81 @@ int corpseMuncher(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj
   return FALSE;
 }
 
+int fishTracker(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
+{
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+  int rc;
+  char buf[256];
+  TThing *t;
+
+  if(!ch || !ch->awake() || ch->fight())
+    return FALSE;
+
+  
+  switch(cmd){
+    case CMD_MOB_GIVEN_ITEM:
+      if(!o || !isname("caughtfish", o->name)){
+	return FALSE;
+      }
+
+      if((rc=dbquery(&res, "sneezy", "fishkeeper(1)", "insert ignore into fishkeeper values ('%s', 0)", ch->name))){
+	if(rc==-1){
+	  vlogf(LOG_BUG, "Database error in fishkeeper");
+	}
+      }
+      mysql_free_result(res);
+
+      sprintf(buf, "update fishkeeper set weight=weight+%f where name='%s'", o->getWeight(), ch->name);
+      if((rc=dbquery(&res, "sneezy", "fishkeeper(2)", buf))){
+	if(rc==-1)
+	  vlogf(LOG_BUG, "Database error in fishkeeper");
+      }
+      
+      mysql_free_result(res);
+
+      sprintf(buf, "Ok, I tallied your fish, weighing in at %f.  Nice one!", 
+	      o->getWeight());
+      myself->doSay(buf);
+
+      for(t=myself->stuff;t;t=t->nextThing){
+	if(isname("caughtfish", t->name)){
+	  delete t;
+	  break;
+	}
+      }
+
+      break;
+    case CMD_WHISPER:
+      arg = one_argument(arg, buf);
+      
+      if(!isname(buf, myself->name))
+	return FALSE;
+
+      arg = one_argument(arg, buf);
+
+
+      if(!strcmp(buf, "topten")){
+	rc=dbquery(&res, "sneezy", "fishKeeper", "select name, weight from fishkeeper order by weight desc limit 10");
+      } else {
+	rc=dbquery(&res, "sneezy", "fishKeeper", "select name, weight from fishkeeper where name='%s'", buf);
+      }
+      
+      while((row=mysql_fetch_row(res))){
+	sprintf(buf, "%s has caught fish weighing in at a total of %f.",
+		row[0], atof(row[1]));
+	myself->doSay(buf);
+      }      
+
+      break;
+    default:
+      return FALSE;
+  }
+
+  return TRUE;
+}
+
+
 int grimhavenHooker(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 {
   int found=0;
@@ -6609,7 +6684,7 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"attuner", attuner},                      // 150 
   {TRUE,"paralyze gaze", paralyzeGaze},
   {TRUE,"Doppleganger/Mimic", doppleganger},
-  {TRUE,"Tusker/Goring", tuskGoring}
-
+  {TRUE,"Tusker/Goring", tuskGoring},
+  {FALSE,"Fish Tracker", fishTracker},
 // replace non-zero, bogus_mob_procs above before adding
 };

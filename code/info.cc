@@ -870,9 +870,16 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
   else if (p->hasWizPower(POWER_BUILDER))
     strcpy(colorBuf, ch->cyan());
 
+#if 1
+  // Do it this way so you get the default-titles also.
+
+  if (p && p->GetMaxLevel() > MAX_MORT) {
+    string str = p->msgVariables(MSG_IMM_TITLE);
+#else
   if (p->msgVariables == MSG_IMM_TITLE &&
       !p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL).empty()) {
     string str = p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL);
+#endif
     unsigned int len = str.size();
     unsigned int padding = 14-len;
     unsigned int frontpadding = padding/2;

@@ -11,7 +11,6 @@
 bool hasColorStrings(const TBeing *mob, const char *arg, int field)
 {
   const char *s = NULL;
-  int found = 0;
 
   if (!arg || !*arg)
     return FALSE;

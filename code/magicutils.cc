@@ -1584,7 +1584,7 @@ bool genericBless(TBeing *c, TBeing *v, int level, bool crit)
   return success;
 }
 
-void genericDisease(TBeing *v, int level)
+void genericDisease(TBeing *vict, int level)
 {
   // assumes check for isImmune already made
   affectedData aff;
@@ -1614,11 +1614,11 @@ void genericDisease(TBeing *v, int level)
 
   // we've already applied a raw immunity check to prevent entirely
   // however, let immunities also decrease duration
-  aff.duration *= (100 - getImmunity(IMMUNE_DISEASE));
+  aff.duration *= (100 - vict->getImmunity(IMMUNE_DISEASE));
   aff.duration /= 100;
 
-  v->affectTo(&aff);
-  disease_start(v, &aff);
+  vict->affectTo(&aff);
+  disease_start(vict, &aff);
 }
 
 void genericCurse(TBeing *c, TBeing *v, int level, spellNumT spell)

@@ -79,17 +79,15 @@ void TBeing::wizFileRead()
 
   TPerson * tPerson = dynamic_cast<TPerson *>(this);
 
-  if (tPerson && !tPerson->tLogFile) {
+  if (tPerson && !tPerson->tLogFile && should_be_logged(tPerson)) {
     char tString[256];
 
     sprintf(tString, "immortals/%s/logfile", name);
 
     if (!(tPerson->tLogFile = fopen(tString, "a")))
       vlogf(LOG_FILE, "Unable to open Log File for %s", name);
-    else {
-      vlogf(LOG_LAPSOS, "Hooked Log File: %s", tString);
+    else
       tPerson->logf("Logging in...");
-    }
   }
 }
 

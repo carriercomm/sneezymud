@@ -545,7 +545,7 @@ void TBeing::doAttribute(const char *arg)
     }
 
     if (GetMaxLevel() >= 5)
-      describeImmunities(this, 100);
+      sendTo(describeImmunities(this, 100).c_str());
 
     if (!getCond(THIRST))
       sendTo(COLOR_BASIC, "<R>You are totally parched.<1>\n\r");

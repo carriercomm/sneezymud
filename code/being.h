@@ -957,7 +957,7 @@ class TBeing : public TThing {
     const string describeTransLimb(wearSlotT) const;
     const string describeTransBodySlot(wearSlotT) const;
     const string describeTransEquipSlot(wearSlotT) const;
-    void describeImmunities(TBeing *, int);
+    string describeImmunities(const TBeing *, int) const;
     void describeObject(const TThing *) const;
     string describeSharpness(const TThing *) const;
     string describePointiness(const TBaseWeapon *) const;

@@ -86,7 +86,7 @@ static int warCry(TMonster *myself, TBeing *targ, TObj *temp_obj)
 
   sprintf(buf,"%s will be mine again!",temp_obj->shortDescr);
   myself->doSay(cap(buf));
-  return myself->takeFirstHit(targ);
+  return myself->takeFirstHit(*targ);
 }
 
 static void bountyPoof(TMonster *myself, int targ_rm)

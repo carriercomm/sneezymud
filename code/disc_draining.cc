@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_draining.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -73,7 +62,7 @@ void lifeLeech(TBeing * caster)
     n = t->nextThing;
     TBeing *tbt = dynamic_cast<TBeing *>(t);
     if (tbt && (caster != tbt) && !tbt->isImmortal()) {
-      if (!caster->inGroup(tbt)) {
+      if (!caster->inGroup(*tbt)) {
         caster->reconcileHurt(tbt, 0.04);
 
         hitp = min(dice(level, 2), (tbt->getHit() - 1));

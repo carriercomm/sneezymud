@@ -884,7 +884,7 @@ int TBeing::rawSummon(TBeing *v)
         act("$n sneers at $N. Uh oh...there's gonna be a RUMBLE!", 
              1, tmp, NULL, this, TO_NOTVICT);
 
-        rc = dynamic_cast<TMonster *>(tmp)->takeFirstHit(this);
+        rc = dynamic_cast<TMonster *>(tmp)->takeFirstHit(*this);
         if (IS_SET_DELETE(rc, DELETE_VICT)) {
           return DELETE_THIS;
         } else if (IS_SET_DELETE(rc, DELETE_THIS)) {

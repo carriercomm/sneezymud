@@ -220,7 +220,7 @@ int pebbleSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
       if (!vict)
         continue;
 
-      if (!caster->inGroup(vict) && !vict->isImmortal()) {
+      if (!caster->inGroup(*vict) && !vict->isImmortal()) {
         caster->reconcileHurt(vict, discArray[SPELL_PEBBLE_SPRAY]->alignMod);
         act("$n is pelted with pebbles!", FALSE, vict, NULL, NULL, TO_ROOM);
         act("You are pelted with pebbles!", FALSE, vict, NULL, NULL, TO_CHAR);
@@ -297,7 +297,7 @@ int sandBlast(TBeing * caster, int level, byte bKnown, int adv_learn)
       if (!vict)
         continue;
 
-      if (!caster->inGroup(vict) && !vict->isImmortal()) {
+      if (!caster->inGroup(*vict) && !vict->isImmortal()) {
         caster->reconcileHurt(vict, discArray[SPELL_SAND_BLAST]->alignMod);
         act("$n is BLASTED with sand!", FALSE, vict, NULL, NULL, TO_ROOM);
         act("You are BLASTED with sand!", FALSE, vict, NULL, NULL, TO_CHAR);
@@ -323,7 +323,7 @@ int sandBlast(TBeing * caster, int level, byte bKnown, int adv_learn)
         if (!vict)
           continue;
 
-        if (caster->inGroup(vict) && caster != vict) {
+        if (caster->inGroup(*vict) && caster != vict) {
           caster->reconcileHurt(vict, discArray[SPELL_SAND_BLAST]->alignMod);
           act("$n is BLASTED with sand!", FALSE, vict, NULL, NULL, TO_ROOM);
           act("You are BLASTED with sand!", FALSE, vict, NULL, NULL, TO_CHAR);
@@ -401,7 +401,7 @@ int lavaStream(TBeing * caster, int level, byte bKnown, int adv_learn)
       if (!vict)
         continue;
 
-      if (!caster->inGroup(vict) && !vict->isImmortal()) {
+      if (!caster->inGroup(*vict) && !vict->isImmortal()) {
         caster->reconcileHurt(vict, discArray[SPELL_LAVA_STREAM]->alignMod);
         act("$n screams in agony as $e is burned by the lava!", 
               FALSE, vict, NULL, NULL, TO_ROOM);
@@ -426,7 +426,7 @@ int lavaStream(TBeing * caster, int level, byte bKnown, int adv_learn)
         if (!vict)
           continue;
 
-        if (caster->inGroup(vict) && caster != vict && !vict->isImmortal()) {
+        if (caster->inGroup(*vict) && caster != vict && !vict->isImmortal()) {
           caster->reconcileHurt(vict, discArray[SPELL_LAVA_STREAM]->alignMod);
           act("$n screams in agony as $e is burned by the lava!", 
               FALSE, vict, NULL, NULL, TO_ROOM);

@@ -2259,7 +2259,7 @@ static int frost_giant_stuff(TMonster *ch)
                FALSE, ch, 0, 0, TO_ROOM);
           shouted = TRUE;
         }
-        rc = tmons->takeFirstHit(v2);
+        rc = tmons->takeFirstHit(*v2);
         if (IS_SET_DELETE(rc, DELETE_VICT)) {
           delete v2;
           v2 = NULL;
@@ -2284,7 +2284,7 @@ static int frost_giant_stuff(TMonster *ch)
     if (!ch->canSee(vict) || !ch->awake())
       continue;
     ch->doAction("", CMD_GROWL);
-    rc = ch->takeFirstHit(vict);
+    rc = ch->takeFirstHit(*vict);
     if (IS_SET_DELETE(rc, DELETE_VICT)) {
       delete vict;
       vict = NULL;
@@ -2706,7 +2706,7 @@ static int caravan_stuff(TBeing *car, caravan_struct *job, dirTypeT)
       loaded = true;
     }
 
-    int rc = mon->takeFirstHit(car);
+    int rc = mon->takeFirstHit(*car);
     if (IS_SET_DELETE(rc, DELETE_THIS)) {
       delete mon;
       mon = NULL;
@@ -3346,7 +3346,7 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
         if (!ch->checkSoundproof())
           act("$n screams 'Get thee back to the underworld that spawned you!!!!'", FALSE, ch, 0, 0, TO_ROOM);
 
-        rc = ch->takeFirstHit(tch);
+        rc = ch->takeFirstHit(*tch);
         if (IS_SET_DELETE(rc, DELETE_VICT)) {
           delete tch;
           tch = NULL;
@@ -3361,7 +3361,7 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
         if (!ch->checkSoundproof())
           act("$n screams 'This place belongs to the UnLiving!!!!'", FALSE, ch, 0, 0, TO_ROOM);
 
-        if ((rc = ch->takeFirstHit(tch)) == DELETE_VICT) {
+        if ((rc = ch->takeFirstHit(*tch)) == DELETE_VICT) {
           delete tch;
           tch = NULL;
         } else if (rc == DELETE_THIS) 
@@ -3375,7 +3375,7 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
          !(tch->specials.act & ACT_WIMPY) && ch->canSee(tch)) {
       if (!ch->checkSoundproof())
         act("$n screams 'Protect the innocent!!!'",FALSE,ch,0,0,TO_ROOM);
-      if ((rc = ch->takeFirstHit(tch)) == DELETE_VICT) {
+      if ((rc = ch->takeFirstHit(*tch)) == DELETE_VICT) {
         delete tch;
         tch = NULL;
       } else if (rc == DELETE_THIS) 

@@ -498,7 +498,7 @@ int TMonster::lookForEngaged(const TBeing *ch)
       continue;
     if (tbt->fight() == this) {
       // I'm a smart mob, and, oh look, tbt is engaged with me...
-      int rc = takeFirstHit(tbt);
+      int rc = takeFirstHit(*tbt);
       if (IS_SET_DELETE(rc, DELETE_VICT)) {
         delete tbt;
         tbt = NULL;

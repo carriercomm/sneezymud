@@ -126,7 +126,7 @@ static void test_fight_start(bool same_time)
 
     if (!same_time) {
       do {
-        mob1->takeFirstHit(mob2);
+        mob1->takeFirstHit(*mob2);
       } while (!mob1->fight());
     } else {
       // set both fighting, no advantage to either

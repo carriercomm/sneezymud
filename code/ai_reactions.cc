@@ -1008,7 +1008,7 @@ int TMonster::aiShoveReact(TBeing *doer, bool worked, dirTypeT dir)
       act("You nudge $N.", TRUE, this, 0, doer, TO_CHAR);
     }
     if (isAngry()) 
-      return takeFirstHit(doer);
+      return takeFirstHit(*doer);
     else
       aiUpset(doer);
   }

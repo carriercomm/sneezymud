@@ -196,7 +196,7 @@ bool TBeing::inGroup(const TBeing &tbt) const
     return FALSE;
 
   TBeing *tbt2 = dynamic_cast<TBeing *>(tbt.rider);
-  if (tbt2 && inGroup(tbt2))
+  if (tbt2 && inGroup(*tbt2))
     return TRUE;
 
   if (!tbt.isAffected(AFF_GROUP))
@@ -225,7 +225,7 @@ unsigned int TBeing::numberInGroupInRoom() const
 
   for (t = roomp->stuff; t; t = t->nextThing) {
     TBeing *tbt = dynamic_cast<TBeing *>(t);
-    if (tbt && inGroup(tbt))
+    if (tbt && inGroup(*tbt))
       count++;
   }
   return count;

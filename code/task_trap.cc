@@ -51,7 +51,7 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
       continue;
     guard->doSay("Hey!  We don't allow any of that nonsense here!");
 
-    if ((rc = guard->takeFirstHit(ch)) == DELETE_VICT)
+    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
       return DELETE_THIS;
     else if (rc == DELETE_THIS) {
       delete guard;
@@ -177,7 +177,7 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
       continue;
     guard->doSay("Hey!  We don't allow any of that nonsense here!");
 
-    if ((rc = guard->takeFirstHit(ch)) == DELETE_VICT)
+    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
       return DELETE_THIS;
     else if (rc == DELETE_THIS) {
       delete guard;
@@ -322,7 +322,7 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
       continue;
     guard->doSay("Hey!  We don't allow any of that nonsense here!");
 
-    if ((rc = guard->takeFirstHit(ch)) == DELETE_VICT)
+    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
       return DELETE_THIS;
     else if (rc == DELETE_THIS) {
       delete guard;
@@ -454,7 +454,7 @@ int task_trap_grenade(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
       continue;
     guard->doSay("Hey!  We don't allow any of that nonsense here!");
 
-    if ((rc = guard->takeFirstHit(ch)) == DELETE_VICT)
+    if ((rc = guard->takeFirstHit(*ch)) == DELETE_VICT)
       return DELETE_THIS;
     else if (rc == DELETE_THIS) {
       delete guard;

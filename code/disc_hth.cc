@@ -69,7 +69,7 @@ int TBeing::doShove(const char *argument, TBeing *vict)
 
       if (!victim->isPc()) {
         TMonster *tmons = dynamic_cast<TMonster *>(victim);
-        rc = tmons->takeFirstHit(this);
+        rc = tmons->takeFirstHit(*this);
         if (IS_SET_DELETE(rc, DELETE_THIS)) {
           if (vict) 
             return rc;

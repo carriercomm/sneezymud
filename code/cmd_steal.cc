@@ -170,7 +170,7 @@ static int steal(TBeing * thief, TBeing * victim)
            !guard->awake() || guard == victim)
         continue;
       guard->doSay("Thief!  Villain!  Prepare to die!");
-      if ((rc = guard->takeFirstHit(thief)) == DELETE_VICT)
+      if ((rc = guard->takeFirstHit(*thief)) == DELETE_VICT)
         return DELETE_THIS;
       else if (rc == DELETE_THIS) {
         delete guard;
@@ -329,7 +329,7 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
            !guard->awake() || guard == victim)
         continue;
       guard->doSay("Thief!  Villain!  Prepare to die!");
-      if ((rc = guard->takeFirstHit(thief)) == DELETE_VICT)
+      if ((rc = guard->takeFirstHit(*thief)) == DELETE_VICT)
         return DELETE_THIS;
       else if (rc == DELETE_THIS) {
         delete guard;

@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/04 02:59:44  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -246,13 +232,15 @@ const int MAX_CORPSE_FLAGS     = 3;  // move and change
 
 /* for containers  - value[1] */
 
-const unsigned int CONT_CLOSEABLE      = (1<<0);
-const unsigned int CONT_PICKPROOF      = (1<<1);
-const unsigned int CONT_CLOSED         = (1<<2);
-const unsigned int CONT_LOCKED         = (1<<3);
-const unsigned int CONT_TRAPPED        = (1<<4);
-const unsigned int CONT_NOOKNICHE      = (1<<5);
-const unsigned int CONT_SECRET         = (1<<6);
+const unsigned int CONT_CLOSEABLE      = (1 <<  0);
+const unsigned int CONT_PICKPROOF      = (1 <<  1);
+const unsigned int CONT_CLOSED         = (1 <<  2);
+const unsigned int CONT_LOCKED         = (1 <<  3);
+const unsigned int CONT_TRAPPED        = (1 <<  4);
+const unsigned int CONT_SECRET         = (1 <<  5); // Contianer cannot be seen(window)
+const unsigned int CONT_DUDTRAP        = (1 << 28); // Dud trap
+const unsigned int CONT_EMPTYTRAP      = (1 << 29); // Can not have a fake trap.
+const unsigned int CONT_GHOSTTRAP      = (1 << 30); // Thief *THOUGHT* they saw a trap.
 
 const unsigned int BOW_STRING_BROKE    = (1 << 0);
 const unsigned int BOW_CARVED          = (1 << 1);

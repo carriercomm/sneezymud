@@ -639,9 +639,11 @@ if (version >= 7 ||
 
 static bool shouldRecycle(int robj)
 {
-  // nuke only if item is highly-limited and at its max
+// old rule vetod by ICon
+//          obj_index[robj].max_exist <= MIN_EXIST_IMMORTAL &&
+
+  // nuke only if item is at its max
   return (obj_index[robj].max_exist &&
-          obj_index[robj].max_exist <= MIN_EXIST_IMMORTAL &&
           obj_index[robj].number >= obj_index[robj].max_exist);
 }
 

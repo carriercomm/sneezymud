@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_leverage.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:37:35  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "combat.h"
 #include "disc_leverage.h"
@@ -235,6 +214,15 @@ int hurl(TBeing *caster, TBeing *victim, char *direction)
   }
   if (caster->roomp && !caster->roomp->dir_option[dr]){
     caster->sendTo("That direction seems to be blocked.\n\r");
+    return FALSE;
+  }
+
+  TRoom *tRoom = (caster->roomp->dir_option[dr]->to_room ?
+                  real_roomp(caster->roomp->dir_option[dr]->to_room) :
+                  NULL);
+
+  if (!tRoom || tRoom->isRoomFlag(ROOM_PEACEFUL)) {
+    caster->sendTo("That is a peaceful room, you can not just hurl people in there!\n\r");
     return FALSE;
   }
 

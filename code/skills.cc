@@ -521,6 +521,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
       return &((CDPhysical *) cd)->skDoorbash;
     case SKILL_DEATHSTROKE:
       return &((CDPhysical *) cd)->skDeathstroke;
+    case SKILL_POWERMOVE:
+      return &((CDPhysical *) cd)->skPowerMove;
 
 // disc_smythe
 // No skills currently

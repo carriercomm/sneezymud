@@ -248,6 +248,7 @@ enum spellNumT {
      SKILL_DOORBASH,
      SKILL_DEATHSTROKE,
      SKILL_DUAL_WIELD_WARRIOR,  
+     SKILL_POWERMOVE,
      // end of warrior
      // start of ranger
 

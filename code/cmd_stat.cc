@@ -147,6 +147,12 @@ void TBeing::statRoom(TRoom *rmp)
   TThing *t;
   int counter = 0;
 
+  if (!limitPowerCheck(CMD_EDIT, rmp->number)) {
+    sendTo("You are not allowed to stat this room, sorry.\n\r");
+    return;
+  }
+
+
   sprintf(buf2,"Room name: %s, Of zone : %d. V-Number : %d, R-number : %d\n\r",
         rmp->name, rmp->getZone(), rmp->number, in_room);
   str = buf2;
@@ -308,6 +314,12 @@ void TBeing::statObj(const TObj *j)
   TThing *t;
   int i;
   string str;
+
+  if (!limitPowerCheck(CMD_OEDIT, j->getSnum())) {
+    sendTo("You are not allowed to stat that object, sorry.\n\r");
+    return;
+  }
+
   
   sprintf(buf, "Object name: [%s], R-number: [%d], V-number: [%d] Item type: ",
        j->name, j->number, obj_index[j->getItemIndex()].virt);
@@ -475,7 +487,12 @@ void TBeing::statBeing(TBeing *k)
   struct time_info_data playing_time;
   int i;
 
-  
+  if (!limitPowerCheck(CMD_MEDIT, k->number)) {
+    sendTo("You are not allowed to stat this being, sorry.\n\r");
+    return;
+  }
+
+
   *buf = *buf2 = *buf3 = *birth_buf = *logon_buf = '\0';
 
   switch (k->player.sex) {
@@ -1813,3 +1830,7 @@ void TPerson::doStat(const char *argument)
     sendTo("No mobile or object by that name in The World.\n\r");
   }
 }
+
+
+
+

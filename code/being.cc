@@ -1218,14 +1218,21 @@ void TBeing::peeOnMe(const TBeing *ch)
   act("You relieve yourself on $N's foot.", TRUE, ch, 0, this, TO_CHAR);
 }
 
-const char * TBeing::getLongDesc()
+const char * TBeing::getLongDesc() const
 {
   if (player.longDescr)
     return player.longDescr;
 
+
+#if 1
+  if (msgVariables.tMessages.msgLongDescr &&
+      *msgVariables.tMessages.msgLongDescr)
+    return msgVariables.tMessages.msgLongDescr;
+#else
   if (msgVariables == MSG_LONGDESCR &&
       !msgVariables(MSG_LONGDESCR, (TThing *)NULL).empty())
     return msgVariables(MSG_LONGDESCR, (TThing *)NULL).c_str();
+#endif
 
   return NULL;
 }

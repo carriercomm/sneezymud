@@ -1382,12 +1382,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
   your_deity_val = which;
   inPraying = TRUE; 
 
-  if(spellstore.storing){
-    spellstore.spelltask=spelltask;
-    spelltask=NULL;
-    return TRUE;
-  }
-
   switch(which) {
     case SPELL_GUST:
       rc = gust(this,ch);
@@ -2232,6 +2226,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
         sendTo("Spell or discipline not yet implemented!\n\r");
         return FALSE;
   }
+
 // COSMO MARKER: Mana..Piety taken through here ...have to change useMana too
   if (inPraying)
     inPraying = 0;
@@ -2248,6 +2243,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
   // one combat round is 2 seconds 
   if (!IS_SET(discArray[which]->comp_types, SPELL_TASKED))
     addSkillLag(which, rc);
+
     
 #if 0
   if (cast)

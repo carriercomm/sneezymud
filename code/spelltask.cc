@@ -1201,6 +1201,15 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
 //   o = NULL;
 
 
+  if(spellstore.storing && spelltask){
+    spellstore.spelltask=spelltask;
+    spelltask=NULL;
+    spellstore.storing=false;
+    return TRUE;
+  }
+
+
+
   if ((discArray[which]->targets & TAR_VIOLENT) &&
       checkPeaceful("Violent disciplines are not allowed here!\n\r")) {
     stopCast(STOP_CAST_GENERIC);

@@ -11,7 +11,11 @@ bool TBeing::powerCheck(wizPowerT wpt) const
   return false;
 }
 
-bool TBeing::limitPowerCheck(cmdTypeT cmd, int checknum) {
+bool TBeing::limitPowerCheck(cmdTypeT cmd, int vnum) {
+  if (!desc) {
+    vlogf(LOG_BUG,"%s got to limitPowerCheck() without desc, very bad.", getName());
+    return TRUE; // if we return FALSE here it could cause a crash
+  }
   if (hasWizPower(POWER_NO_LIMITS))
     return TRUE;
   int as, ae, bs, be, o;
@@ -20,8 +24,6 @@ bool TBeing::limitPowerCheck(cmdTypeT cmd, int checknum) {
   bs = desc->blockbstart;
   be = desc->blockbend;
   o = desc->office;
-  // of course this isnt right...but it compiles :)
-  int vnum = 0;
 
   switch(cmd) {
     case CMD_FORCE:
@@ -83,6 +85,7 @@ bool TBeing::isGenericObj(int vnum)
       || (vnum >= 300 && vnum <= 342) // generic weapons
       || (vnum >= 400 && vnum <= 417) // generic food
       || (vnum >= 420 && vnum <= 443) // generic drink
+      || (vnum == 1) // oed loaded object
       ) // add other generics here
     return TRUE;
   return FALSE;

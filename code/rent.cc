@@ -16,6 +16,9 @@ static const int NORMAL_SLOT   = -1;
 static const int CONTENTS_END  = -2;
 static const int CORPSE_END  = -3;
 
+static const int LIMITED_RENT_ITEM = 10;  
+// in 5.2 anything with max exists <= this number will be charged rent
+
 struct SInnkeeperHate {
   int    tVNum; // Mobile VNum of the innkeeper in question.
   race_t tRace;  // Race in question
@@ -157,6 +160,11 @@ double getLevMod(unsigned short int Class, unsigned int lev)
 
 unsigned int rent_credit(ush_int Class, unsigned int orig_lev, unsigned int numClasses)
 {
+#ifdef SNEEZY2000
+  // for 5.2 we're going for 0 base rent credit for all classes, then charging on basis of max exists
+  return (unsigned int)0;
+#endif
+
   // First, establish credit for the AC and struct of the player's
   // equipment.
   // this should be level based, but tweak that level for class since
@@ -952,6 +960,10 @@ void TBeing::addObjCost(TBeing *re, TObj *obj, objCost *cost, string &str)
   
   if (obj->isRentable()) {
     temp = max(0, obj->rentCost());
+#ifdef SNEEZY2000
+    // in sneezy 5.2 we don't want to charge for anything that isn't limited. -dash 01/01
+    if(obj->max.max_exist <= LIMITED_RENT_ITEM) temp = 0;
+#endif
     cost->total_cost += temp;
     if (re) {
       if (desc && desc->m_bIsClient) {

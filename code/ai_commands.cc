@@ -1,20 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: ai_commands.cc,v $
-// Revision 5.1  1999/10/16 04:45:11  batopr
-// new version
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD 4.0 - All rights reserved, SneezyMUD Coding Team
 //      "ai_commands.cc" - handles the actual responses to all commands
 //        a user can do for use with the mob AI routines.
@@ -78,6 +63,7 @@ int TMonster::aiBounce(TBeing *doer,TBeing *, aiTarg cond)
         act("$n head bobs about watching people bounce around.",TRUE,this,0,doer,TO_ROOM);
       break;
   }
+
   return FALSE;
 }
 
@@ -199,6 +185,7 @@ int TMonster::aiDance(TBeing *doer, TBeing *other, aiTarg cond)
       }
       break; 
   }
+
   return FALSE;
 }
 
@@ -293,6 +280,7 @@ int TMonster::aiSmile (TBeing *doer, TBeing *other, aiTarg cond)
       }
       break;
   }
+
   return FALSE;
 }
 
@@ -302,6 +290,7 @@ int TMonster::aiCackle(TBeing *doer, TBeing *, aiTarg cond)
     aiRudeNoise(doer);
     return FALSE;
   }
+
   switch (cond) {
     case TARGET_NONE:
     case TARGET_SELF:
@@ -312,6 +301,7 @@ int TMonster::aiCackle(TBeing *doer, TBeing *, aiTarg cond)
       aiStrangeThings(doer);
       break;
   }
+
   return FALSE;
 }
 
@@ -321,6 +311,7 @@ int TMonster::aiLaugh(TBeing *doer, TBeing *other, aiTarg cond)
     aiRudeNoise(doer);
     return FALSE;
   }
+
   switch (cond) {
     case TARGET_NONE:
       DA(1);
@@ -366,6 +357,7 @@ int TMonster::aiGiggle (TBeing *doer, TBeing *, aiTarg cond)
     // doubt they would understand a giggle 
     return FALSE;
   }
+
   switch (cond) {
     case TARGET_NONE:
     case TARGET_SELF:
@@ -383,6 +375,7 @@ int TMonster::aiGiggle (TBeing *doer, TBeing *, aiTarg cond)
       }
       break;
   }
+
   return FALSE;
 }
 
@@ -453,6 +446,7 @@ int TMonster::aiShake (TBeing *doer, TBeing *, aiTarg cond)
     case TARGET_OTHER:
       break;
   }
+
   return FALSE;
 }
 
@@ -492,6 +486,7 @@ int TMonster::aiPuke (TBeing *doer, TBeing *, aiTarg cond)
       }
       break;
   }
+
   return FALSE;
 }
 
@@ -566,7 +561,7 @@ int TMonster::aiScream (TBeing *doer, TBeing *, aiTarg cond)
     case TARGET_SELF:
     case TARGET_MOB:
     case TARGET_OTHER:
-      vlogf(6,"TMonster::aiScream is whacky.");
+      vlogf(LOG_MOB_AI, "TMonster::aiScream is whacky.");
       break;
   }
   return FALSE;
@@ -646,7 +641,7 @@ int TMonster::aiSigh (TBeing *, TBeing *, aiTarg cond)
     case TARGET_SELF:
     case TARGET_MOB:
     case TARGET_OTHER:
-      vlogf(5,"Wierd call into TMonster::aiSigh.");
+      vlogf(LOG_MOB_AI, "Wierd call into TMonster::aiSigh.");
       break;
   }
   return FALSE;
@@ -2856,7 +2851,7 @@ void TBeing::aiWear(TObj *obj)
   TThing *tmp;
 
   if (!obj) {
-    vlogf(8,"AI_wear called with bad declarations.");
+    vlogf(LOG_MOB_AI, "AI_wear called with bad declarations.");
     return;
   }
   if (inRoom() == ROOM_NOWHERE)
@@ -2882,11 +2877,11 @@ void TBeing::aiGet(TThing *obj)
   TThing *tmp;
 
   if (!obj) {
-    vlogf(8, "AI_wear called with bad declarations.");
+    vlogf(LOG_MOB_AI, "AI_wear called with bad declarations.");
     return;
   }
   if (!roomp) {
-    vlogf(5, "%s without a roomp in aiGet", getName());
+    vlogf(LOG_MOB, "%s without a roomp in aiGet", getName());
     return;
   }
   for (tmp = roomp->stuff; tmp; tmp = tmp->nextThing) {

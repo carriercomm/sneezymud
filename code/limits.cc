@@ -230,7 +230,38 @@ int TMonster::hitGain()
   int gain;
   int num;
 
-  gain = max(2, (GetMaxLevel() / 2));
+  // ok well. here's the deal, as of late March 2001, players are able to abuse
+  // the slowness of mob healing to run and hide, then heal much faster than
+  // the mob they were fighting. I'm going to roughly linearize the monster HP
+  // gain formula to heal as fast (in terms of %hp) as PCs
+
+  // evaluating the TPerson version of this function shows that:
+  // a level 50 warrior should get about 1/20 hp a regen,
+  // and a level 1 warrior should get about 8/20 hp a level
+  // thus, we get... (.4-.35*(level/50.0))*hitLimit()
+  // i'm also gonna cap level at 50 so that there is no way we can get negative values
+
+  int oldgain = max(2, (GetMaxLevel() / 2));
+  // the old version
+  
+  // base1 is the % for level 1, base50 is the percent for level 50, for easy adjusting
+
+  double base1 = 0.20;
+  double base50 = 0.04;
+
+
+  double level = (double)(min(50, (int)GetMaxLevel()));
+
+  gain = (int)(( base1 - (base1-base50) * (level/50.0)) * (double)hitLimit());
+
+  // just because i'm an asshole, i'm going to make sure this new value wont be lower
+  // than the old value
+
+  gain = max(oldgain,gain);
+  
+  if (fight())
+    gain = 0;
+
 
   TBed * tb = dynamic_cast<TBed *>(riding);
   if (tb)
@@ -371,6 +402,10 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
   // smart people should be able to learn 1/2 all possible learning
   // average people should learn 3/8
   // stupid people should learn 1/4
+  // new - 2/3,1/2,3/3
+  double minlearn = 1.0/3.0;
+  double avlearn = 1.0/2.0;
+  double maxlearn = 2.0/3.0;
 
   // I'd like to see all classes finish their prereqs at the same rate
   // thus leaving all the spec to be done after that
@@ -378,7 +413,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
   // i'll assume average person should finish basic discs at L30
   // thus basic learning should give a person 200/30 pracs a level = 6.67
   
-  // thus, the next 20 levels should give 3/8 learning in however many base
+  // thus, the next 20 levels should give 1/2 learning in however many base
   // disciplines.
 
   // using cleric as and example, this should be 5 discs * 60 pracs/disc = 300 pracs
@@ -388,6 +423,19 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
   // should have started learning advanced stuff
 
   // advanced level = 30 * (8/3) * (learnrate) = 80 * learnrate
+  // like a putz, i decided this was too low and went to change it
+  // so i plugged it into the statPlot with higher values, but FORGOT
+  // to change the formulas we later derived using those values.
+  // DON'T DO THAT
+
+  // new things - we can force the range at which they finish basic training
+  // for the moment i'd like to force between 22.5 and 37.5, because that will give a maxed
+  // int person dependable 9 pracs a lev for basic training
+
+  double deviation = 7.5;
+  double avbasic = 30.0; // try to keep this 30, the balance docs follow that premise
+
+
 
   // so pracs per advanced level = (discs * 60 * learnrate) / (50 - 80 * learnrate) = pracs
   
@@ -434,13 +482,15 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
 
 
   if (!desc) {
-    learnrate = plotStat(STAT_CURRENT, STAT_INT, (float)(0.33), (float)(0.66), (float)(0.50), 1.0);
+    learnrate = plotStat(STAT_CURRENT, STAT_INT, minlearn, maxlearn, avlearn, 1.4);
   } else {
-    learnrate = plotStat(STAT_NATURAL, STAT_INT, (float)(0.33), (float)(0.66), (float)(0.50), 1.0);
+    learnrate = plotStat(STAT_NATURAL, STAT_INT, minlearn, maxlearn, avlearn, 1.4);
   }
 
 
-  double advancedlevel = (90.0/(8.0*learnrate));
+
+  double advancedlevel = (double)((int)(avbasic+(deviation*((avlearn - learnrate)/(avlearn-minlearn)))));
+  //  double advancedlevel = (90.0/(8.0*learnrate));
   double basicpracs = (200.0/advancedlevel);
   double advancedpracs = (discs * 60.0 * learnrate)/(50.0 - advancedlevel);
   
@@ -562,12 +612,15 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
     num /= 4;
   } 
 
-  if ((100*num) >= (::number(1,100))) {
+  if ((100.0*num) >= (::number(1,99))) {
     prac++;
   }
   if(isPc()) {
-    vlogf(LOG_DASH, "%s gaining %5.2f pracs (%5.2f) lev: %d, advancedlev: %5.2f", getName(),
-	  temp, num, getLevel(Class), advancedlevel);
+    vlogf(LOG_DASH, "%s gaining %d pracs (%4.2f + %4.2f) lev: %d, advancedlev: %d", getName(),
+	  prac, temp, num, getLevel(Class), (int)advancedlevel);
+    vlogf(LOG_JESUS, "%s gaining %d pracs (%4.2f + %4.2f) lev: %d, advancedlev: %d", getName(),
+          prac, temp, num, getLevel(Class), (int)advancedlevel);
+
   }
   return prac;
 
@@ -1311,40 +1364,53 @@ double TBeing::hpGainForLevel(classIndT Class) const
   
   
 
-
-  if(isPc()) {
-    vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
-	  hpgain*(double)getConHpModifier() - hpgain,
-	  (int)(hpgain*(double)getConHpModifier()));
-    vlogf(LOG_JESUS,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
-	  hpgain*(double)getConHpModifier() - hpgain,
-	  (int)(hpgain*(double)getConHpModifier()));
-    // added a log for myself out of curiosity
-  }
+#if 0
+  vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
+	hpgain*(double)getConHpModifier() - hpgain,
+	(int)(hpgain*(double)getConHpModifier()));
+  vlogf(LOG_JESUS,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
+	hpgain*(double)getConHpModifier() - hpgain,
+	(int)(hpgain*(double)getConHpModifier()));
+  // added a log for myself out of curiosity
+  
+#endif
   double raw = hpgain;
   
   // tack on CON modifier
   hpgain *= (double) getConHpModifier();
-
-
+  
+  
   hpgain /= (double) howManyClasses();
-
-  double bonus = raw - (int)(hpgain);
-
+  
+  double bonus = hpgain - raw;
+  
   double roundoff = hpgain - (int)(hpgain);
   hpgain = (int)hpgain;
   
-  if(100*roundoff < ::number(1,100)) {
+  int roll;
+  roll = ::number(1,99);
+  
+  if(100.0*roundoff >= roll) {
     hpgain += 1.0;
   }
   
 
   if(isPc()) {
-    vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),raw,
-          bonus, (int)(hpgain));
+    vlogf(LOG_DASH,"%s gaining %d + %4.2f hitpoints %d (%d > %d)", getName(),(int)raw,
+          bonus, (int)hpgain, (int)(100.0*roundoff), roll);
+    vlogf(LOG_JESUS,"%s gaining %d + %4.2f hitpoints -> %4.2f (%d > %d)", getName(),(int)raw,
+          bonus, hpgain, (int)(100.0*roundoff), roll);
   }
 
 
   return hpgain;
 }
+
+
+
+
+
+
+
+
 

@@ -541,8 +541,13 @@ bool TBaseWeapon::isPierceWeapon() const
 
 void TBaseWeapon::divinateMe(TBeing *caster) const
 {
+#if 1
+  caster->sendTo("It is capable of doing %s of damage for your level.\n\r", 
+          describe_damage((int) damageLevel(), caster));
+#else
   caster->sendTo("It is capable of doing %s of damage.\n\r", 
-          describe_damage((int) damageLevel()));
+          describe_damage((int) damageLevel(), caster));
+#endif
 }
 
 int TBaseWeapon::enhanceMe(TBeing *caster, int level, byte bKnown)

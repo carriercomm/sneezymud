@@ -168,7 +168,7 @@ static string identifyBeingStuff(const TBeing *caster, const TBeing *victim)
       tempStat.add(the_stat, temp);
     }
   }
-  str += "<c>Current:<z>");
+  str += "<c>Current:<z>";
   str += tempStat.printStatHeader();
   str += "        ";
 

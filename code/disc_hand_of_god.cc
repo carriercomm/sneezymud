@@ -739,6 +739,7 @@ int portal(TBeing * caster, TBeing * victim, int level, byte bKnown)
 {
   char buf[256];
   TMonster *tmon;
+  TPerson *tPerson = dynamic_cast<TPerson *>(caster);
 
   int location = victim->in_room;
   TRoom * rp = victim->roomp;
@@ -800,6 +801,9 @@ int portal(TBeing * caster, TBeing * victim, int level, byte bKnown)
     }
     *caster->roomp += *tmp_obj;
 
+    if (tPerson)
+      tmp_obj->checkOwnersList(tPerson);
+
     caster->roomp->playsound(SOUND_SPELL_PORTAL, SOUND_TYPE_MAGIC);
 
     TPortal * next_tmp_obj = new TPortal();
@@ -813,6 +817,9 @@ int portal(TBeing * caster, TBeing * victim, int level, byte bKnown)
     next_tmp_obj->obj_flags.cost = 1;
     next_tmp_obj->setTarget(caster->in_room);
     *rp += *next_tmp_obj;
+
+    if (tPerson)
+      next_tmp_obj->checkOwnersList(tPerson);
 
     rp->playsound(SOUND_SPELL_PORTAL, SOUND_TYPE_MAGIC);
 

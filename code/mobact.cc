@@ -3147,11 +3147,133 @@ int TMonster::fearCheck(const TBeing *ch, bool mobpulse)
   return FALSE;
 }
 
+
+int TMonster::factionAggroCheck()
+{
+  TThing *t, *t2;
+  TPerson *tmp_ch;
+  int rc;
+
+  if((!isCult() && !isBrother()) ||
+     (isCult() && !inLogrus()) ||
+     (isBrother() && !inBrightmoon())){
+    return FALSE;
+  }
+
+  if (fight())
+    return FALSE;
+
+  if (desc)
+    return FALSE;
+
+    // Scroll through stuff list to get count of valid things to hit, 
+
+  for (t = roomp->stuff; t; t = t2) {
+    t2 = t->nextThing;
+    // cast to Person, rather than isPc(), so poly'd chars are safe 
+    tmp_ch = dynamic_cast<TPerson *>(t);
+    if (!tmp_ch)
+      continue;
+
+    if (canSee(tmp_ch) && (getPosition() >= POSITION_STANDING)) {
+      if (tmp_ch->isImmortal() && tmp_ch->isPlayerAction(PLR_NOHASSLE)) {
+	continue;
+      }
+
+      if (checkPeaceful("You can't seem to exercise your violent tendencies.\n\r")) {
+	if (!::number(0, 4)) {
+	  aiGrowl(NULL);
+	}
+	return TRUE;
+      }
+
+      if((isCult() && (tmp_ch->isBrother() || tmp_ch->isSnake())) ||
+	 (isBrother() && tmp_ch->isCult())){
+	
+	if(isCult() && tmp_ch->isBrother()){
+	  switch(::number(0,3)){
+	    case 0:
+	      doAction(fname(tmp_ch->name), CMD_FLIPOFF);
+	      doAction("", CMD_SCREAM);	  
+	      break;
+	    case 1:
+	      doSay("Religious psycho-babbeling weirdos are not welcome here!");
+	      break;
+	    case 2:
+	      doSay("Your stench makes me ill, Galekian.");
+	      break;
+	    case 3:
+	      doSay("Now is your chance to meet Galek, face to face!");
+	      doAction("", CMD_CACKLE);
+	      break;
+	  }
+	} else if(isCult() && tmp_ch->isSnake()){
+	  switch(::number(0,3)){
+	    case 0:
+	      doSay("You are not welcome, manipulator.");
+	      break;
+	    case 1:
+	      doSay("You are either with us or against us.  You will take your choice to the grave!");
+	      break;
+	    case 2:
+	      doSay("The streets of Logrus will run red with the blood of our enemies!");
+	      doAction("", CMD_SCREAM);
+	      break;
+	    case 3:
+	      doSay("I will eat you in a sandwich.");
+	      doAction("", CMD_DROOL);
+	      break;
+	  }
+	} else if(isBrother()){
+	  switch(::number(0,3)){
+	    case 0:
+	      doSay("Get thee back to the festering hole from whence thou came, Logrite!");
+	      doEmote("screams with rage as he charges into battle.");
+	      break;
+	    case 1:
+	      doSay("I shall vanquish thee!");
+	      doEmote("rushes to the defense of the city.");
+	      break;
+	    case 2:
+	      doSay("Silly Logrite, Brightmoon is for Brothers!");
+	      doEmote("leaps into battle.");
+	      break;
+	    case 3:
+	      doSay("Rally the guard!  There are Logrites about!");
+	      doEmote("charges into the fray.");
+	      break;
+	  }	      
+	} else {
+	  act("$n snarls angrily and attacks!",TRUE,this,0,0,TO_ROOM);
+	  vlogf(LOG_BUG, "faction confusion in factionAggroCheck()");
+	}
+	
+
+	rc = takeFirstHit(*tmp_ch);
+	if (IS_SET_DELETE(rc, DELETE_VICT)) {
+	  delete tmp_ch;
+	  tmp_ch = NULL;
+	}
+	if (IS_SET_DELETE(rc, DELETE_THIS)) 
+	  return DELETE_THIS;
+	
+	return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+
+
+
 int TMonster::aggroCheck(bool mobpulse)
 {
   TThing *t, *t2;
   TPerson *tmp_ch;
   int rc;
+
+  if(factionAggroCheck())
+    return TRUE;
 
   if (fight())
     return FALSE;
@@ -3160,7 +3282,7 @@ int TMonster::aggroCheck(bool mobpulse)
     return FALSE;
 
   // Some randomization of who gets attacked added - Brutius 1/28/97
-  if (aggro() && (getHit() >= (hitLimit()/2))) {
+  if ((aggro() && (getHit() >= (hitLimit()/2)))){
     // Scroll through stuff list to get count of valid things to hit, 
 
     for (t = roomp->stuff; t; t = t2) {
@@ -3177,7 +3299,7 @@ int TMonster::aggroCheck(bool mobpulse)
         stats.aggro_attempts++;
 
         // randomize who gets hit some
-        if (mobpulse || ::number(0,9) < 7)
+        if ((mobpulse || ::number(0,9) < 7))
           continue;
 
         if (checkPeaceful("You can't seem to exercise your violent tendencies.\n\r")) {
@@ -3186,8 +3308,8 @@ int TMonster::aggroCheck(bool mobpulse)
           }
           return TRUE;
         }
-        if ((tmp_ch->plotStat(STAT_CURRENT, STAT_KAR, 0, 100, 50)) <=
-            (plotStat(STAT_CURRENT, STAT_INT, 0, 200, 100) + anger())) {
+        if (((tmp_ch->plotStat(STAT_CURRENT, STAT_KAR, 0, 100, 50)) <=
+	     (plotStat(STAT_CURRENT, STAT_INT, 0, 200, 100) + anger()))){
           if (!isDumbAnimal() && ::number(0, 3)) {
             // This should basically prevent mobs from attacking when they
             // are grossly out-armed and they know it.  But it also gives
@@ -3197,7 +3319,7 @@ int TMonster::aggroCheck(bool mobpulse)
               return FALSE;
           }
 
-          if (specials.act & ACT_WIMPY) {
+          if (specials.act & ACT_WIMPY){
             if (!tmp_ch->awake()) {
               stats.aggro_successes++;
               rc = takeFirstHit(*tmp_ch);
@@ -3213,7 +3335,7 @@ int TMonster::aggroCheck(bool mobpulse)
             continue;
           } else {
             stats.aggro_successes++;
-            act("$n snarls angrily and attacks!",TRUE,this,0,0,TO_ROOM);
+	    act("$n snarls angrily and attacks!",TRUE,this,0,0,TO_ROOM);
             rc = takeFirstHit(*tmp_ch);
             if (IS_SET_DELETE(rc, DELETE_VICT)) {
               delete tmp_ch;

@@ -4001,7 +4001,7 @@ int TRealContainer::trapMe(TBeing *ch, const char *trap_type)
   if (isContainerFlag(CONT_TRAPPED)) {
     if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
       if (detectTrapObj(ch, this)) {
-        sprintf(buf, "You start to trap $p, but then notice an insideous %s trap already present.", 
+        sprintf(buf, "You start to trap $p, but then notice an insidious %s trap already present.", 
            good_uncap(trap_types[getContainerTrapType()]).c_str());
         act(buf, TRUE, ch, this, NULL, TO_CHAR);
         return FALSE;

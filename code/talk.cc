@@ -2,27 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: talk.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/10 20:50:52  batopr
-// Added mud_assert in disturbMeditation to avoid crash bug
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//  
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//      
 //      "talk.cc" - All functions related to player communications
 //  
 //////////////////////////////////////////////////////////////////////////
@@ -37,11 +16,17 @@ void TBeing::disturbMeditation(TBeing *vict) const
   if (vict->task && !isImmortal()) {
     if (vict->task->task == TASK_PENANCE) {
       act("$n disturbs your penance!", FALSE, this, NULL, vict, TO_VICT);
-      act("You disturb $S penance!", TRUE, this, NULL, vict, TO_CHAR);
+
+      if (sameRoom(vict))
+        act("You disturb $S penance!", TRUE, this, NULL, vict, TO_CHAR);
+
       vict->stopTask();
     } else if (vict->task->task == TASK_MEDITATE) {
       act("$n disturbs your meditation!", FALSE, this, NULL, vict, TO_VICT);
-      act("You disturb $S meditation!", TRUE, this, NULL, vict, TO_CHAR);
+
+      if (sameRoom(vict))
+        act("You disturb $S meditation!", TRUE, this, NULL, vict, TO_CHAR);
+ 
       vict->stopTask();
     }
   }

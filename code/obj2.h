@@ -169,6 +169,7 @@ class TChest : public TRealContainer {
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual string statObjInfo() const;
     virtual itemTypeT itemType() const { return ITEM_CHEST; }
+    virtual void lowCheck();
 
     virtual bool objectRepair(TBeing *, TMonster *, silentTypeT);
 

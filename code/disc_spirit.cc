@@ -347,10 +347,9 @@ int ensorcer(TBeing *caster, TBeing *victim, int level, byte bKnown)
     aff.bitvector = AFF_CHARM;
     aff.duration  =  3 * level * UPDATES_PER_MUDHOUR;
 
-    if (victim->getImmunity(IMMUNE_CHARM)) {
-      aff.duration *= 100 - victim->getImmunity(IMMUNE_CHARM);
-      aff.duration /= 100;
-    }
+    // we've made raw immunity check, but allow it to reduce effects too
+    aff.duration *= (100 - victim->getImmunity(IMMUNE_CHARM));
+    aff.duration /= 100;
 
     switch (critSuccess(caster, SPELL_ENSORCER)) {
       case CRIT_S_DOUBLE:
@@ -1747,6 +1746,10 @@ int fear(TBeing *caster, TBeing *victim, int level, byte bKnown)
       aff.type = SPELL_FEAR;
       aff.duration = level * UPDATES_PER_MUDHOUR / 2;
       aff.renew = aff.duration;  // renewable immediately
+
+    // we've made raw immunity check, but allow it to reduce effects too
+    aff.duration *= (100 - victim->getImmunity(IMMUNE_FEAR));
+    aff.duration /= 100;
 
       victim->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES);
     }

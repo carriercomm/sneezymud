@@ -169,11 +169,12 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	db.o disc_adventuring.o disc_aegis.o disc_afflictions.o disc_air.o \
 	disc_alchemy.o disc_animal.o disc_blunt.o disc_brawling.o \
 	disc_cleric.o disc_combat.o disc_cure.o disc_deikhan.o \
-	disc_draining.o disc_earth.o disc_fattacks.o disc_fire.o \
+	disc_earth.o disc_fattacks.o disc_fire.o \
 	disc_hand_of_god.o disc_hth.o disc_leverage.o disc_looting.o \
 	disc_mage.o disc_meditation.o disc_mindbody.o disc_monk.o \
-	disc_mounted.o disc_murder.o disc_nature.o disc_physical.o \
-	disc_pierce.o disc_ranged.o disc_ranger.o disc_shaman.o \
+	disc_mounted.o disc_murder.o disc_physical.o disc_nature.o \
+	disc_pierce.o disc_ranged.o disc_ranger.o disc_shaman.o disc_shaman_armadillo.o \
+	disc_shaman_frog.o disc_shaman_spider.o disc_shaman_control.o \
 	disc_slash.o disc_smythe.o disc_sorcery.o disc_spirit.o \
 	disc_survival.o disc_theology.o disc_thief.o disc_warrior.o \
 	disc_water.o disc_wrath.o discipline.o disease.o doors.o drawpoker.o \
@@ -271,19 +272,20 @@ DISC_HEADS   = disc_adventuring.h disc_aegis.h disc_afflictions.h \
                disc_brawling.h disc_meditation.h disc_combat.h disc_cleric.h \
                disc_cures.h disc_deikhan.h disc_deikhan_aegis.h \
                disc_deikhan_cures.h disc_deikhan_fight.h disc_mounted.h \
-               disc_deikhan_wrath.h disc_draining.h disc_earth.h  \
+               disc_deikhan_wrath.h disc_earth.h  \
                disc_fire.h disc_hand_of_god.h disc_hth.h  \
                disc_leverage.h disc_fattacks.h disc_looting.h disc_lore.h  \
-               disc_mage.h disc_monk.h disc_murder.h disc_nature.h  \
+               disc_mage.h disc_monk.h disc_murder.h  \
                disc_pierce.h disc_plants.h disc_physical.h \
-               disc_poisons.h disc_ranged.h disc_ranger.h \
-               disc_ranger_fight.h disc_shaman.h  \
-               disc_shaman_alchemy.h disc_shaman_fight.h  \
-               disc_shaman_healing.h disc_smythe.h disc_sorcery.h \
+               disc_poisons.h disc_ranged.h disc_ranger.h disc_nature.h \
+               disc_ranger_fight.h disc_shaman.h disc_shaman_armadillo.h \
+	       disc_shaman_frog.h disc_shaman_skunk.h disc_shaman_spider.h \
+               disc_shaman_alchemy.h disc_shaman_control.h \
+               disc_smythe.h disc_sorcery.h \
                disc_spirit.h disc_stealth.h disc_survival.h   \
                disc_mindbody.h disc_theology.h disc_thief.h  \
                disc_thief_fight.h disc_totem.h disc_traps.h  \
-               disc_undead.h disc_warrior.h disc_water.h disc_wrath.h
+               disc_warrior.h disc_water.h disc_wrath.h
 
 $(OBJDIR)%.o : %.cc $(GEN_HEADS)
 	@echo Making \"$<\"
@@ -360,7 +362,6 @@ $(OBJDIR)disc_cleric.o: disc_cleric.h
 $(OBJDIR)disc_combat.o: disc_combat.h components.h combat.h
 $(OBJDIR)disc_cure.o: disc_cures.h combat.h spelltask.h
 $(OBJDIR)disc_deikhan.o: disc_deikhan.h combat.h
-$(OBJDIR)disc_draining.o: disc_draining.h combat.h
 $(OBJDIR)disc_earth.o: disc_earth.h combat.h spelltask.h
 $(OBJDIR)disc_fire.o: disc_fire.h spelltask.h combat.h
 $(OBJDIR)disc_hand_of_god.o: disc_hand_of_god.h combat.h
@@ -373,6 +374,10 @@ $(OBJDIR)disc_monk.o: disc_monk.h combat.h
 $(OBJDIR)disc_mounted.o: disc_mounted.h
 $(OBJDIR)disc_murder.o: disc_murder.h combat.h spelltask.h
 $(OBJDIR)disc_nature.o: disc_nature.h combat.h spelltask.h
+$(OBJDIR)disc_shaman_armadillo.o: disc_shaman_armadillo.h combat.h spelltask.h
+$(OBJDIR)disc_shaman_frog.o: disc_shaman_frog.h combat.h spelltask.h
+$(OBJDIR)disc_shaman_spider.o: disc_shaman_spider.h combat.h spelltask.h
+$(OBJDIR)disc_shaman_control.o: disc_shaman_control.h combat.h spelltask.h
 $(OBJDIR)disc_physical.o: disc_pierce.h
 $(OBJDIR)disc_pierce.o: disc_pierce.h
 $(OBJDIR)disc_ranged.o: disc_ranged.h
@@ -399,7 +404,7 @@ $(OBJDIR)handler.o: combat.h range.h connect.h shop.h
 $(OBJDIR)hearts.o: $(CASINO_HEADS)
 $(OBJDIR)hospital.o: combat.h
 $(OBJDIR)immortal.o: statistics.h mail.h $(CASINO_HEADS) combat.h
-$(OBJDIR)immortal.o: socket.h systemtask.h disc_nature.h shop.h
+$(OBJDIR)immortal.o: socket.h systemtask.h disc_shaman_armadillo.h disc_nature.h shop.h
 $(OBJDIR)indexdata.o: statistics.h
 $(OBJDIR)info.o: statistics.h $(CASINO_HEADS) combat.h components.h
 $(OBJDIR)info.o: skillsort.h

@@ -1,6 +1,6 @@
 03-12-00 / 03-16-00 / 03-19-00 / 03-21-00 / 03-22-00 - Lapsos
 03-23-00 / 03-25-00 / 03-26-00 / 03-29-00 / 03-30-00 - Lapsos
-04-01-00 - Lapsos
+04-01-00 / 04-04-00 / 04-08-00 / 04-09-00 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
@@ -80,6 +80,13 @@
   be complete "tan" won't work.
 - Moved the 'is limited' check on items for immortal mortals to display
   for any item with a cap due to the current imm recycle code.
+- Fixed my self/me code, was being a bit unclean and problem prone.
+- Re-Added old style self/me check to comply with old use.
+- Modified doStop so a person can do 'stop <player>' to stop a person from
+  following them.
+- Setup the makecorpse function, and some leading up to it, to assign objects
+  placed in the new corpse to the killer.  This will stop the 'kill with one
+  player and loot with another in my account.'
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

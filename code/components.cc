@@ -1608,13 +1608,8 @@ void buildComponentArray()
   res=mysql_use_result(db);
   while((row=mysql_fetch_row(res))){
     vnum=atoi(row[0]);
-    spell=(spellNumT) atoi(row[1]);
+    spell=mapFileToSpellnum(atoi(row[1]));
     usage=atoi(row[2]);
-
-    if(spell>MAX_SKILL){ 
-      vlogf(LOG_BUG, "spell %i (comp %i) greater than MAX_SKILL", spell, vnum);
-      continue;
-    }
 
     if(spell != TYPE_UNDEFINED &&
        (((usage & COMP_SPELL) != 0))){

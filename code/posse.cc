@@ -2,26 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: posse.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/29 22:19:03  batopr
-// Fixed so CMD_GENERIC_DESTROYED would always result in memory being freed
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "posse.cc" - Special procedures for GH posse
 //
 ///////////////////////////////////////////////////////////////////////////
@@ -56,6 +36,18 @@ int grimhavenPosse(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TOb
       posseeStateT state;
       int arrest_state;
       TMonster *criminal;
+
+      hunt_struct() :
+        cur_pos(0),
+        cur_path(0),
+        state(STATE_NONE),
+        arrest_state(0),
+        criminal(NULL)
+      {
+      }
+      ~hunt_struct()
+      {
+      }
   } *job;
 
   if (cmd == CMD_GENERIC_DESTROYED) {

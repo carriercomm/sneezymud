@@ -2261,6 +2261,8 @@ void checkFactionHelp(TBeing *caster, TBeing *victim)
 {
   int dec_amt;
 
+  return;
+
   if (caster->isOppositeFaction(victim)) {
     dec_amt = (int) (caster->getMove() / 4);
     caster->addToMove(-dec_amt);

@@ -112,8 +112,8 @@ void TBeing::doRepair(const char *arg)
     return;
   }
 
-  if (!(obj = heldInPrimHand()) || !isname(v_name, obj->name)) {
-    sendTo("You'll have to be holding that in your primary hand to repair it.\n\r");
+  if (!(obj = heldInSecHand()) || !isname(v_name, obj->name)) {
+    sendTo("You'll have to be holding that in your secondary hand to repair it.\n\r");
     return;
   }
 
@@ -131,7 +131,7 @@ void TBeing::doRepair(const char *arg)
 
 void TThing::repairMeHammer(TBeing *caster, TObj *obj)
 {
-  act("You need to hold a hammer in your secondary hand in order to repair $p",
+  act("You need to hold a hammer in your primary hand in order to repair $p",
            TRUE, caster, obj, NULL, TO_CHAR);
   return;
 }
@@ -139,7 +139,7 @@ void TThing::repairMeHammer(TBeing *caster, TObj *obj)
 void TTool::repairMeHammer(TBeing *caster, TObj *obj)
 {
   if (getToolType() != TOOL_HAMMER) {
-   act("You need to hold a hammer in your secondary hand in order to repair $p",
+   act("You need to hold a hammer in your primary hand in order to repair $p",
            TRUE, caster, obj, NULL, TO_CHAR);
     return;
   }
@@ -162,8 +162,8 @@ void repair(TBeing * caster, TObj *obj)
 {
   TThing *hammer;
 
-  if (!(hammer = caster->heldInSecHand())) {
-    act("You need to hold a hammer in your secondary hand in order to repair $p",
+  if (!(hammer = caster->heldInPrimHand())) {
+    act("You need to hold a hammer in your primary hand in order to repair $p",
            TRUE, caster, obj, NULL, TO_CHAR);
     return;
   }
@@ -182,4 +182,10 @@ int repairMetal(TBeing *ch, TObj *o)
   start_task(ch, NULL, NULL, TASK_SMYTHE, o->name, 999, (ushort) ch->in_room, 0, 0, 0);
   return 0;
 }
+
+
+
+
+
+
 

@@ -1407,7 +1407,7 @@ class TBeing : public TThing {
     void setFighting(TThing *, int, bool);
     int damageTrivia(TBeing *v, TThing *o, int dam, spellNumT type);
     void doDamage(int, spellNumT);
-    int tellStatus(int, bool, int);
+    int tellStatus(int, bool, bool);
     int getActualDamage(TBeing *, TThing *, int, spellNumT);
     int damageEm(int, string, spellNumT);
     int skipImmortals(int) const;

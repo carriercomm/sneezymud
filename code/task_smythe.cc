@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: task_smythe.cc,v $
+// Revision 5.1.1.4  2000/12/21 20:15:35  jesus
+// *** empty log message ***
+//
 // Revision 5.1.1.3  2000/11/19 22:20:48  jesus
 // smythe update
 //
@@ -120,7 +123,7 @@ void TTool::smythePulse(TBeing *ch, TObj *o)
       delete this;
       return;
     }
-    if (o->getMaxStructPoints() <= o->getStructPoints()) {
+    if (o->getMaxStructPoints() <= o->getStructPoints() - o->getDepreciation()) {
       act("$n finishes repairing $p and proudly smiles.", FALSE, ch, o, forge, TO_ROOM);
       act("You finish repairing $p and smile triumphantly.", FALSE, ch, o, forge, TO_CHAR);
       act("You let $p cool down.", FALSE, ch, o, 0, TO_CHAR);

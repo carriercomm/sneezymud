@@ -689,6 +689,21 @@ int TBeing::pourWaterOnMe(TBeing *ch, TObj *sObj)
         TRUE, ch, 0, this, TO_NOTVICT);
 
     rc = reconcileDamage(this, ::number(5, max(2, min(5, (int) (size/20)))), DAMAGE_FROST);
+  } else if ((type != LIQ_WHISKY) && (type != LIQ_FIREBRT) &&
+	     (type != LIQ_VODKA) && (type != LIQ_RUM) &&
+	     (type != LIQ_BRANDY)){
+    TThing *t;
+    TObj *obj = NULL;
+    int i;
+    
+    for (i = MIN_WEAR;i < MAX_WEAR;i++) {
+      if (!(t = equipment[i]) || !(obj = dynamic_cast<TObj *>(t)) ||
+	  !obj->isObjStat(ITEM_BURNING) || !::number(0,2))
+	continue;
+      obj->remBurning(ch);
+      act("Your $p is extinguished.", FALSE, ch, obj, 0, TO_CHAR);
+      act("$n's $p is extinguished.", FALSE, ch, obj, 0, TO_ROOM);
+    }
   }
 
   dContainer->setDrinkUnits(0);  

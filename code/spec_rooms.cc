@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spec_rooms.cc,v $
+// Revision 5.1.1.3  1999/10/18 19:40:53  peel
+// Fixed some random compile bugs.
+//
 // Revision 5.1.1.2  1999/10/16 21:52:04  batopr
 // Prevented flares from nuking in the dump
 //
@@ -1588,8 +1591,10 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
 
 int monkQuestProcLand(TBeing *ch, cmdTypeT cmd, const char *, TRoom *rp)
 {
+#if 0
   TMonster *tmon;
   TThing *t=NULL;
+#endif
 
   if(cmd!=CMD_ROOM_ENTERED)
     return FALSE;

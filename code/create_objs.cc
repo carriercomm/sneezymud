@@ -1886,7 +1886,9 @@ static void change_obj_spec(TBeing *ch, TObj *obj, const char *arg, editorEnterT
 
 void change_chest_value2(TBeing *ch, TRealContainer *o, const char *arg, editorEnterTypeT type)
 {
-  int loc_update, row, i;
+  unsigned int loc_update;
+  int row;
+  unsigned int i;
   char buf[256];
 
   if (type != ENTER_CHECK) {
@@ -1927,7 +1929,7 @@ void change_chest_value2(TBeing *ch, TRealContainer *o, const char *arg, editorE
         if (i == CONT_TRAPPED ||
             i == CONT_EMPTYTRAP ||
             i == CONT_GHOSTTRAP) {
-          sendTo("This flag is set automatically and can not be changed.\n\r"); 
+          ch->sendTo("This flag is set automatically and can not be changed.\n\r"); 
           return;
         }
      

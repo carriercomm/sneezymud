@@ -4704,19 +4704,21 @@ int Descriptor::sendLogin(const char *arg)
   return FALSE;
 }
 
-bool Descriptor::checkForAccount(char *arg)
+bool Descriptor::checkForAccount(char *arg, bool silent)
 {
   char buf[256];
   struct stat timestat;
 
   if (bogusAccountName(arg)) {
-    writeToQ("Sorry, that is an illegal name for an account.\n\r");
+    if (!silent)
+      writeToQ("Sorry, that is an illegal name for an account.\n\r");
     return TRUE;
   }
   sprintf(buf, "account/%c/%s/account", LOWER(arg[0]), lower(arg).c_str());
   
   if (!stat(buf, &timestat)) {
-    writeToQ("Account already exists, enter another name.\n\r");
+    if (!silent)
+      writeToQ("Account already exists, enter another name.\n\r");
     return TRUE;
   }
   return FALSE;

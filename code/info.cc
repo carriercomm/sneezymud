@@ -2730,25 +2730,20 @@ void TBeing::doWorld()
          blue(), secsToString(upt).c_str(), norm());
   str += buf;
 
-  sprintf(buf, "%sMachine Lag: Avg/Cur/High/Low        %ld/%ld/%ld/%ld%s\n\r",
-	 blue(), 
-	 (lag_info.count ? lag_info.total/lag_info.count : 0),
-	 lag_info.current,
-	 lag_info.high,
-	 lag_info.low, norm());
-  str += buf;
-
-  if(isImmortal()){
-    for(i=0;i<10;++i){
-      if(lag_info.lagcount[i]) {
-	sprintf(buf, "%sLag %i:                               %ld (%ld/%ld)%s\n\r",
-		blue(), i, (lag_info.lagcount[i] ? lag_info.lagtime[i]/lag_info.lagcount[i] : 0),
-		lag_info.lagtime[i], lag_info.lagcount[i], norm());
-        str += buf;
-      }
+  long int total=0, count=0;
+  for(i=0;i<10;++i){
+    if(lag_info.lagcount[i]){
+      total+=lag_info.lagtime[i];
+      count++;
     }
   }
-
+  sprintf(buf, "%sMachine Lag: Avg/Cur/High/Low        %ld/%ld/%ld/%ld%s\n\r",
+	  blue(),
+	  (count ? total/count : 0),
+	  lag_info.current,
+	  lag_info.high,
+	  lag_info.low, norm());
+  str += buf;
 
   sprintf(buf, "Total number of rooms in world:               %ld\n\r", 
         roomCount);

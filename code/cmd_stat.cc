@@ -959,6 +959,11 @@ void TBeing::statBeing(TBeing *k)
       sprintf(buf + strlen(buf),
                 "     Expires in %d updates.\n\r",
           aff->duration);
+    } else if (aff->type == AFFECT_HORSEOWNED) {
+      sprintf(buf + strlen(buf), "Horse-owned: \n\r");
+      sprintf(buf + strlen(buf),
+                "     Expires in %d updates.\n\r",
+          aff->duration);
     } else if (aff->type == AFFECT_DRUNK) {
       sprintf(buf + strlen(buf), "Drunken slumber: \n\r");
       sprintf(buf + strlen(buf), 

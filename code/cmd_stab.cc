@@ -1,26 +1,139 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_stab.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:33:45  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "combat.h"
+
+spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSlotT tLimb, int & tDamage, int tSever)
+{
+  const float tDamageValues[MAX_WEAR] =
+  { 0.00, // Nowhere
+    1.50, // Head
+    1.10, // Neck
+    1.05, // Body
+    1.10, // Back
+    0.90, // Arm-R
+    0.90, // Arm-L
+    0.80, // Wrist-R
+    0.80, // Wrist-L
+    0.40, // Hand-R
+    0.40, // Hand-L
+    0.20, // Finger-R
+    0.20, // Finger-L
+    1.20, // Waiste
+    1.10, // Leg-R
+    1.10, // Leg-L
+    0.30, // Foot-R
+    0.30, // Foot-L
+    0.00, // Hold-R
+    0.00, // Hold-L
+    1.10, // Ex-Leg-R
+    1.10, // Ex-Leg-L
+    0.30, // Ex-Foot-R
+    0.30, // Ex-Foot-L
+  };
+
+  spellNumT tDamageType = DAMAGE_NORMAL;
+
+  switch (tLimb) {
+    case WEAR_HEAD:
+      tDamageType = DAMAGE_CAVED_SKULL;
+      break;
+    case WEAR_NECK:
+      tDamageType = DAMAGE_BEHEADED;
+      break;
+    case WEAR_BODY:
+      tDamageType = DAMAGE_IMPALE;
+      break;
+    case WEAR_WAISTE:
+      tDamageType = DAMAGE_DISEMBOWLED;
+      break;
+    case WEAR_BACK:
+      tDamageType = SKILL_STABBING;
+      break;
+    default:
+      tDamageType = TYPE_STAB;
+      break;
+  }
+
+  // Basically damage is varied based on the limb here.
+  tDamage = (int) ((float) tDamage * tDamageValues[tLimb]);
+
+  bool tKill = tThief->willKill(tSucker, tDamage, tDamageType, FALSE);
+
+  string tStLimb(tSucker->describeBodySlot(tLimb));
+
+  char tStringChar[256],
+       tStringVict[256],
+       tStringOthr[256];
+
+  switch (::number(0, 3)) {
+    case 0:
+      sprintf(tStringChar, "You thrust your $o into $N's %s!", tStLimb.c_str());
+      sprintf(tStringVict, "$n thrusts $s $o into your %s!", tStLimb.c_str());
+      sprintf(tStringOthr, "$n thrusts $s $o into $N's %s!", tStLimb.c_str());
+      break;
+
+    case 1:
+      sprintf(tStringChar, "You stab $N in $S %s!", tStLimb.c_str());
+      sprintf(tStringVict, "$n stabs you in your %s!", tStLimb.c_str());
+      sprintf(tStringOthr, "$n stabs $N in $S %s!", tStLimb.c_str());
+      break;
+
+    default:
+      sprintf(tStringChar, "You puncture $N's %s with your $o!", tStLimb.c_str());
+      sprintf(tStringVict, "$n punctures your %s with $S $o!", tStLimb.c_str());
+      sprintf(tStringOthr, "$n punctures $N's %s with $S $o!", tStLimb.c_str());
+      break;
+  }
+
+  act(tStringChar, FALSE, tThief, tWeapon, tSucker, TO_CHAR);
+  act(tStringVict, FALSE, tThief, tWeapon, tSucker, TO_VICT);
+  act(tStringOthr, FALSE, tThief, tWeapon, tSucker, TO_NOTVICT);
+
+  if (tKill) {
+    switch (tLimb) {
+      case WEAR_HEAD:
+        sprintf(tStringChar, "You cause $N's skull to cave in!");
+        sprintf(tStringVict, "$n caused your skull to cave in!");
+        sprintf(tStringOthr, "$n caused $N's skull to cave in!");
+        break;
+
+      case WEAR_NECK:
+        sprintf(tStringChar, "You sever $N at the neck!");
+        sprintf(tStringVict, "$n severs you at the neck!");
+        sprintf(tStringOthr, "$n severs $N at the neck!");
+        break;
+
+      case WEAR_BODY:
+        sprintf(tStringChar, "You thrust $p DEEP into $N's gut!");
+        sprintf(tStringVict, "$n thusts $p DEEP into your gut, good thing you are dead now!");
+        sprintf(tStringOthr, "$n thrusts $p DEEP into $N's gut!");
+        break;
+
+      case WEAR_WAISTE:
+        sprintf(tStringChar, "You slice $N from love handle to love handle!");
+        sprintf(tStringVict, "$n slices you from love handle to love handle!");
+	sprintf(tStringOthr, "$n slices $N from love handle to love handle!");
+        break;
+
+      case WEAR_BACK:
+        sprintf(tStringChar, "You carve a rather nice hole in $N's back!");
+        sprintf(tStringVict, "$n carves you a good sized hole in your back!");
+        sprintf(tStringOthr, "$n carves $N a good sized hole in the back!");
+        break;
+
+      default:
+        sprintf(tStringChar, "Your stab to $N's %s ceasing their existance!", tStLimb.c_str());
+        sprintf(tStringVict, "$n stabs you in your %s, ceasing your existance!", tStLimb.c_str());
+        sprintf(tStringOthr, "$n stabs $N in $S %s, ceasing their existance!", tStLimb.c_str());
+        break;
+    }
+
+    act(tStringChar, FALSE, tThief, tWeapon, tSucker, TO_CHAR);
+    act(tStringVict, FALSE, tThief, tWeapon, tSucker, TO_VICT);
+    act(tStringOthr, FALSE, tThief, tWeapon, tSucker, TO_NOTVICT);
+  }
+
+  return tDamageType;
+}
 
 static int stab(TBeing *thief, TBeing * victim)
 {
@@ -85,6 +198,83 @@ static int stab(TBeing *thief, TBeing * victim)
   dam = thief->getActualDamage(victim, obj, dam, SKILL_STABBING);
 
   int i = thief->specialAttack(victim,SKILL_STABBING);
+
+
+  // Start of test stab-limb code.
+
+
+  if (gamePort != PROD_GAMEPORT) {
+    wearSlotT tLimb  = victim->getPartHit(thief, FALSE);
+    int       tSever = 0;
+
+    if (!victim->hasPart(tLimb))
+      tLimb = victim->getCritPartHit();
+
+    if (!victim->awake() ||
+        (i && (i != GUARANTEED_FAILURE) && bSuccess(thief, bKnown, SKILL_STABBING))) {
+      switch (critSuccess(thief, SKILL_STABBING)) {
+        case CRIT_S_KILL:
+          CS(SKILL_STABBING);
+          dam   *=  4;
+          tSever = 30;
+          break;
+        case CRIT_S_TRIPLE:
+          CS(SKILL_STABBING);
+          dam   *=  3;
+          tSever = 15;
+          break;
+        case CRIT_S_DOUBLE:
+          CS(SKILL_STABBING);
+          dam   *= 2;
+          tSever = 5;
+          break;
+        case CRIT_S_NONE:
+        default:
+          tSever = 0;
+          break;
+      }
+
+      spellNumT tDamageType = doStabMsg(thief, victim, obj, tLimb, dam, tSever);
+
+      if (thief->reconcileDamage(victim, dam, tDamageType) == -1)
+        return DELETE_VICT;
+    } else {
+      switch (critFail(thief, SKILL_STABBING)) {
+        case CRIT_F_HITSELF:
+        case CRIT_F_HITOTHER:
+          act("You over thrust and fall flat on your face!",
+              FALSE, thief, obj, victim, TO_CHAR);
+          act("$n misses $s thrust into $N and falls flat on their face!",
+              FALSE, thief, obj, victim, TO_NOTVICT);
+          act("$n misses $s thrust into you and falls flat on their face!",
+              FALSE, thief, obj, victim, TO_VICT);
+          rc = thief->crashLanding(POSITION_SITTING);
+
+          if (IS_SET_DELETE(rc, DELETE_THIS))
+            return DELETE_THIS;
+
+          break;
+        case CRIT_F_NONE:
+        default:
+          act("You miss your thrust into $N.",
+              FALSE, thief, obj, victim, TO_CHAR);
+          act("$n misses $s thrust into $N.",
+              FALSE, thief, obj, victim, TO_NOTVICT);
+          act("$n misses $s thrust into you.",
+              FALSE, thief, obj, victim, TO_NOTVICT);
+          break;
+      }
+
+      thief->reconcileDamage(victim, 0, SKILL_STABBING);
+    }
+
+    return FALSE;
+  }
+
+
+  // End of test stab-limb code.
+
+
   if (!victim->awake() || 
       (i &&
        (i != GUARANTEED_FAILURE) &&

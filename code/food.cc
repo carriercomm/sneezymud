@@ -732,6 +732,10 @@ void TBeing::checkForSpills() const
 
 void TBeing::setCond(condTypeT i, sbyte val)
 {
+  // Don't set thirst/hunter/drunk for immortals, even if in mortal form at current.
+  if (GetMaxLevel() > MAX_MORT)
+    return;
+
   specials.conditions[i] = val;
 }
 

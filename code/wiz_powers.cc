@@ -524,6 +524,10 @@ const string getWizPowerName(wizPowerT wpt)
       return "Reset";
     case POWER_IMMORTAL_OUTFIT:
       return "Outfit-immortal";
+    case POWER_SETSEV:
+      return "Setsev";
+    case POWER_SETSEV_IMM:
+      return "Setsev-Advanced";
     case MAX_POWER_INDEX:
       break;
   }

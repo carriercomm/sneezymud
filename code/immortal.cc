@@ -2988,6 +2988,7 @@ void TPerson::doStart()
   setMana(manaLimit());
   setPiety(pietyLimit());
   setMove(moveLimit());
+  setLifeforce(25);
 
   // Ripped from the level gain functions to give classes a variant 
   // from the standard 25 hp based on con etc. Brutius 06/18/1999
@@ -3062,7 +3063,7 @@ int TBeing::genericRestore(restoreTypeT partial)
 {
   setCond(FULL, 24);
   setCond(THIRST, 24);
-
+  setLifeforce(25);
   setPiety(pietyLimit());
   setMana(manaLimit());
   setHit(hitLimit());

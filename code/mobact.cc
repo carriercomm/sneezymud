@@ -56,6 +56,7 @@ int TMonster::protectionStuff()
 
   if(getPosition() <= POSITION_SLEEPING)
     return FALSE;
+
   if (isAffected(AFF_CHARM) || master) 
     return FALSE;
 
@@ -74,7 +75,7 @@ int TMonster::protectionStuff()
           (getRace() == tbt->getRace())) {
 #endif
       if (IS_SET(specials.act, ACT_PROTECTOR) &&
-            isSameFaction(tbt)) {
+            isSameFaction(tbt) && canSee(tbt->fight())) {
         doSay("I will come to thy Aid!");
         if (getPosition() < POSITION_STANDING)
           doStand();
@@ -110,7 +111,7 @@ int TMonster::protectionStuff()
         if (isSameFaction(tbt)) {
 //        if (getRace() == tbt->getRace()) {
           continue;
-        } else {
+        } else if (canSee(tbt->fight())) {
           doSay("I will come to thy Aid!");
           if (getPosition() < POSITION_STANDING)
             doStand();
@@ -136,7 +137,7 @@ int TMonster::protectionStuff()
           if (isSameFaction(tbt) &&
                (getRace() == tbt->getRace())) {
             continue;
-          } else {
+          } else if (canSee(tbt->fight())) {
             doSay("I will come to thy Aid!");
             if (getPosition() < POSITION_STANDING)
               doStand();
@@ -3822,7 +3823,8 @@ vlogf(4, "Mob invoking (5) prayer %d on self with possibly bad target flags for 
 	if (doesKnowSkill(spell) && (getSkillValue(spell) > 33) &&
 	    isTransformableLimb(WEAR_HAND_R, TRUE) &&
             roomp && !roomp->notRangerLandSector() &&
-	    !equipment[WEAR_HAND_R] && !equipment[WEAR_HAND_L]){
+	    !equipment[WEAR_HAND_R] && !equipment[WEAR_HAND_L] &&
+            !equipment[HOLD_RIGHT] && !equipment[HOLD_LEFT]) {
 	  act("$n utters, 'Shred!'",
 	      TRUE, this, 0, 0, TO_ROOM);
 	  found = TRUE;	  

@@ -45,5 +45,19 @@ extern void AlterWeather(changeWeatherT *);
 extern void calcNewSunRise();
 extern void calcNewSunSet();
 extern int hourminTime();
+extern void weatherAndTime(int);
+extern struct weather_data weather_info;
+extern void anotherHour();
+extern void weatherChange();
+extern void GetMonth(int);
+extern unsigned char moontype;
+extern void sunriseAndSunset();
+extern int sunRise();
+extern int sunSet();
+extern int moonRise();
+extern int moonSet();
+extern bool moonIsUp();
+extern bool sunIsUp();
+extern const char * moonType();
 
 #endif

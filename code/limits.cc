@@ -764,7 +764,8 @@ void gain_exp(TBeing *ch, double gain, int dam)
 	newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
 	// the 100 compensates for dam
 	gain = min(gain, newgain); 
-	gain += (rand()%(gain*.1))-(gain*.05);
+	//	gain += (rand()%(int)(gain*.1))-(gain*.05);
+	gain = (gain*0.95) +  (((float)::number(0,100))*gain)/1000.0;
     }
 #else
 #endif

@@ -202,6 +202,9 @@ const int TOG_MONK_GREEN_ELIGIBLE   = 151;
 const int TOG_MONK_GREEN_STARTED    = 152;
 const int TOG_MONK_GREEN_FALLING    = 153;
 const int TOG_MONK_GREEN_FALLEN     = 154;
+
+const int TOG_GAVE_ESSENCE_RAT_KING = 155; // non-monk toggle reused per request
+
 const int TOG_MONK_GREEN_OWNED      = 156;
 
 const int TOG_MAGE_BELT_ELIGIBLE    = 157;
@@ -297,7 +300,6 @@ const int TOG_IMMORTAL_BLANK_7 = 93;
 const int TOG_IMMORTAL_BLANK_8 = 94;
 const int TOG_IMMORTAL_BLANK_9 = 95;
 const int TOG_IMMORTAL_BLANK_10 = 96;
-const int TOG_MONK_GREEN_FINISHED   = 155;
 // end recycle
 
 const int MAX_TOG_INDEX       = 215;  // move and change

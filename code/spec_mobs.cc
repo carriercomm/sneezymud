@@ -2,29 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: spec_mobs.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/09/15 03:58:04  batopr
-// fixed memory leak in hobbit emissary
-//
-// Revision 1.2  1999/09/14 01:33:32  batopr
-// fixed frostGiant not to leak hunt_struct memory
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "spec_mobs.cc" - Special procedures for mobiles.
 //
 ///////////////////////////////////////////////////////////////////////////

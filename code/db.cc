@@ -1033,7 +1033,8 @@ continue;
           rs.command == 'P' ||
           (rs.command == 'T' && !rs.if_flag) ||
           rs.command == 'R' ||
-          rs.command == 'D')
+          rs.command == 'D' ||
+          rs.command == 'L')
         if ((rc = fscanf(fl, " %d", &rs.arg3)) != 1)
           vlogf(LOG_LOW,"command %u ('%c') in %s missing arg3 (rc=%d)",
                zd.cmd.size(),
@@ -1050,6 +1051,11 @@ continue;
         if (fscanf(fl, " %d", &rs.arg4) != 1)
           vlogf(LOG_LOW,"command %u ('T') in %s missing arg4",
                zd.cmd.size(), zd.name);
+
+      if (rs.command == 'L')
+        if (fscanf(fl, " %d", &rs.arg4) != 1)
+          vlogf(LOG_LOW, "command %u ('L') in %s missing arg4",
+                zd.cmd.size(), zd.name);
 
       zd.cmd.push_back(rs);
 
@@ -1882,8 +1888,10 @@ void reset_zone(int zone, bool bootTime)
           break;
         case '?':
           if (rs.character) {
-            if ((rs.character == 'M') || (rs.character == 'O') ||
+            if ((rs.character == 'M') ||
+                (rs.character == 'O') ||
                 (rs.character == 'B') ||
+                (rs.character == 'L') ||
                 (objload && (rs.character == 'P')) ||
                 (mobload && (rs.character != 'P'))) {
 
@@ -2313,7 +2321,10 @@ void reset_zone(int zone, bool bootTime)
           }  // check for dest room
           break;
         case 'L':
-          sysLootLoad(rs, mob, obj, false);
+          if (bootTime)
+            last_cmd = sysLootLoad(rs, mob, obj, false);
+          else
+            last_cmd = 0;
           break;
         default:
           vlogf(LOG_BUG, "Undefd cmd in reset table; zone %d cmd %d.\n\r", zone, cmd_no);

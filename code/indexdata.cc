@@ -139,6 +139,11 @@ objIndexData & objIndexData::operator= (const objIndexData &a)
   itemtype = a.itemtype;
   value = a.value;
 
+  int i;
+  for(i=0;i<MAX_OBJ_AFFECT;++i){
+    affected[i]=a.affected[i];
+  }
+
   return *this;
 }
 
@@ -155,6 +160,11 @@ objIndexData::objIndexData(const objIndexData &a) :
     ex_description = new extraDescription(*a.ex_description);
   else
     ex_description = NULL;
+
+  int i;
+  for(i=0;i<MAX_OBJ_AFFECT;++i){
+    affected[i]=a.affected[i];
+  }
 }
 
 objIndexData::~objIndexData()
@@ -236,15 +246,17 @@ void generate_obj_index()
 void generate_obj_index()
 {
   objIndexData *tmpi = NULL;
-  MYSQL_RES *res, *extra_res;
-  MYSQL_ROW row, extra_row;
-  MYSQL *extra_db;
+  MYSQL_RES *res, *extra_res, *affect_res;
+  MYSQL_ROW row, extra_row, affect_row;
+  MYSQL *extra_db, *affect_db;
   extraDescription *new_descr;
+  int i=0;
 
   // to prevent constant resizing (slows boot), declare an appropriate initial
   // size.  Should be smallest power of 2 that will hold everything
   obj_index.reserve(8192);
 
+  /****** extra ******/
   extra_db=mysql_init(NULL);
   if(!mysql_real_connect(extra_db, NULL, "sneezy", NULL, 
 	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
@@ -258,6 +270,22 @@ void generate_obj_index()
   }
   extra_res=mysql_use_result(extra_db);
   extra_row=mysql_fetch_row(extra_res);
+
+  /****** affect ******/
+  affect_db=mysql_init(NULL);
+  if(!mysql_real_connect(affect_db, NULL, "sneezy", NULL, 
+	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+    vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
+    exit(0);
+  }
+
+  if(mysql_query(affect_db, "select vnum, type, mod1, mod2 from affect order by vnum")){
+    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(affect_db));
+    exit(0);
+  }
+  affect_res=mysql_use_result(affect_db);
+  affect_row=mysql_fetch_row(affect_res);
+  /********************/
 
   if(!db){
     vlogf(LOG_MISC, "generate_obj_index: initializing database.");
@@ -304,6 +332,24 @@ void generate_obj_index()
       tmpi->ex_description = new_descr;
 
       extra_row=mysql_fetch_row(extra_res);
+    }
+
+    i=0;
+    while(affect_row && atoi(affect_row[0])==tmpi->virt){
+      tmpi->affected[i].location = mapFileToApply(atoi(affect_row[1]));
+
+      if (tmpi->affected[i].location == APPLY_SPELL)
+	tmpi->affected[i].modifier = mapFileToSpellnum(atoi(affect_row[2]));
+      else
+	tmpi->affected[i].modifier = atoi(affect_row[2]);
+      
+      tmpi->affected[i].modifier2 = atoi(affect_row[3]);
+      tmpi->affected[i].type = TYPE_UNDEFINED;
+      tmpi->affected[i].level = 0;
+      tmpi->affected[i].bitvector = 0;      
+
+      affect_row=mysql_fetch_row(affect_res);
+      i++;
     }
 
     obj_index.push_back(*tmpi);

@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: trap.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -41,7 +30,7 @@ const int MAX_TRAP_EFF       = 17;  // move and change
 
 // these values are same for traps, doors, portals and containers
 
-enum trap_t {
+enum doorTrapT {
    DOOR_TRAP_NONE, 	DOOR_TRAP_POISON,	DOOR_TRAP_SPIKE,
    DOOR_TRAP_SLEEP, 	DOOR_TRAP_TNT,		DOOR_TRAP_BLADE,
    DOOR_TRAP_FIRE,	DOOR_TRAP_ACID,		DOOR_TRAP_DISEASE,

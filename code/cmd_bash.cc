@@ -88,9 +88,9 @@ bool TBeing::canBash(TBeing *victim, silentTypeT silent)
   if (noHarmCheck(victim))
     return FALSE;
 
-  if (victim->isFlying()) {
+  if (victim->isFlying() && !isFlying()) {
     if (!silent)
-      sendTo("You can't bash someone that is flying.\n\r");
+      sendTo("You can't bash someone that is flying unless you are also.\n\r");
     return FALSE;
   }
   if (riding) {

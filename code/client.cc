@@ -775,6 +775,14 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       strncpy(account->passwd, crypted, 10);
       *(account->passwd + 10) = '\0';
 
+      if (illegalEmail(arg, this, SILENT_YES)) {
+        writeToQ("Please enter an email address. Accounts with bogus addresses will be deleted.\n\r");
+        writeToQ("Address -> ");
+        break;
+      }
+      strcpy(account->email, arg);
+
+
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
       break;
     } 

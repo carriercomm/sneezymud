@@ -982,6 +982,10 @@ void TPerson::doTrans(const char *argument)
         return;
       }
 
+      if(!limitPowerCheck(CMD_TRANSFER,(victim->isPc()) ? -1 : victim->number)) {
+	sendTo("You are not allowed to transfer that being.\n\r");
+	return;
+      }
       // used to track down: XXX trans'd me outta inn and got me killed!
       vlogf(LOG_SILENT, "%s transferring %s from %d to %d.", getName(), victim->getName(), victim->inRoom(), inRoom());
 
@@ -1203,7 +1207,10 @@ int TBeing::doGoto(const string & argument)
         sendTo("No room exists with that number.\n\r");
         return FALSE;
       } else {
-        if (loc_nr < WORLD_SIZE) {
+	if (!limitPowerCheck(CMD_GOTO, loc_nr)) {
+	  sendTo("You are currently forbidden from going there.\n\r");
+	  return FALSE;
+	} else if (loc_nr < WORLD_SIZE) {
           sendTo("You form order out of chaos.\n\r");
           CreateOneRoom(loc_nr);
         } else {
@@ -1231,6 +1238,12 @@ int TBeing::doGoto(const string & argument)
     return FALSE;
   }
   // a location has been found.
+
+  if (!limitPowerCheck(CMD_GOTO, location)) {
+    sendTo("You are currently forbidden from going there.\n\r");
+    return FALSE;
+  }
+
 
   if (isSpammyRoom(location) && !is_abbrev(tStString.c_str(), "yes")) {
     sendTo("To enter this particular room you must do: goto %d yes\n\r", location);
@@ -1576,6 +1589,11 @@ void TPerson::doSwitch(const char *argument)
       return;
     }
 
+    if(!limitPowerCheck(CMD_SWITCH, tBeing->number)) {
+      sendTo("You're not allowed to switch/load that mobile.\n\r");
+      return;
+    }
+
     *roomp += *tBeing;
     (dynamic_cast<TMonster *>(tBeing))->oldRoom = inRoom();
     (dynamic_cast<TMonster *>(tBeing))->createWealth();
@@ -1591,6 +1609,13 @@ void TPerson::doSwitch(const char *argument)
       return;
     }
   }
+
+  if(!limitPowerCheck(CMD_SWITCH, tBeing->number)) {
+    sendTo("You're not allowed to switch into that mobile.\n\r");
+    return;
+  }
+
+
   if (this == tBeing) {
     sendTo("Heh heh heh...we are jolly funny today, aren't we?\n\r");
     return;
@@ -2137,6 +2162,10 @@ void TPerson::doForce(const char *argument)
     sendTo("No one with that name found in world, sorry.\n\r");
     return;
       }
+    }
+    if (!limitPowerCheck(CMD_FORCE, (vict->isPc()) ? -1 : vict->number)) {
+      sendTo("You are not allowed to force that being.\n\r");
+      return;
     }
     if ((GetMaxLevel() <= vict->GetMaxLevel()) && dynamic_cast<TPerson *>(vict))
       sendTo("Oh no you don't!!\n\r");

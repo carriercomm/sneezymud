@@ -4276,7 +4276,8 @@ int sharpener(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *o)
       }
       return TRUE;
     case CMD_GENERIC_PULSE:
-      if (!(job = (sharp_struct *) me->act_ptr)) {
+      job = static_cast<sharp_struct *>(me->act_ptr);
+      if (!job) {
         vlogf(LOG_PROC,"SHARPENER PROC ERROR: terminating (hopefully)");
         return FALSE;
       }

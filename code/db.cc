@@ -84,11 +84,16 @@ void bootPulse(const char *str, bool end_str)
 
   Descriptor *d;
   string sc;
+  static string tLastRealMessage("");
 
   if (str) {
     if (strcmp(str, ".")) {
       sc = MUD_NAME;
       sc += " Boot Process: ";
+
+      // Set the last real output.
+      tLastRealMessage  = sc;
+      tLastRealMessage += str;
     } else
       sc = "";
 
@@ -100,7 +105,7 @@ void bootPulse(const char *str, bool end_str)
     sc += "\n\r";
   }
 
-  gSocket->addNewDescriptorsDuringBoot();
+  gSocket->addNewDescriptorsDuringBoot(tLastRealMessage);
   for (d = descriptor_list; d; d = d->next) {
     (&d->output)->putInQ(colorString(NULL, d, sc.c_str(), NULL, COLOR_BASIC, TRUE).c_str());
     d->outputProcessing();

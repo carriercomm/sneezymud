@@ -1,33 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_murder.cc,v $
-// Revision 5.1.1.4  1999/10/29 10:37:31  lapsos
-// Modified hide to be usable by backstab.
-//
-// Revision 5.1.1.3  1999/10/29 05:41:08  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.2  1999/10/29 05:08:13  cosmo
-// Fixing lag on backstab resulting in death.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/09 04:23:03  batopr
-// Removed addHated from cudgel
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "combat.h"
@@ -177,15 +147,29 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
       GLeader = master;
     else
       GLeader = this;
+
     if (GLeader != this && sameRoom(GLeader) && GLeader->fight())
       victim = GLeader->fight();
     else {
-      for(FDt = GLeader->followers;
-          (FDt && sameRoom(FDt->follower) && FDt->follower != this &&
-           !(victim = FDt->follower->fight()));
-          FDt = FDt->next);
+      for (FDt = GLeader->followers; FDt; FDt = FDt->next) {
+        if (!sameRoom(FDt->follower))
+          continue;
+
+        if (FDt->follower == this)
+	  continue;
+
+        if (!FDt->follower->isAffected(AFF_GROUP))
+          continue;
+
+        if ((victim = FDt->follower->fight())) 
+          break;
+      }
+
+      if (!sameRoom(victim))
+        victim = NULL;
     }
   }
+
   if (!vict && !victim) {
     if (*argument)
       only_argument(argument, namebuf);
@@ -195,21 +179,26 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
       return FALSE;
     }
   }
+
   if (vict && !victim)
     victim = vict;
   // *** End of Test Tank-Target Backstab Code  -Lapsos
+
   if (!sameRoom(victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }
+
   if ((rc = backstab(this, victim))) {
     if (!victim->isPc())
       dynamic_cast<TMonster *>(victim)->US(25);
     addSkillLag(SKILL_BACKSTAB, rc);
   }
+
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
       return rc;
+
     delete victim;
     victim = NULL;
     REM_DELETE(rc, DELETE_VICT);

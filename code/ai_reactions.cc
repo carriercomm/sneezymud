@@ -1123,10 +1123,10 @@ void TMonster::aiGrowl(const TBeing *tar) const
           act("$n chirps noisily at $N.", TRUE, this, 0, tar, TO_ROOM);
           return;
         case 3:
-          act("$n chirps angrily at $N, and flaps $s wings menicingly.", TRUE, this, 0, tar, TO_ROOM);
+          act("$n chirps angrily at $N, and flaps $s wings menacingly.", TRUE, this, 0, tar, TO_ROOM);
           return;
         case 4:
-          act("$n chirps noisily at $N, and flaps $s wings menicingly.", TRUE, this, 0, tar, TO_ROOM);
+          act("$n chirps noisily at $N, and flaps $s wings menacingly.", TRUE, this, 0, tar, TO_ROOM);
           return;
         case 5:
           act("$n chirps angrily at $N.", TRUE, this, 0, tar, TO_ROOM);

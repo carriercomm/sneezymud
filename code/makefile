@@ -188,6 +188,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	magic_skills.o magicutils.o mail.o makecorpse.o materials.o \
 	meeting.o mob_loader.o mobact.o money.o monster.o movement.o \
 	multiclass.o newbie.o note.o obj.o \
+	obj_table.o obj_tool.o obj_trash.o obj_treasure.o obj_tree.o \
 	obj_wand.o obj_window.o obj_worn.o \
 	offense.o oldlimbs.o oldrace.o \
 	opal.o opinion.o organic.o other.o other_obj.o parse.o peelpk.o \
@@ -208,13 +209,13 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	spellstore.o \
 	spelltask.o staff.o \
 	statistics.o stats.o statue.o structs.o symbol.o systemtask.o \
-	table.o talk.o task.o task_attune.o task_lightfire.o task_scribe.o \
+	talk.o task.o task_attune.o task_lightfire.o task_scribe.o \
 	task_skin.o task_trap.o task_brew.o task_meditate.o task_search.o \
 	task_sleep.o task_charge.o task_penance.o task_seekwater.o \
 	task_smythe.o task_dull.o task_picklock.o task_sharpen.o \
 	task_spell_friends.o task_get.o task_rest.o task_sit.o task_track.o \
-	task_whittle.o task_stavecharge.o thing.o toggle.o tool.o trap.o \
-	trash.o treasure.o tree.o utility.o vial.o weather.o \
+	task_whittle.o task_stavecharge.o thing.o toggle.o trap.o \
+	utility.o vial.o weather.o \
 	wiz_data.o wiz_powers.o
 
 #	rewrite_obj_file.o \

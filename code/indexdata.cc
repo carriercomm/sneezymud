@@ -246,7 +246,7 @@ void generate_obj_index()
   obj_index.reserve(8192);
 
   extra_db=mysql_init(NULL);
-  if(!mysql_real_connect(extra_db, NULL, NULL, NULL, 
+  if(!mysql_real_connect(extra_db, NULL, "sneezy", NULL, 
 	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
     vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
     exit(0);

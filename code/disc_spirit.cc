@@ -320,7 +320,7 @@ int ensorcer(TBeing *caster, TBeing *victim, int level, byte bKnown)
     return SPELL_FAIL;
   }
 #endif
-  if (victim->isImmune(IMMUNE_CHARM, level) ||
+  if (victim->isImmune(IMMUNE_CHARM, level) || victim->GetMaxLevel() > caster->GetMaxLevel() ||
       (!victim->isPc() && dynamic_cast<TMonster *>(victim)->Hates(caster, NULL)) ||
       caster->isNotPowerful(victim, level, SPELL_ENSORCER, SILENT_YES) ||
       (victim->isLucky(caster->spellLuckModifier(SPELL_ENSORCER)))) {

@@ -10,28 +10,28 @@
 
 #include "stdsneezy.h"
 
-TContainer::TContainer() :
+TBaseContainer::TBaseContainer() :
   TObj()
 {
 }
 
-TContainer::TContainer(const TContainer &a) :
+TBaseContainer::TBaseContainer(const TBaseContainer &a) :
   TObj(a)
 {
 }
 
-TContainer & TContainer::operator=(const TContainer &a)
+TBaseContainer & TBaseContainer::operator=(const TBaseContainer &a)
 {
   if (this == &a) return *this;
   TObj::operator=(a);
   return *this;
 }
 
-TContainer::~TContainer()
+TBaseContainer::~TBaseContainer()
 {
 }
 
-bool TContainer::engraveMe(TBeing *ch, TMonster *me, bool give)
+bool TBaseContainer::engraveMe(TBeing *ch, TMonster *me, bool give)
 {
   char buf[256];
 
@@ -49,17 +49,17 @@ bool TContainer::engraveMe(TBeing *ch, TMonster *me, bool give)
   return TRUE;
 }
 
-int TContainer::stealModifier()
+int TBaseContainer::stealModifier()
 {
   return 50;   // make bags tough to steal
 }
 
-int TContainer::getReducedVolume(const TThing *) const
+int TBaseContainer::getReducedVolume(const TThing *) const
 {
   return getTotalVolume();
 }
 
-string TContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
+string TBaseContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
 {
   string tString("");
 
@@ -79,7 +79,7 @@ string TContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
   return tString;
 }
 
-void TContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tShop)
+void TBaseContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tShop)
 {
   TObj::purchaseMe(ch, tKeeper, tCost, tShop);
 }

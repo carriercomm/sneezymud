@@ -305,7 +305,8 @@ static int kickHit(TBeing *caster, TBeing *victim, int score, int level, spellNu
 	return DELETE_VICT;
     }
 
-  if (caster->reconcileDamage(victim, dam,dam_type) == -1)
+//  if (caster->reconcileDamage(victim, dam,dam_type) == -1)
+  if (caster->reconcileDamage(victim, 1000,dam_type) == -1)
     return DELETE_VICT;
 
   if (victim->spelltask) {

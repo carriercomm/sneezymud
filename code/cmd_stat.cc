@@ -223,6 +223,22 @@ void TBeing::statRoom(TRoom *rmp)
       }
     }
   }
+  str += "--------- Born Here ---------\n\r";
+  counter = 0;
+  for (t = rmp->tBornInsideMe; t; t = t->nextBorn) {
+    TMonster *tMonster;
+
+    if ((tMonster = dynamic_cast<TMonster *>(t))) {
+      counter++;
+
+      if (counter > 5)
+        str += "Too Many Creators Born In Room To Show More\n\r";
+      else {
+        sprintf(buf2, "[%6d] %s\n\r", tMonster->mobVnum(), tMonster->getName());
+        str += buf2;
+      }
+    }
+  }
   str += "--------- Contents ---------\n\r";
   counter = 0;
   for (t = rmp->stuff; t; t = t->nextThing) {

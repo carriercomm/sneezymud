@@ -1331,9 +1331,9 @@ int TObj::burnObject(TBeing *ch, int perc)
     //i want to give objs only a CHANCE to burn
     // flamability is usually 1-10 so if we use this as a
     // modifier
-    // and give flammable objects only a 25-75% chance of burning, it should be good
+    // and give flammable objects only a 0-75% chance of burning, it should be good
 
-    if(::number(0,100) < 25+(5*material_nums[getMaterial()].flammability) &&
+    if(::number(0,100) < (int)(7.5*(double)material_nums[getMaterial()].flammability) &&
        !isObjStat(ITEM_BURNING) && !isObjStat(ITEM_PAIRED)){
       setBurning(ch);
       sprintf(buf, "Your $o start$Q to burn!");

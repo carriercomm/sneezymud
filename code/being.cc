@@ -480,9 +480,9 @@ charFile::charFile() :
   bankmoney(0),
   exp(0),
   spellHitroll(0),
-   hitroll(0),
-   damroll(0),
-   armor(1000)
+  hitroll(0),
+  damroll(0),
+  armor(1000)
 // points(),
 // end pointData members
   fatigue(0),
@@ -499,7 +499,11 @@ charFile::charFile() :
   flags(0),
   plr_color(0),
   plr_colorSub(COLOR_SUB_NONE),
-  plr_colorOff(0)
+  plr_colorOff(0),
+  temp1(0),
+  temp2(0),
+  temp3(0),
+  temp4(0)
 {
   classIndT cit;
   for (cit=MIN_CLASS_IND; cit < MAX_SAVED_CLASSES; cit++) {

@@ -1,36 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: ai_responses.cc,v $
-// Revision 5.1.1.5  1999/11/05 21:19:27  peel
-// added destination response and fixed up moveto
-//
-// Revision 5.1.1.4  1999/11/05 17:24:56  peel
-// Added checknroom response
-//
-// Revision 5.1.1.3  1999/11/04 22:38:57  peel
-// *** empty log message ***
-//
-// Revision 5.1.1.2  1999/11/04 22:34:17  peel
-// Added moveto response
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:29:21  batopr
-// *** empty log message ***
-//
-// Revision 1.2  1999/09/30 03:34:17  lapsos
-// Added special 5 for mithros on the script stuff.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "combat.h"
 
@@ -1286,8 +1253,10 @@ resp * TMonster::readCommand( FILE *fp)
 // return DELETE_VICT for ch
 int specificCode(TMonster *mob, TBeing *ch, int which, const resp * respo)
 {
-  string   tmpstr;
-  TSymbol *tSymbol;
+  string       tmpstr;
+  TSymbol     *tSymbol;
+  followData  *FDt;
+  affectedData tAff;
 
   switch (which) {
     case 1:
@@ -1406,10 +1375,80 @@ int specificCode(TMonster *mob, TBeing *ch, int which, const resp * respo)
       }
 
       return FALSE;
+    case 6:
+      if (mob->mobVnum() != 10604) {
+        vlogf(LOW_ERROR, "Bad mob (%s:%d) calling specificCode(%d)",
+              mob->getName(), mob->mobVnum(), which);
+        return RET_STOP_PARSING;
+      }
+
+      if (!ch)
+        return RET_STOP_PARSING;
+
+      FDt = (ch->master ? ch->master->followers : ch->followers);
+
+      act("$n murmurs over a mermaids scale.",
+          FALSE, mob, NULL, NULL, TO_ROOM);
+      act("$n draws upon the primordial force of the mermaid.",
+          FALSE, mob, NULL, NULL, TO_ROOM);
+      act("A mermaids scale begins to spark and flash.",
+          FALSE, mob, NULL, NULL, TO_ROOM);
+      act("A giant mass of balled lightning forms above the mermaids scale.",
+          FALSE, mob, NULL, NULL, TO_ROOM);
+      act("A giant ball of blue-white lightning erupts from $n's hands!",
+          FALSE, mob, NULL, NULL, TO_ROOM);
+
+      tAff.type      = SPELL_LIGHTNING_BREATH;
+      tAff.level     = mob->GetMaxLevel();
+      tAff.location  = APPLY_IMMUNITY;
+      tAff.modifier  = IMMUNE_ELECTRICITY;
+      tAff.bitvector = 0;
+
+      for (; FDt; FDt = FDt->next) {
+        if (!mob->sameRoom(FDt->follower))
+          continue;
+
+        // ch is taken care of below because they might be the leader.
+        if (FDt->follower == ch)
+          continue;
+
+        // Only affect group members.
+        if (!FDt->follower->isAffected(AFF_GROUP))
+          continue;
+
+        act("You are enveloped by a ball of pure blue-white light!",
+            FALSE, FDt->follower, NULL, NULL, TO_CHAR);
+        act("A blue-white ball of lightning surrounds $n!",
+            TRUE, FDt->follower, NULL, NULL, TO_ROOM);
+
+        tAff.duration  = ((ONE_SECOND * 60) * 60) * ::number(12, 24);
+        tAff.modifier2 = ::number(25, 75);
+        FDt->follower->affectJoin(FDt->follower, &tAff, AVG_DUR_NO, AVG_EFF_YES);
+      }
+
+      act("You are enveloped by a ball of pure blue-white light!",
+          FALSE, ch, NULL, NULL, TO_CHAR);
+      act("A blue-white ball of lightning surrounds $n!",
+          TRUE, ch, NULL, NULL, TO_ROOM);
+      tAff.duration  = ((ONE_SECOND * 60) * 60) * ::number(12, 24);
+      tAff.modifier2 = ::number(25, 75);
+        ch->affectJoin(ch, &tAff, AVG_DUR_NO, AVG_EFF_YES);
+
+      if (ch->master) {
+        act("You are enveloped by a ball of pure blue-white light!",
+            FALSE, ch->master, NULL, NULL, TO_CHAR);
+        act("A blue-white ball of lightning surrounds $n!",
+            TRUE, ch->master, NULL, NULL, TO_ROOM);
+        tAff.duration  = ((ONE_SECOND * 60) * 60) * ::number(12, 24);
+        tAff.modifier2 = ::number(25, 75);
+        ch->master->affectJoin(ch->master, &tAff, AVG_DUR_NO, AVG_EFF_YES);
+      }
+
+      return FALSE;
     default:
       vlogf(5, "Undefined response segment: %d", which);
       break;
   }
+
   return FALSE;
 }
-

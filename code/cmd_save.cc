@@ -159,7 +159,6 @@ void TBeing::doSave(silentTypeT silent, const char *tArg = NULL)
       *this += *t;
     }
 
-    wearSlotT wearIndex;
     for (wearIndex = MIN_WEAR; wearIndex < MAX_WEAR; wearIndex++) {
       if (tPerson->equipment[wearIndex]) {
         TThing * obj = tPerson->unequip(wearIndex);

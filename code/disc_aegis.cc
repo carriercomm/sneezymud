@@ -6,16 +6,12 @@
 int cureBlindness(TBeing *c, TBeing * victim, int level, byte learn)
 {
   affectedData * aff;  // pointer declaration is an exception to this rule
-  int duration;
 
   if (!victim->isAffected(AFF_BLIND)) {
     act("Nothing seems to happen.  Try someone who is blind.", FALSE, c, NULL, victim, TO_CHAR);
     c->deityIgnore(SILENT_YES);
     return FALSE;
   }
-
-  duration = level * UPDATES_PER_MUDHOUR;
-  duration = (int) (c->percModifier() * duration);
 
   if (bSuccess(c, learn, c->getPerc(), SPELL_CURE_BLINDNESS)) {
     if (victim->affected) {
@@ -32,6 +28,9 @@ int cureBlindness(TBeing *c, TBeing * victim, int level, byte learn)
     checkFactionHelp(c,victim);
     return SPELL_SUCCESS;
   } else {
+    int duration = (level/10 + 1) * UPDATES_PER_MUDHOUR;
+    duration = (int) (c->percModifier() * duration);
+
     switch (critFail(c, SPELL_CURE_BLINDNESS)) {
       case CRIT_F_HITOTHER:
       case CRIT_F_HITSELF:

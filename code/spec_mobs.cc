@@ -942,7 +942,7 @@ int kraken(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
       opp->sendTo("You have been BLINDED!\n\r");
 
       opp->rawBlind(myself->GetMaxLevel(), 
-                    myself->GetMaxLevel() * UPDATES_PER_MUDHOUR,
+                    (myself->GetMaxLevel()/20 + 1) * UPDATES_PER_MUDHOUR,
                     SAVE_YES);
     }
     return TRUE;

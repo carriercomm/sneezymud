@@ -288,10 +288,10 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
 
   the_arrow = dynamic_cast<TObj *>(stuff);
 
-  ch->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_BOW, 2);
+  ch->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_RANGED_PROF, 2);
   ch->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_RANGED_SPEC, 40);
 
-  if (ch->getSkillValue(SKILL_BOW) < 10) {
+  if (ch->getSkillValue(SKILL_RANGED_PROF) < 10) {
     ch->sendTo("You can't even get the arrow out of the bow properly!\n\r");
     ch->sendTo("You realize you don't know much about shooting...get more training.\n\r");
     act("$p falls to the $g harmlessly.", FALSE, ch, the_arrow, NULL, TO_CHAR);
@@ -299,7 +299,7 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
     --(*the_arrow);
     *ch->roomp += *the_arrow;
     return FALSE;
-  } else if (ch->getSkillValue(SKILL_BOW) < (::number(0, 30))) {
+  } else if (ch->getSkillValue(SKILL_RANGED_PROF) < (::number(0, 30))) {
     ch->sendTo("You have a hard time getting the arrow out of the bow properly!\n\r");
     ch->sendTo("You realize you should get more training and practice more.\n\r");
     act("$p falls to the $g harmlessly.", FALSE, ch, the_arrow, NULL, TO_CHAR);

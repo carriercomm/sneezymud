@@ -109,6 +109,7 @@ void TPerson::doEdit(const char *arg)
   sectorTypeT sectype;
   string tStr;
   long r_flags;
+  string tStString("");
   char string[512],
        Buf[256],
        tString[256],
@@ -781,6 +782,18 @@ void TPerson::doEdit(const char *arg)
       return;
       break;
     case  9: // Name
+      tStString = string;
+      stSpaceOut(tStString);
+
+      if (!tStString.empty()) {
+        delete [] roomp->name;
+
+        sendTo("Room Name Set To: %s\n\r", tStString.c_str());
+        roomp->name = mud_str_dup(tStString.c_str());
+
+        return;
+      }
+
       desc->str = &roomp->name;
       break;
     case 10: // River

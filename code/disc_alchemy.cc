@@ -146,7 +146,7 @@ static void identifyBeingStuff(const TBeing *caster, const TBeing *victim)
 
   caster->sendTo("Height %d inches, weight %d pounds.\n\r", victim->getHeight(), (int) victim->getWeight());
 
-  caster->sendTo(COLOR_MOBS, "%s is %s.\n\r", good_cap(victim->getName()), ac_for_score(victim->getArmor()));
+  caster->sendTo(COLOR_MOBS, "%s is %s.\n\r", good_cap(victim->getName()).c_str(), ac_for_score(victim->getArmor()));
 
   Stats tempStat;
   tempStat = victim->getCurStats();
@@ -174,8 +174,6 @@ static void identifyBeingStuff(const TBeing *caster, const TBeing *victim)
 
 int identify(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
-  char buf[80];
-
   if (bSuccess(caster, bKnown, SPELL_IDENTIFY)) {
 
     identifyBeingStuff(caster, victim);

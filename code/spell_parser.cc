@@ -1944,7 +1944,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
         break;
 
       case SPELL_PORTAL:
-          portal(this, ch);
+          portal(this, n);
         break;
       case SPELL_CREATE_FOOD:
       case SPELL_CREATE_FOOD_DEIKHAN:

@@ -4678,7 +4678,7 @@ int Descriptor::sendLogin(const char *arg)
       sprintf(buf2 + strlen(buf2), "\n\r\n\rWelcome to %s :\n\r%s :\n\r", MUD_NAME_VERS, buf);
       fclose(fp);
     }
-    sprintf(buf2 + strlen(buf2), "Celebrating seven years providing quality MUDding.\n\r\n\r");
+    sprintf(buf2 + strlen(buf2), "Celebrating eight years providing quality Mudding.\n\r\n\r");
     sprintf(buf2 + strlen(buf2), "Enter NEW for a new account, or ? for help.\n\r");
     sprintf(buf2 + strlen(buf2), "\n\rLogin: ");
     output.putInQ(buf2);

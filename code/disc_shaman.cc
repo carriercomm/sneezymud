@@ -2,6 +2,7 @@
 #include "disease.h"
 #include "combat.h"
 #include "disc_shaman.h"
+#include "spelltask.h"
 
 int createGolem(TBeing * caster, int target, int power, int level, byte bKnown)
 {
@@ -897,10 +898,98 @@ int dancingBones(TBeing * caster, TObj * corpse)
     return FALSE;
 
   level = caster->getSkillLevel(SPELL_DANCING_BONES);
-  int bKnown = caster->getSkillLevel(SPELL_DANCING_BONES);
+  int bKnown = caster->getSkillValue(SPELL_DANCING_BONES);
 
-  ret=dancingBones(caster,corpse,level,bKnown);
+  ret=voodoo(caster,corpse,level,bKnown);
   if (IS_SET(ret, VICTIM_DEAD))
     return DELETE_ITEM;   // nuke the corpse
   return FALSE;
 }
+
+
+int shieldOfMists(TBeing *caster, TBeing *victim, int level, byte bKnown)
+{
+  affectedData aff;
+
+  aff.type = SPELL_SHIELD_OF_MISTS;
+  aff.level = level;
+  aff.duration = (3 + (aff.level / 2)) * UPDATES_PER_MUDHOUR;
+  aff.location = APPLY_ARMOR;
+  aff.modifier = -80;
+  aff.bitvector = 0;
+
+  if (bSuccess(caster,bKnown,SPELL_SHIELD_OF_MISTS)) {
+    switch (critSuccess(caster, SPELL_SHIELD_OF_MISTS)) {
+      case CRIT_S_KILL:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_DOUBLE:
+        CS(SPELL_SHIELD_OF_MISTS);
+        aff.duration = (12 + (level / 2)) * UPDATES_PER_MUDHOUR;
+        if (caster != victim)
+          aff.modifier *= 2;
+        break;
+      case CRIT_S_NONE:
+        break;
+    }
+    if (caster != victim) 
+      aff.modifier /= 5;
+
+    //Second argument FALSE causes it to add new duration to old
+    //Third argument TRUE causes it to average the old and newmodifier
+
+    if (!victim->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES)) {
+      caster->nothingHappens();
+      return FALSE;
+    }
+
+
+    act("<G>$n is enveloped by a thick green mist!<z>", FALSE, victim, NULL,
+NULL, TO_ROOM);
+    act("<G>You are enveloped by a thick green mist!<z>", FALSE, victim,
+NULL, NULL, TO_CHAR);
+
+    caster->reconcileHelp(victim, discArray[SPELL_SHIELD_OF_MISTS]->alignMod);
+    return SPELL_SUCCESS;
+  } else {
+    caster->nothingHappens();
+    return SPELL_FAIL;
+  }
+}
+
+void shieldOfMists(TBeing *caster, TBeing *victim, TMagicItem * obj)
+{
+int ret;
+
+ret=shieldOfMists(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
+}
+
+int shieldOfMists(TBeing *caster, TBeing *victim)
+{
+  taskDiffT diff;
+
+    if (!bPassMageChecks(caster, SPELL_SHIELD_OF_MISTS, victim))
+      return FALSE;
+
+    lag_t rounds = discArray[SPELL_SHIELD_OF_MISTS]->lag;
+    diff = discArray[SPELL_SHIELD_OF_MISTS]->task;
+
+    start_cast(caster, victim, NULL, caster->roomp, SPELL_SHIELD_OF_MISTS,
+diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
+      return TRUE;
+}
+
+int castShieldOfMists(TBeing *caster, TBeing *victim)
+{
+int ret,level;
+
+  level = caster->getSkillLevel(SPELL_SHIELD_OF_MISTS);
+  int bKnown = caster->getSkillValue(SPELL_SHIELD_OF_MISTS);
+
+  if ((ret=shieldOfMists(caster,victim,level,bKnown)) == SPELL_SUCCESS) {
+  }
+  return TRUE;
+}
+
+
+
+

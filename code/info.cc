@@ -1279,8 +1279,8 @@ void TBeing::doWho(const char *argument)
         }
       }
     }
-    max_player_since_reboot = max(max_player_since_reboot, count);
-    sprintf(buf, "\n\rTotal Players : [%d] Max since last reboot : [%d] Avg Players : [%.1f]\n\r", count, max_player_since_reboot, stats.useage_iters ? (float) stats.num_users / stats.useage_iters : 0);
+    accStat.max_player_since_reboot = max(accStat.max_player_since_reboot, count);
+    sprintf(buf, "\n\rTotal Players : [%d] Max since last reboot : [%d] Avg Players : [%.1f]\n\r", count, accStat.max_player_since_reboot, stats.useage_iters ? (float) stats.num_users / stats.useage_iters : 0);
     sb += buf;
     if (desc)
       desc->page_string(sb.c_str(), 0, TRUE);
@@ -1508,20 +1508,20 @@ void TBeing::doWho(const char *argument)
       return;
     }
   }
-  max_player_since_reboot = max(max_player_since_reboot, count);
+  accStat.max_player_since_reboot = max(accStat.max_player_since_reboot, count);
   if (isImmortal()) {
     if (!listed)
       sprintf(buf, "\n\rTotal players / Link dead [%d/%d] (%2.0f%%)\n\rMax since Reboot [%d]  Avg Players : [%.1f]\n\r",
            count, lcount, ((double) lcount / (int) count) * 100, 
-           max_player_since_reboot,
+           accStat.max_player_since_reboot,
            stats.useage_iters ? (float) stats.num_users / stats.useage_iters : 0);
     else
       sprintf(buf, "\n\rTotal players / Link dead [%d/%d] (%2.0f%%)\n\rNumber Listed: %d  Max since Reboot [%d]  Avg Players : [%.1f]\n\r", 
            count, lcount, ((double) lcount / (int) count) * 100, listed,
-           max_player_since_reboot,
+           accStat.max_player_since_reboot,
            stats.useage_iters ? (float) stats.num_users / stats.useage_iters : 0);
   } else {
-    sprintf(buf, "\n\rTotal Players : [%d] Max since last reboot : [%d] Avg Players : [%.1f]\n\r", count, max_player_since_reboot, stats.useage_iters ? (float) stats.num_users / stats.useage_iters : 0);
+    sprintf(buf, "\n\rTotal Players : [%d] Max since last reboot : [%d] Avg Players : [%.1f]\n\r", count, accStat.max_player_since_reboot, stats.useage_iters ? (float) stats.num_users / stats.useage_iters : 0);
   }
   sb += buf;
   if (desc)

@@ -916,8 +916,8 @@ TPerson::TPerson(Descriptor *thedesc) :
   desc->session.setToZero();
   desc->prompt_d.xptnl = 0;
 
-  player_num++;
-  max_player_since_reboot = max(max_player_since_reboot, player_num);
+  accStat.player_num++;
+  accStat.max_player_since_reboot = max(accStat.max_player_since_reboot, accStat.player_num);
 }
 
 TPerson::TPerson(const TPerson &a) :
@@ -931,8 +931,8 @@ TPerson::TPerson(const TPerson &a) :
   memcpy(toggles, a.toggles, sizeof(toggles));
   memcpy(wizPowers, a.wizPowers, sizeof(wizPowers));
 
-  player_num++;
-  max_player_since_reboot = max(max_player_since_reboot, player_num);
+  accStat.player_num++;
+  accStat.max_player_since_reboot = max(accStat.max_player_since_reboot, accStat.player_num);
 }
 
 TPerson & TPerson::operator=(const TPerson &a)
@@ -972,7 +972,7 @@ TPerson::~TPerson()
   // getting here as an error.
   dropItemsToRoom(SAFE_NO, DROP_IN_ROOM);
 
-  player_num--;
+  accStat.player_num--;
 
   delete [] title;
   title = NULL;

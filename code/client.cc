@@ -1415,7 +1415,7 @@ int Descriptor::clientCreateChar(char *arg)
   enum connectStateT oldconnected = connected;
   connected = CON_PLYNG;
   ch->desc = this;
-  player_count++;
+  accStat.player_count++;
 
   dynamic_cast<TPerson *>(ch)->doStart();
   ch->saveChar(ROOM_AUTO_RENT);

@@ -3968,8 +3968,8 @@ void TBeing::doInfo(const char *arg)
       }
     } else if (is_abbrev(arg1, "numbers")) {
       sendTo("Player number info:\n\r");
-      sendTo("  Current number of players: %u.\n\r", player_num);
-      sendTo("  Max number since reboot : %u.\n\r", max_player_since_reboot);
+      sendTo("  Current number of players: %u.\n\r", accStat.player_num);
+      sendTo("  Max number since reboot : %u.\n\r", accStat.max_player_since_reboot);
       sendTo("  Max descriptors is presently: %d.\n\r", maxdesc);
       sendTo("  Average faction_power is: %.4f\n\r", avg_faction_power);
       sendTo("  Number of room-specials: %u\n\r", roomspec_db.size());

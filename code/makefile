@@ -158,7 +158,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	cmd_mend_limb.o cmd_message.o \
 	cmd_news.o \
 	cmd_quest.o cmd_quivpalm.o cmd_rename.o cmd_rescue.o cmd_save.o \
-	cmd_score.o cmd_sedit.o cmd_set.o cmd_stab.o cmd_stat.o cmd_steal.o \
+	cmd_score.o cmd_sedit.o cmd_set.o cmd_spin.o cmd_stab.o cmd_stat.o cmd_steal.o \
 	cmd_stomp.o cmd_testcode.o cmd_testfight.o cmd_trophy.o\
 	cmd_visible.o cmd_who.o \
 	cmd_zonefile.o \
@@ -323,6 +323,7 @@ $(OBJDIR)cmd_news.o: statistics.h
 $(OBJDIR)cmd_quivpalm.o: combat.h
 $(OBJDIR)cmd_sedit.o: combat.h dirsort.h
 $(OBJDIR)cmd_set.o: statistics.h
+$(OBJDIR)cmd_spin.o: combat.h
 $(OBJDIR)cmd_stab.o: combat.h
 $(OBJDIR)cmd_steal.o: disc_looting.h
 $(OBJDIR)cmd_stomp.o: combat.h

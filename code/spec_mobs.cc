@@ -3520,10 +3520,10 @@ int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
 {
   TBeing *vict;
   int rc;
-  TObj *obj;
+  TObj *obj=NULL;
 
   if(cmd == CMD_GENERIC_PULSE){
-    if(1 || !::number(0,100) && me->roomp && 
+    if(!::number(0,100) && me->roomp && 
        (obj = read_object(10030, VIRTUAL))){
       *me->roomp += *obj;
       act("$n defecates on the $g.",

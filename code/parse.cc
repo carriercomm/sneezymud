@@ -786,7 +786,7 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
           doCredits();
           break;
         case CMD_NEWS:
-          doNews();
+          doNews(newarg);
           break;
         case CMD_WHERE:
           doWhere(newarg);

@@ -1390,7 +1390,7 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
             case 92:
 	      if(v->getSex()==SEX_MALE && v->hasPart(WEAR_WAISTE) &&
 		 (!(obj = v->equipment[WEAR_WAISTE]) || !obj->isMetal())){
-		sprintf(buf, "With a deft swing of your %s, you sever $N's gentials.", limbStr.c_str());
+		sprintf(buf, "With a deft swing of your %s, you sever $N's genitals.", limbStr.c_str());
 		act(buf,FALSE,this,obj,v,TO_CHAR,ANSI_ORANGE);
 		sprintf(buf, "$n deftly severs your genitals with $s %s!  OWWWWW!", limbStr.c_str());
 		act(buf,FALSE,this,obj,v,TO_VICT,ANSI_ORANGE);

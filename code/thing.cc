@@ -82,11 +82,8 @@ bool TThing::inLethargica() const
 
 bool TThing::isSpiked() const
 {
-  TBaseClothing *armor = NULL;
   if (isname("spiked", name))
     return TRUE;
-  else if (armor = dynamic_cast<TBaseClothing *>(this)) 
-    return isObjStat(ITEM_SPIKED);
   return FALSE;
 }
 

@@ -157,7 +157,7 @@ void TBeing::doNews(const char *argument)
             !strcmp(dp->d_name, ".."))
           continue;
   
-        sprintf(buf, "%s/%s", BUILDER_HELP_PATH, dp->d_name);
+        sprintf(buf, "%s/%s", IMMORTAL_HELP_PATH, dp->d_name);
         if (!stat(buf, &theStat)) {
           if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
             newsFileList nfl(dp->d_name, theStat.st_mtime);

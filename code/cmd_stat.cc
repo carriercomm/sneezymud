@@ -513,10 +513,10 @@ void TBeing::statBeing(TBeing *k)
       sprintf(buf + strlen(buf), "IMM: Office: %d\n\r", d->office);
 
       if (d->blockastart)
-        sprintf(buf + strlen(buf), "IMM: Block1: %d - %d\n\r", d->blockastart, d->blockaend);
+        sprintf(buf + strlen(buf), "IMM: BlockA: %d - %d\n\r", d->blockastart, d->blockaend);
 
       if (d->blockbstart)
-        sprintf(buf + strlen(buf), "IMM: Block2: %d - %d\n\r", d->blockbstart, d->blockbend);
+        sprintf(buf + strlen(buf), "IMM: BlockB: %d - %d\n\r", d->blockbstart, d->blockbend);
     }
   }
 

@@ -1825,7 +1825,7 @@ class TBeing : public TThing {
     void doMotd(const char *);
     void doLimbs(const string &);
     void describeLimbDamage(const TBeing *) const;
-    string describeAffects(TBeing *, showMeT);
+    string describeAffects(TBeing *, showMeT) const;
     void doStand();
     void doCrawl();
     void doFollow(const char *);

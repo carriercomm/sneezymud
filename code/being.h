@@ -831,8 +831,8 @@ class TBeing : public TThing {
     void affectRemove(affectedData *, silentTypeT = SILENT_NO);
     void affectFrom(spellNumT);
     void transformLimbsBack(const char *, wearSlotT, bool);
-    bool hasDisease(int) const;
-    void diseaseFrom(int);
+    bool hasDisease(diseaseTypeT) const;
+    void diseaseFrom(diseaseTypeT);
     int affectJoin(TBeing *, affectedData *, avgDurT, avgEffT, bool text = TRUE);
     void classSpecificStuff();
     virtual int hitGain() = 0;

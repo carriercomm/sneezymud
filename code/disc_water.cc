@@ -885,6 +885,7 @@ int gillsOfFlesh(TBeing * caster, TBeing * victim, int level, byte bKnown)
     aff.level = level;
     aff.duration = 6 * UPDATES_PER_MUDHOUR;
     aff.modifier = 0;
+    aff.renew = aff.duration;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_WATERBREATH;
 

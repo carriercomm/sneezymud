@@ -134,13 +134,14 @@ void TBaseContainer::logMe(const TBeing *ch, const char *cmdbuf) const
 int TBaseContainer::getAllFrom(TBeing *ch, const char *argument)
 {
   int rc;
-  TPCorpse * tCorpse;
+  //  TPCorpse * tCorpse;
 
   act("You start getting items from $p.", TRUE, ch, this, NULL, TO_CHAR);
   act("$n starts getting items from $p.", TRUE, ch, this, NULL, TO_ROOM);
   start_task(ch, ch->roomp->stuff, ch->roomp, TASK_GET_ALL, argument, 
             350, ch->in_room, 0, 0, 0);
 
+  /*
   if ((tCorpse = dynamic_cast<TPCorpse *>(this)) &&
       !ch->isImmortal() &&
       lower(ch->getName()) != tCorpse->getOwner()) {
@@ -151,6 +152,7 @@ int TBaseContainer::getAllFrom(TBeing *ch, const char *argument)
     ch->affectJoin(ch, &tAff, AVG_DUR_NO, AVG_EFF_NO);
     vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (1)", ch->getName());
   }
+  */
 
   // this is a kludge, task_get still has a tiny delay on it
   // this dumps around it and goes right to the guts
@@ -166,7 +168,7 @@ int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
   char newarg[100], capbuf[256];
   int rc;
   int p;
-  TPCorpse * tCorpse;
+  //  TPCorpse * tCorpse;
 
   if (getall(arg1, newarg)) {                                 
     if (!searchLinkedListVis(ch, newarg, stuff)) {            
@@ -192,6 +194,7 @@ int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
     act("You start getting items from $p.", TRUE, ch, this, NULL, TO_CHAR);
     act("$n starts getting items from $p.", TRUE, ch, this, NULL, TO_ROOM);
 
+    /*
     if ((tCorpse = dynamic_cast<TPCorpse *>(this)) &&
         !ch->isImmortal() &&
         lower(ch->getName()) != tCorpse->getOwner()) {
@@ -202,6 +205,7 @@ int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
       ch->affectJoin(ch, &tAff, AVG_DUR_NO, AVG_EFF_NO);
       vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (2)", ch->getName());
     }
+    */
 
     start_task(ch, ch->roomp->stuff, ch->roomp, TASK_GET_ALL, capbuf, 
             350, ch->in_room, 1, 0, 0);
@@ -239,6 +243,7 @@ int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
     start_task(ch, ch->roomp->stuff, ch->roomp, TASK_GET_ALL, capbuf,
             350, ch->in_room, 0, p + 1, 0);
 
+    /*
     if ((tCorpse = dynamic_cast<TPCorpse *>(this)) &&
         !ch->isImmortal() &&
         lower(ch->getName()) != tCorpse->getOwner()) {
@@ -249,6 +254,7 @@ int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
       ch->affectJoin(ch, &tAff, AVG_DUR_NO, AVG_EFF_NO);
       vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (3)", ch->getName());
     }
+    */
 
     // this is a kludge, task_get still has a tiny delay on it
     // this dumps around it and goes right to the guts

@@ -160,7 +160,7 @@ void mudTimePassed(time_t t2, time_t t1, struct time_info_data *now)
   secs = (long) (t2 - t1);
 
   now->minutes = (secs / SECS_PER_UPDATE) % 4;	
-  secs -= SECS_PER_MUD_UPDATE * now->minutes;
+  secs -= SECS_PER_UPDATE * now->minutes;
 
   // values are 0, 15, 30, 45...
   now->minutes *= 15;

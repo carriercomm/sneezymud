@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_aegis.cc,v $
+// Revision 5.1.1.2  1999/12/09 15:13:00  batopr
+// changes to support disease changed to enum
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -123,7 +126,7 @@ int cureDisease(TBeing *caster, TBeing * victim, int, byte learn, spellNumT spel
 {
   char buf[256];
   bool found = FALSE;
-  int disease = DISEASE_NULL;
+  diseaseTypeT disease = DISEASE_NULL;
   int s1 = 0, u1 = 0, mod;
   int i;
   

@@ -263,7 +263,8 @@ int TPerson::hitGain()
     gain = 0;
   else {
     gain = graf((age()->year - getBaseAge() + 15), 2, 4, 5, 9, 4, 3, 2);
-    gain += plotStat(STAT_CURRENT,STAT_CON,1,8,4);
+    gain += 4;
+    gain = (int)((double)(gain)*plotStat(STAT_CURRENT,STAT_CON,.80,1.25,1.00));
   }
 
   // arbitrary multiplier
@@ -338,8 +339,8 @@ int TBeing::moveGain()
 sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
 {
   sh_int prac;
-  float num;
-  bool preReqs = FALSE;
+  double num;
+  //bool preReqs = FALSE;
   int combat = 0;
   bool doneCombat = FALSE;
 
@@ -355,12 +356,111 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
     doneCombat = TRUE;
   }
 
+  // A note on learning
+  // as of March 2001, each class has the following specialized disciplines:
+  // (Normal Spec disc is 60 pracs, weapon spec is 20, allow 1 weapon spec
+  // for each of the 'fighting' classes)
+  // Mages:    7
+  // Monks:    4.33
+  // Warriors: 4.33
+  // Rangers:  5.33
+  // Deikhans: 5.33
+  // Thieves:  6.33
+  // Clerics:  5
+
+  // smart people should be able to learn 1/2 all possible learning
+  // average people should learn 3/8
+  // stupid people should learn 1/4
+
+  // I'd like to see all classes finish their prereqs at the same rate
+  // thus leaving all the spec to be done after that
+  // this gets messy, however.
+  // i'll assume average person should finish basic discs at L30
+  // thus basic learning should give a person 200/30 pracs a level = 6.67
+  
+  // thus, the next 20 levels should give 3/8 learning in however many base
+  // disciplines.
+
+  // using cleric as and example, this should be 5 discs * 60 pracs/disc = 300 pracs
+  // 300 pracs * (3/8) learning = 112.5 pracs / 20 level = 5.625 pracs per level.
+
+  // if we use the rate of basic learning, we can calculate the level when they
+  // should have started learning advanced stuff
+
+  // advanced level = 30 * (8/3) * (learnrate) = 80 * learnrate
+
+  // so pracs per advanced level = (discs * 60 * learnrate) / (50 - 80 * learnrate) = pracs
+  
+  // ok... so lets do it!
+  double discs = 0;
+
+  // NOTE - this is what you should change if a class is getting too many/too few pracs
+  // or if more disciplines are added.
+  switch (Class) {
+    case MAGE_LEVEL_IND:
+      discs = 6.333;
+      break;
+    case CLERIC_LEVEL_IND:
+      discs = 5.0;
+      break;
+    case WARRIOR_LEVEL_IND:
+      discs = 4.666;
+      break;
+    case THIEF_LEVEL_IND:
+      discs = 6.333;
+      break;
+    case DEIKHAN_LEVEL_IND:
+      discs = 5.5;
+      break;
+    case MONK_LEVEL_IND:
+      discs = 4.666;
+      break;
+    case RANGER_LEVEL_IND:
+      discs = 5.5;
+      break;
+    case SHAMAN_LEVEL_IND:
+      discs = 6.333;
+      break;
+    case UNUSED1_LEVEL_IND:
+    case UNUSED2_LEVEL_IND:
+    case UNUSED3_LEVEL_IND:
+    case MAX_SAVED_CLASSES:
+      vlogf(LOG_BUG,"Got to a bad spot in calcNewPracs(), bad class");
+      break;
+  }
+  
+  
+  double learnrate;
+
+
+  if (!desc) {
+    learnrate = plotStat(STAT_CURRENT, STAT_INT, (float)(0.33), (float)(0.66), (float)(0.50), 1.0);
+  } else {
+    learnrate = plotStat(STAT_NATURAL, STAT_INT, (float)(0.33), (float)(0.66), (float)(0.50), 1.0);
+  }
+
+
+  double advancedlevel = (90.0/(8.0*learnrate));
+  double basicpracs = (200.0/advancedlevel);
+  double advancedpracs = (discs * 60.0 * learnrate)/(50.0 - advancedlevel);
+  
+
+  if (getLevel(Class) >= advancedlevel)
+    num = advancedpracs;
+  else
+    num = basicpracs;
+  
+  float temp = num;
+
+  #if 0
+
+
   // these are the default number of practices to use for each class
   // after they are done with their basic discs
   // we override these numbers appropriately
   float fMin = 5.0;
   float fMax = 9.0;
-  float avg = 6.9;
+  float avg = 6.6;
 
   // override the defaults as appropriate (i.e., if we want person to
   // get practice gain appropriate for the basic discs
@@ -374,7 +474,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
       } 
       break;
     case CLERIC_LEVEL_IND:
-if (!doneCombat || (getDiscipline(DISC_CLERIC)->getLearnedness() < MAX_DISC_LEARNEDNESS) || forceBasic == 1) {
+      if (!doneCombat || (getDiscipline(DISC_CLERIC)->getLearnedness() < MAX_DISC_LEARNEDNESS) || forceBasic == 1) {
         preReqs = TRUE;
         fMin =5.0;
         fMax =8.0;
@@ -446,6 +546,7 @@ if (!doneCombat || (getDiscipline(DISC_CLERIC)->getLearnedness() < MAX_DISC_LEAR
   } else {
     num = plotStat(STAT_NATURAL, STAT_INT, fMin, fMax, avg, 1.0);
   }
+#endif
 
   prac = (int) num;
   num = num - prac;
@@ -464,7 +565,13 @@ if (!doneCombat || (getDiscipline(DISC_CLERIC)->getLearnedness() < MAX_DISC_LEAR
   if ((100*num) >= (::number(1,100))) {
     prac++;
   }
+  if(isPc()) {
+    vlogf(LOG_DASH, "%s gaining %5.2f pracs (%5.2f) lev: %d, advancedlev: %5.2f", getName(),
+	  temp, num, getLevel(Class), advancedlevel);
+  }
   return prac;
+
+
 }
 
 void TBeing::setPracs(sh_int prac, classIndT Class)
@@ -714,15 +821,42 @@ void gain_exp(TBeing *ch, double gain, int dam)
           double peak2 = getExpClassLevel(i,ch->getLevel(i) + 2);
           double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
           double curr = getExpClassLevel(i,ch->getLevel(i));
-	  double gainmod = ((ch->getLevel(i))); // removed +1
+	  double gainmod = ((1.15*ch->getLevel(i)) ); // removed +1
           if (ch->getLevel(i)) {
+	    
+
+            if (!been_here && gain > ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000))+2.0 && dam > 0) {
+              been_here = TRUE; // don't show multiple logs for multiclasses
+              // the 100 turns dam into a %
+              newgain = ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000)) + 2.0;
+	    
+	      newgain = (newgain*0.95) +  (((float)::number(0,100))*newgain)/1000.0;
+
+
+              vlogf(LOG_DASH, "%s(L%d) vs %s(L%d) cap: D: %d%%, E: %5.2f -> %5.2f (%5.2fx)",
+                    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
+                    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, gain,
+                    newgain, (gain/newgain));
+              vlogf(LOG_JESUS, "%s(L%d) vs %s(L%d) cap: Dam: %d, Exp: %d, Cap: %d (%dx), MK: %d, %d classes",
+                    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
+                    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, (int)gain,
+                    (int)newgain, (int)(gain/newgain), (int)gainmod, ch->howManyClasses());
+
+	      gain = newgain;
+
+
+            }
+
+
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
               ch->sendTo(COLOR_BASIC, "<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
               ch->setExp(peak2);
               return;
+
             } else if (ch->getExp() >= peak) {
               // do nothing..this rules! Tell Brutius Hey, I didnt get any exp? 
+
             } else if ((ch->getExp() + gain >= peak) && (ch->GetMaxLevel() < MAX_MORT)) {
               ch->sendTo(COLOR_BASIC, "<G>You have gained enough to be a Level %d %s.<1>\n\r", 
 			 ch->getLevel(i)+1, classNames[i].capName);
@@ -732,16 +866,20 @@ void gain_exp(TBeing *ch, double gain, int dam)
                 return;
               }
 	    }
+
 	    // if(gain > ((peak - curr) / gainmod)) {
-	    if (!been_here && gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000)+2 && dam > 0) { 
+#if 0
+	    if (!been_here && gain > ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000))+2.0 && dam > 0) { 
 	      been_here = TRUE; // don't show multiple logs for multiclasses
 	      // the 100 turns dam into a %
-	      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
+	      newgain = ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000)) + 2.0;
 
-	      vlogf(LOG_DASH, "%s(L%d) vs %s(L%d) cap: D: %d, E: %d, C: %d (%dx), MK: %d, %d classes",
+
+
+	      vlogf(LOG_DASH, "%s(L%d) vs %s(L%d) cap: D: %d, E: %f, C: %f (%fx), MK: %f, %d classes",
 		    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a", 
-		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, (int)gain,	
-		    (int)newgain, (int)(gain/newgain), (int)gainmod, ch->howManyClasses());
+		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, gain,	
+		    newgain, (gain/newgain), gainmod, ch->howManyClasses());
 	      vlogf(LOG_JESUS, "%s(L%d) vs %s(L%d) cap: Dam: %d, Exp: %d, Cap: %d (%dx), MK: %d, %d classes",
 		    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
 		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, (int)gain,
@@ -749,19 +887,20 @@ void gain_exp(TBeing *ch, double gain, int dam)
 
 
 	    }  
+#endif
 	  }
 	}
 	
       }
-#ifdef SNEEZY2000
+#if 0
       // Theoretically, a players peak - curr / gainmod is extremely reasonable
       // for a veteran player hitting mobs above thier level but not too far
       // We may need to watch for the backstabbers
       if(dam > 0) {
 	double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
 	double curr = getExpClassLevel(i,ch->getLevel(i));
-	double gainmod = ((ch->getLevel(i))); // removed +1
-	newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
+	double gainmod = ((ch->getLevel(i))) + 1.0; // removed +1
+	newgain = ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000)) + 2;
 	// the 100 compensates for dam
 	gain = min(gain, newgain); 
 	//	gain += (rand()%(int)(gain*.1))-(gain*.05);
@@ -1163,27 +1302,55 @@ double TBeing::hpGainForLevel(classIndT Class) const
     hpgain += (double) ::number(4,8);
 
   if (hasClass(CLASS_WARRIOR) && Class == WARRIOR_LEVEL_IND)
-    hpgain += (double) ::number(5,11);
+    hpgain += (double) ::number(5,12);
 
   if (hasClass(CLASS_THIEF) && Class == THIEF_LEVEL_IND)
     hpgain += (double) ::number(3,9);
 
   if (hasClass(CLASS_DEIKHAN) && Class == DEIKHAN_LEVEL_IND)
-    hpgain += (double) ::number(4,9);
+    hpgain += (double) ::number(5,10);
 
   if (hasClass(CLASS_MONK) && Class == MONK_LEVEL_IND)
-    hpgain += (double) ::number(5,9);
+    hpgain += (double) ::number(3,8);
 
   if (hasClass(CLASS_RANGER) && Class == RANGER_LEVEL_IND)
-    hpgain += (double) ::number(5,10);
+    hpgain += (double) ::number(5,9);
 
   if (hasClass(CLASS_SHAMAN) && Class == SHAMAN_LEVEL_IND)
     hpgain += (double) ::number(2,8);
+  
+  
 
+
+  if(isPc()) {
+    vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
+	  hpgain*(double)getConHpModifier() - hpgain,
+	  (int)(hpgain*(double)getConHpModifier()));
+  }
+  double raw = hpgain;
+  
   // tack on CON modifier
-  hpgain += (double) getConHpModifier();
+  hpgain *= (double) getConHpModifier();
+
 
   hpgain /= (double) howManyClasses();
 
+  double bonus = raw - (int)(hpgain);
+
+  double roundoff = hpgain - (int)(hpgain);
+  hpgain = (int)hpgain;
+  
+  if(100*roundoff < ::num(1,100)) {
+    hpgain += 1.0;
+  }
+  
+
+  if(isPc()) {
+    vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),raw,
+          bonus, (int)(hpgain);
+  }
+
+
   return hpgain;
 }
+

@@ -442,7 +442,7 @@ struct PolyType {
   int  learning;
   int  number;
   discNumT  discipline;
-  race_t tRace;
+  unsigned long int tRace;
 };
 
 extern spellInfo *discArray[MAX_SKILL+1];

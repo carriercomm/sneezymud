@@ -272,6 +272,21 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
             }
             return;
           }
+
+          // handle the look in all.corpse special case
+          if (is_abbrev(arg2, "all.corpse") &&
+              strlen(arg2) > 6) {
+            TThing *t;
+            for (t = roomp->stuff; t; t = t->nextThing) {
+              TBaseCorpse * tbc = dynamic_cast<TBaseCorpse *>(t);
+              if (tbc) {
+                // because some corpses are dust piles, we make no name check
+                doLook(argument, cmd, tbc);
+              }
+            }
+            return;
+          }
+
           bits = generic_find(arg2, FIND_OBJ_INV | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, this, &tmp_char, &o);
           if (bits) {
             if ((bits == FIND_OBJ_ROOM) && riding && o->parent) {

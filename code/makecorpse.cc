@@ -205,6 +205,9 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SKILL_BODYSLAM:
         sprintf(buf, "The body of %s looks as if a great weight has squished %s.",getName(),hmhr());
         break;
+      case SKILL_SPIN:
+	sprintf(buf, "%s's corpse lies here with a dazed look.", getName());
+	break;
       case DAMAGE_COLLISION:
         sprintf(buf, "%s's corpse lies shattered here, having collided with something massive.", namebuf);
         break;

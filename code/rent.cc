@@ -639,6 +639,7 @@ if (version >= 7 ||
 
 static bool shouldRecycle(int robj)
 {
+  return FALSE;
 #if 0
   // nuke based on total number available
   return (obj_index[robj].max_exist &&

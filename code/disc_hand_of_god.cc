@@ -5,6 +5,15 @@
 #include "disc_hand_of_god.h"
 #include "being.h"
 
+static void moveLoss(TBeing &ch)
+{ 
+  // used by recall and summon
+
+  // take up to 100 move
+  // however, leave them with at least 10 mv
+  ch.addToMove(max(-100, -(ch.getMove()-10)));
+}
+
 int astralWalk(TBeing * caster, TBeing * victim, int level, byte bKnown)
 {
   int rc;
@@ -413,9 +422,7 @@ int wordOfRecall(TBeing * caster, TBeing * victim, int, byte bKnown)
         TRUE, victim, NULL, NULL, TO_ROOM);
     victim->doLook("", CMD_LOOK);
 
-    // take up to 100 move for recalling
-    // however, leave them with at least 10 mv
-    victim->addToMove(max(-100, -(victim->getMove()-10)));
+    moveLoss(*victim);
 
     victim->updatePos();
     act("You are exhausted from interplanar travel.", 
@@ -596,7 +603,9 @@ int summon(TBeing * caster, TBeing * victim, int level, byte bKnown)
           rc = caster->genericTeleport(SILENT_YES);
 
           caster->doLook("", CMD_LOOK);
-          caster->addToMove(-100);
+
+          moveLoss(*caster);
+
           caster->setMove(max(0, caster->getMove()));
           caster->updatePos();
           act("You hear a small \"pop\" as $n appears in the middle of the room.",

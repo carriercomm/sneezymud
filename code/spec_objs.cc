@@ -2388,19 +2388,25 @@ int scirenDrown(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
     return FALSE;   
 
   dam = ::number(4,10);
-  act("$p <1><B>emits a stream of salty water directed at $n's mouth<1>!\n\r<B>HA! Look at $m drown<1>!",
+  act("$p <1><B>pulsates with a glowing blue hue<1>.\n\r$p <1><B>emits a stream of salty water directed at $n's mouth<1>!!",
       0, vict, o, 0, TO_ROOM);
-  act("$p <1><B>emits a stream of salty water directed at your mouth<1>!\n\r<B>ACK! You're drowning<1>!",
+  act("$p <1><B>pulsates with a glowing blue hue<1>.\n\r$p <1><B>emits a stream of salty water directed at your mouth<1>!!",
       0, vict, o, 0, TO_CHAR);
 
-  ch->dropPool(3, LIQ_SALTWATER);
+  // makes sense since were shooting salt water at the victims mouth
+  // may as well have a puddle -jh
+  ch->dropPool(5, LIQ_SALTWATER);
 
   affectedData aff;
   aff.type = SPELL_SUFFOCATE;
-  aff.level = 10;
+  aff.level = 20;
   aff.duration = 3;  // shortlived spell affect -jh
-  vict->affectJoin(ch, &aff, AVG_DUR_NO, AVG_EFF_YES);  
-  rc = ch->reconcileDamage(vict, dam, DAMAGE_SUFFOCATION);
+  aff.modifier = DISEASE_SUFFOCATE; 
+  aff.location = APPLY_NONE;  
+  aff.bitvector = AFF_SILENT;
+
+  rc = ch->applyDamage(vict, dam, DAMAGE_SUFFOCATION);
+  vict->affectJoin(vict, &aff, AVG_DUR_NO, AVG_EFF_YES);
   if (IS_SET_DELETE(rc, DELETE_VICT))
     return DELETE_VICT;
   return TRUE;   

@@ -204,7 +204,6 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
                 if (!isPlayerAction(PLR_BRIEF))
                   sendRoomDesc(rp);
 
-		describeRoomLight();
                 listExits(rp);
                 list_thing_in_room(rp->stuff, this);
               }

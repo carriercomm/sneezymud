@@ -392,8 +392,8 @@ int TBeing::doAction(const string & argument, cmdTypeT cmd) return rc(0)
     return FALSE;
   }
 
-  if ((vict = get_char_room_vis(this, buf, NULL, EXACT_YES))) {
-  } else if (((vict = get_char_room_vis(this, buf))) {
+  if (vict = get_char_room_vis(this, buf, NULL, EXACT_YES)) {
+  } else if (vict = get_char_room_vis(this, buf)) {
   } else {
     sendTo(action.not_found);
     sendTo("\n\r");

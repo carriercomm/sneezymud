@@ -102,11 +102,6 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("You know nothing about making door traps.\n\r");
         return FALSE;
       }
-      if (getDoorTrapLearn(type) <= 0) {
-        sendTo("You need more training before setting a door trap.\n\r");
-        return FALSE;
-      }
- 
 
       sscanf(string, "%s %s", direct, trap_type);
       if ((dir = old_search_block(direct, 0, strlen(direct), dirs, 0)) <= 0) {
@@ -169,6 +164,11 @@ int TBeing::doSetTraps(const char *arg)
         return FALSE;
       }
 
+      if (getDoorTrapLearn(type) <= 0) {
+        sendTo("You need more training before setting a door trap.\n\r");
+        return FALSE;
+      }
+ 
       sendTo("You start working on your trap.\n\r");
       sprintf(buf, "$n starts fiddling with the %s.", uncap(doorbuf));
       act(buf, TRUE, this, NULL, NULL, TO_ROOM);
@@ -180,11 +180,6 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("You know nothing about making container traps.\n\r");
         return FALSE;
       }
-      if (getContainerTrapLearn(type) <= 0) {
-        sendTo("You need more training before setting a container trap.\n\r");
-        return FALSE;
-      }
- 
       sscanf(string, "%s %s", direct, trap_type);
       if (!(obj = get_obj_vis_accessible(this, direct))) {
 	sendTo("No such item present.\n\r");
@@ -205,11 +200,6 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("You know nothing about making mines.\n\r");
         return FALSE;
       }
-      if (getMineTrapLearn(type) <= 0) {
-        sendTo("You need more training before setting a mine trap.\n\r");
-        return FALSE;
-      }
- 
 
       sscanf(string, "%s", trap_type);
 
@@ -242,6 +232,11 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("Syntax: trap mine <trap-type>\n\r");
         return FALSE;
       }
+      if (getMineTrapLearn(type) <= 0) {
+        sendTo("You need more training before setting a mine trap.\n\r");
+        return FALSE;
+      }
+ 
       if (!hasTrapComps(trap_type, TRAP_TARG_MINE, 0)) {
         sendTo("You need more items to make that trap.\n\r");
         return FALSE;
@@ -256,11 +251,6 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("You know nothing about making grenades.\n\r");
         return FALSE;
       }
-      if (getGrenadeTrapLearn(type) <= 0) {
-        sendTo("You need more training before setting a grenade trap.\n\r");
-        return FALSE;
-      }
- 
 
       sscanf(string, "%s", trap_type);
 
@@ -293,6 +283,11 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("Syntax: trap grenade <trap-type>\n\r");
         return FALSE;
       }
+      if (getGrenadeTrapLearn(type) <= 0) {
+        sendTo("You need more training before setting a grenade trap.\n\r");
+        return FALSE;
+      }
+ 
       if (!hasTrapComps(trap_type, TRAP_TARG_GRENADE, 0)) {
         sendTo("You need more items to make that trap.\n\r");
         return FALSE;
@@ -3877,6 +3872,11 @@ int TRealContainer::trapMe(TBeing *ch, const char *trap_type)
     ch->sendTo("You need more items to make that trap.\n\r");
     return FALSE;
   }
+  if (getContainerTrapLearn(type) <= 0) {
+    sendTo("You need more training before setting a container trap.\n\r");
+    return FALSE;
+  }
+ 
 
   ch->sendTo("You start working on your trap.\n\r");
   act("$n starts fiddling with $p.", TRUE, ch, this, 0, TO_ROOM);

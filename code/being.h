@@ -1420,8 +1420,8 @@ class TBeing : public TThing {
     bool checkPeaceful(const string &) const;
     bool checkPeacefulVictim(const string &, const TThing *) const;
     int extraDam(const TBeing *, const TBaseWeapon *) const;
-    void makeCorpse(spellNumT);
-    int die(spellNumT);
+    TThing * makeCorpse(spellNumT, TBeing * = NULL);
+    int die(spellNumT, TBeing * = NULL);
     int slotChance(wearSlotT num) const;
     void makeBodyPart(wearSlotT);
     void makeDiseasedPart(wearSlotT);
@@ -1448,7 +1448,7 @@ class TBeing : public TThing {
     bool canUseLeg(primLegT) const;
     int checkPassWard(dirTypeT) const;
     bool canSwim(dirTypeT);
-    int rawKill(spellNumT);
+    int rawKill(spellNumT, TBeing * = NULL);
     bool validMove(dirTypeT);
     const char *movementType(bool) const;
     ubyte getMaxLimbHealth(wearSlotT) const;
@@ -1668,7 +1668,7 @@ class TBeing : public TThing {
     void doExtinguish(const string &);
     void doLight(const string &);
     void doRefuel(const char *);
-    void doStop();
+    void doStop(const string);
     void doContinue(const char *);
     void doHistory();
     int  doCreate(const char *);

@@ -41,7 +41,6 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
   int value;
   TObj *obj = NULL;
   TMonster *tMonster;
-  TThing *tThing;
   char buf[80];
   const char *arg2;
   cmdTypeT cmd_val;
@@ -295,9 +294,9 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
       rc = doCommand(cmd, arg, NULL, FALSE);
       break;
     case CMD_GIVE:
-#if 1
+#if 0
       tStArgument = two_arg(tStArgument, tStObj, tStSucker);
-      tThing = searchLinkedList(tStObj, stuff, TYPEOBJ);
+      TThing *tThing = searchLinkedList(tStObj, stuff, TYPEOBJ);
 
       if (mob && tThing && canSee(mob))
         rc = doGiveObj(mob, tThing, GIVE_FLAG_DROP_ON_FAIL);

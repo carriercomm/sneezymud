@@ -2,16 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: spells.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+// spells.h
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -529,7 +520,7 @@ enum spellNumT {
      AFFECT_COMBAT,
      AFFECT_PET,
      AFFECT_PLAYERKILL,
-     LAST_ODDBALL_AFFECT,
+     LAST_ODDBALL_AFFECT
 };
 const spellNumT MIN_SPELL = spellNumT(TYPE_UNDEFINED+1);
 const spellNumT TYPE_MIN_HIT = TYPE_HIT;

@@ -342,19 +342,22 @@ void pissOff(TMonster *irritated, TBeing *reason)
 bool hitInnocent(const TBeing *ch, const TThing *thing, const TThing *vict)
 {
   // hit innocent due to misthrow
-  if (ch && ch->isImmortal())
-    return FALSE;
- 
-  // presume anyone in group and near thrower, is safely out of the way
-  const TBeing * tbc = dynamic_cast<const TBeing *>(vict);
-  if (tbc && ch && tbc->inGroup(*ch) && tbc->sameRoom(*ch)) 
-    return false;
 
-  // protect the mounts of group members too
-  if (tbc && tbc->rider) {
-    TBeing *temp = dynamic_cast<TBeing *>(tbc->horseMaster());
-    if (temp && ch && temp->inGroup(*ch) && temp->sameRoom(*ch))
+  if (ch) {
+    if (ch->isImmortal())
+      return FALSE;
+ 
+    // presume anyone in group and near thrower, is safely out of the way
+    const TBeing * tbc = dynamic_cast<const TBeing *>(vict);
+    if (tbc && tbc->inGroup(*ch) && tbc->sameRoom(*ch)) 
       return false;
+  
+    // protect the mounts of group members too
+    if (tbc && tbc->rider) {
+      TBeing *temp = dynamic_cast<TBeing *>(tbc->horseMaster());
+      if (temp && temp->inGroup(*ch) && temp->sameRoom(*ch))
+        return false;
+    }
   }
 
   float num;

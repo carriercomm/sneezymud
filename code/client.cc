@@ -786,9 +786,9 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       }
       strcpy(account->email, email);
 
-      if (!*timezone || (atoi(arg) > 23) || (atoi(arg) < -23)) {
+      if (!*timezone || (atoi(timezone) > 23) || (atoi(timezone) < -23)) {
       }
-      account->time_adjust = atoi(arg);
+      account->time_adjust = atoi(timezone);
 
       switch(*listserver) {
         case '1':

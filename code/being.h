@@ -1395,7 +1395,7 @@ class TBeing : public TThing {
     bool checkPeaceful(const string &) const;
     bool checkPeacefulVictim(const string &, const TThing *) const;
     int extraDam(const TBeing *, const TBaseWeapon *) const;
-    void makeCorpse(int);
+    void makeCorpse(spellNumT);
     int die(spellNumT);
     int slotChance(wearSlotT num) const;
     void makeBodyPart(wearSlotT);

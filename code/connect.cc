@@ -496,8 +496,8 @@ int Descriptor::outputProcessing()
     }
     strcpy(buf, i);
     if (snoop.snoop_by && snoop.snoop_by->desc) {
-      (&snoop.snoop_by->desc->output)->putInQ("% ");
-      (&snoop.snoop_by->desc->output)->putInQ(i);
+      snoop.snoop_by->desc->output.putInQ("% ");
+      snoop.snoop_by->desc->output.putInQ(i);
     }
     if (socket->writeToSocket(i))
       return -1;
@@ -4308,32 +4308,32 @@ void setPrompts(fd_set out)
       update = 0;
       if (!d->connected && (ch = d->character) && ch->isPc() &&
           !(ch->isPlayerAction(PLR_COMPACT)))
-        (&d->output)->putInQ("\n\r");
+        d->output.putInQ("\n\r");
 
       if ((ch = d->character) && ch->task) {
         if (ch->task->task == TASK_PENANCE) {
           sprintf(promptbuf, "\n\rPIETY : %5.2f > ", ch->getPiety());
-          (&d->output)->putInQ(cap(promptbuf));
+          d->output.putInQ(cap(promptbuf));
         }
         if (ch->task->task == TASK_MEDITATE) {
           sprintf(promptbuf, "\n\rMANA : %d > ", ch->getMana());
-          (&d->output)->putInQ(cap(promptbuf));
+          d->output.putInQ(cap(promptbuf));
         }
         if ((ch->task->task == TASK_SHARPEN || 
              ch->task->task == TASK_DULL) && 
             (obj = ch->heldInPrimHand())) {
           sprintf(promptbuf, "\n\r%s > ", ch->describeSharpness(obj).c_str());
-          (&d->output)->putInQ(promptbuf);
+          d->output.putInQ(promptbuf);
         }
       }
       if (d->str && (d->prompt_mode != DONT_SEND)) {
         if (ch && ch->isPlayerAction(PLR_BUGGING) && !**d->str &&
             strcmp(d->name, "Comment")) {
           // ideas, bugs, typos
-          (&d->output)->putInQ("Subject: ");
+          d->output.putInQ("Subject: ");
         } else {
           // comments
-          (&d->output)->putInQ("-> ");
+          d->output.putInQ("-> ");
         }
       } else if (d->pagedfile && (d->prompt_mode != DONT_SEND)) {
         sprintf(promptbuf, "\n\r[ %sReturn%s to continue, %s(r)%sefresh, %s(b)%sack, page %s(%d/%d)%s, or %sany other key%s to quit ]\n\r", 
@@ -4343,7 +4343,7 @@ void setPrompts(fd_set out)
             d->green(),  
             d->cur_page, d->tot_pages, d->norm(),
             d->green(),  d->norm());
-        (&d->output)->putInQ(promptbuf);
+        d->output.putInQ(promptbuf);
       } else if (!d->connected) {
         if (!ch) {
           vlogf(LOG_BUG, "Descriptor in connected mode with NULL desc->character.");
@@ -4357,7 +4357,7 @@ void setPrompts(fd_set out)
             d->green(),  
             d->cur_page, d->tot_pages, d->norm(),
             d->green(),  d->norm());
-          (&d->output)->putInQ(promptbuf);
+          d->output.putInQ(promptbuf);
         } else {
           if ((d->m_bIsClient || (ch->isPlayerAction(PLR_VT100 | PLR_ANSI) &&
                              IS_SET(d->prompt_d.type, PROMPT_VTANSI_BAR)))) {
@@ -4424,7 +4424,7 @@ void setPrompts(fd_set out)
             /*
             if (d->prompt_mode != DONT_SEND && d->m_bIsClient) {
               strcpy(promptbuf, "> ");
-              (&d->output)->putInQ(promptbuf);
+              d->output.putInQ(promptbuf);
             }
             */
           }
@@ -4575,7 +4575,7 @@ void setPrompts(fd_set out)
             }
 
             strcat(promptbuf, "> ");
-            (&d->output)->putInQ(promptbuf);
+            d->output.putInQ(promptbuf);
           }
         }
       }
@@ -4614,7 +4614,7 @@ void Descriptor::worldSend(const char *text, TBeing *ch)
 
   for (d = descriptor_list; d; d = d->next) {
     if (!d->connected)
-      (&d->output)->putInQ(colorString(ch, d, text, NULL, COLOR_BASIC, TRUE).c_str());
+      d->output.putInQ(colorString(ch, d, text, NULL, COLOR_BASIC, TRUE).c_str());
   }
 }
 

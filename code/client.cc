@@ -40,7 +40,7 @@ void Descriptor::clientf(const char *msg,...)
       vsprintf(messageBuffer, msg, ap);
       va_end(ap);
       sprintf(tmp, "\200%s\n", messageBuffer);
-      (&output)->putInQ(tmp);
+      output.putInQ(tmp);
     }
   }
 }

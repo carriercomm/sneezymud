@@ -2764,7 +2764,7 @@ int TBeing::addCommandToQue(const char *msg)
   if (isPc() && desc){
     if (!isPlayerAction(PLR_MAILING) && 
         desc->connected != CON_WRITING) 
-    (&desc->input)->putInQ(msg);
+    desc->input.putInQ(msg);
   } else {
     rc = parseCommand(msg, TRUE);
     if (IS_SET_DELETE(rc, DELETE_THIS))

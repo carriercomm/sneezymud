@@ -3873,6 +3873,11 @@ void TBeing::doReplace(const char *argument)
     return;
   } else {
     fclose(fp);
+
+    // log this event so we can see if item duplication (etc.) is caused by it.
+    vlogf(LOG_FILE, "%s replacing %s's %s file.",
+       getName(), arg1, dir2);
+
     sprintf(buf, "cp -r %s/%s/%c/%s %s/%c/%s", 
                     dir, dir2, arg1[0], arg1, dir2, arg1[0], arg1);
     vsystem(buf);

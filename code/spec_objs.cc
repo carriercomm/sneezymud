@@ -2352,6 +2352,7 @@ int nightBlade(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 }
 
 
+
 int bloodDrain(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -2374,6 +2375,27 @@ int bloodDrain(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
     return DELETE_VICT;
   return TRUE;
 }
+
+int energyBeam(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  TBeing *ch;
+  int rc, dam;
+
+  ch = genericWeaponProcCheck(vict, cmd, o, 8);
+  if (!ch)
+    return FALSE;
+
+  dam = ::number(4,10);
+  act("$p <1><W>glows in a sparkling, bright white light<1>.\n\r<W>You hear a deafening crackle as <1>$p <1><W>jolts $m!<1>",
+      0, vict, o, 0, TO_ROOM);
+  act("$p <1><W>glows in a sparkling, bright white light<1>.\n\r<W>You hear a deafening crackle as $n's <1>$p <1><W>jolts you!<1>",
+      0, vict, o, 0, TO_CHAR);
+
+  rc = ch->reconcileDamage(vict, dam, DAMAGE_NORMAL);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    return DELETE_VICT;
+  return TRUE;
+}                
 
 int scirenDrown(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
@@ -2820,6 +2842,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {TRUE, "Lightning Rod", weaponLightningRod},
   {FALSE, "Jambiya", weaponJambiyaSpecial}, // 50
   {TRUE, "Sciren's Suffocation", scirenDrown},
+  {TRUE, "Energy Beam Weapon", energyBeam},
 
-  {FALSE, "BOGUS", bogusObjProc},  // 52
+  {FALSE, "BOGUS", bogusObjProc},  // 53
 };

@@ -2730,7 +2730,7 @@ void TBeing::doWorld()
          blue(), secsToString(upt).c_str(), norm());
   str += buf;
 
-  sprintf(buf, "%sMachine Lag: Avg/Cur/High/Low        %d/%d/%d/%d%s\n\r",
+  sprintf(buf, "%sMachine Lag: Avg/Cur/High/Low        %ld/%ld/%ld/%ld%s\n\r",
 	 blue(), 
 	 (lag_info.count ? lag_info.total/lag_info.count : 0),
 	 lag_info.current,
@@ -2741,7 +2741,7 @@ void TBeing::doWorld()
   if(isImmortal()){
     for(i=0;i<10;++i){
       if(lag_info.lagcount[i]) {
-	sprintf(buf, "%sLag %i:                              %d/%d%s\n\r",
+	sprintf(buf, "%sLag %i:                              %ld/%ld%s\n\r",
 	       blue(), i, lag_info.lagtime[i], lag_info.lagcount[i], norm());
         str += buf;
       }
@@ -2749,7 +2749,7 @@ void TBeing::doWorld()
   }
 
 
-  sprintf(buf, "Total number of rooms in world:               %d\n\r", 
+  sprintf(buf, "Total number of rooms in world:               %ld\n\r", 
         roomCount);
   str += buf;
   sprintf(buf, "Total number of zones in world:               %d\n\r", 
@@ -2758,7 +2758,7 @@ void TBeing::doWorld()
   sprintf(buf, "Total number of distinct objects in world:%s    %d%s\n\r",
         green(), obj_index.size(), norm());
   str += buf;
-  sprintf(buf, "Total number of objects in game:%s              %d%s\n\r",
+  sprintf(buf, "Total number of objects in game:%s              %ld%s\n\r",
         green(), objCount, norm());
   str += buf;
   sprintf(buf, "Total number of registered accounts:%s          %d%s\n\r", 
@@ -2821,7 +2821,7 @@ void TBeing::doWorld()
         norm());
     str += buf;
   }
-  sprintf(buf, "Total number of monsters in game:%s             %d%s\n\r",
+  sprintf(buf, "Total number of monsters in game:%s             %ld%s\n\r",
         red(), mobCount, norm());
   str += buf;
 

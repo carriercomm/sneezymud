@@ -232,7 +232,7 @@ TThing * TThing::dismount(positionTypeT pos)
 
   if (tbt && tbt->master == this) {
     // stop follower unless they are following for other reasons
-    is (!tbt->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
+    if (!tbt->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
 
       // skill based check to let mount continue to follow, even when dismounted
       if (!ch->doesKnowSkill(SKILL_TRAIN_MOUNT) || 

@@ -718,6 +718,7 @@ int TBeing::doTell(const char *arg, bool visible)
     if (!(vict = get_pc_world(this, name, EXACT_NO, INFRA_NO, visible))) {
       if (!(vict = get_char_vis_world(this, name, NULL, EXACT_YES))) {
         if (!(vict = get_char_vis_world(this, name, NULL, EXACT_NO))) {
+          sendTo("You fail to tell to '%s'\n\r", name);
           return FALSE;
         }
       }

@@ -545,6 +545,11 @@ int TTool::garotteMe(TBeing *thief, TBeing *victim)
     aff.modifier = DISEASE_GARROTTE;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_SILENT;
+
+    // we've made raw immunity check, but allow it to reduce effects too
+    aff.duration *= (100 - victim->getImmunity(IMMUNE_SUFFOCATION));
+    aff.duration /= 100;
+
     victim->affectTo(&aff);
 
   } else {

@@ -384,6 +384,11 @@ int TBeing::rawMove(dirTypeT dir)
       return FALSE;
     }
   }
+  if(affectedBySpell(AFFECT_PLAYERKILL) && 
+     to_here && to_here->isRoomFlag(ROOM_PEACEFUL)){
+    sendTo("Player killers can't enter peaceful rooms.\n\r");
+    return FALSE;
+  }
   if (willBumpHeadDoor(from_here->dir_option[dir], &iHeight) &&
         (getPosHeight() *4/5 > iHeight) &&
       !hasQuestBit(TOG_MONK_GREEN_FALLING)) {

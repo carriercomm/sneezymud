@@ -1,13 +1,11 @@
-/*****************************************************************************
-
-  SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
-
-  "cmd_visible.cc"
-  All functions and routines related to mortal invisibility control.
-
-  Created 8/05/99 - Lapsos(William A. Perrotto III)
-
-******************************************************************************/
+///////////////////////////////////
+//
+//  SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
+//
+//  "cmd_visible.cc"
+//  All functions and routines related to mortal invisibility control.
+//
+///////////////////////////////////
 
 #include "stdsneezy.h"
 
@@ -35,7 +33,7 @@ void TPerson::doVisible(const char *, bool tSilent)
 
   if (!isAffected(AFF_INVISIBLE)) {
     if (!tSilent)
-      sendTo("You are not invisble to begin with.\n\r");
+      sendTo("You are not invisible to begin with.\n\r");
 
     return;
   }
@@ -62,7 +60,7 @@ void TPerson::doVisible(const char *, bool tSilent)
 
   // The affect of 'holding back' the magic causes the time left
   // to be drained.
-  for (tAffect = affected; tAffect; tAffect = tAffect->next)
+  for (tAffect = affected; tAffect; tAffect = tAffect->next) {
     if (tAffect->type == SPELL_INVISIBILITY) {
       tDuration = (double) tAffect->duration * .025;
       tDuration = (double) tAffect->duration - tDuration;
@@ -70,6 +68,7 @@ void TPerson::doVisible(const char *, bool tSilent)
       tAffect->bitvector = 0;
       return;
     }
+  }
 }
 
 void TBeing::doMortalInvis(const char *)
@@ -104,7 +103,7 @@ void TPerson::doMortalInvis(const char *)
 
   // The affect of 're-releasing' the magic causes the time left
   // to be drained.
-  for (tAffect = affected; tAffect; tAffect = tAffect->next)
+  for (tAffect = affected; tAffect; tAffect = tAffect->next) {
     if (tAffect->type == SPELL_INVISIBILITY) {
       tDuration = (double) tAffect->duration * .025;
       tDuration = (double) tAffect->duration - tDuration;
@@ -112,4 +111,5 @@ void TPerson::doMortalInvis(const char *)
       tAffect->bitvector = AFF_INVISIBLE;
       return;
     }
+  }
 }

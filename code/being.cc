@@ -989,6 +989,9 @@ void TBeing::setRace(race_t r)
 
 double TBeing::getExp() const
 {
+  if (snum > -1)
+    return 0;
+
   return points.exp;
 }
 

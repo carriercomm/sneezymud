@@ -78,3 +78,8 @@ string TContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
 
   return tString;
 }
+
+void TContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tShop)
+{
+  TObj::purchaseMe(ch, tKeeper, tCost, tShop);
+}

@@ -1339,7 +1339,7 @@ int TObj::objectTickUpdate(int pulse)
             *equippedBy += *t;
           }
         } else if (parent) {
-          act("$p biodegrade$Q in your hands.", FALSE, parent, this, 0, TO_CHAR);
+          act("$p disintegrate$Q in your hands.", FALSE, parent, this, 0, TO_CHAR);
           while ((t = stuff)) {
             (*t)--;
             *parent += *t;

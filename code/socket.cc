@@ -176,7 +176,7 @@ int TSocket::gameLoop()
   Descriptor *point;
   int pulse = 0;
   int teleport, combat, drowning, special_procs, update_stuff;
-  int pulse_tick, pulse_mudhour, mobstuff;
+  int pulse_tick, pulse_mudhour, mobstuff, quickpulse;
   TBeing *tmp_ch, *temp;
   TObj *obj, *next_thing;
   static int sent = 0;
@@ -327,6 +327,7 @@ int TSocket::gameLoop()
       pulse_mudhour = (pulse % PULSE_MUDHOUR);
       mobstuff = (pulse % PULSE_MOBACT);
       pulse_tick = (pulse % PULSE_UPDATE);
+      quickpulse = (pulse % ONE_SECOND);
     } else {
       teleport = (pulse % (PULSE_TELEPORT/2));
       combat = (pulse % (PULSE_COMBAT/2));
@@ -336,6 +337,7 @@ int TSocket::gameLoop()
       pulse_mudhour = (pulse % (PULSE_MUDHOUR/2));
       mobstuff = (pulse % (PULSE_MOBACT/2));
       pulse_tick = (pulse % (PULSE_UPDATE/2));
+      quickpulse = (pulse % ONE_SECOND);
     }
 
     if (!pulse_tick) {
@@ -465,6 +467,21 @@ int TSocket::gameLoop()
             }
           }
 	}
+	if (!quickpulse) {
+          if (obj->spec) {
+            rc = obj->checkSpec(NULL, CMD_GENERIC_QUICK_PULSE, "", NULL);
+            if (IS_SET_DELETE(rc, DELETE_ITEM)) {
+              next_thing = obj->next;
+              delete obj;
+              obj = NULL;
+              continue;
+            }
+            if (rc) {
+              next_thing = obj->next;
+              continue;
+            }
+          }
+        }
 	if (!pulse_mudhour) {
 	  rc = obj->objectTickUpdate(pulse);
           if (IS_SET_DELETE(rc, DELETE_THIS)) {

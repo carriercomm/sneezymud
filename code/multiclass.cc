@@ -3,6 +3,11 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: multiclass.cc,v $
+// Revision 5.1.1.4  2001/04/01 04:42:55  jesus
+// took sid and omen from hardcoded 58
+//
+// both are retired
+//
 // Revision 5.1.1.3  2001/03/18 07:23:19  dash
 // changes for 5.2, old 5.1 changes fixed
 //
@@ -380,6 +385,8 @@ void TPerson::startLevels()
     calcMaxLevel();
 
     // Minor Office Holders
+#ifdef 222
+    // Currently there are nonex
   } else if (!strcmp(name, "Omen") ||
              !strcmp(name, "Sidartha")) {
     setLevel(MAGE_LEVEL_IND, MAX_IMMORT - 2);
@@ -389,7 +396,7 @@ void TPerson::startLevels()
     setWizPowers(this,this,"allpowers");
     remWizPower(POWER_IDLED);
     calcMaxLevel();
-
+#endif
     // Other Mudadmin
   } else if (!strcmp(name, "Dolgan")) {
     setLevel(MAGE_LEVEL_IND, MAX_IMMORT - 3);

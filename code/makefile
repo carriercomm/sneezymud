@@ -143,8 +143,8 @@ LDFLAGS +=-lmysqlclient
 ###############################################################################
 
 OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
-	alignment_deity.o ansi.o appliedsub.o armor.o armor_wand.o arrow.o \
-	audio.o bag.o bandaid.o base_clothing.o base_corpse.o \
+	alignment_deity.o ansi.o appliedsub.o \
+	bag.o bandaid.o base_clothing.o base_corpse.o \
 	base_cup.o base_light.o base_weapon.o bed.o being.o blackjack.o \
 	board.o boat.o body.o book.o bounty_hunter.o bow.o breath.o cards.o \
 	chest.o client.o \
@@ -188,6 +188,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	magic_skills.o magicutils.o mail.o makecorpse.o materials.o \
 	meeting.o mob_loader.o mobact.o money.o monster.o movement.o \
 	multiclass.o newbie.o note.o obj.o \
+	obj_armor.o obj_armor_wand.o obj_arrow.o obj_audio.o \
 	obj_table.o obj_tool.o obj_trash.o obj_treasure.o obj_tree.o \
 	obj_wand.o obj_window.o obj_worn.o \
 	offense.o oldlimbs.o oldrace.o \

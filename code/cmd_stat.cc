@@ -151,6 +151,10 @@ void TBeing::statRoom(TRoom *rmp)
         rmp->name, rmp->getZone(), rmp->number, in_room);
   str = buf2;
 
+  sprintf(buf2, "Room Coords: %d, %d, %d\n\r",
+	  rmp->getXCoord(), rmp->getYCoord(), rmp->getZCoord());
+  str += buf2;
+
   sprintf(buf2,"Sector type : %s ", TerrainInfo[rmp->getSectorType()]->name);
   str += buf2;
 

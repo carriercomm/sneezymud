@@ -670,15 +670,15 @@ int TSocket::gameLoop()
     if (!(pulse % 1199))
       sendAutoTips();
 
-    if (!(pulse % 100)){
-      lag_info.current=time(0)-lagtime_t;
-      lagtime_t=time(0);
-
-      lag_info.total+=lag_info.current;
-      ++lag_info.count;
+    if (!(pulse %100)){
+      int which=(pulse/100)%10;
       
-      lag_info.high = max(lag_info.current, lag_info.high);
-      lag_info.low = min(lag_info.current, lag_info.low);
+      lag_info.current=lag_info.lagtime[which]=time(0)-lagtime_t;
+      lagtime_t=time(0);
+      lag_info.lagcount[which]=1;
+
+      lag_info.high = max(lag_info.lagtime[which], lag_info.high);
+      lag_info.low = min(lag_info.lagtime[which], lag_info.low);
     }
 
     if (pulse >= 2400) {

@@ -59,7 +59,7 @@
 - Setup the drift code to make a canSwim check for 'fights the current'
   instead of simply shifting them around.
 - Fixed bash so you can bash a flying mob if you are also flying.
-- Fixed up the message code to not messup when <d>'s and such are located
+- Fixed up the message code to not messup when < d >'s and such are located
   in the names.
 - Trimmed the messages in the zonefile save code zonefile output.
 - Fixed up redit delete exits.

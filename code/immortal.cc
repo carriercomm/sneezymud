@@ -734,36 +734,6 @@ TO_CHAR);
       victim->addPlayerAction(PLR_NOSNOOP);
       act("$N can no longer be snooped.", FALSE, this, 0, victim, TO_CHAR);
     }
-  } else if (is_abbrev(buf2, "double")) {
-    if (powerCheck(POWER_FLAG_IMP_POWER))
-      return;
-
-    if (!victim->desc) {
-      sendTo("You can't flag them for this.\n\r");
-      return;
-    }
-    if (IS_SET(victim->desc->account->flags, ACCOUNT_ALLOW_DOUBLECLASS)) {
-      REMOVE_BIT(victim->desc->account->flags, ACCOUNT_ALLOW_DOUBLECLASS);
-      act("You remove $N's ability to doubleclass.", false, this, 0, victim, TO_CHAR);
-    } else {
-      SET_BIT(victim->desc->account->flags, ACCOUNT_ALLOW_DOUBLECLASS);
-      act("You grant $N the ability to doubleclass.", false, this, 0, victim, TO_CHAR);
-    }
-  } else if (is_abbrev(buf2, "triple")) {
-    if (powerCheck(POWER_FLAG_IMP_POWER))
-      return;
-
-    if (!victim->desc) {
-      sendTo("You can't flag them for this.\n\r");
-      return;
-    }
-    if (IS_SET(victim->desc->account->flags, ACCOUNT_ALLOW_TRIPLECLASS)) {
-      REMOVE_BIT(victim->desc->account->flags, ACCOUNT_ALLOW_TRIPLECLASS);
-      act("You remove $N's ability to tripleclass.", false, this, 0, victim, TO_CHAR);
-    } else {
-      SET_BIT(victim->desc->account->flags, ACCOUNT_ALLOW_TRIPLECLASS);
-      act("You grant $N the ability to tripleclass.", false, this, 0, victim, TO_CHAR);
-    }
   } else if (is_abbrev(buf2, "faction")) {
     if (powerCheck(POWER_FLAG_IMP_POWER))
       return;
@@ -5680,6 +5650,58 @@ void TBeing::doAccount(const char *arg)
         SET_BIT(afp.flags, ACCOUNT_EMAIL);
         sendTo("You have set the %s account email-banished.\n\r", afp.name);
         vlogf(LOG_MISC, "%s email-banished account '%s'", getName(), afp.name);
+      }
+      
+      rewind(fp);
+      fwrite(&afp, sizeof(accountFile), 1, fp);
+      fclose(fp);
+      return;
+    } else if (is_abbrev(buf2, "double")) {
+      if (powerCheck(POWER_FLAG_IMP_POWER))
+        return;
+  
+      if (IS_SET(afp.flags, ACCOUNT_ALLOW_DOUBLECLASS)) {
+        REMOVE_BIT(afp.flags, ACCOUNT_ALLOW_DOUBLECLASS);
+        sendTo("You revoke the %s account's ability to double-class.\n\r", afp.name);
+      } else {
+        SET_BIT(afp.flags, ACCOUNT_ALLOW_DOUBLECLASS);
+        sendTo("You grant the %s account the ability to double-class.\n\r", afp.name);
+      }
+      
+      rewind(fp);
+      fwrite(&afp, sizeof(accountFile), 1, fp);
+      fclose(fp);
+      return;
+    } else if (is_abbrev(buf2, "triple")) {
+      if (powerCheck(POWER_FLAG_IMP_POWER))
+        return;
+  
+      if (IS_SET(afp.flags, ACCOUNT_ALLOW_TRIPLECLASS)) {
+        REMOVE_BIT(afp.flags, ACCOUNT_ALLOW_TRIPLECLASS);
+        sendTo("You revoke the %s account's ability to triple-class.\n\r", afp.name);
+      } else {
+        SET_BIT(afp.flags, ACCOUNT_ALLOW_TRIPLECLASS);
+        sendTo("You grant the %s account the ability to triple-class.\n\r", afp.name);
+      }
+      
+      rewind(fp);
+      fwrite(&afp, sizeof(accountFile), 1, fp);
+      fclose(fp);
+      return;
+    } else if (is_abbrev(buf2, "immortal")) {
+      if (powerCheck(POWER_FLAG_IMP_POWER))
+        return;
+  
+      // this is not something that should be done (manually) unless a 
+      // god has left immortality entirely
+      if (IS_SET(afp.flags, ACCOUNT_IMMORTAL)) {
+        REMOVE_BIT(afp.flags, ACCOUNT_IMMORTAL);
+        sendTo("You flag the %s account immortal.\n\r", afp.name);
+        vlogf(LOG_MISC, "%s making account='%s' non-immortal", getName(), afp.name);
+      } else {
+        SET_BIT(afp.flags, ACCOUNT_IMMORTAL);
+        sendTo("You unflag the %s account as immortal.\n\r", afp.name);
+        vlogf(LOG_MISC, "%s making account='%s' immortal", getName(), afp.name);
       }
       
       rewind(fp);

@@ -185,6 +185,9 @@ static string identifyBeingStuff(const TBeing *caster, const TBeing *victim)
     if (aff->type == AFFECT_PET) {
       sprintf(buf, "pet of: '%s'\n\r", ((char *) aff->be));
       str += buf;
+    } else if (aff->type == AFFECT_THRALL) {
+      sprintf(buf, "thrall of: '%s'\n\r", ((char *) aff->be));
+      str += buf;
     } else if (aff->type == AFFECT_ORPHAN_PET) {
       sprintf(buf, "orphan pet of: '%s'\n\r", ((char *) aff->be));
       str += buf;

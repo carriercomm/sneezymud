@@ -19,7 +19,7 @@ extern "C" {
 #include "combat.h"
 
 unsigned int account_number = 0;
-unsigned int active_account = 0;
+unsigned int active_player = 0;
 int player_count = 0;
 unsigned int player_num = 0;
 unsigned int max_player_since_reboot = 0;

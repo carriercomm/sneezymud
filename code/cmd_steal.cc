@@ -302,6 +302,15 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
           act("You unequip $p and steal it.", FALSE, thief, obj, 0, TO_CHAR);
           *thief += *(victim->unequip(eq_pos));
         }
+
+        if (victim->isPc() && !thief->isImmortal()) {
+          affectedData tAff;
+
+          tAff.type     = AFFECT_PLAYERLOOT;
+          tAff.duration = (24 * UPDATES_PER_MUDHOUR);
+          thief->affectTo(&tAff);
+        }
+
         thief->doSave(SILENT_YES);
         victim->doSave(SILENT_YES);
         if (!thief->hasWizPower(POWER_WIZARD))

@@ -150,7 +150,8 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	chest.o client.o cmd_bash.o cmd_bodyslam.o cmd_charge.o cmd_chop.o \
 	cmd_compare.o cmd_consider.o \
 	cmd_deathstroke.o cmd_disarm.o cmd_dissect.o \
-	cmd_doorbash.o cmd_feigndeath.o cmd_grapple.o cmd_headbutt.o \
+	cmd_doorbash.o cmd_egotrip.o \
+	cmd_feigndeath.o cmd_grapple.o cmd_headbutt.o \
 	cmd_jump.o \
 	cmd_kick.o cmd_kneestrike.o cmd_look.o cmd_low.o \
 	cmd_mend_limb.o cmd_message.o \
@@ -175,7 +176,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	disc_slash.o disc_smythe.o disc_sorcery.o disc_spirit.o \
 	disc_survival.o disc_theology.o disc_thief.o disc_warrior.o \
 	disc_water.o disc_wrath.o discipline.o disease.o doors.o drawpoker.o \
-	drinkcon.o drug_container.o drug.o edit.o egotrip.o enum.o equip.o \
+	drinkcon.o drug_container.o drug.o edit.o enum.o equip.o \
 	expandable_container.o faction.o flame.o food.o fuel.o gaining.o \
 	gemstone.o general_weapon.o 
 
@@ -298,6 +299,7 @@ $(OBJDIR)cmd_deathstroke.o: combat.h
 $(OBJDIR)cmd_disarm.o: combat.h
 $(OBJDIR)cmd_dissect.o: components.h disc_adventuring.h
 $(OBJDIR)cmd_doorbash.o: disc_warrior.h combat.h
+$(OBJDIR)cmd_egotrip.o: disc_fire.h disc_aegis.h
 $(OBJDIR)cmd_kick.o: combat.h
 $(OBJDIR)cmd_kneestrike.o: combat.h
 $(OBJDIR)cmd_feigndeath.o: combat.h
@@ -375,7 +377,6 @@ $(OBJDIR)disc_wrath.o: disc_wrath.h combat.h
 $(OBJDIR)discipline.o: $(DISC_HEADS) components.h combat.h spelltask.h
 $(OBJDIR)drawpoker.o: $(CASINO_HEADS)
 $(OBJDIR)edit.o: socket.h
-$(OBJDIR)egotrip.o: disc_fire.h disc_aegis.h
 $(OBJDIR)food.o: shop.h
 $(OBJDIR)gaining.o: statistics.h
 $(OBJDIR)gin.o: $(CASINO_HEADS)

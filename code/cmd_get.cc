@@ -250,7 +250,7 @@ int TBeing::doGet(const char *argument)
   int p;
   getTypeT type = GETALLALL;
 
-  if((tptr=strstr(argument, "-autoloot"))!=NULL){
+  if ((tptr = strstr(argument, "-autoloot")) != NULL){
     autoloot=TRUE;
     *tptr='\0';
   }
@@ -361,9 +361,8 @@ int TBeing::doGet(const char *argument)
         // this dumps around it and goes right to the guts
         rc = (*(tasks[TASK_GET_ALL].taskf))
             (this, CMD_TASK_CONTINUE, "", 0, roomp, 0);
-        if (IS_SET_ONLY(rc, DELETE_THIS)) {
+        if (IS_SET_ONLY(rc, DELETE_THIS)) 
           return DELETE_THIS;
-        }
 
         break;
       } else if ((p = getabunch(arg1, newarg))) {

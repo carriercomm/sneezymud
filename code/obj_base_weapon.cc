@@ -309,14 +309,14 @@ int TBaseWeapon::sharpenerGiveMe(TBeing *ch, TMonster *me)
     return TRUE;
   }
   // Now we have a weapon that can be sharpened
-  job = (sharp_struct *) me->act_ptr;
+  job = static_cast<sharp_struct *>(me->act_ptr);
   if (!job->wait) {
 #if 0
     act("You give $p to $N to be re-edged.", FALSE, ch, this, me, TO_CHAR);
     act("$n gives $p to $N to be re-edged.", FALSE, ch, this, me, TO_ROOM);
 #endif
     job->wait = max((int) (getMaxSharp() - getCurSharp()) ,  (int) (getCurSharp() - getMaxSharp()));
-    job->wait /= 5;
+    job->wait /= 15;
     job->wait += 1;   // gotta exit with at least 1
     sprintf(buf, "Thanks for your business, I'll take your %d talen%s payment in advance!", cost, (cost > 1) ? "s" : "");
     me->doSay(buf);

@@ -1288,7 +1288,7 @@ int TBeing::doGoto(const string & argument)
       TBeing *tbt = dynamic_cast<TBeing *>(t);
 
       if (tbt && this != tbt && (!hasStealth || tbt->GetMaxLevel() > MAX_MORT)) {
-        string s = nameColorString(this, tbt->desc, msgVariables(MSG_BAMFOUT, (TThing *)NULL, (const char *)NULL, false).c_str(), NULL, COLOR_BASIC, TRUE);
+        string s = nameColorString(this, tbt->desc, msgVariables(MSG_BAMFOUT, (TThing *)NULL, (const char *)NULL, false).c_str(), NULL, COLOR_BASIC, false);
         act(s.c_str(), TRUE, this, 0, tbt, TO_VICT);
       }
     }
@@ -1338,7 +1338,7 @@ int TBeing::doGoto(const string & argument)
       TBeing *tbt = dynamic_cast<TBeing *>(t);
 
       if (tbt && this != tbt && (!hasStealth || tbt->GetMaxLevel() > MAX_MORT)) {
-        string s = nameColorString(this, tbt->desc, msgVariables(MSG_BAMFIN, (TThing *)NULL, (const char *)NULL, false).c_str(), NULL, COLOR_BASIC, TRUE);
+        string s = nameColorString(this, tbt->desc, msgVariables(MSG_BAMFIN, (TThing *)NULL, (const char *)NULL, false).c_str(), NULL, COLOR_BASIC, false);
         act(s.c_str(), TRUE, this, 0, tbt, TO_VICT);
       }
     }

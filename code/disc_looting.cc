@@ -288,7 +288,7 @@ int TRealContainer::detectMe(TBeing *thief) const
     return FALSE;
 
   // to track down reports that detect is turning up "none traps"
-  mud_asser(getContainerTrapType() != DOOR_TRAP_NONE, "Bad trap type in detectMe");
+  mud_assert(getContainerTrapType() != DOOR_TRAP_NONE, "Bad trap type in detectMe");
 
   // opening a trapped item
   if (bSuccess(thief, bKnown, SKILL_DETECT_TRAP)) {

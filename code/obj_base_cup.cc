@@ -335,7 +335,7 @@ int TBaseCup::chiMe(TBeing *tLunatic)
     tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
 
   if (!bSuccess(tLunatic, bKnown, SKILL_CHI) ||
-      getDrinkUnits() <= 0 || !isDrinkConFlag(DRINK_PERM)) {
+      getDrinkUnits() <= 0 || isDrinkConFlag(DRINK_PERM)) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
     return FALSE;

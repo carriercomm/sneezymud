@@ -323,7 +323,7 @@ int TSymbol::chiMe(TBeing *tLunatic)
     act("You focus upon $p, but faulter and gently harm it!",
         FALSE, tLunatic, this, NULL, TO_CHAR);
     act("$n focuses on $p, but it cracks gently in response!",
-        FALSE, tLunatic, this, NULL, TO_CHAR);
+        TRUE, tLunatic, this, NULL, TO_ROOM);
 
     addToSymbolCurStrength(-::number(1, 4));
 

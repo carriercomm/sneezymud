@@ -359,7 +359,7 @@ int TRoom::chiMe(TBeing *tLunatic)
   TThing *tThing,
          *tNextThing;
 
-  if (tLunatic->getSkillLevel(SKILL_CHI) < 100 ||
+  if (tLunatic->getSkillValue(SKILL_CHI) < 100 ||
       tLunatic->getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 25) {
     tLunatic->sendTo("I'm afraid you don't have the training to do this.\n\r");
     return FALSE;
@@ -376,7 +376,7 @@ int TRoom::chiMe(TBeing *tLunatic)
   for (tThing = stuff; tThing; tThing = tNextThing) {
     tNextThing = tThing->nextThing;
 
-    if (!(tSucker = dynamic_cast<TBeing *>(tThing)))
+    if (!(tSucker = dynamic_cast<TBeing *>(tThing)) || tSucker == tLunatic)
       continue;
 
     tRc = tSucker->chiMe(tLunatic);

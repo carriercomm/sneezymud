@@ -237,7 +237,8 @@ int TThing::chiMe(TBeing *tLunatic)
     return RET_STOP_PARSING;
   }
 
-  tLunatic->sendTo("$p resists your attempts to chi it!\n\r");
+  act("$p resists your attempts to chi it!",
+      FALSE, tLunatic, this, NULL, TO_CHAR);
   tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
 
   return FALSE;

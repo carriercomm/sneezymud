@@ -1223,7 +1223,7 @@ int TBeing::chiMe(TBeing *tLunatic)
       tDamage,
       tMana;
 
-  if (tLunatic->getSkillLevel(SKILL_CHI) < 50 ||
+  if (tLunatic->getSkillValue(SKILL_CHI) < 50 ||
       tLunatic->getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 10) {
     tLunatic->sendTo("I'm afraid you don't have the training to do this.\n\r");
     return RET_STOP_PARSING;
@@ -1232,9 +1232,41 @@ int TBeing::chiMe(TBeing *tLunatic)
   if (tLunatic->checkPeaceful("You feel too peaceful to contemplate violence here.\n\r"))
     return RET_STOP_PARSING;
 
-  if (this == tLunatic ||
-      this->isImmortal() ||
-      this->inGroup(tLunatic))
+  if (tLunatic == this) {
+    tMana = 100 - ::number(1, getSkillValue(SKILL_CHI) / 2);
+    affectedData aff;
+
+    if (affectedBySpell(SKILL_CHI)) {
+      sendTo("You are already projecting your chi upon yourself.\n\r");
+      return FALSE;
+    }
+
+    if (bSuccess(this, bKnown, SKILL_CHI)) {
+      reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+      act("You close your eyes and concentrate for a moment, then begin radiating an intense <R>heat<1> from your body.", TRUE, this, NULL, NULL, TO_CHAR);
+      act("$n closes $s eyes in concentration, then begins radiating an intense <R>heat<1> from $s body.", TRUE, this, NULL, NULL, TO_ROOM);
+
+      aff.type      = SKILL_CHI;
+      aff.level     = bKnown;
+      aff.duration  = (3 + (bKnown / 2)) * UPDATES_PER_TICK;
+      aff.location  = APPLY_IMMUNITY;
+      aff.modifier  = IMMUNE_COLD;
+      aff.modifier2 = ((bKnown * 2) / 3);
+      aff.bitvector = 0;
+      affectTo(&aff, -1);
+    } else {
+      act("You are unable to focus your mind.",
+          TRUE, this, NULL, NULL, TO_CHAR);
+
+      if (getMana() >= 0)
+        reconcileMana(TYPE_UNDEFINED, 0, tMana/2);
+    }
+
+    return FALSE;
+  }
+
+  if (this->isImmortal() || this->inGroup(tLunatic))
     return FALSE;
 
   if (bSuccess(tLunatic, bKnown, SKILL_CHI)) {

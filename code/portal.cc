@@ -455,7 +455,7 @@ int TPortal::chiMe(TBeing *tLunatic)
   } else
     tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
 
-  if (!bSuccess(tLunatic, bKnown, SKILL_CHI)) {
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI) | obj_flags.decay_time <= 0) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
     return FALSE;

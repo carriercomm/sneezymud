@@ -423,8 +423,9 @@ getName());
 
 int TBaseCorpse::chiMe(TBeing *tLunatic)
 {
-  int tMana  = ::number(10, 30),
-      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+  int     tMana  = ::number(10, 30),
+          bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+  TThing *tThing;
 
   if (tLunatic->getMana() < tMana) {
     tLunatic->sendTo("You lack the chi to do this.\n\r");
@@ -445,9 +446,9 @@ int TBaseCorpse::chiMe(TBeing *tLunatic)
   act("$n stares at $p which suddenly bursts into flames!",
       TRUE, tLunatic, this, NULL, TO_ROOM);
 
-  while (stuff) {
-    --(*stuff);
-    *roomp += *stuff;
+  while ((tThing = stuff)) {
+    --(*tThing);
+    *roomp += *tThing;
   }
 
   return DELETE_VICT;

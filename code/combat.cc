@@ -3923,7 +3923,10 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SKILL_POISON_WEAPON:
     case SKILL_DISGUISE:
     case SKILL_DODGE_THIEF:
-    case SKILL_SET_TRAP:
+    case SKILL_SET_TRAP_CONT:
+    case SKILL_SET_TRAP_DOOR:
+    case SKILL_SET_TRAP_MINE:
+    case SKILL_SET_TRAP_GREN:
     case SKILL_DUAL_WIELD_THIEF:
     case SKILL_COUNTER_STEAL:
     case SKILL_BREW:

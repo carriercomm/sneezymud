@@ -855,15 +855,13 @@ void roomDirData::wardDoor(dirTypeT dir, int room)
 // this is a room-special proc
 int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
 {
-  char buf[255];
-
-  if (!ch) {
-    mud_assert(ch != NULL, "No character in SecretDoors");
+  if (!rp) {
+    mud_assert(rp != NULL, "No room in SecretDoors");
     return FALSE;
   }
 
-  if (!rp) {
-    mud_assert(rp != NULL, "No room in SecretDoors");
+  if (!ch) {
+    // some triggers (pulse) will pass in !ch, just ignore them
     return FALSE;
   }
 
@@ -874,6 +872,9 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     vlogf(LOG_BUG,"char %s not in proper room (SecretDoors)",ch->getName());
     return FALSE;
   }
+
+  char buf[255];
+
   one_argument(arg,buf);
   switch (rp->number) {
     case 450:

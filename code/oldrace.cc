@@ -215,6 +215,7 @@ void TBeing::setRacialStuff()
     case RACE_SNAKE:
     case RACE_SIMAL:
     case RACE_HIPPOPOTAMUS:
+    case RACE_ANGEL:
     case MAX_RACIAL_TYPES:
       break;
   }

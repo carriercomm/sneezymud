@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: parse.cc,v $
+// Revision 5.1.1.7  1999/10/29 10:37:44  lapsos
+// Modified hide to be usable by backstab.
+//
 // Revision 5.1.1.6  1999/10/29 05:16:02  cosmo
 // Taking out junk
 //
@@ -1423,6 +1426,10 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
           return FALSE;
       }
     }
+
+    if (IS_SET(specials.affectedBy, AFF_HIDE))
+      REMOVE_BIT(specials.affectedBy,AFF_HIDE);
+
     if (IS_SET_DELETE(rc, DELETE_ITEM)) {
       // switch it to vict
       ADD_DELETE(rc, DELETE_VICT);
@@ -1460,8 +1467,6 @@ int TBeing::parseCommand(const char *orig_arg, bool typedIn)
     if (!sameRoom(riding))
       dismount(POSITION_STANDING);
   }
-  if (IS_SET(specials.affectedBy, AFF_HIDE))
-    REMOVE_BIT(specials.affectedBy,AFF_HIDE);
 
   strcpy(argument, orig_arg);
 
@@ -1522,6 +1527,10 @@ int TBeing::parseCommand(const char *orig_arg, bool typedIn)
     incorrectCommand();
     return FALSE;
   }
+
+  if (IS_SET(specials.affectedBy, AFF_HIDE) && cmd != CMD_BACKSTAB)
+    REMOVE_BIT(specials.affectedBy,AFF_HIDE);
+
   if (getCaptiveOf()) {
     switch (cmd) {
       case CMD_NORTH:

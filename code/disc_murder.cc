@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_murder.cc,v $
+// Revision 5.1.1.4  1999/10/29 10:37:31  lapsos
+// Modified hide to be usable by backstab.
+//
 // Revision 5.1.1.3  1999/10/29 05:41:08  cosmo
 // *** empty log message ***
 //
@@ -290,7 +293,9 @@ int backstab(TBeing *thief, TBeing * victim)
   if ((!thief->isAffected(AFF_INVISIBLE) ||
        victim->isAffected(AFF_DETECT_INVISIBLE)) &&
       victim->canSee(thief) &&
-      !thief->isAffected(AFF_SNEAK) && victim->awake()) {
+      !thief->isAffected(AFF_SNEAK) &&
+      !thief->isAffected(AFF_HIDE) &&
+      victim->awake()) {
     act("$N notices you walking up behind $M, apparently you were not sneaking and visible...",FALSE,thief,0,victim,TO_CHAR);
     act("$n makes a pathetic attempt at backstabbing $N.", FALSE, thief, 0, victim, TO_NOTVICT);
     act("You nearly cut yourself as you try to backstab $N.", FALSE, thief, 0, victim, TO_CHAR);

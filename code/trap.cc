@@ -2294,7 +2294,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
   return FALSE;
 }
 
-bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
+bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt, int *price)
 {
   int item1 = 0, item2 = 0, item3 = 0, item4 = 0;
   TThing *com1, *com2, *com3, *com4 = NULL;
@@ -2444,6 +2444,16 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
   com1 = searchLinkedListVis(this, obj_index[item1].name, stuff);
   com2 = searchLinkedListVis(this, obj_index[item2].name, stuff);
   com3 = searchLinkedListVis(this, obj_index[item3].name, stuff);
+
+  if (price) {
+    *price = 0;
+    if (com1)
+      *price += com1->obj_flags.cost;
+    if (com2)
+      *price += com2->obj_flags.cost;
+    if (com3)
+      *price += com3->obj_flags.cost;
+  }
 
   if (amt == -1) {
     // trap is finished, delete the items

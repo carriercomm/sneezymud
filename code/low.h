@@ -2,32 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: low.h,v $
-// Revision 5.1.1.5  2000/02/10 19:13:44  mithros
-// Added Rat King Mob Desc for a quest toggle.
-//
-// Revision 5.1.1.4  2000/01/13 04:53:50  mithros
-// Umm, put those two mobs back :)
-//
-// Revision 5.1.1.3  2000/01/12 20:03:46  mithros
-// Removed two mob descriptors I didn't need for Ranger L21 Quest
-//
-// Revision 5.1.1.2  2000/01/12 19:18:45  mithros
-// Added Some Mob descriptors for Ranger L21 Quest.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/15 22:22:37  peel
-// Set vnum for GENERIC_SMOKE to smoke dummy object.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 

@@ -839,7 +839,7 @@ int TGenWeapon::smiteWithMe(TBeing *ch, TBeing *v)
   }
 
   aff.type = SKILL_SMITE;
-  aff.duration = 40 * UPDATES_PER_MUDHOUR;
+  aff.duration = 30 * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = 0;

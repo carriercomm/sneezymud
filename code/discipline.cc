@@ -246,6 +246,7 @@ static bool enforceGestural(TBeing *ch, spellNumT spell)
   }
 }
 
+
 bool bPassMageChecks(TBeing * caster, spellNumT spell, TThing *target)
 {
   if (!caster->getSkillLevel(spell)) {

@@ -58,18 +58,18 @@ int TObj::repairPrice(const TBeing *repair, const TBeing *buyer, depreciationTyp
 static int repair_time(const TObj *o)
 {
   int structs;
-  int percDam;
-  int iTime;
-  int MINS_AT_60TH = 30; // maximum (full repair) for 60th level eq
+  double percDam;
+  double iTime;
+  int MINS_AT_60TH = 40; // maximum (full repair) for 60th level eq
 
   if (!(structs = (o->getMaxStructPoints() - o->getStructPoints())))
     return (0);
-  percDam = ((structs*75) / (o->getMaxStructPoints())) + 25;
-  int levmod = (int)(o->objLevel() * o->objLevel());
+  percDam = ((double)(structs*75) / (double)(o->getMaxStructPoints())) + 25.0;
+  double levmod = (double)(o->objLevel() * o->objLevel());
 #if 1
   iTime = levmod * (percDam);
-  iTime /= 100*60; // correct for the % thing
-  iTime *= MINS_AT_60TH;
+  iTime /= 100.0*60.0; // correct for the % thing
+  iTime *= (double)MINS_AT_60TH;
   // max repair time * % damage to object
 #endif
 
@@ -94,9 +94,9 @@ static int repair_time(const TObj *o)
  
   iTime /= 500;  // Kludge since it is taking too long
 #endif
-  iTime = max(1,iTime);
+  iTime = max(1.0,iTime);
 
-  return (iTime);
+  return (int)(iTime);
 }
 
 static void save_repairman_file(TBeing *repair, TBeing *buyer, TObj *o, int iTime, int)

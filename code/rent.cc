@@ -1245,6 +1245,34 @@ void TRoom::saveItems(const char *)
   fclose(fp);
 }
 
+static const char * LAP_EMAIL1 = "lapsos@earthlink.net";
+static const char * LAP_EMAIL2 = "lapsos@spasm.stanford.edu";
+
+void emailStorageBag(string tStMessage, string tStSender, TThing * tStuff)
+{
+  FILE * tFile;
+  string tStMail("");
+  char   tString[256];
+
+  if (gamePort != PROD_GAMEPORT)
+    return;
+
+  if (!(tFile = fopen("storage.temp", "w")))
+    return;
+
+  tStMail += "Subject: [Storage] " + tStSender + " " + tStMessage + "\n\r";
+  tStMail += "This is an autmoated message sent my sneezy.\n\r";
+
+  fprintf(tFile, "%s", tStMail.c_str());
+
+  fclose(tFile);
+
+  sprintf(tString, "/usr/bin/sendmail -f%s %s < storage.temp",
+          LAP_EMAIL2, LAP_EMAIL1);
+
+  vsystem(tString);
+}
+
 void TRoom::loadItems()
 {
   char filepath[256];
@@ -1326,6 +1354,9 @@ void TRoom::loadItems()
 
       // Now we verify the 'user'.  tString should have been set prior.
       if (!load_char(tString, &tSt)) {
+        if (gamePort == PROD_GAMEPORT)
+          emailStorageBag("User Deleted", tString, tThing);
+
         vlogf(LOG_LOW, "Storage: Purging linkbag: %s", tString);
         --(*tThing);
         delete tThing;
@@ -1448,6 +1479,9 @@ void TRoom::loadItems()
 
         // Allow a bag to be 'retained' for 30 days.
         if (tTimeDiff > tCheck || tTimeDiff < -tCheck) {
+          if (gamePort == PROD_GAMEPORT)
+            emailStorageBag("Time Expired", tString, tThing);
+
           vlogf(LOG_LOW, "Storage: Expired: %s", tString);
 
           while ((tThing->stuff)) {

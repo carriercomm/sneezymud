@@ -3211,13 +3211,14 @@ void TObj::describeTreasure(const char *arg,int num, int price)
   setWeight((float) (num + 0.5)/10.0);
 }
 
+// called on PULSE_MUDHOUR
 void do_other_obj_stuff(void)
 {
   TObj *to;
   TPortal *obj;
 
-  if (hourminTime() == 48) {
-    // create day gates
+  if (time_info.hours == 12) {
+    // create day gates at noon
     if (!(to = read_object(ITEM_DAYGATE, VIRTUAL))) {
       vlogf(LOG_LOW, "Error loading day gate");
       return;
@@ -3238,8 +3239,8 @@ void do_other_obj_stuff(void)
     obj->setPortalType(10);
     thing_to_room(obj,5700);
     act("$n appears suddenly!", TRUE, obj, 0, 0, TO_ROOM);
-  } else if (hourminTime() == 0) {
-    // create moon gates
+  } else if (time_info.hours == 0) {
+    // create moon gates at midnight
     if (!(to = read_object(ITEM_MOONGATE, VIRTUAL))) {
       vlogf(LOG_LOW, "Error loading moon gate");
       return;

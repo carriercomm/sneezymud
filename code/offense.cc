@@ -1770,21 +1770,30 @@ bool TBeing::noHarmCheck(TBeing *vict)
   if (this == vict)
     return FALSE;
 
-#if 1
-  if (desc && IS_SET(desc->autobits, AUTO_NOHARM) &&
-      (vict->isPc() || (vict->isAffected(AFF_CHARM) && vict->master == this))) {
-    sendTo("You have your AUTO NOHARM flag set.\n\r");
-    sendTo("You must remove it before attacking another PC or one of your pets.\n\r");
-    return TRUE;
+  if (desc && IS_SET(desc->autobits, AUTO_NOHARM)) {
+    if (vict->isPc()) {
+      sendTo("You have your AUTO NOHARM flag set.\n\r");
+      sendTo("You must remove it before attacking another PC.\n\r");
+      return TRUE;
+    }
+    if (vict->master == this) {
+      if (vict->isPet(PETTYPE_PET)) {
+        sendTo("You have your AUTO NOHARM flag set.\n\r");
+        sendTo("You must remove it before attacking one of your pets.\n\r");
+        return TRUE;
+      }
+      if (vict->isPet(PETTYPE_CHARM)) {
+        sendTo("You have your AUTO NOHARM flag set.\n\r");
+        sendTo("You must remove it before attacking one of your charms.\n\r");
+        return TRUE;
+      }
+      if (vict->isPet(PETTYPE_THRALL)) {
+        sendTo("You have your AUTO NOHARM flag set.\n\r");
+        sendTo("You must remove it before attacking one of your thralls.\n\r");
+        return TRUE;
+      }
+    }
   }
-#else
-  if (desc &&
-      IS_SET(desc->autobits, AUTO_NOHARM) && vict->isPc()) {
-    sendTo("You have your AUTO NOHARM flag set.\n\r");
-    sendTo("You must remove it before attacking another PC.\n\r");
-    return TRUE;
-  }
-#endif
 
   if (desc && !isImmortal() && isPc() && 
           vict->desc && vict->isPc() &&

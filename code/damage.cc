@@ -858,13 +858,12 @@ int TBeing::getActualDamage(TBeing *v, TThing *o, int dam, spellNumT attacktype)
 int TBeing::damageEm(int dam, string log, spellNumT dmg_type)
 {
   int rc;
-  int flying;
 
   if (isImmortal())
     return FALSE;
 
   // doDamage erases flight, needed later to do crash landings by tellStatus
-  flying = isFlying();
+  bool flying = isFlying();
   doDamage(dam, dmg_type);
 
   rc = tellStatus(dam, TRUE, flying);

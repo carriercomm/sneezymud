@@ -1484,12 +1484,12 @@ TThing * TBeing::findArrow(const char *buf, silentTypeT silent) const
   int     curPos;
   TThing  *tThing;
 
-  arrow = searchLinkedListVis(this, buf, stuff):
+  arrow = searchLinkedListVis(this, buf, stuff);
   if (!arrow) {
     for (curPos = MIN_WEAR; curPos < MAX_WEAR; curPos++) {
       if ((tQuiver = dynamic_cast<TQuiver *>(equipment[curPos])) &&
            !tQuiver->isClosed()) {
-        if ((arrow = searchLinkedListVis(this, arg2, tQuiver->stuff))) {
+        if ((arrow = searchLinkedListVis(this, buf, tQuiver->stuff))) {
           if (!silent) {
             act("You pull $p from $N.",
                 TRUE, this, arrow, tQuiver, TO_CHAR);
@@ -1505,7 +1505,7 @@ TThing * TBeing::findArrow(const char *buf, silentTypeT silent) const
            tQuiver->isClosed())
         continue;
 
-      if (!(arrow = searchLinkedListVis(this, arg2, tThing->stuff)))
+      if (!(arrow = searchLinkedListVis(this, buf, tThing->stuff)))
         continue;
 
       if (!silent) {

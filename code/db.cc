@@ -1322,7 +1322,7 @@ TObj *read_object(int nr, readFileTypeT type)
     return NULL;
   }
 
-  if((rc=dbquery(&res, "sneezy", "read_object(1)", "select type, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from object where vnum=%i", obj_index[nr].virt))){
+  if((rc=dbquery(&res, "sneezy", "read_object(1)", "select type, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from obj where vnum=%i", obj_index[nr].virt))){
     if(rc==-1)
       vlogf(LOG_BUG, "Database error in read_object");
     return NULL;

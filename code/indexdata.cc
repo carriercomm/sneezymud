@@ -288,7 +288,7 @@ void generate_obj_index()
   /********************/
 
 
-  if(dbquery(&res, "sneezy", "generate_obj_index", "select vnum, name, short_desc, long_desc, max_exist, spec_proc, weight, max_struct, wear_flag, type, price, action_desc from object order by vnum")){
+  if(dbquery(&res, "sneezy", "generate_obj_index", "select vnum, name, short_desc, long_desc, max_exist, spec_proc, weight, max_struct, wear_flag, type, price, action_desc from obj order by vnum")){
     vlogf(LOG_BUG, "Database error: generate_obj_index");
     exit(0);
   }

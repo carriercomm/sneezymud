@@ -279,6 +279,12 @@ int TBeing::bashSuccess(TBeing *victim, spellNumT skill)
   int distNum = 0;
   int level = 0;
 
+
+  TThing *obj = NULL;
+  TBaseClothing *tbc = NULL;
+  int shieldDam = 0;
+
+
   if (victim->riding) {
     act("You knock $N off $p.", FALSE, this, victim->riding, victim, TO_CHAR);
     act("$n knocks $N off $p.", FALSE, this, victim->riding, victim, TO_NOTVICT);
@@ -290,6 +296,22 @@ int TBeing::bashSuccess(TBeing *victim, spellNumT skill)
   act("You send $N sprawling.", FALSE, this, 0, victim, TO_CHAR);
   act("You tumble as $n knocks you over",
         FALSE, this, 0, victim, TO_VICT, ANSI_BLUE);
+ 
+  //extra damage done by shield with spikes 10-20-00 -dash
+  if (((obj = this->heldInSecHand()) &&
+       (tbc = dynamic_cast<TBaseClothing *>(obj)) &&
+       tbc->isShield() && (tbc->isSpiked() || tbc->isObjStat(ITEM_SPIKED)))) {
+    shieldDam = (int)((tbc->getWeight()/3) + 1);
+
+    act("The spikes on your $o sink into $N.", FALSE, this, tbc, victim, TO_CHAR);
+    act("The spikes on $n's $o sink into $N.", FALSE, this, tbc, victim, TO_NOTVICT);
+    act("The spikes on $n's $o sink into you.", FALSE, this, tbc, victim, TO_VICT);
+
+    if (this->reconcileDamage(victim, shieldDam, TYPE_STAB) == -1)
+      return DELETE_VICT;
+
+  }
+
   level = getSkillLevel(skill);
   distNum = 1;
   if (isLucky(levelLuckModifier(victim->GetMaxLevel())))

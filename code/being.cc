@@ -1219,7 +1219,7 @@ void TBeing::peeOnMe(const TBeing *ch)
 
 int TBeing::chiMe(TBeing *tLunatic)
 {
-  int bKnown  = tLunatic->getSkillLevel(SKILL_CHI),
+  int bKnown  = tLunatic->getSkillValue(SKILL_CHI),
       tDamage,
       tMana;
 

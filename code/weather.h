@@ -50,14 +50,28 @@ extern struct weather_data weather_info;
 extern void anotherHour();
 extern void weatherChange();
 extern void GetMonth(int);
-extern unsigned char moontype;
 extern void sunriseAndSunset();
-extern int sunRise();
-extern int sunSet();
-extern int moonRise();
-extern int moonSet();
-extern bool moonIsUp();
-extern bool sunIsUp();
+
+extern unsigned char moontype;
+enum moonTimeT {
+  MOON_TIME_SET,
+  MOON_TIME_RISE,
+};
+
+extern int moonTime(moonTimeT);
 extern const char * moonType();
+extern bool moonIsUp();
+
+enum sunTimeT {
+  SUN_TIME_DAWN,
+  SUN_TIME_RISE,
+  SUN_TIME_DAY,
+  SUN_TIME_SINK,
+  SUN_TIME_SET,
+  SUN_TIME_NIGHT,
+};
+
+extern int sunTime(sunTimeT);
+extern bool sunIsUp();
 
 #endif

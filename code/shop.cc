@@ -1,5 +1,6 @@
 #include <cmath>
 #include <unistd.h>
+#include <algorithm>
 
 #include "stdsneezy.h"
 #include "shop.h"
@@ -1814,6 +1815,83 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
   }
 #endif
 
+  if(cmd == CMD_WHISPER && ch->isImmortal()){
+    char buf[256];
+    TThing *tt;
+    int count=0, value=0, price=0, discount=100;
+    unsigned int i, tmp;
+    TObj *o;
+
+    arg = one_argument(arg, buf);
+    if(!is_abbrev(buf, myself->getName()))
+      return FALSE;
+
+    arg = one_argument(arg, buf);
+    
+    if(!strcmp(buf, "info")){
+      sprintf(buf, "%s I have %i talens.", ch->getName(), myself->getMoney());
+      myself->doTell(buf);
+      
+      for(tt=myself->stuff;tt;tt=tt->nextThing){
+	o=dynamic_cast<TObj *>(tt);
+	++count;
+	value+=o->obj_flags.cost;
+	price+=o->shopPrice(1, shop_nr, -1, &discount);
+      }
+      sprintf(buf, "%s I have %i items worth %i talens and selling for %i talens.", ch->getName(), count, value, price);
+      myself->doTell(buf);
+
+      sprintf(buf, "%s My profit_buy is %f and my profit_sell is %f.",
+	      ch->getName(), shop_index[shop_nr].profit_buy,
+	      shop_index[shop_nr].profit_sell);
+      myself->doTell(buf);
+
+      sprintf(buf, "%s I deal in", ch->getName());
+      for(i=0;i<shop_index[shop_nr].type.size();++i){
+	tmp=shop_index[shop_nr].type[i];
+	if((int)tmp != -1)
+	  sprintf(buf+strlen(buf), " %s,",
+		  ItemInfo[tmp]->name);
+      }
+      buf[strlen(buf)-1]='\0';
+      myself->doTell(buf);
+
+    } else if(!strcmp(buf, "set")){
+      arg = one_argument(arg, buf);
+      
+      if(!strcmp(buf, "profit_buy")){
+	shop_index[shop_nr].profit_buy=atof(arg);
+	sprintf(buf, "%s Ok, my profit_buy is now %f", 
+		ch->getName(), shop_index[shop_nr].profit_buy);
+	myself->doTell(buf);
+      } else if(!strcmp(buf, "profit_sell")){
+	shop_index[shop_nr].profit_sell=atof(arg);
+	sprintf(buf, "%s Ok, my profit_sell is now %f", 
+		ch->getName(), shop_index[shop_nr].profit_sell);
+	myself->doTell(buf);
+      }
+    } else if(!strcmp(buf, "add")){
+      arg = one_argument(arg, buf);
+      tmp=atoi(buf);
+
+      shop_index[shop_nr].type.push_back(tmp);
+    } else if(!strcmp(buf, "remove")){
+      arg=one_argument(arg, buf);
+      tmp=atoi(buf);
+
+      vector<unsigned int>::iterator result=
+	find(shop_index[shop_nr].type.begin(),
+	     shop_index[shop_nr].type.end(), tmp);
+      
+      shop_index[shop_nr].type.erase(result);
+
+    }
+
+
+    return TRUE;
+  }
+
+
   return FALSE;
 }
 
@@ -1966,8 +2044,8 @@ void bootTheShops()
     sd.close1=atoi(row[14]);
     sd.open2=atoi(row[15]);
     sd.close2=atoi(row[16]);
-    sd.profit_buy=atoi(row[17]);
-    sd.profit_sell=atoi(row[18]);
+    sd.profit_buy=atof(row[17]);
+    sd.profit_sell=atof(row[18]);
 
     while(producing_row && atoi(producing_row[0])==shop_nr){
       sd.producing.push_back(atoi(producing_row[1]));

@@ -38,37 +38,6 @@ void TObj::logMe(const TBeing *ch, const char *cmdbuf) const
            obj_index[getItemIndex()].number);
 }
 
-void TContainer::logMe(const TBeing *ch, const char *cmdbuf) const
-{
-  TObj::logMe(ch, cmdbuf);
-  
-  const char *last = NULL;
-  if(stuff)
-    last=stuff->getName();
-  int runcount=1;
-  TThing *t;
-  for (t = stuff; t; t = t->nextThing, ++runcount) {
-    if(!t->nextThing || strcmp(last, t->nextThing->getName())){
-      if(runcount>1){
-	vlogf(LOG_SILENT, "%s%s%s %s containing %s [%i].", 
-              (ch ? ch->getName() : ""),
-              (ch ? " " : ""),
-	      cmdbuf, getName(), t->getName(), runcount);
-      } else 
-	vlogf(LOG_SILENT, "%s%s%s %s containing %s.", 
-          (ch ? ch->getName() : ""),
-          (ch ? " " : ""),
-	  cmdbuf, getName(), t->getName());
-      runcount=0;
-      if(t->nextThing)
-        last=t->nextThing->getName();
-      else
-        last=t->getName();
-    } else
-      last=t->getName();
-  }
-}
-
 void TBeing::logItem(const TThing *obj, cmdTypeT cmd) const
 {
   char cmdbuf[200];
@@ -201,72 +170,6 @@ int TThing::openMe(TBeing *ch)
 {
   ch->sendTo("That's not a container.\n\r");
   return FALSE;
-}
-
-int TRealContainer::openMe(TBeing *ch)
-{
-  char buf[256];
-
-  if (!isClosed()) {
-    ch->sendTo("But it's already open!\n\r");
-    return FALSE;
-  } else if (!isCloseable() && !isClosed()) {
-    ch->sendTo("You can't do that.\n\r");
-    return FALSE;
-  } else if (isContainerFlag(CONT_LOCKED)) {
-    ch->sendTo("It seems to be locked.\n\r");
-    return FALSE;
-  } else if (isContainerFlag(CONT_TRAPPED) ||
-             !isContainerFlag(CONT_EMPTYTRAP) ||
-             isContainerFlag(CONT_GHOSTTRAP)) {
-    if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
-      if (detectTrapObj(ch, this) || isContainerFlag(CONT_GHOSTTRAP)) {
-        sprintf(buf, "You start to open $p, but then notice an insidious %s trap...",
-              good_uncap(trap_types[getContainerTrapType()]).c_str());
-        act(buf, TRUE, ch, this, NULL, TO_CHAR);
-
-        return FALSE;
-      } else if (!isContainerFlag(CONT_TRAPPED) &&
-                 !bSuccess(ch, ch->getSkillValue(SKILL_DETECT_TRAP), SKILL_DETECT_TRAP)) {
-        setContainerTrapType(doorTrapT(::number((DOOR_TRAP_NONE + 1), (MAX_TRAP_TYPES - 1))));
-        setContainerTrapDam(0);
-        addContainerFlag(CONT_GHOSTTRAP);
-
-        sprintf(buf, "You start to open $p, but then notice an insidious %s trap...",
-                good_uncap(trap_types[getContainerTrapType()]).c_str());
-        act(buf, TRUE, ch, this, NULL, TO_CHAR);
-
-        return FALSE;
-      }
-    }
-
-    act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
-    act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);
-    remContainerFlag(CONT_CLOSED);
-    remContainerFlag(CONT_GHOSTTRAP);
-    addContainerFlag(CONT_EMPTYTRAP);
-
-    if (isContainerFlag(CONT_TRAPPED)) {
-      int rc = ch->triggerContTrap(this);
-      int res = 0;
-      if (IS_SET_DELETE(rc, DELETE_ITEM))
-        ADD_DELETE(res, DELETE_THIS);
-
-      if (IS_SET_DELETE(rc, DELETE_THIS))
-        ADD_DELETE(res, DELETE_VICT);
-
-      return res;
-    }
-
-    return TRUE;
-  } else {
-    remContainerFlag(CONT_CLOSED);
-    remContainerFlag(CONT_GHOSTTRAP);
-    addContainerFlag(CONT_EMPTYTRAP);
-    act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
-    act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);
-    return TRUE;
-  }
 }
 
 void TThing::getMeFrom(TBeing *ch, TThing *t)
@@ -1099,7 +1002,7 @@ int TBeing::doDrop(const char *argument, TThing *tng, bool forcedDrop)
   }
 }
 
-int TThing::putMeInto(TBeing *ch, TRealContainer *sub)
+int TThing::putMeInto(TBeing *ch, TOpenContainer *sub)
 {
   if (dynamic_cast<TSpellBag *>(sub)) {
     act("Sorry, $p can only hold spell components.",
@@ -1881,100 +1784,11 @@ int TObj::getAllFrom(TBeing *ch, const char *argument)
   return FALSE;
 }
 
-int TContainer::getAllFrom(TBeing *ch, const char *argument)
-{
-  int rc;
-
-  act("You start getting items from $p.", TRUE, ch, this, NULL, TO_CHAR);
-  act("$n starts getting items from $p.", TRUE, ch, this, NULL, TO_ROOM);
-  start_task(ch, ch->roomp->stuff, ch->roomp, TASK_GET_ALL, argument, 350, ch->in_room, 0, 0, 0);
-  // this is a kludge, task_get still has a tiny delay on it
-  // this dumps around it and goes right to the guts
-  rc = (*(tasks[TASK_GET_ALL].taskf))
-        (ch, CMD_TASK_CONTINUE, "", 0, ch->roomp, 0);
-  if (IS_SET_DELETE(rc, DELETE_THIS)) 
-    return DELETE_VICT;
-  return FALSE;
-}
-
 // return TRUE will stop the get
 int TObj::getObjFrom(TBeing *ch, const char *, const char *)
 {
   act("$p is not a container.", FALSE, ch, this, 0, TO_CHAR);
   return TRUE;
-}
-
-int TContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
-{
-  char newarg[100], capbuf[256];
-  int rc;
-  int p;
-
-  if (getall(arg1, newarg)) {
-    if (!searchLinkedListVis(ch, newarg, stuff)) {
-      ch->sendTo(COLOR_OBJECTS, "There are no \"%s\"'s visible in %s.\n\r",newarg, getName());
-      return TRUE;
-    }
-    if (ch->getPosition() <= POSITION_SITTING) {
-      ch->sendTo("You need to be standing to do that.\n\r");
-      if (!ch->awake())
-        return TRUE;   // sleeping
-      ch->doStand();
- 
-      if (ch->fight())
-        return TRUE;  // don't fall through
-    }
-    if (dynamic_cast<TBeing *>(ch->riding) && (in_room != ROOM_NOWHERE)) {
-      act("You can't get things from $p while mounted!", 
-             FALSE, ch, this, 0, TO_CHAR);
-      return TRUE;
-    }
-    sprintf(capbuf, "%s %s", newarg, arg2);
-    act("You start getting items from $p.", TRUE, ch, this, NULL, TO_CHAR);
-    act("$n starts getting items from $p.", TRUE, ch, this, NULL, TO_ROOM);
-
-    start_task(ch, ch->roomp->stuff, ch->roomp, TASK_GET_ALL, capbuf, 350, ch->in_room, 1, 0, 0);
-    // this is a kludge, task_get still has a tiny delay on it
-    // this dumps around it and goes right to the guts
-    rc = (*(tasks[TASK_GET_ALL].taskf))
-          (ch, CMD_TASK_CONTINUE, "", 0, ch->roomp, 0);
-    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      return DELETE_VICT;
-    }
-    return TRUE;
-  } else if ((p = getabunch(arg1, newarg))) {
-    if (!searchLinkedListVis(ch, newarg, stuff)) {
-      ch->sendTo(COLOR_OBJECTS, "There are no \"%s\"'s visible in %s.\n\r",newarg, getName());
-      return TRUE;
-    }
-    if (ch->getPosition() <= POSITION_SITTING) {
-      ch->sendTo("You need to be standing to do that.\n\r");
-      if (!ch->awake())
-        return TRUE;   // sleeping
-      ch->doStand();
- 
-      if (ch->fight())
-        return TRUE;  // don't fall through
-    }
-    if (dynamic_cast<TBeing *>(ch->riding) && (ch->in_room != ROOM_NOWHERE)) {
-      act("You can't get things from $p while mounted!", 
-           FALSE, ch, this, 0, TO_CHAR);
-      return TRUE;
-    }
-    sprintf(capbuf, "%s %s", newarg, arg2);
-    act("You start getting items from $p.", TRUE, ch, this, NULL, TO_CHAR);
-    act("$n starts getting items from $p.", TRUE, ch, this, NULL, TO_ROOM);
-    start_task(ch, ch->roomp->stuff, ch->roomp, TASK_GET_ALL, capbuf, 350, ch->in_room, 0, p + 1, 0);
-    // this is a kludge, task_get still has a tiny delay on it
-    // this dumps around it and goes right to the guts
-    rc = (*(tasks[TASK_GET_ALL].taskf))
-        (ch, CMD_TASK_CONTINUE, "", 0, ch->roomp, 0);
-    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      return DELETE_VICT;
-    }
-    return TRUE;
-  }
-  return FALSE;
 }
 
 int TTable::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
@@ -2057,28 +1871,7 @@ int TThing::putSomethingInto(TBeing *ch, TThing *)
   return 2;
 }
 
-int TRealContainer::putSomethingInto(TBeing *ch, TThing *obj)
-{
-  int rc = obj->putSomethingIntoContainer(ch, this);
-
-  int ret = 0;
-  if (IS_SET_DELETE(rc, DELETE_THIS))
-    ret |= DELETE_ITEM;
-  if (IS_SET_DELETE(rc, DELETE_ITEM))
-    ret |= DELETE_THIS;
-  if (IS_SET_DELETE(rc, DELETE_VICT))
-    ret |= DELETE_VICT;
-
-  return ret;
-}
-
-int TContainer::putSomethingIntoContainer(TBeing *ch, TRealContainer *cont)
-{
-  act("Containers can't hold other containers.", FALSE, ch, cont,this, TO_CHAR);
-  return FALSE;
-}
-
-int TObj::putSomethingIntoContainer(TBeing *ch, TRealContainer *cont)
+int TObj::putSomethingIntoContainer(TBeing *ch, TOpenContainer *cont)
 {
   if (isObjStat(ITEM_NODROP)) {
     act("You can't let go of $N, it must be CURSED!", 
@@ -2092,7 +1885,7 @@ int TObj::putSomethingIntoContainer(TBeing *ch, TRealContainer *cont)
 // DELETE_THIS = this
 // DELETE_VICT = ch
 // DELETE_ITEM = cont
-int TThing::putSomethingIntoContainer(TBeing *ch, TRealContainer *cont)
+int TThing::putSomethingIntoContainer(TBeing *ch, TOpenContainer *cont)
 {
   int rc;
 
@@ -2299,33 +2092,8 @@ void TQuiver::putMoneyInto(TBeing *ch, int)
   ch->sendTo("You can't put money into that.\n\r");
 }
 
-void TRealContainer::putMoneyInto(TBeing *ch, int amount)
-{
-  if (isClosed()) {
-    act("$p is closed.", FALSE, ch, this, 0, TO_CHAR);
-    return;
-  }
-  ch->sendTo("OK.\n\r");
-
-  act("$n puts some money into $p.", FALSE, ch, this, 0, TO_ROOM);
-  *this += *create_money(amount);
-  ch->addToMoney(-amount, GOLD_INCOME);
-  if (ch->fight())
-    ch->addToWait(combatRound(1 + amount/5000));
-  ch->doSave(SILENT_YES);
-}
-
 bool TThing::getObjFromMeCheck(TBeing *)
 {
-  return FALSE;
-}
-
-bool TRealContainer::getObjFromMeCheck(TBeing *ch)
-{
-  if (isClosed()) {
-    act("$P must be opened first.", 1, ch, 0, this, TO_CHAR);
-    return TRUE;
-  }
   return FALSE;
 }
 

@@ -570,19 +570,16 @@ int TSocket::gameLoop()
             }
           }
 	  if (tmp_ch->task && (pulse >= tmp_ch->task->nextUpdate)) {
-	    // below here
+	    TObj *tmper_obj = NULL;
 	    if (tmp_ch->task->obj) {
-	      TObj *tmper_obj = tmp_ch->task_obj; 
+	      tmper_obj = tmp_ch->task_obj; 
 	    } 
-	    // above here
 	    rc = (*(tasks[tmp_ch->task->task].taskf))
       (tmp_ch, CMD_TASK_CONTINUE, "", pulse, tmp_ch->task->room, tmp_ch->task->obj);
-	    // below here
 	    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-	      delete tmper_obj
+	      delete tmper_obj;
 	      tmp_obj = NULL;
 	    }
-	    // above here
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
               temp = tmp_ch->next;
               delete tmp_ch;

@@ -113,7 +113,7 @@ void update_trophy(const char *name, int vnum, double add){
   char buf[256];
   MYSQL_RES *res;
 
-  if(vnum==-1 || !name){ return; }
+  if(vnum==-1 || vnum==0 || !name){ return; }
   
   if((rc=dbquery(&res, "sneezy", "update_trophy(1)", "insert ignore into trophy values ('%s', %i, 0)", name, vnum))){
     if(rc==-1){
@@ -234,8 +234,30 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
     if (!v->isPc() && (v->getHit() <= -2))
       dam = 11 + v->getHit();
 
-    update_trophy(this->getName(), v->mobVnum(), 
-		  ((double) dam / (double) (v->hitLimit()+11)));
+    if(this->isPc() && !v->isPc()){
+      followData *f;
+      int groupcount=1;
+      double trophyperc;
+
+      for (f = followers; f; f = f->next) {
+	if (inGroup(*f->follower) && sameRoom(*f->follower)) {
+	  groupcount++;
+	}
+      }
+
+      trophyperc=(double)(((double)dam/(double)(v->hitLimit()+11))/groupcount);
+
+      update_trophy(getName(), v->mobVnum(), trophyperc);
+
+      for (f = followers; f; f = f->next) {
+	if (f->follower->isPc() && inGroup(*f->follower) && 
+	    sameRoom(*f->follower)) {
+	  update_trophy(f->follower->getName(), v->mobVnum(), trophyperc);
+	}
+      }      
+
+    }
+
 
     percent = ((double) dam / (double) (v->getHit() + 11));
 

@@ -1528,8 +1528,25 @@ int TBeing::passOut()
   affectedData af;
   int rc;
 
-  int drunk = max(1,plotStat(STAT_CURRENT, STAT_CON, 13, 28, 23) - getCond(DRUNK));
-  if (::number(0,drunk))
+  // Coded by : Glint
+  // Coded on : 04/10/2001
+  //
+  // Old Code for passout Check : {
+  // int drunk = max(1,plotStat(STAT_CURRENT,STAT_CON,13,28,23)-getCond(DRUNK))
+  // if (::number(0,drunk))
+  // return FALSE;
+  // } end of Old Code
+  //
+  // Modified the chance of passing out from being drunk.  
+  // If just drunk enough to pass out you have 1/8th chance (human)
+  // If MAX drunk, 50% chance to pass out.
+  // Constitution is used to modify chance of passing out.
+
+  int getDrunk = getCond(DRUNK)-14;
+  int chancePassOut = (int)(4.17*(double)getDrunk+8.33);
+  double conEffect = 1.0 - plotStat(STAT_CURRENT, STAT_CON, 0.25, 0.75, 0.50);
+  chancePassOut = (int)((double)chancePassOut * 2.0 * conEffect);
+  if (::number(1,100) > chancePassOut)
     return FALSE;
   af.type = AFFECT_DRUNK;
   af.level = max(1, (int) getCond(DRUNK));

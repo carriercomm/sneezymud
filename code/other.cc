@@ -2780,12 +2780,9 @@ void TThing::extinguishMe(TBeing *ch)
   if(!(o=dynamic_cast<TObj *>(this)) || !o->isObjStat(ITEM_BURNING)){
     ch->sendTo("You can't extinguish that; it's not burning.\n\r");
   } else {
-    if(ch->isImmortal()){
-      o->remBurning(ch);
-      act("You extinguish $p, and it smolders slightly before going out.", FALSE, ch, o, 0, TO_CHAR);
-      act("$n extinguishes $p, and it smolders slightly before going out.", FALSE, ch, o, 0, TO_ROOM);
-    } else
-      ch->sendTo("Not supported.\n\r");
+    o->remBurning(ch);
+    act("You extinguish $p, and it smolders slightly before going out.", FALSE, ch, o, 0, TO_CHAR);
+    act("$n extinguishes $p, and it smolders slightly before going out.", FALSE, ch, o, 0, TO_ROOM);
   }
   return;
 }

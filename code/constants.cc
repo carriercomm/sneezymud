@@ -7,7 +7,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdsneezy.h"
-#include "create.h"
 #include "drug.h"
 
 const dirTypeT rev_dir[MAX_DIR] =

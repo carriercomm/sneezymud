@@ -9,7 +9,6 @@
 //
 
 #include "stdsneezy.h"
-#include "create.h"
 
 TPortal::TPortal() :
   TSeeThru(),

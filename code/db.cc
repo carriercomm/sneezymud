@@ -14,7 +14,6 @@
 #include "mail.h"
 #include "components.h"
 #include "board.h"
-#include "create.h"
 #include "stdsneezy.h"
 #include "loadset.h"
 

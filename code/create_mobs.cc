@@ -12,7 +12,6 @@ extern "C" {
 }
 
 #include "stdsneezy.h"
-#include "create.h"
 #include "mail.h"
 #include "combat.h"
 #include "statistics.h"

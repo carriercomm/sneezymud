@@ -18,7 +18,6 @@ extern "C" {
 #include <algorithm>
 
 #include "stdsneezy.h"
-#include "create.h"
 #include "combat.h"
 #include "dirsort.h"
 

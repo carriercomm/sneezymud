@@ -8,7 +8,6 @@
 
 #include "stdsneezy.h"
 #include "components.h"
-#include "create.h"
 #include "shop.h"
 
 vector<compPlace>component_placement(0);

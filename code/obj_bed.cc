@@ -1,8 +1,6 @@
 // bed.cc
 
 #include "stdsneezy.h"
-#include "create.h"
-#include "games.h"
 
 TBed::TBed() :
   TObj(),

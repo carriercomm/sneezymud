@@ -1,5 +1,4 @@
 #include "stdsneezy.h"
-#include "create.h"
 
 TArrow::TArrow() :
   TBaseWeapon(),

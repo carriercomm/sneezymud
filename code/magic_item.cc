@@ -1,7 +1,6 @@
 // magic_item.cc
 
 #include "stdsneezy.h"
-#include "create.h"
 
 TMagicItem::TMagicItem() :
   TObj(),

@@ -8,7 +8,6 @@
 #include "stdsneezy.h"
 #include "disc_looting.h"
 #include "disease.h"
-#include "create.h"
 
 extern const char * const GRENADE_EX_DESC = "__grenade_puller";
 extern const char * const TRAP_EX_DESC = "__trap_setter";

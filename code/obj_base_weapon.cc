@@ -6,7 +6,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdsneezy.h"
-#include "create.h"
 #include "combat.h"
 #include "statistics.h"
 #include "shop.h"

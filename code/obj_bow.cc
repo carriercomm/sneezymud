@@ -1,6 +1,5 @@
 #include "stdsneezy.h"
 #include "range.h"
-#include "create.h"
 
 TBow::TBow() :
   TObj(),

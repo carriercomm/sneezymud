@@ -3033,6 +3033,7 @@ float old_ac_lev = mob->getACLevel();
       affectedData *aff;
       for (aff = mob->affected; aff; aff = aff->next) {
         if ((aff->type == AFFECT_PET) || 
+            (aff->type == AFFECT_CHARM) ||
             (aff->type == AFFECT_THRALL) ||
             (aff->type == AFFECT_ORPHAN_PET)) {
           char * tmp = mud_str_dup(ch->name);

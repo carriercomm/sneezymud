@@ -4535,7 +4535,7 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
   sk->lastUsed = time(0);
   learnSuccessLog(this, sknum, boost);
 
-  if (getSkillValue(sknum) == 100) {
+  if (getNatSkillValue(sknum) == 100) {
     if ((discArray[sknum]->comp_types & COMP_MATERIAL))
       strcpy(tString, "feel you have total control over the powers of");
     else if (discArray[sknum]->holyStrength) {

@@ -18,6 +18,9 @@ void TBeing::doConsider(const char *argument)
 
   only_argument(argument, namebuf);
 
+  if (is_abbrev(namebuf, "self"))
+    strcpy(namebuf, getNameNOC(this).c_str());
+
   if (!(victim = get_char_room_vis(this, namebuf))) {
     if (!isImmortal() || !hasWizPower(POWER_IMM_EVAL)) {
       sendTo("Consider killing whom?\n\r");

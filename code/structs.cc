@@ -512,8 +512,10 @@ void TObj::checkOwnersList(const TPerson *ch)
   return;
 #endif
 
+  /*
   if (gamePort != PROD_GAMEPORT)
     return;
+  */
 
   const char * tmpbuf = owners;
   char indiv[256];
@@ -536,13 +538,49 @@ void TObj::checkOwnersList(const TPerson *ch)
         continue;
 
       if (ch->desc && ch->desc->account && !strcmp(ch->desc->account->name, st.aname)) {
-        // transferred betwen 2 chars in same account!
-        vlogf(2, "CHEATING!  Item (%s:%d) transferred to %s when previously owned by %s.   owners=[%s %s]", getName(), objVnum(), ch->getName(), indiv, owners, ch->getName());
+        TMoney *tTalens;
 
-        // because of where this gets called (operator+=), deleting would be
-        // bad due to requirements to check for it occuring all over the place.
-        // lets set the decay instead and let ticktimer handle it...
-        obj_flags.decay_time = 0;  // decay next pulse
+        if ((tTalens = dynamic_cast<TMoney *>(this))) {
+          // This is basic 'drop -- talens'|'get -- talens'
+          TBeing *tPerson = (ch->desc ? ch->desc->character : NULL);
+
+          // Here is where we nail them to the wall.
+          // We strike them for the total value of the talens 2x over.
+          // This sets the pile of money value to 0 and
+          // Removes the same amount from them (on-person/bank).
+
+          if (!tPerson) // Seriously bad
+            break;
+
+          int tLose = tTalens->getMoney(),
+              tLost,
+              tHave;
+
+          tLost = tHave = min(ch->getMoney(), tLose);
+          tPerson->setMoney(ch->getMoney() - tHave);
+          tLose -= tHave;
+
+          if (tLose > 0) {
+            tHave = min(ch->getBank(), tLose);
+            tPerson->setBank(ch->getBank() - tHave);
+            tLost += tHave;
+          }
+
+          vlogf(2, "CHEATING!  Money (%d) being picked up by %s when dropped by %s.  Lost:%d",
+                tTalens->getMoney(), ch->getName(), indiv, tLost);
+
+          tTalens->setMoney(0);
+        } else {
+          // transferred betwen 2 chars in same account!
+
+          vlogf(2, "CHEATING!  Item (%s:%d) transferred to %s when previously owned by %s.   owners=[%s %s]", getName(), objVnum(), ch->getName(), indiv, owners, ch->getName());
+
+          // because of where this gets called (operator+=), deleting would be
+          // bad due to requirements to check for it occuring all over the place.
+          // lets set the decay instead and let ticktimer handle it...
+
+          obj_flags.decay_time = 0;  // decay next pulse
+        }
       }
     }
 

@@ -29,7 +29,7 @@ wizSaveData::wizSaveData() :
   office(0),
   blockastart(0),
   blockaend(0),
-  blockbstart(a),
+  blockbstart(0),
   blockbend(0)
 {}
 

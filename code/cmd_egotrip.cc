@@ -22,7 +22,7 @@ void TBeing::doEgoTrip(const char *arg)
     return;
   }
 
-  string badsyn = "Syntax: egotrip <\"deity\" | \"bless\" | \"blast\" | \"damn\" | \"hate\" | \"cleanse\">\n\r";
+  string badsyn = "Syntax: egotrip <\"deity\" | \"bless\" | \"blast\" | \"damn\" | \"hate\" | \"cleanse\" | \"wander\">\n\r";
 
 //  char argument[256];
   string argument, sarg = arg, restarg;
@@ -193,6 +193,20 @@ void TBeing::doEgoTrip(const char *arg)
         continue;
       tmon->addHated(ch);
       act("$N now hates $p.", false, this, ch, tmon, TO_CHAR);
+    }
+    return;
+  } else if (is_abbrev(argument, "wander")) {
+    TThing *t, *t2;
+    for (t = roomp->stuff; t; t = t2) {
+      t2 = t->nextThing;
+      TMonster *tmon = dynamic_cast<TMonster *>(t);
+      if (!tmon)
+        continue;
+      int rc = tmon->wanderAround();
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
+        delete tmon;
+        tmon = NULL;
+      }
     }
     return;
   } else if (is_abbrev(argument, "cleanse")) {

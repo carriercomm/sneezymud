@@ -1894,6 +1894,7 @@ void reset_zone(int zone, bool bootTime)
               continue;
             }
             *rp += *mob;
+            mob->brtRoom = (rp ? rp->number : ROOM_NOWHERE);
             mobRepop(mob, zone);
 
 #if 1
@@ -1959,6 +1960,7 @@ void reset_zone(int zone, bool bootTime)
               continue;
             }
             *rp += *mob;
+            mob->brtRoom = (rp ? rp->number : ROOM_NOWHERE);
             mobRepop(mob, zone);
 
 #if 1
@@ -2078,6 +2080,7 @@ void reset_zone(int zone, bool bootTime)
               mob->addFollower(old_mob);
 
             // needs to be after we are set riding
+            mob->brtRoom = (rp ? rp->number : ROOM_NOWHERE);
             mobRepop(mob, zone);
 
             last_cmd = 1;

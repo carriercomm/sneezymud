@@ -2384,13 +2384,22 @@ int scirenDrown(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   if (!ch)
     return FALSE;
 
+  if (vict->affectedBySpell(SPELL_SUFFOCATE))
+    return FALSE;   
+
   dam = ::number(4,10);
-  act("$p <1><B>emits a stream of salty water directed at $n's mouth<1>.",
+  act("$p <1><B>emits a stream of salty water directed at $n's mouth<1>!\n\r<B>HA! Look at $m drown<1>!",
       0, vict, o, 0, TO_ROOM);
-  act("$p <1><B>emits a stream of salty water directed at your Throat<1>!",
+  act("$p <1><B>emits a stream of salty water directed at your mouth<1>!\n\r<B>ACK! You're drowning<1>!",
       0, vict, o, 0, TO_CHAR);
 
   ch->dropPool(3, LIQ_SALTWATER);
+
+  affectedData aff;
+  aff.type = SPELL_SUFFOCATE;
+  aff.level = 10;
+  aff.duration = 3;  // shortlived spell affect -jh
+  vict->affectJoin(ch, &aff, AVG_DUR_NO, AVG_EFF_YES);  
   rc = ch->reconcileDamage(vict, dam, DAMAGE_SUFFOCATION);
   if (IS_SET_DELETE(rc, DELETE_VICT))
     return DELETE_VICT;

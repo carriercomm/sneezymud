@@ -670,8 +670,38 @@ const char *describe_level(int n)
     return "extremely high level";
 }
 
-const char *describe_damage(int n)
+const char *describe_damage(int n, const TBeing *tBeing)
 {
+#if 1
+  if (!tBeing)
+    return "a perfect amount";
+
+  int tDiff = n - tBeing->GetMaxLevel();
+
+  if (tDiff < -20)
+    return "a horrid amount";
+  else if (tDiff < -15)
+    return "a sad amount";
+  else if (tDiff < -10)
+    return "a pathetic amount";
+  else if (tDiff < -5)
+    return "a decent amount";
+  else if (tDiff <= -1)
+    return "a near perfect amount";
+  else if (tDiff == 0)
+    return "a Perfect amount";
+  else if (tDiff <= 2)
+    return "a near perfect amount"; // This and -1 is where we confuse them.
+  else if (tDiff < 5)
+    return "a good amount";
+  else if (tDiff < 10)
+    return "a really good amount";
+  else if (tDiff < 15)
+    return "an extremely good amount";
+  else
+    return "way too much of an amount";
+
+#else
   if (n < 3)
     return "a trivial amount";
   else if (n < 8)
@@ -688,6 +718,7 @@ const char *describe_damage(int n)
     return "an awesome amount";
   else
     return "a unexplainable amount";
+#endif
 }
 
 const char *describe_armor(int n)

@@ -5853,11 +5853,19 @@ void TBeing::describeMaxStructure(const TObj *obj, int learn) const
 
 void TBeing::describeWeaponDamage(const TBaseWeapon *obj, int learn) const
 {
-  if (!hasClass(CLASS_RANGER) && !hasClass(CLASS_WARRIOR) && 
-      !hasClass(CLASS_DEIKHAN)) {
+  if (!hasClass(CLASS_RANGER) &&
+      !hasClass(CLASS_WARRIOR) && 
+      !hasClass(CLASS_DEIKHAN) &&
+      !hasWizPower(POWER_WIZARD)) {
     learn /= 3;
   }
 
+#if 1
+  double av_dam = GetApprox(obj->damageLevel(), learn);
+
+  sendTo(COLOR_OBJECTS, "It is capable of doing %s of damage for your level\n\r", 
+         describe_damage((int) av_dam, this));
+#else
   double av_dam = obj->baseDamage();
   av_dam += (double) obj->itemDamroll();
   av_dam = GetApprox((int) av_dam, learn);
@@ -5884,6 +5892,7 @@ void TBeing::describeWeaponDamage(const TBaseWeapon *obj, int learn) const
           ((av_dam < 19) ? "awesome" :
           ((av_dam < 20) ? "superb" :
                            "super-human")))))))))))))))))))));
+#endif
 }
 
 void TBeing::describeArmor(const TBaseClothing *obj, int learn)
@@ -5892,6 +5901,54 @@ void TBeing::describeArmor(const TBaseClothing *obj, int learn)
       !hasClass(CLASS_DEIKHAN))
     learn /= 3;
 
+#if 1
+  double tACPref,
+         tStrPref,
+         tSHLvl = suggestArmor(),
+         tIsLvl = obj->armorLevel(ARMOR_LEV_AC),
+         tACMin,
+         tACQua;
+
+  obj->armorPercs(&tACPref, &tStrPref);
+
+  // This tells us what they 'should have' on the slot:
+  tSHLvl *= tACPref;
+
+  // Convert tSHLvl to a level
+  tACPref *= (obj->isPaired() ? 2.0 : 1.0);
+  tACMin = ((500.0 * tACPref) + (obj->isPaired() ? 1.0 : 0.5));
+  tACQua = (max(0.0, (tSHLvl - tACMin)) / tACPref);
+  tSHLvl = tACQua / 25;
+
+  int tDiff = GetApprox((int) (tIsLvl - tSHLvl), learn);
+  string tStLevel("");
+
+  if (tDiff < -20)
+    tStLevel = "a horrid amount";
+  else if (tDiff < -15)
+    tStLevel = "a sad amount";
+  else if (tDiff < -10)
+    tStLevel = "a pathetic amount";
+  else if (tDiff < -5)
+    tStLevel = "a decent amount";
+  else if (tDiff <= -1)
+    tStLevel = "a near perfect amount";
+  else if (tDiff == 0)
+    tStLevel = "a Perfect amount";
+  else if (tDiff <= 2)
+    tStLevel = "a near perfect amount"; // This and -1 is where we confuse them
+  else if (tDiff < 5)
+    tStLevel = "a good amount";
+  else if (tDiff < 10)
+    tStLevel = "a really good amount";
+  else if (tDiff < 15)
+    tStLevel = "an extremely good amount";
+  else
+    tStLevel = "way too much of an amount";
+
+  sendTo(COLOR_OBJECTS, "This supplies %s of protection for your class and level\n\r",
+         tStLevel.c_str());
+#else
   int armor = 0;    // works in reverse here.  armor > 0 is GOOD
   armor -= obj->itemAC();
   armor = GetApprox(armor, learn);
@@ -5914,6 +5971,7 @@ void TBeing::describeArmor(const TBaseClothing *obj, int learn)
       ((armor < 28) ? "armoring you like a dragon" :
       ((armor < 30) ? "being virtually impenetrable" :
                        "being impenetrable")))))))))))))))));
+#endif
 }
 
 void TBeing::describeImmunities(TBeing *vict, int learn)

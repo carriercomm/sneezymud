@@ -738,7 +738,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
 		    ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
 	      vlogf(LOG_DASH, "Experience cap reached by %s!", ch->getName());
 	      vlogf(LOG_DASH, "[ Level: %d / Dam: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]",
-		    ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+		    ch->getLevel(i), dam, (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
 	    }  
 	  }
 	}

@@ -574,8 +574,9 @@ int TBeing::updateTickStuff()
 
     if (!fight() && ((isAnElemental || isAnOldPet) || 
                      (!isAnOrphanPet && !hasExp))) {
-      if (specials.hunting || act_ptr || (dynamic_cast<TMonster *>(this) && 
-                              dynamic_cast<TMonster *>(this)->hates.clist)) {
+      if (specials.hunting || act_ptr || getSnum() >= 0 ||
+          (dynamic_cast<TMonster *>(this) && 
+           dynamic_cast<TMonster *>(this)->hates.clist)) {
         shouldGo = FALSE;
       }
       if (shouldGo && !stuff) {

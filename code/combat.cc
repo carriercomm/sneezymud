@@ -1204,6 +1204,18 @@ void TBeing::checkForQuestTog(TBeing *vict)
 	  !hasQuestBit(TOG_PROVING_SELF))
 	found = TRUE;
       break;
+    case MOB_CLERIC_VOLCANO:
+      if (hasQuestBit(bitnum = TOG_STARTED_RANGER_L21) &&
+          !hasQuestBit(TOG_FAILED_CLERIC_V) &&
+          !hasQuestBit(TOG_PENANCE_R21_1))
+        found = TRUE;
+      break;
+    case MOB_CLERIC_ARDEN:
+      if (hasQuestBit(bitnum = TOG_SEEKING_CLERIC_A) &&
+          !hasQuestBit(TOG_FAILED_CLERIC_A) &&
+          !hasQuestBit(TOG_PENANCE_R21_2))
+        found = TRUE; 
+      break;
     default:
       found = FALSE;
       break;
@@ -1274,6 +1286,18 @@ void TBeing::sendCheatMessage(char *cheater)
     case MOB_ORC_MAGI:
       sendTo("<c>You realize you did not follow the guidelines of your quest, so this fight will be for naught.<1>\n\r");
       setQuestBit(TOG_FAILED_TO_KILL_MAGI);
+      break;
+    case MOB_CLERIC_VOLCANO:
+      sprintf(buf, "%s You have failed to defeat me in single combat.", nameBuf);
+      doTell(buf);
+      sprintf(buf, "%s An honorable ranger would allow me to heal completely before attacking again.", nameBuf);
+      doTell(buf);
+      break;
+    case MOB_CLERIC_ARDEN:
+      sprintf(buf, "%s You have failed to defeat me in single combat.", nameBuf);
+      doTell(buf);
+      sprintf(buf, "%s An honorable ranger would allow me to heal completely before attacking again.", nameBuf);
+      doTell(buf);
       break;
     default:
       vlogf(LOG_COMBAT, "Somehow got to getCheatMessage without a valid toggle bit %s.", getName());

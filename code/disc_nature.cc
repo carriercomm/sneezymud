@@ -788,6 +788,20 @@ int ret,level;
   }
 }
 
+int rootControl(TBeing *caster, TBeing *victim, TMagicItem *tObj)
+{
+  int tLevel = tObj->getMagicLevel(),
+    tKnown = tObj->getMagicLearnedness(),
+    tReturn = 0;
+
+  tReturn = rootControl(caster, victim, 0, tLevel, tKnown);
+
+  if (IS_SET(tReturn, CASTER_DEAD))
+    ADD_DELETE(tReturn, DELETE_THIS);
+
+  return tReturn;
+}
+
 int rootControl(TBeing * caster, TBeing * victim, int, int dam, byte bKnown)
 {
   dam = max(1,dam);

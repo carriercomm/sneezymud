@@ -638,16 +638,16 @@ void Race::showTo(TBeing *caller)
 
   str += "Male Dimensions:    ";
   str += fmt("Height: %d+%dd%d\tWeight: %d+%dd%d\n\r") %
-    baseMaleHeight % maleHtNumDice % maleHtDieSize,
+    baseMaleHeight % maleHtNumDice % maleHtDieSize %
     baseMaleWeight % maleWtNumDice % maleWtDieSize;
 
   str += "Female Dimensions:  ";
   str += fmt("Height: %d+%dd%d\tWeight: %d+%dd%d\n\r") %
-    baseFemaleHeight % femaleHtNumDice % femaleHtDieSize,
+    baseFemaleHeight % femaleHtNumDice % femaleHtDieSize %
     baseFemaleWeight % femaleWtNumDice % femaleWtDieSize;
 
   str += "Modifiers:\n\r";
-  str += fmt("\tHP:\t%d\tMV:\t%d\tMANA:\t%d\n\r") % hpMod % moveMod % manaMod);
+  str += fmt("\tHP:\t%d\tMV:\t%d\tMANA:\t%d\n\r") % hpMod % moveMod % manaMod;
 
   str += fmt("\tSearch:\t%d\tSight:\t%d\tVision:\t%d\n\r") % 
     searchMod % lineOfSightMod % visionBonus;

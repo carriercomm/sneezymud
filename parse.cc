@@ -3136,6 +3136,20 @@ void bisect_arg(const char *arg, int *field, char *sstring, const char * const a
   return;
 }
 
+void bisect_arg(const sstring arg, int *field, sstring str, const sstring *array)
+{
+  sstring my_arg, buf;
+
+  my_arg = one_argument(arg, buf);
+  if (!(*field = old_search_block(buf, 0, strlen(buf), array, 0)))
+    return;
+
+  for (; isspace(*arg); arg++);
+  for (; (*sstring = *arg); arg++, sstring++);
+
+  return;
+}
+
 char *fold(char *line)
 {
   const unsigned int FOLDAT = 78;

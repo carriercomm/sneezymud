@@ -96,11 +96,9 @@ void Descriptor::send_client_room_objects()
 void Descriptor::send_client_prompt(int, int update)
 {
   TBeing *ch, *tank;
-  sstring c_name, cond;
-  sstring t_name, t_cond;
+  sstring c_name = "", cond = "";
+  sstring t_name = "", t_cond = "";
   int ratio;
-
-  *c_name = *cond = *t_name = *t_cond = '\0';
 
   if (connected || !(ch = character))
     return;

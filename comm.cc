@@ -948,7 +948,7 @@ void Descriptor::updateScreenVt100(unsigned int update)
 	buf += fmt("<%s=%s>") % fname(f->name) % prompt_mesg[ratio];
 	last.fighting = TRUE;
 
-        ratio = fname(f->name).length() + strlen(prompt_mesg[ratio]);
+        ratio = fname(f->name).length() + prompt_mesg[ratio].length();
 
 	while (ratio < 25) {
           buf += " ";
@@ -1029,7 +1029,7 @@ void Descriptor::updateScreenVt100(unsigned int update)
         int ratio = min(10, max(0, ((f->getHit() * 9) / maxh)));
 
         memset(&StTemp, 0, sizeof(StTemp));
-        sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio]);
+        sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio].c_str());
 
         if (strlen(StTemp) > 22) {
           StTemp[19] = StTemp[20] = StTemp[21] = '.';
@@ -1080,7 +1080,7 @@ void Descriptor::updateScreenVt100(unsigned int update)
 	  int ratio = min(10, max(0, ((f->getHit() * 9) / f->hitLimit())));
 
           memset(&StTemp, 0, sizeof(StTemp));
-          sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio]);
+          sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio].c_str());
 
           if (strlen(StTemp) > 22) {
             StTemp[19] = StTemp[20] = StTemp[21] = '.';
@@ -1327,7 +1327,7 @@ void Descriptor::updateScreenAnsi(unsigned int update)
           prompt_mesg[ratio] % ch->norm();
         last.fighting = TRUE;
 
-        ratio = fname(f->name).length() + strlen(prompt_mesg[ratio]);
+        ratio = fname(f->name).length() + prompt_mesg[ratio].length();
 
         while (ratio < 25) {
           buf += " ";
@@ -1432,7 +1432,7 @@ void Descriptor::updateScreenAnsi(unsigned int update)
         int ratio = min(10, max(0, ((f->getHit() * 9) / f->hitLimit())));
 
         memset(&StTemp, 0, sizeof(StTemp));
-        sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio]);
+        sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio].c_str());
 
         if (strlen(StTemp) > 22) {
 	  StTemp[19] = StTemp[20] = StTemp[21] = '.';
@@ -1483,7 +1483,7 @@ void Descriptor::updateScreenAnsi(unsigned int update)
 	  int ratio = min(10, max(0, ((f->getHit() * 9) / f->hitLimit())));
 
           memset(&StTemp, 0, sizeof(StTemp));
-	  sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio]);
+	  sprintf(StTemp, "<%s=%s>", fname(f->name).c_str(), prompt_mesg[ratio].c_str());
 
           if (strlen(StTemp) > 22) {
             StTemp[19] = StTemp[20] = StTemp[21] = '.';

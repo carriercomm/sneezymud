@@ -4441,39 +4441,37 @@ void TBeing::describeArmor(const TBaseClothing *obj, int learn)
 
 sstring TBeing::describeImmunities(const TBeing *vict, int learn) const
 {
-  char buf[80];
-  char buf2[256];
-  sstring str;
+  sstring str = "";
 
   int x;
   for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {
+    sstring buf;
     x = GetApprox(vict->getImmunity(i), learn);
 
     if (x == 0 || immunity_names[i].empty())
       continue;
     if (x > 90 || x < -90)
-      strcpy(buf, "extremely");
+      buf = "extremely";
     else if (x > 70 || x < -70)
-      strcpy(buf, "heavily");
+      buf = "heavily";
     else if (x > 50 || x < -50)
-      strcpy(buf, "majorly");
+      buf = "majorly";
     else if (x > 30 || x < -30)
-      strcpy(buf, "greatly");
+      buf = "greatly";
     else if (x > 10 || x < -10)
-      strcpy(buf, "somewhat");
+      buf = "somewhat";
     else
-      strcpy(buf, "lightly");
+      buf = "lightly";
 
     if (vict == this) 
-      sprintf(buf2, "You are %s %s to %s.\n\r",
-         buf, (x > 0 ? "resistant" : "susceptible"),
-         immunity_names[i]);
+      str += fmt("You are %s %s to %s.\n\r") %
+        buf % (x > 0 ? "resistant" : "susceptible") %
+        immunity_names[i];
     else
-      sprintf(buf2, "%s is %s %s to %s.\n\r",
-         sstring(pers(vict)).cap().c_str(),
-         buf, (x > 0 ? "resistant" : "susceptible"),
-         immunity_names[i]);
-    str += buf2;
+      str += fmt("%s is %s %s to %s.\n\r") %
+        sstring(pers(vict)).cap() %
+        buf % (x > 0 ? "resistant" : "susceptible") %
+        immunity_names[i];
   }
   return str;
 }

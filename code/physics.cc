@@ -626,7 +626,7 @@ int TBeing::checkFalling()
     }
     doLook("", CMD_LOOK);
 
-    rc = genericMovedIntoRoom(rp, -1, CHECK_FALLING_NO);
+    rc = genericMovedIntoRoom(rp, -1, CHECK_FALL_NO);
     if (IS_SET_DELETE(rc, DELETE_THIS))
       return DELETE_THIS;
 

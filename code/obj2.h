@@ -10,7 +10,8 @@
 
 #include "drug.h"
 
-class TContainer : public TObj {
+// Things can be in a base container (but people can't put things into it)
+class TBaseContainer : public TObj {
   private:
   public:
     virtual void assignFourValues(int, int, int, int) = 0;
@@ -24,9 +25,9 @@ class TContainer : public TObj {
     virtual int getAllFrom(TBeing *, const char *);
     virtual int getObjFrom(TBeing *, const char *, const char *);
     virtual int putSomethingInto(TBeing *, TThing *) = 0;
-    virtual int putSomethingIntoContainer(TBeing *, TRealContainer *);
-    virtual void findSomeDrink(TDrinkCon **, TContainer **, TContainer *);
-    virtual void findSomeFood(TFood **, TContainer **, TContainer *);
+    virtual int putSomethingIntoContainer(TBeing *, TOpenContainer *);
+    virtual void findSomeDrink(TDrinkCon **, TBaseContainer **, TBaseContainer *);
+    virtual void findSomeFood(TFood **, TBaseContainer **, TBaseContainer *);
     virtual bool engraveMe(TBeing *, TMonster *, bool);
     virtual int getReducedVolume(const TThing *) const;
     virtual void powerstoneCheck(TOpal **);
@@ -37,14 +38,17 @@ class TContainer : public TObj {
     virtual void purchaseMe(TBeing *, TMonster *, int, int);
 
   protected:
-    TContainer();
+    TBaseContainer();
   public:
-    TContainer(const TContainer &a);
-    TContainer & operator=(const TContainer &a);
-    virtual ~TContainer();
+    TBaseContainer(const TBaseContainer &a);
+    TBaseContainer & operator=(const TBaseContainer &a);
+    virtual ~TBaseContainer();
 };
 
-class TRealContainer : public TContainer {
+// a base-container that can be opened and closed
+// permits things to be put into it by players
+// volume remains constant as contents are added
+class TOpenContainer : public TBaseContainer {
   private:
     float max_weight;
     unsigned char container_flags;
@@ -97,14 +101,15 @@ class TRealContainer : public TContainer {
     void setCarryVolumeLimit(int);
 
   protected:
-    TRealContainer();
+    TOpenContainer();
   public:
-    TRealContainer(const TRealContainer &a);
-    TRealContainer & operator=(const TRealContainer &a);
-    virtual ~TRealContainer();
+    TOpenContainer(const TOpenContainer &a);
+    TOpenContainer & operator=(const TOpenContainer &a);
+    virtual ~TOpenContainer();
 };
 
-class TExpandableContainer : public TRealContainer {
+// an openable container that changes in volume based on contents
+class TExpandableContainer : public TOpenContainer {
   private:
   public:
     virtual void assignFourValues(int, int, int, int);
@@ -122,6 +127,7 @@ class TExpandableContainer : public TRealContainer {
     virtual ~TExpandableContainer();
 };
 
+// The actual item
 class TBag : public TExpandableContainer {
   private:
   public:
@@ -139,6 +145,7 @@ class TBag : public TExpandableContainer {
     virtual ~TBag();
 };
 
+// The actual item
 class TSpellBag : public TExpandableContainer {
   private:
   public:
@@ -163,7 +170,8 @@ class TSpellBag : public TExpandableContainer {
     virtual TThing & operator+= (TThing & t);
 };
 
-class TChest : public TRealContainer {
+// The actual item
+class TChest : public TOpenContainer {
   private:
   public:
     virtual void assignFourValues(int, int, int, int);
@@ -180,6 +188,7 @@ class TChest : public TRealContainer {
     virtual ~TChest();
 };
 
+// The actual item
 class TKeyring : public TExpandableContainer {
   private:
   public:
@@ -196,7 +205,8 @@ class TKeyring : public TExpandableContainer {
     virtual ~TKeyring();
 };
 
-class TBaseCorpse : public TContainer {
+// an abstract corpse
+class TBaseCorpse : public TBaseContainer {
   private:
     unsigned int corpse_flags;
     race_t corpse_race;
@@ -242,6 +252,7 @@ class TBaseCorpse : public TContainer {
     virtual ~TBaseCorpse();
 };
 
+// corpses for non-PCs
 class TCorpse : public TBaseCorpse {
   private:
   public:
@@ -253,6 +264,56 @@ class TCorpse : public TBaseCorpse {
     TCorpse(const TCorpse &a);
     TCorpse & operator=(const TCorpse &a);
     virtual ~TCorpse();
+};
+
+// corpses for PCs
+class TPCorpse : public TBaseCorpse {
+  private:
+    int on_lists;
+    int corpse_in_room;
+    int num_corpses_in_room;
+    string fileName;
+    TPCorpse *nextGlobalCorpse;
+    TPCorpse *nextCorpse;
+    TPCorpse *previousCorpse;
+  public:
+    virtual void assignFourValues(int, int, int, int);
+    virtual void getFourValues(int *, int *, int *, int *) const;
+    virtual string statObjInfo() const;
+    virtual void decayMe();
+    virtual int getMe(TBeing *, TThing *);
+    virtual void getMeFrom(TBeing *, TThing *);
+    virtual void dropMe(TBeing *, showMeT, showRoomT);
+    virtual itemTypeT itemType() const { return ITEM_PCORPSE; }
+    void removeCorpseFromList(bool updateFile = TRUE);
+    void addCorpseToLists();
+    void saveCorpseToFile();
+//    void assignCorpsesToRooms();
+    int checkOnLists();
+    void togOnCorpseListsOn();
+    void togOnCorpseListsOff();
+    void setRoomNum(int n);
+    int getRoomNum() const;
+    void setNumInRoom(int n);
+    int getNumInRoom() const;
+    void addToNumInRoom(int n);
+    void setOwner(const string Name);
+    const string & getOwner() const;
+    void clearOwner();
+    void setNext(TPCorpse *n);
+    void removeNext();
+    TPCorpse *getNext() const;
+    void setPrevious(TPCorpse *n);
+    void removePrevious();
+    TPCorpse *getPrevious() const;
+    void setNextGlobal(TPCorpse *n);
+    void removeGlobalNext();
+    virtual void describeObjectSpecifics(const TBeing *) const {};
+    TPCorpse *getGlobalNext() const;
+    TPCorpse();
+    TPCorpse(const TPCorpse &a);
+    TPCorpse & operator=(const TPCorpse &a);
+    virtual ~TPCorpse();
 };
 
 class TTable : public TObj {
@@ -626,7 +687,7 @@ class TArrow : public TBaseWeapon {
     virtual bool engraveMe(TBeing *, TMonster *, bool);
     virtual void bloadBowArrow(TBeing *, TThing *);
     virtual int throwMe(TBeing *, dirTypeT, const char *);
-    virtual int putMeInto(TBeing *, TRealContainer *);
+    virtual int putMeInto(TBeing *, TOpenContainer *);
     virtual string compareMeAgainst(TBeing *, TObj *);
     virtual void changeObjValue4(TBeing *);
     virtual string displayFourValues();
@@ -700,55 +761,6 @@ class TMagicItem : public virtual TObj
     TMagicItem(const TMagicItem &a);
     TMagicItem & operator=(const TMagicItem &a);
     virtual ~TMagicItem();
-};
-
-class TPCorpse : public TBaseCorpse {
-  private:
-    int on_lists;
-    int corpse_in_room;
-    int num_corpses_in_room;
-    string fileName;
-    TPCorpse *nextGlobalCorpse;
-    TPCorpse *nextCorpse;
-    TPCorpse *previousCorpse;
-  public:
-    virtual void assignFourValues(int, int, int, int);
-    virtual void getFourValues(int *, int *, int *, int *) const;
-    virtual string statObjInfo() const;
-    virtual void decayMe();
-    virtual int getMe(TBeing *, TThing *);
-    virtual void getMeFrom(TBeing *, TThing *);
-    virtual void dropMe(TBeing *, showMeT, showRoomT);
-    virtual itemTypeT itemType() const { return ITEM_PCORPSE; }
-    void removeCorpseFromList(bool updateFile = TRUE);
-    void addCorpseToLists();
-    void saveCorpseToFile();
-//    void assignCorpsesToRooms();
-    int checkOnLists();
-    void togOnCorpseListsOn();
-    void togOnCorpseListsOff();
-    void setRoomNum(int n);
-    int getRoomNum() const;
-    void setNumInRoom(int n);
-    int getNumInRoom() const;
-    void addToNumInRoom(int n);
-    void setOwner(const string Name);
-    const string & getOwner() const;
-    void clearOwner();
-    void setNext(TPCorpse *n);
-    void removeNext();
-    TPCorpse *getNext() const;
-    void setPrevious(TPCorpse *n);
-    void removePrevious();
-    TPCorpse *getPrevious() const;
-    void setNextGlobal(TPCorpse *n);
-    void removeGlobalNext();
-    virtual void describeObjectSpecifics(const TBeing *) const {};
-    TPCorpse *getGlobalNext() const;
-    TPCorpse();
-    TPCorpse(const TPCorpse &a);
-    TPCorpse & operator=(const TPCorpse &a);
-    virtual ~TPCorpse();
 };
 
 class TWand : public virtual TMagicItem {
@@ -1172,7 +1184,7 @@ class TComponent : public TObj {
     virtual bool allowsCast() { return true; }
     virtual void update(int);
     virtual void describeObjectSpecifics(const TBeing *) const;
-    virtual int putMeInto(TBeing *, TRealContainer *);
+    virtual int putMeInto(TBeing *, TOpenContainer *);
     virtual void findComp(TComponent **, spellNumT);
     virtual void decayMe();
     virtual int objectSell(TBeing *, TMonster *);
@@ -1183,7 +1195,7 @@ class TComponent : public TObj {
     virtual void recalcShopData(int, int);
     virtual int rentCost() const;
     virtual bool splitMe(TBeing *, const char *);
-    virtual int putSomethingIntoContainer(TBeing *, TRealContainer *);
+    virtual int putSomethingIntoContainer(TBeing *, TOpenContainer *);
     virtual int suggestedPrice() const;
     virtual void objMenu(const TBeing *) const;
     double priceMultiplier() const;
@@ -1240,7 +1252,7 @@ class TKey : public TObj {
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual string statObjInfo() const;
     virtual itemTypeT itemType() const { return ITEM_KEY; }
-    virtual int putMeInto(TBeing *, TRealContainer *);
+    virtual int putMeInto(TBeing *, TOpenContainer *);
 
     virtual void lowCheck();
     virtual bool objectRepair(TBeing *, TMonster *, silentTypeT);
@@ -1855,7 +1867,7 @@ class TFood : public TObj {
 
     virtual bool poisonObject();
     virtual void nukeFood();
-    virtual void findSomeFood(TFood **, TContainer **, TContainer *);
+    virtual void findSomeFood(TFood **, TBaseContainer **, TBaseContainer *);
     virtual void eatMe(TBeing *);
     virtual void tasteMe(TBeing *);
     virtual void purchaseMe(TBeing *, TMonster *, int, int);
@@ -1941,7 +1953,7 @@ class TBaseCup : public TObj {
 class TDrinkCon : public TBaseCup {
   public:
     virtual itemTypeT itemType() const { return ITEM_DRINKCON; }
-    virtual void findSomeDrink(TDrinkCon **, TContainer **, TContainer *);
+    virtual void findSomeDrink(TDrinkCon **, TBaseContainer **, TBaseContainer *);
     virtual void waterCreate(const TBeing *, int);
     virtual int divineMe(TBeing *, int, byte);
 

@@ -1263,8 +1263,8 @@ int TBeing::triggerTrap(TTrap *o)
 
       return TRUE;
     default:
-      vlogf(LOG_BUG, "Unknown trap type %d in triggerTrap (%s)", 
-         o->getTrapDamType(), o->getName());
+      vlogf(LOG_BUG, "Unknown trap type %d in triggerTrap (%s:%d)", 
+         o->getTrapDamType(), o->getName(), o->objVnum());
       return TRUE;
   }
 

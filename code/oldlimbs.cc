@@ -494,9 +494,14 @@ bool TBeing::hasHands() const
       isLimbFlags(WEAR_HAND_L, PART_TRANSFORMED))
     return false;
 
-  return (isHumanoid() || isUndead() || isLycanthrope() || isDiabolic() ||
-          getRace() == RACE_CENTAUR ||
-          getRace() == RACE_SIMAL) ;
+  body_t bod = getMyRace()->getBodyType();
+  return (isHumanoid() ||
+          isUndead() ||
+          isLycanthrope() ||
+          isDiabolic() ||
+          bod == BODY_FROGMAN ||
+          bod == BODY_CENTAUR ||
+          bod == BODY_SIMAL) ;
 }
 
 const string TBeing::describeTransBodySlot(wearSlotT i) const

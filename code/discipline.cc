@@ -1400,6 +1400,16 @@ spellNumT TBeing::getSkillNum(spellNumT spell_num) const
           has_class = TRUE;
         }
       }
+      if (hasClass(CLASS_WARRIOR)) {
+        if (!has_class) {
+          spell_num = SKILL_DUAL_WIELD_WARRIOR;
+        }
+        if ((num2 = getSkillValue(SKILL_DUAL_WIELD_WARRIOR)) > num) {
+          spell_num = SKILL_DUAL_WIELD_WARRIOR;
+          num = num2;
+          has_class = TRUE;
+        }
+      }
       if (hasClass(CLASS_THIEF)) {
         if (!has_class) {
           spell_num = SKILL_DUAL_WIELD_THIEF;

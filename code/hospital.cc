@@ -526,11 +526,6 @@ int healing_room(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
       num = 25 + number(1, healed->GetMaxLevel() / 2);
       num = min(num, (healed->hitLimit() - healed->getHit()));
 
-#if 0
-       // This is abnormally high, Im changing it Brutius 10/20/98
-      cost = num * healed->GetMaxLevel() * healed->GetMaxLevel() * 8 / 100;
-      cost += 1;
-#endif
       cost = num * healed->GetMaxLevel() * healed->GetMaxLevel() / 100;
       if (cost > healed->getMoney()) {
         healed->sendTo("The hospital doesn't accept any medicare or insurance plans.\n\r");
@@ -548,6 +543,8 @@ int healing_room(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
             --(*healed);
             thing_to_room(healed, 3710);
             break;
+          default:
+            vlogf(LOG_PROC, "Undefined room %d in healing_room", healed->in_room);
         }
       } else {
         healed->sendTo("The hospital works wonders on your body.\n\r");
@@ -571,8 +568,8 @@ int emergency_room(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *)
 
   cost = 150 * ch->GetMaxLevel();
   if (cmd == CMD_LIST) {
-    ch->sendTo("1 - Healing of the Physical Self\n\r");
-    ch->sendTo("2 - Healing of the Mind\n\r");
+    ch->sendTo("1 - Healing of the Physical Self (HP Restore)\n\r");
+    ch->sendTo("2 - Healing of the Mind (Mana Restore)\n\r");
     ch->sendTo("Any of these for %d talens.\n\r", cost);
     return TRUE;
   } else if (cmd == CMD_BUY) {        /* Buy */

@@ -486,7 +486,8 @@ void blindness(TBeing * caster, TBeing * victim, TMagicItem * obj)
   int duration, level = obj->getMagicLevel();
 
   ret=blindness(caster,victim,level,obj->getMagicLearnedness());
-  duration = obj->getMagicLevel() * UPDATES_PER_MUDHOUR;
+
+  duration = (obj->getMagicLevel()/10 + 1) * UPDATES_PER_MUDHOUR;
   saveTypeT save = SAVE_NO;
   if (IS_SET(ret, SPELL_SAVE)) 
     save = SAVE_YES;
@@ -570,7 +571,7 @@ void blindness(TBeing * caster, TBeing * victim)
 
   int ret=blindness(caster,victim,level,caster->getSkillValue(SPELL_BLINDNESS));
 
-  int duration = level * UPDATES_PER_MUDHOUR;
+  int duration = (level/10 + 1) * UPDATES_PER_MUDHOUR;
   duration = (int) (caster->percModifier() * duration);
 
   saveTypeT save = SAVE_NO;

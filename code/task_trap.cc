@@ -287,8 +287,13 @@ void TTrap::makeTrapLand(TBeing *ch, doorTrapT status, const char *args)
   setTrapEffectType(stdflags);
 
   ch->sendTo("You have successfully constructed a land mine!\n\r");
-  ch->hasTrapComps(args, TRAP_TARG_MINE, -1);
+
+  int price;
+  ch->hasTrapComps(args, TRAP_TARG_MINE, -1, &price);
   ch->stopTask();
+
+  // set price on the mine to that of the components
+  obj_flags.cost = price;
 
   *ch += *this;
 }
@@ -407,7 +412,12 @@ void TTrap::makeTrapGrenade(TBeing *ch, doorTrapT status, const char *args)
   setTrapEffectType(TRAP_EFF_THROW);
 
   ch->sendTo("You have successfully constructed a grenade!\n\r");
-  ch->hasTrapComps(args, TRAP_TARG_GRENADE, -1);
+  int price;
+  ch->hasTrapComps(args, TRAP_TARG_GRENADE, -1, &price);
+
+  // set price on the trap to that of the components
+  obj_flags.cost = price;
+
   ch->stopTask();
 
   *ch += *this;

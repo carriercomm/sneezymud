@@ -16,6 +16,23 @@ static const int NORMAL_SLOT   = -1;
 static const int CONTENTS_END  = -2;
 static const int CORPSE_END  = -3;
 
+struct SInnkeeperHate {
+  int    tVNum; // Mobile VNum of the innkeeper in question.
+  race_t tRace;  // Race in question
+  bool   isHate; // Do I hate this race?  Or like them...
+  string tStMessage; // Message to display for 'hated' races.
+} SIKHates[] = {
+  // An innkeeper can be specified more than once if they have multiple
+  // Hates/Likes.  Rules:
+  //   If a shopkeeper has a 'like' them they auto-hate every other race.
+  //   If a shopkeeper has a 'hate' then they auto-like every other race.
+
+  // This one is a marker one, add below it but before '_NORACE'
+  {0, RACE_HUMAN, true, "Get out, we don't serve your kind here scum!"},
+
+  {0, RACE_NORACE, false, "Leave!"} // Add all new entries BEFORE this line.
+};
+
 // this returns a number indicating how long we "think" it should
 // take to get to level "lev"
 // it is somewhat arbitrary
@@ -2636,6 +2653,68 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
   }
 
 #endif
+
+  bool   autoHates  = false,
+         autoLikes  = false,
+         hatesMe[2] = {false, false};
+  string tStString("");
+
+  for (int tCounter = 0; SIKHates[tCounter].tRace != RACE_NORACE; tCounter++) {
+    if (SIKHates[tCounter].tVNum != recep->mobVnum())
+      continue;
+
+    if (SIKHates[tCounter].isHate) {
+      tStString = SIKHates[tCounter].tStMessage;
+      autoLikes = true;
+
+      if (!hatesMe[0]) {
+        hatesMe[0] = true;
+        hatesMe[1] = false;
+      }
+
+      if (SIKHates[tCounter].tRace == ch->getRace()) {
+        tStString = SIKHates[tCounter].tStMessage;
+        hatesMe[0] = true;
+        hatesMe[1] = true;
+      }
+    } else {
+      autoHates = true;
+
+      if (!hatesMe[0]) {
+        hatesMe[0] = true;
+        hatesMe[1] = true;
+      }
+
+      if (SIKHates[tCounter].tRace == ch->getRace())
+        hatesMe[0] = true;
+        hatesMe[1] = false;
+    }
+  }
+
+  if ((hatesMe[0] ? hatesMe[1] : autoHates)) {
+    char tString[256];
+
+    recep->doAction(fname(ch->name), CMD_GROWL);
+
+    if (!tStString.empty())
+      sprintf(tString, "%s %s", ch->getNameNOC(ch).c_str(), tStString.c_str());
+
+    recep->doTell(tString);
+
+    for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
+      if (exit_ok(exitp = recep->exitDir(dir), NULL)) {
+        act("$n throws you from the inn.",
+            FALSE, recep, 0, ch, TO_VICT);
+        act("$n throws $N from the inn.",
+            FALSE, recep, 0, ch, TO_NOTVICT);
+        recep->throwChar(ch, dir, FALSE, SILENT_NO, true);
+
+        return TRUE;
+      }
+    }
+
+    return TRUE;
+  }
 
   if (cmd == CMD_RENT) {
     if (ch->isImmortal()) {

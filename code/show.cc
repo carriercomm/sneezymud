@@ -2200,7 +2200,7 @@ void TPerson::doShow(const char *argument)
     if(*buf2){  
       // one material
       matnum=atoi(buf2);
-      describeMaterial(matnum);
+      sb += describeMaterial(matnum);
     } else {
       // list materials
       sb += "Material Material\n\r";

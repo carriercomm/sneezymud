@@ -229,7 +229,7 @@ extern bool GuildProcs(int);
 extern void deityCheck(int);
 extern void apocCheck();
 
-extern void list_char_in_room(TBeing *list, TBeing *ch);
+extern void list_char_in_room(TThing *list, TBeing *ch);
 
 // ch can not be const due to listMe()
 extern void list_thing_in_room(const TThing *list, TBeing *ch);

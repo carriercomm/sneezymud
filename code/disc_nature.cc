@@ -459,7 +459,7 @@ int TBeing::doBarkskin(const char *argument)
       return FALSE;
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

@@ -242,6 +242,9 @@ static void TBeingLoad(TBeing *ch, int vnum)
   fclose(mob_f);
 
   mob->checkMobStats(TINYFILE_NO);
+
+  // Prevent super med mobs.
+  mob->setExp(0.0);
 }
 
 static void TBeingSave(TBeing *ch, TMonster *mob, int vnum)

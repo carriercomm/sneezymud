@@ -1051,16 +1051,21 @@ void TPerson::doLow(const char *arg)
 
   arg = one_argument(arg, buf);
   if (!*buf) {
-    sendTo("Syntax: low <mob | obj | weapon | race> ...\n\r");
+    sendTo("Syntax: low <mob | race> ...\n\r");
     return;
-  } else if (is_abbrev(buf, "objs")) {
+  } else if (is_abbrev(buf, "objs") ||
+	     is_abbrev(buf, "weapons")) {
+    sendTo("The low command does not currently work for objects or weapons.\n\r");
+    
+#if 0
     lowObjs(arg);
-    return;
-  } else if (is_abbrev(buf, "mobs")) {
-    lowMobs(arg);
     return;
   } else if (is_abbrev(buf, "weapons")) {
     lowWeaps(arg);
+#endif
+    return;
+  } else if (is_abbrev(buf, "mobs")) {
+    lowMobs(arg);
     return;
   } else if (is_abbrev(buf, "race")) {
     lowRace(arg);

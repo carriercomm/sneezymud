@@ -304,7 +304,33 @@ void TBeing::doShout(const char *arg)
   descriptor_list->sendShout(this, garbed);
 }
 
-
+// many of the talk features colorize the says/tells/etc for easier viewing
+// If I do "say this <r>color<z> is cool", I would expect to see color in
+// red, and "this ", " is cool" be the 'normal' say color.
+// unfortunately, turning off red (<z>) makes everything go back to
+// normal, and we lose the 'normal' color.
+// To get around this, we parse the say statement, and convert any <z>, <Z>,
+// or <1> to a 'replacement' color string and then send it out.
+static void convertStringColor(const char replacement, char * str)
+{
+  unsigned int iter;
+  for (iter = 0; iter < strlen(str) - 2; iter++) {
+    // look for the start of a colorized string
+    if (str[iter] == '<' and str[iter+2] == '>') {
+      switch (str[++iter]) {
+        case 'z':
+        case 'Z':
+        case '1':
+          str[iter] = replacement;
+          break;
+        default:
+          break;
+      }
+      iter++;
+      continue;
+    }
+  }
+}
 
 void TBeing::doGrouptell(const char *arg)
 {
@@ -343,6 +369,8 @@ void TBeing::doGrouptell(const char *arg)
     return;
   } else {
     strcpy(garbed, garble(arg, getCond(DRUNK)).c_str());
+
+    convertStringColor('r', garbed);
 
     sendTo("You tell your group: %s%s%s\n\r", red(), colorString(this, desc, garbed, NULL, COLOR_BASIC, FALSE).c_str(), norm());
   }

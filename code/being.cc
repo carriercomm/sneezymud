@@ -1295,7 +1295,7 @@ int TBeing::chiMe(TBeing *tLunatic)
 
       aff.type      = SKILL_CHI;
       aff.level     = bKnown;
-      aff.duration  = (3 + (bKnown / 2)) * UPDATES_PER_TICK;
+      aff.duration  = (3 + (bKnown / 2)) * UPDATES_PER_MUDHOUR;
       aff.location  = APPLY_IMMUNITY;
       aff.modifier  = IMMUNE_COLD;
       aff.modifier2 = ((bKnown * 2) / 3);

@@ -567,10 +567,29 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
                  v->getName(), getName(), v->roomp->name, v->in_room, buf2);
           
         } else {
+#if 1
+          if (v == this && isPc())
+            vlogf(LOG_COMBAT, "%s killed %sself at %2 (%d) Method: %s -- <%sSuicide>",
+                  getName(), hshr(), roomp->name, in_room, buf2,
+                  ((GetMaxLevel() <= 5) ? "NEWBIE " : ""));
+          else if (GetMaxLevel() > MAX_MORT && isPc() && v->isPc()) {
+            if (v->GetMaxLevel() > MAX_MORT)
+              vlogf(LOG_COMBAT, "%s killed by %s at %s (%d) Method: %s -- <God VS God>",
+                    v->getName(), getName(), v->roomp->name, v->in_room, buf2);
+            else
+              vlogf(LOG_COMBAT, "%s killed by %s at %s (%d) Method: %s -- <Immortal Kill>",
+                    v->getName(), getName(), v->roomp->name, v->in_room, buf2);
+          } else
+            vlogf(LOG_COMBAT, "%s killed by %s at %s (%d) Method: %s -- <%sPlayer kill>",
+                  v->getName(), getName(), v->roomp->name, v->in_room, buf2,
+                  ((v->GetMaxLevel() <= 5) ? "NEWBIE " : ""));
+
+#else
           vlogf(LOG_MISC, "%s killed by %s at %s (%d) Method: %s -- <%sPlayer kill>",
                 v->getName(), getName(), v->roomp->name, v->in_room,
                 buf2,
                 ((v->GetMaxLevel() <= 5 && v != this) ? "NEWBIE " : ""));
+#endif
           total_player_kills++;
 
 	  if(this!=v && this->roomp && !this->roomp->isRoomFlag(ROOM_ARENA)){

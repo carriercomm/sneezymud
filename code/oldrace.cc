@@ -5,6 +5,7 @@
 // oldrace.cc - old functions related to mobile race
 //
 //////////////////////////////////////////////////////////////////////////
+
 #include "stdsneezy.h"
 
 #include <iostream.h>
@@ -129,7 +130,6 @@ void TBeing::setRacialStuff()
       setMaxMove(getMaxMove() + 150);
       setMove(moveLimit());
       break;
-    case RACE_VEGMAN:
     case RACE_MYTHIC:
     case RACE_MAMMAL:
     case RACE_UNIDENT:
@@ -3803,7 +3803,7 @@ spellNumT TBeing::getFormType() const
     case RACE_ORC:
     case RACE_FROGMAN:
     case RACE_GOBLIN:
-    case RACE_VEGMAN:
+    case RACE_ANGEL:
     case RACE_DROW:
     case RACE_MERMAID:
     case RACE_FISHMAN:

@@ -103,6 +103,20 @@ int TBeing::doHit(const char *argument, TBeing *vict)
     return FALSE;
 
   if ((getPosition() >= POSITION_CRAWLING) && !fight()) {
+    TThing      * tThing;
+    TBaseWeapon * tWeapon;
+
+    if ((tThing   = equipment[getPrimaryHold()]) &&
+        !(tWeapon = dynamic_cast<TBaseWeapon *>(tThing)) &&
+        (tThing   = equipment[getSecondaryHold()]) &&
+        !(tWeapon = dynamic_cast<TBaseWeapon *>(tThing)) &&
+        !IS_SET(desc->autobits, AUTO_ENGAGE) &&
+        !IS_SET(desc->autobits, AUTO_ENGAGE_ALWAYS)) {
+      sendTo("You are wielding no weapons and intend to attack?\n\r");
+      sendTo("I'm afraid that's rather hard, use engage instead.\n\r");
+      return FALSE;
+    }
+
 
 //    if (!victim->fight()) 
 // put if statement back in if doesnt work right
@@ -681,6 +695,9 @@ static bool canFleeThisWay(TBeing *ch, dirTypeT dir)
   if (rp2->getMoblim() && MobCountInRoom(rp2->stuff) >= rp2->getMoblim())
     return false;
 
+  if (rp2->isVertSector())
+    return false;
+
 #if 0
   // out of the frying pan, into the fire...
   // this should be allowed, that's the way it worked in original DIKU
@@ -722,6 +739,21 @@ int TBeing::doFlee(const char *arg)
     sendTo("You can't flee while orienting yourself.\n\r");
     return TRUE;
   }
+  // This is used to prevent 'insta-fleeing' on mobiles
+  if (isAffected(AFF_SHOCKED) && !isPc()) {
+    sendTo("You are still recovering from something!\n\r");
+    return FALSE;
+  } if (!isPc()) {
+    affectedData tAff;
+
+    tAff.type     = AFFECT_COMBAT;
+    tAff.duration = 1; // Short and sweet
+    tAff.modifier = AFF_SHOCKED;
+    tAff.location = APPLY_NONE;
+
+    affectTo(&tAff, -1);
+  }
+
   if (isAffected(AFF_PARALYSIS)) {
     sendTo("You can't flee while paralyzed.\n\r");
     return FALSE;

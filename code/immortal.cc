@@ -5718,11 +5718,11 @@ void TBeing::doAccount(const char *arg)
   
       if (IS_SET(afp.flags, ACCOUNT_IMMORTAL)) {
         REMOVE_BIT(afp.flags, ACCOUNT_IMMORTAL);
-        sendTo("You flag the %s account immortal.\n\r", afp.name);
+        sendTo("You un-flag the %s account immortal.\n\r", afp.name);
         vlogf(LOG_MISC, "%s making account='%s' non-immortal", getName(), afp.name);
       } else {
         SET_BIT(afp.flags, ACCOUNT_IMMORTAL);
-        sendTo("You unflag the %s account as immortal.\n\r", afp.name);
+        sendTo("You flag the %s account as immortal.\n\r", afp.name);
         vlogf(LOG_MISC, "%s making account='%s' immortal", getName(), afp.name);
       }
       

@@ -211,8 +211,8 @@ class TThing {
     virtual bool hasHands() const { return FALSE; }
 
     virtual bool poisonObject() { return FALSE; }
-    virtual void findSomeFood(TFood **, TContainer **, TContainer *) {}
-    virtual void findSomeDrink(TDrinkCon **, TContainer **, TContainer *) {}
+    virtual void findSomeFood(TFood **, TBaseContainer **, TBaseContainer *) {}
+    virtual void findSomeDrink(TDrinkCon **, TBaseContainer **, TBaseContainer *) {}
     virtual void describeContains(const TBeing *) const;
     virtual void describeObjectSpecifics(const TBeing *) const {}
     virtual void nukeFood();
@@ -270,7 +270,7 @@ class TThing {
     virtual void evaluateMe(TBeing *) const;
     virtual void findSomeComponent(TComponent **, TComponent **, TComponent **, spellNumT, int) {}
     virtual bool allowsCast() { return false; }
-    virtual int putMeInto(TBeing *, TRealContainer *);
+    virtual int putMeInto(TBeing *, TOpenContainer *);
     virtual void findComp(TComponent **, spellNumT);
     virtual int componentSell(TBeing *, TMonster *, int, TThing *);
     virtual int componentValue(TBeing *, TMonster *, int, TThing *);
@@ -339,7 +339,7 @@ class TThing {
     virtual int openMe(TBeing *);
     virtual int putSomethingInto(TBeing *, TThing *);
     virtual int putSomethingIntoTable(TBeing *, TTable *);
-    virtual int putSomethingIntoContainer(TBeing *, TRealContainer *);
+    virtual int putSomethingIntoContainer(TBeing *, TOpenContainer *);
     virtual void peeOnMe(const TBeing *);
     virtual bool listThingRoomMe(const TBeing *) const;
     virtual bool canSeeMe(const TBeing *, infraTypeT) const;

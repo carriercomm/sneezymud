@@ -492,7 +492,7 @@ class TMonster : public TBeing {
     void clericSymbolLoader();
     void clericHolyWaterLoader();
     void buffMobLoader();
-    void genericMobLoader(TRealContainer **);
+    void genericMobLoader(TOpenContainer **);
     virtual int hitGain();
     virtual int manaGain();
     virtual int rawKill(spellNumT);

@@ -46,8 +46,8 @@ class TArrow;
 class TBow;
 class TBaseCorpse;
 class TTable;
-class TContainer;
-class TRealContainer;
+class TBaseContainer;
+class TOpenContainer;
 class boardStruct;
 
 const int MAX_BUF_LENGTH              = 240;

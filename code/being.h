@@ -1111,7 +1111,7 @@ class TBeing : public TThing {
     int triggerTrap(TTrap *);
     int triggerDoorTrap(dirTypeT);
     int triggerPortalTrap(TPortal *);
-    int triggerContTrap(TRealContainer *);
+    int triggerContTrap(TOpenContainer *);
     int checkForMoveTrap(dirTypeT);
     int checkForInsideTrap(TThing *);
     int checkForGetTrap(TThing *);

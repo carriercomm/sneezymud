@@ -2469,8 +2469,8 @@ static void ChangeExitNumber(TRoom *rp, TBeing *ch, const char *arg, editorEnter
 
   update = atoi(arg);
 
-  if (update < 0 || update > 29000) {
-    ch->sendTo("\n\rRoom number must be between 0 and 29000.\n\r");
+  if (update < 0 || update > 39000) {
+    ch->sendTo("\n\rRoom number must be between 0 and 39000.\n\r");
     ch->sendTo("\n\rExit to Room: ");
     return;
   }

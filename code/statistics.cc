@@ -311,6 +311,24 @@ void TBeing::doGamestats(const char *arg)
   if (!buf || !*buf) {
     sendTo("Syntax: gamestats <combat | equipment | level | trivia | statistics>\n\r");
     return;
+  } else if (is_abbrev(buf, "attributes")) {
+    int temp_stat = getStat(STAT_CURRENT, STAT_STR);
+    double plot1 = 0;
+    double plot2 = 0;
+    double curve;
+    if (!buf2 || !*buf2)
+      curve = 1.4;
+    else
+      curve = atof(buf2);
+    for(int tmpint = 5; tmpint <= 205; tmpint += 5) {
+      setStat(STAT_CURRENT, STAT_STR, tmpint);
+      plot1 = plotStat(STAT_CURRENT, STAT_STR, .80, 1.25, 1.00, curve);
+      plot2 = plotStat(STAT_CURRENT, STAT_STR, 0.0, 100.0, 50.0, curve);
+      sprintf(buf, "Stat Value: %5.2f     Plot1: %5.2f    Plot2: %5.2f%%\n\r", (double)tmpint, plot1, plot2);
+      sendTo(buf);
+    }
+    setStat(STAT_CURRENT, STAT_STR, temp_stat);
+    return;
   } else if (is_abbrev(buf, "combat")) {
     int tot_dam = stats.damage[PC_STAT] + stats.damage[MOB_STAT];
     sprintf(buf, "Total damage taken  : %d\n\r", tot_dam);

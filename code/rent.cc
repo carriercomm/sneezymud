@@ -2766,8 +2766,7 @@ float old_ac_lev = mob->getACLevel();
       deleteDuringRead(mob);
       break;
     }
-    // use to be expBonus, now ignored
-    mob->setExp(0);         // force it to 0
+    setExp(tmp);
 
     if (fscanf(fp, " %d ", &tmp) != 1) {
       vlogf(LOG_BUG, "Error reading follower data (%s mobs %d) (15)", arg, num);
@@ -3023,8 +3022,9 @@ float old_ac_lev = mob->getACLevel();
 
       // if they rented while mounted, bring horse back in, but don't force
       // the follow (since they aren't mounted anymore)
-      if (mob->isAffected(AFF_CHARM))
+      if (mob->isAffected(AFF_CHARM)) {
         ch->addFollower(mob);
+      }
 
       // fixup any AFFECT_PET affects to have the proper memory
       // this affect modifies "TThing * be" to be a char * storing the name
@@ -3415,7 +3415,7 @@ bool TBeing::saveFollowers(bool rent_time)
             mob->getDamLevel(),
             mob->getDamPrecision());
     fprintf(fp, "%d %d %d %d %d\n",
-            mob->getMoney(), 0, mob->getRace(), (int) mob->getWeight(), mob->getHeight());
+            mob->getMoney(), (int) mob->getExp(), mob->getRace(), (int) mob->getWeight(), mob->getHeight());
 
     for(statTypeT iStat=STAT_STR;iStat<MAX_STATS_USED;iStat++)
       fprintf(fp, "%d ", mob->chosenStats.get(iStat));

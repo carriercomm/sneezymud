@@ -402,6 +402,7 @@ enum spellNumT {
   
      // end of thief
      // start of shaman
+     SKILL_SACRIFICE,
      SPELL_AQUALUNG,
      SPELL_AQUATIC_BLAST,
      SPELL_THORNFLESH,

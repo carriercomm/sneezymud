@@ -1089,6 +1089,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_REPAIR:
           doRepair(newarg);
           break;
+        case CMD_SACRIFICE:
+          doSacrifice(newarg);
+          break;
         case CMD_BANDAGE:
           doBandage(newarg);
           break;
@@ -2425,6 +2428,7 @@ void buildCommandArray(void)
   commandArray[CMD_RECEIVE] = new commandInfo("receive", POSITION_CRAWLING, 0);
   commandArray[CMD_CLS] = new commandInfo("cls", POSITION_DEAD, 0);
   commandArray[CMD_REPAIR] = new commandInfo("repair", POSITION_CRAWLING, 0);
+  commandArray[CMD_SACRIFICE] = new commandInfo("sacrifice", POSITION_CRAWLING, 0);
   commandArray[CMD_TERMINAL] = new commandInfo("terminal", POSITION_DEAD, 0);
   commandArray[CMD_PROMPT] = new commandInfo("prompt", POSITION_DEAD, 0);
   commandArray[CMD_GLANCE] = new commandInfo("glance", POSITION_RESTING, 0);

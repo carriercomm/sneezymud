@@ -7,6 +7,7 @@
 class CDShaman : public CDiscipline
 {
 public:
+    CSkill skSacrifice;
     CSkill skShieldOfMists;
     CSkill skEnthrallSpectre;
     CSkill skEnthrallGhast;
@@ -17,6 +18,7 @@ public:
     CSkill skDancingBones;
     CDShaman()
       : CDiscipline(),
+      skSacrifice(),
       skShieldOfMists(),
       skEnthrallSpectre(),
       skEnthrallGhast(),
@@ -28,6 +30,7 @@ public:
     }
     CDShaman(const CDShaman &a)
       : CDiscipline(a),
+      skSacrifice(a.skSacrifice),
       skShieldOfMists(a.skShieldOfMists),
       skEnthrallSpectre(a.skEnthrallSpectre),
       skEnthrallGhast(a.skEnthrallGhast),
@@ -40,6 +43,7 @@ public:
     CDShaman & operator=(const CDShaman &a) {
       if (this == &a) return *this;
       CDiscipline::operator=(a);
+      skSacrifice = a.skSacrifice;
       skShieldOfMists = a.skShieldOfMists;
       skEnthrallSpectre = a.skEnthrallSpectre;
       skEnthrallGhast = a.skEnthrallGhast;
@@ -80,5 +84,6 @@ private:
     void shieldOfMists(TBeing *, TBeing *, TMagicItem *);
     int shieldOfMists(TBeing *, TBeing *, int, byte);
 
+    void sacrifice(TBeing *, TBaseCorpse *);
 #endif
 

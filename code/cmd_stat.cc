@@ -1325,6 +1325,7 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_DULL:
       case SKILL_ATTUNE:
       case SKILL_STAVECHARGE:
+      case SKILL_SACRIFICE:
       case SPELL_SHIELD_OF_MISTS:
         if (!discArray[aff->type]) {
           vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", aff->type, k->getName());

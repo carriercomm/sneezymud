@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: task.h,v $
+// Revision 5.1.1.3  2001/04/14 07:15:24  jesus
+// *** empty log message ***
+//
 // Revision 5.1.1.2  2000/12/27 08:27:35  dash
 // added code for 'defensive trance' warrior skill
 //
@@ -66,6 +69,7 @@ extern int task_charge        (TBeing *, cmdTypeT, const char *, int, TRoom *, T
 extern int task_whittle       (TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
 extern int task_stavecharging (TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
 extern int task_trance_of_blades(TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
+extern int task_sacrifice      (TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
 
 typedef struct _tasks_entry {
   const char * const name;
@@ -104,6 +108,7 @@ enum taskTypeT {
      TASK_WHITTLE,
      TASK_STAVECHARGE,
      TASK_TRANCE_OF_BLADES,
+     TASK_SACRIFICE,
      NUM_TASKS  // keep this as max
 };
 

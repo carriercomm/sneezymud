@@ -1064,6 +1064,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SPELL_SHIELD_OF_MISTS:
       case SKILL_RESCUE:
       case SKILL_SMYTHE:
+      case SKILL_SACRIFICE:
       case SKILL_DISARM:
       case SKILL_PARRY_WARRIOR:
       case SKILL_DUAL_WIELD_WARRIOR:
@@ -3683,6 +3684,9 @@ void TCorpse::describeObjectSpecifics(const TBeing *ch) const
   if (isCorpseFlag(CORPSE_NO_DISSECT))
     act("$p appears to have been dissected already.",
         FALSE, ch, this, 0, TO_CHAR);
+  if (isCorpseFlag(CORPSE_NO_SACRIFICE))
+    act("$p appears to have been sacrificed already.",
+        FALSE, ch, this, 0, TO_CHAR);
 }
 
 void TSymbol::describeObjectSpecifics(const TBeing *ch) const
@@ -3772,7 +3776,9 @@ void TObj::describeMe(const TBeing *ch) const
       else
         ch->sendTo("It is not limited for immortals.\n\r");
     }
-
+    if (11 >= obj_index[getItemIndex()].max_exist) {
+      ch->sendTo("This item is considered limited and will cost a rental fee.\n\r");
+    }
 #ifndef SNEEZY2000
     if (isRentable()) {
       int temp = max(0, rentCost());

@@ -295,6 +295,7 @@ class TThing {
     virtual void stringMeBow(TBeing *, TThing *);
     virtual void stringMeString(TBeing *, TBow *);
     virtual void skinMe(TBeing *, const char *);
+    virtual void sacrificeMe(TBeing *, const char *);
     virtual int pickWithMe(TBeing *, const char *, const char *, const char *);
     virtual void repairMeHammer(TBeing *, TObj *);
     virtual int garottePulse(TBeing *, affectedData *);
@@ -302,6 +303,7 @@ class TThing {
     virtual void unequipMe(TBeing *) {}
     virtual void findSmytheTools(TTool **, TTool **) {}
     virtual void smythePulse(TBeing *, TObj *);
+    virtual void sacrificePulse(TBeing *, TBaseCorpse *);
     virtual void attunePulse(TBeing *);
     virtual void pickPulse(TBeing *);
     virtual int  skinPulse(TBeing *, TBaseCorpse *);

@@ -1005,6 +1005,7 @@ class TTool : public TObj {
     virtual int garotteMe(TBeing *, TBeing *);
     virtual void stringMeString(TBeing *, TBow *);
     virtual void skinMe(TBeing *, const char *);
+    virtual void sacrificeMe(TBeing *, const char *);
     virtual int pickWithMe(TBeing *, const char *, const char *, const char *);
     virtual void repairMeHammer(TBeing *, TObj *);
     virtual int garottePulse(TBeing *, affectedData *);
@@ -1013,6 +1014,7 @@ class TTool : public TObj {
     virtual void describeObjectSpecifics(const TBeing *) const;
     virtual void findSmytheTools(TTool **, TTool**);
     virtual void smythePulse(TBeing *, TObj *);
+    virtual void sacrificePulse(TBeing *, TBaseCorpse *);
     virtual void pickPulse(TBeing *);
     virtual int  skinPulse(TBeing *, TBaseCorpse *);
     virtual void sharpenPulse(TBeing *, TThing *);

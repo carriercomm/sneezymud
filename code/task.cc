@@ -206,6 +206,7 @@ TaskEntry tasks[NUM_TASKS] =
   {"whittling", "You are too busy using your whittle skills.\n\r", task_whittle},
   {"stave charging", "You are too busy charging a stave.\n\r", task_stavecharging},
   {"in a defensive trance", "Not while you're in a defensive trance!\n\r", task_trance_of_blades},
+  {"sacrificing", "Not while you are performing the sacrificial ritual of life!\n\r", task_sacrifice},
 };
 
 bool TBeing::nobrainerTaskCommand(cmdTypeT cmd)

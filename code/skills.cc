@@ -876,6 +876,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
       return &((CDShamanArmadillo *) cd)->skAqualung;
     case SPELL_SHIELD_OF_MISTS: 
       return &((CDShaman *) cd)->skShieldOfMists;
+    case SKILL_SACRIFICE: 
+      return &((CDShaman *) cd)->skSacrifice;
     case SPELL_ROOT_CONTROL:  //               340
       return &((CDNature *) cd)->skRootControl;
     case SPELL_LIVING_VINES:  //               348

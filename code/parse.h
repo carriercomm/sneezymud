@@ -346,6 +346,7 @@ enum cmdTypeT {
      CMD_RECEIVE,
      CMD_CLS,
      CMD_REPAIR,
+     CMD_SACRIFICE,
      CMD_TERMINAL,
      CMD_PROMPT,
      CMD_GLANCE,

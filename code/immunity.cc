@@ -530,6 +530,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SKILL_SCRIBE:
     case SKILL_RESCUE:
     case SKILL_SMYTHE:
+    case SKILL_SACRIFICE:
     case SKILL_SWITCH_OPP:
     case SKILL_RETREAT:
     case SKILL_GRAPPLE:

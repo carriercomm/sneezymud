@@ -104,7 +104,6 @@ int TBeing::dentItem(TBeing *victim, TObj *item, int amt, int slot)
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }
     }
-
     item->addToStructPoints(-amt);
     if (item->getStructPoints() <= 0) {
       item->makeScraps();
@@ -221,7 +220,6 @@ int TBeing::pierceItem(TBeing *victim, TObj *item, int amt, int slot)
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }
     }
-
     item->addToStructPoints(-amt);
     if (item->getStructPoints() <= 0) {
       item->makeScraps();

@@ -4495,6 +4495,7 @@ int flu_giver(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
 
   act("$n pukes in multiple colors.", FALSE, me, NULL, NULL, TO_ROOM);
   me->sendTo("You puke.\n\r");
+  me->dropPool(10, LIQ_VOMIT);
   af.type = AFFECT_DISEASE;
   af.level = 0;
   af.duration = 200;

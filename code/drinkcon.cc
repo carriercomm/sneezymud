@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: drinkcon.cc,v $
+// Revision 5.1.1.3  2000/09/04 04:38:08  jesus
+// *** empty log message ***
+//
 // Revision 5.1.1.2  2000/01/27 17:49:53  batopr
 // renamed classes project
 //
@@ -160,4 +163,5 @@ void assign_drink_types()
   DrinkInfo[LIQ_HOLYWATER] = new drinkInfo(0,  1, -5, "clear", "holy water");
   DrinkInfo[LIQ_PORT] = new drinkInfo(8, -1,  5, "<R>red<1>", "<R>port<1>");
   DrinkInfo[LIQ_MUSHROOM_ALE] = new drinkInfo(7, -1,  5, "<g>green<1>", "<g>mushroom<1><o> ale<1>");
+  DrinkInfo[LIQ_VOMIT] = new drinkInfo(8, -1,  5, "<G>light green<1>", "<G>v<o>o<G>m<o>i<G>t<1>");
 }

@@ -1765,7 +1765,6 @@ string one_argument(string argument, string & first_arg)
   size_t bgin, look_at;
 
   bgin = 0;
-  vlogf(LOG_FILE, "string one_argument");
 
   do {
     string whitespace = " \n\r";

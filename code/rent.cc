@@ -1314,6 +1314,7 @@ void TRoom::loadItems()
     vlogf(LOG_LOW, "Storage: Booting Storage Room");
 
     TThing * tThing,
+           * tCont,
            * tThingNext;
     TObj   * tBag = read_object(GENERIC_L_BAG, VIRTUAL);
     TBag   * tContainer;
@@ -1367,8 +1368,8 @@ void TRoom::loadItems()
       vlogf(LOG_LOW, "Storage: Processing Linkbag: %s", tString);
 
       // If we got here, the bag is a linkbag and the player is around.
-      for (TThing *tCont = tThing->stuff; tCont; tCont = tCont->nextThing) {
-        TNote * tNote = dynamic_cast<TNote *>(tThing);
+      for (tCont = tThing->stuff; tCont; tCont = tCont->nextThing) {
+        TNote * tNote = dynamic_cast<TNote *>(tCont);
 
         if (!tNote)
           continue;
@@ -1384,8 +1385,10 @@ void TRoom::loadItems()
 	//Current time is: Mon Mar 20 00:40:14 2000 (PST)
         if (sscanf(tNote->action_description,
                    "Current time is: %s %s %d %d:%d:%d %d (%*s)",
-                   tWek, tMon, &tDay, &tHour, &tMin, &tSec, &tYear) != 7)
+                   tWek, tMon, &tDay, &tHour, &tMin, &tSec, &tYear) != 7) {
+          vlogf(LOG_LAPSOS, "Storage: Note:\n\r%s", tNote->action_description);
           continue;
+        }
 
         struct tm tTime;
 
@@ -1468,11 +1471,14 @@ void TRoom::loadItems()
           case 1:
             tDay += 31;
           case 0:
-            tDay += (!((tTime.tm_year - 1996) % 4) ? 29 : 28);
+            tDay += (!(((1900 + tTime.tm_year) - 1996) % 4) ? 29 : 28);
         }
 
         tDay += (tTime.tm_mday - 1);
         tTime.tm_yday = tDay;
+
+        time_t tTempReal = mktime(&tTime);
+        vlogf(LOG_LAPSOS, "Storage: %s", ctime(&tTempReal));
 
         double tTimeDiff = difftime(tCurrentTime, mktime(&tTime)),
                tCheck    = 60.0 * 60.0 * 24.0 * 30.0;
@@ -1493,7 +1499,12 @@ void TRoom::loadItems()
           --(*tThing);
           delete tThing;
 	}
+
+        break;
       }
+
+      if (!tCont)
+        vlogf(LOG_LOW, "Storage: Unable to find rent note for: %s", tString);
     }
 
     if (!tBag->stuff)

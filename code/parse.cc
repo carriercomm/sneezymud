@@ -1333,6 +1333,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_ZONEFILE:
           doZonefile(tmpstring);
           break;
+        case CMD_LOOT:
+          doLoot(tmpstring);
+          break;
         case MAX_CMD_LIST:
         case CMD_RESP_TOGGLE:
         case CMD_RESP_UNTOGGLE:
@@ -2459,6 +2462,7 @@ void buildCommandArray(void)
   commandArray[CMD_TRIGGER] = new commandInfo("trigger", POSITION_STANDING, GOD_LEVEL1);
   commandArray[CMD_STORE] = new commandInfo("store", POSITION_STANDING, GOD_LEVEL1);
   commandArray[CMD_ZONEFILE] = new commandInfo("zonefile", POSITION_DEAD, GOD_LEVEL1);
+  commandArray[CMD_LOOT] = new commandInfo("loot", POSITION_DEAD, GOD_LEVEL1);
 }
 
 bool _parse_name(const char *arg, char *name)

@@ -93,16 +93,13 @@ void TLight::extinguishWater()
 void TLight::lampLightStuff(TMonster *ch)
 {
   // if lamp is on during day, turn off
-  if (time_info.hours >= (sunRise() + 3) &&
-      time_info.hours < (sunSet() - 3) &&
-      isLit()) {
+  if (is_daytime() && isLit()) {
     ch->doExtinguish(fname(name));
   }
   // if off at night, turn on
-  // note, this starts turning on 2 hours before sun sets
-  if ((time_info.hours < (sunRise() + 3) ||
-       time_info.hours >= sunSet() - 3) &&
-       !isLit())  {
+  // we use !isday rather than isnight so that dawn/twilight will cause
+  // lights to be turned on
+  if (!is_daytime() && !isLit())  {
     ch->doLight(fname(name));
   }
   // refill if < 90% full.  val1 = max, val2 = current

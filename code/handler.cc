@@ -424,8 +424,25 @@ void TBeing::affectModify(applyTypeT loc, long mod, long mod2, unsigned long bit
       addToStat(STAT_CURRENT, STAT_CHA, mod);
       return;
     case APPLY_AGE:
-      age_mod += mod;
-      return;
+      {
+        // changing the age will affect stats
+        // natural stats are recalculated on the fly, so no probs
+        // current stats, however, must be updated to reflect.
+        // figure out how much natural changes by, and change current to match
+        statTypeT whichStat;
+        for (whichStat = MIN_STAT; whichStat < MAX_STAT; whichStat++) {
+          int oldVal = getStat(STAT_NATURAL, whichStat);
+          age_mod += mod;
+          int newVal = getStat(STAT_NATURAL, whichStat);
+
+          setStat(STAT_CURRENT, whichStat, getStat(STAT_CURRENT, whichStat) + newVal - oldVal);
+          age_mod -= mod;
+        }
+
+        // change the age for real
+        age_mod += mod;
+        return;
+      }
     case APPLY_CHAR_WEIGHT:
       setWeight(getWeight() + mod);
       return;

@@ -108,8 +108,8 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
       }
 
       // test for failure
-      if (!ch->doesKnowSkill(SKILL_SET_TRAP) ||
-          !bSuccess(ch, learning, SKILL_SET_TRAP)) {
+      if (!ch->doesKnowSkill(SKILL_SET_TRAP_DOOR) ||
+          !bSuccess(ch, learning, SKILL_SET_TRAP_DOOR)) {
         // trigger trap
 
         rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_DOOR);
@@ -226,8 +226,8 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
       }
 
       // test for failure
-      if (!ch->doesKnowSkill(SKILL_SET_TRAP) ||
-          !bSuccess(ch, learning, SKILL_SET_TRAP)) {
+      if (!ch->doesKnowSkill(SKILL_SET_TRAP_CONT) ||
+          !bSuccess(ch, learning, SKILL_SET_TRAP_CONT)) {
         // trigger trap
         rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_CONT);
         if (IS_SET_DELETE(rc, DELETE_ITEM)) {
@@ -369,8 +369,8 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
       }
 
       // test for failure
-      if (!ch->doesKnowSkill(SKILL_SET_TRAP) ||
-          !bSuccess(ch, learning, SKILL_SET_TRAP)) {
+      if (!ch->doesKnowSkill(SKILL_SET_TRAP_MINE) ||
+          !bSuccess(ch, learning, SKILL_SET_TRAP_MINE)) {
         // trigger trap
         rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_MINE);
         if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -502,8 +502,8 @@ int task_trap_grenade(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
       }
 
       // test for failure
-      if (!ch->doesKnowSkill(SKILL_SET_TRAP) ||
-          !bSuccess(ch, learning, SKILL_SET_TRAP)) {
+      if (!ch->doesKnowSkill(SKILL_SET_TRAP_GREN) ||
+          !bSuccess(ch, learning, SKILL_SET_TRAP_GREN)) {
         // trigger trap
         rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_GRENADE);
         if (IS_SET_DELETE(rc, DELETE_THIS))

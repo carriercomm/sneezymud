@@ -28,7 +28,7 @@ class TSocket {
   int newDescriptor();
   void nonBlock();
   void initSocket();
-  void addNewDescriptorsDuringBoot();
+  void addNewDescriptorsDuringBoot(string);
 
   TSocket(int p);
   ~TSocket();

@@ -1399,6 +1399,17 @@ void TBeing::statBeing(TBeing *k)
         strcat(buf, buf2);
         break;
 
+      case AFFECT_GROWTH_POTION:
+        sprintf(buf + strlen(buf), "Spell : 'Growth'\n\r");
+        sprintf(buf + strlen(buf), "     Modifies %s by %ld points\n\r",
+                apply_types[aff->location].name, aff->modifier);
+        sprintf(buf + strlen(buf), "     Expires in %6d updates, Bits set ",
+                aff->duration);
+        sprintbit(aff->bitvector, affected_bits, buf2);
+        strcat(buf2, "\n\r");
+        strcat(buf, buf2);
+        break;
+
       case LAST_ODDBALL_AFFECT:
       case LAST_TRANSFORMED_LIMB:
       case LAST_BREATH_WEAPON:

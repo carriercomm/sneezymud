@@ -1354,6 +1354,16 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
           sprintf(buf, "Affected: Transformed Limb: fish gills: \n\r");
         str += buf;
         break;
+      case AFFECT_GROWTH_POTION:
+        if (ch == this)
+          sprintf(buf, "Affected: Abnormal Growth: approx duration : %s\n\r",
+                  describeDuration(this, aff->duration).c_str());
+        else
+          sprintf(buf, "Affected: Abnormal Growth\n\r");
+
+        str += buf;
+        break;
+
       case AFFECT_COMBAT:
         // no display
         break;

@@ -641,7 +641,7 @@ void TBeing::doSign(const char *arg)
     sendTo("You can't sign while fighting.\n\r");
     return;
   }
-  mud_str_copy(buf, arg + i, 256);
+  mud_str_copy(buf, arg + i, MAX_INPUT_LENGTH + 40);
   buf2[0] = '\0';
   // work through the arg, word by word.  if you fail your
   //  skill roll, the word comes out garbled. */

@@ -133,20 +133,28 @@ int castIdentify(TBeing *caster, TObj *obj)
     return TRUE;
 }
 
-static void identifyBeingStuff(const TBeing *caster, const TBeing *victim)
+static string identifyBeingStuff(const TBeing *caster, const TBeing *victim)
 {
-  caster->sendTo("You sense that %s is a %s %s.\n\r", victim->hssh(), 
+  string str;
+  char buf[256];
+
+  sprintf(buf, "You sense that %s is a %s %s.\n\r", victim->hssh(), 
               describe_level(victim->GetMaxLevel()), 
               victim->getMyRace()->getPluralName().c_str());
+  str += buf;
 
-  if (dynamic_cast<const TPerson *>(victim))
-    caster->sendTo("%d years, %d months, %d days, %d hours old.\n\r",
+  if (dynamic_cast<const TPerson *>(victim)) {
+    sprintf(buf, "%d years, %d months, %d days, %d hours old.\n\r",
              victim->age()->year, victim->age()->month, 
              victim->age()->day, victim->age()->hours / 2);
+    str += buf;
+  }
 
-  caster->sendTo("Height %d inches, weight %d pounds.\n\r", victim->getHeight(), (int) victim->getWeight());
+  sprintf(buf, "Height %d inches, weight %d pounds.\n\r", victim->getHeight(), (int) victim->getWeight());
+  str += buf;
 
-  caster->sendTo(COLOR_MOBS, "%s is %s.\n\r", good_cap(victim->getName()).c_str(), ac_for_score(victim->getArmor()));
+  sprintf(buf, "%s is %s.\n\r", good_cap(victim->getName()).c_str(), ac_for_score(victim->getArmor()));
+  str += buf;
 
   Stats tempStat;
   tempStat = victim->getCurStats();
@@ -160,24 +168,41 @@ static void identifyBeingStuff(const TBeing *caster, const TBeing *victim)
       tempStat.add(the_stat, temp);
     }
   }
-  caster->sendTo(COLOR_MOBS,"<c>Current:<z>");
-  caster->sendTo(COLOR_MOBS, tempStat.printStatHeader().c_str());
-  caster->sendTo("        ");
-  caster->sendTo(COLOR_MOBS, tempStat.printRawStats(caster).c_str());
+  str += "<c>Current:<z>");
+  str += tempStat.printStatHeader();
+  str += "        ";
 
-  char buf[256];
+  str += tempStat.printRawStats(caster);
+
+  str += "Affected by: ";
+
   sprintbit(victim->specials.affectedBy, affected_bits, buf);
-  caster->sendTo("Affected by: ");
-  caster->sendTo(buf);
-  caster->sendTo("\n\r");
+  str += buf;
+  str += "\n\r";
+
+  affectedData *aff;
+  for (aff = victim->affected; aff; aff = aff->next) {
+    if (aff->type == AFFECT_PET) {
+      sprintf(buf, "pet of: '%s'\n\r", ((char *) aff->be));
+      str += buf;
+    } else if (aff->type == AFFECT_ORPHAN_PET) {
+      sprintf(buf, "orphan pet of: '%s'\n\r", ((char *) aff->be));
+      str += buf;
+    }
+  }
+
+  return str;
 }
 
 int identify(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
   if (bSuccess(caster, bKnown, SPELL_IDENTIFY)) {
+    if (caster->desc) {
+      string str = identifyBeingStuff(caster, victim);
+      str += caster->describeImmunities(victim, bKnown);
 
-    identifyBeingStuff(caster, victim);
-    caster->describeImmunities(victim, bKnown);
+      caster->desc->page_string(str.c_str(), 0);
+    }
 
     return SPELL_SUCCESS;
   } else {
@@ -320,20 +345,29 @@ int castDivinationObj(TBeing *caster, const TObj *obj)
 int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
   if (bSuccess(caster, bKnown, SPELL_DIVINATION)) {
-    identifyBeingStuff(caster, victim);
+    if (caster->desc) {
+      string str = identifyBeingStuff(caster, victim);
 
-    for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {
-      if (victim->getImmunity(i) == 0 || !*immunity_names[i])
-        continue;
-      if (victim->getImmunity(i) > 0)
-        caster->sendTo("%d%% resistant to %s.\n\r", victim->getImmunity(i),
-           immunity_names[i]);
-      if (victim->getImmunity(i) < 0)
-        caster->sendTo("%d%% susceptible to %s.\n\r", victim->getImmunity(i),
-           immunity_names[i]);
+      char buf[256];
+      for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {
+        if (victim->getImmunity(i) == 0 || !*immunity_names[i])
+          continue;
+        if (victim->getImmunity(i) > 0) {
+          sprintf(buf, "%d%% resistant to %s.\n\r", victim->getImmunity(i),
+             immunity_names[i]);
+          str += buf;
+        }
+        if (victim->getImmunity(i) < 0) {
+          sprintf(buf, "%d%% susceptible to %s.\n\r", victim->getImmunity(i),
+             immunity_names[i]);
+          str += buf;
+        }
+      }
+      str += caster->describeMaterial(victim);
+
+      caster->desc->page_string(str.c_str(), 0);
     }
-    caster->describeMaterial(victim);
-
+  
     return SPELL_SUCCESS;
   } else {
     caster->nothingHappens();

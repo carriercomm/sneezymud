@@ -53,7 +53,11 @@ const int PULSE_COMBAT      =ONE_SECOND * 3;
 const int PULSE_DROWNING    =ONE_SECOND * 9;
 const int PULSE_SPEC_PROCS  =ONE_SECOND * 9;
 const int PULSE_NOISES      =ONE_SECOND * 12;
-const int PULSE_UPDATES     =ONE_SECOND * 36;
+
+// Altering PULSE_UPDATES will speed up ticks, but also causes "mud time"
+// to totally recalculate (making it shorter will age people).
+// use caution!
+const int PULSE_UPDATES     =ONE_SECOND * 72;
 const int PULSE_TICKS       =PULSE_UPDATES * 2;
 
 // there are 2 ticks per "hour"

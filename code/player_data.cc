@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: player_data.cc,v $
+// Revision 5.1.1.2  1999/11/03 06:39:00  lapsos
+// Maded 'reset zone' default to current zone.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1443,8 +1446,11 @@ void TBeing::doReset(const char *arg)
     }
     one_argument(arg, buf);
     if (!buf || !*buf) {
+      zone = (roomp ? roomp->getZone() : 0);
+      /*
       sendTo("Syntax: reset zone <zone#>\n\r");
       return;
+      */
     }
     unsigned int i;
     if (is_abbrev(buf, "all")) {

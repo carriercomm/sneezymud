@@ -9,6 +9,7 @@
 
 #include "stdsneezy.h"
 
+#include "disc_armadillo.h"
 #include "disc_air.h"
 #include "disc_alchemy.h"
 #include "disc_earth.h"

@@ -37,6 +37,7 @@ extern "C" {
 #include "disc_hand_of_god.h"
 #include "disc_cures.h"
 #include "disc_nature.h"
+#include "disc_armadillo.h"
 
 #include "spelltask.h"
 

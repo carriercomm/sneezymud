@@ -29,6 +29,7 @@ extern "C" {
 #include "games.h"
 
 #include "disc_nature.h"
+#include "disc_armadillo.h"
 #include "account.h"
 #include "systemtask.h"
 #include "socket.h"

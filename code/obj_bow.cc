@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: obj_bow.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/27 10:27:34  lapsos
-// message change in fast load.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "range.h"
 #include "create.h"
@@ -151,6 +130,7 @@ void TBow::setMaxRange(unsigned int r)
 void TBow::evaluateMe(TBeing *ch) const
 {
   int learn = ch->getSkillValue(SKILL_EVALUATE);
+
   if (learn <= 0) {
     ch->sendTo("You are not sufficiently knowledgeable about evaluation.\n\r");
     return;
@@ -162,6 +142,37 @@ void TBow::evaluateMe(TBeing *ch) const
              getName());
   ch->describeObject(this);
   ch->describeNoise(this, learn);
+
+  if (learn > 10)
+    switch (arrowType) {
+      case 0:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold hunting type arrows.\n\r", getName());
+        break;
+      case 1:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold fighting type arrows.\n\r", getName());
+        break;
+      case 2:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold squabble type quarrels.\n\r", getName());
+        break;
+      case 3:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold common type quarrels.\n\r", getName());
+        break;
+      case 4:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold sniper type blowdarts.\n\r", getName());
+        break;
+      case 5:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold common type blowdarts.\n\r", getName());
+        break;
+      case 6:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold heavy type sling ammo.\n\r", getName());
+        break;
+      case 7:
+        ch->sendTo(COLOR_OBJECTS, "%s can hold common type sling ammo.\n\r", getName());
+        break;
+      default:
+        ch->sendTo(COLOR_OBJECTS, "%s seems to have a messy arrow size.\r", getName());
+        break;
+    }
 
   if (learn > 20)
     ch->describeMaxStructure(this, learn);

@@ -234,18 +234,45 @@ static bool legalMobMovement(TMonster * mob, dirTypeT door)
   return true;
 }
 
+// this forces the mob to pick an exit and leave through it.  It uses a 
+// random starting point and cycles around until it finds an exit.
+int TMonster::wanderAround()
+{
+  dirTypeT i;
+  int rc;
+
+  // pick a random starting dir
+  dirTypeT tmp=dirTypeT(::number(MIN_DIR, MAX_DIR-1));
+  bool been_here = false;
+
+  // but cycle over all exist back to beginning
+  // we will use "tmp" as the random starting point
+  // we will use "i" as an iterator
+  // been_here is used to keep from infinitely looping
+
+  // note also that i is abusing the loop feature we set up in the
+  // enum ++ operator for it.
+  for(i=tmp; ; i++) {
+    if (i==MAX_DIR)
+      continue;
+    if (i == tmp) {
+      if (been_here)
+        return FALSE;
+      been_here = true;
+    }
+
+    if((rc = mobileWander(i)))
+      return rc;
+  }
+}
+
 // returns DELETE_THIS
-// door = DIR_NONE for random
+// attempt to wander in a given direction
 int TMonster::mobileWander(dirTypeT door)
 {
   roomDirData *exitp;
   TRoom *rp = NULL, *rp2 = NULL;
   int rc;
-
-  if(door == DIR_NONE) {
-    if((door = dirTypeT(::number(MIN_DIR, 3*MAX_DIR))) >= MAX_DIR)
-      return 0;
-  }
 
   if ((getPosition() < POSITION_STANDING) || 
       !exit_ok(exitp = exitDir(door), &rp) ||
@@ -2552,36 +2579,6 @@ int TMonster::scavenge()
   return FALSE;
 }
 
-int TMonster::wanderAround()
-{
-  dirTypeT i;
-  int rc;
-
-  // pick a random starting dir
-  dirTypeT tmp=dirTypeT(::number(MIN_DIR, MAX_DIR-1));
-  bool been_here = false;
-
-  // but cycle over all exist back to beginning
-  // we will use "tmp" as the random starting point
-  // we will use "i" as an iterator
-  // been_here is used to keep from infinitely looping
-
-  // note also that i is abusing the loop feature we set up in the
-  // enum ++ operator for it.
-  for(i=tmp; ; i++) {
-    if (i==MAX_DIR)
-      continue;
-    if (i == tmp) {
-      if (been_here)
-        return FALSE;
-      been_here = true;
-    }
-
-    if((rc = mobileWander(i)))
-      return rc;
-  }
-}
-
 // returns DELETE_THIS
 int TMonster::notFightingMove(int pulse)
 {
@@ -2683,8 +2680,8 @@ int TMonster::notFightingMove(int pulse)
   }
 
   if (!IS_SET(specials.act, ACT_SENTINEL)) {
-    if (!::number(0,19)) {
-      rc = mobileWander(DIR_NONE);
+    if (!::number(0,4)) {
+      rc = wanderAround();
       if (IS_SET_DELETE(rc, DELETE_THIS))
         return DELETE_THIS;
       else if (rc)

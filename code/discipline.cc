@@ -167,11 +167,11 @@ static bool enforceGestural(TBeing *ch, spellNumT spell)
     // PCs
 
     sec_obj = ch->heldInSecHand();
-    sec_usable = ch->canUseArm(FALSE);
+    sec_usable = ch->canUseArm(HAND_SECONDARY);
     sec_okay = ((!sec_obj || sec_obj->allowsCast()) && sec_usable);
 
     prim_obj = ch->heldInPrimHand();
-    prim_usable = ch->canUseArm(TRUE);
+    prim_usable = ch->canUseArm(HAND_PRIMARY);
     prim_okay = ((!prim_obj || prim_obj->allowsCast()) && prim_usable);
 
     if (ch->getWizardryLevel() >= WIZ_LEV_COMP_EITHER) {

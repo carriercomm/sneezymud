@@ -119,7 +119,7 @@ bool TBeing::eitherLegHurt() const
 
 bool TBeing::eitherArmHurt() const
 {
-  return (!canUseArm(TRUE) || !canUseArm(FALSE));
+  return (!canUseArm(HAND_PRIMARY) || !canUseArm(HAND_SECONDARY));
 }
 
 bool TBeing::eitherHandHurt() const
@@ -149,7 +149,7 @@ bool TBeing::canUseLeg(int primary) const
   return TRUE;
 }
 
-bool TBeing::canUseArm(bool primary) const
+bool TBeing::canUseArm(primaryTypeT primary) const
 {
   if (primary) 
     return (canUseLimb(getPrimaryArm()) &&
@@ -167,7 +167,7 @@ bool TBeing::canUseArm(bool primary) const
 
 bool TBeing::bothArmsHurt() const
 {
-  return (!canUseArm(TRUE) && !canUseArm(FALSE));
+  return (!canUseArm(HAND_PRIMARY) && !canUseArm(HAND_SECONDARY));
 }
 
 bool TBeing::canUseHand(bool primary) const

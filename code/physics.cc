@@ -73,8 +73,8 @@ bool TBeing::canClimb()
   skill -= (bothLegsHurt() ? 120 : 0);
   skill -= (canUseLeg(TRUE) ? 0 : 45);
   skill -= (canUseLeg(FALSE) ? 0 : 45);
-  skill -= (canUseArm(TRUE) ? 0 : 65);
-  skill -= (canUseArm(FALSE) ? 0 : 65);
+  skill -= (canUseArm(HAND_PRIMARY) ? 0 : 65);
+  skill -= (canUseArm(HAND_SECONDARY) ? 0 : 65);
   num = 100 - GetMaxLevel();
   skill += ::number(-(3*num),(2*num));
 

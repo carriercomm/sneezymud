@@ -2842,7 +2842,7 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
   }
   if(res){
     *res=mysql_store_result(db);
-    if(!mysql_num_rows(*res) && mysql_field_count(db)) 
+    if(*res && !mysql_num_rows(*res) && mysql_field_count(db)) 
       return 1;
   }  
 

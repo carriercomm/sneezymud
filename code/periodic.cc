@@ -359,7 +359,7 @@ void TMonster::makeNoise()
   if (inRoom() == ROOM_NOCTURNAL_STORAGE)
     return;
 
-  if (!isPc() && sounds) {
+  if (!isPc() && sounds && !rider) {
     if (default_pos > POSITION_SLEEPING) {
       if (getPosition() > POSITION_SLEEPING) 
         MakeRoomNoise(this, in_room, sounds, distantSnds);
@@ -740,13 +740,14 @@ int TBeing::updateHalfTickStuff()
   bool berserk_noheal=0;
   TBeing *trider=NULL;
   unsigned int i, hours_first, hours_last, severity;
-
+  
 
   if (isAffected(AFF_SLEEP) && (getPosition() > POSITION_SLEEPING)) {
     sendTo("You grow sleepy and can remain awake no longer.\n\r");
     act("$n collapses as $e falls asleep.", TRUE, this, 0, 0, TO_ROOM);
     setPosition(POSITION_SLEEPING);
   }
+    
 
   rc = updateBodyParts();
   if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -1423,7 +1424,7 @@ void do_check_mail()
       for (tmp = recipient; *tmp; tmp++)
         if (isupper(*tmp))
           *tmp = tolower(*tmp);
-      if (has_mail(recipient))
+      if (has_mail(recipient) && gamePort != BUILDER_GAMEPORT)
         ch->sendTo("You have %sMAIL!%s\n\r", ch->cyan(), ch->norm());
     }
     // d->checkForMultiplay();

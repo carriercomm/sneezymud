@@ -43,11 +43,12 @@ string describeDuration(const TBeing *ch, int dur)
     dur /= 1000;
     dur = max(1, dur);
   }
-  // aff->dur decrements once per PULSE_COMBAT
-  // 1 tick = 30 mud mins = 1 PULSE_TICKS
 
-  hours = dur * PULSE_COMBAT/ PULSE_TICKS / 2;
-  mins = dur * 30 * PULSE_COMBAT/ PULSE_TICKS % 60;
+  // aff->dur decrements once per PULSE_COMBAT
+  // total duration (in pulses) it lasts is dur*COMBAT
+
+  hours = dur * PULSE_COMBAT / PULSE_MUDHOUR;
+  mins = ((dur * PULSE_COMBAT) % PULSE_MUDHOUR) * 60 / PULSE_MUDHOUR;
 
   if (hours >= 24) {
     days = hours/24;

@@ -75,8 +75,7 @@ bool hasColorStrings(const TBeing *mob, const char *arg, int field)
         case 'z':
         case 'Z':
         case '1':
-          found = 1;
-          break;
+          return true;
         case 'h':
         case 'H':
         case 'n':
@@ -86,11 +85,7 @@ bool hasColorStrings(const TBeing *mob, const char *arg, int field)
       }
     }
   }
-  if (found)
-    return TRUE;
-  else
-    return FALSE;
-
+  return FALSE;
 }
 
 // takes the string given by arg, replaces any <m> or <M> in it with

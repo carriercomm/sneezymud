@@ -251,7 +251,7 @@ void generate_obj_index()
     exit(0);
   }
 
-  if(data.Exec("select o.vnum, o.name, o.short_desc, o.long_desc, e.name, e.description from object o, extra e") != PGRES_TUPLES_OK){
+  if(data.Exec("select o.vnum, o.name, o.short_desc, o.long_desc, e.name, e.description from object o, extra e where o.vnum=e.vnum") != PGRES_TUPLES_OK){
     vlogf(0, "Database query failed: %s\n", data.ErrorMessage());
     exit(0);
   }

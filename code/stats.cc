@@ -949,8 +949,8 @@ double TBeing::plotStat(statSetT whichSet, statTypeT whichStat, double min_value
     cleared = true;
   }
  
-  int MAXSTAT = 180;
-  int MINSTAT = 30;
+  int MAXSTAT = 200;
+  int MINSTAT = 010;
   if (whichSet == STAT_CHOSEN) {
     MAXSTAT = 25;
     MINSTAT = -25;

@@ -70,13 +70,24 @@ int room_length[] =
 
 static void update_room_menu(const TBeing *ch)
 {
-  const char *edit_menu =
-"    1) Name                       2) Description\n\r"
-"    3) Flags                      4) Sector Type\n\r"
-"    5) Exits                      6) Extra Description\n\r"
-"    7) Maximum Capacity           8) Room Height\n\r"
-"    9) Delete an exit            10) Delete all extra descs\n\r"
-"\n\r";
+  const char *edit_menu_basic =
+ "    1) Name                       2) Description\n\r"
+ "    3) Flags                      4) Sector Type\n\r"
+ "    5) Exits                      6) Extra Description\n\r"
+ "    7) Maximum Capacity           8) Room Height\n\r"
+ "    9) Delete an exit            10) Delete all extra descs\n\r"
+ "\n\r";
+  const char *edit_menu_advanced =
+ "%s 1)%s %s\n\r"
+ "%s 2)%s %sDescription%s\n\r"
+ "%s 3)%s %sFlags%s\n\r"
+ "%s 4)%s %s\n\r"
+ "%s 5)%s %sExits%s:%s\n\r"
+ "%s 6)%s %sExtra Description(s)%s\n\r"
+ "%s 7)%s %sMax Capacity%s: %d\n\r"
+ "%s 8)%s %sRoom Height%s: %d\n\r"
+ "%s 9)%s %sDelete an Exit%s\n\r"
+ "%s10)%s %sDelete All Extra Descriptions%s\n\r";
 
   ch->sendTo(VT_HOMECLR);
   ch->sendTo(VT_CURSPOS, 1, 1);
@@ -87,7 +98,43 @@ static void update_room_menu(const TBeing *ch)
   ch->sendTo("Sector Type: %s", TerrainInfo[ch->roomp->getSectorType()]->name);
   ch->sendTo(VT_CURSPOS, 5, 1);
   ch->sendTo("Menu:\n\r");
-  ch->sendTo(edit_menu);
+
+  if (IS_SET(ch->desc->autobits, AUTO_TIPS)) {
+    dirTypeT     tExit;
+    roomDirData *tData;
+    string       tStString("");
+
+    const char *exDirs[] =
+    {
+      "N", "E", "S", "W", "U",
+      "D", "NE", "NW", "SE", "SW"
+    };
+
+    for (tExit = MIN_DIR; tExit < MAX_DIR; tExit++)
+      if ((tData = ch->roomp->exitDir(tExit)) && tData->to_room != ROOM_NOWHERE) {
+        tStString += " ";
+        tStString += exDirs[tExit];
+      }
+
+    if (tStString.empty()) {
+      tStString += " ";
+      tStString += "NONE";
+    }
+
+    ch->sendTo(edit_menu_advanced,
+               ch->cyan(), ch->norm(), ch->roomp->name,
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), TerrainInfo[ch->roomp->getSectorType()]->name,
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(), tStString.c_str(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(), ch->roomp->getMoblim(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(), ch->roomp->getRoomHeight(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm());
+  } else
+    ch->sendTo(edit_menu_basic);
+
   ch->sendTo("--> ");
 }
 

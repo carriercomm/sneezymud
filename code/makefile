@@ -193,6 +193,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	obj_staff.o obj_statue.o obj_symbol.o \
 	obj_table.o obj_tool.o obj_trap.o \
 	obj_trash.o obj_treasure.o obj_tree.o \
+	obj_vial.o \
 	obj_wand.o obj_window.o obj_worn.o \
 	offense.o oldlimbs.o oldrace.o \
 	opal.o opinion.o organic.o other.o other_obj.o parse.o peelpk.o \
@@ -219,7 +220,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	task_smythe.o task_dull.o task_picklock.o task_sharpen.o \
 	task_spell_friends.o task_get.o task_rest.o task_sit.o task_track.o \
 	task_whittle.o task_stavecharge.o thing.o toggle.o trap.o \
-	utility.o vial.o weather.o \
+	utility.o weather.o \
 	wiz_data.o wiz_powers.o
 
 #	rewrite_obj_file.o \

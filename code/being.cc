@@ -471,7 +471,20 @@ charFile::charFile() :
   wimpy(0),
   autobits(0),
   best_rent_credit(0),
-  points(),
+//  point data members
+  hit(0),
+  maxHit(0),
+  move(0),
+  maxMove(0),
+  money(0),
+  bankmoney(0),
+  exp(0),
+  spellHitroll(0),
+   hitroll(0),
+   damroll(0),
+   armor(1000)
+// points(),
+// end pointData members
   fatigue(0),
   hero_num(0),
   f_percent(0),

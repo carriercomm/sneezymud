@@ -345,15 +345,16 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
                   v->cyan(),v->norm());
           act(buf, TRUE, this, weapon, v, TO_VICT);
           num2 = getWeaponDam(this,weapon,(weapon == heldInPrimHand() ? HAND_PRIMARY : HAND_SECONDARY));
-          num2 /= 2;
+          num2 /= 8;
+	  num2 += 1;
           rc = stickIn(unequip(weapon->eq_pos), WEAR_FOOT_R);
           if (desc)
             desc->career.stuck_in_foot++;
 
           if (IS_SET_DELETE(rc, DELETE_THIS))
             return DELETE_THIS;
-
-          rc = damageLimb(this,WEAR_FOOT_R,weapon,&num);
+	  num2 *= 4;
+          rc = damageLimb(this,WEAR_FOOT_R,weapon,&num2);
           if (IS_SET_DELETE(rc, DELETE_VICT))
             return DELETE_THIS;
 
@@ -414,15 +415,17 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
 
   if ((mod == -1) && v->isImmune(getTypeImmunity(wtype), 0))
     return FALSE;
-#ifdef DASHO
-  if (mod == -1 && v->isAffected(AFFECT_DUMMY)) {
-    affectedData aff;
-    for(aff = (*v->affected); aff.next != NULL; aff = (*aff.next)) {
-      if (aff.type == AFFECT_DUMMY && aff.modifier == SKILL_CRIT_HIT &&  aff.level == 60) {
-	mod = aff.modifier2;
-	v->affectFrom(AFFECT_DUMMY);
+#if 1
+  if (mod == -1 && v->affectedBySpell(AFFECT_DUMMY)) {
+    affectedData *an = NULL;
+
+
+    for (an = v->affected; an; an = an->next) {
+      if (an->type == AFFECT_DUMMY && an->level == 60) {
+	mod = an->modifier2;
       }
     }
+    v->affectFrom(AFFECT_DUMMY);
   }
 #endif
   // get wtype back so it fits in array  

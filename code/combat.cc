@@ -1769,6 +1769,9 @@ int TBeing::hit(TBeing *target, int pulse)
         addToHit(::number(1,3));
       }
     }
+
+    // we do this later now - dash (4/14/01)
+#if 0
     if (!isPc()) {
       TMonster *tmons = dynamic_cast<TMonster *>(this);
       if (!tmons->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
@@ -1789,7 +1792,9 @@ int TBeing::hit(TBeing *target, int pulse)
         }
       }
     } 
+#endif
   } 
+
 
   // we come in here multiple times
   // 1 round is PULSE_COMBAT long
@@ -2276,7 +2281,9 @@ int TBeing::defendRound(const TBeing * attacker) const
     // this is NOT the way a skill should in general modify this function
     // and is only appropriate for this case.
     if (doesKnowSkill(SKILL_OOMLAT))
-      armor += armor * getSkillValue(SKILL_OOMLAT) / 250; 
+      armor += (int)((double)armor * (double)getSkillValue(SKILL_OOMLAT) / 250.0); 
+    // playing with ints this way worries me... i see too much potential for this not to take effect -d
+
 
     bonus = max((armor - 500), 0) * 2/3;
 
@@ -2451,12 +2458,9 @@ int TBeing::hits(TBeing *v, int mod)
 
   if (!v->awake() || (v->getPosition() < POSITION_RESTING))
     return GUARANTEED_SUCCESS;
-#if DASHO
-  vlogf(LOG_DASH,"%s is in hits. checking %s for dummy affect.",getName(), v->getName());
-  if (v && v->affected && v->affectedBySpell(AFFECT_DUMMY)) {
+#if 1
+  if (v->affectedBySpell(AFFECT_DUMMY)) {
     affectedData *an = NULL;
-
-    vlogf(LOG_DASH,"%s has dummy affect and is victim in hits(), forcing success now.",v->getName());
 
     for (an = v->affected; an; an = an->next) {
       if (an->type == AFFECT_DUMMY && an->level == 60) {
@@ -3202,6 +3206,28 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
     sendTo("You can't attack with an arrow.\n\r");
     return retCode; 
   }
+
+  if (!vict->isPc()) {
+    TMonster *tmons = dynamic_cast<TMonster *>(vict);
+    if (!tmons->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
+      tmons->developHatred(this);
+
+      // if we are fighting an NPC pet, develop hatred toward the master
+      // however, only do this is the pet was the aggressor (PC ordere pet
+      // to attack), to avoid guards "get thee back to.." from hating
+      // elemental's owner.  Only hate if the pet was the aggressor, or
+      // if the pet's owner is also fighting
+      if (!isPc() && isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
+	if (master && (master->isPc() || master->desc)) {
+	  if (isAffected(AFF_AGGRESSOR) ||
+	      master->fight() == tmons) {
+	    tmons->developHatred(master);
+	  }
+	}
+      }
+    }
+  }
+
 
   // handle a weapon's spec_proc 
   if (weapon && weapon->spec) {

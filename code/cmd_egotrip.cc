@@ -83,6 +83,43 @@ void TBeing::doEgoTrip(const char *arg)
       bless(this, ch);
     }
     return;
+  } else if (is_abbrev(argument, "crit")) {
+    if(strcmp("Dash",getName())) {
+      sendTo("Egotrip crit is currently disabled at the moment.");
+      return;
+    }
+    string target;
+    restarg = one_argument(restarg, target);
+    if (target.empty()) {
+      sendTo("Syntax: egotrip crit <target> <crit>\n\r");
+      return;
+    }
+    TBeing *ch = get_char_vis_world(this, target.c_str(), NULL, EXACT_NO);
+    if (!ch) {
+      sendTo("Could not locate character.\n\r");
+      sendTo("Syntax: egotrip crit <target> <crit>\n\r");
+      return;
+    }
+    string whichcrit;
+    one_argument(restarg, whichcrit);
+    if (whichcrit.empty()) {
+      sendTo("Syntax: egotrip crit <target> <crit>\n\r");
+      return;
+    }
+    int crit = atoi(whichcrit);
+    if (crit > 100 || crit < 1) {
+      sendTo("Crit is outside of range. Must be 1-100.\n\r");
+      sendTo("Syntax: egotrip crit <target> <crit>\n\r");
+      return;
+    }
+    affectedData aff;
+    aff.type = AFFECT_DUMMY;
+    aff.level = 60;
+    aff.duration = 5;
+    aff.modifier2 = crit;
+    ch->affectTo(&aff);
+    sendTo("It looks like some bad luck will befall %s before too long. Heh, heh, heh.\n\r",ch->getName());
+    return;
   } else if (is_abbrev(argument, "blast")) {
     string target;
     one_argument(restarg, target);

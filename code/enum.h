@@ -409,6 +409,11 @@ enum checkImmunityT {
   CHECK_IMMUNITY_YES = true
 };
 
+enum concatT {
+  CONCAT_NO = false,
+  CONCAT_YES = true
+};
+
 enum showMeT {
   DONT_SHOW_ME = false,
   SHOW_ME = true

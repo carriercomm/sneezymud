@@ -160,6 +160,12 @@ void TBeing::doMessage(const char *tArg)
         return;
       }
 
+      // string has the extra \n\r from the input attached, so strip that off
+      while (tStString.find("\n") != string::npos)
+        tStString.replace(tStString.find("\n"), 1, "");
+      while (tStString.find("\r") != string::npos)
+        tStString.replace(tStString.find("\r"), 1, "");
+
       if ((messageCommandSwitches[tValue][1] & MSG_REQ_GNAME) &&
           !isNamed && (tStString.find("<n>") == string::npos)) {
         sendTo("This type requires your name.  Either use %s or <n>\n\r",
@@ -311,12 +317,6 @@ bool TMessages::operator==(messageTypeT tValue)
 
 TMessages & TMessages::operator()(messageTypeT tValue, string tStString)
 {
-  // the string has the extra \n\r from the input attached, so strip that off
-  while (tStString.find("\n") != string::npos)
-    tStString.replace(tStString.find("\n"), 1, "");
-  while (tStString.find("\r") != string::npos)
-    tStString.replace(tStString.find("\r"), 1, "");
-
   // look for "~R" and replace with newlines
   while (tStString.find("~R") != string::npos)
     tStString.replace(tStString.find("~R"), 2, "\n\r");

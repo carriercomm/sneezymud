@@ -543,7 +543,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
 {
   char message[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
   char buf[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
-  char name[MAX_NAME_LENGTH];
+  char name[MAX_NAME_LENGTH] = "\0";
   Descriptor *i;
   time_t lt;
   struct tm *this_time;
@@ -604,15 +604,22 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
     for (i = descriptor_list; i; i = i->next) {
       if (i->connected)
         continue;
+
       if (!i->character)
         continue;
+
       if (!i->character->hasWizPower(POWER_SETSEV))
         continue;
+
       if (tError == LOG_LOW && !i->character->hasWizPower(POWER_SETSEV_IMM))
         continue;
-      if (!IS_SET(i->severity, 1<<tError) && 
-	  (!name[0] || strcmp(name, i->character->name)))
+
+      if (!IS_SET(i->severity, 1<<tError))
         continue;
+
+      if (name[0] && strcmp(name, i->character->name))
+        continue;
+
       if (i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING))
         continue;
  

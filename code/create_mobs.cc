@@ -2718,19 +2718,11 @@ switch (field) {
   }
 }
 
-const char tMobStringShorts[][10] =
+const char * const tMobStringShorts[] =
   {"bamfin", "bamfout", "deathcry", "repop", "movein", "moveout"};
 
 static void change_mob_string_values(TBeing *ch, TMonster *tMob, const char *tString, editorEnterTypeT tEnterT)
 {
-  const char tMobStringValues[] =
-    "%s1%s) bamfin [diurnal/nocturnal enter world message\n\r%s<z>\n\r\n\r"
-    "%s2%s) bamfout [diurnal/nocturnal leave world message\n\r%s<z>\n\r\n\r"
-    "%s3%s) death cry [blood freezes message when mob dies]\n\r%s<z>\n\r\n\r"
-    "%s4%s) repop [when mob is added to the world initially]\n\r%s<z>\n\r\n\r"
-    "%s5%s) movein [message when mobile enters a room]\n\r%s<z>\n\r\n\r"
-    "%s6%s) moveout [message when mobile leaves a room]\n\r%s<z>\n\r\n\r";
-
   int tUpdate;
   bool tHas = (tMob->ex_description ? true : false);
 
@@ -2756,25 +2748,25 @@ static void change_mob_string_values(TBeing *ch, TMonster *tMob, const char *tSt
   ch->sendTo(VT_HOMECLR);
   ch->sendTo("Mobile affected by flags :\n\r\n\r");
 
-  ch->sendTo(COLOR_MOBS, tMobStringValues,
+  unsigned int iter;
+  for (iter = 0; iter < 6; iter++) {
+    const char * tMobStringValues[] = {
+      "%s1%s) bamfin [diurnal/nocturnal enter world message\n\r%s<z>\n\r\n\r",
+      "%s2%s) bamfout [diurnal/nocturnal leave world message\n\r%s<z>\n\r\n\r",
+      "%s3%s) death cry [blood freezes message when mob dies]\n\r%s<z>\n\r\n\r",
+      "%s4%s) repop [when mob is added to the world initially]\n\r%s<z>\n\r\n\r",
+      "%s5%s) movein [message when mobile enters a room]\n\r%s<z>\n\r\n\r",
+      "%s6%s) moveout [message when mobile leaves a room]\n\r%s<z>\n\r\n\r"
+    };
+
+    const char *exd = NULL;
+    if (tHas && tMob->ex_description) {
+      exd = tMob->ex_description->findExtraDesc(tMobStringShorts[iter]);
+    }
+    ch->sendTo(COLOR_MOBS, tMobStringValues[iter],
              ch->cyan(), ch->norm(),
-             ((tHas && tMob->ex_description  && tMob->ex_description->findExtraDesc("bamfin")) ?
-              tMob->ex_description->findExtraDesc("bamfin")   : "Empty"),
-             ch->cyan(), ch->norm(),
-             ((tHas && tMob->ex_description  && tMob->ex_description->findExtraDesc("bamfout")) ?
-              tMob->ex_description->findExtraDesc("bamfout")  : "Empty"),
-             ch->cyan(), ch->norm(),
-             ((tHas && tMob->ex_description  && tMob->ex_description->findExtraDesc("deathcry")) ?
-              tMob->ex_description->findExtraDesc("deathcry") : "Empty"),
-             ch->cyan(), ch->norm(),
-             ((tHas && tMob->ex_description  && tMob->ex_description->findExtraDesc("repop")) ?
-              tMob->ex_description->findExtraDesc("repop")    : "Empty"),
-             ch->cyan(), ch->norm(),
-             ((tHas && tMob->ex_description  && tMob->ex_description->findExtraDesc("movein")) ?
-              tMob->ex_description->findExtraDesc("movein")   : "Empty"),
-             ch->cyan(), ch->norm(),
-             ((tHas && tMob->ex_description  && tMob->ex_description->findExtraDesc("moveout")) ?
-              tMob->ex_description->findExtraDesc("moveout")  : "Empty"));
+             exd ? exd : "Empty");
+  }
 
   ch->sendTo(VT_CURSPOS, 21, 1);
   ch->sendTo("Select message type, <ENTER> to return to the main menu.\n\r--> ");

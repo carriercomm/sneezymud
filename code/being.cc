@@ -1292,11 +1292,11 @@ int TBeing::chiMe(TBeing *tLunatic)
       if (this->reconcileDamage(tLunatic, ::number((tDamage / 2), tDamage), SKILL_CHI) == -1)
         return (DELETE_THIS | RET_STOP_PARSING);
     } else {
-      act("...$N screws up $s face in agony.",
+      act("...$N screws up $S face in agony.",
           TRUE, tLunatic, NULL, this, TO_CHAR);
       act("$n exerts $s <r>chi force<1> on you, causing extreme pain.",
           TRUE, tLunatic, NULL, this, TO_VICT);
-      act("$N screws up $s face in agony.",
+      act("$N screws up $S face in agony.",
           TRUE, tLunatic, NULL, this, TO_NOTVICT);
 
       if (tLunatic->reconcileDamage(this, tDamage, SKILL_CHI) == -1)

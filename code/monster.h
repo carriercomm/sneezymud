@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: monster.h,v $
+// Revision 5.1.1.3  1999/12/26 04:46:49  lapsos
+// Added brtRoom (Birth Room).
+//
 // Revision 5.1.1.2  1999/10/18 15:25:43  batopr
 // Converted some funcs to use spellNumT arguments
 //
@@ -96,6 +99,7 @@ class TMonster : public TBeing {
     opinionData fears;
     sh_int persist;
     sh_int oldRoom;
+    sh_int brtRoom;
     unsigned short hatefield;
     unsigned short fearfield;
     ubyte moneyConst;

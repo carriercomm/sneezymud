@@ -1310,6 +1310,12 @@ int TObj::objectTickUpdate(int pulse)
 	break;
     }
 
+    if(equippedBy && ch){
+      act("Your $o burns you!",
+	  FALSE, ch, this, 0, TO_CHAR);
+      ch->reconcileDamage(ch, ::number(1,10), DAMAGE_FIRE);
+    }
+
     // we let non-flammable things burn, but we don't 'decay' them
     if(material_nums[getMaterial()].flammability){
       addToStructPoints(-burnamount);

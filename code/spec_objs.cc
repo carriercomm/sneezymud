@@ -2391,7 +2391,7 @@ int energyBeam(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   act("$p <1><W>glows in a sparkling, bright white light<1>.\n\r<W>You hear a deafening crackle as $n's <1>$p <1><W>jolts you!<1>",
       0, vict, o, 0, TO_CHAR);
 
-  rc = ch->reconcileDamage(vict, dam, DAMAGE_NORMAL);
+  rc = ch->reconcileDamage(vict, dam, DAMAGE_ELECTRIC);
   if (IS_SET_DELETE(rc, DELETE_VICT))
     return DELETE_VICT;
   return TRUE;

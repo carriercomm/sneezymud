@@ -674,9 +674,18 @@ int cudgel(TBeing *thief, TBeing *victim)
 
   TGenWeapon * obj = dynamic_cast<TGenWeapon *>(thief->heldInPrimHand());
 
-  if (!obj) {
-    thief->sendTo("You need to wield a weapon, to make it a success.\n\r");
-    return FALSE;
+  if (!obj || !obj->canCudgel()) {
+    // Allow high learndness to use offhand, for a cost.
+    if (bKnown >= 80) {
+      obj    = dynamic_cast<TGenWeapon *>(thief->heldInSecHand());
+      level  = max(1, (level - 10));
+      bKnown = max(1, (bKnown - 20));
+    }
+
+    if (!obj) {
+      thief->sendTo("You need to wield a weapon, to make it a success.\n\r");
+      return FALSE;
+    }
   }
 
   if (thief->riding) {

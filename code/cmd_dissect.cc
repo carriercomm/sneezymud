@@ -43,7 +43,8 @@ int determineDissectionItem(TBaseCorpse *corpse, int *amount, char *msg, char *g
         sprintf(gl_msg, "$n cuts $p from $N.");
         break;
       case RACE_DRAGON:
-        if(corpse->getCorpseVnum()==MOB_AQUATIC_DRAGON) break;
+        if(corpse->getCorpseVnum()==MOB_AQUATIC_DRAGON)
+          break;
         else if (::number(0,1)) {
           num = COMP_SORCERERS_GLOBE_BREW;
           *amount = 50;

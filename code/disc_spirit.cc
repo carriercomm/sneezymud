@@ -375,6 +375,10 @@ int ensorcer(TBeing *caster, TBeing *victim, int level, byte bKnown)
       return SPELL_FALSE;
     }
 
+    aff.type = AFFECT_CHARM;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
     if (!victim->isPc())
       dynamic_cast<TMonster *>(victim)->genericCharmFix();
 

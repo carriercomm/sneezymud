@@ -99,8 +99,8 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Monk Red Quest: Has Sash", MOB_MONK_GM_LEVEL50},
   {"Immortal Skill: Stat", MOB_NONE},     //85
   {"Immortal Skill: Logs", MOB_NONE},
-  {"", MOB_NONE},          // toggles 87-96 are open for future immortal toggles
-  {"", MOB_NONE},
+  {"Holy Devastator Quest:  find Abnor", MOB_GRIZWALD},
+  {"", MOB_NONE},       // toggles 88-96 are open for future immortal toggles
   {"", MOB_NONE},
   {"", MOB_NONE},   //90
   {"", MOB_NONE},

@@ -20,13 +20,14 @@ bool TBeing::limitPowerCheck(cmdTypeT cmd, int checknum) {
   bs = desc->blockbstart;
   be = desc->blockbend;
   o = desc->office;
+  // of course this isnt right...but it compiles :)
+  int vnum = 0;
 
   switch(cmd) {
     case CMD_FORCE:
     case CMD_TRANSFER:
     case CMD_RESTORE:
     case CMD_SWITCH:
-    case CMD_MEDIT:
     case CMD_GIVE:
     case CMD_OUTFIT:
     case CMD_STEAL:

@@ -58,17 +58,28 @@ int TObj::repairPrice(const TBeing *repair, const TBeing *buyer, depreciationTyp
 static int repair_time(const TObj *o)
 {
   int structs;
+  int percDam;
   int iTime;
+  int MINS_AT_60TH = 30; // maximum (full repair) for 60th level eq
 
   if (!(structs = (o->getMaxStructPoints() - o->getStructPoints())))
     return (0);
-
+  percDam = ((structs*75) / (o->getMaxStructPoints())) + 25;
+  int levmod = (int)(o->objLevel() * o->objLevel());
 #if 1
+  iTime = levmod * (percDam);
+  iTime /= 100*60; // correct for the % thing
+  iTime *= MINS_AT_60TH;
+  // max repair time * % damage to object
+#endif
+
+  // i took the following out, it kind of sucks. 
+#if 0
   // price is based on struct (armor/weapons) so no real need to
   // take both into account
   // let's just make time based on level of the gear
   iTime = (int) (o->objLevel() * 1);
-#else
+  // #else
   // Let's make the time be proportional to cost, and total damage - Russ 
   iTime = ((structs * 800) + (2 * o->obj_flags.cost));
 
@@ -80,7 +91,7 @@ static int repair_time(const TObj *o)
     iTime *= max(11, 10 + o->obj_flags.cost/10000);
     iTime /= 10;
   }
-
+ 
   iTime /= 500;  // Kludge since it is taking too long
 #endif
   iTime = max(1,iTime);
@@ -519,6 +530,9 @@ void TObj::giveToRepair(TMonster *repair, TBeing *buyer, int *found)
   ticket = make_ticket(repair, buyer, this, when_ready, repair_number);
   *buyer += *ticket;
   save_repairman_file(repair, buyer, this, when_ready, repair_number);
+  vlogf(LOG_DASH, "%s repairing %s - str %d/%d, lev %d.  Repair time: %s.", 
+  fname(buyer->name).c_str(), getName(), (int)getStructPoints(), (int)getMaxStructPoints(),
+  (int)(this->objLevel()*1), secsToString(when_ready-ct).c_str());
 
   buyer->logItem(this, CMD_REPAIR);
 

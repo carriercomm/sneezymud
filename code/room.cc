@@ -405,6 +405,11 @@ int TRoom::chiMe(TBeing *tLunatic)
 
 void TRoom::operator << (TThing &tThing)
 {
+  // assign birthRoom
+  TMonster * tmon = dynamic_cast<TMonster *>(&tThing);
+  if (tmon)
+    tmon->brtRoom = this->number;
+
   if (!tBornInsideMe) {
     tBornInsideMe = &tThing;
     tThing.nextBorn = NULL;

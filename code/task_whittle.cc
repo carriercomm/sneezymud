@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: task_whittle.cc,v $
+// Revision 5.1.1.3  1999/11/01 14:10:32  lapsos
+// Fixed up list a little to lenthen the 0 turn build objects.
+//
 // Revision 5.1.1.2  1999/11/01 12:07:21  lapsos
 // Added new entries.
 //
@@ -107,7 +110,7 @@ void initWhittle()
   whittleItems[i++]("small-box box container wood",
                     -1,  1,  186, false, WHITTLE_EASY);
   whittleItems[i++]("wood-ring ring small simple",
-                    -1,  8,  179, false, WHITTLE_EASY);
+                    -1,  8,  179, false, WHITTLE_DELICATE);
   whittleItems[i++]("wood-club light small",
                     -1, 50,  176, false, WHITTLE_HARD);
   whittleItems[i++]("minature-figurine figurine small delicate",
@@ -119,9 +122,9 @@ void initWhittle()
   whittleItems[i++]("simple-pipe pipe wooden",
                     -1, 40,  180, false, WHITTLE_HARD);
   whittleItems[i++]("wooden-pen pen",
-                    -1, 20,  181, false, WHITTLE_GENERAL);
+                    -1, 20,  181, false, WHITTLE_DELICATE);
   whittleItems[i++]("toothpick",
-                    -1,  1,  182, false, WHITTLE_EASY);
+                    -1,  1,  182, false, WHITTLE_DELICATE);
   whittleItems[i++]("wood length sturdy",
                     -1, 20,  189, false, WHITTLE_EASY);
   whittleItems[i++]("stick walking",

@@ -144,8 +144,8 @@ void TTool::repairMeHammer(TBeing *caster, TObj *obj)
     return;
   }
 
-  if (obj->getMaxStructPoints() <= obj->getStructPoints()) {
-    caster->sendTo("But it looks as good as new!\n\r");
+  if (obj->getMaxStructPoints() <= obj->getStructPoints() - obj->getDepreciation()) {
+    caster->sendTo("But it looks as good as good as its going to get!\n\r");
     return;
   }
   if (caster->getMove() < 10) {
@@ -178,6 +178,8 @@ int repairMetal(TBeing *ch, TObj *o)
   }
   act("You begin to prepare to fix $p.", FALSE, ch, o, 0, TO_CHAR);
   act("$n begins to prepare to fix $p.", FALSE, ch, o, 0, TO_ROOM);
+  o->addToDepreciation(2); // considering repairer prolly sucks compared to a pro, i think
+                           // this is fair. -dash, dec 2000, sometime before x-mas
 
   start_task(ch, NULL, NULL, TASK_SMYTHE, o->name, 999, (ushort) ch->in_room, 0, 0, 0);
   return 0;

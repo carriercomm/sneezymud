@@ -11,6 +11,7 @@
 #include "disease.h"
 #include "statistics.h"
 #include "components.h"
+#include "shop.h"
 
 // returns DELETE_THIS if this has to be deleted
 int TMonster::mobileGuardian()
@@ -2973,6 +2974,45 @@ int TMonster::mobileActivity(int pulse)
 
     if (!::number(0,4))
       bumpHead(&iHeight);
+  }
+
+  if (spec==SPEC_SHOPKEEPER && !(pulse %(200*PULSE_MOBACT)) && !noSpecials){
+    unsigned int shop_nr;
+    
+    for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != number); shop_nr++);
+    
+    if (shop_nr >= shop_index.size()) {
+      vlogf(LOG_BUG, "Warning... shop # for mobile %d (real nr) not found.", number);
+      return FALSE;
+    }
+    
+    if(shopOwned(shop_nr)){
+      setMoney(getMoney()-25);
+      //      vlogf(LOG_PEEL, "shop_nr %i, charged tax", shop_nr);
+
+      if(getMoney()<0){
+	MYSQL_RES *res;
+	int rc;
+
+	if((rc=dbquery(&res, "sneezy", "shop_keeper", "delete from shopowned where shop_nr=%i", shop_nr+1))){
+	  if(rc){
+	    vlogf(LOG_BUG, "Database error in shop_keeper");
+	    return FALSE;
+	  }
+	}
+	
+	if((rc=dbquery(&res, "sneezy", "shop_keeper", "delete from shopownedaccess where shop_nr=%i", shop_nr+1))){
+	  if(rc){
+	    vlogf(LOG_BUG, "Database error in shop_keeper");
+	    return FALSE;
+	  }
+	}
+	vlogf(LOG_PEEL, "shop_nr %i, ran out of money and was reclaimed", shop_nr);
+
+	setMoney(1000000);
+      }
+
+    }
   }
 
   if (spec && !(pulse %(50*PULSE_MOBACT)) && !::number(0, 1) && !noSpecials) {

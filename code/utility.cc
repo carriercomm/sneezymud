@@ -527,6 +527,29 @@ int TBeing::numClasses() const
   return x;
 }
 
+void TPerson::logf(const char * tString, ...)
+{
+  if (!tLogFile)
+    return;
+
+  va_list tAp;
+  char    tBuffer[256];
+  struct tm * tTime;
+  time_t      tCTime;
+
+  va_start(tAp, tString);
+  vsprintf(tBuffer, tString, tAp);
+  va_end(tAp);
+
+  tCTime = time(0);
+  tTime = localtime(&tCTime);
+
+  fprintf(tLogFile, "%4.4d|%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
+          tTime->tm_year + 1900, tTime->tm_mon + 1, tTime->tm_mday,
+          tTime->tm_hour, tTime->tm_min, tTime->tm_sec, tBuffer);
+  fflush(tLogFile);
+}
+
 void vlogf(const char * errorMsg, ...)
 {
   va_list ap;

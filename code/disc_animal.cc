@@ -431,18 +431,18 @@ int beastSummon(TBeing * caster, const char * arg)
 static const int LAST_SHAPESHIFT_MOB = 12;
 struct PolyType shapeShiftList[LAST_SHAPESHIFT_MOB] =
 {
-  {"gopher", 30, 1, 25401, DISC_ANIMAL},
-  {"deer", 31, 1, 14105, DISC_ANIMAL},
-  {"wolf", 35, 10, 3400, DISC_ANIMAL},
-  {"snake", 37, 20, 3412, DISC_ANIMAL},
-  {"moose", 39, 30,10200, DISC_ANIMAL},
-  {"dolphin", 40, 45, 12432, DISC_ANIMAL},
-  {"bear", 42, 75, 3403, DISC_ANIMAL},
-  {"crow", 44, 70, 14350, DISC_ANIMAL},
-  {"shark", 40, 60,  12413, DISC_ANIMAL},
-  {"hawk", 48, 100, 14440, DISC_ANIMAL},
-  {"saberfish", 49, 80, 5503, DISC_ANIMAL},
-  {"spider", 49, 80, 7717, DISC_ANIMAL},
+  {"gopher"   , 30,   1, 25401, DISC_ANIMAL, RACE_NORACE},
+  {"deer"     , 31,   1, 14105, DISC_ANIMAL, RACE_NORACE},
+  {"wolf"     , 35,  10,  3400, DISC_ANIMAL, RACE_NORACE},
+  {"snake"    , 37,  20,  3412, DISC_ANIMAL, RACE_NORACE},
+  {"moose"    , 39,  30, 10200, DISC_ANIMAL, RACE_NORACE},
+  {"dolphin"  , 40,  45, 12432, DISC_ANIMAL, RACE_NORACE},
+  {"bear"     , 42,  75,  3403, DISC_ANIMAL, RACE_NORACE},
+  {"crow"     , 44,  70, 14350, DISC_ANIMAL, RACE_NORACE},
+  {"shark"    , 40,  60, 12413, DISC_ANIMAL, RACE_NORACE},
+  {"hawk"     , 48, 100, 14440, DISC_ANIMAL, RACE_NORACE},
+  {"saberfish", 49,  80,  5503, DISC_ANIMAL, RACE_NORACE},
+  {"spider"   , 49,  80,  7717, DISC_ANIMAL, RACE_NORACE},
 };
 
 int shapeShift(TBeing *caster, const char * buffer, int level, byte bKnown)

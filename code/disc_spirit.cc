@@ -697,19 +697,19 @@ void dispelInvisible(TBeing *caster, TObj* obj)
 
 static struct PolyType PolyList[] =
 {
-  {"orc"       ,  8,   1,   941, DISC_SPIRIT}, // L  4
-  {"frog"      ,  8,   1,   917, DISC_SPIRIT}, // L  5
-  {"cockatrice", 10,   1,   911, DISC_SPIRIT}, // L  6
-  {"kamodo"    , 12,  30,  7501, DISC_SPIRIT}, // L 25
-  {"minotaur"  , 15,  40,   937, DISC_SPIRIT}, // L  8
-  {"lamia"     , 25,  50,   934, DISC_SPIRIT}, // L 13
-  {"reindeer"  , 25,  55, 10212, DISC_SPIRIT}, // L 15
-  {"chimera"   , 30,  60,   910, DISC_SPIRIT}, // L 15
-  {"dragonne"  , 35,  70,   915, DISC_SPIRIT}, // L 21
-  {"tiger"     , 40,  85, 23630, DISC_SPIRIT}, // L 24
-  {"ettin"     , 45, 100,   916, DISC_SPIRIT}, // L 27
-  {"arch"      , 60, 100, 28813, DISC_SPIRIT},  // L 70 (*god only*)
-  {"\n"        , -1,  -1,    -1, DISC_SPIRIT}
+  {"orc"       ,  8,   1,   941, DISC_SPIRIT, RACE_NORACE}, // L  4
+  {"frog"      ,  8,   1,   917, DISC_SPIRIT, RACE_NORACE}, // L  5
+  {"cockatrice", 10,   1,   911, DISC_SPIRIT, RACE_NORACE}, // L  6
+  {"kamodo"    , 12,  30,  7501, DISC_SPIRIT, RACE_NORACE}, // L 25
+  {"minotaur"  , 15,  40,   937, DISC_SPIRIT, RACE_NORACE}, // L  8
+  {"lamia"     , 25,  50,   934, DISC_SPIRIT, RACE_NORACE}, // L 13
+  {"reindeer"  , 25,  55, 10212, DISC_SPIRIT, RACE_NORACE}, // L 15
+  {"chimera"   , 30,  60,   910, DISC_SPIRIT, RACE_NORACE}, // L 15
+  {"dragonne"  , 35,  70,   915, DISC_SPIRIT, RACE_NORACE}, // L 21
+  {"tiger"     , 40,  85, 23630, DISC_SPIRIT, RACE_NORACE}, // L 24
+  {"ettin"     , 45, 100,   916, DISC_SPIRIT, RACE_NORACE}, // L 27
+  {"arch"      , 60, 100, 28813, DISC_SPIRIT, RACE_NORACE}, // L 70 (god only)
+  {"\n"        , -1,  -1,    -1, DISC_SPIRIT, RACE_NORACE}
 };
 
 int polymorph(TBeing *caster, int level, byte bKnown)

@@ -823,6 +823,31 @@ void TBeing::setMaxMana(int mana)
   points.maxMana = mana;
 }
 
+// LIFEFORCE 
+
+int TBeing::getLifeforce() const
+{
+  return points.lifeforce;
+}
+
+void TBeing::setLifeforce(int lifeforce)
+{
+  points.lifeforce = lifeforce;
+}
+
+void TBeing::addToLifeforce(int lifeforce)
+{
+  points.lifeforce += lifeforce;
+  points.lifeforce = max((short int) 0, points.lifeforce);
+}
+
+bool TBeing::noLifeforce(int lifeforce) const
+{
+  return (points.lifeforce < lifeforce);
+}
+
+// END LIFEFORCE
+
 short int TBeing::manaLimit() const
 {
   return 100;

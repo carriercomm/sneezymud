@@ -1899,8 +1899,7 @@ int Descriptor::nanny(const char *arg)
               connected = CON_QCLASS;
             }
             break;
-          case '8':
-#if 0
+          case 'Z':
             if (canChooseClass(CLASS_SHAMAN)) {
               character->setClass(CLASS_SHAMAN);
               go2next = TRUE;
@@ -1909,10 +1908,19 @@ int Descriptor::nanny(const char *arg)
               writeToQ("--> ");
               connected = CON_QCLASS;
             }
-#endif
-	    writeToQ("Shaman are not yet a playable class, sorry.\n\r");
-            writeToQ("--> ");
-            connected = CON_QCLASS;
+	    writeToQ("Shaman are not yet a playable class.\n\r");
+	    writeToQ("At some point in time, Jesus may authorize your use of this\n\r");
+	    writeToQ("class as a play tester or whatever. If not consider this a \n\r");
+	    writeToQ("warning to go back and create something else.\n\r\n\r");
+	    writeToQ("Shaman are to be a very high maintainance class. You are\n\r");
+	    writeToQ("therefore warned now that this class may be unplayable by\n\r");
+	    writeToQ("even the average mudder. This class is meant for the most\n\r");
+	    writeToQ("experienced of players. Not paying attention to your Shaman\n\r");
+	    writeToQ("can and will result in multiple deaths. YOU HAVE BEEN WARNED!\n\r");
+	    // writeToQ("Shaman are not yet a playable class, sorry.\n\r");
+            // writeToQ("--> ");
+            // connected = CON_QCLASS;
+	    vlogf(LOG_JESUS, "UNAUTHERIZED SHAMAN CREATION: %s ", character->getName());
             break;
 #ifdef SNEEZY2000
 #else
@@ -5048,8 +5056,12 @@ void setPrompts(fd_set out)
               SET_BIT(update, CHANGED_MANA);
             }
             if (ch->getPiety() != d->last.piety) {
-              d->last.piety= ch->getPiety();
+              d->last.piety = ch->getPiety();
               SET_BIT(update, CHANGED_PIETY);
+            }
+            if (ch->getLifeforce() != d->last.lifeforce) {
+              d->last.lifeforce = ch->getLifeforce();
+              SET_BIT(update, CHANGED_LIFEFORCE);
             }
             if (ch->getMove() != d->last.move) {
               d->last.move = ch->getMove();
@@ -5124,7 +5136,8 @@ void setPrompts(fd_set out)
               "%sN:%s%s ",           // Exp Tnl
               "%s%s<%s%s=%s>%s ",    // Opponent
               "%s%s<%s/tank=%s>%s ", // Tank / Tank-Other
-              "%s<%.1f%s> "          // Lockout
+              "%s<%.1f%s> ",          // Lockout
+              "%sLF:%d%s "         // Lifeforce
             };
 
             if (ch->isImmortal() && IS_SET(d->prompt_d.type, PROMPT_BUILDER_ASSISTANT)) {
@@ -5149,6 +5162,12 @@ void setPrompts(fd_set out)
                         StPrompts[2],
                         (hasColor ? d->prompt_d.manaColor : ""),
                         ch->getPiety(),
+                        ch->norm());
+              else if (ch->hasClass(CLASS_SHAMAN))
+                sprintf(promptbuf + strlen(promptbuf),
+                        StPrompts[12],
+                        (hasColor ? d->prompt_d.manaColor : ""),
+                        ch->getLifeforce(),
                         ch->norm());
               else
                 sprintf(promptbuf + strlen(promptbuf),

@@ -544,7 +544,7 @@ void TBeing::statBeing(TBeing *k)
       sprintf(buf2 + strlen(buf2), "%s ", classNames[ijc].capName);
 
   sprintf(buf + strlen(buf),"<c>Class :<z> %-28s", buf2);
-  sprintf(buf + strlen(buf),"<c>Level   :<z> [M%d C%d W%d T%d A%d D%d K%d R%d]\n\r",
+  sprintf(buf + strlen(buf),"<c>Level   :<z> [M%d C%d W%d T%d S%d D%d K%d R%d]\n\r",
          k->getLevel(MAGE_LEVEL_IND), k->getLevel(CLERIC_LEVEL_IND),
          k->getLevel(WARRIOR_LEVEL_IND), k->getLevel(THIEF_LEVEL_IND),
          k->getLevel(SHAMAN_LEVEL_IND), k->getLevel(DEIKHAN_LEVEL_IND),
@@ -607,6 +607,10 @@ void TBeing::statBeing(TBeing *k)
   if (k->hasClass(CLASS_CLERIC) || k->hasClass(CLASS_DEIKHAN))
     sprintf(buf + strlen(buf), "%sPiety :%s [%5.1f]%sHit    :%s %-10s  %sMove    :%s %-10s\n\r",
       cyan(), norm(), k->getPiety(),
+      cyan(), norm(), buf2, cyan(), norm(), buf3);
+  else if (k->hasClass(CLASS_SHAMAN))
+    sprintf(buf + strlen(buf), "%sLifef.:%s [%4d]%sHit    :%s %-10s  %sMove    :%s %-10s\n\r",
+      cyan(), norm(), k->getLifeforce(),
       cyan(), norm(), buf2, cyan(), norm(), buf3);
   else
     sprintf(buf + strlen(buf), "%sMana  :%s [%3d]  %sHit    :%s %-10s  %sMove    :%s %-10s\n\r",

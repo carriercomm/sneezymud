@@ -3555,6 +3555,9 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
       }
     }
   }
+  if (hasClass(CLASS_SHAMAN) && (dam == 0)) {
+    addToLifeforce(1);
+  }    
   combatFatigue(weapon);
   updatePos();
   vict->updatePos();
@@ -5230,7 +5233,11 @@ void TBeing::genericKillFix(void)
     }
   }
   if (isPc()) {
-    setHit(1);
+    if (hasClass(CLASS_SHAMAN)) {
+      setHit(25);
+    } else {
+      setHit(1);
+    }
     if (riding)
       dismount(POSITION_SITTING);
     setPosition(POSITION_STANDING);

@@ -765,6 +765,15 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       }
       strcpy(account->name, aname);
 
+      if (strlen(apassword) < 5) {
+      } else if (strlen(apassword) > 10) {
+      }
+      if (!hasDigit(apassword)) {
+      }
+      crypted =(char *) crypt(apassword, account->name);
+      strncpy(account->passwd, crypted, 10);
+      *(account->passwd + 10) = '\0';
+
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
       break;
     } 

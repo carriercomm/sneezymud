@@ -173,10 +173,8 @@ int TMoney::moneyMeMoney(TBeing *ch, TThing *sub)
   if (sub && isname(ch->name, sub->name) && dynamic_cast<TPCorpse*>(sub))
     isMyCorpse = true;
 
-  /*
   if ((tP = dynamic_cast<TPerson *>(ch)))
     checkOwnersList(tP);
-  */
 
   (*this)--;
   amount = getMoney();

@@ -601,7 +601,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
         continue;
       if (!i->character->hasWizPower(POWER_SETSEV))
         continue;
-      if (tError == LOG_LOW && i->character->powerCheck(POWER_SETSEV_IMM))
+      if (tError == LOG_LOW && !i->character->hasWizPower(POWER_SETSEV_IMM))
         continue;
       if (!IS_SET(i->severity, 1<<tError) && 
 	  (!name[0] || strcmp(name, i->character->name)))

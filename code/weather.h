@@ -45,6 +45,7 @@ extern void AlterWeather(changeWeatherT *);
 extern void calcNewSunRise();
 extern void calcNewSunSet();
 extern int hourminTime();
+extern string hmtAsString(int);
 extern void weatherAndTime(int);
 extern struct weather_data weather_info;
 extern void anotherHour();

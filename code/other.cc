@@ -2118,7 +2118,10 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
       detectMagic(caster,victim,obj);
       break;
     case SPELL_DISPEL_MAGIC:
-      rc = dispelMagic(caster,victim,obj);
+      if (target) 
+        rc = dispelMagic(caster,target,obj);
+      else
+        rc = dispelMagic(caster,victim,obj);
       break;
     case SPELL_COPY:
       copy(caster,obj,target);

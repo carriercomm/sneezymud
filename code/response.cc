@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: response.cc,v $
+// Revision 5.1.1.2  1999/11/05 21:19:04  peel
+// modified RespMemory to allow NULL being
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -146,12 +149,11 @@ RespMemory::RespMemory() :
 
 RespMemory::RespMemory(cmdTypeT newCmd, TBeing *tBeing, const char *tArg)
 {
-  if (!tBeing || tBeing->getNameNOC(tBeing).empty()) {
-    vlogf(9, "RespMemory called with invalid Being.");
-    return;
+  if (tBeing && !tBeing->getNameNOC(tBeing).empty()) {
+    name = mud_str_dup(tBeing->getNameNOC(tBeing).c_str());
+  } else {
+    name = NULL;
   }
-
-  name = mud_str_dup(tBeing->getNameNOC(tBeing).c_str());
 
   if (tArg && *tArg)
     args = mud_str_dup(tArg);

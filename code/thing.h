@@ -179,6 +179,9 @@ class TThing {
     bool sameRoom(const TThing &ch) const;
     bool inImperia() const;
     bool inGrimhaven() const;
+    bool inLogrus() const;
+    bool inAmber() const;
+    bool inBrightmoon() const;
     bool inLethargica() const;
     int getDrechels(int) const;
     int checkSoundproof() const;

@@ -2638,7 +2638,7 @@ int newbieHelperWProc(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TOb
             ch->sendTo("%s: target is.\n\r",
                        o->getName());
           } else if (is_abbrev(Topic, "goto")) {
-            ch->sendTo("%s: While your in Grimhaven you can use the  goto  command to get\n\r",
+            ch->sendTo("%s: While you're in Grimhaven you can use the goto command to get\n\r",
                        o->getName());
             ch->sendTo("%s: to the more important places.  These are the more important ones:\n\r",
                        o->getName());

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: peelpk.cc,v $
+// Revision 5.1.1.2  1999/10/18 17:11:12  batopr
+// changed an int to a spellNumT
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -258,7 +261,7 @@ void TBeing::doPeelPk(const char *argument)
 } 
 
 // returns DELETE_THIS
-int TBeing::peelPkRespawn(TBeing *killer, int dmg_type)
+int TBeing::peelPkRespawn(TBeing *killer, spellNumT dmg_type)
 {
   int i, valid=0, team=-1;
   Descriptor *idesc;

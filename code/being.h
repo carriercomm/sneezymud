@@ -254,7 +254,7 @@ const int DELETE_VICT          = ((1<<7));
 const int ALREADY_DELETED      = ((1<<8));
 const int RET_STOP_PARSING     = ((1<<9));
 
-#elif 0
+#elif 1
 const int DELETE_ITEM          = ((1<<5) | (1<<29));
 const int DELETE_THIS          = ((1<<6) | (1<<29));
 const int DELETE_VICT          = ((1<<7) | (1<<29));

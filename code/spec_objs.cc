@@ -1913,7 +1913,7 @@ int crystal_ball(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
   target = victim->roomp->number;
 
   if (victim->GetMaxLevel() > ch->GetMaxLevel()) {
-    obj_act("You are not powerful enough to see that person, $n!", 
+    obj_act("says 'You are not powerful enough to see that person, $n!'", 
         ch, me, NULL, ANSI_GREEN);
     return TRUE;
   }

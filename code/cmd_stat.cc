@@ -947,6 +947,8 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_CALL_LIGHTNING:
       case SPELL_LIGHTNING_BREATH:
       case SPELL_GUSHER:
+      case SPELL_AQUALUNG:
+      case SPELL_AQUATIC_BLAST:
       case SPELL_ICY_GRIP:
       case SPELL_ARCTIC_BLAST:
       case SPELL_ICE_STORM:
@@ -1086,6 +1088,7 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_SILENCE:
       case SPELL_BREATH_OF_SARAHAGE:
       case SPELL_PLASMA_MIRROR:
+      case SPELL_THORNFLESH:
       case SPELL_ETHER_GATE:
       case SPELL_HEAL_LIGHT:
       case SPELL_CREATE_FOOD:

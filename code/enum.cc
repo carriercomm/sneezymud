@@ -248,7 +248,7 @@ int mapDiscToFile(discNumT dn)
       return 19;
     case DISC_RANGER_FIGHT:
       return 20;
-    case DISC_SHAMAN_ARMADILLO: // was nature
+    case DISC_SHAMAN_ARMADILLO:
       return 21;
     case DISC_ANIMAL:
       return 22;
@@ -296,15 +296,15 @@ int mapDiscToFile(discNumT dn)
       return 46;
     case DISC_SHAMAN:
       return 47;
-    case DISC_SHAMAN_FIGHT:
+    case DISC_SHAMAN_FROG:
       return 48;
     case DISC_SHAMAN_ALCHEMY:
       return 49;
-    case DISC_SHAMAN_HEALING:
+    case DISC_SHAMAN_SKUNK:
       return 50;
-    case DISC_UNDEAD:
+    case DISC_SHAMAN_SPIDER:
       return 51;
-    case DISC_DRAINING:
+    case DISC_SHAMAN_CONTROL:
       return 52;
     case DISC_TOTEM:
       return 53;
@@ -383,7 +383,7 @@ discNumT mapFileToDisc(int num)
     case 20:
       return DISC_RANGER_FIGHT;
     case 21:
-      return DISC_SHAMAN_ARMADILLO;  // was nature
+      return DISC_SHAMAN_ARMADILLO;
     case 22:
       return DISC_ANIMAL;
     case 23:
@@ -431,15 +431,15 @@ discNumT mapFileToDisc(int num)
     case 47:
       return DISC_SHAMAN;
     case 48:
-      return DISC_SHAMAN_FIGHT;
+      return DISC_SHAMAN_FROG;
     case 49:
       return DISC_SHAMAN_ALCHEMY;
     case 50:
-      return DISC_SHAMAN_HEALING;
+      return DISC_SHAMAN_SKUNK;
     case 51:
-      return DISC_UNDEAD;
+      return DISC_SHAMAN_SPIDER;
     case 52:
-      return DISC_DRAINING;
+      return DISC_SHAMAN_CONTROL;
     case 53:
       return DISC_TOTEM;
     case 54:

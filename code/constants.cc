@@ -1659,7 +1659,7 @@ const struct disc_names_data discNames[MAX_DISCS] =
   {DISC_SMYTHE, CLASS_WARRIOR, "smythe"},
   {DISC_RANGER, CLASS_RANGER, "ranger abilities"},
   {DISC_RANGER_FIGHT, CLASS_RANGER, "fighting skills"},  //20
-  {DISC_NATURE, CLASS_SHAMAN, "nature"},
+  {DISC_SHAMAN_ARMADILLO, CLASS_SHAMAN, "armadillo abilities"},
   {DISC_ANIMAL, CLASS_RANGER, "animals"},
   {DISC_PLANTS, CLASS_RANGER, "plants"},
   {DISC_SURVIVAL, CLASS_RANGER, "survival skills"}, 
@@ -1683,11 +1683,11 @@ const struct disc_names_data discNames[MAX_DISCS] =
   {DISC_STEALTH, CLASS_THIEF, "stealth"},               // 45
   {DISC_TRAPS, CLASS_THIEF, "traps"},
   {DISC_SHAMAN, CLASS_SHAMAN, "shaman abilities"},      
-  {DISC_SHAMAN_FIGHT, CLASS_SHAMAN, "fighting skills"},
+  {DISC_SHAMAN_FROG, CLASS_SHAMAN, "frog abilities"},
   {DISC_SHAMAN_ALCHEMY, CLASS_SHAMAN, "alchemy"},
-  {DISC_SHAMAN_HEALING, CLASS_SHAMAN, "healing"},       // 50
-  {DISC_UNDEAD, CLASS_SHAMAN, "undead"},
-  {DISC_DRAINING, CLASS_SHAMAN, "draining"},            
+  {DISC_SHAMAN_SKUNK, CLASS_SHAMAN, "skunk abilities"},       // 50
+  {DISC_SHAMAN_SPIDER, CLASS_SHAMAN, "spider abilities"},
+  {DISC_SHAMAN_CONTROL, CLASS_SHAMAN, "control"},            
   {DISC_TOTEM, CLASS_SHAMAN, "totemism"},
   {DISC_WIZARDRY, CLASS_MAGE | CLASS_SHAMAN, "wizardry"},
   {DISC_FAITH, CLASS_CLERIC | CLASS_DEIKHAN, "faith"},  // 55
@@ -1727,7 +1727,7 @@ const char * const disc_names[MAX_DISCS] =
   "Smythe Skills",
   "Ranger Abilities",
   "Fighting Skills",            // 20
-  "Nature Abilities",
+  "Armadillo Abilities",
   "Animal Abilities",
   "Plant Abilities",
   "Survival Skills",
@@ -1751,11 +1751,11 @@ const char * const disc_names[MAX_DISCS] =
   "Stealth",                     // 45
   "Traps",
   "Shaman Abilities",
-  "Fighting Skills",
+  "Frog Abilities",
   "Alchemy Abilities",
-  "Healing Abilities",           // 50
-  "Undead Control",
-  "Draining Abilities",
+  "Skunk Abilities",           // 50
+  "Spider Abilities",
+  "Control Abilities",
   "Totemism",
   "Wizardry",
   "Faith",                        // 55

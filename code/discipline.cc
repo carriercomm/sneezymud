@@ -23,10 +23,11 @@
 #include "disc_plants.h"
 #include "disc_ranger_fight.h"
 #include "disc_shaman_alchemy.h"
-#include "disc_shaman_fight.h"
-#include "disc_draining.h"
-#include "disc_undead.h"
-#include "disc_shaman_healing.h"
+#include "disc_shaman_frog.h"
+#include "disc_shaman_control.h"
+#include "disc_shaman_spider.h"
+#include "disc_shaman_skunk.h"
+#include "disc_shaman_armadillo.h"
 #include "disc_totem.h"
 #include "disc_thief.h"
 #include "disc_thief_fight.h"
@@ -66,7 +67,7 @@
 #include "disc_barehand.h"
 #include "disc_survival.h"
 #include "disc_animal.h"
-#include "disc_nature.h"
+// #include "disc_nature.h"
 #include "spelltask.h"
 
 #define DISC_DEBUG  0
@@ -2350,12 +2351,12 @@ void TBeing::assignDisciplinesClass()
     discs->disc[DISC_TRAPS] = new CDTraps();
 
     discs->disc[DISC_SHAMAN] = new CDShaman();
-    discs->disc[DISC_SHAMAN_FIGHT] = new CDShamanFight();
+    discs->disc[DISC_SHAMAN_FROG] = new CDShamanFrog();
     discs->disc[DISC_SHAMAN_ALCHEMY] = new CDShamanAlchemy();
-    discs->disc[DISC_SHAMAN_HEALING] = new CDShamanHealing();
-    discs->disc[DISC_NATURE] = new CDNature();
-    discs->disc[DISC_UNDEAD] = new CDUndead();
-    discs->disc[DISC_DRAINING] = new CDDraining();
+    discs->disc[DISC_SHAMAN_SKUNK] = new CDShamanSkunk();
+    discs->disc[DISC_SHAMAN_ARMADILLO] = new CDShamanArmadillo();
+    discs->disc[DISC_SHAMAN_SPIDER] = new CDShamanSpider();
+    discs->disc[DISC_SHAMAN_CONTROL] = new CDShamanControl();
     discs->disc[DISC_TOTEM] = new CDTotem();
 
     discs->disc[DISC_WIZARDRY] = new CDWizardry();
@@ -2550,12 +2551,12 @@ void TBeing::assignDisciplinesClass()
   if (hasClass(CLASS_SHAMAN)) {
     if (!isPc()) {
       discs->disc[DISC_SHAMAN] = new CDShaman();
-      discs->disc[DISC_SHAMAN_FIGHT] = new CDShamanFight();
+      discs->disc[DISC_SHAMAN_FROG] = new CDShamanFrog();
       discs->disc[DISC_SHAMAN_ALCHEMY] = new CDShamanAlchemy();
-      discs->disc[DISC_SHAMAN_HEALING] = new CDShamanHealing();
-      discs->disc[DISC_UNDEAD] = new CDUndead();
-      discs->disc[DISC_NATURE] = new CDNature();
-      discs->disc[DISC_DRAINING] = new CDDraining();
+      discs->disc[DISC_SHAMAN_SKUNK] = new CDShamanSkunk();
+      discs->disc[DISC_SHAMAN_SPIDER] = new CDShamanSpider();
+      discs->disc[DISC_SHAMAN_ARMADILLO] = new CDShamanArmadillo();
+      discs->disc[DISC_SHAMAN_CONTROL] = new CDShamanControl();
       discs->disc[DISC_TOTEM] = new CDTotem();
       discs->disc[DISC_BLUNT] = new CDBash();
       discs->disc[DISC_PIERCE] = new CDPierce();
@@ -2563,12 +2564,12 @@ void TBeing::assignDisciplinesClass()
       discs->disc[DISC_LORE] = new CDLore();
     }
     getDiscipline(DISC_SHAMAN)->ok_for_class |= CLASS_SHAMAN;
-    getDiscipline(DISC_SHAMAN_FIGHT)->ok_for_class |= CLASS_SHAMAN;
+    getDiscipline(DISC_SHAMAN_FROG)->ok_for_class |= CLASS_SHAMAN;
     getDiscipline(DISC_SHAMAN_ALCHEMY)->ok_for_class |= CLASS_SHAMAN;
-    getDiscipline(DISC_SHAMAN_HEALING)->ok_for_class |= CLASS_SHAMAN;
-    getDiscipline(DISC_UNDEAD)->ok_for_class |= CLASS_SHAMAN;
-    getDiscipline(DISC_NATURE)->ok_for_class |= CLASS_SHAMAN;
-    getDiscipline(DISC_DRAINING)->ok_for_class |= CLASS_SHAMAN;
+    getDiscipline(DISC_SHAMAN_SKUNK)->ok_for_class |= CLASS_SHAMAN;
+    getDiscipline(DISC_SHAMAN_SPIDER)->ok_for_class |= CLASS_SHAMAN;
+    getDiscipline(DISC_SHAMAN_ARMADILLO)->ok_for_class |= CLASS_SHAMAN;
+    getDiscipline(DISC_SHAMAN_CONTROL)->ok_for_class |= CLASS_SHAMAN;
     getDiscipline(DISC_TOTEM)->ok_for_class |= CLASS_SHAMAN;
     getDiscipline(DISC_BLUNT)->ok_for_class |= CLASS_SHAMAN;
     getDiscipline(DISC_PIERCE)->ok_for_class |= CLASS_SHAMAN;
@@ -3538,30 +3539,30 @@ void TBeing::assignSkillsClass()
 //    Note that if a disc is maxxed it will drop to the next one
         switch ((::number(1,6))) {
           case 1:
-            if ((cd = getDiscipline(DISC_DRAINING)) &&
+            if ((cd = getDiscipline(DISC_SHAMAN_CONTROL)) &&
                  cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-              raiseDiscOnce(DISC_DRAINING);
+              raiseDiscOnce(DISC_SHAMAN_CONTROL);
               found = TRUE;
               break;
             }
           case 2:
-            if ((cd = getDiscipline(DISC_NATURE)) &&
-                 cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-              raiseDiscOnce(DISC_NATURE);
+	    if ((cd = getDiscipline(DISC_SHAMAN_ARMADILLO)) &&
+                cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
+              raiseDiscOnce(DISC_SHAMAN_ARMADILLO);
               found = TRUE;
               break;
-            }
+	    }
           case 3:
-            if ((cd = getDiscipline(DISC_SHAMAN_FIGHT)) &&
+            if ((cd = getDiscipline(DISC_SHAMAN_FROG)) &&
                  cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-              raiseDiscOnce(DISC_SHAMAN_FIGHT);
+              raiseDiscOnce(DISC_SHAMAN_FROG);
               found = TRUE;
               break;
             }
          case 4:
-           if ((cd = getDiscipline(DISC_UNDEAD)) &&
+           if ((cd = getDiscipline(DISC_SHAMAN_SPIDER)) &&
                 cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-              raiseDiscOnce(DISC_UNDEAD);
+              raiseDiscOnce(DISC_SHAMAN_SPIDER);
               found = TRUE;
               break;
             }
@@ -3579,34 +3580,34 @@ void TBeing::assignSkillsClass()
         } else if ((cd = getDiscipline(DISC_TOTEM)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS && (num == 2)) {
           raiseDiscOnce(DISC_TOTEM);
-        } else if ((cd = getDiscipline(DISC_UNDEAD)) &&
+        } else if ((cd = getDiscipline(DISC_SHAMAN_SPIDER)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS && (num == 3)) {
-          raiseDiscOnce(DISC_UNDEAD);
+          raiseDiscOnce(DISC_SHAMAN_SPIDER);
 
-        } else if ((cd = getDiscipline(DISC_DRAINING)) &&
+        } else if ((cd = getDiscipline(DISC_SHAMAN_CONTROL)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-          raiseDiscOnce(DISC_DRAINING);
-        } else if ((cd = getDiscipline(DISC_SHAMAN_FIGHT)) &&
+          raiseDiscOnce(DISC_SHAMAN_CONTROL);
+        } else if ((cd = getDiscipline(DISC_SHAMAN_FROG)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-          raiseDiscOnce(DISC_SHAMAN_FIGHT);
-        } else if ((cd = getDiscipline(DISC_NATURE)) &&
-                    cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-          raiseDiscOnce(DISC_NATURE);
+          raiseDiscOnce(DISC_SHAMAN_FROG);
+	} else if ((cd = getDiscipline(DISC_SHAMAN_ARMADILLO)) &&
+	        cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
+	  raiseDiscOnce(DISC_SHAMAN_ARMADILLO);
         } else if ((cd = getDiscipline(DISC_BLUNT)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
           raiseDiscOnce(DISC_BLUNT);
         } else if ((cd = getDiscipline(DISC_TOTEM)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
           raiseDiscOnce(DISC_TOTEM);
-        } else if ((cd = getDiscipline(DISC_UNDEAD)) &&
+        } else if ((cd = getDiscipline(DISC_SHAMAN_SPIDER)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-          raiseDiscOnce(DISC_UNDEAD);
+          raiseDiscOnce(DISC_SHAMAN_SPIDER);
         } else if ((cd = getDiscipline(DISC_PIERCE)) &&
                    cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
           raiseDiscOnce(DISC_PIERCE);
-        } else if ((cd = getDiscipline(DISC_SHAMAN_HEALING)) &&
+        } else if ((cd = getDiscipline(DISC_SHAMAN_SKUNK)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
-          raiseDiscOnce(DISC_SHAMAN_HEALING);
+          raiseDiscOnce(DISC_SHAMAN_SKUNK);
         } else if ((cd = getDiscipline(DISC_SHAMAN_ALCHEMY)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS) {
           raiseDiscOnce(DISC_SHAMAN_ALCHEMY);
@@ -3765,14 +3766,14 @@ int TBeing::isNotPowerful(TBeing *vict, int lev, spellNumT skill, silentTypeT si
     case DISC_SPIRIT:
     case DISC_SORCERY:
     case DISC_ALCHEMY:
-    case DISC_NATURE:
+    case DISC_SHAMAN_ARMADILLO:
     case DISC_ANIMAL:
     case DISC_SURVIVAL:
     case DISC_SHAMAN:
     case DISC_TOTEM:
-    case DISC_DRAINING:
-    case DISC_UNDEAD:
-    case DISC_SHAMAN_HEALING:
+    case DISC_SHAMAN_CONTROL:
+    case DISC_SHAMAN_SPIDER:
+    case DISC_SHAMAN_SKUNK:
       cd = getDiscipline(DISC_WIZARDRY);
       if (cd && cd->getLearnedness() > 0)
         lev += 2 + (cd->getLearnedness() / 20);
@@ -3888,12 +3889,12 @@ int TBeing::getSkillLevel(spellNumT skill) const
       lev = getClassLevel(CLASS_MONK);
       break;
     case DISC_SHAMAN:
-    case DISC_SHAMAN_FIGHT:
+    case DISC_SHAMAN_FROG:
     case DISC_SHAMAN_ALCHEMY:
-    case DISC_NATURE:
-    case DISC_SHAMAN_HEALING:
-    case DISC_UNDEAD:
-    case DISC_DRAINING:
+    case DISC_SHAMAN_ARMADILLO:
+    case DISC_SHAMAN_SKUNK:
+    case DISC_SHAMAN_SPIDER:
+    case DISC_SHAMAN_CONTROL:
     case DISC_TOTEM:
       lev = getClassLevel(CLASS_SHAMAN);
       break;

@@ -929,7 +929,7 @@ TRAININFO TrainerInfo[] =
   {SPEC_TRAINER_BRAWLING, "brawling", "Brawling Moves", DISC_BRAWLING, CLASS_WARRIOR},
   {SPEC_TRAINER_MEDITATION_MONK, "meditation", "about Meditation", DISC_MEDITATION_MONK, CLASS_MONK},
   {SPEC_TRAINER_SURVIVAL, "survival", "How to Survive", DISC_SURVIVAL, CLASS_RANGER},
-  {SPEC_TRAINER_NATURE, "nature", "Natural Magic", DISC_NATURE, CLASS_SHAMAN},
+  {SPEC_TRAINER_SHAMAN_ARMADILLO, "armadillo", "about the Abilities of the Armadillo", DISC_SHAMAN_ARMADILLO, CLASS_SHAMAN},
   {SPEC_TRAINER_ANIMAL, "animal", "Animal Magic", DISC_ANIMAL, CLASS_RANGER},
   {SPEC_TRAINER_AEGIS, "aegis", "the Aegis of the Deities", DISC_AEGIS, CLASS_CLERIC},
   {SPEC_TRAINER_SHAMAN, "shaman", "The Ways of the Shaman", DISC_AEGIS, CLASS_SHAMAN},
@@ -955,12 +955,12 @@ TRAININFO TrainerInfo[] =
   {SPEC_TRAINER_THIEF_FIGHT, "fighting", "Fighting Skills for Thieves", DISC_THIEF_FIGHT, CLASS_THIEF},
   {SPEC_TRAINER_POISONS, "poisons", "about Poisons", DISC_POISONS, CLASS_THIEF},
 
-  {SPEC_TRAINER_SHAMAN_FIGHT, "fighting", "Fighting Skills for Shamans", DISC_SHAMAN, CLASS_SHAMAN},
+  {SPEC_TRAINER_SHAMAN_FROG, "frog", "about the Abilities of the Frog", DISC_SHAMAN_FROG, CLASS_SHAMAN},
 
   {SPEC_TRAINER_SHAMAN_ALCHEMY, "alchemy", "Alchemy Spells for Shamans", DISC_SHAMAN_ALCHEMY, CLASS_SHAMAN},
-  {SPEC_TRAINER_SHAMAN_HEALING, "healing", "Healing Spells for Shamans", DISC_SHAMAN_HEALING, CLASS_SHAMAN},
-  {SPEC_TRAINER_UNDEAD, "undead", "about the Undead", DISC_UNDEAD, CLASS_SHAMAN},
-  {SPEC_TRAINER_DRAINING, "undead", "about the Undead", DISC_DRAINING, CLASS_SHAMAN},
+  {SPEC_TRAINER_SHAMAN_SKUNK, "skunk", "about the Abilities of the Skunk", DISC_SHAMAN_SKUNK, CLASS_SHAMAN},
+  {SPEC_TRAINER_SHAMAN_SPIDER, "spider", "about the Abilities of the Spider", DISC_SHAMAN_SPIDER, CLASS_SHAMAN},
+  {SPEC_TRAINER_SHAMAN_CONTROL, "control", "about Being Controling", DISC_SHAMAN_CONTROL, CLASS_SHAMAN},
   {SPEC_TRAINER_TOTEM, "totemism", "about Totemism", DISC_TOTEM, CLASS_SHAMAN},
 
   {SPEC_TRAINER_RANGER_FIGHT, "fighting", "Fighting Skills for Rangers", DISC_RANGER_FIGHT, CLASS_RANGER},

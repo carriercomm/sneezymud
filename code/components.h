@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: components.h,v $
+// Revision 5.1.1.3  2001/02/01 21:58:29  jesus
+// shaman stuff
+//
 // Revision 5.1.1.2  2001/01/11 19:55:39  jesus
 // shaman stuff
 //
@@ -118,12 +121,15 @@ const int COMP_INFRAVISION2_BREW=1415;
 const int COMP_INVISIBILITY_BREW=1416;
 const int COMP_TRUE_SIGHT_BREW  =1418;
 const int COMP_GILLS_OF_FLESH_BREW   =1420;
-const int COMP_PLASMA_MIRROR    =1421;
-const int COMP_SHIELD_OF_MISTS  =23020;
+const int COMP_PLASMA_MIRROR      =1421;
+const int COMP_SHIELD_OF_MISTS    =23020;
 const int COMP_ENTHRALL_SPECTRE   =31301;
 const int COMP_ENTHRALL_GHAST     =31302;
 const int COMP_ENTHRALL_GHOUL     =31303;
 const int COMP_ENTHRALL_DEMON     =31304;
+const int COMP_THORNFLESH         =31305;
+const int COMP_AQUALUNG           =31306;
+const int COMP_AQUATIC_BLAST      =31307;
 
 class compPlace
 {
@@ -246,3 +252,5 @@ extern vector<compInfo>CompInfo;
 
 
 #endif
+
+

@@ -609,3 +609,253 @@ int rootControl(TBeing * caster, TBeing * victim)
   return rc;
 }
  
+// LIVING VINES
+
+int livingVines(TBeing *caster, TBeing *victim,int level, byte bKnown)
+{
+  affectedData aff1, aff2;
+ 
+  if (caster->isNotPowerful(victim, level, SPELL_LIVING_VINES, SILENT_NO)) {
+    return SPELL_FAIL;
+  }
+  if (caster->roomp->notRangerLandSector() && !caster->roomp->isForestSector()) {
+    act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
+    caster->sendTo("You need to be in nature or on land to cast this spell!\n\r");
+    return SPELL_FAIL;
+  }
+ 
+  caster->reconcileHurt(victim, discArray[SPELL_LIVING_VINES]->alignMod);
+ 
+  aff1.type = SPELL_LIVING_VINES;
+  aff1.level = level;
+  aff1.bitvector = AFF_WEB;
+  aff1.location = APPLY_ARMOR;
+  aff1.modifier = (level / 2) + 5;
+  aff1.duration = level * UPDATES_PER_MUDHOUR;
+ 
+  aff2.type = SPELL_LIVING_VINES;
+  aff2.level = level;
+  aff2.bitvector = AFF_WEB;
+  aff2.location = APPLY_SPELL_HITROLL;
+  aff2.modifier = (-level*2);
+  aff2.duration = level * UPDATES_PER_MUDHOUR;
+   
+  if (bSuccess(caster, bKnown, SPELL_LIVING_VINES)) {
+    act("$n summons the vines to hold $N!", FALSE, caster, NULL, victim, TO_NOTVICT);
+    act("You command the vines to trap $N!", FALSE, caster, NULL, victim, TO_CHAR);
+    act("$n summons the vines to ensnare you!", FALSE, caster, NULL, victim, TO_VICT);
+    switch(critSuccess(caster, SPELL_LIVING_VINES)) {
+      case CRIT_S_DOUBLE:
+        CS(SPELL_LIVING_VINES);
+        aff1.duration *= 2;
+        aff2.modifier *= 2;
+        break;
+      default:
+        if (victim->isLucky(caster->spellLuckModifier(SPELL_LIVING_VINES))) {
+          SV(SPELL_LIVING_VINES);
+          aff1.duration /= 2;
+          aff2.modifier /= 2;
+        }
+    }
+    victim->affectTo(&aff1);
+    victim->affectTo(&aff2);
+    caster->reconcileDamage(victim, 0,SPELL_LIVING_VINES);
+    return SPELL_SUCCESS;
+  } else {
+    switch (critFail(caster, SPELL_LIVING_VINES)) {
+      case CRIT_F_HITSELF:
+      case CRIT_F_HITOTHER:
+        CF(SPELL_LIVING_VINES);
+        act("$n traps $mself with the vines %s summoned!", FALSE, caster, NULL, NULL, TO_ROOM);
+        act("Oops! You trap yourself in the vines you summoned!", FALSE, caster, NULL, victim, TO_CHAR);
+        act("Hey, $n was trying to trap you with the vines %s summoned!", FALSE, caster, NULL, victim, TO_VICT);
+        caster->affectTo(&aff1);
+        caster->affectTo(&aff2);
+        caster->reconcileDamage(victim, 0,SPELL_LIVING_VINES);
+        return SPELL_CRIT_FAIL;
+        break;
+      default:
+        break;
+    }
+    caster->sendTo("Nothing seems to happen.\n\r");
+    act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
+    return SPELL_FAIL;
+  }
+}
+ 
+void livingVines(TBeing *caster, TBeing *victim, TMagicItem * obj)
+{
+  livingVines(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
+}
+ 
+void livingVines(TBeing *caster, TBeing *victim)
+{
+int ret,level;
+ 
+  if (!bPassMageChecks(caster, SPELL_LIVING_VINES, victim))
+    return;
+ 
+  level = caster->getSkillLevel(SPELL_LIVING_VINES);
+  int bKnown = caster->getSkillValue(SPELL_LIVING_VINES);
+ 
+  if ((ret=livingVines(caster,victim,level,bKnown)) == SPELL_SUCCESS) {
+  } else {
+    if (ret==SPELL_CRIT_FAIL) {
+    } else {
+    }
+  }
+}
+
+// END LIVING VINES
+// TREE WALK
+ 
+int TObj::treeMe(TBeing *, const char *, int, int *)
+{
+  return FALSE;
+}
+
+int treeWalk(TBeing * caster, const char * arg, int, byte bKnown)
+{
+  TBeing *ch = NULL;
+  TObj *o;
+  TRoom *rp = NULL;
+  TThing *t, *t2, *t3;
+  int rc;
+  int numx, j = 1;
+  char tmpname[MAX_INPUT_LENGTH], *tmp;
+
+  act("You reach into the Sydarthae, in search of the life force of a powerful tree.", FALSE, caster, 0, 0, TO_CHAR);
+  act("$n enters a trance.", FALSE, caster, 0, 0, TO_ROOM);
+
+
+  for (;arg && *arg && isspace(*arg); arg++);
+
+  if (bSuccess(caster,bKnown,SPELL_TREE_WALK)) {
+    strcpy(tmpname, arg);
+    tmp = tmpname;
+
+    if (!(numx = get_number(&tmp)))
+      numx = 1;
+
+    for (o = object_list; o; o = o->next) {
+      if (o->treeMe(caster, tmp, numx, &j)) {
+        rp = o->roomp;
+        if (rp)
+          break;
+      }
+    }
+    if (!o) {
+      for (ch = character_list; ch; ch = ch->next) {
+        if (ch->getRace() != RACE_TREE)
+          continue;
+        if (isname(tmp, ch->name)) {
+          if (j >= numx) {
+            rp = ch->roomp;
+            if (rp) {
+              act("You locate $N, and form a magical anchor between $M and you.", 
+                    FALSE, caster, 0, ch, TO_CHAR);
+              break;
+            }
+          }
+          j++;
+        }
+      }
+    }
+    if (!o && !ch) {
+      act("You fail to find any lifeforce by that name.", 
+             FALSE, caster, 0, 0, TO_CHAR);
+      act("$n snaps out of $s trance.", FALSE, caster, 0, 0, TO_ROOM);
+      return SPELL_SUCCESS;
+    }
+
+    for (t = caster->roomp->stuff; t; t = t2) {
+      t2 = t->nextThing;
+      TBeing *tbt = dynamic_cast<TBeing *>(t);
+      if (!tbt)
+        continue;
+      if (tbt->inGroup(*caster)) {
+        act("A mystic force thrusts you into the Sydarthae, and out the otherside.",
+           FALSE, tbt, 0, 0, TO_CHAR);
+        act("A mystic force yanks $n into somewhere unknown.",
+           FALSE, caster, 0, 0, TO_ROOM);
+
+        while ((t3 = tbt->rider)) {
+          TBeing *tb = dynamic_cast<TBeing *>(t3);
+          if (tb) {
+            rc = tb->fallOffMount(t, POSITION_STANDING);
+            if (IS_SET_DELETE(rc, DELETE_THIS)) {
+              delete tb;
+              tb = NULL;
+            }
+          } else {
+            t3->dismount(POSITION_DEAD);
+          }
+        }
+
+        if (tbt->riding) {
+          
+          rc = tbt->fallOffMount(tbt->riding, POSITION_STANDING);
+          if (IS_SET_DELETE(rc, DELETE_THIS)) {
+            delete tbt;
+            tbt = NULL;
+          }
+        }
+
+        --(*tbt);
+        *rp += *tbt;
+
+        act("$n shimmers into existence.", FALSE, tbt, NULL, NULL, TO_ROOM);
+        act("You shimmer into existence.", FALSE, tbt, NULL, NULL, TO_CHAR);
+
+        tbt->doLook("", CMD_LOOK);
+
+        rc = tbt->genericMovedIntoRoom(rp, -1);
+        if (IS_SET_DELETE(rc, DELETE_THIS)) {
+          if (tbt != caster) {
+            delete tbt;
+            tbt = NULL;
+          } else {
+            return SPELL_SUCCESS + CASTER_DEAD;
+          }
+        }
+      }
+    }
+    return SPELL_SUCCESS;
+  } else {
+    act("You fail to detect a life force strong enough to anchor yourself with.", FALSE, caster, 0, 0, TO_CHAR);
+    act("$n snaps out of $s trance.", FALSE, caster, 0, 0, TO_ROOM);
+    return SPELL_FAIL;
+  }
+}
+
+int treeWalk(TBeing * caster, const char * arg)
+{
+  int ret,level;
+ 
+  if (!bPassMageChecks(caster, SPELL_TREE_WALK, NULL))
+    return FALSE;
+
+  if (caster->roomp->isFlyingSector()) {
+    caster->sendTo("You are unable to break through the magic.");
+    return FALSE;
+  }
+
+  if (caster->fight()) {
+    caster->sendTo("You are unable to commune with nature while fighting.");
+    return FALSE;
+  }
+ 
+  level = caster->getSkillLevel(SPELL_TREE_WALK);
+  int bKnown = caster->getSkillValue(SPELL_TREE_WALK);
+ 
+  ret=treeWalk(caster,arg,level,bKnown);
+  if (IS_SET(ret, SPELL_SUCCESS)) {
+  } else {
+  }
+
+  if (IS_SET(ret, CASTER_DEAD))
+    return DELETE_THIS;
+  return FALSE;
+}
+
+// END TREE WALK

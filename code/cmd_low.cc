@@ -592,7 +592,7 @@ bool GuildProcs(int spec)
     case SPEC_TRAINER_DEIKHAN:
     case SPEC_TRAINER_BRAWLING:
     case SPEC_TRAINER_SURVIVAL:
-    case SPEC_TRAINER_NATURE:
+    case SPEC_TRAINER_SHAMAN_ARMADILLO:
     case SPEC_TRAINER_ANIMAL:
     case SPEC_TRAINER_AEGIS:
     case SPEC_TRAINER_SHAMAN:
@@ -615,11 +615,11 @@ bool GuildProcs(int spec)
     case SPEC_TRAINER_FOCUSED_ATTACKS:
     case SPEC_TRAINER_THIEF_FIGHT:
     case SPEC_TRAINER_POISONS:
-    case SPEC_TRAINER_SHAMAN_FIGHT:
+    case SPEC_TRAINER_SHAMAN_FROG:
     case SPEC_TRAINER_SHAMAN_ALCHEMY:
-    case SPEC_TRAINER_SHAMAN_HEALING:
-    case SPEC_TRAINER_UNDEAD:
-    case SPEC_TRAINER_DRAINING:
+    case SPEC_TRAINER_SHAMAN_SKUNK:
+    case SPEC_TRAINER_SHAMAN_SPIDER:
+    case SPEC_TRAINER_SHAMAN_CONTROL:
     case SPEC_TRAINER_TOTEM:
     case SPEC_TRAINER_RANGER_FIGHT:
     case SPEC_TRAINER_STEALTH:
@@ -763,7 +763,7 @@ void TMonster::checkMobStats(tinyfileTypeT forReal)
     vlogf(LOG_LOW,"multiclass mob: %s",getName());
 
   if (hasClass(CLASS_SHAMAN))
-    vlogf(LOG_LOW, "shaman mob: %s:%d", getName(), mobVnum());
+    vlogf(LOG_JESUS, "shaman mob: %s:%d", getName(), mobVnum());
 
   /*
   // Leave this disabled.  With the new tBorn code it is now outdated.

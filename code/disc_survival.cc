@@ -854,13 +854,13 @@ int TDrinkCon::divineMe(TBeing *caster, int, byte bKnown)
   }
 
   if (caster->affectedBySpell(SKILL_DIVINATION)) {
-    act("You can only divine once per half-day.", FALSE, caster, NULL, NULL, TO_CHAR);
+    act("You are not ready to divine again so soon.", FALSE, caster, NULL, NULL, TO_CHAR);
     return SPELL_FAIL;
   }
 
   aff.type = SKILL_DIVINATION;
   aff.location = APPLY_NONE;
-  aff.duration = 24 * UPDATES_PER_MUDHOUR;
+  aff.duration = 12 * UPDATES_PER_MUDHOUR;
   aff.bitvector = 0;
   aff.modifier = 0;
 

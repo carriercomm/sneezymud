@@ -55,6 +55,26 @@ bool TThing::inGrimhaven() const
           (inRoom() >= 25400 && inRoom() <= 25499));
 }
 
+bool TThing::inAmber() const
+{
+  return ((inRoom() >= 2850 && inRoom() <= 3014) ||
+	  (inRoom() >= 8700 && inRoom() <= 8899) ||
+	  (inRoom() >= 16200 && inRoom() <= 16249) ||
+	  (inRoom() >= 27800 && inRoom() <= 27899));
+}
+
+bool TThing::inLogrus() const
+{
+  return ((inRoom() >= 3700 && inRoom() <= 3899) ||
+	  (inRoom() >= 26650 && inRoom() <= 26699));
+}
+
+bool TThing::inBrightmoon() const
+{ 
+  return ((inRoom() >= 1200 && inRoom() <= 1399) ||
+	  (inRoom() >= 16450 && inRoom() <= 16499));
+}
+
 bool TThing::inLethargica() const
 {
   return (inRoom() >= 23400 && inRoom() <= 23599);

@@ -2466,6 +2466,15 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_ENERGY_DRAIN:
       rc = energyDrain(caster,victim,obj);
       break;
+    case SPELL_BLAST_OF_FURY:
+      rc = blastOfFury(caster, victim, obj);
+      break;
+    case SPELL_ROOT_CONTROL:
+      rc = rootControl(caster, victim, obj);
+      break;
+    case SPELL_BEAST_SOOTHER:
+      rc = beastSoother(caster, victim, obj);
+      break;
     default:
       vlogf(LOG_BUG,"Object (%s) with uncoded spell (%d)!", obj->getName(), spell);
       break;

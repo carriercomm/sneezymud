@@ -11,6 +11,8 @@
 
 #include "stdsneezy.h"
 
+//#define MAIL_ZONEFILE
+
 void doSaveZoneFile(TBeing *, const string &);
 
 void TBeing::doZonefile(const string & tStArg)
@@ -74,8 +76,10 @@ void doSaveZoneFile(TBeing *ch, const string & tArg)
     return;
   }
 
-  if (zone_table[zValue].top != ch->desc->blockastart &&
-      zone_table[zValue].top != ch->desc->blockbstart &&
+  if (((zValue > 0) ? (zone_table[zValue - 1].top + 1) : 0)
+      != ch->desc->blockastart &&
+      ((zValue > 0) ? (zone_table[zValue - 1].top + 1) : 0)
+      != ch->desc->blockbstart &&
       !ch->hasWizPower(POWER_WIZARD)) {
     ch->sendTo("I'm sorry, this zone doesn't belong to you...\n\r");
     return;
@@ -275,10 +279,18 @@ void doSaveZoneFile(TBeing *ch, const string & tArg)
   fputs("S\n", tFile);
   fclose(tFile);
 
-  sprintf(tString, "/usr/lib/sendmail -f%s %s < immortals/%s/zonefile",
-          SAVEZONEFILE_REPLYTO,
-          ch->desc->account->email, ch->getNameNOC(ch).c_str());
-  vsystem(tString);
+#ifdef MAIL_ZONEFILE
+  if (((zValue > 0) ? (zone_table[zValue - 1].top + 1) : 0)
+      == ch->desc->blockastart ||
+      ((zValue > 0) ? (zone_table[zValue - 1].top + 1) : 0)
+      == ch->desc->blockbstart) {
+    sprintf(tString, "/usr/lib/sendmail -f%s %s < immortals/%s/zonefile",
+            SAVEZONEFILE_REPLYTO,
+            ch->desc->account->email, ch->getNameNOC(ch).c_str());
+    vsystem(tString);
+  }
+#endif
+
   sprintf(tString, "cp -f immortals/%s/zonefile tmp/%s.output",
           ch->getNameNOC(ch).c_str(), ch->getNameNOC(ch).c_str());
   vsystem(tString);

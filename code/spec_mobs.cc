@@ -1612,7 +1612,7 @@ static bool okForJanitor(TMonster *myself, TObj *obj)
 
         // keep this from happening for clutter-search
         if (myself->sameRoom(corpse))
-          get(myself, obj2, corpse);
+          get(myself, obj2, corpse, GETOBJOBJ);
       }
     }
     // if nothing in the corpse, let them get the corpse

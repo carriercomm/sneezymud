@@ -70,7 +70,7 @@ void TBeing::doZonesSingle(string tStString)
   if (tZone >= 0 && tZone < zone_table.size()) {
     sprintf(tString, "zoneHelp/%d", (tZone > 0 ? (zone_table[tZone - 1].top + 1) : 0));
 
-    if (file_to_string(tString, tStTemp, true)) {
+    if (file_to_string(tString, tStTemp)) {
       tStBuffer += "\n\r";
       tStBuffer += tStTemp;
     }

@@ -107,7 +107,7 @@ void TBeing::doHelp(const char *arg)
     desc->start_page_file(helppath, "ERROR in multi playing.  Tell a god.");
 #else
     str = "";
-    file_to_string(helppath, str, true);
+    file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
     desc->page_string(str.c_str(), 0);
 #endif
@@ -164,7 +164,7 @@ void TBeing::doHelp(const char *arg)
       sprintf(buf2,"%s%-30.30s (Last Updated: %s)%s\n\r\n\r", green(),
             namebuf,timebuf, norm());
       str = buf2;
-      file_to_string(helppath, str, true);
+      file_to_string(helppath, str, CONCAT_YES);
       str += "\n\r";
       desc->page_string(str.c_str(), 0);
       return;
@@ -204,7 +204,7 @@ void TBeing::doHelp(const char *arg)
       sprintf(buf2,"%s%-30.30s (Last Updated: %s)%s\n\r\n\r", green(),
             namebuf,timebuf, norm());
       str = buf2;
-      file_to_string(helppath, str, true);
+      file_to_string(helppath, str, CONCAT_YES);
       str += "\n\r";
       desc->page_string(str.c_str(), 0);
       return;
@@ -251,7 +251,7 @@ void TBeing::doHelp(const char *arg)
     sprintf(buf2,"%s%-30.30s (Last Updated: %s)%s\n\r\n\r", green(),
             namebuf,timebuf, norm());
     str = buf2;
-    file_to_string(helppath, str, true);
+    file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
     desc->page_string(str.c_str(), 0);
     return;
@@ -526,7 +526,7 @@ void TBeing::doHelp(const char *arg)
 
     str += "\n\r";
 
-    file_to_string(helppath, str, true);
+    file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
     desc->page_string(str.c_str(), 0);
     return;
@@ -679,7 +679,7 @@ void TBeing::doHelp(const char *arg)
     }
 
     str += "\n\r";
-    file_to_string(helppath, str, true);
+    file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
     desc->page_string(str.c_str(), 0);
     return;

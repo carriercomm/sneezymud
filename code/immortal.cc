@@ -5433,7 +5433,7 @@ void TBeing::doSysViewoutput()
     desc->start_page_file( file, "There is nothing to read.\n\r");
   else {
     string sb = "";
-    file_to_string(file, sb, true);
+    file_to_string(file, sb);
     sb += "\n\r";
     processStringForClient(sb);
     desc->clientf("%d", CLIENT_NOTE);

@@ -2484,7 +2484,7 @@ void TBeing::doWizlist()
     else {
       wizlist_used_num++;
 
-      file_to_string(WIZLIST_FILE, tStString, true);
+      file_to_string(WIZLIST_FILE, tStString);
       desc->page_string(tStString.c_str(), 0);
       fclose(tFile);
     }

@@ -348,6 +348,23 @@ void TBeing::doCommand(const char *arg)
   desc->page_string(str.c_str());
 }
 
+static int splitShares(const TBeing *ch, const TBeing *k)
+{
+  if (!ch->inGroup(*k) ||
+      !ch->sameRoom(*k))
+    return 0;
+
+  if (k->desc)
+    return k->desc->session.group_share;
+
+  // what's left are basically mobs
+  // pets and mounts are not forced to fight, so if they do, give 1 share
+  if (k->isMount() || k->isPet(PETTYPE_PET))
+    return 1;
+
+  return 0;
+}
+
 void TBeing::doSplit(const char *argument, bool tell)
 {
   char buf[256];
@@ -376,16 +393,11 @@ void TBeing::doSplit(const char *argument, bool tell)
     if (!(k = master))
       k = this;
 
-    if (inGroup(*k) && sameRoom(*k))
-      no_members = ((k->desc) ? k->desc->session.group_share : 
-            ((k->isPet() || k->isMount() || dynamic_cast<TMonster *>(k)) ? 0 : 1));
-    else
-      no_members = 0;
-
+    // If I am here, I should get my share.
+    no_members = splitShares(this, k);
 
     for (f = k->followers; f; f = f->next)
-      if (inGroup(*f->follower) && sameRoom(*f->follower))
-        no_members += (f->follower->desc ? f->follower->desc->session.group_share : ((f->follower->isPet() || f->follower->isMount() || dynamic_cast<TMonster *>(f->follower)) ? 0 : 1));
+      no_members += splitShares(this, f->follower);
 
     if ((no_members <= 1) || !isAffected(AFF_GROUP)) {
       // the auto-split logic kicks us in here
@@ -402,23 +414,15 @@ void TBeing::doSplit(const char *argument, bool tell)
       return;
     }
     if (!hasWizPower(POWER_WIZARD)) {
-      if (desc)
-        tmp_amount = amount * (no_members - desc->session.group_share) / no_members;
-      else if (isPet() || isMount() || dynamic_cast<TMonster *>(this))
-        tmp_amount = amount;
-      else
-        tmp_amount = amount * (no_members - 1) / no_members;
+      int myshares = splitShares(this, this);
+      tmp_amount = amount * (no_members - myshares) / no_members;
 
       addToMoney(-tmp_amount, GOLD_XFER);
     }
 
     if (k->isAffected(AFF_GROUP) && sameRoom(*k) && k != this) {
-      if (k->desc)
-        tmp_amount = amount * (k->desc->session.group_share) / no_members;
-      else if (k->isPet() || k->isMount() || dynamic_cast<TMonster *>(k))
-        tmp_amount = 0;
-      else
-        tmp_amount = amount * (1) / no_members;
+      int myshares = splitShares(this, k);
+      tmp_amount = amount * myshares / no_members;
 
 #if 0
       // too easy, find something better
@@ -427,19 +431,15 @@ void TBeing::doSplit(const char *argument, bool tell)
 #endif
 
       k->addToMoney(tmp_amount, GOLD_XFER);
-       if (k->getPosition() >= POSITION_RESTING) 
+      if (k->getPosition() >= POSITION_RESTING) 
         k->sendTo(COLOR_MOBS, "%s splits %d talens, and you receive %d of them.\n\r",
                     getName(), amount, tmp_amount);
     }
     for (f = k->followers; f; f = f->next) {
       if (f->follower->isAffected(AFF_GROUP) && sameRoom(*f->follower) && f->follower != this) {
-        if (f->follower->desc)
-          tmp_amount = amount * (f->follower->desc->session.group_share) / no_members;
-        else if (f->follower->isPet() || f->follower->isMount() || dynamic_cast<TMonster *>(f->follower))
-          tmp_amount = 0;  // pets
-        else
-          tmp_amount = amount / no_members;
-
+        int myshares = splitShares(this, f->follower);
+        tmp_amount = amount * myshares / no_members;
+        
 #if 0
         reconcileHelp(f->follower, (double) tmp_amount/100000);
 #endif
@@ -1577,13 +1577,8 @@ void TBeing::doGroup(const char *argument)
       sprintf(namebuf, "%s", (k != this ? k->getNameNOC(this).c_str() : "You"));
       if (k->isAffected(AFF_GROUP)) {// && canSee(k)) {  I changed this on 010398 Russ
         if (sameRoom(*k)) {
-          if (k->desc)
-            tmp_share = k->desc->session.group_share;
-          else if (k->isPet() || k->isMount() || dynamic_cast<TMonster
-*>(k))
-            tmp_share = 0;
-          else
-            tmp_share = 1;
+          tmp_share = splitShares(this, k);
+
           if (k->hasClass(CLASS_CLERIC) || k->hasClass(CLASS_DEIKHAN)) {
             sendTo("%s%-15.15s%s [%s%.1f%%hp %.1f%%p. %s look%s %s.%s]\n\r\t%s%2d share%s talens, %.1f%% shares XP%s\n\r", cyan(), cap(namebuf), norm(), red(),
               (((double) (k->getHit())) / ((double) k->hitLimit()) * 100),
@@ -1613,12 +1608,8 @@ void TBeing::doGroup(const char *argument)
       for (f = k->followers; f; f = f->next) {
         sprintf(namebuf, "%s", (f->follower != this ? f->follower->getNameNOC(this).c_str() : "You"));
         if (f->follower->isAffected(AFF_GROUP) && canSee(f->follower)) {
-          if (f->follower->desc)
-            tmp_share = f->follower->desc->session.group_share;
-          else if (f->follower->isPet() || f->follower->isMount() || dynamic_cast<TMonster *>(f->follower))
-            tmp_share = 0;
-          else
-            tmp_share = 1;
+          tmp_share = splitShares(this, f->follower);
+
           if (sameRoom(*f->follower)) { 
             if (f->follower->hasClass(CLASS_CLERIC) || 
                 f->follower->hasClass(CLASS_DEIKHAN))

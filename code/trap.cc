@@ -88,6 +88,12 @@ int TBeing::doSetTraps(const char *arg)
   int rc;
   TObj *obj;
 
+  // prevent people from making traps in peace rooms:
+    // policeman may attack if they see you trapping
+    // goofup may cause damage
+  if (checkPeaceful("You are not permitted to construct traps here.\n\r"))
+    return FALSE;
+
   bisect_arg(arg, &field, string, user_trap_types);
 
   switch (field - 1) {

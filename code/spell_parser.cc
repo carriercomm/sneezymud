@@ -2218,6 +2218,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case AFFECT_COMBAT:
     case AFFECT_PET:
     case AFFECT_PLAYERKILL:
+    case AFFECT_HORSEOWNED:
     case LAST_ODDBALL_AFFECT:
         sendTo("Spell or discipline not yet implemented!\n\r");
         return FALSE;

@@ -57,7 +57,7 @@ void TBaseClothing::lowCheck()
     if (canWear(ITEM_HOLD)) {
       int amt = -itemAC();
       if (amt)
-        vlogf(LOG_LOW "Holdable item (%s:%d) with AC that was not a shield.",
+        vlogf(LOG_LOW, "Holdable item (%s:%d) with AC that was not a shield.",
             getName(), objVnum());
     }
   }

@@ -82,7 +82,12 @@ bool TThing::inLethargica() const
 
 bool TThing::isSpiked() const
 {
-  return (isname("spiked", name));
+  TBaseClothing *armor = NULL;
+  if (isname("spiked", name))
+    return TRUE;
+  else if (armor = dynamic_cast<TBaseClothing *>(this)) 
+    return isObjStat(ITEM_SPIKED);
+  return FALSE;
 }
 
 int TThing::swungObjectDamage(const TBeing *, const TBeing *) const

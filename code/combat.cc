@@ -3369,6 +3369,8 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
         mess_sent |= ONEHIT_MESS_DODGE;
       else if (thiefDodge(vict, weapon, &dam, w_type, part_hit))
 	mess_sent |= ONEHIT_MESS_DODGE;
+      else if (parryWarrior(vict, weapon, &dam, w_type, part_hit))
+	mess_sent |= ONEHIT_MESS_DODGE;
     }
     loseSneak();
 

@@ -777,7 +777,7 @@ int mapSpellnumToFile(spellNumT stt)
       return 649;
     case SKILL_SLASH_PROF:
       return 654;
-    case SKILL_BOW:
+    case SKILL_RANGED_PROF:
       return 655;
     case SKILL_PIERCE_PROF:
       return 656;
@@ -789,6 +789,8 @@ int mapSpellnumToFile(spellNumT stt)
       return 659;
     case SKILL_BAREHAND_PROF:
       return 660;
+    case SKILL_PARRY_WARRIOR:
+      return 664;
     case SKILL_ATTUNE:
       return 661;
     case SKILL_STAVECHARGE:
@@ -1590,6 +1592,8 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_OFFENSE;
     case 663:
       return SKILL_WHITTLE;
+    case 664:
+      return SKILL_PARRY_WARRIOR;
     case 596:
       return SKILL_WIZARDRY;
     case 597:
@@ -1611,7 +1615,7 @@ spellNumT mapFileToSpellnum(int stt)
     case 654:
       return SKILL_SLASH_PROF;
     case 655:
-      return SKILL_BOW;
+      return SKILL_RANGED_PROF;
     case 656:
       return SKILL_PIERCE_PROF;
     case 657:

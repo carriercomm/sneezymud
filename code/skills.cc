@@ -498,6 +498,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
       return &((CDHTH *) cd)->skShove;
     case SKILL_RETREAT:
       return &((CDHTH *) cd)->skRetreat;
+    case SKILL_PARRY_WARRIOR:  //            664
+      return &((CDHTH *) cd)->skParryWarrior;
 
 //disc_brawling
 
@@ -995,7 +997,7 @@ CSkill *TBeing::getSkill(spellNumT skill) const
   // disc_combat
     case SKILL_SLASH_PROF: // 1521
       return &((CDCombat *) cd)->skSlash;
-    case SKILL_BOW: // 1522
+    case SKILL_RANGED_PROF: // 1522
       return &((CDCombat *) cd)->skBow;
     case SKILL_PIERCE_PROF: // 1523
       return &((CDCombat *) cd)->skPierce;

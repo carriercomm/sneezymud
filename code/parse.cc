@@ -1099,6 +1099,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_SPY:
           rc = doSpy();
           break;
+        case CMD_PARRY:
+	  rc = doParry();
+	  break;
         case CMD_DODGE:
           rc = doDodge();
           break;
@@ -2406,6 +2409,7 @@ void buildCommandArray(void)
   commandArray[CMD_OEDIT] = new commandInfo("oedit", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_MEDIT] = new commandInfo("medit", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_DODGE] = new commandInfo("dodge", POSITION_FIGHTING, 0);
+  commandArray[CMD_PARRY] = new commandInfo("parry", POSITION_FIGHTING, 0);
   commandArray[CMD_ALIAS] = new commandInfo("alias", POSITION_DEAD, 0);
   commandArray[CMD_CLEAR] = new commandInfo("clear", POSITION_DEAD, 0);
   commandArray[CMD_SHOOT] = new commandInfo("shoot", POSITION_CRAWLING, 0);

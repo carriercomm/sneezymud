@@ -281,6 +281,7 @@ enum cmdTypeT {
      CMD_GAIN,
      CMD_TIMESHIFT,
      CMD_DISARM,
+     CMD_PARRY,
      CMD_THINK,
      CMD_ENTER,
      CMD_FILL,

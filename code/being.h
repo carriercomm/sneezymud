@@ -1290,6 +1290,7 @@ class TBeing : public TThing {
     int doSearch(const char *);
     int doSpy();
     int doDodge();
+    int doParry();
     int SpyCheck();
     int disarmTrap(const char *, TObj *);
     int detectTrap(const char *, int);
@@ -1392,6 +1393,7 @@ class TBeing : public TThing {
     void normalHitMessage(TBeing *, TThing *, spellNumT, int, wearSlotT);
     int monkDodge(TBeing *, TThing *, int *, int, wearSlotT);
     int thiefDodge(TBeing *, TThing *, int *, int, wearSlotT);
+    int parryWarrior(TBeing *, TThing *, int *, int, wearSlotT);
     int damageItem(TBeing *, wearSlotT, spellNumT, TThing *, int, const char * = NULL);
     int damageWeapon(TBeing *, wearSlotT, TThing **);
     void damageArm(bool, int);

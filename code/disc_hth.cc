@@ -196,35 +196,56 @@ int shove(TBeing *caster, TBeing * victim, char * direction, spellNumT skill)
   return TRUE;
 }
 
-CDHTH::CDHTH() :
-  CDiscipline(),
-  skShove(),
-  skRetreat()
+int TBeing::parryWarrior(TBeing *v, TThing *weapon, int *dam, int w_type, wearSlotT part_hit)
 {
-}
+  char buf[256], type[16];
 
-CDHTH::CDHTH(const CDHTH &a) :
-  CDiscipline(a),
-  skShove(a.skShove),
-  skRetreat(a.skRetreat)
-{
-}
+  // presumes warrior is in appropriate position for parry already
 
-CDHTH & CDHTH::operator=(const CDHTH &a)
-{
-  if (this == &a) return *this;
-  CDiscipline::operator=(a);
-  skShove = a.skShove;
-  skRetreat = a.skRetreat;
-  return *this;
-}
+  if (!v->doesKnowSkill(SKILL_PARRY_WARRIOR) && hasClass(CLASS_WARRIOR))
+    return FALSE;
 
-CDHTH::~CDHTH()
-{
-}
+  w_type -= TYPE_HIT;
 
-CDHTH * CDHTH::cloneMe()
+  // base amount, modified for difficulty
+  // the higher amt is, the more things get blocked
+  int amt = (int) (45 * 100 / getSkillDiffModifier(SKILL_PARRY_WARRIOR));
+
+  if (::number(0, 999) >= amt)
+    return FALSE;
+
+  // check bSuccess after above check, so that we limit how often we
+  // call the learnFrom stuff
+  if (bSuccess(v, v->getSkillValue(SKILL_PARRY_WARRIOR), SKILL_PARRY_WARRIOR)) {
+    *dam = 0;
+
+    strcpy(type, "parry");
+
+    sprintf(buf, "You %s $n's %s at your %s.", type,
+	    attack_hit_text[w_type].singular,
+	    v->describeBodySlot(part_hit).c_str());
+    act(buf, FALSE, this, 0, v, TO_VICT, ANSI_CYAN);
+
+    sprintf(buf, "$N %ss your %s at $S %s.", type,
+	    attack_hit_text[w_type].singular,
+	    v->describeBodySlot(part_hit).c_str());                                                          
+    act(buf, FALSE, this, 0, v, TO_CHAR, ANSI_CYAN);
+
+    sprintf(buf, "$N %ss $n's %s at $S %s.", type,
+	    attack_hit_text[w_type].singular,
+	    v->describeBodySlot(part_hit).c_str());
+    act(buf, TRUE, this, 0, v, TO_NOTVICT);
+
+    return TRUE;
+  }
+  return FALSE;
+}                  
+int TBeing::doParry()
 {
-  return new CDHTH(*this);
-}
+  sendTo("Parry is not yet supported in this fashion.\n\r");
+  return 0;
+} 
+
+
+
 

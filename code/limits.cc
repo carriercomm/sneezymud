@@ -923,7 +923,8 @@ int TBeing::checkIdling()
         inRoom() != ROOM_NOWHERE && inRoom() != ROOM_STORAGE) {
       specials.was_in_room = in_room;
       if (fight()) {
-        specials.fighting->stopFighting();
+        if (fight()->fight())
+          fight()->stopFighting();
         stopFighting();
       }
       act("$n disappears into the void.", TRUE, this, 0, 0, TO_ROOM);

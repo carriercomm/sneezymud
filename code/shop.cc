@@ -71,14 +71,15 @@ int TObj::shopPrice(int num, int shop_nr, int chr, int *discount) const
 
 bool is_ok(TMonster *keeper, TBeing *ch, int shop_nr)
 {
-  if (shop_index[shop_nr].open1 > time_info.hours) {
+  int hmt = hourminTime();
+  if (shop_index[shop_nr].open1 > hmt) {
      keeper->doSay("Come back later!");
     return FALSE;
-  } else if (shop_index[shop_nr].close1 < time_info.hours) {
-    if (shop_index[shop_nr].open2 > time_info.hours) {
+  } else if (shop_index[shop_nr].close1 < hmt) {
+    if (shop_index[shop_nr].open2 > hmt) {
       keeper->doSay("Sorry, we have closed, but come back later.");
       return FALSE;
-    } else if (shop_index[shop_nr].close2 < time_info.hours) {
+    } else if (shop_index[shop_nr].close2 < hmt) {
       keeper->doSay("Sorry, come back tomorrow.");
       return FALSE;
     }

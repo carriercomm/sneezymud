@@ -106,7 +106,8 @@ int ret,level;
 
 int slumber(TBeing *caster, TBeing *victim, int level, byte bKnown)
 {
-  int ret= FALSE, found = FALSE, rc = FALSE;
+  int ret= FALSE, rc = FALSE;
+  bool found = false;
   int crit = 1;
   saveTypeT save = SAVE_NO;
   TObj *primary = dynamic_cast<TObj *>(caster->heldInPrimHand());
@@ -126,7 +127,6 @@ int slumber(TBeing *caster, TBeing *victim, int level, byte bKnown)
       vlogf(LOG_MISC, "Sleep Tag Staff: %s just got slept by %s",
                victim->getName(), caster->getName());
       rc = victim->rawSleep(level, (4 + level/2) * UPDATES_PER_TICK, crit, save);
-//      if (IS_SET(rc, DELETE_THIS)) {
       if (IS_SET_DELETE(rc, DELETE_THIS)) {
         return SPELL_SUCCESS | VICTIM_DEAD;
       }
@@ -195,7 +195,6 @@ int slumber(TBeing *caster, TBeing *victim, int level, byte bKnown)
     }
   }
   rc = victim->rawSleep(level, (4 + level/2) * UPDATES_PER_TICK, crit, save);
-//  if (IS_SET(rc, DELETE_THIS)) {
   if (IS_SET_DELETE(rc, DELETE_THIS)) {
     if (victim == caster)
       ret |= CASTER_DEAD;

@@ -142,6 +142,7 @@ enum toolTypeT {
      TOOL_HOLYWATER,
      TOOL_FLINTSTEEL,
      TOOL_TOTEM,
+     TOOL_FISHINGBAIT,
      MAX_TOOL_TYPE // move and change
 };
 const toolTypeT MIN_TOOL_TYPE = TOOL_WHETSTONE;

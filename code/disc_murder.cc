@@ -221,6 +221,14 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
     REM_DELETE(rc, DELETE_VICT);
   }
 
+  TGenWeapon * obj = dynamic_cast<TGenWeapon *>(heldInPrimHand());
+
+  if (obj &&
+      obj->checkSpec(victim, CMD_BACKSTAB, "-special-", this) == DELETE_VICT) {
+    delete victim;
+    victim = NULL;
+  } 
+
   return rc;
 }
 

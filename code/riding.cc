@@ -170,9 +170,17 @@ int TMonster::lookForHorse()
       continue;
     if (horse->isPet() || horse->isCharm() || horse->isZombie())
       continue;
+
+    // only choose healthy horses
     if (horse->getHit() < horse->hitLimit())
       continue;
+
+    // let's not suicide ourselves on powerful mounts
     if ((horse->GetMaxLevel() + 4) > GetMaxLevel())
+      continue;
+
+    // don't be a horse thief
+    if (horse->affectedBySpell(AFFECT_HORSEOWNED))
       continue;
 
     // technically, should do an addCommandToQue here
@@ -210,6 +218,17 @@ TThing * TThing::dismount(positionTypeT pos)
   TBeing *tbt = dynamic_cast<TBeing *>(riding);
   TMonster *tmons = dynamic_cast<TMonster *>(riding);
   TBeing *ch = dynamic_cast<TBeing *>(this);
+
+  // If a PC hops off a mount, "save" the mount momentarily to avoid
+  // complaints about mobs grabbing the mount
+  if (isPc() && tmons) {
+    affectedData aff;
+    aff.type = AFFECT_HORSEOWNED;
+    aff.duration = 1 * UPDATES_PER_TICK;
+
+    tmons->affectTo(&aff);
+  }
+
   if (tbt && tbt->master == this) {
     // stop follower unless they are following for other reasons
     if (!tbt->isPet() && !tbt->isZombie() && !tbt->isCharm()) {

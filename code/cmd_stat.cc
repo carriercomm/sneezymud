@@ -454,14 +454,14 @@ void TBeing::statObj(const TObj *j)
   return;
 }
 
-void TBeing::statBeing(TBeing *k)
+void TBeing::statBeing(const TBeing *k)
 {
   affectedData *aff, *af2;
   char buf[MAX_STRING_LENGTH];
   char buf2[256];
   char buf3[256];
   TBeing *x1;
-  TMonster *tMonster = dynamic_cast<TMonster *>(k);
+  const TMonster *km = dynamic_cast<const TMonster *>(k);
   char *birth, *logon;
   char birth_buf[40], logon_buf[40];
   resp *respy;
@@ -485,19 +485,18 @@ void TBeing::statBeing(TBeing *k)
       break;
   }
 
-  if (tMonster)
-    sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d]\n\r     In-Room[%d] Old-Room[%d] Birth-Room[%d]\n\r",
+  if (km)
+    sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d]\n\r     In-Room[%d] Old-Room[%d] Birth-Room[%d] V-Number[%d]\n\r",
             (dynamic_cast<const TPerson *>(k) ? "PC" : "NPC"),
-            k->name, k->number, k->in_room, tMonster->oldRoom, tMonster->brtRoom);
+            k->name, k->number, k->in_room, km->oldRoom, km->brtRoom,
+            k->number >= 0 ? mob_index[km->getMobIndex()].virt : -1);
   else
     sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d] Room[%d]\n\r",
             (dynamic_cast<const TPerson *>(k) ? "PC" : "NPC"),
             k->name, k->number, k->in_room);
 
   sprintf(buf + strlen(buf),"-----------------------------------------------------------------------------\n\r");
-  const TMonster *km = dynamic_cast<const TMonster *>(k);
   if (km) {
-    sprintf(buf + strlen(buf),"V-Number [%d]\n\r", mob_index[km->getMobIndex()].virt);
     sprintf(buf + strlen(buf),"Short description: %s\n\r",
 	   (km->shortDescr ? km->shortDescr : "None"));
     sprintf(buf + strlen(buf),"Long description: %s",

@@ -1027,6 +1027,10 @@ int mapWizPowerToFile(wizPowerT att)
       return 105;
     case POWER_SEE_FACTION_SENDS:
       return 106;
+    case POWER_SETSEV:
+      return 107;
+    case POWER_SETSEV_IMM:
+      return 108;
     case MAX_POWER_INDEX:
       break;
   }
@@ -1251,6 +1255,10 @@ wizPowerT mapFileToWizPower(int att)
       return POWER_IMMORTAL_OUTFIT;
     case 106:
       return POWER_SEE_FACTION_SENDS;
+    case 107:
+      return POWER_SETSEV;
+    case 108:
+      return POWER_SETSEV_IMM;
     default:
       break;
   }

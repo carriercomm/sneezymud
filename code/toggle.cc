@@ -224,7 +224,7 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Ranger L21 Quest: Seeking Bullywug Oil", MOB_RANGER_AMBER},
   {"Ranger L21 Quest: Seeking Bandits in Bullywug", MOB_SHAMAN_BULLY},  //210
   {"Ranger L21 Quest: Got Bullywug Oil", MOB_SHAMAN_BULLY},
-  {"Ranger L21 Quest: Finished Ranger L21 Quest", MOB_AMBER_RANGER},
+  {"Ranger L21 Quest: Finished Ranger L21 Quest", MOB_RANGER_AMBER},
   {"Faction Membership: eligible", MOB_NONE},
   {"Caldonia: bought her a shot of whisky", MOB_CALDONIA},
   {"", MOB_NONE}, //215

@@ -1168,6 +1168,7 @@ int TBeing::doGoto(const string & argument)
     char tString[10];
 
     sprintf(tString, "%d", (desc ? desc->office : ROOM_IMPERIA));
+    buf = tString;
   } else if (buf == "help" && desc) {
     sendTo("Useful rooms:\n\r____________________\n\r");
     sendTo("         %6d: Your Office\n\r", desc->office);

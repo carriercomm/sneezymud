@@ -148,7 +148,8 @@ int TBaseContainer::getAllFrom(TBeing *ch, const char *argument)
 
     tAff.type     = AFFECT_PLAYERLOOT;
     tAff.duration = (24 * UPDATES_PER_MUDHOUR);
-    ch->affectTo(&tAff);
+    ch->affectJoin(ch, &tAff, AVG_DUR_NO, AVG_EFF_NO);
+    vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (1)", ch->getName());
   }
 
   // this is a kludge, task_get still has a tiny delay on it
@@ -198,7 +199,8 @@ int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
 
       tAff.type     = AFFECT_PLAYERLOOT;
       tAff.duration = (24 * UPDATES_PER_MUDHOUR);
-      ch->affectTo(&tAff);
+      ch->affectJoin(ch, &tAff, AVG_DUR_NO, AVG_EFF_NO);
+      vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (2)", ch->getName());
     }
 
     start_task(ch, ch->roomp->stuff, ch->roomp, TASK_GET_ALL, capbuf, 
@@ -244,7 +246,8 @@ int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
 
       tAff.type     = AFFECT_PLAYERLOOT;
       tAff.duration = (24 * UPDATES_PER_MUDHOUR);
-      ch->affectTo(&tAff);
+      ch->affectJoin(ch, &tAff, AVG_DUR_NO, AVG_EFF_NO);
+      vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (3)", ch->getName());
     }
 
     // this is a kludge, task_get still has a tiny delay on it

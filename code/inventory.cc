@@ -1733,22 +1733,21 @@ int TBeing::doDonate(const char *argument)
       act("$p has no real long term value, so you junk it instead.",
           FALSE, this, o, NULL, TO_CHAR);
       doJunk("", o);
+    } else {
+      act("You donate $p.", false, this, t_o, NULL, TO_CHAR);
+      act("$n donates $p.", false, this, t_o, NULL, TO_ROOM);
 
-      return FALSE;
+      logItem(t_o, CMD_DONATE);
+      for (t = t_o->stuff; t; t = t->nextThing)
+        logItem(t, CMD_DONATE);
+
+      --(*t_o);
+      thing_to_room(t_o, ROOM_DONATION);
     }
-
-    act("You donate $p.", false, this, t_o, NULL, TO_CHAR);
-    act("$n donates $p.", false, this, t_o, NULL, TO_ROOM);
-
-    logItem(t_o, CMD_DONATE);
-    for (t = t_o->stuff; t; t = t->nextThing)
-      logItem(t, CMD_DONATE);
-
-    --(*t_o);
-    thing_to_room(t_o, ROOM_DONATION);
 
     if (num > 0)
       num--;
+
     count++;
   }
 

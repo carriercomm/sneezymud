@@ -48,7 +48,7 @@ int secs_to_level(int lev)
 
   float ticks_regen = (float) avg_pc_hp / (float) regen_per_tick;
 
-  int secs_regen = (int) (ticks_regen * (PULSE_UPDATES/2) / ONE_SECOND);
+  int secs_regen = (int) (ticks_regen * (PULSE_UPDATE/2) / ONE_SECOND);
 
   int tot_time = secs_regen + time_combat;
 

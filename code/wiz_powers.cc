@@ -40,7 +40,6 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_STAT);
     ch->setWizPower(POWER_SHOW);
     ch->setWizPower(POWER_PURGE);
-    ch->setWizPower(POWER_LOAD);  // load rooms backdoor   
   } else if (is_abbrev(arg, "remrooms")) {
     ch->remWizPower(POWER_REDIT);  
     ch->remWizPower(POWER_RSAVE);
@@ -49,7 +48,6 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->remWizPower(POWER_STAT);
     ch->remWizPower(POWER_SHOW);
     ch->remWizPower(POWER_PURGE);
-    ch->remWizPower(POWER_LOAD);  // load rooms backdoor   
   } else if (is_abbrev(arg, "mobs")) {
     ch->setWizPower(POWER_MEDIT);
     ch->setWizPower(POWER_STAT_MOBILES);
@@ -57,6 +55,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_SEDIT);
     ch->setWizPower(POWER_IMMORTAL_OUTFIT);
     ch->setWizPower(POWER_WIZNET_ALWAYS);
+    ch->setWizPower(POWER_LOAD);  // load rooms backdoor   
   } else if (is_abbrev(arg, "remmobs")) {
     ch->remWizPower(POWER_MEDIT);
     ch->remWizPower(POWER_STAT_MOBILES);
@@ -64,6 +63,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->remWizPower(POWER_SEDIT);
     ch->remWizPower(POWER_IMMORTAL_OUTFIT);
     ch->remWizPower(POWER_WIZNET_ALWAYS);
+    ch->remWizPower(POWER_LOAD);  // load rooms backdoor   
   } else if (is_abbrev(arg, "objs")) {
     ch->setWizPower(POWER_LOAD_SET);
     ch->setWizPower(POWER_STAT_OBJECT);
@@ -196,6 +196,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     wizPowerT wpt;
     for (wpt = MIN_POWER_INDEX; wpt < MAX_POWER_INDEX; wpt++)
       ch->setWizPower(wpt);
+      ch->remWizPower(POWER_IDLED);
   } else if (is_abbrev(arg, "allpowers")) {
     doer->sendTo("This gives them *ALL* powers, don't do it unless you really really mean to.\n\r");
     doer->sendTo("You have to type the whole word 'allpowers' to do it too.\n\r");
@@ -204,6 +205,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     wizPowerT wpt;
     for (wpt = MIN_POWER_INDEX; wpt < MAX_POWER_INDEX; wpt++)
       ch->remWizPower(wpt);
+      ch->setWizPower(POWER_IDLED);
   } else if (is_abbrev(arg, "remall")) {
     doer->sendTo("This removes *ALL* powers, don't do it unless you really really mean to.\n\r");
     doer->sendTo("You have to type the whole word 'remall' to do it too.\n\r");

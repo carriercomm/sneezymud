@@ -142,6 +142,11 @@ void Descriptor::send_client_prompt(int, int update)
     if (ch->hasClass(CLASS_CLERIC) || ch->hasClass(CLASS_DEIKHAN)) {
       sprintf(manaBuf, "%.1f", ch->getPiety());
       strcpy(maxManaBuf, "100");
+#ifdef JESUS
+    } else if (ch->hasClass(CLASS_SHAMAN)) {
+      sprintf(manaBuf, "%d", ch->getLifeforce());
+      sprintf(maxManaBuf, "%d", ch->lifeforceLimit());
+#endif
     } else {
       sprintf(manaBuf, "%d", ch->getMana());
       sprintf(maxManaBuf, "%d", ch->manaLimit());

@@ -131,7 +131,7 @@ void SystemTask::CheckTask()
   //  Check on the running task.
   } else {
     if (waitpid(top->pid, &pstatus, WNOHANG) < 0) {
-      vlogf(LOG_MISC, "INFO: task '%s' completed.", top->cmd);
+      vlogf(LOG_SILENT, "INFO: task '%s' completed.", top->cmd);
       //  Process the output.
       memset((char *) &fstatus, 0, sizeof(struct stat));
       if (stat(TMPFILE, &fstatus) < 0) 

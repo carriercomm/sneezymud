@@ -668,9 +668,29 @@ void TPerson::setTitle(bool tForm)
   title = mud_str_dup(tString);
 }
 
-void gain_exp(TBeing *ch, double gain, int rawdamage)
+
+// Ok we're doing some wierd stuff in this function, so I'll document here.  For the exp cap,
+// we're capping anything with:
+// rawgain > (damage_of_hit / max_hp_of_mob) * (exp_for_level / min_kills_per_lev) 
+// we also modify for number of classes, so that the cap is 1/2 as large for a dual class
+// basically, if you play with the formula, you'll find that this limits the player so that
+// in any particular fight, the player CANNOT gain more than 1/min_kills of his exp needed to
+// move from his current level to the next.
+// damage / max_hp is passed as a single integer, dam  (no damage = 0, full damage = 10000)
+// exp_for_level is calculated from the exp needed for next lev minus exp needed for current lev
+//   ie, (peak - curr)
+// min_kills_per_lev is an AXIOM, since projected kills per lev is 17 + 1.25*lev (18-80, linear)
+// we decided on gainmod = lev + 1 (2-50, linear)
+// if the cap is being hit too much, it is a sign that the PCs have grown too powerful, or the
+// gainmod formula is too strict.  if the cap isn't being hit (specifically when players are
+// being pleveled) then gainmod is too lenient.             Dash - Jan 2001
+
+// NOTE, gainmod is defined in multiple places, if you change it, change all of them please
+
+void gain_exp(TBeing *ch, double gain, int dam)
 {
   classIndT i;
+  double newgain = 0;
 
 #if 0
   if (!ch->isPc() && ch->isAffected(AFF_CHARM)) {
@@ -690,7 +710,7 @@ void gain_exp(TBeing *ch, double gain, int rawdamage)
           double peak2 = getExpClassLevel(i,ch->getLevel(i) + 2);
           double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
           double curr = getExpClassLevel(i,ch->getLevel(i));
-	  double gainmod = ((ch->getLevel(i) * ch->getLevel(i)) + 28);
+	  double gainmod = ((ch->getLevel(i)) + 1);
           if (ch->getLevel(i)) {
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
@@ -713,23 +733,33 @@ void gain_exp(TBeing *ch, double gain, int rawdamage)
                 ch->setExp(peak2- 1);
                 return;
               }
-	      if(gain > ((peak - curr) / gainmod)) {
+	      // if(gain > ((peak - curr) / gainmod)) {
+	      if (gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) && dam > 0) { // the 100 turns dam into a %
+		newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000);
 		vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
-		vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d ]", ch->getLevel(i), (int)gain, (int)((peak - curr) / gainmod), (int)gainmod);
+		vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]", 
+		      ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+                vlogf(LOG_DASH, "Experience cap reached by %s!", ch->getName());
+                vlogf(LOG_DASH, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]",
+                      ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+		
 	      }  
-            }
-          }
-        }
+	  }
+	}
       }
+    }
 #ifdef SNEEZY2000
     // Theoretically, a players peak - curr / gainmod is extremely reasonable
     // for a veteran player hitting mobs above thier level but not too far
     // We may need to watch for the backstabbers
-    double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
-    double curr = getExpClassLevel(i,ch->getLevel(i));
-    double gainmod = ((ch->getLevel(i) * ch->getLevel(i)) + 28);
-    gain = min(gain, ((peak - curr) / gainmod));
-    gain += (rand()%(gain*.1))-(gain*.05));
+    if(dam > 0) {
+      double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
+      double curr = getExpClassLevel(i,ch->getLevel(i));
+      double gainmod = ((ch->getLevel(i) + 1));
+      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000); // the 100 compensates for dam
+      gain = min(gain, newgain); 
+      gain += (rand()%(gain*.1))-(gain*.05));
+    }
 #else
 #endif
     ch->addToExp(gain);

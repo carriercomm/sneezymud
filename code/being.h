@@ -566,6 +566,7 @@ class TBeing : public TThing {
     virtual TThing& operator-- ();
 
     // VIRTUAL FUNCTIONS
+    virtual int editAverageMe(TBeing *, const char *);
     virtual const char * getLongDesc() const;
     virtual int chiMe(TBeing *);
     virtual const char *getName() const;

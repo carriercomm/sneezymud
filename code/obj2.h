@@ -427,6 +427,7 @@ class TBaseClothing : public virtual TObj
     virtual void getFourValues(int *, int *, int *, int *) const = 0;
     virtual string statObjInfo() const = 0;
 
+    virtual int editAverageMe(TBeing *, const char *);
     virtual string showModifier(showModeT, const TBeing *) const;
     virtual void objMenu(const TBeing *) const;
     virtual int rentCost() const;
@@ -523,6 +524,7 @@ class TBaseWeapon : public TObj {
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual string statObjInfo() const = 0;
 
+    virtual int editAverageMe(TBeing *, const char *);
     virtual double baseDamage() const;
     virtual int swungObjectDamage(const TBeing *, const TBeing *) const;
     virtual void lowCheck();

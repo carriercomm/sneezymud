@@ -89,6 +89,7 @@ class TThing {
     }
     
     // VIRTUAL FUNCTIONS
+    virtual int editAverageMe(TBeing *, const char *);
     virtual int chiMe(TBeing *);
     virtual void eatMe(TBeing *);
     virtual const char *hshr() const { return "its"; }

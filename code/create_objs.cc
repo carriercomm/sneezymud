@@ -2,33 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: create_objs.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.4  1999/10/09 05:04:23  batopr
-// Fixed errmsgs in obj_applys
-//
-// Revision 1.3  1999/10/09 04:57:06  batopr
-// Fixed change_obj_apply to deal with apply numbers properly
-//
-// Revision 1.2  1999/10/09 04:37:42  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD      (c) 1993 SneezyMUD Coding Team.   All Rights Reserved. 
-//
 // create_objs.c : Online object creation/saving/loading for builders.
 //
 ///////////////////////////////////////////////////////////////////////////
@@ -65,7 +38,9 @@ static void update_obj_menu(const TBeing *ch, const TObj *obj)
   ch->sendTo(VT_CURSPOS, 1, 1);
   ch->sendTo("%sObject Name:%s %s", ch->cyan(), ch->norm(), obj->name);
   ch->sendTo(VT_CURSPOS, 2, 1);
-  ch->sendTo("%sItem Type :%s %s", ch->purple(), ch->norm(), ItemInfo[obj->itemType()]->name);
+
+  itemTypeT itt = obj->itemType();
+  ch->sendTo("%sItem Type :%s %s", ch->purple(), ch->norm(), ItemInfo[itt]->name);
 
   // this possibly adds item-specific stuff on line 3
   obj->objMenu(ch);

@@ -210,6 +210,12 @@ const int TOG_STARTED_MONK_RED      = 82;
 const int TOG_FINISHED_MONK_RED     = 83;
 const int TOG_HAS_MONK_RED          = 84;
 
+const int TOG_MONK_BLACK_ELIGIBLE   = 215;
+const int TOG_MONK_BLACK_STARTED    = 216;
+const int TOG_MONK_BLACK_FINISHED   = 217;
+const int TOG_MONK_BLACK_OWNED      = 218;
+
+
 const int TOG_GAVE_ESSENCE_RAT_KING = 155; // non-monk toggle reused per request
 
 const int TOG_MAGE_BELT_ELIGIBLE    = 157;
@@ -303,7 +309,7 @@ const int TOG_IMMORTAL_BLANK_9 = 95;
 const int TOG_IMMORTAL_BLANK_10 = 96;
 // end recycle
 
-const int MAX_TOG_INDEX       = 215;  // move and change
+const int MAX_TOG_INDEX       = 219;  // move and change
 
 extern TOGINFO TogIndex[MAX_TOG_INDEX + 1];
 

@@ -4271,11 +4271,13 @@ void TBeing::doInfo(const char *arg)
       unsigned int tTotalGold[MAX_MONEY_TYPE],
                    tTotalGlobal = getPosGoldGlobal(),
                    tTotalShops  = getPosGoldShops(),
+                   tTotalRent   = getPosGold(GOLD_RENT),
                    tTotalBudget = getPosGoldBudget();
                int tNetGold[MAX_MONEY_TYPE],
                    tNetGlobal   = getNetGoldGlobal(),
                    tNetShops    = getNetGoldShops(),
-                   tNetBudget   = getNetGoldBudget();
+                   tNetBudget   = getNetGoldBudget(),
+                   tNetRent     = getNetGold(GOLD_RENT);
                int tTotalDrain  = tTotalGlobal - tNetGlobal;
 
       if (!arg || !*arg) {
@@ -4298,6 +4300,11 @@ void TBeing::doInfo(const char *arg)
         sprintf(buf2, "Modifier: Repair: %2.2f (Factor: %6.2f%%)\n\r",
                 gold_modifier[GOLD_REPAIR],
                 100.0 * (tTotalBudget - tNetBudget) / tTotalDrain);
+        buf += buf2;
+        sprintf(buf2, "Modifier: Rent  : %2.2f (Factor: %6.2f%%) (Adjusted: %6.2f%%)\n\r",
+                gold_modifier[GOLD_RENT],
+                100.0 * (tTotalRent - tNetRent) / tTotalDrain,
+                100.0 * (tTotalRent - tNetRent) / gold_modifier[GOLD_RENT] / tTotalDrain);
         buf += buf2;
         sprintf(buf2, "Modifier: Equip : %2.2f (Factor: %6.2f%%)\n\r",
                 stats.equip,

@@ -639,7 +639,6 @@ if (version >= 7 ||
 
 static bool shouldRecycle(int robj)
 {
-  return FALSE;
 #if 0
   // nuke based on total number available
   return (obj_index[robj].max_exist &&
@@ -834,8 +833,7 @@ void objsToStore(signed char slot, TObj *o, rentHeader * st, TBeing *ch, bool d,
     (st->number)++;
     if (!raw_write_item(fp, tmpcorpse, st->version))
       vlogf(LOG_BUG, "Rent error in %s's file", tmpcorpse->getName());
-//  Someone changed something, testing to see if ok, delete if stable 7/17/98
-//    objsToStore(NORMAL_SLOT, dynamic_cast<TObj *>(tmpcorpse->stuff), st, ch, d, fp, corpse);
+
     objsToStore(NORMAL_SLOT, dynamic_cast<TObj *>(tmpcorpse->stuff), st, ch, d, fp, FALSE);
     slot = CONTENTS_END;
     if (fwrite(&slot, sizeof(signed char), 1, fp) != 1) {

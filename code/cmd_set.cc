@@ -241,7 +241,7 @@ void TPerson::doSet(const char *argument)
 #endif
         mob->doSave(SILENT_NO);
       } else {
-        sendTo("Wiz-Power Unset: %s\n\r", getWizPowerName(wpt).c_str());
+        sendTo("Wiz-Power Removed: %s\n\r", getWizPowerName(wpt).c_str());
         mob->remWizPower(wpt);
 #if 0
         mob->sendTo("The following Wiz-Power has been revoked: %s\n\r",

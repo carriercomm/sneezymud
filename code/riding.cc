@@ -88,10 +88,12 @@ bool TBeing::hasSaddle() const
   if (!(obj = equipment[WEAR_BACK]))
     return FALSE;
   TBaseClothing *tbc = dynamic_cast<TBaseClothing *>(obj);
-  if (!tbc || !tbc->isSaddle())
-    return FALSE;
-
-  return TRUE;
+  TBaseContainer *tbc2 = dynamic_cast<TBaseContainer *>(obj);
+  if (tbc && tbc->isSaddle())
+    return 1;
+  if (tbc2 && tbc2->isSaddle())
+    return (tbc2->isSaddle());
+  return FALSE;
 }
 
 // returns DELETE_THIS
@@ -246,7 +248,7 @@ TThing * TThing::dismount(positionTypeT pos)
         TBeing *tb3 = dynamic_cast<TBeing *>(t);
         if (tb3) {
           tb3->addFollower(tbt);
-          if (tbt->hasSaddle()) {
+          if (tbt->hasSaddle() == 1) {
             act("You hop up into the now vacant saddle.", TRUE, tb3, 0, 0, TO_CHAR);
             act("$n hops up into the now vacant saddle.", TRUE, tb3, 0, 0, TO_ROOM);
           }
@@ -305,6 +307,13 @@ int TBeing::doMount(const char *arg, cmdTypeT cmd, TBeing *h)
       sendTo("Your berserker rage scares the mount.\n\r");
       return FALSE;
     }
+    if (horse->hasSaddle()){
+      TBaseContainer *tbc3 = dynamic_cast<TBaseContainer *>(horse->equipment[WEAR_BACK]);
+      if (tbc3 && tbc3->isSaddle() == 2) {
+      	act("You cannot ride $N when it is saddled with a pack.", FALSE,this, 0,horse, TO_CHAR);
+      	return FALSE;     
+      }
+    }
     if (!isImmortal() && (horse->isTanking() || (horse->fight() && !hasClass(CLASS_DEIKHAN)))) {
       sendTo("You do not have the skill to mount something that is fighting!\n\r");
       return FALSE;
@@ -357,9 +366,7 @@ int TBeing::doMount(const char *arg, cmdTypeT cmd, TBeing *h)
 	act("$N is too large for you to ride.", FALSE, this, 0, horse, TO_CHAR);
 	return FALSE;
       }
-    }
-
-    
+    }    
     if (!isImmortal() && (fight() || horse->fight())) {
       learn = getSkillValue(SKILL_RIDE) + 
 	advancedRidingBonus(dynamic_cast<TMonster *>(horse));
@@ -517,7 +524,7 @@ int TBeing::doMount(const char *arg, cmdTypeT cmd, TBeing *h)
     }
 #endif
     if (rideCheck(-check)) {
-      if (horse->hasSaddle() && !horse->rider) {
+      if (horse->hasSaddle()==1 && !horse->rider) {
         act("You hop into the saddle and start riding $N.",
                  FALSE, this, 0, horse, TO_CHAR);
         act("$n hops into the saddle and starts riding $N.", 

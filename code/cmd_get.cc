@@ -246,6 +246,8 @@ int TBeing::doGet(const char *argument)
   TThing *t;
   bool found = FALSE, autoloot = FALSE;
   int rc;
+  TBeing *horse = NULL;
+  TObj *tmpobj = NULL;
 
   int p;
   getTypeT type = GETALLALL;
@@ -463,6 +465,21 @@ int TBeing::doGet(const char *argument)
       }
 
       sub = get_obj_vis_accessible(this, arg2);
+
+      if (!sub) {
+	int bits = generic_find(arg2, FIND_CHAR_ROOM, this, &horse, &tmpobj);
+	if (bits)
+	  if (horse->isRideable() && horse->equipment[WEAR_BACK]) {
+	    TBaseContainer *saddlebag = dynamic_cast<TBaseContainer *>(horse->equipment[WEAR_BACK]);
+	    if (saddlebag && saddlebag->isSaddle()) {
+	      sub = dynamic_cast<TObj *>(saddlebag);
+	      act("You reach over to $N and open the $o on $s back.",FALSE,this,saddlebag,horse,TO_CHAR);
+	      act("$n reaches over to $N and opens the $o on $s back.",FALSE,this,saddlebag,horse,TO_NOTVICT);
+	      act("$n reaches over to you and opens the $o on your back.",FALSE,this,saddlebag,horse,TO_VICT);
+	    }
+	  }
+      }
+      
       if (!sub) {
 	if(autoloot==TRUE)
 	  sendTo("You do not see or have the corpse.\n\r");
@@ -488,7 +505,24 @@ int TBeing::doGet(const char *argument)
       sendTo("You can't take a thing from multiple containers.\n\r");
       break;
     case GETOBJOBJ:
-      if ((sub = get_obj_vis_accessible(this, arg2))) {
+
+      sub = get_obj_vis_accessible(this, arg2);
+
+      if (!sub) {
+        int bits = generic_find(arg2, FIND_CHAR_ROOM, this, &horse, &tmpobj);
+        if (bits)
+          if (horse->isRideable() && horse->equipment[WEAR_BACK]) {
+            TBaseContainer *saddlebag = dynamic_cast<TBaseContainer *>(horse->equipment[WEAR_BACK]);
+            if (saddlebag && saddlebag->isSaddle()) {
+              sub = dynamic_cast<TObj *>(saddlebag);
+	      act("You reach over to $N and open the $o on $s back.",FALSE,this,saddlebag,horse,TO_CHAR);
+	      act("$n reaches over to $N and opens the $o on $s back.",FALSE,this,saddlebag,horse,TO_NOTVICT);
+	      act("$n reaches over to you and opens the $o on your back.",FALSE,this,saddlebag,horse,TO_VICT);
+	    }
+          }
+      }
+
+      if (sub) {
         rc = sub->getObjFrom(this, arg1, arg2);
         if (IS_SET_DELETE(rc, DELETE_VICT))
           return DELETE_THIS;

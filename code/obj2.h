@@ -37,6 +37,8 @@ class TBaseContainer : public TObj {
     virtual string showModifier(showModeT, const TBeing *) const;
     virtual void purchaseMe(TBeing *, TMonster *, int, int);
 
+    int isSaddle() const;
+
   protected:
     TBaseContainer();
   public:

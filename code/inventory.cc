@@ -586,7 +586,28 @@ int TBeing::doPut(const char *argument)
         num = 1;
 
       if (!strcmp(arg1, "all")) {
-        if ((sub = get_obj_vis_accessible(this, arg2))) {
+     
+
+	sub = get_obj_vis_accessible(this, arg2);
+	
+	if (!sub) {
+	  TObj *tmpobj;
+	  TBeing *horse;
+	  int bits = generic_find(arg2, FIND_CHAR_ROOM, this, &horse, &tmpobj);
+	  if (bits)
+	    if (horse->isRideable() && horse->equipment[WEAR_BACK]) {
+	      TBaseContainer *saddlebag = dynamic_cast<TBaseContainer *>(horse->equipment[WEAR_BACK]);
+	      if (saddlebag && saddlebag->isSaddle()) {
+		sub = dynamic_cast<TObj *>(saddlebag);
+		act("You reach over to $N and open the $o on $s back.",FALSE,this,saddlebag,horse,TO_CHAR);
+		act("$n reaches over to $N and opens the $o on $s back.",FALSE,this,saddlebag,horse,TO_NOTVICT);
+		act("$n reaches over to you and opens the $o on your back.",FALSE,this,saddlebag,horse,TO_VICT);
+	      }
+	    }
+	}
+
+        if (sub) {
+
           for (t = stuff, i = 0; t; t = t2) {
             t2 = t->nextThing;
             if (t == sub || !canSee(t)) {
@@ -630,7 +651,7 @@ int TBeing::doPut(const char *argument)
           sendTo("You don't have the '%s'.\n\r", arg1);
           return FALSE;
         }
-
+	bool firsttimeround=TRUE;
         for (t = stuff, i = 0, j = 1; t && i < num; t = t2) {
           t2 = t->nextThing;
           obj = dynamic_cast<TObj *>(t);
@@ -639,8 +660,28 @@ int TBeing::doPut(const char *argument)
               j++;
               continue;
             }
-            if ((sub = dynamic_cast<TObj *>( get_obj_vis_accessible(this, arg2)))) {
-              rc = put(this, obj, sub);
+	    sub = dynamic_cast<TObj *>( get_obj_vis_accessible(this, arg2));
+	    if (!sub) {
+	      TObj *tmpobj;
+	      TBeing *horse;
+	      int bits = generic_find(arg2, FIND_CHAR_ROOM, this, &horse, &tmpobj);
+	      if (bits)
+		if (horse->isRideable() && horse->equipment[WEAR_BACK]) {
+		  TBaseContainer *saddlebag = dynamic_cast<TBaseContainer *>(horse->equipment[WEAR_BACK]);
+		  if (saddlebag && saddlebag->isSaddle()) {
+		    sub = dynamic_cast<TObj *>(saddlebag);
+		    if (firsttimeround) {
+		      act("You reach over to $N and open the $o on $s back.",FALSE,this,saddlebag,horse,TO_CHAR);
+		      act("$n reaches over to $N and opens the $o on $s back.",FALSE,this,saddlebag,horse,TO_NOTVICT);
+		      act("$n reaches over to you and opens the $o on your back.",FALSE,this,saddlebag,horse,TO_VICT);
+		      firsttimeround = FALSE;
+		    }
+		  }
+		}
+	    }
+	  
+	    if (sub) {
+	      rc = put(this, obj, sub);
               i++;  // acknowledge the attempt
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete obj;

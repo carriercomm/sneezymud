@@ -65,6 +65,10 @@ int check_size_restrictions(const TBeing *ch, const TObj *o, wearSlotT slot, con
   const TBaseClothing *tbc = dynamic_cast<const TBaseClothing *>(o);
   if (!tbc || dynamic_cast<const TJewelry *>(tbc))
     return TRUE;
+  const TBaseContainer *tbc2 = (dynamic_cast<const TBaseContainer *>(o)); 
+  if (tbc2) 
+    if (tbc2->isSaddle())
+      return TRUE;
   if (tbc->isSaddle())
     return TRUE;
   if ((slot == WEAR_NECK) ||
@@ -839,7 +843,11 @@ int TBeing::wear(TObj *o, wearKeyT keyword, TBeing *ch)
     case WEAR_KEY_BACK:
       if (o->canWear(ITEM_WEAR_BACK)) {
         tbc = dynamic_cast<TBaseClothing *>(o);
-        if (tbc && tbc->isSaddle()) {
+	TBaseContainer *tbc2 = dynamic_cast<TBaseContainer *>(o);
+	if (tbc2 && tbc2->isSaddle()){
+	  sendTo("You have to be saddled to put that on.\n\r");
+	  return FALSE;
+	} else if (tbc && tbc->isSaddle()) {
           sendTo("You have to be saddled to put that on.\n\r");
           return FALSE;
         } else if (validEquipSlot(WEAR_BACK)) {
@@ -1951,11 +1959,17 @@ int TBeing::doUnsaddle(const char *arg)
           FALSE, this, 0, horse, TO_CHAR);
     return FALSE;
   }
-  TBaseClothing *tbc;
-  if (!(saddle = horse->equipment[WEAR_BACK]) || 
-      !(tbc = dynamic_cast<TBaseClothing *>(saddle)) ||
-      !tbc->isSaddle()) {
-    act("$N is not wearing a saddle",
+  saddle = horse->equipment[WEAR_BACK];
+  TBaseClothing *tbc = NULL;
+  TBaseContainer *tbc2 = NULL;
+  if (saddle) {
+    tbc = dynamic_cast<TBaseClothing *>(saddle);
+    tbc2 = dynamic_cast<TBaseContainer *>(saddle); //for saddlepacks etc 10-21-00, -dash
+  }
+  if (!(saddle) ||
+      !(tbc  && tbc->isSaddle()) &&  //two checks for two kinds of saddles
+      !(tbc2 && tbc2->isSaddle())) {              
+    act("$N is not wearing a saddle.",
           FALSE, this, 0, horse , TO_CHAR);
     return FALSE;
   }
@@ -2014,13 +2028,17 @@ int TBeing::doSaddle(const char *arg)
     sendTo("You don't seem to have the '%s'.\n\r", arg2);
     return FALSE;
   }
+  if (this == horse) {
+    sendTo("You can't saddle yourself, you dolt. Try wearing it.\n\r");
+  }
   if (!horse->isRideable()) {
     act("You can't saddle $N, $E isn't rideable.", 
           FALSE, this, saddle, horse, TO_CHAR);
     return FALSE;
   }
   TBaseClothing *tbc = dynamic_cast<TBaseClothing *>(saddle);
-  if (!tbc || !tbc->isSaddle()) {
+  TBaseContainer *tbc2 = dynamic_cast<TBaseContainer *>(saddle);
+  if (!(tbc && tbc->isSaddle()) &&  !(tbc2 && tbc2->isSaddle())) {
     act("$p is not a saddle.",
           FALSE, this, saddle, horse , TO_CHAR);
     return FALSE;

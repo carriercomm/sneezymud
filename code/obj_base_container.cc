@@ -356,3 +356,12 @@ bool TBaseContainer::fitsSellType(tObjectManipT tObjectManip,
     return TObj::fitsSellType(tObjectManip, ch, tKeeper, tStString, tItemType, tCount, tShop);
 }
 
+int TBaseContainer::isSaddle() const
+{
+  if (isname("saddle",name) && (isname("panier",name) || isname("pack",name) || isname("bag",name))) {
+    if (isname ("[CAN_RIDE]",name))
+      return 1;
+    else return 2;
+  }
+  return FALSE;
+}

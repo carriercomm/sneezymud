@@ -234,12 +234,25 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
         return TRUE;
       } else {
         // get all bag
-        if (!(sub = get_obj_vis_accessible(ch, buf2))) {
-          ch->sendTo("The %s is no longer accessible.\n\r", buf2);
-          ch->stopTask();
-          ch->doSave(SILENT_YES);
-          return FALSE;
-        }
+        sub = get_obj_vis_accessible(ch, buf2);
+	if (!sub) {
+	  TBeing *horse;
+	  TObj *tmpobj;
+      	  int bits = generic_find(buf2, FIND_CHAR_ROOM, ch, &horse, &tmpobj);
+	  if (bits)
+	    if (horse->isRideable() && horse->equipment[WEAR_BACK]) {
+	      TBaseContainer *saddlebag = dynamic_cast<TBaseContainer *>(horse->equipment[WEAR_BACK]);
+	      if (saddlebag->isSaddle())
+		sub = dynamic_cast<TObj *>(saddlebag);
+	    }
+	}
+	if (!sub) {
+	  ch->sendTo("The %s is no longer accessible.\n\r", buf2);
+	  ch->stopTask();
+	  ch->doSave(SILENT_YES);
+	  return FALSE;
+	}
+        
         if (ch->task->flags) {
           if (!ch->anythingGetable(sub, buf1)) {
             act("You can get no more from $p", TRUE, ch, sub, NULL, TO_CHAR);

@@ -1117,6 +1117,82 @@ void TBeing::doRload(const char *)
 
 void TPerson::doRload(const char *argument)
 {
+#if 1
+  int    tStart = 0,
+         tEnd = 0;
+  bool   tSec = false;
+  char   tString[256];
+  string tStArg(argument),
+         tStString(""),
+         tStBuffer("");
+
+  if (!hasWizPower(POWER_RLOAD)) {
+    incorrectCommand();
+    return;
+  }
+
+  if (!desc || !isImmortal())
+    return;
+
+  stSpaceOut(tStArg);
+  tStArg = two_arg(tStArg, tStString, tStBuffer);
+
+  if (tStString.empty() || tStString[0] == '1') {
+    tStart = desc->blockastart;
+    tEnd   = desc->blockaend;
+  } else if (tStString[0] == '2') {
+    tStart = desc->blockbstart;
+    tEnd   = desc->blockbend;
+    tSec   = true;
+  } else if (is_abbrev(tStString.c_str(), "backup")) {
+    string tStExtra(""),
+           tStStandard("");
+    bool   tStandard = false;
+
+    two_arg(tStBuffer, tStExtra, tStStandard);
+
+    if (!tStExtra.empty()) {
+      if (tStExtra[0] == '1') {
+        if (!tStStandard.empty() && is_abbrev(tStStandard.c_str(), "standard"))
+          tStandard = true;
+      } else if (tStExtra[0] == '2') {
+        tSec = true;
+
+        if (!tStStandard.empty() && is_abbrev(tStStandard.c_str(), "standard"))
+          tStandard = true;
+      } else if (is_abbrev(tStExtra.c_str(), "standard"))
+        tStandard = true;
+      else {
+        sendTo("Syntax: redit load backup <\"1\"/\"2\"/\"standard\"> <\"standard\">\n\r");
+        return;
+      }
+    }
+
+    if (!tSec)
+      sprintf(tString, "cp immortals/%s/rooms.bak%s immortals/%s/rooms",
+              getName(), (!tStandard ? "2" : ""), getName());
+    else
+      sprintf(tString, "cp immortals/%s/rooms_2.bak%s immortals/%s/rooms_2",
+              getName(), (!tStandard ? "2" : ""), getName());
+
+    sendTo("Restoring Backup2 File.\n\r");
+    vsystem(tString);
+    return;
+  } else {
+    sendTo("Syntax: redit load <\"1\"/\"2\">\n\r");
+    return;
+  }
+
+  if (tStart <= 0 || tEnd <= 0) {
+    sendTo("You have no rooms assigned in that block...Sorry.\n\r");
+    return;
+  }
+
+  if (tStart > tEnd)
+    sendTo("Your room block is messed up.  Talk with Head Low immediatly!\n\r");
+  else
+    RoomLoad(this, tStart, tEnd, tSec);
+#else
   string stRoom(""),
          enRoom(""),
          tString("");
@@ -1176,6 +1252,7 @@ void TPerson::doRload(const char *argument)
     RoomLoad(this, start, end, useSecond);
   else
     sendTo("Syntax: rload <first-room> <last-room>\n\r");
+#endif
 }
 
 void TBeing::doRsave(const char *)
@@ -3213,6 +3290,67 @@ void room_edit(TBeing *ch, const char *arg)
 
 void TPerson::doRsave(const char *argument)
 {
+#if 1
+  int    tStart = 0,
+         tEnd   = 0;
+  bool   tSec   = false;
+  char   tString[256];
+  string tStArg(argument),
+         tStString(""),
+         tStBuffer("");
+
+  if (!hasWizPower(POWER_RSAVE)) {
+    incorrectCommand();
+    return;
+  }
+
+  if (!desc || !isImmortal())
+    return;
+
+  stSpaceOut(tStArg);
+  tStArg = two_arg(tStArg, tStString, tStBuffer);
+
+  if (tStString.empty() || tStString[0] == '1') {
+    tStart = desc->blockastart;
+    tEnd   = desc->blockaend;
+  } else if (tStString[0] == '2') {
+    tStart = desc->blockbstart;
+    tEnd   = desc->blockbend;
+    tSec   = true;
+  } else if (is_abbrev(tStString.c_str(), "backup")) {
+    if (tStBuffer.empty() || tStBuffer[0] == '1')
+      sprintf(tString, "cp immortals/%s/rooms immortals/%s/rooms.bak2",
+              getName(), getName());
+    else if (tStBuffer[0] == '2')
+      sprintf(tString, "cp immortals/%s/rooms_2 immortals/%s/rooms_2.bak2",
+              getName(), getName());
+    else {
+      sendTo("Syntax: redit save backup <\"1\"/\"2\">\n\r");
+      return;
+    }
+
+    sendTo("Creating Backup2 File.\n\r");
+    vsystem(tString);
+    return;
+  } else {
+    sendTo("Syntax: redit save <\"1\"1/\"2\">\n\r");
+    return;
+  }
+
+  if (tStart <= 0 || tEnd <= 0) {
+    sendTo("You have no rooms assigned in that block...Sorry.\n\r");
+    return;
+  }
+
+  if (tStart > tEnd)
+    sendTo("Your room block is messed up.  Talk with Head Low immediatly!\n\r");
+  else {
+    sprintf(tString, "mv immortals/%s/rooms%s immortals/%s/rooms%s.bak",
+            getName(), (tSec ? "_2" : ""), getName(), (tSec ? "_2" : ""));
+    vsystem(tString);
+    RoomSave(this, tStart, tEnd, tSec);
+  }
+#else
   string stRoom(""),
          enRoom(""),
          tString("");
@@ -3225,6 +3363,7 @@ void TPerson::doRsave(const char *argument)
     incorrectCommand();
     return;
   }
+
   if (!isImmortal())
     return;
 
@@ -3268,5 +3407,5 @@ void TPerson::doRsave(const char *argument)
     RoomSave(this, start, end, useSecond);
   } else
     sendTo("Syntax: rsave <first-room> <last-room>\n\r");
+#endif
 }
-

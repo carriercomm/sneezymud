@@ -798,7 +798,45 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
         case '2':                                                                                                 
           break;                                                                                                  
       }                                                                                                           
-      clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
+      // Account term
+      account->term = TERM_NONE;
+
+      // Save all information
+      FILE *fp;
+      char buf[256], buf2[256];
+      accountFile afp;
+
+      sprintf(buf, "account/%c/%s/account", LOWER(account->name[0]), lower(account->name).c_str());
+      if (!(fp = fopen(buf, "w"))) {
+        sprintf(buf2, "account/%c/%s", LOWER(account->name[0]), lower(account->name).c_str());
+        if (mkdir(buf2, 0770)) {
+          vlogf(LOG_CLIENT, "Can't make directory for saveAccount (%s)", lower(account->name).c_str());
+          return FALSE;
+        }
+        if (!(fp = fopen(buf, "w"))) {
+          vlogf(LOG_CLIENT, "Big problems in saveAccount (s)", lower(account->name).c_str());
+          return FALSE;
+        }
+      }
+      // If we get here, fp should be valid
+      memset(&afp, '\0', sizeof(afp));
+    
+      strcpy(afp.email, account->email);
+      strcpy(afp.passwd, account->passwd);
+      strcpy(afp.name, account->name);
+    
+      afp.birth = account->birth;
+      afp.term = account->term;
+      afp.time_adjust = account->time_adjust;
+      afp.flags = account->flags;
+    
+      fwrite(&afp, sizeof(accountFile), 1, fp);
+      fclose(fp);
+    
+      accStat.account_number++;
+    
+      vlogf(LOG_MISC, "New Client Account: '%s' with email '%s'", account->name, account->email);
+      clientf("%d|1", CLIENT_CHECKACCOUNTNAME);
       break;
     } 
     default:

@@ -6,7 +6,6 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdsneezy.h"
-#include "create.h"
 #include "combat.h"
 #include "statistics.h"
 #include "shop.h"
@@ -309,14 +308,14 @@ int TBaseWeapon::sharpenerGiveMe(TBeing *ch, TMonster *me)
     return TRUE;
   }
   // Now we have a weapon that can be sharpened
-  job = (sharp_struct *) me->act_ptr;
+  job = static_cast<sharp_struct *>(me->act_ptr);
   if (!job->wait) {
 #if 0
     act("You give $p to $N to be re-edged.", FALSE, ch, this, me, TO_CHAR);
     act("$n gives $p to $N to be re-edged.", FALSE, ch, this, me, TO_ROOM);
 #endif
     job->wait = max((int) (getMaxSharp() - getCurSharp()) ,  (int) (getCurSharp() - getMaxSharp()));
-    job->wait /= 5;
+    job->wait /= 15;
     job->wait += 1;   // gotta exit with at least 1
     sprintf(buf, "Thanks for your business, I'll take your %d talen%s payment in advance!", cost, (cost > 1) ? "s" : "");
     me->doSay(buf);
@@ -433,7 +432,7 @@ void TBaseWeapon::changeObjValue3(TBeing *ch)
 
 int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
 {
-  int sharp, hardness;
+  int hardness;
   char buf[256];
   TThing *tt;
 
@@ -449,21 +448,22 @@ int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
     else
       hardness = 0;
   } else {
-    if (v->getMaxLimbHealth(part_hit))
+    int maxlim = v->getMaxLimbHealth(part_hit);
+    if (maxlim)
       hardness = material_nums[v->getMaterial()].hardness *
-          v->getCurLimbHealth(part_hit) / v->getMaxLimbHealth(part_hit);
+          v->getCurLimbHealth(part_hit) / maxlim;
     else
       hardness = 0;
   }
   // Check to see if it gets dulled.
-  sharp = getCurSharp();
+  int sharp = getCurSharp();
 
   // this hardness check will be made for ALL types of weapon damage
   // both blunting and structural
   if ((::number(WEAPON_DAM_MIN_HARDNESS, WEAPON_DAM_MAX_HARDNESS) <= hardness) ||
       (::number(WEAPON_DAM_MIN_HARDNESS, WEAPON_DAM_MAX_HARDNESS) <= hardness)) {
-    if (getCurSharp() &&
-          (!::number(0, WEAPON_DAM_MAX_SHARP) <= sharp)) {
+    if (sharp &&
+          (::number(0, WEAPON_DAM_MAX_SHARP) <= sharp)) {
       if (isBluntWeapon()) {
         // The blunter the weapon, the easier to chip a bit - bat
         sprintf(buf, "Your %s%s%s is %schipped%s by %s$n's %s.",
@@ -770,13 +770,13 @@ void TBaseWeapon::changeBaseWeaponValue1(TBeing *ch, const char *arg, editorEnte
   }
   ch->sendTo(VT_HOMECLR);
   if (isSlashWeapon()) {
-    ch->sendTo("1) Max sharpness (Maximum sharpness item can ever be):     Current=%d\n\r", getMaxSharp());
+    ch->sendTo("1) Max sharpness (Maximum sharpness item can ever be):     Max    =%d\n\r", getMaxSharp());
     ch->sendTo("2) Sharpness (sharpness that weapon will start out with):  Current=%d\n\r", getCurSharp());
   } else if (isBluntWeapon()) {
-    ch->sendTo("1) Max Bluntness (Maximum bluntness item can ever be):     Current=%d\n\r", getMaxSharp());
+    ch->sendTo("1) Max Bluntness (Maximum bluntness item can ever be):     Max    =%d\n\r", getMaxSharp());
     ch->sendTo("2) Bluntness (sharpness that weapon will start out with):  Current=%d\n\r", getCurSharp());
   } else {
-    ch->sendTo("1) Max Pointiness (Maximum pointiness item can ever have):   Current=%d\n\r", getMaxSharp());
+    ch->sendTo("1) Max Pointiness (Maximum pointiness item can ever have):   Max    =%d\n\r", getMaxSharp());
     ch->sendTo("2) Pointiness (pointiness that weapon will start out with):  Current=%d\n\r", getCurSharp());
   }
   ch->sendTo(VT_CURSPOS, 10, 1);
@@ -813,7 +813,7 @@ int TGenWeapon::smiteWithMe(TBeing *ch, TBeing *v)
   }
 
   aff.type = AFFECT_SKILL_ATTEMPT;
-  aff.duration = 2 * UPDATES_PER_TICK;
+  aff.duration = 2 * UPDATES_PER_MUDHOUR;
   aff.modifier = SKILL_SMITE;
   aff.location = APPLY_NONE;
   aff.bitvector = 0;
@@ -838,7 +838,7 @@ int TGenWeapon::smiteWithMe(TBeing *ch, TBeing *v)
   }
 
   aff.type = SKILL_SMITE;
-  aff.duration = 40 * UPDATES_PER_TICK;
+  aff.duration = 30 * UPDATES_PER_MUDHOUR;
   aff.modifier = 0;
   aff.location = APPLY_NONE;
   aff.bitvector = 0;
@@ -880,7 +880,7 @@ int TBaseWeapon::poisonWeaponWeapon(TBeing *ch)
   }
   if (isObjStat(ITEM_BLESS) ||
       isObjStat(ITEM_MAGIC)) {
-    ch->sendTo("You can't poison that!\n\r");
+    ch->sendTo("The weapon resists the poison!\n\r");
     return FALSE;
   }
   for (i=0;i < MAX_SWING_AFFECT;i++) {
@@ -893,7 +893,7 @@ int TBaseWeapon::poisonWeaponWeapon(TBeing *ch)
       break;
   }
   if (i >= MAX_SWING_AFFECT) {
-    ch->sendTo("You can't poison that!\n\r");
+    ch->sendTo("The weapon resists the poison!\n\r");
     return FALSE;
   }
   if (!(poison = get_thing_char_using(ch, "poison", 0, TRUE, FALSE))) {
@@ -921,8 +921,10 @@ int TBaseWeapon::wieldMe(TBeing *ch, char *arg2)
     if (isname(name, "[paired]"))
       canSingleWieldPrim = canSingleWieldSecd = false;
 
+#if 0
     vlogf(LOG_LAPSOS, "Dynamic Paired Code Active: %s %d %d",
           arg2, canSingleWieldPrim, canSingleWieldSecd);
+#endif
 
     if (!*arg2) {
       if (!canSingleWieldPrim)
@@ -1306,7 +1308,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
             i == GUARANTEED_FAILURE)) {
         act("$n dodges out of the way of $p.", FALSE, tb, this, NULL, TO_ROOM);
         tb->sendTo("You dodge out of its way.\n\r");
-        if (!ch->sameRoom(tb))
+        if (!ch->sameRoom(*tb))
           act("In the distance, $N dodges out of the way of $p.",
                  TRUE,ch,this,tb,TO_CHAR);
         resCode = FALSE;
@@ -1330,11 +1332,11 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
           --(*this);
           rc = tb->stickIn(this, phit);
           if (rc) {
-            if (!ch->sameRoom(tb))
+            if (!ch->sameRoom(*tb))
               act("In the distance, $p embeds itself in $N.",
                    TRUE,ch,this,tb,TO_CHAR);
           } else {
-            if (!ch->sameRoom(tb))
+            if (!ch->sameRoom(*tb))
               act("In the distance, $N is hit by $p.",TRUE,ch,this,tb,TO_CHAR);
           }
           if (IS_SET_DELETE(rc, DELETE_THIS)) {
@@ -1349,7 +1351,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
         } else {
           --(*this);
           *(tb->roomp) += *this;
-          if (!ch->sameRoom(c))
+          if (!ch->sameRoom(*c))
             act("In the distance, $N is hit by $p.",TRUE,ch,this,tb,TO_CHAR);
         }
 
@@ -1361,7 +1363,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
           if (::number(1, d) <= getStructPoints()) {
             addToStructPoints(-1);
             if (getStructPoints() <= 0) {
-              if (!ch->sameRoom(tb))
+              if (!ch->sameRoom(*tb))
                 act("In the distance, $p is destroyed.",TRUE,ch,this,0,TO_CHAR);
               makeScraps();
               ADD_DELETE(resCode, DELETE_ITEM);

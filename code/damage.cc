@@ -120,6 +120,8 @@ void update_trophy(const char *name, int vnum, double add){
       vlogf(LOG_BUG, "Database error in update_trophy");
     }
   }
+  mysql_free_result(res);
+
   sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", add, name, vnum);
   if((rc=dbquery(&res, "sneezy", "update_trophy(2)", buf))){
     if(rc==-1)

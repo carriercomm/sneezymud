@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spec_rooms.cc,v $
+// Revision 5.1.1.4  1999/10/25 18:57:57  mithros
+// Added a couple "SecretDoors" room numbers for GH Cathedral Expansion
+//
 // Revision 5.1.1.3  1999/10/18 19:40:53  peel
 // Fixed some random compile bugs.
 //
@@ -1668,6 +1671,7 @@ void assign_rooms(void)
     {758, oft_frequented_room},
     {761, oft_frequented_room},
     {763, oft_frequented_room},
+    {774, SecretDoors},     // twist-lid for 2nd Floor Cathedral trapdoor
     {1295, bank},
     {1353, healing_room},
     {1385, dump},
@@ -1686,6 +1690,8 @@ void assign_rooms(void)
     {7266, SecretPortalDoors},
     {7268, SecretPortalDoors},
     {8756, bank},
+    {9050, SecretDoors},      // GH Cathedral Expansion secret doors
+    {9064, SecretDoors},
     {9390, SecretDoors},      // badlands brush
     {9391, SecretDoors},
     {10020, monkQuestProcLand},

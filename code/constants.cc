@@ -696,6 +696,9 @@ const char * const chest_bits[] =
   "Closed",
   "Locked",
   "Trapped",
+  "Secret (No-See)",
+  "Detect-Trap/No-Trap",
+  "Detect-Trap/Ghost-Trap",
 };
 
 const char * const door_types[] =

@@ -2766,7 +2766,7 @@ void TPerson::doPurge(const char *argument)
 
       if (vict->desc) {
         delete vict->desc;
-        vict->desc = 0;
+        vict->desc = NULL;
       }
       delete vict;
       vict = NULL;
@@ -2774,9 +2774,45 @@ void TPerson::doPurge(const char *argument)
       // since we already did a get_char loop above, this is really just doing
       // objs, despite the fact that it is a TThing
       act("$n destroys $p.", TRUE, this, t_obj, 0, TO_ROOM);
-      TPerson *tper = dynamic_cast<TPerson *>(t_obj);
-      if (tper)
-        tper->dropItemsToRoom(SAFE_YES, DROP_IN_ROOM);
+      TPerson *vict = dynamic_cast<TPerson *>(t_obj);
+      if (vict && vict->isLinkdead()) {
+        // linkdead PC will have eq stored from last save.
+        // without this, eq would be dropped on ground (duplicated)
+        wearSlotT ij;
+        for (ij = MIN_WEAR; ij < MAX_WEAR; ij++) {
+          if (vict->equipment[ij]) {
+            t_obj = vict->unequip(ij);
+            obj = dynamic_cast<TObj *>(t_obj);
+
+            // since the item is technically still in rent, it is accounted
+            // for.  Deleting it here is going to drop the number by 1 which
+            // would be bad.  Artifically bump it up, so that things stay
+            // in synch.
+            if (obj->isRare() && (obj->number >= 0))
+              obj_index[obj->getItemIndex()].number++;
+
+            delete obj;
+            obj = NULL;
+          }
+        }
+        TThing *t, *t2;
+        for (t = vict->stuff; t; t = t2) {
+          t2 = t->nextThing;
+          obj = dynamic_cast<TObj *>(t);
+
+          // since the item is technically still in rent, it is accounted
+          // for.  Deleting it here is going to drop the number by 1 which
+          // would be bad.  Artifically bump it up, so that things stay
+          // in synch.
+          if (obj->isRare() && (obj->number >= 0))
+            obj_index[obj->getItemIndex()].number++;
+
+          delete obj;
+          obj = NULL;
+        }
+      } else if (vict) 
+        vict->dropItemsToRoom(SAFE_YES, DROP_IN_ROOM);
+
       delete t_obj;
       t_obj = NULL;
     } else {

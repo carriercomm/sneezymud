@@ -1378,7 +1378,7 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
                   delete obj;
                   obj = NULL;
                 }
-                applyDamage(v, 20 * v->hitLimit(),DAMAGE_DISEMBOWLED);
+                applyDamage(v, 20 * v->hitLimit(),DAMAGE_DISEMBOWLED_HR);
                 *part_hit = WEAR_BODY;
                 if (desc)
                   desc->career.crit_disembowel++;

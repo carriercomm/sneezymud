@@ -639,7 +639,8 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case DAMAGE_HEADBUTT_CROTCH:
     case DAMAGE_HEADBUTT_LEG:
     case DAMAGE_HEADBUTT_FOOT:
-    case DAMAGE_DISEMBOWLED:
+    case DAMAGE_DISEMBOWLED_HR:
+    case DAMAGE_DISEMBOWLED_VR:
     case DAMAGE_STOMACH_WOUND:
     case DAMAGE_IMPALE:
     case DAMAGE_STARVATION:

@@ -1012,7 +1012,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
     case DAMAGE_NORMAL:
     case DAMAGE_CAVED_SKULL:
     case DAMAGE_BEHEADED:
-    case DAMAGE_DISEMBOWLED:
+    case DAMAGE_DISEMBOWLED_HR:
+    case DAMAGE_DISEMBOWLED_VR:
     case DAMAGE_STOMACH_WOUND:
     case DAMAGE_HACKED:
     case DAMAGE_IMPALE:

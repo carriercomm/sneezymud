@@ -387,8 +387,11 @@ void TBeing::makeCorpse(spellNumT dmg_type)
       case SKILL_BACKSTAB:
         sprintf(buf, "A big gaping wound is in the center of %s's back.", getName());
         break;
-      case DAMAGE_DISEMBOWLED:
+      case DAMAGE_DISEMBOWLED_HR:
         sprintf(buf, "The corpse of %s has been disembowled with a slash from gullet to groin!",getName());
+        break;
+      case DAMAGE_DISEMBOWLED_VR:
+        sprintf(buf, "The corpse of %s has a large slash from hip to hip!", getName());
         break;
       case DAMAGE_EATTEN:
         sprintf(buf,"%s's corpse has been mawed and chewed upon by something VERY large!",namebuf);

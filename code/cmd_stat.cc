@@ -1424,7 +1424,8 @@ void TBeing::statBeing(TBeing *k)
       case DAMAGE_TRAP_SLASH:
       case DAMAGE_ARROWS:
       case DAMAGE_TRAP_PIERCE:
-      case DAMAGE_DISEMBOWLED:
+      case DAMAGE_DISEMBOWLED_HR:
+      case DAMAGE_DISEMBOWLED_VR:
       case DAMAGE_EATTEN:
       case DAMAGE_HACKED:
       case DAMAGE_KNEESTRIKE_FOOT:

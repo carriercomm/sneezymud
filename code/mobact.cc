@@ -295,10 +295,14 @@ int TMonster::mobileWander(dirTypeT door)
     // if it can fly, goDir will make it when appropriate
   }
 
+  // keep mobs where they are supposed to be
+  if (IS_SET(specials.act, ACT_STAY_ZONE) && 
+      rp->getZone() != rp2->getZone())
+    return 0;
+
   if (specials.last_direction == door)
     specials.last_direction = DIR_NONE;
-  else if (!IS_SET(specials.act, ACT_STAY_ZONE) ||
-           (rp->getZone() == rp2->getZone())) {
+  else {
     specials.last_direction = door;
     rc = goDirection(door);
     if (IS_SET_DELETE(rc, DELETE_THIS))

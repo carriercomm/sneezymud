@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_adventuring.h,v $
+// Revision 5.1.1.2  2001/04/15 03:53:21  peel
+// added SKILL_ALCOHOLISM
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -27,6 +30,7 @@
 class CDAdventuring : public CDiscipline
 {
   public:
+    CSkill skAlcoholism;
     CSkill skRide;
     CSkill skSwim;
     CSkill skClimb;
@@ -58,7 +62,7 @@ class CDAdventuring : public CDiscipline
 
     CDAdventuring()
       : CDiscipline(),
-        skRide(), skSwim(), skClimb(),
+        skAlcoholism(), skRide(), skSwim(), skClimb(),
         skSign(), skKnowPeople(), skKnowGiant(),
         skKnowVeggie(), skKnowAnimal(), skKnowReptile(),
         skKnowUndead(), skKnowOther(), skKnowDemon(),
@@ -72,7 +76,7 @@ class CDAdventuring : public CDiscipline
     }
     CDAdventuring(const CDAdventuring &a)
       : CDiscipline(a),
-        skRide(a.skRide), skSwim(a.skSwim), skClimb(a.skClimb),
+        skAlcoholism(a.skAlcoholism), skRide(a.skRide), skSwim(a.skSwim), skClimb(a.skClimb),
         skSign(a.skSign), skKnowPeople(a.skKnowPeople), skKnowGiant(a.skKnowGiant),
         skKnowVeggie(a.skKnowVeggie), skKnowAnimal(a.skKnowAnimal), 
         skKnowReptile(a.skKnowReptile),
@@ -90,6 +94,7 @@ class CDAdventuring : public CDiscipline
     CDAdventuring & operator=(const CDAdventuring &a) {
       if (this == &a) return *this;
       CDiscipline::operator=(a);
+      skAlcoholism = a.skAlcoholism;
       skRide = a.skRide;
       skSwim = a.skSwim;
       skClimb = a.skClimb;

@@ -935,6 +935,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
 
 // GENERAL DISCIPLINES
 
+    case SKILL_ALCOHOLISM:// 668
+      return &((CDAdventuring *) cd)->skAlcoholism;
     case SKILL_RIDE: // 760
       return &((CDAdventuring *) cd)->skRide;
     case SKILL_SIGN: // 761
@@ -1158,7 +1160,6 @@ CSkill *TBeing::getSkill(spellNumT skill) const
     case AFFECT_HORSEOWNED:
     case AFFECT_GROWTH_POTION:
     case LAST_ODDBALL_AFFECT:
-    case SKILL_ALCOHOLISM:
       break;
   }
 

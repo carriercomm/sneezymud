@@ -1495,10 +1495,13 @@ bool alchemy_create_deny(int numberx)
     return true;
   if (isname("[quest_object]", oid.name))
     return true;
+  if (isname("[prop_object]", oid.name))
+    return true;
   if (isname("pager beeper", oid.name))
     return true;
   if (isname("muffs ear", oid.name))
     return true;
+
   return false;
 }
         

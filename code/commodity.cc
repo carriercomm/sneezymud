@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: commodity.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -267,7 +256,7 @@ int TCommodity::sellCommod(TBeing *ch, TMonster *keeper, int shop_nr, TThing *ba
     *ch += *ch->unequip(eq_pos);
 
   if (bag && bag != ch) {
-    rc = get(ch, this, bag);
+    rc = get(ch, this, bag, GETOBJOBJ);
     if (IS_SET_DELETE(rc, DELETE_ITEM)) {
       return DELETE_THIS;
     }

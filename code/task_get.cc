@@ -1,26 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: task_get.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/29 22:12:20  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD 4.0 - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
@@ -175,7 +154,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
               continue;
             else {
               ch->task->calcNextUpdate(pulse, 1);
-              rc = get(ch, t, NULL);
+              rc = get(ch, t, NULL, GETNULL);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -196,7 +175,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
         } else if (!ch->task->flags) {
           // This is something like get all.sword
           while ((t = get_thing_in_list_getable(ch, ch->task->orig_arg, rp->stuff))) {
-            rc = get(ch, t, NULL);
+            rc = get(ch, t, NULL, GETNULL);
 	    if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -220,7 +199,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
           // get 6*item   ?
           while ((t = get_thing_in_list_getable(ch, ch->task->orig_arg, rp->stuff))) {
             if (--(ch->task->flags) > 0) {
-              rc = get(ch, t, NULL);
+              rc = get(ch, t, NULL, GETNULL);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -271,7 +250,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
           }
           while ((t = get_thing_in_list_getable(ch, buf1, sub->stuff))) {
             if (--(ch->task->flags) > 0) {
-              rc = get(ch, t, sub);
+              rc = get(ch, t, sub, GETOBJOBJ);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -304,7 +283,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
           }
           while ((t = get_thing_on_list_getable(ch, buf1, sub->rider))) {
             if (--(ch->task->flags) > 0) {
-              rc = get(ch, t, sub);
+              rc = get(ch, t, sub, GETOBJOBJ);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -343,7 +322,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
         } else {
           if (ch->task->status) {
             while ((t = get_thing_in_list_getable(ch, buf1, sub->stuff))) {
-              rc = get(ch, t, sub);
+              rc = get(ch, t, sub, GETOBJOBJ);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -369,7 +348,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
             }
 
             while ((t = get_thing_on_list_getable(ch, buf1, sub->rider))) {
-              rc = get(ch, t, sub);
+              rc = get(ch, t, sub, GETOBJOBJ);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -423,7 +402,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
                 if (!ch->task) // how does this happen????
                   return FALSE;
                 ch->task->calcNextUpdate(pulse, 1);
-                rc = get(ch, t, sub);
+                rc = get(ch, t, sub, GETOBJOBJ);
                 if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                   delete t;
                   t = NULL;
@@ -464,7 +443,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
                 continue;
               else {
                 ch->task->calcNextUpdate(pulse, 1);
-                rc = get(ch, t, sub);
+                rc = get(ch, t, sub, GETOBJOBJ);
                 if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                   delete t;
                   t = NULL;

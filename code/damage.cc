@@ -330,7 +330,6 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
   TThing *t, *t2;
   affectedData *af, *af2;
   TPerson *tp=NULL;;
-  MYSQL_RES *res;
 
   if ((v->master == this) && dynamic_cast<TMonster *>(v))
     v->stopFollower(TRUE);
@@ -717,6 +716,12 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
         }
       }
     }
+
+#if 0
+    // disabled in favor of per-hit tracking
+
+  MYSQL_RES *res;
+
     
     // track trophy count
     if (desc &&!roomp->isRoomFlag(ROOM_ARENA) && !inPkZone() && 
@@ -767,6 +772,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 	  vlogf(LOG_BUG, "Database error in damageEpilog");
       }
     }
+#endif
 
     strcpy(buf2, v->name);
     add_bars(buf2);

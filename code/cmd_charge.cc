@@ -51,7 +51,11 @@ static int charge(TBeing *ch, TBeing *vict)
          false, ch, mount, NULL, TO_CHAR);
     return FALSE;
   }
-
+  if (!mount->isFlying() && vict->isFlying()) {
+    act("That would be hard, considering $N is flying, and your $o is not.", 
+	FALSE,ch,mount,vict, TO_CHAR);
+    return FALSE;
+  }
   if (ch->checkPeaceful("This room is too peaceful to contemplate violence in.\n\r"))
     return FALSE;
 
@@ -135,34 +139,34 @@ vict->getName());
 
   int dam = ch->getSkillDam(vict, SKILL_CHARGE, ch->getSkillLevel(SKILL_CHARGE), ch->getAdvLearning(SKILL_CHARGE));
 
-#if 0
+#if 1  // added charge crit per popular request
   // this is not the right way to do this.  - bat
   // New Damage Formula for Charge
-  if (gamePort != PROD_GAMEPORT) {
-    float newDam        = (100 + ((float) mount->GetMaxLevel() -
-                                  (float) ch->GetMaxLevel())) / 100;
-    float crossValue    = (float) dam * newDam;
-    int   initialDamage = dam;
-    bool  didCrit       = false;
+  //if (gamePort != PROD_GAMEPORT) {
+    //float newDam        = (100 + ((float) mount->GetMaxLevel() -
+  // (float) ch->GetMaxLevel())) / 100;
+    //float crossValue    = (float) dam * newDam;
+    //int   initialDamage = dam;
+    //bool  didCrit       = false;
 
-    dam = (int) crossValue;
+    //    dam = (int) crossValue;
 
     TThing *prim = ch->heldInPrimHand();
-    if (prim && (bKnown > ::number(0, 400))) {
-      act("A splitsecond before the charge you brace $o to strike.",
+    if (prim && !(::number(0, 25))) {
+      act("A split second before the charge you brace your $o to strike.",
           TRUE, ch, prim, vict, TO_CHAR);
-      act("$n holds $o in preparation.",
+      act("$n braces $s $o in preparation for the strike.",
           TRUE, ch, prim, vict, TO_VICT);
-      act("$n holds $o and glances towards $N",
+      act("$n braces $s $o in preperation for $s charge at $N.",
           TRUE, ch, prim, vict, TO_NOTVICT);
 
-      dam += ::number(5, max(7, (ch->GetMaxLevel() / 2)));
-      didCrit = true;
+      dam += ::number(5, ch->GetMaxLevel() / 2);
+      //   didCrit = true;
     }
-
-    vlogf(LOG_MISC, "Charge Damage Formula [%s][%.2f / %.2f|%d / %s]", ch->getName(),
-          newDam, crossValue, initialDamage, (didCrit ? "Critical" : "Normal"));
-  }
+	
+    // vlogf(LOG_MISC, "Charge Damage Formula [%s][%.2f / %.2f|%d / %s]", ch->getName(),
+    //      newDam, crossValue, initialDamage, (didCrit ? "Critical" : "Normal"));
+    //  }
 #endif
 
   act("You charge $N, striking $M with a mighty blow.",  

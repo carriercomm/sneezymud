@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: ai_responses.cc,v $
+// Revision 5.1.1.3  1999/11/04 22:38:57  peel
+// *** empty log message ***
+//
 // Revision 5.1.1.2  1999/11/04 22:34:17  peel
 // Added moveto response
 //
@@ -345,7 +348,7 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
 	   rc=goDirection(dir);
 	   break;
 	 default:
-	   // enter a portal here...
+	   break;
        }
       break;
     default:

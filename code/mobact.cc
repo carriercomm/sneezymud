@@ -2771,7 +2771,19 @@ int TMonster::mobileActivity(int pulse)
   int rc;
   TThing *t;
 
-  if (isDiurnal() || isNocturnal() || parent || !roomp)
+#if 0
+  // this doesn't work right
+  // these check if the mob is diurnal/nocturnal and its night/day
+  // meaning we have mob in the world who aren't doing mobileActivity
+  if (isDiurnal() || isNocturnal())
+    return 0;
+#else
+  // this is better
+  if(inRoom() == ROOM_NOCTURNAL_STORAGE)
+    return 0;
+#endif
+
+  if(parent || !roomp)
     return 0;
   
   if (isAquatic() && (specials.zone != 1) && (mobVnum() >= 0) &&
@@ -3299,9 +3311,15 @@ int TMonster::aggroCheck(bool mobpulse)
         }
         stats.aggro_attempts++;
 
+#ifndef SNEEZY2000
         // randomize who gets hit some
         if ((mobpulse || ::number(0,9) < 7))
           continue;
+#else
+	// make roomenter aggro not happen sometimes
+	if(!mobpulse && (::number(0,3) <= 1))
+	  continue;
+#endif
 
         if (checkPeaceful("You can't seem to exercise your violent tendencies.\n\r")) {
           if (!::number(0, 4)) {
@@ -3309,8 +3327,15 @@ int TMonster::aggroCheck(bool mobpulse)
           }
           return TRUE;
         }
+#ifdef SNEEZY2000
+        if (((tmp_ch->plotStat(STAT_CURRENT, STAT_KAR, 0, 100, 50)) <=
+	     (plotStat(STAT_CURRENT, STAT_INT, 0, 200, 100) + anger())) ||
+	    IS_SET(specials.act, ACT_AGGRESSIVE)){
+#else
         if (((tmp_ch->plotStat(STAT_CURRENT, STAT_KAR, 0, 100, 50)) <=
 	     (plotStat(STAT_CURRENT, STAT_INT, 0, 200, 100) + anger()))){
+#endif
+
           if (!isDumbAnimal() && ::number(0, 3)) {
             // This should basically prevent mobs from attacking when they
             // are grossly out-armed and they know it.  But it also gives

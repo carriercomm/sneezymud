@@ -1745,6 +1745,7 @@ class TBeing : public TThing {
     int doKick(const char *, TBeing *);
     bool isSaveMob(const TBeing *) const;
     bool isPet(const unsigned int) const;
+    bool isElemental() const;
     int doBash(const char *, TBeing *);
     virtual void doSnoop(const char *);
     virtual int doAt(const char *, bool);

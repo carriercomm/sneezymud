@@ -66,7 +66,7 @@ int forage(TBeing *caster, byte bKnown)
 
     aff.type = SKILL_FORAGE;
     aff.location = APPLY_NONE;
-    aff.duration = 24 * UPDATES_PER_TICK;
+    aff.duration = 4 * UPDATES_PER_TICK;
     aff.bitvector = 0;
     aff.modifier = 0;
     caster->affectTo(&aff, -1);
@@ -77,7 +77,7 @@ int forage(TBeing *caster, byte bKnown)
   } else {
     aff.type = AFFECT_SKILL_ATTEMPT;
     aff.location = APPLY_NONE;
-    aff.duration = 4 * UPDATES_PER_TICK;
+    aff.duration = 2 * UPDATES_PER_TICK;
     aff.bitvector = 0;
     aff.modifier = SKILL_FORAGE;
 

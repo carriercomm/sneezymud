@@ -427,7 +427,7 @@ int shapeShift(TBeing *caster, int level, byte bKnown)
     REMOVE_BIT(mob->specials.act, ACT_DIURNAL);
     REMOVE_BIT(mob->specials.act, ACT_NOCTURNAL);
 
-    mob->setMana(min((mob->getMana() - 15), 85));
+    mob->setLifeforce(min((mob->getLifeforce() - 15), 85));
     return SPELL_SUCCESS;
   } else {
     return SPELL_FAIL;

@@ -3703,7 +3703,11 @@ a pet.", fname(ch->name).c_str());
     int pcLevel = ch->GetMaxLevel();
 
     price = pet->petPrice();
-    sprintf(buf, "%s A pet %s will cost %d.", ch->name, fname(pet->name).c_str(), price);
+    sprintf(buf, "%s A pet %s will cost %d to purchase",
+            ch->name, fname(pet->name).c_str(), price);
+    me->doTell(buf);
+    sprintf(buf, "%s and %d to rent.",
+            ch->name, (pet->petPrice() / 4));
     me->doTell(buf);
     if (ch->isImmortal()) {
     } else if (!ch->hasClass(CLASS_RANGER)) {

@@ -1885,12 +1885,29 @@ wizPowerT wizPowerFromCmd(cmdTypeT cmd)
 
 void TBeing::doWizhelp()
 {
-  char      buf[MAX_STRING_LENGTH];
-  int       no;
+  char      buf[MAX_STRING_LENGTH],
+            tString[MAX_STRING_LENGTH];
+  int       no,
+            tLength = 2;
+  unsigned int i;
   wizPowerT tPower;
 
   if (!isImmortal())
     return;
+
+  for (i = 0; i < MAX_CMD_LIST; i++) {
+    if (!commandArray[i])
+      continue;
+
+    if ((GetMaxLevel() >= commandArray[i]->minLevel) &&
+        (commandArray[i]->minLevel > MAX_MORT) &&
+        ((tPower = wizPowerFromCmd(cmdTypeT(i))) == MAX_POWER_INDEX ||
+         hasWizPower(tPower)))
+      tLength = max(strlen(commandArray[i]->name), (unsigned) tLength);
+  }
+
+  sprintf(tString, "%%-%ds", (tLength + 1));
+  tLength = (79 / tLength);
 
   sendTo("The following privileged commands are available:\n\r\n\r");
 
@@ -1898,9 +1915,7 @@ void TBeing::doWizhelp()
 
   if ((tPower = wizPowerFromCmd(CMD_AS)) == MAX_POWER_INDEX ||
       hasWizPower(tPower))
-    strcpy(buf,"as        ");  // has to be at level 1 to be useful 
-
-  unsigned int i;
+    sprintf(buf, tString, "as");
 
   for (no = 2, i = 0; i < MAX_CMD_LIST; i++) {
     if (!commandArray[i])
@@ -1911,9 +1926,11 @@ void TBeing::doWizhelp()
         ((tPower = wizPowerFromCmd(cmdTypeT(i))) == MAX_POWER_INDEX ||
          hasWizPower(tPower))) {
 
-      sprintf(buf + strlen(buf), "%-10s", commandArray[i]->name);
-      if (!(no % 7))
+      sprintf(buf + strlen(buf), tString, commandArray[i]->name);
+
+      if (!(no % (tLength - 1)))
         strcat(buf, "\n\r");
+
       no++;
     }
   }

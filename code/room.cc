@@ -402,3 +402,56 @@ int TRoom::chiMe(TBeing *tLunatic)
 
   return FALSE;
 }
+
+void TRoom::operator << (TThing &tThing)
+{
+  if (!tBornInsideMe) {
+    tBornInsideMe = &tThing;
+    return;
+  }
+
+  TThing *tList;
+
+  for (tList = tBornInsideMe; tList->nextBorn; tList = tList->nextBorn) {
+    if (&tThing == tList) {
+      vlogf(LOG_BUG, "Mob already in born list being added again. [%s]", tThing.getName());
+      return;
+    }
+  }
+
+  tList->nextBorn = &tThing;
+}
+
+bool TRoom::operator |= (const TThing &tThing)
+{
+  TThing *tList;
+
+  for (tList = tBornInsideMe; tList; tList = tList->nextBorn)
+    if (tList == &tThing)
+      return true;
+
+  return false;
+}
+
+void TRoom::operator >> (const TThing &tThing)
+{
+  TThing *tList,
+         *tLast = NULL;
+
+  for (tList = tBornInsideMe; tList; tList = tList->nextBorn) {
+    if (&tThing == tList) {
+      if (tLast)
+        tLast->nextBorn = tList->nextBorn;
+      else
+	tBornInsideMe = tList->nextBorn;
+
+      tList->nextBorn = NULL;
+
+      return;
+    }
+
+    tLast = tList;
+  }
+
+  vlogf(LOG_BUG, "Attempt to remove mob from born list that isn't in born list! [%s]", tThing.getName());
+}

@@ -320,6 +320,15 @@ TMonster::~TMonster()
   if (getLongDesc() && player.longDescr == mob_index[getMobIndex()].long_desc)
     vlogf(LOG_BUG, "TMonster delete: after allocation, monster still had shared string (%s) : long", getName());
 
+  TRoom *tRoom;
+
+  if (brtRoom == ROOM_NOWHERE)
+    ; // Do nothing.  This triggers on immortal loaded mobs so is cool.
+  else if (!(tRoom = real_roomp(brtRoom)))
+    vlogf(LOG_BUG, "Mobile being destroyed with empty birth room! [%s]", getName());
+  else
+    *tRoom >> *this;
+
 // Just a placemarker end of desctructor
   int test;
   test = 0;

@@ -439,7 +439,8 @@ TRoom::TRoom(int r) :
   moblim(0),
   roomHeight(-1),
   roomFlags(0),
-  descPos(-1)
+  descPos(-1),
+  tBornInsideMe(NULL)
 {
   funct = NULL;
   number = in_room = r;
@@ -451,6 +452,14 @@ TRoom::TRoom(int r) :
 TRoom::~TRoom()
 {
   TThing *t, *t2;
+
+  // Burn the born list.
+  for (t = tBornInsideMe; t; t = t->nextBorn) {
+    TMonster *tMonster = dynamic_cast<TMonster *>(t);
+
+    if (tMonster)
+      tMonster->brtRoom = ROOM_NOWHERE;
+  }
 
   for (t = stuff; t; t = t2) {
     t2 = t->nextThing;
@@ -1056,6 +1065,7 @@ TThing::TThing() :
   parent(NULL),
   stuff(NULL),
   nextThing(NULL),
+  nextBorn(NULL),
   roomp(NULL),
   desc(NULL), 
   ex_description(NULL),
@@ -1396,6 +1406,7 @@ TThing::TThing(const TThing &a) :
     number(a.number), height(a.height),
     canBeSeen(a.canBeSeen), name(a.name), shortDescr(a.shortDescr),
     parent(a.parent), stuff(a.stuff), nextThing(a.nextThing),
+    nextBorn(a.nextBorn),
     roomp(a.roomp), desc(a.desc), 
     ex_description(a.ex_description),
     rider(a.rider), riding(a.riding),
@@ -1429,6 +1440,7 @@ TThing & TThing::operator=(const TThing &a)
   stuckIn = a.stuckIn;
   equippedBy = a.equippedBy;
   nextThing = a.nextThing;
+  nextBorn = a.nextBorn;
   stuff = a.stuff;
   parent = a.parent;
   desc = a.desc;

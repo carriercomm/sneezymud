@@ -578,7 +578,7 @@ int TSocket::gameLoop()
       (tmp_ch, CMD_TASK_CONTINUE, "", pulse, tmp_ch->task->room, tmp_ch->task->obj);
 	    if (IS_SET_DELETE(rc, DELETE_THIS)) {
 	      delete tmper_obj;
-	      tmp_obj = NULL;
+	      tmper_obj = NULL;
 	    }
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
               temp = tmp_ch->next;

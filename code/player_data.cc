@@ -737,6 +737,38 @@ void TBeing::saveChar(sh_int load_room)
   char buf2[256];
 
   if (dynamic_cast<TMonster *>(this)) {
+    // save money for shop keepers, if they're owned
+    if(spec==SPEC_SHOPKEEPER){
+      unsigned int shop_nr;
+      int rc;
+      MYSQL_RES *res;
+      MYSQL_ROW row;
+    
+      for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != this->number); shop_nr++);
+    
+      if (shop_nr >= shop_index.size()) {
+	vlogf(LOG_BUG, "Warning... shop # for mobile %d (real nr) not found.", this->number);
+	return;
+      }
+    
+      if((rc=dbquery(&res, "sneezy", "saveItems", "select * from shopownedaccess where shop_nr=%i", shop_nr+1))==-1){
+	vlogf(LOG_BUG, "Database error in shop_keeper");
+	return;
+      }
+      if((row=mysql_fetch_row(res))){
+	mysql_free_result(res);
+	if((rc=dbquery(&res, "sneezy", "saveItems", "update shopowned set gold=%i where shop_nr=%i", getMoney(), shop_nr+1))){
+	  if(rc==-1){
+	    vlogf(LOG_BUG, "Database error in shop_keeper");
+	    return;
+	  }
+	}
+
+	mysql_free_result(res);
+      }
+    }
+
+
     if (!IS_SET(specials.act, ACT_POLYSELF) || !desc)
       return;
   
@@ -801,6 +833,7 @@ void TBeing::saveChar(sh_int load_room)
   saveCareerStats();
 
   saveDrugStats();
+
 
   // tmp which is the original character should not have a desc when it leaves
   if (tmp) 

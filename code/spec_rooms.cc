@@ -215,7 +215,7 @@ int dump(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     else { 
       // take the global income modifier into account, in times of drought, we
       // don't want folks resorting to using the dump to get their money
-      value = (int) (value * gold_modifier[GOLD_INCOME]);
+      value = (int) (value * gold_modifier[GOLD_INCOME].getVal());
       ch->addToMoney(value, GOLD_DUMP);
     }
   }

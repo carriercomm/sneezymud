@@ -246,7 +246,7 @@ void TMoney::onObjLoad()
 {
   // adjust the money based on the global modifiers
   int x = getMoney();
-  x = (int) (x * gold_modifier[GOLD_INCOME]);
+  x = (int) (x * gold_modifier[GOLD_INCOME].getVal());
   setMoney(x);
 }
 

@@ -487,7 +487,7 @@ int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
       addToCurSharp(-1);
     }
     // Check for structural damage
-    int chance = 1000 - (int) (1000 * gold_modifier[GOLD_REPAIR]);
+    int chance = 1000 - (int) (1000 * gold_modifier[GOLD_REPAIR].getVal());
     if (::number(0,999) >= chance) {
       // NOTE: this makes it easier to damage an item that is very damaged already
       if (::number(0, getMaxStructPoints()) >= getStructPoints()) {

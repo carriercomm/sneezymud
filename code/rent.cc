@@ -1098,14 +1098,14 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
     }
   } else {
     int daily_cost = cost->total_cost;
-    int adjusted_cost = (int) (daily_cost * gold_modifier[GOLD_RENT]);
+    int adjusted_cost = (int) (daily_cost * gold_modifier[GOLD_RENT].getVal());
     cost->total_cost = adjusted_cost;
 
     if (recep) {
 #if 1
       sprintf(buf, "$n tells you 'Your stuff is %d talens over your credit.'", daily_cost);
       act(buf, FALSE, recep, 0, this, TO_VICT);
-      sprintf(buf, "$n tells you 'The current rent multiplier is %.2f.'", gold_modifier[GOLD_RENT]);
+      sprintf(buf, "$n tells you 'The current rent multiplier is %.2f.'", gold_modifier[GOLD_RENT].getVal());
       act(buf, FALSE, recep, 0, this, TO_VICT);
 #endif
 
@@ -2239,14 +2239,14 @@ void TBeing::makeRentNote(TBeing *recip)
                max((int) (cost.total_cost-credit), 0));
     tStBuffer += buf;
     sprintf(buf, "Current Rent Factor : %.2f\n\r",
-               gold_modifier[GOLD_RENT]);
+               gold_modifier[GOLD_RENT].getVal());
     tStBuffer += buf;
     sprintf(buf, "Daily Rent Cost : %d\n\r",
-               max((int) ((cost.total_cost-credit)*gold_modifier[GOLD_RENT]), 0));
+               max((int) ((cost.total_cost-credit)*gold_modifier[GOLD_RENT].getVal()), 0));
     tStBuffer += buf;
     sprintf(buf, "Total Days Rentable: On-Hand: %d / Total: %d\n\r",
-            (int) (getMoney() / ((cost.total_cost - credit) * gold_modifier[GOLD_RENT])),
-            (int) ((getMoney() + getBank()) / ((cost.total_cost - credit) * gold_modifier[GOLD_RENT])));
+            (int) (getMoney() / ((cost.total_cost - credit) * gold_modifier[GOLD_RENT].getVal())),
+            (int) ((getMoney() + getBank()) / ((cost.total_cost - credit) * gold_modifier[GOLD_RENT].getVal())));
     tStBuffer += buf;
   }
 

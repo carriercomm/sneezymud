@@ -15,7 +15,7 @@ void TBeing::doTestCode(const char *arg)
   int shopNet = getNetGoldShops();
   int shopDrain = shopPos - shopNet;
 
-  float old_shop_mod = gold_modifier[GOLD_SHOP];
+  float old_shop_mod = gold_modifier[GOLD_SHOP].getVal();
 
   // target shop is to drain 1.05 * what it provides
   float new_shop_mod = old_shop_mod * shopDrain / shopPos / 1.05;
@@ -46,7 +46,7 @@ void TBeing::doTestCode(const char *arg)
   int drainNoRep = budgDrainNew - drainRepAct;
   int drainDes = (int) (budgPosNew * 0.90);
   int drainRepDes = drainDes - drainNoRep;
-  float old_repair_factor = gold_modifier[GOLD_REPAIR];
+  float old_repair_factor = gold_modifier[GOLD_REPAIR].getVal();
   float new_repair_factor = drainRepDes / drainRepAct * old_repair_factor;
   sendTo("Theoretical repair equilibrium modifier:   %.2f\n\r", new_repair_factor);
 
@@ -55,7 +55,7 @@ void TBeing::doTestCode(const char *arg)
   int posNoInc = budgPosNew - posIncAct;
   int posDes = (int) (budgDrainNew * 1.02);
   int posIncDes = posDes - posNoInc;
-  float old_inc_factor = gold_modifier[GOLD_INCOME];
+  float old_inc_factor = gold_modifier[GOLD_INCOME].getVal();
   float new_inc_factor = posIncDes / posIncAct * old_inc_factor;
   sendTo("Theoretical income quilibrium modifier: %.2f\n\r", new_inc_factor);
 #endif

@@ -4125,15 +4125,15 @@ void TBeing::doInfo(const char *arg)
       float tot_drain = tot_gold - net_gold;
 
       sprintf(buf2, "Shop  : modifier: %.2f        (factor  : %.2f%%)\n\r",
-           gold_modifier[GOLD_SHOP],
+           gold_modifier[GOLD_SHOP].getVal(),
            100.0 * (tot_gold_allshops - net_gold_allshops) / tot_gold_allshops);
       buf += buf2;
       sprintf(buf2, "Income: modifier: %.2f        (factor  : %.2f%%)\n\r",
-            gold_modifier[GOLD_INCOME],
+            gold_modifier[GOLD_INCOME].getVal(),
             100.0 * net_gold_budget / tot_gold_budget);
       buf += buf2;
       sprintf(buf2, "Repair: modifier: %.2f        (factor  : %.2f%%)\n\r",
-            gold_modifier[GOLD_REPAIR],
+            gold_modifier[GOLD_REPAIR].getVal(),
             100.0 * (tot_gold_budget - net_gold_budget) / tot_drain);
       buf += buf2;
       sprintf(buf2, "Equip: modifier: %.2f        (factor  : %.2f%%)\n\r",
@@ -4304,21 +4304,21 @@ void TBeing::doInfo(const char *arg)
         };
 
         sprintf(buf2, "Modifier: Shop  : %2.2f (Factor: %6.2f%%)\n\r",
-                gold_modifier[GOLD_SHOP],
+                gold_modifier[GOLD_SHOP].getVal(),
                 100.0 * (tTotalShops - tNetShops) / tTotalShops);
         buf += buf2;
         sprintf(buf2, "Modifier: Income: %2.2f (Factor: %6.2f%%)\n\r",
-                gold_modifier[GOLD_INCOME],
+                gold_modifier[GOLD_INCOME].getVal(),
                 100.0 * tNetBudget / tTotalBudget);
         buf += buf2;
         sprintf(buf2, "Modifier: Repair: %2.2f (Factor: %6.2f%%)\n\r",
-                gold_modifier[GOLD_REPAIR],
+                gold_modifier[GOLD_REPAIR].getVal(),
                 100.0 * (tTotalBudget - tNetBudget) / tTotalDrain);
         buf += buf2;
         sprintf(buf2, "Modifier: Rent  : %2.2f (Factor: %6.2f%%) (Adjusted: %6.2f%%)\n\r",
-                gold_modifier[GOLD_RENT],
+                gold_modifier[GOLD_RENT].getVal(),
                 100.0 * (tTotalRent - tNetRent) / tTotalDrain,
-                100.0 * (tTotalRent - tNetRent) / gold_modifier[GOLD_RENT] / tTotalDrain);
+                100.0 * (tTotalRent - tNetRent) / gold_modifier[GOLD_RENT].getVal() / tTotalDrain);
         buf += buf2;
         sprintf(buf2, "Modifier: Equip : %2.2f (Factor: %6.2f%%)\n\r",
                 stats.equip,
@@ -4460,15 +4460,15 @@ void TBeing::doInfo(const char *arg)
       int tot_drain = tot_gold - net_gold;
 
       sprintf(buf2, "Shop  : modifier: %.2f        (factor  : %.2f%%)\n\r",
-           gold_modifier[GOLD_SHOP],
+           gold_modifier[GOLD_SHOP].getVal(),
            100.0 * (tot_gold_allshops - net_gold_allshops) / tot_gold_allshops);
       buf += buf2;
       sprintf(buf2, "Income: modifier: %.2f        (factor  : %.2f%%)\n\r",
-            gold_modifier[GOLD_INCOME],
+            gold_modifier[GOLD_INCOME].getVal(),
             100.0 * net_gold_budget / tot_gold_budget);
       buf += buf2;
       sprintf(buf2, "Repair: modifier: %.2f        (factor  : %.2f%%)\n\r",
-            gold_modifier[GOLD_REPAIR],
+            gold_modifier[GOLD_REPAIR].getVal(),
             100.0 * (tot_gold_budget - net_gold_budget) / tot_drain);
       buf += buf2;
       sprintf(buf2, "Equip: modifier: %.2f        (factor  : %.2f%%)\n\r",

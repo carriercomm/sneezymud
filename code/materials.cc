@@ -15,7 +15,7 @@ static bool genericDamCheck(int susc, int sharp)
 #if 0
   // gold_repair is taken into account in the cost to repair stuff formula
   // this is probably obsolete - 9/30/99
-  int chance = 1000 - (int) (1000 * gold_modifier[GOLD_REPAIR]); 
+  int chance = 1000 - (int) (1000 * gold_modifier[GOLD_REPAIR].getVal());
   if (::number(0,999) < chance)
     return false;
 #endif

@@ -36,7 +36,7 @@ int TObj::repairPrice(const TBeing *repair, const TBeing *buyer, depreciationTyp
   int gsp = getShopPrice(&discount);
 
   // ideally, this price will be < gsp, but gold_mod should handle that for us
-  int price = (int) (gsp * gold_modifier[GOLD_REPAIR]);
+  int price = (int) (gsp * gold_modifier[GOLD_REPAIR].getVal());
 
   price *= maxFix(repair, dep_done) - getStructPoints();
   price /= getMaxStructPoints();

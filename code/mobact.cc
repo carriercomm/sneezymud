@@ -2682,7 +2682,7 @@ int TMonster::notFightingMove(int pulse)
   }
 
   if (!IS_SET(specials.act, ACT_SENTINEL)) {
-    if (!::number(0,19)) {
+    if (!::number(0,39)) {
       rc = mobileWander(DIR_NONE);
       if (IS_SET_DELETE(rc, DELETE_THIS))
         return DELETE_THIS;

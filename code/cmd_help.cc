@@ -751,7 +751,7 @@ void buildHelpIndex()
     helpIndex.push_back(str);
   }
 // COSMO STRING  
-  delete str;
+//  delete str;
   closedir(dfd);
 
   // set a reasonable initial size

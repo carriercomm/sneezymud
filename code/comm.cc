@@ -232,7 +232,7 @@ void TBeing::sendTo(colorTypeT lev, const char *msg,...) const
   va_end(ap);
 
   string messageBuffer = colorString(this, desc, buf, NULL, lev, FALSE);
-  (&desc->output)->putInQ(messageBuffer.c_str());
+  desc->output.putInQ(messageBuffer.c_str());
 }
 
 void TRoom::sendTo(colorTypeT lev, const char *text, ...) const
@@ -251,7 +251,7 @@ void TRoom::sendTo(colorTypeT lev, const char *text, ...) const
       if ((lev == COLOR_NEVER) || (lev == COLOR_NONE)) {
       } else {
         string messageBuffer = colorString(tbt, i->desc, buf, NULL, lev, TRUE);
-        (&tbt->desc->output)->putInQ(messageBuffer.c_str());
+        tbt->desc->output.putInQ(messageBuffer.c_str());
       }
     }
   }
@@ -275,7 +275,7 @@ void TBeing::sendTo(const char *msg,...) const
   va_start(ap, msg);
   vsprintf(messageBuffer, msg, ap);
   va_end(ap);
-  (&desc->output)->putInQ(messageBuffer);
+  desc->output.putInQ(messageBuffer);
 }
 
 void save_all()
@@ -295,9 +295,9 @@ void sendToOutdoor(colorTypeT lev, const char *text, const char *text_tropic)
               !(ch->isPlayerAction(PLR_MAILING | PLR_BUGGING))) {
           if ((lev == COLOR_NEVER) || (lev == COLOR_NONE)) {
             if (ch->roomp->isTropicalSector()) {
-              (&i->output)->putInQ(text_tropic);
+              i->output.putInQ(text_tropic);
             } else {
-              (&i->output)->putInQ(text);
+              i->output.putInQ(text);
             }
           } else {
             string buf;
@@ -306,7 +306,7 @@ void sendToOutdoor(colorTypeT lev, const char *text, const char *text_tropic)
             } else {
               buf = colorString(ch, i, text, NULL, lev, FALSE);
             }
-            (&i->output)->putInQ(buf.c_str());
+            i->output.putInQ(buf.c_str());
           }
         }
       }
@@ -322,7 +322,7 @@ void sendToExcept(char *text, TBeing *ch)
   if (text)
     for (i = descriptor_list; i; i = i->next)
       if (ch->desc != i && !i->connected)
-        (&i->output)->putInQ(text);
+        i->output.putInQ(text);
 }
 
 void sendToRoom(colorTypeT color, const char *text, int room)
@@ -338,7 +338,7 @@ void sendToRoom(colorTypeT color, const char *text, int room)
       TBeing *tbt = dynamic_cast<TBeing *>(i);
       if (tbt && tbt->desc && !tbt->desc->connected && tbt->awake()) {
         string buf = colorString(tbt, tbt->desc, text, NULL, color, FALSE);
-        (&tbt->desc->output)->putInQ(buf.c_str());
+        tbt->desc->output.putInQ(buf.c_str());
       }
     }
   }
@@ -358,7 +358,7 @@ void sendToRoom(const char *text, int room)
       if (!tbt)
         continue;
       if (tbt->desc && !tbt->desc->connected && tbt->awake())
-        (&tbt->desc->output)->putInQ(text);
+        tbt->desc->output.putInQ(text);
     }
   }
 }
@@ -391,7 +391,7 @@ void sendrpf(int tslevel, colorTypeT color, TRoom *rp, const char *msg,...)
       TBeing *tbt = dynamic_cast<TBeing *>(i);
       if (tbt && tbt->desc && !tbt->desc->connected && tbt->awake() &&
           tbt->GetMaxLevel() > tslevel)
-        (&tbt->desc->output)->putInQ(colorString(tbt, tbt->desc, messageBuffer, NULL, color, TRUE).c_str());
+        tbt->desc->output.putInQ(colorString(tbt, tbt->desc, messageBuffer, NULL, color, TRUE).c_str());
     }
   }
 }
@@ -424,7 +424,7 @@ void sendrpf(int tslevel, TRoom *rp, const char *msg,...)
       TBeing *tbt = dynamic_cast<TBeing *>(i);
       if (tbt && tbt->desc && !tbt->desc->connected && tbt->awake() &&
           tbt->GetMaxLevel() > tslevel)
-        (&tbt->desc->output)->putInQ(colorString(tbt, tbt->desc, messageBuffer, NULL, COLOR_NONE, TRUE).c_str());
+        tbt->desc->output.putInQ(colorString(tbt, tbt->desc, messageBuffer, NULL, COLOR_NONE, TRUE).c_str());
 
     }
   }
@@ -444,7 +444,7 @@ void sendrp_exceptf(TRoom *rp, TBeing *ch, const char *msg,...)
     for (i = rp->stuff; i; i = i->nextThing) {
       TBeing *tbt = dynamic_cast<TBeing *>(i);
       if (tbt && tbt->desc && !tbt->desc->connected && (tbt != ch) && tbt->awake())
-        (&tbt->desc->output)->putInQ(messageBuffer);
+        tbt->desc->output.putInQ(messageBuffer);
     }
   }
 }
@@ -461,7 +461,7 @@ void TRoom::sendTo(const char *text, ...) const
 
   for (i = stuff; i; i = i->nextThing) {
     if (i->desc && !i->desc->connected)
-      (&i->desc->output)->putInQ(messageBuffer);
+      i->desc->output.putInQ(messageBuffer);
   }
 }
 
@@ -950,18 +950,18 @@ void act(const char *str, bool hide, const TThing *t1, const TThing *obj, const 
       }
 
       if (!color) {
-        (&to->desc->output)->putInQ(cap(buf));
+        to->desc->output.putInQ(cap(buf));
       } else {
         string str = to->ansi_color(color);
         if (str.empty())
-          (&to->desc->output)->putInQ(cap(buf));
+          to->desc->output.putInQ(cap(buf));
         else {
-          (&to->desc->output)->putInQ(str.c_str());
-          (&to->desc->output)->putInQ(cap(buf));
-          (&to->desc->output)->putInQ(to->norm());
+          to->desc->output.putInQ(str.c_str());
+          to->desc->output.putInQ(cap(buf));
+          to->desc->output.putInQ(to->norm());
         } 
       }
-      (&to->desc->output)->putInQ("\n\r");
+      to->desc->output.putInQ("\n\r");
     }
     if ((type == TO_VICT) || (type == TO_CHAR))
       return;

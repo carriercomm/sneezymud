@@ -73,10 +73,6 @@ TBeing::~TBeing()
   TRoom *rp = NULL;
   int rc = 0;
 
-  if (gamePort != PROD_GAMEPORT)
-    if (number >= 0 && number == 11057)
-      vlogf(LOG_BUG, "Mandor Being Destroyed! [%d / %d]", in_room, specials.was_in_room);
-
   if ((!roomp || in_room == ROOM_NOWHERE) &&
       (!desc || !desc->connected || desc->connected >= CON_REDITING)) {
     if (in_room != ROOM_NOWHERE || parent)

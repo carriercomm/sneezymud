@@ -1417,6 +1417,7 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
     if (IS_SET_DELETE(rc, DELETE_VICT)) {
       return rc;
     }
+
     return FALSE;
   }
 }

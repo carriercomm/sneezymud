@@ -299,13 +299,32 @@ void TBeing::doHelp(const char *arg)
     spellNumT skill;
     discNumT disc_num;
     spellNumT snt;
+
+    // first, see if we can find a matching skill that the player has
+    // this is here so skills with same name (for different classes) will
+    // be isolated.
     for (snt = MIN_SPELL; snt < MAX_SKILL; snt++) {
       if (hideThisSpell(snt))
         continue;
 
-      if (!strcasecmp(discArray[snt]->name, spellIndex[i]))
+      if (strcasecmp(discArray[snt]->name, spellIndex[i]))
+        continue;
+   
+      if (doesKnowSkill(snt))
         break;
     }
+
+    // if we can't find match on name for skill they have, just use name match
+    if (snt >= MAX_SKILL) {
+      for (snt = MIN_SPELL; snt < MAX_SKILL; snt++) {
+        if (hideThisSpell(snt))
+          continue;
+  
+        if (!strcasecmp(discArray[snt]->name, spellIndex[i]))
+          break;
+      }
+    }
+
     skill = snt;
     if (skill >= MAX_SKILL) {
       vlogf(LOG_BUG,"Bogus spell help file: %s", spellIndex[i]);

@@ -1128,7 +1128,8 @@ int TPerson::doAt(const char *argument, bool isFarlook)
 
     if (!is_abbrev(tStString.c_str(), "yes")) {
       sendTo("That room, or the creature's room you chose, is a particular room.\n\r");
-      sendTo("To do this, do this: at %s yes %s\n\r", loc, tStArgument.c_str());
+      sendTo("To do this, do this: at %s yes %s %s %s\n\r", 
+             loc, tStString.c_str(), tStBuffer.c_str(), tStArgument.c_str());
       return FALSE;
     }
 
@@ -1210,6 +1211,10 @@ int TBeing::doGoto(const string & argument)
     sendTo("              2: Builder's Lounge/Board\n\r");
     sendTo("              8: Reimbursement/Enforcement Board\n\r");
     sendTo("         %6d: Center Square\n\r", ROOM_CS);
+    sendTo("             77: Slap on the Wrist (First Offense)\n\r");
+    sendTo("             70: Hell\n\r");
+    sendTo("             81: Conference Room\n\r");
+    sendTo("            557: Roaring Lion Inn\n\r");
 
     return FALSE;
   }

@@ -2759,7 +2759,8 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
 {
   char buf[MAX_STRING_LENGTH+MAX_STRING_LENGTH];
   char buf2[MAX_STRING_LENGTH+MAX_STRING_LENGTH];
-  int onstring=0, ptr2=0, ptr=0;
+  int onstring=0, ptr2=0, ptr=0, tmp=0;
+  char tmpc;
   va_list ap;
   static MYSQL *sneezydb, *immodb;
   MYSQL *db=NULL;
@@ -2783,8 +2784,17 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
       } else {
 	if(buf[ptr-1]=='=')
 	  onstring=1;
-	else
-	  vlogf(LOG_BUG, "dbquery: Found stray ' in query parsing");
+	else {
+	  // serious klugery
+	  // found a stray ', so assume we screwed up, backtrack and fix it
+	  tmp=ptr2;
+	  while(buf2[--ptr2]!='\'');
+	  tmpc=buf2[++ptr2];
+	  buf2[ptr2]='\'';
+	  while(++ptr2 && ptr2<tmp)
+	    buf2[ptr2]^=tmpc^=buf2[ptr2]^=tmpc;
+	  vlogf(LOG_BUG, "dbquery: Found stray ' in query parsing, cross your fingers");
+	}
       }
     }
 

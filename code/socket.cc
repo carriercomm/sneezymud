@@ -525,7 +525,7 @@ int TSocket::gameLoop()
           }
         }
 
-	if (!mobstuff && zone_table[tmp_ch->roomp->getZone()].zone_value==1) {
+	if (!mobstuff) {
           if (Gravity) {
 	    tmp_ch->checkSinking(tmp_ch->in_room);
 
@@ -537,7 +537,8 @@ int TSocket::gameLoop()
 	      continue;
             }
           }
-	  if (!tmp_ch->isPc() && dynamic_cast<TMonster *>(tmp_ch)){
+	  if (!tmp_ch->isPc() && dynamic_cast<TMonster *>(tmp_ch) &&
+	      zone_table[tmp_ch->roomp->getZone()].zone_value!=1){
 	    rc = dynamic_cast<TMonster *>(tmp_ch)->mobileActivity(pulse);
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
               temp = tmp_ch->next;

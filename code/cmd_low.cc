@@ -1526,7 +1526,7 @@ void TBeing::lowWeaps(const char *arg)
         (blunt  && tbw->isBluntWeapon()) ||
         (pierce && tbw->isPierceWeapon()) ||
         (slash  && tbw->isSlashWeapon())) {
-      vlogf(-1, "Pushing Back Object: %d:%d", objnum, obj->objVnum());
+      vlogf(LOG_SILENT, "Pushing Back Object: %d:%d", objnum, obj->objVnum());
       objList.push_back(objnum);
     }
 

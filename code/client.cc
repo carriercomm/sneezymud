@@ -137,16 +137,13 @@ void Descriptor::send_client_prompt(int, int update)
     }
     clientf("%d|%s|%s|%s|%s", CLIENT_FIGHT, c_name, cond, t_name, t_cond);
   }
-  if ((update & CHANGED_MANA) || (update & CHANGED_PIETY)) {
+  if ((update & CHANGED_MANA) || (update & CHANGED_PIETY) || (update & CHANGED_LIFEFORCE)) {
     char manaBuf[80], maxManaBuf[80];
     if (ch->hasClass(CLASS_CLERIC) || ch->hasClass(CLASS_DEIKHAN)) {
       sprintf(manaBuf, "%.1f", ch->getPiety());
       strcpy(maxManaBuf, "100");
-#ifdef JESUS
     } else if (ch->hasClass(CLASS_SHAMAN)) {
       sprintf(manaBuf, "%d", ch->getLifeforce());
-      sprintf(maxManaBuf, "%d", ch->lifeforceLimit());
-#endif
     } else {
       sprintf(manaBuf, "%d", ch->getMana());
       sprintf(maxManaBuf, "%d", ch->manaLimit());

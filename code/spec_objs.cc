@@ -2718,6 +2718,7 @@ int newbieHelperWProc(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TOb
 extern int board(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponBlinder(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponManaDrainer(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
+extern int weaponLightningRod(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 
 // assign special procedures to objects
 
@@ -2772,6 +2773,6 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "potion of characteristics", statPotion},  
   {FALSE, "daySword", daySword},  
   {FALSE, "nightBlade", nightBlade},  
-  {FALSE, "BOGUS", bogusObjProc},  
+  {TRUE, "Lightning Rod", weaponLightningRod},  
   {FALSE, "BOGUS", bogusObjProc},  // 50
 };

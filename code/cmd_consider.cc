@@ -6,6 +6,8 @@
 //
 //////////////////////////////////////////////////////////////////////////
 
+#include <cmath>
+
 #include "stdsneezy.h"
 
 void TBeing::doConsider(const char *argument)

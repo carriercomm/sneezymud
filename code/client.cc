@@ -754,9 +754,11 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
     case CLIENT_NEWACCOUNT: {
       char aname[256];
       char apassword[256];
+      char email[256]l
       static char *crypted;
       strcpy(aname, nextToken('|', 255, str2).c_str());
       strcpy(apassword, nextToken('|', 255, str2).c_str());
+      strcpy(email, nextToken('|', 255, str2).c_str());k
 
       account = new TAccount;
       // Does account exist or is it a bogus name? This function will return TRUE is so
@@ -775,12 +777,9 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       strncpy(account->passwd, crypted, 10);
       *(account->passwd + 10) = '\0';
 
-      if (illegalEmail(arg, this, SILENT_YES)) {
-        writeToQ("Please enter an email address. Accounts with bogus addresses will be deleted.\n\r");
-        writeToQ("Address -> ");
-        break;
+      if (illegalEmail(email, this, SILENT_YES)) {
       }
-      strcpy(account->email, arg);
+      strcpy(account->email, email);
 
 
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);

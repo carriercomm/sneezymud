@@ -2457,7 +2457,7 @@ void buildCommandArray(void)
   commandArray[CMD_VISIBLE] = new commandInfo("visible", POSITION_STANDING, 0);
   commandArray[CMD_TRIGGER] = new commandInfo("trigger", POSITION_STANDING, GOD_LEVEL1);
   commandArray[CMD_STORE] = new commandInfo("store", POSITION_STANDING, GOD_LEVEL1);
-  commandArray[CMD_ZONEFILE] = new comandInfo("zonefile", POSITION_DEAD, GOD_LEVEL1);
+  commandArray[CMD_ZONEFILE] = new commandInfo("zonefile", POSITION_DEAD, GOD_LEVEL1);
 }
 
 bool _parse_name(const char *arg, char *name)

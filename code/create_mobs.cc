@@ -107,7 +107,7 @@ static void send_mob_menu(const TBeing *ch, const TMonster *tMon)
 
     strcpy(tStringOut[0], (tMon->name ? tMon->name : "Unknown"));
     strcpy(tStringOut[1], (tMon->shortDescr ? tMon->shortDescr : "Unknown"));
-    strcpy(tStringOut[2], (tMon->player.getLongDesc() ? tMon->player.getLongDesc() : "Unknown"));
+    strcpy(tStringOut[2], (tMon->getLongDesc() ? tMon->getLongDesc() : "Unknown"));
     sprintf(tStringOut[3], "%d %3.2f", tMon->getFaction(), tMon->getPerc());
     sprintf(tStringOut[4], "%.1f", tMon->getMult());
     sprintf(tStringOut[5], "%d", tMon->GetMaxLevel());
@@ -252,13 +252,13 @@ static void TBeingSave(TBeing *ch, TMonster *mob, int vnum)
   int j, k;
 
   if (!mob->name || !mob->getDescr() || 
-      !mob->shortDescr || !mob->player.getLongDesc()) {
+      !mob->shortDescr || !mob->getLongDesc()) {
     ch->sendTo("Your mob is missing one or more strings.\n\r");
     ch->sendTo("Please update the follwing before saving:%s%s%s%s\n\r",
                (mob->name                 ? "" : " Name"),
                (mob->getDescr()           ? "" : " Description"),
                (mob->shortDescr           ? "" : " Short-Description"),
-               (mob->player.getLongDesc() ? "" : " Long-Description"));
+               (mob->getLongDesc() ? "" : " Long-Description"));
     return;
   }
 
@@ -292,9 +292,9 @@ static void TBeingSave(TBeing *ch, TMonster *mob, int vnum)
   }
   temp[j] = '\0';
   fprintf(fp, "%s~\n", temp);
-  for (j = 0, k = 0; k <= (int) strlen(mob->player.getLongDesc()); k++) {
-    if (mob->player.getLongDesc()[k] != 13)
-      temp[j++] = mob->player.getLongDesc()[k];
+  for (j = 0, k = 0; k <= (int) strlen(mob->getLongDesc()); k++) {
+    if (mob->getLongDesc()[k] != 13)
+      temp[j++] = mob->getLongDesc()[k];
   }
   temp[j] = '\0';
   fprintf(fp, "%s~\n", temp);
@@ -594,7 +594,7 @@ static void change_mob_long_desc(TBeing *ch, TMonster *mob, editorEnterTypeT typ
   ch->sendTo(VT_HOMECLR);
 
   ch->sendTo("Current long description:\n\r");
-  ch->sendTo("%s", mob->player.getLongDesc());
+  ch->sendTo("%s", mob->getLongDesc());
   ch->sendTo("\n\r\n\rNew mob long description:\n\r");
   ch->sendTo("Terminate with a ~ ON A SEPERATE LINE. Press <ENTER> again to continue.\n\r");
   delete [] mob->player.longDescr;
@@ -2388,11 +2388,11 @@ switch (field) {
     case 8: // Long Description
       if (!*string) {
         sendTo("You need to give me a long description.\n\r");
-        sendTo("Current Long is:\n\r%s\n\r", cMob->player.getLongDesc());
+        sendTo("Current Long is:\n\r%s\n\r", cMob->getLongDesc());
         return;
       }
       cMob->swapToStrung();
-      if (cMob->player.getLongDesc())
+      if (cMob->getLongDesc())
         delete [] cMob->player.longDescr;
       strcat(string, "\n\r");
       cMob->player.longDescr = mud_str_dup(string);
@@ -2676,12 +2676,12 @@ switch (field) {
       cMob->swapToStrung();
 
       if (is_abbrev(tTextLns[0], "long")) {
-        if (!cMob->player.getLongDesc()) {
+        if (!cMob->getLongDesc()) {
           sendTo("Mobile doesn't have a long description, cannot use replace.\n\r");
           return;
         }
 
-        tStr = cMob->player.getLongDesc();
+        tStr = cMob->getLongDesc();
 
         if (tStr.find(tTextLns[1]) == string::npos) {
           sendTo("Couldn't find pattern in long description.\n\r");

@@ -548,6 +548,12 @@ int TBeing::doPray(const char *argument)
   if (!isPc() && !desc)
        return FALSE;
 
+  if (isPc() && GetMaxLevel() > MAX_MORT && !hasWizPower(POWER_NO_LIMITS)) {
+    sendTo("You are currently not permitted to cast prayers, sorry.\n\r");
+    return FALSE;
+  }
+
+
   if (!hasHands()) {
     sendTo("Sorry, you don't have the right form for that.\n\r");
     return FALSE;
@@ -1023,6 +1029,12 @@ int TBeing::preCastCheck()
     return FALSE;
   }
 
+  if (isPc() && GetMaxLevel() > MAX_MORT && !hasWizPower(POWER_NO_LIMITS)) {
+    sendTo("You are currently not permitted to cast spells, sorry.\n\r");
+    return FALSE;
+  }
+
+
   if (!isImmortal() && !hasClass(CLASS_MAGIC_USER | CLASS_RANGER)) {
     if (hasClass(CLASS_CLERIC)) {
       sendTo("Clerics can't cast spells, they pray!\n\r");
@@ -1067,6 +1079,7 @@ int TBeing::doCast(const char *argument)
 
   if((which=parseSpellNum(arg))==TYPE_UNDEFINED)
     return FALSE;
+
 
   return doDiscipline(which, arg);
 }

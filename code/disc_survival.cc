@@ -2,25 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_survival.cc,v $
-// Revision 5.1.1.3  1999/10/21 23:59:46  mithros
-// Added some new skins for specific mobs, Simal Zone
-//
-// Revision 5.1.1.2  1999/10/21 23:51:21  lapsos
-// Added race-simal skin.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/30 14:05:25  lapsos
-// Fixed a starting bug in seekwater(deduction of moves)
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+//  disc_survival.cc : The survival discipline
 //
 //////////////////////////////////////////////////////////////////////////
 

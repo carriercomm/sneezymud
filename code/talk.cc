@@ -157,10 +157,10 @@ int TBeing::doSay(const char *arg)
   if (!*arg)
     sendTo("Yes, but WHAT do you want to say?\n\r");
   else {
-    strcpy(garbed, garble(arg, getCond(DRUNK)).c_str());
+    mud_str_copy(garbed, garble(arg, getCond(DRUNK)).c_str(), 256);
 
     if (hasDisease(DISEASE_DROWNING)) 
-      strcpy(garbed, "Glub glub glub.");
+      mud_str_copy(garbed, "Glub glub glub.", 256);
 
     sendTo(COLOR_COMM, "<g>You say, <z>\"%s%s\"\n\r", 
             colorString(this, desc, garbed, NULL, COLOR_BASIC, FALSE).c_str(), norm());
@@ -174,7 +174,7 @@ int TBeing::doSay(const char *arg)
       if (!(d = mob->desc) || mob == this || (mob->getPosition() <= POSITION_SLEEPING))
         continue;
 
-      strcpy(capbuf, mob->pers(this));
+      mud_str_copy(capbuf, mob->pers(this), 256);
       cap(capbuf);
       sprintf(tmpbuf, "%s", colorString(mob, mob->desc, capbuf, NULL, COLOR_NONE, FALSE).c_str()); 
 
@@ -276,7 +276,7 @@ void Descriptor::sendShout(TBeing *ch, const char *arg)
     if (dynamic_cast<TMonster *>(b) ||
         (!b->isImmortal() && ch->isImmortal()) ||
         (b->desc && !IS_SET(i->autobits, AUTO_NOSHOUT))) {
-      strcpy(capbuf, b->pers(ch));
+      mud_str_copy(capbuf, b->pers(ch), 256);
       if (!capbuf) {
         forceCrash("No capbuf in sendShout!");
         continue;
@@ -369,9 +369,9 @@ void TBeing::doShout(const char *arg)
   }
   if ((roomp->isUnderwaterSector() || hasDisease(DISEASE_DROWNING)) &&
        !isImmortal())
-    strcpy(garbed, "Glub glub glub.");
+    mud_str_copy(garbed, "Glub glub glub.", 256);
   else
-    strcpy(garbed, garble(arg, getCond(DRUNK)).c_str());
+    mud_str_copy(garbed, garble(arg, getCond(DRUNK)).c_str(), 256);
 
   sendTo(COLOR_COMM, "<g>You shout<Z>, \"%s%s\"\n\r", colorString(this, desc, garbed, NULL, COLOR_BASIC, FALSE).c_str(), norm());
   act("$n rears back $s head and shouts loudly.", FALSE, this, 0, 0, TO_ROOM);
@@ -473,7 +473,7 @@ void TBeing::doCommune(const char *arg)
   }
   if (*arg == '@') {
     one_argument(arg, buf2);
-    strcpy(buf2, &buf2[1]);  // skip the @
+    mud_str_copy(buf2, &buf2[1],256);  // skip the @
     levnum = atoi(buf2);
     if (levnum > 0) {
       // only a properly formatted string should be changed
@@ -641,7 +641,7 @@ void TBeing::doSign(const char *arg)
     sendTo("You can't sign while fighting.\n\r");
     return;
   }
-  strcpy(buf, arg + i);
+  mud_str_copy(buf, arg + i, 256);
   buf2[0] = '\0';
   // work through the arg, word by word.  if you fail your
   //  skill roll, the word comes out garbled. */
@@ -785,7 +785,7 @@ int TBeing::doTell(const char *arg, bool visible)
        !isImmortal() && !vict->isImmortal())
     garbed = "Glub glub glub.";
 
-  strcpy(capbuf, vict->pers(this));  // Use Someone for tells (invis gods, etc)
+  mud_str_copy(capbuf, vict->pers(this), 256);  // Use Someone for tells (invis gods, etc)
 
   char garbedBuf[256];
   char nameBuf[256];
@@ -871,7 +871,7 @@ int TBeing::doWhisper(const char *arg)
   }
 
   char garbed[256];
-  strcpy(garbed, garble(message, getCond(DRUNK)).c_str());
+  mud_str_copy(garbed, garble(message, getCond(DRUNK)).c_str(), 256);
 
   sprintf(buf, "$n whispers to you, \"%s\"", colorString(this, vict->desc, garbed, NULL, COLOR_COMM, TRUE).c_str());
 
@@ -941,7 +941,7 @@ int TBeing::doAsk(const char *arg)
     act("$n quietly asks $mself a question.", TRUE, this, 0, 0, TO_ROOM);
     sendTo("You think about it for a while...\n\r");
   } else {
-    strcpy(garbled, garble(message, getCond(DRUNK)).c_str());
+    mud_str_copy(garbled, garble(message, getCond(DRUNK)).c_str(), 256);
 
     sprintf(buf, "$n asks you, \"%s\"", garbled);
     act(buf, TRUE, this, 0, vict, TO_VICT);

@@ -259,12 +259,12 @@ void generate_obj_index()
   /****** extra ******/
   extra_db=mysql_init(NULL);
   if(!mysql_real_connect(extra_db, NULL, "sneezy", NULL, 
-	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
     vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
     exit(0);
   }
 
-  if(mysql_query(extra_db, "select vnum, name, description from extra order by vnum")){
+  if(mysql_query(extra_db, "select vnum, name, description from objextra order by vnum")){
     vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(extra_db));
     exit(0);
   }
@@ -274,12 +274,12 @@ void generate_obj_index()
   /****** affect ******/
   affect_db=mysql_init(NULL);
   if(!mysql_real_connect(affect_db, NULL, "sneezy", NULL, 
-	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
     vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
     exit(0);
   }
 
-  if(mysql_query(affect_db, "select vnum, type, mod1, mod2 from affect order by vnum")){
+  if(mysql_query(affect_db, "select vnum, type, mod1, mod2 from objaffect order by vnum")){
     vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(affect_db));
     exit(0);
   }

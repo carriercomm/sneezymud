@@ -313,7 +313,7 @@ void ObjLoad(TBeing *ch, int vnum)
   mysql_free_result(res);
 
 
-  if((dbquery(&res, "immortal", "ObjLoad(2)", "select name, description from extra where vnum=%i and owner='%s'", vnum, ch->name)==-1)){
+  if((dbquery(&res, "immortal", "ObjLoad(2)", "select name, description from objextra where vnum=%i and owner='%s'", vnum, ch->name)==-1)){
     ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   }
@@ -331,7 +331,7 @@ void ObjLoad(TBeing *ch, int vnum)
   i=0;
 
 
-  if((dbquery(&res, "immortal", "ObjLoad(3)", "select type, mod1, mod2 from affect where vnum=%i and owner='%s'", vnum, ch->name)==-1)){
+  if((dbquery(&res, "immortal", "ObjLoad(3)", "select type, mod1, mod2 from objaffect where vnum=%i and owner='%s'", vnum, ch->name)==-1)){
     ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   }
@@ -429,7 +429,7 @@ static void ObjSave(TBeing *ch, TObj *o, int vnum)
     return;
   }
 
-  if(dbquery(NULL, "immortal", "ObjSave(2)", "delete from extra where vnum=%i and owner='%s'", vnum, ch->name)){
+  if(dbquery(NULL, "immortal", "ObjSave(2)", "delete from objextra where vnum=%i and owner='%s'", vnum, ch->name)){
     ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   }
@@ -447,19 +447,19 @@ static void ObjSave(TBeing *ch, TObj *o, int vnum)
       }
       temp[j] = '\0';
 
-      if(dbquery(NULL, "immortal", "ObjSave(3)", "replace extra set name='%s', description='%s', owner='%s', vnum=%i", exdes->keyword, temp, ch->name, vnum)){
+      if(dbquery(NULL, "immortal", "ObjSave(3)", "replace objextra set name='%s', description='%s', owner='%s', vnum=%i", exdes->keyword, temp, ch->name, vnum)){
 	ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
 	return;
       }           
     } else {
-      if(dbquery(NULL, "immortal", "ObjSave(4)", "replace extra set name='%s', description='', owner='%s'", exdes->keyword, ch->name)){
+      if(dbquery(NULL, "immortal", "ObjSave(4)", "replace objextra set name='%s', description='', owner='%s'", exdes->keyword, ch->name)){
 	ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
 	return;
       }
     }
   }
 
-  if(dbquery(NULL, "immortal", "ObjSave(5)", "delete from affect where vnum=%i and owner='%s'", vnum, ch->name)){
+  if(dbquery(NULL, "immortal", "ObjSave(5)", "delete from objaffect where vnum=%i and owner='%s'", vnum, ch->name)){
     ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   }
@@ -469,7 +469,7 @@ static void ObjSave(TBeing *ch, TObj *o, int vnum)
       continue;
     
     if (o->affected[i].location != APPLY_NONE) {
-      if(dbquery(NULL, "immortal", "ObjSave(6)", "replace affect set type=%i, mod1=%ld, mod2=%ld, owner='%s', vnum=%i",
+      if(dbquery(NULL, "immortal", "ObjSave(6)", "replace objaffect set type=%i, mod1=%ld, mod2=%ld, owner='%s', vnum=%i",
 		 mapApplyToFile(o->affected[i].location), 
 		 applyTypeShouldBeSpellnum(o->affected[i].location) ? mapSpellnumToFile(spellNumT(o->affected[i].modifier)) : o->affected[i].modifier,
 		 o->affected[i].modifier2, ch->name, vnum)){
@@ -641,8 +641,8 @@ void oremove(TBeing *ch, int vnum)
   }
     
   if(dbquery(NULL, "immortal", "oremove(1)", "delete from object where vnum=%i and owner='%s'", vnum, ch->name) ||
-     dbquery(NULL, "immortal", "oremove(2)", "delete from affect where vnum=%i and owner='%s'", vnum, ch->name) ||
-     dbquery(NULL, "immortal", "oremove(3)", "delete from extra where vnum=%i and owner='%s'", vnum, ch->name)){
+     dbquery(NULL, "immortal", "oremove(2)", "delete from objaffect where vnum=%i and owner='%s'", vnum, ch->name) ||
+     dbquery(NULL, "immortal", "oremove(3)", "delete from objextra where vnum=%i and owner='%s'", vnum, ch->name)){
     ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   } else

@@ -523,7 +523,7 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
 	 getLevel(Class)>=45){
 	if(!silent)
 	  gm->doSay("You are now eligible to quest for your red sash.  Say \"red sash\" for more information.");
-
+	setQuestBit(TOG_MONK_RED_ELIGIBLE);
       }
       break;
 

@@ -150,7 +150,8 @@ class textQ
     void putInQ(const char *txt);
 };
 
-class editStuff {
+class editStuff
+{
   public:
     int x, y;        // Current x andy position on the screen for cursor
     int bottom, end; // Bottom of text, and end of current line
@@ -161,7 +162,8 @@ class editStuff {
     ~editStuff();
 };
     
-class careerData {
+class careerData
+{
   public:
     unsigned int kills;            // keep up with kills I've made
     unsigned int group_kills;            // keep up with kills I've made
@@ -266,7 +268,8 @@ class careerData {
     }
 };
 
-class sessionData {
+class sessionData
+{
   public:
     time_t connect;
     int kills;
@@ -336,7 +339,8 @@ class sessionData {
     }
 };
 
-class promptData {
+class promptData
+{
   public:
     unsigned short int type;
     char hpColor[20];
@@ -356,7 +360,8 @@ class promptData {
 };
 
 // Descriptor class
-class Descriptor {
+class Descriptor
+{
   public:
     TSocket *socket;
     editStuff edit;

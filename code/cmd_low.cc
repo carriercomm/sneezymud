@@ -1082,7 +1082,7 @@ void TPerson::doLow(const char *arg)
 	   "Bonus       :","Cnt","Max","Min","Avg","Sum");
 
     while((row=mysql_fetch_row(res))){
-      switch(atoi(row[0])){
+      switch(mapFileToApply(atoi(row[0]))){
 	case APPLY_STR:
 	  sendTo("Strength    : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
 	  break;

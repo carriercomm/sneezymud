@@ -2939,6 +2939,23 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
   return TRUE;
 }
 
+int portableHole(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *ob2)
+{
+  int original_loc=ch->in_room;
+  int holeroom=61;
+
+  if(cmd != CMD_OBJ_HAVING_SOMETHING_PUT_INTO) 
+    return FALSE;
+
+  --(*ch);
+  thing_to_room(ch, holeroom);
+  o->dropMe(ch, SHOW_ME, DONT_SHOW_ROOM);
+  --(*ch);
+  thing_to_room(ch, original_loc);
+
+  return TRUE;
+}
+
 extern int board(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponBlinder(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponManaDrainer(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
@@ -3004,6 +3021,8 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {TRUE, "Energy Beam Weapon", energyBeam},
   {TRUE, "Viper Weapon (poison)", poisonViperBlade},
   {FALSE, "trolley", trolley},
-
-  {FALSE, "BOGUS", bogusObjProc},  // 55
+  {FALSE, "portable hole", portableHole}, // 55
 };
+
+
+

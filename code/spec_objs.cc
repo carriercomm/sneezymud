@@ -72,7 +72,7 @@ int TObj::checkSpec(TBeing *t, cmdTypeT cmd, const char *arg, TThing *t2)
 
   // we use static_cast here because we don't ALWAYS pass the proper kind of
   // parameter through the pointer fields.
-  if (spec) {
+  if (spec && t2) {
     rc = (objSpecials[GET_OBJ_SPE_INDEX(spec)].proc) 
           (t, cmd, arg, this, static_cast<TObj *>(t2));
     return rc;

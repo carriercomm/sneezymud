@@ -1467,6 +1467,7 @@ class TBeing : public TThing {
     bool checkSlotPlayer() const;
     bool isSwimming() const;
     void doPeelPk(const char *);
+    bool cutPeelPkDam() const;
     int peelPkRespawn(TBeing *, spellNumT);
     bool inPkZone() const;
     void removeFromPeelPk(TBeing *);

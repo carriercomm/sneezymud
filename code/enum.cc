@@ -248,7 +248,7 @@ int mapDiscToFile(discNumT dn)
       return 19;
     case DISC_RANGER_FIGHT:
       return 20;
-    case DISC_NATURE:
+    case DISC_SHAMAN_ARMADILLO: // was nature
       return 21;
     case DISC_ANIMAL:
       return 22;
@@ -383,7 +383,7 @@ discNumT mapFileToDisc(int num)
     case 20:
       return DISC_RANGER_FIGHT;
     case 21:
-      return DISC_NATURE;
+      return DISC_SHAMAN_ARMADILLO;  // was nature
     case 22:
       return DISC_ANIMAL;
     case 23:

@@ -2798,12 +2798,18 @@ void TThing::extinguishMe(TBeing *ch)
 {
   TObj *o;
 
-  if(!(o=dynamic_cast<TObj *>(this)) || !o->isObjStat(ITEM_BURNING)){
-    ch->sendTo("You can't extinguish that; it's not burning.\n\r");
+  if (!(o=dynamic_cast<TObj *>(this)) || !o->isObjStat(ITEM_BURNING)) {
+    ch->sendTo("Can't find anything burning in the room or in your hand.\n\r");
+    ch->sendTo("Assuming you meant an item your wearing. You begin to extinguish yourself.\n\r");
+    act("You stop, drop, and roll on the ground.", FALSE, ch, 0, 0, TO_CHAR);
+    act("$n stops, drops, and rolls on the ground.", FALSE, ch, 0, 0, TO_ROOM);
+    start_task(ch, 0, 0, TASK_EXTINGUISH_MY_ASS, "", 2, ch->inRoom(), 0, 0, 5);
   } else {
     o->remBurning(ch);
-    act("You extinguish $p, and it smolders slightly before going out.", FALSE, ch, o, 0, TO_CHAR);
-    act("$n extinguishes $p, and it smolders slightly before going out.", FALSE, ch, o, 0, TO_ROOM);
+    act("You extinguish $p, and it smolders slightly before going out.",  
+	FALSE, ch, o, 0, TO_CHAR);
+    act("$n extinguishes $p, and it smolders slightly before going out.",
+	FALSE, ch, o, 0, TO_ROOM);
   }
   return;
 }
@@ -2822,6 +2828,11 @@ void TBeing::doExtinguish(const string & argument)
 
   bool roomOnly = is_abbrev(arg2, "room");
   bool heldOnly = is_abbrev(arg2, "held");
+
+  if (POSITION_SITTING >= getPosition()) {
+    sendTo("You aren't in a position to do that.\n\r");
+    return;
+  }
 
   if (arg1.empty()) {
     sendTo("Extinguish what?\n\r");

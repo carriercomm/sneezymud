@@ -1275,6 +1275,213 @@ void TRoom::loadItems()
   if (reset)
     setRoomFlagBit(ROOM_SAVE_ROOM);
 
+  // This is an automated System designed to help keep storage clean.
+  // If a bag is in here that is a linkbag then we mail the owner to
+  // let them know it is still here and that they need to let us know
+  // if they want it or if we should purge it.  Combined with this we
+  // clean up non-linkbag objects and place it into another bag to be
+  // neat and tidy.  We also look for the link-note that we put inside
+  // the bag and purge the bag if it's here for too long.
+  if (number == ROOM_STORAGE) {
+    vlogf(LOG_LOW, "Storage: Booting Storage Room");
+
+    TThing * tThing,
+           * tThingNext;
+    TObj   * tBag = read_object(GENERIC_L_BAG, VIRTUAL);
+    TBag   * tContainer;
+    char     tString[256];
+    charFile tSt;
+
+    if (!tBag) {
+      vlogf(LOG_LOW, "Storage: Failed to create Junk Bag.");
+      fclose(fp);
+      return;
+    }
+
+    for (tThing = stuff; tThing; tThing = tThingNext) {
+      tThingNext = tThing->nextThing;
+
+      // Remove various things.
+      if (!(tContainer = dynamic_cast<TBag *>(tThing))) {
+        vlogf(LOG_LOW, "Storage: Moving Junk: %s", tThing->name);
+        --(*tThing);
+        *tBag += *tThing;
+        continue;
+      }
+
+      // Remove old junk bags.
+      if (sscanf(tThing->name, "linkbag %[A-Za-z]", tString) != 1) {
+        vlogf(LOG_LOW, "Storage: Moving Old Junk Bag");
+        while ((tThing->stuff)) {
+          TThing * tTemp = tThing->stuff;
+          --(*tTemp);
+          *tBag += *tTemp;
+        }
+
+        --(*tThing);
+        delete tThing;
+
+        continue;
+      }
+
+      // Now we verify the 'user'.  tString should have been set prior.
+      if (!load_char(tString, &tSt)) {
+        vlogf(LOG_LOW, "Storage: Purging linkbag: %s", tString);
+        --(*tThing);
+        delete tThing;
+
+        continue;
+      }
+
+      vlogf(LOG_LOW, "Storage: Processing Linkbag: %s", tString);
+
+      // If we got here, the bag is a linkbag and the player is around.
+      for (TThing *tCont = tThing->stuff; tCont; tCont = tCont->nextThing) {
+        TNote * tNote = dynamic_cast<TNote *>(tThing);
+
+        if (!tNote)
+          continue;
+ 
+        int  tDay,
+             tHour,
+             tMin,
+             tSec,
+             tYear;
+        char tMon[4],
+             tWek[4];
+
+	//Current time is: Mon Mar 20 00:40:14 2000 (PST)
+        if (sscanf(tNote->action_description,
+                   "Current time is: %s %s %d %d:%d:%d %d (%*s)",
+                   tWek, tMon, &tDay, &tHour, &tMin, &tSec, &tYear) != 7)
+          continue;
+
+        struct tm tTime;
+
+        tTime.tm_sec = tSec;
+        tTime.tm_min = tMin;
+        tTime.tm_mday = tDay;
+        tTime.tm_year = (tYear - 1900);
+        time_t tCurrentTime = time(0);
+        tTime.tm_isdst = localtime(&tCurrentTime)->tm_isdst;
+
+        if (!strcmp(tMon, "Jan"))
+          tTime.tm_mon = 0;
+        else if (!strcmp(tMon, "Feb"))
+          tTime.tm_mon = 1;
+        else if (!strcmp(tMon, "Mar"))
+          tTime.tm_mon = 2;
+        else if (!strcmp(tMon, "Apr"))
+          tTime.tm_mon = 3;
+        else if (!strcmp(tMon, "May"))
+          tTime.tm_mon = 4;
+        else if (!strcmp(tMon, "Jun"))
+          tTime.tm_mon = 5;
+        else if (!strcmp(tMon, "Jul"))
+          tTime.tm_mon = 6;
+        else if (!strcmp(tMon, "Aug"))
+          tTime.tm_mon = 7;
+        else if (!strcmp(tMon, "Sep"))
+          tTime.tm_mon = 8;
+        else if (!strcmp(tMon, "Oct"))
+          tTime.tm_mon = 9;
+        else if (!strcmp(tMon, "Nov"))
+          tTime.tm_mon = 10;
+        else if (!strcmp(tMon, "Dec"))
+          tTime.tm_mon = 11;
+        else {
+          vlogf(LOG_BUG, "Storage: Unknown Month: %s", tMon);
+          tTime.tm_mon = 0;
+        }
+
+        if (!strcmp(tWek, "Sun"))
+          tTime.tm_wday = 0;
+        else if (!strcmp(tWek, "Mon"))
+          tTime.tm_wday = 1;
+        else if (!strcmp(tWek, "Tue"))
+          tTime.tm_wday = 2;
+        else if (!strcmp(tWek, "Wed"))
+          tTime.tm_wday = 3;
+        else if (!strcmp(tWek, "Thu"))
+          tTime.tm_wday = 4;
+        else if (!strcmp(tWek, "Fri"))
+          tTime.tm_wday = 5;
+        else if (!strcmp(tWek, "Sat"))
+          tTime.tm_wday = 6;
+        else {
+          vlogf(LOG_BUG, "Storage: Unknown Day: %s", tWek);
+          tTime.tm_wday = 1;
+        }
+
+        tDay = 0;
+
+        switch (tTime.tm_mon) {
+          case 10:
+            tDay += 31;
+          case 9:
+            tDay += 30;
+          case 8:
+            tDay += 31;
+          case 7:
+            tDay += 30;
+          case 6:
+            tDay += 31;
+          case 5:
+            tDay += 31;
+          case 4:
+            tDay += 30;
+          case 3:
+            tDay += 31;
+          case 2:
+            tDay += 30;
+          case 1:
+            tDay += 31;
+          case 0:
+            tDay += (!((tTime.tm_year - 1996) % 4) ? 29 : 28);
+        }
+
+        tDay += (tTime.tm_mday - 1);
+        tTime.tm_yday = tDay;
+
+        double tTimeDiff = difftime(tCurrentTime, mktime(&tTime)),
+               tCheck    = 60.0 * 60.0 * 24.0 * 30.0;
+
+        // Allow a bag to be 'retained' for 30 days.
+        if (tTimeDiff > tCheck || tTimeDiff < -tCheck) {
+          vlogf(LOG_LOW, "Storage: Expired: %s", tString);
+
+          while ((tThing->stuff)) {
+            TThing * tTemp = tThing->stuff;
+            --(*tTemp);
+            *tBag += *tTemp;
+          }
+
+          --(*tThing);
+          delete tThing;
+	}
+      }
+    }
+
+    if (!tBag->stuff)
+      delete tBag;
+    else {
+      string tStString("");
+
+      tBag->swapToStrung();
+      tBag->addObjStat(ITEM_NOPURGE);
+
+      delete [] tBag->getDescr();
+      delete [] tBag->name;
+
+      tStString = "A bag containing various junk.";
+      tBag->setDescr(mud_str_dup(tStString.c_str()));
+      tStString = "bag junk various [wizard]";
+      tBag->name = mud_str_dup(tStString.c_str());
+
+      *this += *tBag;
+    }
+  }
+
   fclose(fp);
 }
 

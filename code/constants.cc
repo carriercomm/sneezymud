@@ -625,7 +625,7 @@ const char * const extra_bits[] =
   "Magic",
   "Nodrop",
   "Bless",
-  "*Do Not Use*",
+  "Spiked",
   "Hover",
   "Rusty",
   "Anti-CLERIC",

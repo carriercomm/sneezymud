@@ -216,8 +216,9 @@ void TBow::bloadArrowBow(TBeing *ch, TArrow *the_arrow)
 
   if (stuff) {
     ch->sendTo("That bow has already been loaded, so you hold it.\n\r");
-    //--(*this);
-    //ch->equipChar(this, ch->getPrimaryHold());
+    --(*this);
+    ch->equipChar(this, ch->getPrimaryHold());
+    ch->addToWait(combatRound(1));
     return;
   }
 

@@ -871,10 +871,21 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
     strcpy(colorBuf, ch->cyan());
 
   if (p->msgVariables == MSG_IMM_TITLE &&
-      !p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL).empty())
+      !p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL).empty()) {
+    string str = p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL);
+    unsigned int len = str.size();
+    unsigned int padding = 14-len;
+    unsigned int frontpadding = padding/2;
+    for (unsigned int iter = 0; iter < frontpadding; iter++)
+      str.insert(0, " ");
+    
     sprintf(tempbuf, "%sLevel:[%-14s%s][%s] %s",
-            colorBuf, p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL).c_str(),
+            colorBuf, str.c_str(),
             colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
+  }
+#if 0
+// these are old hard-coded names
+// folks should use "mess title" instead
   else if (!strcmp(p->getName(), "Brutius"))
     sprintf(tempbuf, "%sLevel:[ Grand Poobah ][%s] %s", 
            colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
@@ -970,6 +981,8 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
   } else if (p->GetMaxLevel() == GOD_LEVEL1)
     sprintf(tempbuf, "%sLevel:[Area Designer ][%s] %s",
             colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
+#endif
+
 #if 1
   else {
     string tmpstring;

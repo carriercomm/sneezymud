@@ -31,7 +31,8 @@
   Right now TStaff/TWand/TPotion/TScroll are all used.  There is code
   setup to allow specifying 'invalid objects' to keep certain things
   from the list, but is currently blank.  Requires wizpower-wizard
-  to use the command.
+  to use the command.  This is currently, and will probably, remain
+  an undocumented feature.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

@@ -1673,7 +1673,7 @@ TBeing *get_char_room_vis(const TBeing *ch, const char *name, int *count, exactT
   string tStName("");
 
   if (!ch) {
-    vlogf(LOG_BUG,"NULL ch in get_char_room_vis");
+    vlogf(LOG_BUG, "NULL ch in get_char_room_vis");
     return NULL;
   }
   if (!*name || !ch->roomp)
@@ -1701,7 +1701,7 @@ TBeing *get_char_room_vis(const TBeing *ch, const char *name, int *count, exactT
       }
     }
 
-    tStName += "blobs";
+    tStName = "blobs";
     tStName += mob->getMyRace()->getSingularName();
 
 #if 1

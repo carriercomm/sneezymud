@@ -2829,11 +2829,9 @@ void TBeing::doExtinguish(const string & argument)
   bool roomOnly = is_abbrev(arg2, "room");
   bool heldOnly = is_abbrev(arg2, "held");
 
-  if (POSITION_SITTING >= getPosition()) {
-    sendTo("You aren't in a position to do that.\n\r");
-    return;
+  if (POSITION_STANDING >= getPosition()) {
+    setPosition(POSITION_STANDING);
   }
-
   if (arg1.empty()) {
     sendTo("Extinguish what?\n\r");
     return;

@@ -235,6 +235,8 @@ string TOpenContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
 
 void TOpenContainer::putMoneyInto(TBeing *ch, int amount)
 {
+  TMoney * money;
+
   if (isClosed()) {
     act("$p is closed.", FALSE, ch, this, 0, TO_CHAR);
     return;
@@ -242,7 +244,14 @@ void TOpenContainer::putMoneyInto(TBeing *ch, int amount)
   ch->sendTo("OK.\n\r");
 
   act("$n puts some money into $p.", FALSE, ch, this, 0, TO_ROOM);
-  *this += *create_money(amount);
+  money  = create_money(amount);
+  *this += *money;
+
+  TPerson * tP;
+
+  if ((tP = dynamic_cast<TPerson *>(this)))
+    money->checkOwnersList(tP);
+
   ch->addToMoney(-amount, GOLD_INCOME);
   if (ch->fight())
     ch->addToWait(combatRound(1 + amount/5000));

@@ -2,28 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: weather.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//    SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //    "weather.cc" - All functions and routines related to weather
-//
-//    The sneezyMUD weather is roughly derived from the original DikuMUD
-//    weather system. We at sneezyMUD tried to make the weather do a lot 
-//    more than the original.
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -180,8 +159,6 @@ void anotherHour()
       time_info.day = 0;
       time_info.month++;
       GetMonth(time_info.month);
-      sprintf(buf, "It is now the %s of %s.\n\r", numberAsString(time_info.day + 1).c_str(), month_name[time_info.month]);
-      descriptor_list->worldSend(buf, NULL);
 
       if (time_info.month > 11) {
 	time_info.month = 0;
@@ -189,6 +166,8 @@ void anotherHour()
         sprintf(buf, "Happy New Year! It is now the Year %d P.S\n\r", time_info.year);
         descriptor_list->worldSend(buf, NULL);
       }
+      sprintf(buf, "It is now the %s of %s.\n\r", numberAsString(time_info.day + 1).c_str(), month_name[time_info.month]);
+      descriptor_list->worldSend(buf, NULL);
     }
     calcNewSunRise();
     calcNewSunSet();

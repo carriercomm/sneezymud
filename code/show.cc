@@ -671,11 +671,11 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
       
       if (isAffected(AFF_INVISIBLE) || getInvisLevel() > MAX_MORT)
         strcat(buffer, " (invisible)");
-      if (isZombie())
+      if (isPet(PETTYPE_THRALL))
         strcat(buffer, " (thrall)");
-      if (isCharm())
+      if (isPet(PETTYPE_CHARM))
         strcat(buffer, " (charm)");
-      if (isPet())
+      if (isPet(PETTYPE_PET))
         strcat(buffer, " (pet)");
       if ((ch->isImmortal() || affectedBySpell(AFFECT_PLAYERKILL)) && 
 	  isLinkdead())
@@ -840,11 +840,11 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
              (buffer[strlen(buffer) - 1] == ' ')) {
         buffer[strlen(buffer) - 1] = '\0';
       }
-      if (isZombie())
+      if (isPet(PETTYPE_THRALL))
         strcat(buffer, " (thrall)");
-      if (isCharm())
+      if (isPet(PETTYPE_CHARM))
         strcat(buffer, " (charm)");
-      if (isPet())
+      if (isPet(PETTYPE_PET))
         strcat(buffer, " (pet)");
       if (ch->isImmortal() && isLinkdead())
         strcat(buffer, " (link-dead)");
@@ -1126,11 +1126,11 @@ void TBeing::show_me_mult_to_char(TBeing *ch, showModeT, unsigned int num) const
     cap(buffer);
     if (isAffected(AFF_INVISIBLE))
       strcat(buffer, " (invisible)");
-    if (isZombie())
+    if (isPet(PETTYPE_THRALL))
       strcat(buffer, " (thrall)");
-    if (isCharm())
+    if (isPet(PETTYPE_CHARM))
       strcat(buffer, " (charm)");
-    if (isPet())
+    if (isPet(PETTYPE_PET))
       strcat(buffer, " (pet)");
     if (ch->isImmortal() && isLinkdead())
       strcat(buffer, " (link-dead)");
@@ -1263,11 +1263,11 @@ void TBeing::show_me_mult_to_char(TBeing *ch, showModeT, unsigned int num) const
              (buffer[strlen(buffer) - 1] == ' ')) {
         buffer[strlen(buffer) - 1] = '\0';
       }
-      if (isZombie())
+      if (isPet(PETTYPE_THRALL))
         strcat(buffer, " (thrall)");
-      if (isCharm())
+      if (isPet(PETTYPE_CHARM))
         strcat(buffer, " (charm)");
-      if (isPet())
+      if (isPet(PETTYPE_PET))
         strcat(buffer, " (pet)");
       if (ch->isImmortal() && isLinkdead())
         strcat(buffer, " (link-dead)");

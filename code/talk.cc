@@ -705,7 +705,7 @@ int TBeing::doTell(const char *arg, bool visible)
     sendTo("You are a dumb animal; you can't talk!\n\r");
     return FALSE;
   }
-  if (isPet() || isCharm() || isZombie()) {
+  is (isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
     sendTo("What a dumb master you have, charmed mobiles can't tell.\n\r");
     return FALSE;
   }

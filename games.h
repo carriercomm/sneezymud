@@ -159,7 +159,7 @@ class CardGame {
     bool is_heart(int);
     bool is_queen_of_spades(int);
     bool has_suit(int *, int);
-    int add_suit(const TBeing *, char *, int) const;
+    int add_suit(const TBeing *, sstring, int) const;
     const sstring suit(const TBeing *, int) const;
     void shuffle();
     void pass(TBeing *, const char *, int);

@@ -1784,18 +1784,16 @@ void TBeing::lowObjs(const char *arg)
       if (tbc->isPaired())
         size_per /= 2;
     }
-    sprintf(buf2, "%s%5d %-30.30s : %3d %2dAC %4.1f %6d %6d %3d%% %4d%s\n\r", 
-      green(), tbc->objVnum(),
-      tbc->getNameNOC(this).c_str(),
-      tbc->obj_flags.max_struct_points, 
-      obj_index[tbc->getItemIndex()].armor, tbc->getWeight(),
-      tbc->obj_flags.cost, tbc->suggestedPrice(), size_per, 
-      obj_index[tbc->getItemIndex()].max_exist, norm());
-    str += buf2;
+    str += fmt("%s%5d %-30.30s : %3d %2dAC %4.1f %6d %6d %3d%% %4d%s\n\r") %
+      green() % tbc->objVnum() %
+      tbc->getNameNOC(this) %
+      tbc->obj_flags.max_struct_points %
+      obj_index[tbc->getItemIndex()].armor % tbc->getWeight() %
+      tbc->obj_flags.cost % tbc->suggestedPrice() % size_per % 
+      obj_index[tbc->getItemIndex()].max_exist % norm();
 
     if (tbc->isPaired()) {
-      sprintf(buf2, "   %sPAIRED%s",blue(),norm());
-      str += buf2;
+      str += fmt("   %sPAIRED%s") % blue() % norm();
     }
     for (i = 0; i < MAX_OBJ_AFFECT; i++) {
       if (tbc->affected[i].location == APPLY_ARMOR)
@@ -1803,29 +1801,40 @@ void TBeing::lowObjs(const char *arg)
       if (tbc->affected[i].location == APPLY_NONE)
         continue;
       if (tbc->affected[i].location == APPLY_SPELL) {
-        sprintf(buf2,"   %s%s by %ld%s", red(),
-        discArray[tbc->affected[i].modifier]->name, tbc->affected[i].modifier2, norm());
+        str += fmt("   %s%s by %ld%s") %
+          red() %
+          discArray[tbc->affected[i].modifier]->name %
+          tbc->affected[i].modifier2 %
+          norm();
       } else if (tbc->affected[i].location == APPLY_DISCIPLINE) {
-        sprintf(buf2,"   %s%s: %s by %ld%s",red(),apply_types[tbc->affected[i].location].name, discNames[tbc->affected[i].modifier].practice, tbc->affected[i].modifier2,
-norm());
+        str += fmt("   %s%s: %s by %ld%s") %
+          red() %
+          apply_types[tbc->affected[i].location].name %
+          discNames[tbc->affected[i].modifier].practice %
+          tbc->affected[i].modifier2 %
+          norm();
       } else if (tbc->affected[i].location == APPLY_IMMUNITY) {
-        sprintf(buf2,"   %s%s: %s by %ld%s",red(),apply_types[tbc->affected[i].location].name,
-          immunity_names[tbc->affected[i].modifier], tbc->affected[i].modifier2,norm());
+        str += fmt("   %s%s: %s by %ld%s") %
+          red() %
+          apply_types[tbc->affected[i].location].name %
+          immunity_names[tbc->affected[i].modifier] %
+          tbc->affected[i].modifier2 %
+          norm();
       } else {
         if ((tbc->affected[i].location == APPLY_SPELL) ||
             (tbc->affected[i].location == APPLY_DISCIPLINE) ||
             (tbc->affected[i].location == APPLY_IMMUNITY) ||
             (tbc->affected[i].location == APPLY_SPELL_EFFECT))
           str += red();
-        sprintf(buf2,"   %s by %ld",apply_types[tbc->affected[i].location].name,
-          tbc->affected[i].modifier);
+        str += fmt("   %s by %ld") %
+          apply_types[tbc->affected[i].location].name %
+          tbc->affected[i].modifier;
         if ((tbc->affected[i].location == APPLY_SPELL) ||
             (tbc->affected[i].location == APPLY_DISCIPLINE) ||
             (tbc->affected[i].location == APPLY_IMMUNITY) ||
             (tbc->affected[i].location == APPLY_SPELL_EFFECT))
-          strcat(buf2, norm());
+          str += norm();
       }
-      str += buf2;
     }
     if (!tbc->isObjStat(ITEM_ANTI_MAGE))
       str += "  MU";
@@ -1954,38 +1963,46 @@ void TBeing::lowWeaps(const char *arg)
   // objList now holds a sorted list of objects
   // send that to user
   str = "THIS INFORMATION IS CONSIDERED CLASSIFIED AND SECRET.  RELEASING IT TO MORTALS\n\rIS GROUNDS FOR DEMOTION OR DELETION.\n\r";
-  sprintf(buf2, "%5s %20s %4s: %4s %4s %5s %6s %5s %5s %5s %5s\n\r","vnum","obj name", 
-          "(#H)", "wgt", "vol", "level", "struct", "qual", "price", "recmd", "max #");
-  str += buf2;
+  str += fmt("%5s %20s %4s: %4s %4s %5s %6s %5s %5s %5s %5s\n\r") %
+    "vnum" % "obj name" % "(#H)" % "wgt" % "vol" % "level" %
+    "struct" % "qual" % "price" % "recmd" % "max #";
   for (objnum = 0; objnum < objList.size(); objnum++) {
     TBaseWeapon * weap = dynamic_cast<TBaseWeapon *>(read_object(objList[objnum], REAL));
     if (!(weap)) {
       vlogf(LOG_BUG,fmt("Error in doLow::lowWeaps.  real obj %d") % objList[objnum]);
       return;
     }
-    sprintf(buf2, "%s%5d %-20.20s %4s: %4.1f %4d %5.2f %6d %5d %6d %6d %4d%s\n\r", 
-      green(), weap->objVnum(),
-      weap->getNameNOC(this).c_str(),
-      (weap->isPaired()) ? "(2H)" : "    ",
-      weap->getWeight(), weap->getVolume(),
-      weap->damageLevel(), 
-      weap->getMaxStructPoints(),
-      weap->getCurSharp(),
-      weap->obj_flags.cost, weap->suggestedPrice(),
-      obj_index[weap->getItemIndex()].max_exist, norm());
+    str += fmt("%s%5d %-20.20s %4s: %4.1f %4d %5.2f %6d %5d %6d %6d %4d%s\n\r") %
+      green() % weap->objVnum() %
+      weap->getNameNOC(this) %
+      ((weap->isPaired()) ? "(2H)" : "    ") %
+      weap->getWeight() % weap->getVolume() %
+      weap->damageLevel() % 
+      weap->getMaxStructPoints() %
+      weap->getCurSharp() %
+      weap->obj_flags.cost % weap->suggestedPrice() %
+      obj_index[weap->getItemIndex()].max_exist % norm();
 
-    str += buf2;
     for (i = 0; i < MAX_OBJ_AFFECT; i++) {
       if (weap->affected[i].location == APPLY_NONE)
         continue;
       if (weap->affected[i].location == APPLY_SPELL) {
-        sprintf(buf2,"   %s%s by %ld%s", red(),
-          discArray[weap->affected[i].modifier]->name, weap->affected[i].modifier2, norm());
+        str += fmt("   %s%s by %ld%s") %
+          red() %
+          discArray[weap->affected[i].modifier]->name %
+          weap->affected[i].modifier2 % norm();
       } else if (weap->affected[i].location == APPLY_DISCIPLINE) {
-        sprintf(buf2,"   %s%s: %s by %ld%s",red(),apply_types[weap->affected[i].location].name, discNames[weap->affected[i].modifier].practice, weap->affected[i].modifier2, norm());
+        str += fmt("   %s%s: %s by %ld%s") %
+          red() %
+          apply_types[weap->affected[i].location].name %
+          discNames[weap->affected[i].modifier].practice %
+          weap->affected[i].modifier2 % norm();
       } else if (weap->affected[i].location == APPLY_IMMUNITY) {
-        sprintf(buf2,"   %s%s: %s by %ld%s",red(),apply_types[weap->affected[i].location].name,
-          immunity_names[weap->affected[i].modifier], weap->affected[i].modifier2, norm());
+        str += fmt("   %s%s: %s by %ld%s") %
+          red() %
+          apply_types[weap->affected[i].location].name %
+          immunity_names[weap->affected[i].modifier] %
+          weap->affected[i].modifier2 % norm();
       } else {
        // doesnt seem to do anything cept spell effect but never know
         if ((weap->affected[i].location == APPLY_SPELL) ||
@@ -1993,15 +2010,15 @@ void TBeing::lowWeaps(const char *arg)
             (weap->affected[i].location == APPLY_IMMUNITY) ||
             (weap->affected[i].location == APPLY_SPELL_EFFECT))
           str += red();
-        sprintf(buf2,"   %s by %ld",apply_types[weap->affected[i].location].name,
-          weap->affected[i].modifier);
+        str += fmt("   %s by %ld") %
+          apply_types[weap->affected[i].location].name %
+          weap->affected[i].modifier;
         if ((weap->affected[i].location == APPLY_SPELL) ||
             (weap->affected[i].location == APPLY_DISCIPLINE) ||
             (weap->affected[i].location == APPLY_IMMUNITY) ||
             (weap->affected[i].location == APPLY_SPELL_EFFECT))
-          strcat(buf2, norm());
+          str += norm();
       }
-      str += buf2;
     }
     str += "\n\r";
     delete weap;

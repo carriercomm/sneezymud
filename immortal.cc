@@ -3008,7 +3008,8 @@ int TBeing::genericRestore(restoreTypeT partial)
 void TBeing::doRestore(const char *argument)
 {
   TBeing *victim;
-  char buf[256], arg1[100], arg2[100];
+  sstring buf;
+  char arg1[100], arg2[100];
   restoreTypeT partial = RESTORE_FULL;
   statTypeT statx;
   int rc;
@@ -3102,8 +3103,6 @@ void TBeing::doRestore(const char *argument)
 
     victim->sendTo(fmt("Congratulations, you've been reimbursed %d practices!\n\r") %pracs);
     sendTo(fmt("Reimbursing %s %d practices.\n\r") %victim->getName() %pracs);
-
-    
   } else {
     sendTo("Syntax : restore <character> <partial | full | pracs>\n\r");
     return;
@@ -3115,7 +3114,6 @@ void TBeing::doRestore(const char *argument)
     victim = NULL;
     return;
   }
-    
 
   if (partial == RESTORE_FULL) {
     rc = generic_dispel_magic(this, victim, GetMaxLevel(), isImmortal());
@@ -3163,12 +3161,11 @@ void TBeing::doRestore(const char *argument)
   if (partial == RESTORE_PARTIAL)
     act("You have been partially healed by $N!", FALSE, victim, 0, this, TO_CHAR);
   else {
-    sprintf(buf, "You have been %sFULLY%s healed by $N!", cyan(), norm());
+    buf = fmt("You have been %sFULLY%s healed by $N!") % cyan() % norm();
     act(buf, FALSE, victim, 0, this, TO_CHAR);
   }
   victim->doSave(SILENT_NO);
 }
-
 
 void TBeing::doNoshout(const sstring &argument)
 {
@@ -3664,8 +3661,7 @@ void TPerson::doAccess(const sstring &arg)
 
 void TBeing::doReplace(const sstring &argument)
 {
-  char buf[256], dir[256], dir2[256];
-  sstring arg1, arg2, arg3;
+  sstring buf, dir, dir2, arg1, arg2, arg3;
   FILE *fp;
   charFile st;
   bool dontMove = FALSE;
@@ -3689,9 +3685,9 @@ void TBeing::doReplace(const sstring &argument)
     return;
   }
   if (is_abbrev(arg3, "today"))
-    strcpy(dir, "SCCS/bkp.today");
+    dir = "SCCS/bkp.today";
   else if (is_abbrev(arg3, "yesterday"))
-    strcpy(dir, "SCCS/bkp.yesterday");
+    dir = "SCCS/bkp.yesterday";
   else {
     sendTo("Syntax : replace <playername | accountname> <player | rent | account> <today | yesterday>\n\r");
     return;
@@ -3700,12 +3696,12 @@ void TBeing::doReplace(const sstring &argument)
     if (powerCheck(POWER_REPLACE_PFILE))
       return;
 
-    strcpy(dir2, "player");
+    dir2 = "player";
     dontMove = TRUE;
   } else if (is_abbrev(arg2, "account")) 
-    strcpy(dir2, "account");
+    dir2 = "account";
   else if (is_abbrev(arg2, "rent")) 
-    strcpy(dir2, "rent");
+    dir2 = "rent";
   else {
     sendTo("Syntax : replace <playername> <player | rent | account> <today | yesterday>\n\r");
     return;
@@ -3714,8 +3710,8 @@ void TBeing::doReplace(const sstring &argument)
     sendTo("Probably don't want to backup with the person on. Ask them to log off.\n\r");
     return;
   }
-  sprintf(buf, "%s/%s/%c/%s", dir, dir2, arg1[0], arg1.c_str());
-  if (!(fp = fopen(buf, "r"))) {
+  buf = fmt("%s/%s/%c/%s") % dir % dir2 % arg1[0] % arg1;
+  if (!(fp = fopen(buf.c_str(), "r"))) {
     sendTo(fmt("Sorry, can't find file '%s'.\n\r") % buf);
     return;
   } else {
@@ -3725,9 +3721,9 @@ void TBeing::doReplace(const sstring &argument)
     vlogf(LOG_FILE, fmt("%s replacing %s's %s file.") % 
        getName() % arg1 % dir2);
 
-    sprintf(buf, "cp -r %s/%s/%c/%s %s/%c/%s", 
-	    dir, dir2, arg1[0], arg1.c_str(), dir2, arg1[0], arg1.c_str());
-    vsystem(buf);
+    buf = fmt("cp -r %s/%s/%c/%s %s/%c/%s") %
+      dir % dir2 % arg1[0] % arg1 % dir2 % arg1[0] % arg1;
+    vsystem(buf.c_str());
     // Make sure that the player file hard link is still intact, if
     // not, saves will be inconsistent - Russ 04-19-96
     if (dontMove) {
@@ -3739,11 +3735,12 @@ void TBeing::doReplace(const sstring &argument)
       // Check for account directory here maybe. This won't work
       // if account directory isn't there.
 
-      sprintf(buf, "rm player/%c/%s", arg1[0], arg1.c_str());
-      vsystem(buf);
-      sprintf(buf, "account/%c/%s/%s", LOWER(st.aname[0]),sstring(st.aname).lower().c_str(),arg1.c_str());
-      sprintf(dir2, "player/%c/%s",  arg1[0], arg1.c_str());
-      link(buf, dir2); 
+      buf = fmt("rm player/%c/%s") % arg1[0] % arg1;
+      vsystem(buf.c_str());
+      buf = fmt("account/%c/%s/%s") % LOWER(st.aname[0]) %
+        sstring(st.aname).lower() % arg1;
+      dir2 = fmt("player/%c/%s") % arg1[0] % arg1;
+      link(buf.c_str(), dir2.c_str()); 
       sendTo("Done.\n\r");
     }
     if (!dontMove) {
@@ -4358,47 +4355,37 @@ void TBeing::doInfo(const char *arg)
           tStaTotal += gold_statistics[tMoney][j];
         }
 
-        sprintf(buf2, "%sLevel %2d:%s\n\r", cyan(), j + 1, norm());
-        buf += buf2;
-        sprintf(buf2, "     %sPos  : %9ld%s  (%.2f%% of total)\n\r",
-                cyan(), tPosTotal, norm(), 100.0 * tPosTotal / tTotalGlobal);
-        buf += buf2;
-        sprintf(buf2, "     %sNet  : %9ld%s  (%.2f%% of total)\n\r",
-                cyan(), tStaTotal, norm(), 100.0 * tStaTotal / tNetGlobal);
-        buf += buf2;
-        sprintf(buf2, "     %sDrain: %9ld%s  (%.2f%% of total)\n\r",
-                cyan(), tPosTotal - tStaTotal, norm(),
-                100.0 * (tPosTotal - tStaTotal) / (tTotalGlobal - tNetGlobal));
-        buf += buf2;
+        buf += fmt("%sLevel %2d:%s\n\r") % cyan() % (j + 1) % norm();
+        buf += fmt("     %sPos  : %9ld%s  (%.2f%% of total)\n\r") %
+          cyan() % tPosTotal % norm() % (100.0 * tPosTotal / tTotalGlobal);
+        buf += fmt("     %sNet  : %9ld%s  (%.2f%% of total)\n\r") %
+          cyan() % tStaTotal % norm() % (100.0 * tStaTotal / tNetGlobal);
+        buf += fmt("     %sDrain: %9ld%s  (%.2f%% of total)\n\r") %
+          cyan() % (tPosTotal - tStaTotal) % norm() %
+          (100.0 * (tPosTotal - tStaTotal) / (tTotalGlobal - tNetGlobal));
 
-        sprintf(buf2, "          Income: %8ld          Comm: %8ld      Gamble: %8ld\n\r",
-                gold_statistics[GOLD_INCOME][j],
-                gold_statistics[GOLD_COMM][j],
-                gold_statistics[GOLD_GAMBLE][j]);
-        buf += buf2;
-        sprintf(buf2, "            Shop: %8ld     Resp-Shop: %8ld      Repair: %8ld\n\r",
-                gold_statistics[GOLD_SHOP][j],
-                gold_statistics[GOLD_SHOP_RESPONSES][j],
-                gold_statistics[GOLD_REPAIR][j]);
-        buf += buf2;
-        sprintf(buf2, "      Armor-Shop: %8ld   Weapon-Shop: %8ld    Pet-Shop: %8ld\n\r",
-                gold_statistics[GOLD_SHOP_ARMOR][j],
-                gold_statistics[GOLD_SHOP_WEAPON][j],
-                gold_statistics[GOLD_SHOP_PET][j]);
-        buf += buf2;
-        sprintf(buf2, "     Symbol-Shop: %8ld     Comp-Shop: %8ld   Good-Shop: %8ld\n\r",
-                gold_statistics[GOLD_SHOP_SYMBOL][j],
-                gold_statistics[GOLD_SHOP_COMPONENTS][j],
-                gold_statistics[GOLD_SHOP_FOOD][j]);
-        buf += buf2;
-        sprintf(buf2, "            Rent: %8ld      Hospital: %8ld       Tithe: %8ld\n\r",
-                gold_statistics[GOLD_RENT][j],
-                gold_statistics[GOLD_HOSPITAL][j],
-                gold_statistics[GOLD_TITHE][j]);
-        buf += buf2;
-        sprintf(buf2, "            Dump: %8ld\n\r\n\r",
-                gold_statistics[GOLD_DUMP][j]);
-        buf += buf2;
+        buf += fmt("          Income: %8ld          Comm: %8ld      Gamble: %8ld\n\r") %
+          gold_statistics[GOLD_INCOME][j] %
+          gold_statistics[GOLD_COMM][j] %
+          gold_statistics[GOLD_GAMBLE][j];
+        buf += fmt("            Shop: %8ld     Resp-Shop: %8ld      Repair: %8ld\n\r") %
+                gold_statistics[GOLD_SHOP][j] %
+                gold_statistics[GOLD_SHOP_RESPONSES][j] %
+                gold_statistics[GOLD_REPAIR][j];
+        buf += fmt("      Armor-Shop: %8ld   Weapon-Shop: %8ld    Pet-Shop: %8ld\n\r") %
+                gold_statistics[GOLD_SHOP_ARMOR][j] %
+                gold_statistics[GOLD_SHOP_WEAPON][j] %
+                gold_statistics[GOLD_SHOP_PET][j];
+        buf += fmt("     Symbol-Shop: %8ld     Comp-Shop: %8ld   Good-Shop: %8ld\n\r") %
+                gold_statistics[GOLD_SHOP_SYMBOL][j] %
+                gold_statistics[GOLD_SHOP_COMPONENTS][j] %
+                gold_statistics[GOLD_SHOP_FOOD][j];
+        buf += fmt("            Rent: %8ld      Hospital: %8ld       Tithe: %8ld\n\r") %
+                gold_statistics[GOLD_RENT][j] %
+                gold_statistics[GOLD_HOSPITAL][j] %
+                gold_statistics[GOLD_TITHE][j];
+        buf += fmt("            Dump: %8ld\n\r\n\r") %
+                gold_statistics[GOLD_DUMP][j];
 
         if (arg && *arg)
           break;

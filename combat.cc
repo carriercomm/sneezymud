@@ -2989,14 +2989,14 @@ static int REALNUM(TBeing *ch, wearSlotT part_hit)
 
 void TBeing::normalHitMessage(TBeing *v, TThing *weapon, spellNumT w_type, int dam, wearSlotT part_hit)
 {
-  char buf[256];
+  sstring buf = "";
   TThing *t;
   TBeing *other;
 
   other = NULL;
 
-  char namebuf[256];
-  char victbuf[256];
+  sstring namebuf;
+  sstring victbuf;
  
   soundNumT snd = MIN_SOUND_NUM;
   if (!dam)
@@ -3021,54 +3021,50 @@ void TBeing::normalHitMessage(TBeing *v, TThing *weapon, spellNumT w_type, int d
 
     if (dam || !(other->desc->autobits & AUTO_NOSPAM)) {
 
-      strcpy(namebuf, other->pers(this)); 
-      strcpy(victbuf, other->pers(v)); 
-      strcpy(buf, sstring(namebuf).cap().c_str());
+      namebuf = other->pers(this); 
+      victbuf = other->pers(v); 
+      buf = namebuf.cap();
       if (Twink == 1) {
-	sprintf(buf + strlen(buf), " %s ", attack_hit_text_twink[w_type].plural);
+	buf += fmt(" %s ") % attack_hit_text_twink[w_type].plural;
       } else {
-	sprintf(buf + strlen(buf), " %s ", attack_hit_text[w_type].plural);
+	buf += fmt(" %s ") % attack_hit_text[w_type].plural;
       }
-      sprintf(buf + strlen(buf), "%s's ", victbuf);
-      sprintf(buf + strlen(buf), "%s ", v->describeBodySlot(part_hit).c_str());
-      sprintf(buf + strlen(buf), "%s", describe_dam(dam, REALNUM(v, part_hit),
-  w_type));
-      sprintf(buf + strlen(buf), "%s", (weapon) ? " with " : "");
-      sprintf(buf + strlen(buf), "%s", (weapon) ? hshr() : "");
-      sprintf(buf + strlen(buf), "%s", (weapon) ? " " : "");
-      sprintf(buf + strlen(buf), "%s.\n\r", weapon ? other->objn(weapon).c_str() : "");
+      buf += fmt("%s's ") % victbuf;
+      buf += fmt("%s ") % v->describeBodySlot(part_hit);
+      buf += fmt("%s") % describe_dam(dam, REALNUM(v, part_hit), w_type);
+      buf += fmt("%s") % ((weapon) ? " with " : "");
+      buf += fmt("%s") % ((weapon) ? hshr() : "");
+      buf += fmt("%s") % ((weapon) ? " " : "");
+      buf += fmt("%s.\n\r") % (weapon ? other->objn(weapon) : "");
 
       other->sendTo(COLOR_MOBS, buf);
       if (snd != MIN_SOUND_NUM)
         other->playsound(snd, SOUND_TYPE_COMBAT, 100, 20, 1);
     }
   }
-  char colorBuf[40];
+  sstring colorBuf;
 
   if (desc && (dam || !(desc->autobits & AUTO_NOSPAM))) {
-    if (isCritPart(part_hit))
-      strcpy(colorBuf, greenBold());
-    else
-      strcpy(colorBuf, green());
+    if (isCritPart(part_hit)) {
+      colorBuf = greenBold();
+    } else {
+      colorBuf = green();
+    }
 
     if (Twink == 1) {
-      sprintf(buf, "You %s%s%s $N's %s%s%s %s%s%s.", colorBuf, attack_hit_text_twink[w_type].singular,
-	      norm(),
-	      colorBuf,
-	      v->describeBodySlot(part_hit).c_str(),
-	      norm(),
-	      describe_dam(dam, REALNUM(v, part_hit), w_type),
-	      (weapon) ? " with your " : "",
-	      (weapon) ? objn(weapon).c_str() : "");
+      buf = fmt("You %s%s%s $N's %s%s%s %s%s%s.") %
+        colorBuf % attack_hit_text_twink[w_type].singular % norm() %
+        colorBuf % v->describeBodySlot(part_hit) % norm() %
+        describe_dam(dam, REALNUM(v, part_hit), w_type) %
+        ((weapon) ? " with your " : "") %
+        ((weapon) ? objn(weapon) : "");
     } else {
-      sprintf(buf, "You %s%s%s $N's %s%s%s %s%s%s.", colorBuf, attack_hit_text[w_type].singular,
-	      norm(),
-	      colorBuf,
-	      v->describeBodySlot(part_hit).c_str(),
-	      norm(),
-	      describe_dam(dam, REALNUM(v, part_hit), w_type),
-	      (weapon) ? " with your " : "",
-	      (weapon) ? objn(weapon).c_str() : "");
+      buf = fmt("You %s%s%s $N's %s%s%s %s%s%s.") %
+        colorBuf % attack_hit_text[w_type].singular % norm() %
+        colorBuf % v->describeBodySlot(part_hit) % norm() %
+        describe_dam(dam, REALNUM(v, part_hit), w_type) %
+        ((weapon) ? " with your " : "") %
+        ((weapon) ? objn(weapon) : "");
     }
 
     act(buf, FALSE, this, 0, v, TO_CHAR);
@@ -3078,24 +3074,24 @@ void TBeing::normalHitMessage(TBeing *v, TThing *weapon, spellNumT w_type, int d
 
   if (v->desc && (dam || !(v->desc->autobits &AUTO_NOSPAM))) {
     if (isCritPart(part_hit))
-      strcpy(colorBuf, v->redBold());
+      colorBuf = v->redBold();
     else
-      strcpy(colorBuf, v->red());
+      colorBuf = v->red();
 
     if (Twink == 1) {
-      sprintf(buf, "$n %s%s%s your %s%s%s %s%s%s.",
-	      colorBuf, attack_hit_text_twink[w_type].plural, v->norm(),
-	      colorBuf, v->describeBodySlot(part_hit).c_str(), v->norm(),
-	      describe_dam(dam, REALNUM(v, part_hit), w_type),
-	      ((weapon) ? " with $s " : ""),
-	      ((weapon) ? fname(weapon->name).c_str() : ""));
+      buf = fmt("$n %s%s%s your %s%s%s %s%s%s.") %
+        colorBuf % attack_hit_text_twink[w_type].plural % v->norm() %
+        colorBuf % v->describeBodySlot(part_hit) % v->norm() %
+        describe_dam(dam, REALNUM(v, part_hit), w_type) %
+        ((weapon) ? " with $s " : "") %
+        ((weapon) ? fname(weapon->name) : "");
     } else {
-      sprintf(buf, "$n %s%s%s your %s%s%s %s%s%s.",
-	      colorBuf, attack_hit_text[w_type].plural, v->norm(),
-	      colorBuf, v->describeBodySlot(part_hit).c_str(), v->norm(),
-	      describe_dam(dam, REALNUM(v, part_hit), w_type),
-	      ((weapon) ? " with $s " : ""),
-	      ((weapon) ? fname(weapon->name).c_str() : ""));
+      buf = fmt("$n %s%s%s your %s%s%s %s%s%s.") %
+        colorBuf % attack_hit_text[w_type].plural % v->norm() %
+        colorBuf % v->describeBodySlot(part_hit) % v->norm() %
+        describe_dam(dam, REALNUM(v, part_hit), w_type) %
+        ((weapon) ? " with $s " : ""),
+        ((weapon) ? fname(weapon->name) : "");
     }
     act(buf, FALSE, this, 0, v, TO_VICT);
     if (snd != MIN_SOUND_NUM)

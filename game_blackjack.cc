@@ -223,10 +223,10 @@ void TBeing::doStay()
 void BjGame::stay(TBeing *ch)
 {
   int pbest, dbest, player;
-  char log_msg[2048];
+  sstring log_msg;
 
-  sprintf(log_msg, "The dealer flips up his down card:\n\r%s\n\r", 
-      pretty_card_printout(ch, dealer[0]).c_str());
+  log_msg = fmt("The dealer flips up his down card:\n\r%s\n\r") %
+    pretty_card_printout(ch, dealer[0]);
   ch->sendTo(COLOR_BASIC, log_msg);
   act(log_msg, TRUE, ch, 0, 0, TO_ROOM);
 
@@ -237,10 +237,10 @@ void BjGame::stay(TBeing *ch)
     if((best_dealer() > 21) && !::number(0,3))
       dealer[nd-1] = deck[deck_inx++];
 
-    sprintf(log_msg, "The dealer is dealt the ");
-    strcat(log_msg, card_names[dealer[nd - 1] & 0x0f]);
+    log_msg = "The dealer is dealt the ";
+    log_msg += card_names[dealer[nd - 1] & 0x0f];
     add_suit(ch, log_msg, dealer[nd - 1]);
-    strcat(log_msg, ".\n\r");
+    log_msg += ".\n\r";
 
     ch->sendTo(COLOR_BASIC, log_msg);
     act(log_msg, TRUE, ch, 0, 0, TO_ROOM);
@@ -248,36 +248,36 @@ void BjGame::stay(TBeing *ch)
     player = best_dealer();
     if (player > 21) {
       ch->sendTo(fmt("The dealer busts with %d.\n\r") % player);
-      sprintf(log_msg, "The dealer busts with %d.", player);
+      log_msg = fmt("The dealer busts with %d.") % player;
       act(log_msg, TRUE, ch, 0, 0, TO_ROOM);
       break;
     }
   }
-  strcpy(log_msg, "Your final hand:\n\r");
+  log_msg = "Your final hand:\n\r";
   for (player = 0; player < np; player++) {
-    strcat(log_msg, card_names[hand[player] & 0x0F]);
+    log_msg += card_names[hand[player] & 0x0F];
     add_suit(ch, log_msg, hand[player]);
-    strcat(log_msg, "\r\n");
+    log_msg += "\r\n";
   }
-  strcat(log_msg, "\n\rThe dealer final hand:\n\r");
+  log_msg += "\n\rThe dealer final hand:\n\r";
   for (player = 0; player < nd; player++) {
-    strcat(log_msg, card_names[dealer[player] & 0x0F]);
+    log_msg += card_names[dealer[player] & 0x0F];
     add_suit(ch, log_msg, dealer[player]);
-    strcat(log_msg, "\r\n");
+    log_msg += "\r\n";
   }
   ch->sendTo(COLOR_BASIC, log_msg);
 
-  strcpy(log_msg, "$n's final hand:\n\r");
+  log_msg = "$n's final hand:\n\r";
   for (player = 0; player < np; player++) {
-    strcat(log_msg, card_names[hand[player] & 0x0F]);
+    log_msg += card_names[hand[player] & 0x0F];
     add_suit(ch, log_msg, hand[player]);
-    strcat(log_msg, "\r\n");
+    log_msg += "\r\n";
   }
-  strcat(log_msg, "\n\rThe dealer final hand:\n\r");
+  log_msg += "\n\rThe dealer final hand:\n\r";
   for (player = 0; player < nd; player++) {
-    strcat(log_msg, card_names[dealer[player] & 0x0F]);
+    log_msg += card_names[dealer[player] & 0x0F];
     add_suit(ch, log_msg, dealer[player]);
-    strcat(log_msg, "\r\n");
+    log_msg += "\r\n";
   }
   act(log_msg, TRUE, ch, 0, 0, TO_ROOM);
 
@@ -305,7 +305,7 @@ void BjGame::stay(TBeing *ch)
 void BjGame::peek(const TBeing *ch)
 {
   int inx, player;
-  char log_msg[2048];
+  sstring log_msg;
 
   if ((inx = index(ch)) < 0) {
     ch->sendTo("You are not sitting at the table yet.\n\r");
@@ -315,18 +315,18 @@ void BjGame::peek(const TBeing *ch)
     ch->sendTo("You are not playing a game.\n\r");
     return;
   }
-  strcpy(log_msg, "You peek at your hand:\n\r");
+  log_msg = "You peek at your hand:\n\r";
   for (player = 0; player < np; player++) {
-    strcat(log_msg, card_names[hand[player] & 0x0F]);
+    log_msg += card_names[hand[player] & 0x0F];
     add_suit(ch, log_msg, hand[player]);
     if (!player)
-      strcat(log_msg, " (down)");
-    strcat(log_msg, "\r\n");
+      log_msg += " (down)";
+    log_msg += "\r\n";
   }
-  strcat(log_msg, "\n\rThe dealer is showing:\n\r");
-  strcat(log_msg, card_names[dealer[1] & 0x0f]);
+  log_msg += "\n\rThe dealer is showing:\n\r";
+  log_msg += card_names[dealer[1] & 0x0f];
   add_suit(ch, log_msg, dealer[1]);
-  strcat(log_msg, "\n\r");
+  log_msg += "\n\r";
   ch->sendTo(COLOR_BASIC, log_msg);
 }
 
@@ -338,7 +338,7 @@ void BjGame::Split(TBeing *ch, const char *, int)
 void BjGame::Hit(const TBeing *ch)
 {
   int inx;
-  char log_msg[2048];
+  sstring log_msg;
 
   inx = index(ch);
   if (inx < 0) {
@@ -351,19 +351,18 @@ void BjGame::Hit(const TBeing *ch)
   }
   hand[np++] = deck[deck_inx++];
 
-  sprintf(log_msg, "You are dealt the ");
-  strcat(log_msg, card_names[hand[np - 1] & 0x0f]);
+  log_msg = "You are dealt the ";
+  log_msg += card_names[hand[np - 1] & 0x0f];
   add_suit(ch, log_msg, hand[np - 1]);
-  strcat(log_msg, ".\n\r");
+  log_msg += ".\n\r";
 
   ch->sendTo(COLOR_BASIC, log_msg);
 
-  sprintf(log_msg, "$n is dealt the ");
-  strcat(log_msg, card_names[hand[np - 1] & 0x0f]);
+  log_msg = "$n is dealt the ";
+  log_msg += card_names[hand[np - 1] & 0x0f];
   add_suit(ch, log_msg, hand[np - 1]);
-  strcat(log_msg, ".");
+  log_msg += ".";
   act(log_msg, TRUE, ch, 0, 0, TO_ROOM);
-
 
   if (min_score() > 21) {
     ch->sendTo("You have busted!\n\r");

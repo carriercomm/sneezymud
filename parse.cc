@@ -18,6 +18,27 @@ sstring lockmess;
 commandInfo *commandArray[MAX_CMD_LIST];
 bool WizLock;
 
+int search_block(const sstring &arg, const sstring *list, bool exact)
+{
+  register int i, l;
+
+  l = arg.length();
+
+  if (exact) {
+    for (i = 0; list[i] != "\n"; i++)
+      if (arg.lower() == list[i].lower())
+        return (i);
+  } else {
+    if (!l)
+      l = 1;
+
+    for (i = 0; list[i] != "\n"; i++)
+      if (arg.lower()[l] == list[i].lower()[l])
+        return (i);
+  }
+  return (-1);
+}
+
 int search_block(const sstring &arg, const char * const *list, bool exact)
 {
   register int i, l;
@@ -38,7 +59,6 @@ int search_block(const sstring &arg, const char * const *list, bool exact)
   }
   return (-1);
 }
-
 
 int old_search_block(const char *argument, int bgin, int length, const char * const * list, bool mode)
 {
@@ -2081,7 +2101,6 @@ sstring one_argument(sstring argument, sstring & first_arg)
     }
   } while (fill_word(first_arg.c_str()));
 
-
   // strip leading whitespace from argument
   if((bgin = argument.find_first_not_of(whitespace))!= string::npos){
     a2 = argument.substr(bgin);
@@ -2090,7 +2109,6 @@ sstring one_argument(sstring argument, sstring & first_arg)
 
   return argument;
 }
-
 
 bool is_abbrev(const char *arg1, const char *arg2, multipleTypeT multiple, exactTypeT exact)
 {
@@ -2204,7 +2222,6 @@ sstring add_bars(const sstring &s){
 
   return stmp;
 }
-
 
 // returns DELETE_THIS, DELETE_VICT, TRUE or FALSE
 int TBeing::triggerSpecialOnPerson(TThing *ch, cmdTypeT cmd, const char *arg)
@@ -2866,7 +2883,7 @@ void buildCommandArray(void)
 
 bool _parse_name(const char *arg, char *name)
 {
-  char buf[80];
+  sstring buf, argbuf;
   unsigned int i;
 
   for (; isspace(*arg); arg++);
@@ -2874,9 +2891,10 @@ bool _parse_name(const char *arg, char *name)
   if (strlen(arg) < 3)
     return TRUE;
 
+  argbuf = arg;
   for (i = 0; *illegalnames[i] != '\n'; i++) {
     if (*illegalnames[i] == '*') {
-      if (strstr(sstring(arg).lower().c_str(), illegalnames[i] + 1))
+      if (strstr(argbuf.lower().c_str(), illegalnames[i] + 1))
         return TRUE;
     } else {
       if (!strcasecmp(illegalnames[i], arg))
@@ -2885,8 +2903,8 @@ bool _parse_name(const char *arg, char *name)
   }
   if (!AllowPcMobs) {
     for (i= 0; i < mob_index.size(); i++) {
-      sprintf(buf, fname(mob_index[i].name).c_str());
-      if (!strcasecmp(buf, arg))
+      buf = fname(mob_index[i].name.c_str());
+      if (buf == argbuf)
         return TRUE;
     }
   }
@@ -3048,37 +3066,42 @@ int TBeing::addCommandToQue(const sstring &msg)
   return FALSE;
 }
 
-sstring sprintbit(unsigned long vektor, const char * const names[])
+sstring sprintbit(unsigned long vektor, const sstring names[])
 {
   long nr;
-  sstring result;
+  sstring result = "";
 
   for (nr = 0; vektor; vektor >>= 1) {
     if (IS_SET(vektor, (unsigned long) 1L))
-      if (*names[nr]) {
+      if (!names[nr].empty()) {
 	result += names[nr];
 	result += " ";
       }
-    if (*names[nr] != '\n')
+    if (names[nr] != "\n") {
       nr++;
+    }
   }
 
-  if (result.empty())
+  if (result.empty()) {
     result="NOBITS";
+  }
 
   return result;
 }
 
-void sprinttype(int type, const sstring names[], char *result)
+sstring sprinttype(int type, const sstring names[])
 {
   int nr;
+  sstring result;
 
   for (nr = 0; (names[nr] != "\n"); nr++);
 
-  if (type < nr)
-    strcpy(result, names[type].c_str());
-  else
-    strcpy(result, "UNDEFINED");
+  if (type < nr) {
+    result = names[type];
+  } else {
+    result = "UNDEFINED";
+  }
+  return result;
 }
 
 #if (!defined SUN && !defined LINUX && !defined(SOLARIS))
@@ -3112,8 +3135,6 @@ void bisect_arg(const char *arg, int *field, char *sstring, const char * const a
 
   return;
 }
-
-
 
 char *fold(char *line)
 {
@@ -3226,8 +3247,6 @@ char *mud_str_copy(char *dest, const sstring &src, size_t n)
 
   return dest;
 }
-
-
 
 void trimString(sstring &arg)
 {

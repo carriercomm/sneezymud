@@ -37,7 +37,7 @@ void TBaseCup::lookObj(TBeing *ch, int) const
   else {
     temp = ((getDrinkUnits() * 3) / getMaxDrinkUnits());
     ch->sendTo(COLOR_OBJECTS, fmt("It's %sfull of a %s liquid.\n\r") %
-          fullness[temp] % liquidInfo[getDrinkType()]->color);
+      fullness[temp] % liquidInfo[getDrinkType()]->color);
   }
 }
 

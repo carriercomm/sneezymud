@@ -125,12 +125,10 @@ static const sstring describe_part_wounds(const TBeing *ch, wearSlotT pos)
 {
   int i, flags;
   int last = 0, count = 0;
-  char buf[256];
+  sstring buf = "";
 
   if (ch->isLimbFlags(pos, PART_MISSING))
     return ("missing.");
-
-  *buf = '\0';
 
   for (i = 0; i < MAX_PARTS; i++) {
     flags = (1 << i);
@@ -144,18 +142,16 @@ static const sstring describe_part_wounds(const TBeing *ch, wearSlotT pos)
   for (i = 0; i < MAX_PARTS; i++) {
     flags = (1 << i);
     if (ch->isLimbFlags(pos, flags)) {
-      if (count == 1)
-        sprintf(buf + strlen(buf), "%s%s%s.", ch->red(), body_flags[i], ch->norm());
-      else if (i != last)
-        sprintf(buf + strlen(buf), "%s%s%s, ", ch->red(), body_flags[i], ch->norm());
-      else
-        sprintf(buf + strlen(buf), "and %s%s%s.", ch->red(), body_flags[i], ch->norm());
+      if (count == 1) {
+        buf += fmt("%s%s%s.") % ch->red() % body_flags[i] % ch->norm();
+      } else if (i != last) {
+        buf += fmt("%s%s%s, ") % ch->red() % body_flags[i] % ch->norm();
+      } else {
+        buf += fmt("and %s%s%s.") % ch->red() % body_flags[i] % ch->norm();
+      }
     }
   }
-  if (*buf)
-    return (buf);
-  else
-    return ("");
+  return buf;
 }
 
 // rp is the room looking at
@@ -165,15 +161,13 @@ void TBeing::listExits(const TRoom *rp) const
   int num = 0, count = 0;
   dirTypeT door;
   roomDirData *exitdata;
-  char buf[1024];
+  sstring buf = "";
 
   const char *exDirs[] =
   {
     "N", "E", "S", "W", "U",
     "D", "NE", "NW", "SE", "SW"
   };
-
-  *buf = '\0';
 
   if (desc && desc->m_bIsClient) 
     return;
@@ -285,7 +279,6 @@ void TBeing::listExits(const TRoom *rp) const
 	       blue() % norm());
     }
   }
-
   
   for (door = MIN_DIR; door < MAX_DIR; door++) {
     if(!(exitdata = rp->exitDir(door)))
@@ -298,25 +291,25 @@ void TBeing::listExits(const TRoom *rp) const
       // Red if closed, Blue if an open exit has a type, purple if normal
       if (IS_SET(exitdata->condition, EX_CLOSED)) {
 	if (count == 1)
-	  sprintf(buf + strlen(buf), "%s%s%s.\n\r", red(), dirs[door], norm());
+	  buf += fmt("%s%s%s.\n\r") % red() % dirs[door] % norm();
 	else if (door != num)
-	  sprintf(buf + strlen(buf), "%s%s%s, ", red(), dirs[door], norm());
+	  buf += fmt("%s%s%s, ") % red() % dirs[door] % norm();
 	else
-	  sprintf(buf + strlen(buf), "and %s%s%s.\n\r", red(), dirs[door],norm());
+	  buf += fmt("and %s%s%s.\n\r") % red() % dirs[door] %norm();
       } else if (exitdata->door_type != DOOR_NONE) {
 	if (count == 1)
-	  sprintf(buf + strlen(buf), "%s%s%s.\n\r", blue(), dirs[door], norm());
+	  buf += fmt("%s%s%s.\n\r") % blue() % dirs[door] % norm();
 	else if (door != num)
-	  sprintf(buf + strlen(buf), "%s%s%s, ", blue(), dirs[door], norm());
+	  buf += fmt("%s%s%s, ") % blue() % dirs[door] % norm();
 	else
-	  sprintf(buf + strlen(buf), "and %s%s%s.\n\r", blue(), dirs[door], norm());
+	  buf += fmt("and %s%s%s.\n\r") % blue() % dirs[door] % norm();
       } else {  
 	if (count == 1)
-	  sprintf(buf + strlen(buf), "%s%s%s.\n\r", purple(), dirs[door], norm());
+	  buf += fmt("%s%s%s.\n\r") % purple() % dirs[door] % norm();
 	else if (door != num)
-	  sprintf(buf + strlen(buf), "%s%s%s, ", purple(), dirs[door], norm());
+	  buf += fmt("%s%s%s, ") % purple() % dirs[door] % norm();
 	else
-	  sprintf(buf + strlen(buf), "and %s%s%s.\n\r", purple(), dirs[door], norm());
+	  buf += fmt("and %s%s%s.\n\r") % purple() % dirs[door] % norm();
       }
     } else {
       TRoom *exitp = real_roomp(exitdata->to_room);
@@ -328,40 +321,34 @@ void TBeing::listExits(const TRoom *rp) const
 
 	if (exitdata->door_type != DOOR_NONE &&
 	    ((!secret || open) || (!secret && see_thru))){
-	  if (IS_SET(exitdata->condition, EX_CLOSED)){
-	    sprintf(buf + strlen(buf), "%s%s*%s%s%s",
-		    ((count != 1 && door == num) ? "and " : ""),
-
-		    (exitp->getSectorType() == SECT_FIRE ? red() :
-		     (exitp->isAirSector() ? cyan() :
-		      (exitp->isWaterSector() ? blue() :
-		       purple()))),
-
-		    dirs[door],
-
-		    norm(),
-
-		    (count == 1 || door == num ? ".\n\r" : ", "));
-	  } else
-	    sprintf(buf + strlen(buf), "%s%s%s%s%s",
-		    ((count != 1 && door == num) ? "and " : ""),
-		    (exitp->getSectorType() == SECT_FIRE ? redBold() :
-		     (exitp->isAirSector() ? cyanBold() :
-		      (exitp->isWaterSector() ? blueBold() :
-		       purpleBold()))),
-		    dirs[door],
-		    norm(),
-		    (count == 1 || door == num ? ".\n\r" : ", "));
+	  if (IS_SET(exitdata->condition, EX_CLOSED)) {
+	    buf += fmt("%s%s*%s%s%s") %
+              ((count != 1 && door == num) ? "and " : "") %
+              (exitp->getSectorType() == SECT_FIRE ? red() :
+                (exitp->isAirSector() ? cyan() :
+                  (exitp->isWaterSector() ? blue() : purple()))) %
+              dirs[door] %
+              norm() %
+              (count == 1 || door == num ? ".\n\r" : ", ");
+	  } else {
+	    buf += fmt("%s%s%s%s%s") %
+              ((count != 1 && door == num) ? "and " : "") %
+              (exitp->getSectorType() == SECT_FIRE ? redBold() :
+                (exitp->isAirSector() ? cyanBold() :
+                  (exitp->isWaterSector() ? blueBold() : purpleBold()))) %
+              dirs[door] %
+              norm() %
+              (count == 1 || door == num ? ".\n\r" : ", ");
+          }
 	} else if (exitdata->door_type == DOOR_NONE) {
-	  sprintf(buf + strlen(buf), "%s%s%s%s%s",
-		  ((count != 1 && door == num) ? "and " : ""),
-		  (exitp->getSectorType() == SECT_FIRE ? red() :
-		   (exitp->isAirSector() ? cyan() :
-		    (exitp->isWaterSector() ? blue() :
-		     purple()))),
-		  dirs[door],
-		  norm(),
-		  (count == 1 || door == num ? ".\n\r" : ", "));
+	  buf += fmt("%s%s%s%s%s") %
+            ((count != 1 && door == num) ? "and " : "") %
+            (exitp->getSectorType() == SECT_FIRE ? red() :
+              (exitp->isAirSector() ? cyan() :
+                (exitp->isWaterSector() ? blue() : purple()))) %
+            dirs[door] %
+            norm() %
+            (count == 1 || door == num ? ".\n\r" : ", ");
 	}
       } else
 	vlogf(LOG_LOW, fmt("Problem with door in room %d") %  inRoom());
@@ -369,16 +356,16 @@ void TBeing::listExits(const TRoom *rp) const
   }
 
 
-  if (*buf) {
+  if (buf.empty()) {
+    sendTo("You see no obvious exits.\n\r");
+  } else {
     if (count == 1) 
       sendTo(fmt("You see an exit %s") % buf);
     else 
       sendTo(fmt("You can see exits to the %s") % buf);
-  } else
-    sendTo("You see no obvious exits.\n\r");
+  }
 }
   
-
 void list_char_in_room(TThing *list, TBeing *ch)
 {
   TThing *i, *cond_ptr[50];
@@ -421,7 +408,6 @@ void list_char_in_room(TThing *list, TBeing *ch)
     }
   }
 }
-
 
 void list_char_to_char(TBeing *list, TBeing *ch, int)
 {
@@ -889,7 +875,7 @@ const sstring TBeing::addColorRoom(TRoom * rp, int title) const
     if (rp->getDescr()) 
       return buf3;
     else {
-      vlogf(LOG_BUG, fmt("room without a descr for dynamic coloring, %s") %  roomp->getName());
+      vlogf(LOG_BUG, fmt("room without a descr for dynamic coloring, %s") % roomp->getName());
       return "";
     }
   } else {
@@ -961,7 +947,7 @@ void TBeing::doExamine(const char *argument, TThing * specific)
 sstring TBeing::describeAffects(TBeing *ch, showMeT showme) const
 {
   affectedData *aff, *af2;
-  sstring str;
+  sstring str = "";
   int objused;
 
   // limit what others can see.  Magic should reveal truth, but in general
@@ -2981,15 +2967,12 @@ void TBeing::doWhere(const char *argument)
   }
 }
 
-
 void TBeing::doLevels(const char *argument)
 {
   int i;
   classIndT Class;
 // int RaceMax;
-  sstring sb;
-  char buf[256],
-       tString[256];
+  sstring sb, buf;
 
   for (; isspace(*argument); argument++);
 
@@ -3047,9 +3030,8 @@ void TBeing::doLevels(const char *argument)
   }
   //RaceMax = RacialMax[race->getRace()][Class];
 
-  sprintf(buf, "Experience needed for level in class %s:\n\r\n\r",
-      classInfo[Class].name.cap().c_str());
-  sb += buf;
+  sb += fmt("Experience needed for level in class %s:\n\r\n\r") %
+    classInfo[Class].name.cap();
 
   ubyte cLvl = getLevel(Class);
 
@@ -3059,40 +3041,36 @@ void TBeing::doLevels(const char *argument)
     int m = i + 3*(MAX_MORT/4+1);
 
     if (i <= MAX_MORT) {
-      sprintf(tString, "%.0f", getExpClassLevel(Class, i));
-      strcpy(tString, sstring(tString).comify().c_str());
-      sprintf(buf, "%s[%2d]%s %s%13s%s%s", 
-            cyan(), i, norm(),
-            ((i > cLvl) ? orange() : green()), tString, norm(),
-            " ");
-      sb += buf;
+      buf = fmt("%.0f") % getExpClassLevel(Class, i);
+      buf = buf.comify();
+      sb += fmt("%s[%2d]%s %s%13s%s%s") %
+        cyan() % i % norm() %
+        ((i > cLvl) ? orange() : green()) % buf % norm() %
+        " ";
     }
     if (j <= MAX_MORT) {
-      sprintf(tString, "%.0f", getExpClassLevel(Class, j));
-      strcpy(tString, sstring(tString).comify().c_str());
-      sprintf(buf, "%s[%2d]%s %s%13s%s%s",
-            cyan(), j, norm(),
-            ((j > cLvl) ? orange() : green()), tString, norm(),
-              " ");
-      sb += buf;
+      buf = fmt("%.0f") % getExpClassLevel(Class, j);
+      buf = buf.comify();
+      sb += fmt("%s[%2d]%s %s%13s%s%s") %
+        cyan() % j % norm() %
+        ((j > cLvl) ? orange() : green()) % buf % norm() %
+        " ";
     }
     if (k <= MAX_MORT) {
-      sprintf(tString, "%.0f", getExpClassLevel(Class, k));
-      strcpy(tString, sstring(tString).comify().c_str());
-      sprintf(buf, "%s[%2d]%s %s%13s%s%s",
-            cyan(), k, norm(),
-            ((k > cLvl) ? orange() : green()), tString, norm(),
-            " ");
-      sb += buf;
+      buf = fmt("%.0f") % getExpClassLevel(Class, k);
+      buf = buf.comify();
+      sb += fmt("%s[%2d]%s %s%13s%s%s") %
+        cyan() % k % norm() %
+        ((k > cLvl) ? orange() : green()) % buf % norm() %
+        " ";
     }
     if (m <= MAX_MORT) {
-      sprintf(tString, "%.0f", getExpClassLevel(Class, m));
-      strcpy(tString, sstring(tString).comify().c_str());
-      sprintf(buf, "%s[%2d]%s %s%13s%s%s",
-            cyan(), m, norm(),
-            ((m > cLvl) ? orange() : green()), tString, norm(),
-            "\n\r");
-      sb += buf;
+      buf = fmt("%.0f") % getExpClassLevel(Class, m);
+      buf = buf.comify();
+      sb += fmt("%s[%2d]%s %s%13s%s%s") %
+        cyan() % m % norm() %
+        ((m > cLvl) ? orange() : green()) % buf % norm() %
+        "\n\r";
     } else {
       sb += "\n\r";
     }
@@ -3608,19 +3586,19 @@ const char *LimbHealth(double a)
 
 const sstring TBeing::slotPlurality(int limb) const
 {
-  char buf[10];
+  sstring buf;
 
   if ((race->getBodyType() == BODY_BIRD) &&
       (limb == WEAR_WAISTE)) {
     // tail feathers
-    sprintf(buf, "are");
+    buf = "are";
   } else if ((race->getBodyType() == BODY_TREE) &&
       ((limb == WEAR_ARM_R) ||
        (limb == WEAR_ARM_L))) {
     // branches
-    sprintf(buf, "are");
+    buf = "are";
   } else
-    sprintf(buf, "is");
+    buf = "is";
 
   return buf;
 }
@@ -4471,7 +4449,7 @@ sstring TBeing::describeImmunities(const TBeing *vict, int learn) const
   for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {
     x = GetApprox(vict->getImmunity(i), learn);
 
-    if (x == 0 || !*immunity_names[i])
+    if (x == 0 || immunity_names[i].empty())
       continue;
     if (x > 90 || x < -90)
       strcpy(buf, "extremely");
@@ -4709,16 +4687,16 @@ void TWand::descMagicSpells(TBeing *ch) const
 {
   discNumT das = DISC_NONE;
   spellNumT iSpell;
-  char capbuf[160];
-  strcpy(capbuf, ch->objs(this));
+  sstring capbuf;
+  capbuf = ch->objs(this);
 
   if ((iSpell = getSpell()) >= MIN_SPELL && discArray[iSpell] &&
       ((das = getDisciplineNumber(iSpell, FALSE)) != DISC_NONE)) {
     if (ch->doesKnowSkill(iSpell))
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % sstring(capbuf).cap() % 
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % capbuf.cap() % 
             discArray[iSpell]->name);
     else
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % sstring(capbuf).cap() %  disc_names[das]);
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % capbuf.cap() % disc_names[das]);
   }
 
   return;
@@ -4728,16 +4706,16 @@ void TStaff::descMagicSpells(TBeing *ch) const
 {
   discNumT das = DISC_NONE;
   spellNumT iSpell;
-  char capbuf[160];
-  strcpy(capbuf, ch->objs(this));
+  sstring capbuf;
+  capbuf = ch->objs(this);
 
   if ((iSpell = getSpell()) >= MIN_SPELL && discArray[iSpell] &&
       ((das = getDisciplineNumber(iSpell, FALSE)) != DISC_NONE)) {
     if (ch->doesKnowSkill(iSpell))
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % sstring(capbuf).cap() % 
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % capbuf.cap() % 
             discArray[iSpell]->name);
     else
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % sstring(capbuf).cap() %  disc_names[das]);
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % capbuf.cap() % disc_names[das]);
   }
 
   return;
@@ -4747,37 +4725,37 @@ void TScroll::descMagicSpells(TBeing *ch) const
 {
   discNumT das = DISC_NONE;
   spellNumT spell;
-  char capbuf[160];
-  strcpy(capbuf, ch->objs(this));
+  sstring capbuf;
+  capbuf = ch->objs(this);
 
   spell = getSpell(0);
   if (spell > TYPE_UNDEFINED && discArray[spell] &&
       ((das = getDisciplineNumber(spell, FALSE)) != DISC_NONE)) {
     if (ch->doesKnowSkill(spell))
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % sstring(capbuf).cap() % 
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % capbuf.cap() % 
             discArray[spell]->name);
     else
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % sstring(capbuf).cap() %  disc_names[das]);
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % capbuf.cap() %  disc_names[das]);
   }
 
   spell = getSpell(1);
   if (spell > TYPE_UNDEFINED && discArray[spell] &&
       ((das = getDisciplineNumber(spell, FALSE)) != DISC_NONE)) {
     if (ch->doesKnowSkill(spell))
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % sstring(capbuf).cap() % 
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % capbuf.cap() % 
             discArray[spell]->name);
     else
-       ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % sstring(capbuf).cap() % disc_names[das]);
+       ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % capbuf.cap() % disc_names[das]);
   }
 
   spell = getSpell(2);
   if (spell > TYPE_UNDEFINED && discArray[spell] &&
       ((das = getDisciplineNumber(spell, FALSE)) != DISC_NONE)) {
     if (ch->doesKnowSkill(spell))
-      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % sstring(capbuf).cap() % 
+      ch->sendTo(COLOR_OBJECTS, fmt("%s produces: %s.\n\r") % capbuf.cap() % 
             discArray[spell]->name);
     else
-       ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % sstring(capbuf).cap() % disc_names[das]);
+       ch->sendTo(COLOR_OBJECTS, fmt("%s produces: Something from the %s discipline.\n\r") % capbuf.cap() % disc_names[das]);
   }
 
   return;
@@ -4797,25 +4775,25 @@ void TBeing::describeSymbolOunces(const TSymbol *obj, int learn) const
   int amt = obj->obj_flags.cost / 100;
   amt = GetApprox(amt, learn);
 
-  char capbuf[160];
-  strcpy(capbuf, objs(obj));
+  sstring capbuf;
+  capbuf = objs(obj);
 
-  sendTo(COLOR_OBJECTS, fmt("%s requires about %d ounce%s of holy water to attune.\n\r") % sstring(capbuf).cap() % amt % (amt == 1 ? "" : "s"));
+  sendTo(COLOR_OBJECTS, fmt("%s requires about %d ounce%s of holy water to attune.\n\r") % capbuf.cap() % amt % (amt == 1 ? "" : "s"));
 
   return;
 }
 
 void TBeing::describeComponentUseage(const TComponent *obj, int) const
 {
-  char capbuf[160];
-  strcpy(capbuf, objs(obj));
+  sstring capbuf;
+  capbuf = objs(obj);
 
   if (IS_SET(obj->getComponentType(), COMP_SPELL))
-    sendTo(COLOR_OBJECTS, fmt("%s is a component used in creating magic.\n\r") % sstring(capbuf).cap());
+    sendTo(COLOR_OBJECTS, fmt("%s is a component used in creating magic.\n\r") % capbuf.cap());
   else if (IS_SET(obj->getComponentType(), COMP_POTION))
-    sendTo(COLOR_OBJECTS, fmt("%s is a component used to brew potions.\n\r") % sstring(capbuf).cap());
+    sendTo(COLOR_OBJECTS, fmt("%s is a component used to brew potions.\n\r") % capbuf.cap());
   else if (IS_SET(obj->getComponentType(), COMP_SCRIBE))
-    sendTo(COLOR_OBJECTS, fmt("%s is a component used during scribing.\n\r") % sstring(capbuf).cap());
+    sendTo(COLOR_OBJECTS, fmt("%s is a component used during scribing.\n\r") % capbuf.cap());
 
   return;
 }
@@ -4828,10 +4806,10 @@ void TBeing::describeComponentDecay(const TComponent *obj, int learn) const
 
   int level = GetApprox(obj->obj_flags.decay_time, learn);
 
-  char capbuf[160];
-  strcpy(capbuf, objs(obj));
+  sstring capbuf;
+  capbuf = objs(obj);
 
-  sendTo(COLOR_OBJECTS, fmt("%s will last ") % sstring(capbuf).cap());
+  sendTo(COLOR_OBJECTS, fmt("%s will last ") % capbuf.cap());
 
   if (!obj->isComponentType(COMP_DECAY)) {
     sendTo("well into the future.\n\r");
@@ -4883,18 +4861,16 @@ void TBeing::describeComponentSpell(const TComponent *obj, int learn) const
 sstring describeMaterial(const TThing *t)
 {
   sstring str;
-  char buf[256];
 
   int mat = t->getMaterial();
-  char mat_name[40];
+  sstring mat_name;
 
-  strcpy(mat_name, sstring(material_nums[mat].mat_name).uncap().c_str());
+  mat_name = sstring(material_nums[mat].mat_name).uncap();
 
   if (dynamic_cast<const TBeing *>(t))
-    sprintf(buf, "%s has a skin type of %s.\n\r", sstring(t->getName()).cap().c_str(), mat_name);
+    str = fmt("%s has a skin type of %s.\n\r") % sstring(t->getName()).cap() % mat_name;
   else
-    sprintf(buf, "%s is made of %s.\n\r", sstring(t->getName()).cap().c_str(), mat_name);
-  str += buf;
+    str = fmt("%s is made of %s.\n\r") % sstring(t->getName()).cap() % mat_name;
 
   str += describeMaterial(mat);
 
@@ -5081,8 +5057,7 @@ void TBeing::describeTrapDamType(const TTrap *obj, int) const
 
 void TBeing::doSpells(const sstring &argument)
 {
-  char buf[MAX_STRING_LENGTH * 2], buffer[MAX_STRING_LENGTH * 2];
-  char learnbuf[64];
+  sstring buf, buffer = "", learnbuf;
   spellNumT i;
   unsigned int j, l;
   Descriptor *d;
@@ -5122,8 +5097,6 @@ void TBeing::doSpells(const sstring &argument)
 
   if (!(d = desc))
     return;
-
-  *buffer = '\0';
 
   if (argument.empty())
     memset(types, 1, sizeof(int) * 4);      
@@ -5184,21 +5157,21 @@ void TBeing::doSpells(const sstring &argument)
     if (!types[type])
       continue;
 
-    if (*buffer)
-      strcat(buffer, "\n\r");
+    if (!buffer.empty())
+      buffer += "\n\r";
 
     switch (type) {
       case 0:
-        strcat(buffer, "Targeted offensive spells:\n\r");
+        buffer += "Targeted offensive spells:\n\r";
         break;
       case 1:
-        strcat(buffer, "Non-targeted offensive spells:\n\r");
+        buffer += "Non-targeted offensive spells:\n\r";
         break;
       case 2:
-        strcat(buffer, "Targeted utility spells:\n\r");
+        buffer += "Targeted utility spells:\n\r";
         break;
       case 3:
-        strcat(buffer, "Non-targeted utility spells:\n\r");
+        buffer += "Non-targeted utility spells:\n\r";
         break;
     }
 
@@ -5206,7 +5179,7 @@ void TBeing::doSpells(const sstring &argument)
       i = skillSortVec[j].theSkill;
       das = getDisciplineNumber(i, FALSE);
       if (das == DISC_NONE) {
-        vlogf(LOG_BUG, fmt("Bad disc for skill %d in doSpells") %  i);
+        vlogf(LOG_BUG, fmt("Bad discipline for skill %d in doSpells") %  i);
         continue;
       }
       cd = getDiscipline(das);
@@ -5269,33 +5242,33 @@ void TBeing::doSpells(const sstring &argument)
         if (!showall) 
           continue;
 
-        sprintf(buf, "%s%-22.22s%s  (Learned: %s)", 
-                cyan(), discArray[i]->name, norm(),
-                skill_diff(discArray[i]->start - tmp_var));
+        buf = fmt("%s%-22.22s%s  (Learned: %s)") %
+          cyan() % discArray[i]->name % norm() %
+          skill_diff(discArray[i]->start - tmp_var);
       } else if (discArray[i]->toggle && 
                  !hasQuestBit(discArray[i]->toggle)) {
         if (!showall) 
           continue;
 
-        sprintf(buf, "%s%-22.22s%s  (Learned: Quest)",
-                cyan(), discArray[i]->name, norm());
+        buf = fmt("%s%-22.22s%s  (Learned: Quest)") %
+          cyan() % discArray[i]->name % norm();
       } else { 
         if (getMaxSkillValue(i) < MAX_SKILL_LEARNEDNESS) {
           if (discArray[i]->startLearnDo > 0) {
-            sprintf(learnbuf, "%.9s/%.9s", how_good(getSkillValue(i)),
-                    how_good(getMaxSkillValue(i))+1);
-            sprintf(buf, "%s%-22.22s%s %-19.19s",
-                    cyan(), discArray[i]->name, norm(), 
-                    learnbuf);
+            learnbuf = fmt("%.9s/%.9s") % how_good(getSkillValue(i)) %
+              (how_good(getMaxSkillValue(i)) + 1);
+            buf = fmt("%s%-22.22s%s %-19.19s") %
+              cyan() % discArray[i]->name % norm() %
+              learnbuf;
           } else {
-            sprintf(buf, "%s%-22.22s%s %-19.19s",
-                    cyan(), discArray[i]->name, norm(), 
-                    how_good(getSkillValue(i)));
+            buf = fmt("%s%-22.22s%s %-19.19s") %
+              cyan() % discArray[i]->name % norm() % 
+              how_good(getSkillValue(i));
           }
         } else {
-          sprintf(buf, "%s%-22.22s%s %-19.19s",
-                  cyan(), discArray[i]->name, norm(), 
-                  how_good(getSkillValue(i)));
+          buf = fmt("%s%-22.22s%s %-19.19s") %
+            cyan() % discArray[i]->name % norm() % 
+            how_good(getSkillValue(i));
         }
         unsigned int comp;
 
@@ -5303,16 +5276,13 @@ void TBeing::doSpells(const sstring &argument)
                        (i != CompInfo[comp].spell_num); comp++);
 
         if (comp != CompInfo.size() && CompInfo[comp].comp_num >= 0) {
-          sprintf(buf + strlen(buf), "   [%3i] %s",  totalcharges, 
-                  obj_index[real_object(CompInfo[comp].comp_num)].short_desc);
+          buf += fmt("   [%3i] %s") % totalcharges %
+            obj_index[real_object(CompInfo[comp].comp_num)].short_desc;
         }         
       }
-        strcat(buf, "\n\r");
+      buf += "\n\r";
         
-      if (strlen(buf) + strlen(buffer) > (MAX_STRING_LENGTH * 2) - 2)
-        break;
-
-      strcat(buffer, buf);
+      buffer += buf;
     } 
   }
   d->page_string(buffer);
@@ -5321,8 +5291,7 @@ void TBeing::doSpells(const sstring &argument)
 
 void TBeing::doRituals(const sstring &argument)
 {
-  char buf[MAX_STRING_LENGTH * 2], buffer[MAX_STRING_LENGTH * 2];
-  char learnbuf[64];
+  sstring buf, buffer = "", learnbuf;
   spellNumT i;
   unsigned int j, l;
   Descriptor *d;
@@ -5362,8 +5331,6 @@ void TBeing::doRituals(const sstring &argument)
 
   if (!(d = desc))
     return;
-
-  *buffer = '\0';
 
   if (argument.empty())
     memset(types, 1, sizeof(int) * 4);      
@@ -5424,21 +5391,21 @@ void TBeing::doRituals(const sstring &argument)
     if (!types[type])
       continue;
 
-    if (*buffer)
-      strcat(buffer, "\n\r");
+    if (!buffer.empty())
+      buffer += "\n\r";
 
     switch (type) {
       case 0:
-        strcat(buffer, "Targeted offensive rituals:\n\r");
+        buffer += "Targeted offensive rituals:\n\r";
         break;
       case 1:
-        strcat(buffer, "Non-targeted offensive rituals:\n\r");
+        buffer += "Non-targeted offensive rituals:\n\r";
         break;
       case 2:
-        strcat(buffer, "Targeted utility rituals:\n\r");
+        buffer += "Targeted utility rituals:\n\r";
         break;
       case 3:
-        strcat(buffer, "Non-targeted utility rituals:\n\r");
+        buffer += "Non-targeted utility rituals:\n\r";
         break;
     }
 
@@ -5446,7 +5413,7 @@ void TBeing::doRituals(const sstring &argument)
       i = skillSortVec[j].theSkill;
       das = getDisciplineNumber(i, FALSE);
       if (das == DISC_NONE) {
-        vlogf(LOG_BUG, fmt("Bad disc for skill %d in doRituals") %  i);
+        vlogf(LOG_BUG, fmt("Bad discipline for skill %d in doRituals") % i);
         continue;
       }
       cd = getDiscipline(das);
@@ -5509,33 +5476,33 @@ void TBeing::doRituals(const sstring &argument)
         if (!showall) 
           continue;
 
-        sprintf(buf, "%s%-22.22s%s  (Learned: %s)", 
-                cyan(), discArray[i]->name, norm(),
-                skill_diff(discArray[i]->start - tmp_var));
+        buf = fmt("%s%-22.22s%s  (Learned: %s)") %
+          cyan() % discArray[i]->name % norm() %
+          skill_diff(discArray[i]->start - tmp_var);
       } else if (discArray[i]->toggle && 
                  !hasQuestBit(discArray[i]->toggle)) {
         if (!showall) 
           continue;
 
-        sprintf(buf, "%s%-22.22s%s  (Learned: Quest)",
-                cyan(), discArray[i]->name, norm());
+        buf = fmt("%s%-22.22s%s  (Learned: Quest)") %
+          cyan() % discArray[i]->name % norm();
       } else { 
         if (getMaxSkillValue(i) < MAX_SKILL_LEARNEDNESS) {
           if (discArray[i]->startLearnDo > 0) {
-            sprintf(learnbuf, "%.9s/%.9s", how_good(getSkillValue(i)),
-                    how_good(getMaxSkillValue(i))+1);
-            sprintf(buf, "%s%-22.22s%s %-19.19s",
-                    cyan(), discArray[i]->name, norm(), 
-                    learnbuf);
+            learnbuf = fmt("%.9s/%.9s") % how_good(getSkillValue(i)) %
+              (how_good(getMaxSkillValue(i)) + 1);
+            buf = fmt("%s%-22.22s%s %-19.19s") %
+              cyan() % discArray[i]->name % norm() %
+              learnbuf;
           } else {
-            sprintf(buf, "%s%-22.22s%s %-19.19s",
-                    cyan(), discArray[i]->name, norm(), 
-                    how_good(getSkillValue(i)));
+            buf = fmt("%s%-22.22s%s %-19.19s") %
+              cyan() % discArray[i]->name % norm() %
+              how_good(getSkillValue(i));
           }
         } else {
-          sprintf(buf, "%s%-22.22s%s %-19.19s",
-                  cyan(), discArray[i]->name, norm(), 
-                  how_good(getSkillValue(i)));
+          buf = fmt("%s%-22.22s%s %-19.19s") %
+            cyan() % discArray[i]->name % norm() %
+            how_good(getSkillValue(i));
         }
         unsigned int comp;
 
@@ -5543,16 +5510,13 @@ void TBeing::doRituals(const sstring &argument)
                        (i != CompInfo[comp].spell_num); comp++);
 
         if (comp != CompInfo.size() && CompInfo[comp].comp_num >= 0) {
-          sprintf(buf + strlen(buf), "   [%3i] %s",  totalcharges, 
-                  obj_index[real_object(CompInfo[comp].comp_num)].short_desc);
+          buf += fmt("   [%3i] %s") % totalcharges %
+            obj_index[real_object(CompInfo[comp].comp_num)].short_desc;
         }         
       }
-        strcat(buf, "\n\r");
+      buf += "\n\r";
         
-      if (strlen(buf) + strlen(buffer) > (MAX_STRING_LENGTH * 2) - 2)
-        break;
-
-      strcat(buffer, buf);
+      buffer += buf;
     } 
   }
   d->page_string(buffer);
@@ -5561,9 +5525,7 @@ void TBeing::doRituals(const sstring &argument)
 
 void TBeing::doPrayers(const sstring &argument)
 {
-  char buf[MAX_STRING_LENGTH * 2] = "\0";
-  char buffer[MAX_STRING_LENGTH * 2] = "\0";
-  char learnbuf[64];
+  sstring buf, buffer = "", learnbuf;
   spellNumT i;
   unsigned int j, l;
   Descriptor *d;
@@ -5647,29 +5609,29 @@ void TBeing::doPrayers(const sstring &argument)
     if (!types[type])
       continue;
 
-    if(*buffer)
-        strcat(buffer, "\n\r");
+    if(!buffer.empty())
+        buffer += "\n\r";
 
     switch(type){
       case 0:
-        strcat(buffer, "Targeted offensive spells:\n\r");
+        buffer += "Targeted offensive spells:\n\r";
         break;
       case 1:
-        strcat(buffer, "Non-targeted offensive spells:\n\r");
+        buffer += "Non-targeted offensive spells:\n\r";
         break;
       case 2:
-        strcat(buffer, "Targeted utility spells:\n\r");
+        buffer += "Targeted utility spells:\n\r";
         break;
       case 3:
-        strcat(buffer, "Non-targeted utility spells:\n\r");
+        buffer += "Non-targeted utility spells:\n\r";
         break;
     }
     for (j = 0; j < skillSortVec.size(); j++) {
       i = skillSortVec[j].theSkill;
       das = getDisciplineNumber(i, FALSE);
       if (das == DISC_NONE) {
-        vlogf(LOG_BUG, fmt("Bad disc for skill %d in doPrayers") %  i);
-          continue;
+        vlogf(LOG_BUG, fmt("Bad discipline for skill %d in doPrayers") % i);
+        continue;
       }
       cd = getDiscipline(das);
         
@@ -5735,35 +5697,44 @@ void TBeing::doPrayers(const sstring &argument)
         if (!showall) 
           continue;
 
-        sprintf(buf, "%s%-22.22s%s  (Learned: %s)",  cyan(), discArray[i]->name, norm(), skill_diff(discArray[i]->start - tmp_var));
+        buf = fmt("%s%-22.22s%s  (Learned: %s)") %
+          cyan() % discArray[i]->name % norm() %
+          skill_diff(discArray[i]->start - tmp_var);
       } else if (discArray[i]->toggle && !hasQuestBit(discArray[i]->toggle)) {
           if (!showall) 
           continue;
 
-          sprintf(buf, "%s%-22.22s%s  (Learned: Quest)", cyan(), discArray[i]->name, norm());
+          buf = fmt("%s%-22.22s%s  (Learned: Quest)") %
+            cyan() % discArray[i]->name % norm();
       } else { 
         if (getMaxSkillValue(i) < MAX_SKILL_LEARNEDNESS) {
           if (discArray[i]->startLearnDo > 0) {
-            sprintf(learnbuf, "%.9s/%.9s", how_good(getSkillValue(i)), how_good(getMaxSkillValue(i))+1);
-            sprintf(buf, "%s%-22.22s%s %-19.19s", cyan(), discArray[i]->name, norm(), learnbuf);
+            learnbuf = fmt("%.9s/%.9s") % how_good(getSkillValue(i)) %
+              (how_good(getMaxSkillValue(i)) + 1);
+            buf = fmt("%s%-22.22s%s %-19.19s") %
+              cyan() % discArray[i]->name % norm() %
+              learnbuf;
           } else 
-            sprintf(buf, "%s%-22.22s%s %-19.19s", cyan(), discArray[i]->name, norm(), how_good(getSkillValue(i)));   
+            buf = fmt("%s%-22.22s%s %-19.19s") %
+              cyan() % discArray[i]->name % norm() %
+              how_good(getSkillValue(i));   
         } else 
-          sprintf(buf, "%s%-22.22s%s %-19.19s", cyan(), discArray[i]->name, norm(), how_good(getSkillValue(i)));
+          buf = fmt("%s%-22.22s%s %-19.19s") %
+            cyan() % discArray[i]->name % norm() %
+            how_good(getSkillValue(i));
             
         unsigned int comp;
 
         for (comp = 0; (comp < CompInfo.size()) && (i != CompInfo[comp].spell_num);comp++);
 
-        if (comp != CompInfo.size() && CompInfo[comp].comp_num >= 0) 
-          sprintf(buf + strlen(buf), "   [%2i] %s",  totalcharges, obj_index[real_object(CompInfo[comp].comp_num)].short_desc); 
+        if (comp != CompInfo.size() && CompInfo[comp].comp_num >= 0) {
+          buf += fmt("   [%2i] %s") % totalcharges %
+            obj_index[real_object(CompInfo[comp].comp_num)].short_desc; 
+        }
       }
-      strcat(buf, "\n\r");
+      buf += "\n\r";
           
-      if (strlen(buf) + strlen(buffer) > (MAX_STRING_LENGTH * 2) - 2)
-        break;
-
-      strcat(buffer, buf);
+      buffer += buf;
     } 
   }
   d->page_string(buffer);

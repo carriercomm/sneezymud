@@ -9,7 +9,6 @@
 #include "stdsneezy.h"
 #include "colorstring.h"
 
-
 sstring stripColorCodes(const sstring &s)
 {
   sstring buf = "";
@@ -28,7 +27,6 @@ sstring stripColorCodes(const sstring &s)
 
   return buf;
 }
-
 
 bool hasColorStrings(const TBeing *mob, const sstring &arg, int field)
 {

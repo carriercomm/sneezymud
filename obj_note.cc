@@ -99,14 +99,14 @@ void TNote::getFourValues(int *x1, int *x2, int *x3, int *x4) const
 
 sstring TNote::statObjInfo() const
 {
-  char buf[256];
+  sstring buf;
   int rc = real_mobile(getRepairman());
 
-  sprintf(buf, "Repairman: %s : %d",
-      (rc >= 0 ? mob_index[rc].short_desc : "Unknown"), getRepairman());
+  buf = fmt("Repairman: %s : %d") %
+    (rc >= 0 ? mob_index[rc].short_desc : "Unknown") %
+    getRepairman();
 
-  sstring a(buf);
-  return a;
+  return buf;
 }
 
 int TNote::objectSell(TBeing *ch, TMonster *keeper)

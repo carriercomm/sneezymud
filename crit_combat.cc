@@ -20,7 +20,7 @@
 // return ONEHIT_MESS_CRIT_S if oneHit should abort and no further oneHits should occur
 int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
 {
-  char buf[256];
+  sstring buf;
   TThing *target;
   int rc;
   int num, num2;
@@ -116,8 +116,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
 		FALSE, this, weapon, NULL, TO_CHAR);
 	  } else if ((::number(0, agi) < (30 + getCond(DRUNK))) &&
 		     weapon->canDrop()) {
-            sprintf(buf, "You %slose%s your grip on $p and it %sfalls out of your grasp%s!",
-                         red(), norm(), red(), norm());
+            buf = fmt("You %slose%s your grip on $p and it %sfalls out of your grasp%s!") % red() % norm() % red() % norm();
             act(buf, FALSE, this, weapon, NULL, TO_CHAR);
             act("$n seems to lose $s grip on $p and it falls out of $s grasp!", TRUE, this, weapon, NULL, TO_ROOM);
             *roomp += *unequip(weapon->eq_pos);
@@ -135,8 +134,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
             act("Your grasp on $p loosens, but you shift position for a firmer grip.",
 		FALSE, this, weapon, NULL, TO_CHAR);
 	  } else {
-	    sprintf(buf, "You %slose%s your grip on $p and it %sfalls out of your grasp%s!",
-		    red(), norm(), red(), norm());
+	    buf = fmt("You %slose%s your grip on $p and it %sfalls out of your grasp%s!") % red() % norm() % red() % norm();
 	    act(buf, FALSE, this, weapon, NULL, TO_CHAR);
 	    act("$n seems to lose $s grip on $p and it falls out of $s grasp!", TRUE, this, weapon, NULL, TO_ROOM);
 	    *roomp += *unequip(weapon->eq_pos);
@@ -353,13 +351,13 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
         // Miss miserably and stick weapon in foot (no dex check). 
         if (weapon && hasPart(WEAR_FOOT_R) && !weapon->isBluntWeapon() &&
             !getStuckIn(WEAR_FOOT_R)) {
-          sprintf(buf, "You miserably miss $N, %sand stick $p in your foot%s!",
-                  red(),norm());
+          buf = fmt("You miserably miss $N, %sand stick $p in your foot%s!") %
+            red() % norm();
           act(buf, FALSE, this, weapon, v, TO_CHAR);
-          sprintf(buf, "$n miserably misses $N, and sticks $p in $s foot!");
+          buf = fmt("$n miserably misses $N, and sticks $p in $s foot!");
           act(buf, TRUE, this, weapon, v, TO_NOTVICT);
-          sprintf(buf, "$n miserably misses you, %sand sticks $p in $s foot%s!",
-                  v->cyan(),v->norm());
+          buf = fmt("$n miserably misses you, %sand sticks $p in $s foot%s!") %
+            v->cyan() % v->norm();
           act(buf, TRUE, this, weapon, v, TO_VICT);
           num2 = getWeaponDam(this,weapon,(weapon == heldInPrimHand() ? HAND_PRIMARY : HAND_SECONDARY));
           num2 /= 8;

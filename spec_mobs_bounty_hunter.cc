@@ -1118,10 +1118,6 @@ void repoCheckForRent(TBeing *ch, TObj *obj, bool corpse) {
   return;
 }
 	  
-      
-    
-  
-
 void repoCheck(TMonster *mob, int rnum)
 {
 
@@ -1129,7 +1125,7 @@ void repoCheck(TMonster *mob, int rnum)
   return;
 
 #if REPO_MOBS
-  char buf[160],buf2[160];
+  sstring buf, buf2;
   int cur_num = obj_index[rnum].getNumber();
   int max_num = obj_index[rnum].max_exist;
 
@@ -1139,13 +1135,13 @@ void repoCheck(TMonster *mob, int rnum)
       !::number(0, ((cur_num > max_num) ? 10 : 100))) {
     // reduce hunter chance on artifacts
     if (::number(1,5) <= cur_num) {
-      strcpy(buf,obj_index[rnum].name);
-      strcpy(buf, add_bars(buf).c_str());
-      sprintf(buf2,"Hunter, repo %s",buf);
+      buf = obj_index[rnum].name;
+      buf = add_bars(buf);
+      buf2 = fmt("Hunter, repo %s") % buf;
       vlogf(LOG_PROC,fmt("REPO: %s auto-hunting: '%s' : cur:%d, max:%d.") % 
-               mob->getName() %buf % cur_num % max_num);
+               mob->getName() % buf % cur_num % max_num);
       mob->spec = SPEC_BOUNTY_HUNTER;
-      bounty_hunter(NULL, CMD_SAY, buf2, mob, NULL);
+      bounty_hunter(NULL, CMD_SAY, buf2.c_str(), mob, NULL);
 
 #if SUPER_REPO_MOBS
       // make supertough to enforce max-exist rules
@@ -1158,13 +1154,3 @@ void repoCheck(TMonster *mob, int rnum)
   }
 #endif
 }
-
-
-
-
-
-
-
-
-
-

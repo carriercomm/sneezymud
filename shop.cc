@@ -1298,12 +1298,8 @@ void TObj::valueMe(TBeing *ch, TMonster *keeper, int shop_nr, int num = 1)
 const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int iMax, int num, int shop_nr, int k, unsigned long int FitT) const
 {
   int cost, found = FALSE;
-  char buf[256];
-  char buf3[256];
-  char buf4[256];
-  char capbuf[256];
-  char atbuf[25];
-  char wcolor[25];
+  sstring buf, buf3, buf4, capbuf, atbuf;
+  sstring wcolor;
   int counter;
   float chr;
   float perc;
@@ -1315,17 +1311,14 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
   // don't show the "level" of weaps/armor though
   if (shop_index[shop_nr].isProducing(this) &&
       dynamic_cast<const TMagicItem *>(this)) {
-    sprintf(capbuf, "%s", getNameForShow(false, false, ch).c_str());
+    capbuf = getNameForShow(false, false, ch);
   } else
-    sprintf(capbuf, "%s", getNameNOC(ch).c_str());
+    capbuf = getNameNOC(ch);
 
-  sprintf(atbuf, "%d", num);
+  atbuf = fmt("%d") % num;
 
-  if (strlen(capbuf) > 29) {
-    capbuf[26] = '.';
-    capbuf[27] = '.';
-    capbuf[28] = '.';
-    capbuf[29] = '\0';
+  if (capbuf.length() > 29) {
+    capbuf.replace(26, sstring::npos, "...");
   }
   chr = ch->getChaShopPenalty();
   // do not adjust for swindle on list, give them worst case price
@@ -1346,9 +1339,9 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
   const TBaseClothing *tbc = dynamic_cast<const TBaseClothing *>(this);
 
   if (!ch->canUseEquipment(this, SILENT_YES)) {
-    sprintf(buf3, "forbidden");
+    buf3 = "forbidden";
   } else if (tbc && tbc->isSaddle()) {
-    sprintf(buf3, "for mounts");
+    buf3 = "for mounts";
   } else if ((slot == HOLD_LEFT) || (slot == HOLD_RIGHT)) {
     if (isPaired()) {
       // weight > ch-wield_weight
@@ -1359,12 +1352,12 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
              (ch->getSkillValue(SKILL_PIERCE_PROF) < MAX_SKILL_LEARNEDNESS)) ||
              (isBluntWeapon() &&
              (ch->getSkillValue(SKILL_BLUNT_PROF) < MAX_SKILL_LEARNEDNESS))) {
-          sprintf(buf3, "not proficient");
+          buf3 = "not proficient";
         } else {
-          sprintf(buf3, "too heavy");
+          buf3 = "too heavy";
         }
       } else {
-        sprintf(buf3, "paired");
+        buf3 = "paired";
         isWearable = true;
       }
     } else {
@@ -1377,24 +1370,24 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
              (ch->getSkillValue(SKILL_PIERCE_PROF) < MAX_SKILL_LEARNEDNESS)) ||
              (isBluntWeapon() &&
              (ch->getSkillValue(SKILL_BLUNT_PROF) < MAX_SKILL_LEARNEDNESS))) {
-          sprintf(buf3, "not proficient");
+          buf3 = "not proficient";
         } else 
-          sprintf(buf3, "too heavy");
+          buf3 = "too heavy";
       } else {
         // weight > ch-wield_weight
         if (compareWeights(getWeight(), ch->maxWieldWeight(this, HAND_TYPE_SEC)) == -1) {
           if (tbc && tbc->isShield())
-            sprintf(buf3, "too heavy");   // shields are secondary hand only
+            buf3 = "too heavy";   // shields are secondary hand only
           else {
-            sprintf(buf3, "primary only");
+            buf3 = "primary only";
             isWearable = true;
           }
         } else {
           if (tbc && tbc->isShield()) {
-            sprintf(buf3, "secondary only");
+            buf3 = "secondary only";
             isWearable = true;
           } else {
-            sprintf(buf3, "either hand");
+            buf3 = "either hand";
             isWearable = true;
           }
         }
@@ -1403,50 +1396,49 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
   } else if ((slot != WEAR_NECK) && (slot != WEAR_FINGER_R) && (slot != WEAR_FINGER_L)) {
     if (dynamic_cast<const TBaseClothing *>(this)) {
       if (getVolume() > (int) (perc/0.85))
-        sprintf(buf3, "too big");
+        buf3 = "too big";
       else if (getVolume() < (int) (perc/1.15))
-        sprintf(buf3, "too small");
+        buf3 = "too small";
       else {
-        sprintf(buf3, "yes");
+        buf3 = "yes";
         isWearable = true;
       }
     } else 
-      sprintf(buf3, "N/A");
+      buf3 = "N/A";
   } else {
-    sprintf(buf3, "yes");
+    buf3 = "yes";
     isWearable = true;
   } 
 
   if (tComp) {
     if (shop_index[shop_nr].isProducing(this)){
-      sprintf(buf4, "[%s]", "Unlimited");
+      buf4 = fmt("[%s]") % "Unlimited";
     } else {
-      sprintf(buf4, "[%d]", tComp->getComponentCharges());
+      buf4 = fmt("[%d]") % tComp->getComponentCharges();
     }
   } else {
-    sprintf(buf4, "[%s]", (shop_index[shop_nr].isProducing(this) ? "Unlimited" : atbuf));
+    buf4 = fmt("[%s]") % (shop_index[shop_nr].isProducing(this) ? "Unlimited" : atbuf);
   }
   found = FALSE;
-  char equipCond[256];
-  char equipColor[80];
+  sstring equipCond;
   int max_trade;
 
   max_trade=shop_index[shop_nr].type.size()-1;
 
-  strcpy(wcolor, ANSI_NORMAL);
+  wcolor = ANSI_NORMAL;
 
   if (isWearable)
     if (tWeapon) {
       if (isPaired() || (tbc && tbc->isShield()) || compareWeights(getWeight(), ch->maxWieldWeight(this, HAND_TYPE_SEC) == -1))
-        strcpy(wcolor, ch->greenBold());
+        wcolor = ch->greenBold();
       else
-        strcpy(wcolor, ch->green());
+        wcolor = ch->green();
 
     } else {
       if (isPaired())
-        strcpy(wcolor, ch->greenBold());
+        wcolor = ch->greenBold();
       else
-        strcpy(wcolor, ch->green());
+        wcolor = ch->green();
     }
 
   for (counter = 0; counter < max_trade; counter++) {
@@ -1457,25 +1449,22 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
         (shop_index[shop_nr].type[counter] == ITEM_MARTIAL_WEAPON) ||
         (shop_index[shop_nr].type[counter] == ITEM_HOLY_SYM) ||
         (shop_index[shop_nr].type[counter] == ITEM_WEAPON)) {
-      strcpy(equipColor, equip_condition(-1).c_str());
-      strcpy(equipCond, equipColor + 3); 
-      equipColor[3] = '\0';
-      sprintf(buf, "%s[%2d] %-29s %s%-12s %-6d %-5s %s%s\n\r",
-             wcolor, k + 1, sstring(capbuf).cap().c_str(),
-             equipColor, equipCond, cost, 
-             buf4, buf3, ch->norm());
+      equipCond = equip_condition(-1);
+      buf = fmt("%s[%2d] %-29s %-15s %-6d %-5s %s%s\n\r") %
+        wcolor % (k + 1) % capbuf.cap() %
+        equipCond % cost % 
+        buf4 % buf3 % ch->norm();
       found = TRUE;
-      strcpy(wcolor, ch->norm());
+      wcolor = ch->norm();
       break;
     }
   }
 
   if (!found) {
-    strcpy(equipColor, equip_condition(-1).c_str());
-    strcpy(equipCond, equipColor + 3);
-    equipColor[3] = '\0';
-    sprintf(buf, "%s[%2d] %-31s %s%-12s %-6d %-5s\n\r",
-            wcolor, k + 1, sstring(capbuf).cap().c_str(), equipColor, equipCond, cost, buf4);
+    equipCond = equip_condition(-1);
+    buf = fmt("%s[%2d] %-31s %-15s %-6d %-5s\n\r") %
+      wcolor % (k + 1) % capbuf.cap() %
+      equipCond % cost % buf4;
   }
 
   // This is for quick listing, fast and simple.
@@ -1491,7 +1480,7 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
   // Lists all items between 100-1000, fits on the head or back or neck, and
   // has hard-leather in the name And fits the current lister.
 
-  if (((FitT & (1 << 0)) == 0 || fitInShop(buf3, ch)) &&
+  if (((FitT & (1 << 0)) == 0 || fitInShop(buf3.c_str(), ch)) &&
       (arg.empty() || isname(arg, name)) &&
       (iMin == 999999 || (cost >= iMin && cost <= iMax)) &&
       ((FitT & (1 << 15)) == 0 || isObjStat(ITEM_GLOW)) &&

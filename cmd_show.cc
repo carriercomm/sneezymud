@@ -19,26 +19,26 @@
 
 static void print_room(int rnum, TRoom *rp, sstring &sb, struct show_room_zone_struct *)
 {
-  char buf[10240];
+  sstring buf;
   int dink, bits, scan;
 
-  sprintf(buf, "%5d %4d %-12s     %s\n\r", rp->number, rnum,
-        TerrainInfo[rp->getSectorType()]->name, (rp->name ? rp->name : "Empty"));
+  buf = fmt("%5d %4d %-12s     %s\n\r") % rp->number % rnum %
+    TerrainInfo[rp->getSectorType()]->name % (rp->name ? rp->name : "Empty");
   if (rp->getRoomFlags()) {
-    strcat(buf, "    [");
+    buf += "    [";
 
     dink = 0;
     for (bits = rp->getRoomFlags(), scan = 0; bits; scan++) {
       if (bits & (1 << scan)) {
         if (dink)
-          strcat(buf, " ");
+          buf += " ";
         if (scan < MAX_ROOM_BITS)
-          strcat(buf, room_bits[scan]);
+          buf += room_bits[scan];
         dink = 1;
         bits ^= (1 << scan);
       }
     }
-    strcat(buf, "]\n\r");
+    buf += "]\n\r";
   }
 
   sb += buf;
@@ -47,16 +47,14 @@ static void print_room(int rnum, TRoom *rp, sstring &sb, struct show_room_zone_s
 static void show_room_zone(int rnum, TRoom *rp, sstring &, struct
 			   show_room_zone_struct *srzs)
 {
-  char buf[MAX_STRING_LENGTH];
-
-  *buf = '\0';
+  sstring buf;
 
   if (!rp || rp->number < srzs->bottom || rp->number > srzs->top)
     return;            // optimize later
 
   if (srzs->blank && (srzs->lastblank + 1 != rp->number)) {
-    sprintf(buf, "rooms %d-%d are blank.\n\r", srzs->startblank,
-	    srzs->lastblank);
+    buf = fmt("rooms %d-%d are blank.\n\r") % srzs->startblank %
+      srzs->lastblank;
     srzs->sb += buf;
     srzs->blank = 0;
   }
@@ -71,8 +69,8 @@ static void show_room_zone(int rnum, TRoom *rp, sstring &, struct
     }
     return;
   } else if (srzs->blank) {
-    sprintf(buf, "rooms %d-%d are blank.\n\r", srzs->startblank,
-	    srzs->lastblank);
+    buf = fmt("rooms %d-%d are blank.\n\r") % srzs->startblank %
+      srzs->lastblank;
     srzs->sb += buf;
     srzs->blank = 0;
   }
@@ -230,12 +228,11 @@ sstring showComponentTechnical(const int tValue)
       tMobNum = real_mobile(tDissectIndex);
 
       if (tMobNum < 0 || tMobNum > (signed) mob_index.size())
-        strcpy(tBuffer, "[Unknown]");
+        tStBuffer = "[Unknown]";
       else
-        strcpy(tBuffer, mob_index[tMobNum].name);
+        tStBuffer = mob_index[tMobNum].name;
 
-      sprintf(tString, "Dissect Load: %d %s\n\r", tDissectIndex, tBuffer);
-      tStString += tString;
+      tStString += fmt("Dissect Load: %d %s\n\r") % tDissectIndex % tStBuffer;
     }
 
   // Check for natural loads.  Unfortunatly it's easy to do a double entry here
@@ -244,15 +241,14 @@ sstring showComponentTechnical(const int tValue)
     if (component_placement[tCompIndex].number == tValue &&
         (component_placement[tCompIndex].place_act & CACT_PLACE)) {
       if (component_placement[tCompIndex].room2 == -1)
-        tBuffer[0] = '\0';
+        tStBuffer = "";
       else
-        sprintf(tBuffer, "-%d", component_placement[tCompIndex].room2);
+        tStBuffer = fmt("-%d") % component_placement[tCompIndex].room2;
 
-      sprintf(tString, "Natural Load: Room%s %d%s\n\r",
-              (!tBuffer[0] ? "" : "s"),
-              component_placement[tCompIndex].room1,
-              tBuffer);
-      tStString += tString;
+      tStString = fmt("Natural Load: Room%s %d%s\n\r") %
+        (!tBuffer[0] ? "" : "s") %
+        component_placement[tCompIndex].room1 %
+        tStBuffer;
     }
 
   // Check for script loads.  This will go through ALL of the scripts and check.
@@ -285,12 +281,12 @@ sstring showComponentTechnical(const int tValue)
           tMobNum = real_mobile(convertTo<int>(tDir->d_name));
 
           if (tMobNum < 0 || tMobNum > (signed) mob_index.size())
-            strcpy(tString, "[Unknown]");
+            tStBuffer = "[Unknown]";
           else
-            strcpy(tString, mob_index[tMobNum].name);
+            tStBuffer = mob_index[tMobNum].name;
 
-          sprintf(tBuffer, "Script: %s %s\n\r",
-                  tDir->d_name, tString);
+          tStString += fmt("Script: %s %s\n\r") %
+            tDir->d_name % tStBuffer;
           tStString += tBuffer;
 
           // Don't show the same entry twice.
@@ -401,53 +397,46 @@ void TPerson::doShow(const char *argument)
     sb += "Faction                   Power    Wealth   Tithe\n\r";
     factionTypeT i;
     for (i = MIN_FACTION; i < MAX_FACTIONS; i++) {
-      sprintf(buf, "%-25.25s %7.2f %-7i %5.2f\n\r",
-          FactionInfo[i].faction_name,
-          FactionInfo[i].faction_power,
-          FactionInfo[i].getMoney(),
-          FactionInfo[i].faction_tithe);
-      sb += buf;
-      sprintf(buf, "      %s%-15.15s%s %-15.15s %-15.15s %-15.15s\n\r",
-          blue(), FactionInfo[i].leader[0], norm(),
-          FactionInfo[i].leader[1],
-          FactionInfo[i].leader[2],FactionInfo[i].leader[3]);
-      sb += buf;
-      sprintf(buf, "      %sCaravan:%s interval: %d, counter: %d, value: %d, defense: %d\n\r",
-          blue(), norm(),
-          FactionInfo[i].caravan_interval,
-          FactionInfo[i].caravan_counter,
-          FactionInfo[i].caravan_value,
-          FactionInfo[i].caravan_defense);
-      sb += buf;
-      sprintf(buf, "             : attempts: %d, successes: %d\n\r",
-          FactionInfo[i].caravan_attempts,
-          FactionInfo[i].caravan_successes);
-      sb += buf;
-      sprintf(buf, "      %sHelp Ratio:%s %.1f, %.1f, %.1f, %.1f\n\r",
-          blue(), norm(),
-          FactionInfo[i].faction_array[FACT_NONE][OFF_HELP],
-          FactionInfo[i].faction_array[FACT_BROTHERHOOD][OFF_HELP],
-          FactionInfo[i].faction_array[FACT_CULT][OFF_HELP],
-          FactionInfo[i].faction_array[FACT_SNAKE][OFF_HELP]);
-      sb += buf;
-      sprintf(buf, "      %sHarm Ratio:%s %.1f, %.1f, %.1f, %.1f\n\r",
-          blue(), norm(),
-          FactionInfo[i].faction_array[FACT_NONE][OFF_HURT],
-          FactionInfo[i].faction_array[FACT_BROTHERHOOD][OFF_HURT],
-          FactionInfo[i].faction_array[FACT_CULT][OFF_HURT],
-          FactionInfo[i].faction_array[FACT_SNAKE][OFF_HURT]);
-      sb += buf;
-      sprintf(buf, "\n\r");
-      sb += buf;
+      sb += fmt("%-25.25s %7.2f %-7i %5.2f\n\r") %
+          FactionInfo[i].faction_name %
+          FactionInfo[i].faction_power %
+          FactionInfo[i].getMoney() %
+          FactionInfo[i].faction_tithe;
+      sb += fmt("      %s%-15.15s%s %-15.15s %-15.15s %-15.15s\n\r") %
+          blue() % FactionInfo[i].leader[0] % norm() %
+          FactionInfo[i].leader[1] %
+          FactionInfo[i].leader[2] %
+          FactionInfo[i].leader[3];
+      sb += fmt("      %sCaravan:%s interval: %d, counter: %d, value: %d, defense: %d\n\r") %
+          blue() % norm() %
+          FactionInfo[i].caravan_interval %
+          FactionInfo[i].caravan_counter %
+          FactionInfo[i].caravan_value %
+          FactionInfo[i].caravan_defense;
+      sb += fmt("             : attempts: %d, successes: %d\n\r") %
+          FactionInfo[i].caravan_attempts %
+          FactionInfo[i].caravan_successes;
+      sb += fmt("      %sHelp Ratio:%s %.1f, %.1f, %.1f, %.1f\n\r") %
+          blue() % norm() %
+          FactionInfo[i].faction_array[FACT_NONE][OFF_HELP] %
+          FactionInfo[i].faction_array[FACT_BROTHERHOOD][OFF_HELP] %
+          FactionInfo[i].faction_array[FACT_CULT][OFF_HELP] %
+          FactionInfo[i].faction_array[FACT_SNAKE][OFF_HELP];
+      sb += fmt("      %sHarm Ratio:%s %.1f, %.1f, %.1f, %.1f\n\r") %
+          blue() % norm() %
+          FactionInfo[i].faction_array[FACT_NONE][OFF_HURT] %
+          FactionInfo[i].faction_array[FACT_BROTHERHOOD][OFF_HURT] %
+          FactionInfo[i].faction_array[FACT_CULT][OFF_HURT] %
+          FactionInfo[i].faction_array[FACT_SNAKE][OFF_HURT];
+      sb += "\n\r";
     }
-    sprintf(buf, "average power: %5.2f\n\r", avg_faction_power);
-    sb += buf;
+    sb += fmt("average power: %5.2f\n\r") % avg_faction_power;
   } else if (is_abbrev(buf, "fights")) {
     sb += "Combatant                      Fighting                       Room\n\r";
     sb += "------------------------------------------------------------------\n\r";
     for (ch = gCombatList; ch; ch = ch->next_fighting) {
-      sprintf(buf, "%-30s %-30s %d\n\r", ch->getName(), ch->fight()->getName(), ch->inRoom());
-      sb += buf;
+      sb += fmt("%-30s %-30s %d\n\r") %
+        ch->getName() % ch->fight()->getName() % ch->inRoom();
     }
   } else if (is_abbrev(buf, "trapped")) {
     sb += "Trapped Containers\n\r";
@@ -478,11 +467,10 @@ void TPerson::doShow(const char *argument)
         else
           sprintf(buf2, "DISABLED: %s", zd.name);
        
-        sprintf(buf, "%3d %-38.38s %4dm %4dm %6d-%-6d %3d %.1f\n\r", 
-             zone, buf2, zd.lifespan, zd.age, bottom, zd.top, 
-             zd.zone_value,
-             (zd.num_mobs ? zd.mob_levels/zd.num_mobs : 0));
-        sb += buf;
+        sb += fmt("%3d %-38.38s %4dm %4dm %6d-%-6d %3d %.1f\n\r") %
+             zone % buf2 % zd.lifespan % zd.age % bottom % zd.top % 
+             zd.zone_value %
+             (zd.num_mobs ? zd.mob_levels/zd.num_mobs : 0);
       }
       bottom = zd.top + 1;
     }
@@ -520,21 +508,21 @@ void TPerson::doShow(const char *argument)
             continue;
 
           TObj *tObj = read_object(obj_index[objectIndex].virt, VIRTUAL);
-          strcpy(buf, tObj->getNameForShow(false, true, this).c_str());
 
           if (!hasWizPower(POWER_SHOW_TRUSTED))
-            sprintf(buf2, "%5d %5d   %s\n\r",
-                    obj_index[objectIndex].virt, objectIndex, buf);
+            sb += fmt("%5d %5d   %s\n\r") %
+              obj_index[objectIndex].virt % objectIndex %
+              (tObj->getNameForShow(false, true, this));
           else
-            sprintf(buf2, "%5d %3d    %5d   %3d %2d %5d %s\n\r",
-                    obj_index[objectIndex].virt, obj_index[objectIndex].getNumber(),
-                    obj_index[objectIndex].max_exist,
-                    obj_index[objectIndex].max_struct,
-                    max(obj_index[objectIndex].armor, (sh_int) 0),
-                    obj_index[objectIndex].value,
-                    buf);
+            sb += fmt("%5d %3d    %5d   %3d %2d %5d %s\n\r") %
+              obj_index[objectIndex].virt %
+              obj_index[objectIndex].getNumber() %
+              obj_index[objectIndex].max_exist %
+              obj_index[objectIndex].max_struct %
+              max(obj_index[objectIndex].armor, (sh_int) 0) %
+              obj_index[objectIndex].value %
+              (tObj->getNameForShow(false, true, this));
 
-          sb += buf2;
         }
 
         if (desc)
@@ -582,17 +570,19 @@ void TPerson::doShow(const char *argument)
       delete obj;
 
       if (!hasWizPower(POWER_SHOW_TRUSTED)) {
-        sprintf(buf, "%5d %5d   %s\n\r", obj_index[objnx].virt, objnx, buf2);
+        sb += fmt("%5d %5d   %s\n\r") %
+          obj_index[objnx].virt %
+          objnx %
+          buf2;
       } else {
-        sprintf(buf, "%5d %3d    %5d   %3d %2d %5d %s\n\r", 
-              obj_index[objnx].virt, obj_index[objnx].getNumber(),
-              obj_index[objnx].max_exist, 
-               obj_index[objnx].max_struct,
-               max(obj_index[objnx].armor, (sh_int) 0),
-               obj_index[objnx].value,
-              buf2);
+        sb += fmt("%5d %3d    %5d   %3d %2d %5d %s\n\r") %
+          obj_index[objnx].virt % obj_index[objnx].getNumber() %
+          obj_index[objnx].max_exist %
+          obj_index[objnx].max_struct %
+          max(obj_index[objnx].armor, (sh_int) 0) %
+          obj_index[objnx].value %
+          buf2;
       }
-      sb += buf;
     }
   } else if (is_abbrev(buf, "mobiles")) {
     if (!hasWizPower(POWER_SHOW_MOB)) {
@@ -606,12 +596,10 @@ void TPerson::doShow(const char *argument)
       sb += "-------------------------------------\n\r";
       for (b = character_list; b; b = b->next) {
         if (b->master && dynamic_cast<TMonster *>(b)) {
-          sprintf(buf, "%-30s", b->getNameNOC(this).c_str());
-          sb += buf;
-          sprintf(buf, " %s%s\n\r",
-              b->master->getNameNOC(this).c_str(), 
-              b->master->isPc() ? " (PC)" : "");
-          sb += buf;
+          sb += fmt("%-30s") % b->getNameNOC(this);
+          sb += fmt(" %s%s\n\r") %
+            b->master->getNameNOC(this) %
+            (b->master->isPc() ? " (PC)" : "");
         }  
       }
       if (desc)
@@ -639,10 +627,9 @@ void TPerson::doShow(const char *argument)
 	
 	
 	if(!haters.empty()){
-	  sprintf(buf, "%-20.20s (room: %5d) Hates: %s", 
-		  stripColorCodes(tmons->getName()).c_str(), 
-		  tmons->inRoom(), haters.c_str());
-	  sb += buf;
+	  sb += fmt("%-20.20s (room: %5d) Hates: %s") %
+            stripColorCodes(tmons->getName()) %
+            tmons->inRoom() % haters;
 	  sb += "\n\r";
 	}
       }
@@ -656,15 +643,13 @@ void TPerson::doShow(const char *argument)
         if (!b->isPc() && IS_SET(b->specials.act, ACT_HUNTING) && 
              (ch = b->specials.hunting)) {
           TMonster *tmons = dynamic_cast<TMonster *>(b);
-          sprintf(buf, "%-20.20s (room: %5d)    %-20.20s (room: %5d) %7s\n\r", 
-                        tmons->getName(), tmons->inRoom(),
-                        ch->getName(), ch->inRoom(),
-                        (tmons->Hates(ch, NULL) ? "(HATED)" : ""));
-          sb += buf;
-          sprintf(buf, "       persist: %d, range: %d, origin: %d\n\r",
-              tmons->persist, tmons->hunt_dist,
-              tmons->oldRoom);
-          sb += buf;
+          sb += fmt("%-20.20s (room: %5d)    %-20.20s (room: %5d) %7s\n\r") %
+            tmons->getName() % tmons->inRoom() %
+            ch->getName() % ch->inRoom() %
+            (tmons->Hates(ch, NULL) ? "(HATED)" : "");
+          sb += fmt("       persist: %d, range: %d, origin: %d\n\r") %
+            tmons->persist % tmons->hunt_dist %
+            tmons->oldRoom;
         }
       }
       if (desc)
@@ -676,9 +661,7 @@ void TPerson::doShow(const char *argument)
       for (b = character_list; b; b = b->next) {
         if ((k = dynamic_cast<TMonster *>(b)) && 
             k->resps && k->resps->respList) {
-          sprintf(buf, "%-30.30s (room: %5d)\n\r",
-                      b->getName(), b->in_room);
-          sb += buf;
+          sb += fmt("%-30.30s (room: %5d)\n\r") % b->getName() % b->in_room;
         }
       }
       if (desc)
@@ -692,16 +675,16 @@ void TPerson::doShow(const char *argument)
       for (b = character_list; b; b = b->next) {
         if (b->spec == SPEC_BOUNTY_HUNTER && b->act_ptr) {
           job = (bounty_hunt_struct *) b->act_ptr;
-          if (job && job->hunted_item && *job->hunted_item)
-            sprintf(buf, "%-30.30s (room: %5d)     item: %20.20s\n\r",
-                        b->getName(), b->in_room, job->hunted_item);
-          else if (job && job->hunted_victim && *job->hunted_victim)
-            sprintf(buf, "%-30.30s (room: %5d)     vict: %20.20s\n\r",
-                        b->getName(), b->in_room, job->hunted_victim);
-          else
-            sprintf(buf, "%-30.30s (room: %5d)     BOGUS\n\r", 
-                        b->getName(), b->in_room);
-          sb += buf;
+          if (job && job->hunted_item && *job->hunted_item) {
+            sb += fmt("%-30.30s (room: %5d)     item: %20.20s\n\r") %
+              b->getName() % b->in_room % job->hunted_item;
+          } else if (job && job->hunted_victim && *job->hunted_victim) {
+            sb += fmt("%-30.30s (room: %5d)     vict: %20.20s\n\r") %
+              b->getName() % b->in_room % job->hunted_victim;
+          } else {
+            sb += fmt("%-30.30s (room: %5d)     BOGUS\n\r") %
+              b->getName() % b->in_room;
+          }
         }
       }
       if (desc)
@@ -734,19 +717,19 @@ void TPerson::doShow(const char *argument)
               mob_index[mobileIndex].virt < 0)
             continue;
 
-          if (!hasWizPower(POWER_SHOW_TRUSTED))
-            sprintf(buf2, "%5d %3ld   %3ld  %3ld %s\n\r",
-                    mob_index[mobileIndex].virt, mob_index[mobileIndex].level,
-                    mob_index[mobileIndex].Class, mob_index[mobileIndex].faction,
-                    mob_index[mobileIndex].name);
-          else
-            sprintf(buf2, "%5d %4d  %3d   %3ld   %3ld  %3ld %s\n\r",
-                    mob_index[mobileIndex].virt, mob_index[mobileIndex].max_exist,
-                    mob_index[mobileIndex].getNumber(), mob_index[mobileIndex].level,
-                    mob_index[mobileIndex].Class, mob_index[mobileIndex].faction,
-                    mob_index[mobileIndex].name);
-
-          sb += buf2;
+          if (!hasWizPower(POWER_SHOW_TRUSTED)) {
+            sb += fmt("%5d %3ld   %3ld  %3ld %s\n\r") %
+              mob_index[mobileIndex].virt % mob_index[mobileIndex].level %
+              mob_index[mobileIndex].Class % mob_index[mobileIndex].faction %
+              mob_index[mobileIndex].name;
+          } else {
+            sb += fmt("%5d %4d  %3d   %3ld   %3ld  %3ld %s\n\r") %
+              mob_index[mobileIndex].virt % mob_index[mobileIndex].max_exist %
+              mob_index[mobileIndex].getNumber() %
+              mob_index[mobileIndex].level %
+              mob_index[mobileIndex].Class % mob_index[mobileIndex].faction %
+              mob_index[mobileIndex].name;
+          }
         }
 
         if (desc)
@@ -785,18 +768,17 @@ void TPerson::doShow(const char *argument)
     continue;
 
       if (!hasWizPower(POWER_SHOW_TRUSTED)) {
-        sprintf(buf, "%5d %3ld   %3ld  %3ld %s\n\r",
-               mob_index[objnx].virt, mob_index[objnx].level,
-               mob_index[objnx].Class, mob_index[objnx].faction,
-               mob_index[objnx].name);
+        sb += fmt("%5d %3ld   %3ld  %3ld %s\n\r") %
+          mob_index[objnx].virt % mob_index[objnx].level %
+          mob_index[objnx].Class % mob_index[objnx].faction %
+          mob_index[objnx].name;
       } else {
-        sprintf(buf, "%5d %4d  %3d   %3ld   %3ld  %3ld %s\n\r", 
-               mob_index[objnx].virt, mob_index[objnx].max_exist,
-               mob_index[objnx].getNumber(), mob_index[objnx].level, 
-               mob_index[objnx].Class, mob_index[objnx].faction,
-               mob_index[objnx].name);
+        sb += fmt("%5d %4d  %3d   %3ld   %3ld  %3ld %s\n\r") %
+          mob_index[objnx].virt % mob_index[objnx].max_exist %
+          mob_index[objnx].getNumber() % mob_index[objnx].level % 
+          mob_index[objnx].Class % mob_index[objnx].faction %
+          mob_index[objnx].name;
       }
-      sb += buf;
     }
   } else if (is_abbrev(buf, "maxed")) {
     if (!hasWizPower(POWER_SHOW_OBJ) || !hasWizPower(POWER_SHOW_TRUSTED)) {
@@ -813,14 +795,13 @@ void TPerson::doShow(const char *argument)
       sprintf(buf2, "%s", obj->getNameForShow(false, true, this).c_str());
       delete obj;
 
-      sprintf(buf, "%5d %3d    %5d   %3d %2d %5d %s\n\r", 
-              obj_index[objnx].virt, obj_index[objnx].getNumber(),
-              obj_index[objnx].max_exist, 
-	      obj_index[objnx].max_struct,
-	      max(obj_index[objnx].armor, (sh_int) 0),
-	      obj_index[objnx].value,
-              buf2);
-      sb += buf;
+      sb += fmt("%5d %3d    %5d   %3d %2d %5d %s\n\r") %
+        obj_index[objnx].virt % obj_index[objnx].getNumber() %
+        obj_index[objnx].max_exist % 
+        obj_index[objnx].max_struct %
+        max(obj_index[objnx].armor, (sh_int) 0) %
+        obj_index[objnx].value %
+        buf2;
     }
   } else if (is_abbrev(buf, "overmax")) {
     if (!hasWizPower(POWER_SHOW_OBJ) || !hasWizPower(POWER_SHOW_TRUSTED)) {
@@ -837,14 +818,13 @@ void TPerson::doShow(const char *argument)
       sprintf(buf2, "%s", obj->getNameForShow(false, true, this).c_str());
       delete obj;
 
-      sprintf(buf, "%5d %3d    %5d   %3d %2d %5d %s\n\r", 
-              obj_index[objnx].virt, obj_index[objnx].getNumber(),
-              obj_index[objnx].max_exist, 
-	      obj_index[objnx].max_struct,
-	      max(obj_index[objnx].armor, (sh_int) 0),
-	      obj_index[objnx].value,
-              buf2);
-      sb += buf;
+      sb += fmt("%5d %3d    %5d   %3d %2d %5d %s\n\r") %
+        obj_index[objnx].virt % obj_index[objnx].getNumber() %
+        obj_index[objnx].max_exist % 
+        obj_index[objnx].max_struct %
+        max(obj_index[objnx].armor, (sh_int) 0) %
+        obj_index[objnx].value %
+        buf2;
     }
   } else if (is_abbrev(buf, "rooms")) {
     strcpy(zonenum, argument);
@@ -890,8 +870,8 @@ void TPerson::doShow(const char *argument)
 
         if (srzs.blank) {
           sb += srzs.sb;
-          sprintf(buf, "rooms %d-%d are blank.\n\r", srzs.startblank, srzs.lastblank);
-          sb += buf;
+          sb += fmt("rooms %d-%d are blank.\n\r") %
+            srzs.startblank % srzs.lastblank;
           srzs.blank = 0;
         } else
           sb += srzs.sb;
@@ -922,9 +902,8 @@ void TPerson::doShow(const char *argument)
       for(i=0;i<200;++i){
 	if(material_nums[i].mat_name[0]){
 	  buf[0]='\0';
-	  sprintf(buf, "%-9i %s\n\r", i, 
-		  sstring(material_nums[i].mat_name).uncap().c_str());
-	  sb += buf;
+	  sb += fmt("%-9i %s\n\r") % i % 
+            sstring(material_nums[i].mat_name).uncap();
 	}
       }
     }
@@ -997,9 +976,8 @@ void TPerson::doShow(const char *argument)
       else
         sprintf(buf2, "%d,...,%d", bottom, top);
 
-      sprintf(buf, "Showing Free %s Entires in Zone: %s\n\r--------------------\n\r",
-              (isMobileF ? "Mobiles" : "Objects"), buf2);
-      sb += buf;
+      sb += fmt("Showing Free %s Entires in Zone: %s\n\r--------------------\n\r") %
+        (isMobileF ? "Mobiles" : "Objects") % buf2;
 
       if (top == bottom)
         shFrTotalCount += showFreeMobObj(top, &sb, isMobileF);
@@ -1010,14 +988,12 @@ void TPerson::doShow(const char *argument)
         for (int Runner = bottom; Runner < (top + 1); Runner++)
           shFrTotalCount += showFreeMobObj(Runner, &sb, isMobileF, true);
 
-      sprintf(buf, "Total Count of %s: %lu\n\r",
-              (isMobileF ? "Mobiles" : "Objects"), shFrTotalCount);
-      sb += buf;
+      sb += fmt("Total Count of %s: %lu\n\r") %
+        (isMobileF ? "Mobiles" : "Objects") % shFrTotalCount;
     }
   } else if (is_abbrev(buf, "created")) {
-    char tString[256],
-         tBuffer[256],
-         tBuf[256];
+    sstring tBuffer;
+    char tBuf[256];
     int  tTotalCount = 0;
 
     for (; isspace(*argument); argument++);
@@ -1048,33 +1024,34 @@ void TPerson::doShow(const char *argument)
             obj_index[tObjectIndex].value >  minCost &&
             (tStItemType.empty() ||
              is_abbrev(tStItemType, ItemInfo[obj_index[tObjectIndex].itemtype]->name))) {
-          strcpy(tBuffer, obj_index[tObjectIndex].short_desc);
+          tBuffer = obj_index[tObjectIndex].short_desc;
 
           if (colorString(this, desc, tBuffer, NULL, COLOR_NONE, TRUE).length() > 40) {
+            tBuffer.assign("...<z>", 38);
+            /*
             tBuffer[38] = '\0';
             strcat(tBuffer, "...<z>");
+            */
           }
 
           // This corrects the 'have color code will misalign' problem.
-          int factualSpace = strlen(tBuffer) - strlen(colorString(this, desc, tBuffer,
-                                                                  NULL, COLOR_NONE,
-                                                                  TRUE).c_str());
+          int factualSpace = tBuffer.length() - colorString(this, desc, tBuffer,
+                                                            NULL, COLOR_NONE,
+                                                            TRUE).length();
 
           sprintf(tBuf, "[%%5d] [%%4d] %%-%ds (%%s)\n\r", (40 + factualSpace));
 
-          sprintf(tString, tBuf,
-                  obj_index[tObjectIndex].virt, obj_index[tObjectIndex].value,
-                  tBuffer,
-                  ItemInfo[obj_index[tObjectIndex].itemtype]->name);
-           sb += tString;
-           tTotalCount++;
+          sb += fmt(tBuf) %
+            obj_index[tObjectIndex].virt % obj_index[tObjectIndex].value %
+            tBuffer %
+            ItemInfo[obj_index[tObjectIndex].itemtype]->name;
+          tTotalCount++;
         }
 
-      sprintf(tString, "Total Count: %d\n\r", tTotalCount);
       sb += "\n\r";
-      sb += tString;
+      tStArgument = fmt("Total Count: %d\n\r") % tTotalCount;
+      sb += tStArgument;
 
-      tStArgument = tString;
       tStArgument += "\n\r";
       tStArgument += sb;
       sb = tStArgument;
@@ -1082,8 +1059,7 @@ void TPerson::doShow(const char *argument)
   } else if (is_abbrev(buf, "components")) {
     TComponent *tComponent = NULL;
     int         tValue = -1;
-    char        tString[256],
-                tBuffer[256];
+    char        tBuffer[256];
 
     for (; isspace(*argument); argument++);
 
@@ -1121,11 +1097,10 @@ void TPerson::doShow(const char *argument)
             else
               strcat(tBuffer, " ");
 
-            sprintf(tString, "%25s [%s] %s\n\r",
-                    (!tError ? "Undefined" : (tError == -1 ? "UNKNOWN/BOGUS" :
-                     discArray[tComponent->getComponentSpell()]->name)),
-                    tBuffer, tComponent->getName());
-            sb += tString;
+            sb += fmt("%25s [%s] %s\n\r") %
+              (!tError ? "Undefined" : (tError == -1 ? "UNKNOWN/BOGUS" :
+                discArray[tComponent->getComponentSpell()]->name)) %
+              tBuffer % tComponent->getName();
 
             // This little function has alot of slap to it.  We don't want
             // to call this 20+ times in rapid succession or we will probably
@@ -1165,11 +1140,6 @@ void TPerson::doShow(const char *argument)
   return;
 }
 
-
-
-
-
-
 // ----- New Show Code Below Here:
 #if 0
       case  1: // zones
@@ -1208,14 +1178,6 @@ void TPerson::doShow(const char *argument)
       case 12: // fights
         ShopFights();
         break;
-
-
-
-
-
-
-
-
 
 
 unsigned long int showFreeMobObj(int shFrZoneNumber, sstring *sb,

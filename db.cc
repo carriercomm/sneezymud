@@ -1510,10 +1510,10 @@ TObj *read_object(int nr, readFileTypeT type)
     obj = makeNewObj(mapFileToItemType(convertTo<int>(obj_cache[cache_object(nr)]->s["type"])));
     obj->number=nr;
     if (!obj->isObjStat(ITEM_STRUNG)) {
-      obj->name = obj_index[nr].name;
-      obj->shortDescr = obj_index[nr].short_desc;
-      obj->setDescr(obj_index[nr].long_desc);
-      obj->action_description = obj_index[nr].description;
+      obj->name = mud_str_dup(obj_index[nr].name);
+      obj->shortDescr = mud_str_dup(obj_index[nr].short_desc);
+      obj->setDescr(mud_str_dup(obj_index[nr].long_desc));
+      obj->action_description = mud_str_dup(obj_index[nr].description);
       obj->ex_description=obj_index[nr].ex_description;
     }
 
@@ -1542,10 +1542,10 @@ TObj *read_object(int nr, readFileTypeT type)
     obj = makeNewObj(mapFileToItemType(convertTo<int>(db["type"])));
     obj->number=nr;
     if (!obj->isObjStat(ITEM_STRUNG)) {
-      obj->name = obj_index[nr].name;
-      obj->shortDescr = obj_index[nr].short_desc;
-      obj->setDescr(obj_index[nr].long_desc);
-      obj->action_description = obj_index[nr].description;
+      obj->name = mud_str_dup(obj_index[nr].name);
+      obj->shortDescr = mud_str_dup(obj_index[nr].short_desc);
+      obj->setDescr(mud_str_dup(obj_index[nr].long_desc));
+      obj->action_description = mud_str_dup(obj_index[nr].description);
       obj->ex_description=obj_index[nr].ex_description;
     }
     obj->setObjStat(convertTo<int>(db["action_flag"]));
@@ -2794,7 +2794,6 @@ TRoom *real_roomp(int virt)
   return ((virt < WORLD_SIZE) && (virt > -1)) ? room_db[virt] : 0;
 }
 
-
 // returns the real number of the monster with given virtual number 
 int real_mobile(int virt)
 {
@@ -2817,7 +2816,6 @@ int real_mobile(int virt)
       bot = mid + 1;
   }
 }
-
 
 // returns the real number of the object with given virtual number 
 int real_object(int virt)
@@ -3152,8 +3150,6 @@ extern void cleanUpMail();
 #endif
 }
 
-
-
 int find_shopnr(int number){
   unsigned int shop_nr;
 
@@ -3166,6 +3162,3 @@ int find_shopnr(int number){
 
   return shop_nr;
 }
-
-
-

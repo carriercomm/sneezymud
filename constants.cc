@@ -181,7 +181,7 @@ const char * const dirs[] =
   "\n"
 };
 
-const char * const scandirs[] =
+const sstring scandirs[] =
 {
   "north",
   "east",
@@ -224,7 +224,7 @@ const char * const dirs_to_blank[] =
   "to the southwest"
 };
 
-const char * const weekdays[7] =
+const sstring weekdays[7] =
 {
   "Sunday",
   "Monday",
@@ -235,7 +235,7 @@ const char * const weekdays[7] =
   "Saturday"
 };
 
-const char * const month_name[12] =
+const sstring month_name[12] =
 {
   "January",
   "February",
@@ -251,7 +251,7 @@ const char * const month_name[12] =
   "December",
 };
 
-const char * const fullness[] =
+const sstring fullness[] =
 {
   "less than half ",
   "about half ",
@@ -630,7 +630,7 @@ void assign_item_info()
      "Volume pile can hold", 10000000, 1);
 };
 
-const char * const wear_bits[MAX_ITEM_WEARS] =
+const sstring wear_bits[MAX_ITEM_WEARS] =
 {
   "Take",
   "Finger",
@@ -679,7 +679,7 @@ const char * const bodyParts[MAX_WEAR + 1] =
   "\n"
 };
 
-const char * const extra_bits[] =
+const sstring extra_bits[] =
 {
   "Glow",
   "Hum",
@@ -716,7 +716,7 @@ const char * const extra_bits[] =
   "\n"
 };
 
-const char * const room_bits[MAX_ROOM_BITS] =
+const sstring room_bits[MAX_ROOM_BITS] =
 {
   "ALWAYS-LIT",
   "DEATH",
@@ -741,7 +741,7 @@ const char * const room_bits[MAX_ROOM_BITS] =
 };
 
 
-const char * const exit_bits[MAX_DOOR_CONDITIONS] =
+const sstring exit_bits[MAX_DOOR_CONDITIONS] =
 {
   "Closed",
   "Locked",
@@ -755,7 +755,7 @@ const char * const exit_bits[MAX_DOOR_CONDITIONS] =
   "Sloped down"
 };
 
-const char * const chest_bits[] =
+const sstring chest_bits[] =
 {
   "Closeable",
   "Pickproof",
@@ -768,7 +768,7 @@ const char * const chest_bits[] =
   "Weightless/Volumeless",
 };
 
-const char * const door_types[] =
+const sstring door_types[] =
 {
   "None",
   "Door",
@@ -783,39 +783,40 @@ const char * const door_types[] =
   "Hatch",
 };
 
-const char * const affected_bits[] =
-{"Blind",
- "Invisible",
- "Swimming",
- "Detect-invisible",
- "Detect-magic",
- "Sense-life",
- "Levitating",
- "Sanctuary",
- "Group",
- "Webbed",
- "Curse",
- "Flying",
- "Poison",
- "Stunned",
- "Paralysis",
- "Infravision",
- "Water-breath",
- "Sleep",
- "Scrying",
- "Sneak",
- "Hide",
- "",
- "Charm",
- "",
- "Unused",
- "True_sight",
- "Eating Corpse",
- "Dragon Ride",
- "Silent",
- "",
- "Aggressor",
- "\n"
+const sstring affected_bits[] =
+{
+  "Blind",
+  "Invisible",
+  "Swimming",
+  "Detect-invisible",
+  "Detect-magic",
+  "Sense-life",
+  "Levitating",
+  "Sanctuary",
+  "Group",
+  "Webbed",
+  "Curse",
+  "Flying",
+  "Poison",
+  "Stunned",
+  "Paralysis",
+  "Infravision",
+  "Water-breath",
+  "Sleep",
+  "Scrying",
+  "Sneak",
+  "Hide",
+  "",
+  "Charm",
+  "",
+  "Unused",
+  "True_sight",
+  "Eating Corpse",
+  "Dragon Ride",
+  "Silent",
+  "",
+  "Aggressor",
+  "\n"
 };
 
 APP_type apply_types[MAX_APPLY_TYPES] = 
@@ -886,7 +887,7 @@ const struct class_info classInfo[MAX_CLASSES] =
 };
 
 
-const char * const action_bits[] =
+const sstring action_bits[] =
 {
   "Changed Strings",
   "Sentinel",
@@ -915,7 +916,7 @@ const char * const action_bits[] =
 };
 
 
-const char * const player_bits[] =
+const sstring player_bits[] =
 {
   "Brief",
   "Compact",
@@ -952,7 +953,7 @@ const char * const player_bits[] =
 };
 
 
-const char * const attr_player_bits[] =
+const sstring attr_player_bits[] =
 {
   "Brief",
   "Compact",
@@ -988,7 +989,7 @@ const char * const attr_player_bits[] =
   "\n"
 };
 
-const char * const prompt_mesg[] =
+const sstring prompt_mesg[] =
 {
   "near death",
   "horrid",
@@ -1205,7 +1206,7 @@ const char * const material_groups[] =
   "\n"
 };
 
-const char * const attack_modes[] =
+const sstring attack_modes[] =
 {
   "normal",
   "defensive",
@@ -1473,7 +1474,7 @@ const byte sharpness[] =
   50,         // TYPE_POUND
 };     
 
-const char * const body_flags[] =
+const sstring body_flags[] =
 {
   "bleeding",
   "infected",
@@ -1490,7 +1491,7 @@ const char * const body_flags[] =
   "\n"
 };
 
-const char * const card_names[14] =
+const sstring card_names[14] =
 {
   "Nothing",
   "Ace",
@@ -1539,7 +1540,7 @@ const double race_vol_constants[MAX_WEAR] = {
   22.86,   // extra foot left
 };
 
-const char * const immunity_names[MAX_IMMUNES] =
+const sstring immunity_names[MAX_IMMUNES] =
 {
   "Heat",     // 0
   "Cold",
@@ -1699,7 +1700,7 @@ const char * const illegalnames[] =
 };
 
 // CHANGE NUMBER if options added
-const char * const color_options[10] =
+const sstring color_options[10] =
 {
   "Color Basic           (color enabled)",
   "Color Objects         (color objects)",
@@ -1812,10 +1813,9 @@ const struct disc_names_data discNames[MAX_DISCS] =
   {DISC_ADVANCED_ADVENTURING, CLASS_WARRIOR | CLASS_RANGER | CLASS_THIEF | CLASS_DEIKHAN | CLASS_MONK | CLASS_CLERIC | CLASS_MAGE | CLASS_SHAMAN, "advanced adventuring"},
 };
 
-const char * const disc_names[MAX_DISCS] =
+const sstring disc_names[MAX_DISCS] =
 {
 // COSMO CLASS MARKER
-
   "Mage Abilities",           // 0 
   "Air Magic",                // 1
   "Alchemy",
@@ -1885,7 +1885,7 @@ const char * const disc_names[MAX_DISCS] =
   "Advanced Adventuring",
 };
 
-const char* const home_terrains[MAX_HOME_TERS] =
+const sstring home_terrains[MAX_HOME_TERS] =
 {
   "unknown",
   "urban dweller",  // human
@@ -1923,7 +1923,7 @@ const char* const home_terrains[MAX_HOME_TERS] =
   "maritime hobbit",
 };
 
-const char * const corpse_flags[MAX_CORPSE_FLAGS] =
+const sstring corpse_flags[MAX_CORPSE_FLAGS] =
 {
   "No-Resurrection",
   "No-Dissection",
@@ -1949,9 +1949,6 @@ const char * const deities[MAX_DEITIES] =
   "Talana, the lawgiver",
   "Salurel, the proud",
 };
-
-
-
 
 const char *shelldesc [] =
 {
@@ -1999,12 +1996,7 @@ const char *shellkeyword [] =
   "cannonball",                  // 18
 };
 
-
-
-
-
-
-const char * const trap_effects[MAX_TRAP_EFF] =
+const sstring trap_effects[MAX_TRAP_EFF] =
 {
   "Movement",
   "Get/Put",
@@ -2024,7 +2016,6 @@ const char * const trap_effects[MAX_TRAP_EFF] =
   "Thrown_armed_2",
   "Thrown_armed_3",
 };
-
 
 const char * heraldcodes[] =
 {
@@ -2046,7 +2037,6 @@ const char * heraldcodes[] =
   "<1>"  // "\n"
 };
 
-
 const char * heraldcolors[] =
 {
   "none",
@@ -2066,7 +2056,6 @@ const char * heraldcolors[] =
   "boldcyan",
   "\n"
 };
-
 
 // some factors from stdsneezy.h
 const int PROD_GAMEPORT = 7900;

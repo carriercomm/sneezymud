@@ -2151,10 +2151,10 @@ void TBeing::doUnlock(const char *argument)
             TRUE, this, 0, (const TThing *)(exitp->getName().c_str()), TO_CHAR);
         cantHit += loseRound(5);
       }
-      char buf[256];
-      sprintf(buf, "$n unlocks the $T with %s.", obj_index[real_object(exitp->key)].short_desc);
+      sstring buf;
+      buf = fmt("$n unlocks the $T with %s.") % obj_index[real_object(exitp->key)].short_desc;
       act(buf, TRUE, this, 0, (const TThing *) (exitp->getName().c_str()), TO_ROOM);
-      sprintf(buf, "You unlock the $T with %s.", obj_index[real_object(exitp->key)].short_desc);
+      buf = fmt("You unlock the $T with %s.") % obj_index[real_object(exitp->key)].short_desc;
       act(buf, TRUE, this, 0, (const TThing *) (exitp->getName().c_str()), TO_CHAR);
      
       REMOVE_BIT(exitp->condition, EX_LOCKED);

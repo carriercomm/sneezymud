@@ -741,8 +741,7 @@ void seditDisplayResponse(TBeing *ch, resp *respIndex,
                           bool tForm, int tValue,
                           bool isSilent, sstring *tStString)
 {
-  char tString[256] = "",
-       tBuffer[256];
+  sstring tString, tBuffer;
 
   // This is bad.  Should never happen.
   // But i'm paranoid.
@@ -750,7 +749,7 @@ void seditDisplayResponse(TBeing *ch, resp *respIndex,
     return;
 
   if (tValue) {
-    sprintf(tBuffer, "[%2d] ", tValue);
+    tBuffer = fmt("[%2d] ") % tValue;
 
     if (isSilent)
       *tStString += tBuffer;
@@ -763,28 +762,28 @@ void seditDisplayResponse(TBeing *ch, resp *respIndex,
     int tObjNum = real_object(convertTo<int>(respIndex->args));
 
     if (tObjNum < 0 || tObjNum > (signed int) obj_index.size())
-      strcpy(tString, " [Unknown]");
+      tString = " [Unknown]";
     else
-      sprintf(tString, " [%s]", obj_index[tObjNum].name);
+      tString = fmt(" [%s]") % obj_index[tObjNum].name;
   }
 
   if (respIndex->cmd < MAX_CMD_LIST) {
-    sprintf(tBuffer, "{%s} = {%s}%s\n\r",
-            commandArray[respIndex->cmd]->name, respIndex->args, tString);
+    tBuffer = fmt("{%s} = {%s}%s\n\r") %
+      commandArray[respIndex->cmd]->name % respIndex->args % tString;
 
     if (isSilent)
       *tStString += tBuffer;
     else
       ch->sendTo(COLOR_COMM, tBuffer);
   } else if (respIndex->cmd == CMD_RESP_ROOM_ENTER) {
-    sprintf(tBuffer, "{roomenter} {%s}\n\r", respIndex->args);
+    tBuffer = fmt("{roomenter} {%s}\n\r") % respIndex->args;
 
     if (isSilent)
       *tStString += tBuffer;
     else
       ch->sendTo(COLOR_COMM, tBuffer);
   } else {
-    sprintf(tBuffer, "{%d} {%s}\n\r", respIndex->cmd, respIndex->args);
+    tBuffer = fmt("{%d} {%s}\n\r") % respIndex->cmd % respIndex->args;
 
     if (isSilent)
       *tStString += tBuffer;
@@ -806,7 +805,7 @@ void seditDisplayResponse(TBeing *ch, resp *respIndex,
       else
         ch->sendTo("\tEmpty\n\r");
     } else for (tCmd = respIndex->cmds; tCmd; tCmd = tCmd->next) {
-      tString[0] = '\0';
+      tString = "";
 
       if ((tCmd->cmd == CMD_LOAD ||
            tCmd->cmd == CMD_RESP_CHECKLOAD) &&
@@ -814,13 +813,13 @@ void seditDisplayResponse(TBeing *ch, resp *respIndex,
         int tObjNum = real_object(convertTo<int>(tCmd->args));
 
         if (tObjNum < 0 || tObjNum > (signed int) obj_index.size())
-          strcpy(tString, " [Unknown]");
+          tString = " [Unknown]";
         else
-          sprintf(tString, " [%s]", obj_index[tObjNum].name);
+          tString = fmt(" [%s]") % obj_index[tObjNum].name;
       }
 
-      sprintf(tBuffer, "\t%s %s;%s\n\r",
-              seditExtraWords(tCmd->cmd).c_str(), tCmd->args, tString);
+      tBuffer = fmt("\t%s %s;%s\n\r") %
+        seditExtraWords(tCmd->cmd) % tCmd->args % tString;
 
       if (isSilent)
         *tStString += tBuffer;

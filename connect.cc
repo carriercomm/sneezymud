@@ -69,9 +69,6 @@ struct {
    "Your vision has been damaged and you are permanently blind."}
 };
 
-			  
-
-
 bonusStatPoints::bonusStatPoints() :
   total(0),
   combat(0),
@@ -80,7 +77,6 @@ bonusStatPoints::bonusStatPoints() :
   util(0)
 {
 }
-
 
 Descriptor::Descriptor() :
   output(true),
@@ -971,7 +967,6 @@ void ShowNewNews(TBeing * tBeing)
   if (tPosted)
     tBeing->sendTo("\n\r");
 }
-
 
 int Descriptor::getFreeStat(){
   // add the base chosen stats
@@ -3320,48 +3315,48 @@ void Descriptor::sendHomeList()
 
 void Descriptor::sendStartStatList()
 {
-  char buf[256];
+  sstring buf;
 
   character->cls();
   writeToQ("\n\rCongratulations, you have finished the basic character creation process.\n\r\n\rThe only remaining step is to determine your character's characteristics.\n\r");
 
-  sprintf(buf, "%s uses a unique system of characteristics.  In essence though, based\n\r", MUD_NAME);
+  buf = fmt("%s uses a unique system of characteristics.  In essence though, based\n\r") % MUD_NAME;
   writeToQ(buf);
 
   writeToQ("on your character's race, characteristics have already been assigned to\n\ryour character.  You are free to adjust these characteristics somewhat above\n\ror below the racial average to suit your particular likings, or, you may\n\rbypass this step, and proceed right into the game.\n\r\n\r");
 
-  sprintf(buf, "%sThis is the only opportunity you will have to adjust these characteristics.%s\n\r\n\r", orange(), norm());
+  buf = fmt("%sThis is the only opportunity you will have to adjust these characteristics.%s\n\r\n\r") % orange() % norm();
   writeToQ(buf);
 
-  sprintf(buf, "Choose:\n\r(%sE%s)%snter the game%s accepting the characteristics assigned by race, or\n\r",
-        cyan(), norm(), cyan(), norm());
+  buf = fmt("Choose:\n\r(%sE%s)%snter the game%s accepting the characteristics assigned by race, or\n\r") %
+        cyan() % norm() % cyan() % norm();
   writeToQ(buf);
 
-  sprintf(buf, "(%sC%s)%sustomize your characteristics%s.\n\r",
-        cyan(), norm(), cyan(), norm());
+  buf = fmt("(%sC%s)%sustomize your characteristics%s.\n\r") %
+        cyan() % norm() % cyan() % norm();
   writeToQ(buf);
 
-  sprintf(buf, "Or type '%s/%s' %sto go back to basic character creation%s.\n\r\n\r--> ",
-        cyan(), norm(), cyan(), norm());
+  buf = fmt("Or type '%s/%s' %sto go back to basic character creation%s.\n\r\n\r--> ") %
+        cyan() % norm() % cyan() % norm();
   writeToQ(buf);
 }
 
 void Descriptor::sendDoneScreen()
 {
-  char buf[256];
+  sstring buf;
 
   character->cls();
   writeToQ("\n\rCongratulations, you have finished the character creation process.\n\r");
-  sprintf(buf, "If you are a newcomer to %s, %stake a minute to read this screen%s.\n\r\n\r", MUD_NAME, orange(), norm());
+  buf = fmt("If you are a newcomer to %s, %stake a minute to read this screen%s.\n\r\n\r") % MUD_NAME % orange() % norm();
   writeToQ(buf);
 
   writeToQ("Upon connecting, you will want to check your initial terminal options.\n\r");
   writeToQ("Know that the game will automatically set some of these options for you.\n\r");
   writeToQ("These include: prompts, automatic actions, terminal size, color.\n\r");
   writeToQ("Your initial settings are just defaults and you can change them easily.\n\r");
-  sprintf(buf, "Good help files to read are <%sCOLOR%s>, <%sPROMPTS%s> and <%sAUTO%s>.\n\r\n\r", orange(), norm(), orange(), norm(), orange(), norm());
+  buf = fmt("Good help files to read are <%sCOLOR%s>, <%sPROMPTS%s> and <%sAUTO%s>.\n\r\n\r") % orange() % norm() % orange() % norm() % orange() % norm();
   writeToQ(buf);
-  sprintf(buf, "You should also %sread the newbie guide%s and %swear your equipment%s.\n\r", orange(), norm(), orange(), norm());
+  buf = fmt("You should also %sread the newbie guide%s and %swear your equipment%s.\n\r") % orange() % norm() % orange() % norm();
   writeToQ(buf);
 
   writeToQ("For further orientation, use the help system, newbie helpers and immortal staff.\n\r");
@@ -3369,11 +3364,11 @@ void Descriptor::sendDoneScreen()
   writeToQ("allowed to help you discover The World.  However, they are allowed\n\r");
   writeToQ("and encouraged to help you with command problems and general orientation.\n\r\n\r");
 
-  sprintf(buf, "The gods and implementors of %s hope that you enjoy your stay.\n\r", MUD_NAME);
+  buf = fmt("The gods and implementors of %s hope that you enjoy your stay.\n\r") % MUD_NAME;
   writeToQ(buf);
   writeToQ("You may also wish to check out our mud client, web site and listserver.\n\r\n\r");
-  sprintf(buf, "When you are ready, (%sE%s)%snter%s the game or '%s/%s' %sto go back a menu%s.\n\r\n\r--> ",
-        cyan(), norm(), cyan(), norm(), cyan(), norm(), cyan(), norm());
+  buf = fmt("When you are ready, (%sE%s)%snter%s the game or '%s/%s' %sto go back a menu%s.\n\r\n\r--> ") %
+        cyan() % norm() % cyan() % norm() % cyan() % norm() % cyan() % norm();
   writeToQ(buf);
 }
 
@@ -3404,15 +3399,15 @@ const char *Descriptor::getStatDescription(int local_stat)
  
 void Descriptor::sendStatRules(int num)
 {
-  char buf[1024];
+  sstring buf;
 
   if (num == 1) {
-    sprintf(buf, "Welcome to the %s characteristic's customization process.\n\r\n\r", MUD_NAME);
+    buf = fmt("Welcome to the %s characteristic's customization process.\n\r\n\r") % MUD_NAME;
     writeToQ(buf);
     writeToQ("Please remember the following as you customize your characteristics.  First,\n\rall characteristics are merely modifiers on preselected racial norms.\n\rThat is, if you elected to be an ogre, you start off with an ogre's\n\rcharacteristics (strength, brawn, intellect, etc).  Likewise, those who\n\relected to be elves, have the elven norm as their starting point.\n\r\n\r");
     writeToQ("REALIZE THAT A ZERO STAT IS YOUR RACIAL NORM.\n\r\n\r");
   } else if (num == 2) {
-    sprintf(buf, "Characteristics on %s are split into four groups, two for physical,\n\rmental, and utility.  Each section has 3 characteristics.  You are free\n\rto move points between characteristics in the same section, but you may not\n\rmove points between characteristics in different sections.  Additionally, no\n\rcharacteristic may be raised or lowered more than 25 points above or below\n\rthe racial norm.\n\r\n\r", MUD_NAME);
+    buf = fmt("Characteristics on %s are split into four groups, two for physical,\n\rmental, and utility.  Each section has 3 characteristics.  You are free\n\rto move points between characteristics in the same section, but you may not\n\rmove points between characteristics in different sections.  Additionally, no\n\rcharacteristic may be raised or lowered more than 25 points above or below\n\rthe racial norm.\n\r\n\r") % MUD_NAME;
     writeToQ(buf);
     writeToQ("The customization process begins on the following screens.\n\r\n\r");
     writeToQ("To change any characteristic, you may do ('+', '-'){amount}(characteristic).\n\rWhere {amount} represents the number of points of the (characteristic)\n\rto change, and (characteristic) represents the letter corresponding to the\n\rcharacteristic.\n\r\n\r");
@@ -3425,58 +3420,56 @@ void Descriptor::sendStatRules(int num)
 
 void Descriptor::sendStatList(int group, int)
 {
-  char buf[1024];
-  char buf1[80];
-  // char buf2[80];
-  char pc_race[80];
-  int stat1;//, stat2;
+  sstring buf;
+  sstring buf1;
+  sstring pc_race;
+  int stat1;
   int free_stat;
-  // buf2 = "";
-  // stat2 = 0;
+
   // get the race description
-  strcpy(pc_race, character->getMyRace()->getSingularName().c_str());
+  pc_race = character->getMyRace()->getSingularName();
   switch (group) {
     case 1:
       character->cls();
       writeToQ("Your current physical characteristics are: \n\r\n\r");
       stat1 = character->chosenStats.get(STAT_STR);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sS%s)%strength%s       [%3d] (%s%s %s%s)\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sS%s)%strength%s       [%3d] (%s%s %s%s)\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(S)trength       [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(S)trength       [%3d] (%s %s)\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
       stat1 = character->chosenStats.get(STAT_CON);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sC%s)%sonstitution%s   [%3d] (%s%s %s%s)\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sC%s)%sonstitution%s   [%3d] (%s%s %s%s)\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(C)onstitution   [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(C)onstitution   [%3d] (%s %s)\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       stat1 = character->chosenStats.get(STAT_BRA);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sB%s)%srawn%s          [%3d] (%s%s %s%s)\n\r\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sB%s)%srawn%s          [%3d] (%s%s %s%s)\n\r\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(B)rawn          [%3d] (%s %s)\n\r\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(B)rawn          [%3d] (%s %s)\n\r\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       if(ALLOW_TRAITS){
 	if (account->term == TERM_ANSI) {
-	  sprintf(buf,"e(%sX%s)%stra%s          [%3d]\n\r\n\r",
-		  cyan(), norm(), cyan(), norm(), bonus_points.total);
+	  buf = fmt("e(%sX%s)%stra%s          [%3d]\n\r\n\r") %
+		  cyan() % norm() % cyan() % norm() % bonus_points.total;
 	} else {
-	  sprintf(buf,"e(X)tra          [%3d]\n\r\n\r", bonus_points.total);
+	  buf = fmt("e(X)tra          [%3d]\n\r\n\r") % bonus_points.total;
 	}
 	writeToQ(buf);
       }
@@ -3487,21 +3480,21 @@ void Descriptor::sendStatList(int group, int)
 
       free_stat = getFreeStat();
 
-      sprintf(buf, "You have %d free physical stat points.\n\r\n\r", free_stat);
+      buf = fmt("You have %d free physical stat points.\n\r\n\r") % free_stat;
       writeToQ(buf);
       if (account->term == TERM_ANSI) {
-        sprintf(buf, "To go back to the previous menu, %stype%s '%s/%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To go back to the previous menu, %stype%s '%s/%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "To disconnect, %stype%s '%s~%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To disconnect, %stype%s '%s~%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r",
-             cyan(), norm(), cyan(), norm(),
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r") %
+             cyan() % norm() % cyan() % norm() %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "(%sE%s)%snd%s when you are done customizing your physical characteristics.\n\r\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("(%sE%s)%snd%s when you are done customizing your physical characteristics.\n\r\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
       } else {
         writeToQ("To go back to the previous menu, type '/'.\n\r");
@@ -3515,43 +3508,43 @@ void Descriptor::sendStatList(int group, int)
       character->cls();
       writeToQ("Your current mental characteristics are: \n\r\n\r");
       stat1 = character->chosenStats.get(STAT_INT);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sI%s)%sntelligence%s   [%3d] (%s%s %s%s)\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sI%s)%sntelligence%s   [%3d] (%s%s %s%s)\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(I)ntelligence   [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(I)ntelligence   [%3d] (%s %s)\n\r") % stat1 % buf1 %  pc_race;
       }
       writeToQ(buf);
       stat1 = character->chosenStats.get(STAT_WIS);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sW%s)%sisdom%s         [%3d] (%s%s %s%s)\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sW%s)%sisdom%s         [%3d] (%s%s %s%s)\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(W)isdom         [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(W)isdom         [%3d] (%s %s)\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       stat1 = character->chosenStats.get(STAT_FOC);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sF%s)%socus%s          [%3d] (%s%s %s%s)\n\r\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sF%s)%socus%s          [%3d] (%s%s %s%s)\n\r\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(F)ocus          [%3d] (%s %s)\n\r\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(F)ocus          [%3d] (%s %s)\n\r\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       if(ALLOW_TRAITS){
 	if (account->term == TERM_ANSI) {
-	  sprintf(buf,"e(%sX%s)%stra%s          [%3d]\n\r\n\r",
-		  cyan(), norm(), cyan(), norm(), bonus_points.total);
+	  buf = fmt("e(%sX%s)%stra%s          [%3d]\n\r\n\r") %
+		  cyan() % norm() % cyan() % norm() % bonus_points.total;
 	} else {
-	  sprintf(buf,"e(X)tra          [%3d]\n\r\n\r", bonus_points.total);
+	  buf = fmt("e(X)tra          [%3d]\n\r\n\r") % bonus_points.total;
 	}
 	writeToQ(buf);
 	
@@ -3564,21 +3557,21 @@ void Descriptor::sendStatList(int group, int)
 
       free_stat = getFreeStat();
 
-      sprintf(buf, "You have %d free mental stat points.\n\r\n\r", free_stat);
+      buf = fmt("You have %d free mental stat points.\n\r\n\r") % free_stat;
       writeToQ(buf);
       if (account->term == TERM_ANSI) {
-        sprintf(buf, "To go back to the previous menu, %stype%s '%s/%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To go back to the previous menu, %stype%s '%s/%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "To disconnect, %stype%s '%s~%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To disconnect, %stype%s '%s~%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r",
-             cyan(), norm(), cyan(), norm(),
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r") %
+             cyan() % norm() % cyan() % norm() %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "(%sE%s)%snd%s when you are done customizing your mental characteristics.\n\r\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("(%sE%s)%snd%s when you are done customizing your mental characteristics.\n\r\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
       } else {
         writeToQ("To go back to the previous menu, type '/'.\n\r");
@@ -3592,45 +3585,45 @@ void Descriptor::sendStatList(int group, int)
       character->cls();
       writeToQ("Your current utility characteristics are: \n\r\n\r");
       stat1 = character->chosenStats.get(STAT_PER);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sP%s)%serception%s     [%3d] (%s%s %s%s)\n\r", 
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sP%s)%serception%s     [%3d] (%s%s %s%s)\n\r") % 
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(P)erception     [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(P)erception     [%3d] (%s %s)\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       stat1 = character->chosenStats.get(STAT_CHA);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sC%s)%sharisma%s       [%3d] (%s%s %s%s)\n\r", 
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sC%s)%sharisma%s       [%3d] (%s%s %s%s)\n\r") % 
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(C)harisma       [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(C)harisma       [%3d] (%s %s)\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       stat1 = character->chosenStats.get(STAT_KAR);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sK%s)%sarma%s          [%3d] (%s%s %s%s)\n\r\n\r", 
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sK%s)%sarma%s          [%3d] (%s%s %s%s)\n\r\n\r") % 
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(K)arma          [%3d] (%s %s)\n\r\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(K)arma          [%3d] (%s %s)\n\r\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
 
       if(ALLOW_TRAITS){
 	if (account->term == TERM_ANSI) {
-	  sprintf(buf,"e(%sX%s)%stra%s          [%3d]\n\r\n\r",
-		  cyan(), norm(), cyan(), norm(), bonus_points.total);
+	  buf = fmt("e(%sX%s)%stra%s          [%3d]\n\r\n\r") %
+		  cyan() % norm() % cyan() % norm() % bonus_points.total;
 	} else {
-	  sprintf(buf,"e(X)tra          [%3d]\n\r\n\r", bonus_points.total);
+	  buf = fmt("e(X)tra          [%3d]\n\r\n\r") % bonus_points.total;
 	}
 	writeToQ(buf);
       }
@@ -3641,21 +3634,21 @@ void Descriptor::sendStatList(int group, int)
 
       free_stat = getFreeStat();
 
-      sprintf(buf, "You have %d free utility stat points.\n\r\n\r", free_stat);
+      buf = fmt("You have %d free utility stat points.\n\r\n\r") % free_stat;
       writeToQ(buf);
       if (account->term == TERM_ANSI) {
-        sprintf(buf, "To go back to the previous menu, %stype%s '%s/%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To go back to the previous menu, %stype%s '%s/%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "To disconnect, %stype%s '%s~%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To disconnect, %stype%s '%s~%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r",
-             cyan(), norm(), cyan(), norm(),
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r") %
+             cyan() % norm() % cyan() % norm() %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "(%sE%s)%snd%s when you are done customizing your utility characteristics.\n\r\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("(%sE%s)%snd%s when you are done customizing your utility characteristics.\n\r\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
       } else {
         writeToQ("To go back to the previous menu, type '/'.\n\r");
@@ -3669,43 +3662,43 @@ void Descriptor::sendStatList(int group, int)
       character->cls();
       writeToQ("Your current physical characteristics are: \n\r\n\r");
       stat1 = character->chosenStats.get(STAT_DEX);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sD%s)%sexterity%s      [%3d] (%s%s %s%s)\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sD%s)%sexterity%s      [%3d] (%s%s %s%s)\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(D)exterity      [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(D)exterity      [%3d] (%s %s)\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
       stat1 = character->chosenStats.get(STAT_AGI);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sA%s)%sgility%s        [%3d] (%s%s %s%s)\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sA%s)%sgility%s        [%3d] (%s%s %s%s)\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(A)gility       [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(A)gility       [%3d] (%s %s)\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       stat1 = character->chosenStats.get(STAT_SPE);
-      strcpy(buf1, getStatDescription(stat1));
+      buf1 = getStatDescription(stat1);
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sS%s)%speed%s          [%3d] (%s%s %s%s)\n\r\n\r",
-          cyan(), norm(), cyan(), norm(), stat1, 
-          orange(), buf1, pc_race, norm());
+        buf = fmt("(%sS%s)%speed%s          [%3d] (%s%s %s%s)\n\r\n\r") %
+          cyan() % norm() % cyan() % norm() % stat1 % 
+          orange() % buf1 % pc_race % norm();
       } else {
-        sprintf(buf,"(S)peed          [%3d] (%s %s)\n\r\n\r", stat1, buf1,  pc_race);
+        buf = fmt("(S)peed          [%3d] (%s %s)\n\r\n\r") % stat1 % buf1 % pc_race;
       }
       writeToQ(buf);
 
       if(ALLOW_TRAITS){
 	if (account->term == TERM_ANSI) {
-	  sprintf(buf,"e(%sX%s)%stra%s          [%3d]\n\r\n\r",
-		  cyan(), norm(), cyan(), norm(), bonus_points.total);
+	  buf = fmt("e(%sX%s)%stra%s          [%3d]\n\r\n\r") %
+		  cyan() % norm() % cyan() % norm() % bonus_points.total;
 	} else {
-	  sprintf(buf,"e(X)tra          [%3d]\n\r\n\r", bonus_points.total);
+	  buf = fmt("e(X)tra          [%3d]\n\r\n\r") % bonus_points.total;
 	}
 	writeToQ(buf);
       }
@@ -3715,21 +3708,21 @@ void Descriptor::sendStatList(int group, int)
       writeToQ("(S)peed affects how fast you are able to do things.\n\r\n\r");
       free_stat = getFreeStat();
 
-      sprintf(buf, "You have %d free physical stat points.\n\r\n\r", free_stat);
+      buf = fmt("You have %d free physical stat points.\n\r\n\r") % free_stat;
       writeToQ(buf);
       if (account->term == TERM_ANSI) {
-        sprintf(buf, "To go back to the previous menu, %stype%s '%s/%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To go back to the previous menu, %stype%s '%s/%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "To disconnect, %stype%s '%s~%s'.\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("To disconnect, %stype%s '%s~%s'.\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r",
-             cyan(), norm(), cyan(), norm(),
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("For help, %stype%s '%s?%s' or (%sH%s)%selp%s.\n\r") %
+             cyan() % norm() % cyan() % norm() %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
-        sprintf(buf, "(%sE%s)%snd%s when you are done customizing your physical characteristics.\n\r\n\r",
-             cyan(), norm(), cyan(), norm());
+        buf = fmt("(%sE%s)%snd%s when you are done customizing your physical characteristics.\n\r\n\r") %
+             cyan() % norm() % cyan() % norm();
         writeToQ(buf);
       } else {
         writeToQ("To go back to the previous menu, type '/'.\n\r");
@@ -3747,26 +3740,24 @@ void Descriptor::sendStatList(int group, int)
 
 void Descriptor::sendRaceList()
 {
-  char buf[1024];
-
-  *buf = '\0';
+  sstring buf;
 
   character->cls();
-  strcpy(buf, "Please pick one of the following races.\n\r\n\r");
+  buf = "Please pick one of the following races.\n\r\n\r";
 
-  sprintf(buf + strlen(buf), "1. Human                     2. Gnome\n\r");
-  sprintf(buf + strlen(buf), "3. Elf                       4. Ogre\n\r");
-  sprintf(buf + strlen(buf), "5. Dwarf                     6. Hobbit\n\r\n\r");
-  sprintf(buf + strlen(buf), "The choice of race is very important on %s.\n\r", MUD_NAME);
-  strcat(buf, "There are advantages and disadvantages to each choice.\n\r");
-  strcat(buf, "Among other factors, race will majorly affect your stats,\n\r");
-  strcat(buf, "immunities, racial skills, and the supply of available equipment.\n\r");
-  sprintf(buf + strlen(buf), "Type %s?%s to see a help file telling you these advantages and disadvantages.\n\r",
-          red(), norm());
-  sprintf(buf + strlen(buf), "Type %s/%s to go back a menu to redo things.\n\r",
-          red(), norm());
-  sprintf(buf + strlen(buf), "Type %s~%s to disconnect.\n\r\n\r--> ",
-          red(), norm());
+  buf += "1. Human                     2. Gnome\n\r";
+  buf += "3. Elf                       4. Ogre\n\r";
+  buf += "5. Dwarf                     6. Hobbit\n\r\n\r";
+  buf += fmt("The choice of race is very important on %s.\n\r") % MUD_NAME;
+  buf += "There are advantages and disadvantages to each choice.\n\r";
+  buf += "Among other factors, race will majorly affect your stats,\n\r";
+  buf += "immunities, racial skills, and the supply of available equipment.\n\r";
+  buf += fmt("Type %s?%s to see a help file telling you these advantages and disadvantages.\n\r") %
+    red() % norm();
+  buf += fmt("Type %s/%s to go back a menu to redo things.\n\r") %
+    red() % norm();
+  buf += fmt("Type %s~%s to disconnect.\n\r\n\r--> ") %
+    red() % norm();
 
   writeToQ(buf);
 }
@@ -4043,9 +4034,9 @@ void Descriptor::show_string(const char *the_input, showNowT showNow, allowRepla
   // this will hold the text of the single page that we are on
   // theortically, it is no more than screen_length * 80, but color
   // codes extend it somewhat
-  char buffer[MAX_STRING_LENGTH];
+  sstring buffer = "";
 
-  char buf[MAX_INPUT_LENGTH];
+  sstring buf;
   char *chk;
   int lines = 0, toggle = 1;
   int lines_per_page;
@@ -4082,14 +4073,14 @@ void Descriptor::show_string(const char *the_input, showNowT showNow, allowRepla
   }
   one_argument(the_input, buf);
 
-  if (*buf) {
-    if (*buf == 'r' || *buf == 'R') {
+  if (!buf.empty()) {
+    if (buf == "r" || buf == "R") {
       cur_page -= 1;
       cur_page = max(0, cur_page);
-    } else if (*buf == 'b' || *buf == 'B') {
+    } else if (buf == "b" || buf == "B") {
       cur_page -= 2;
       cur_page = max(0, cur_page);
-    } else if (isdigit(*buf)) 
+    } else if (buf.isNumber()) 
       cur_page = max(min((int) tot_pages, convertTo<int>(buf)), 1) - 1;
     else {
       if (showstr_head) {
@@ -4104,7 +4095,6 @@ void Descriptor::show_string(const char *the_input, showNowT showNow, allowRepla
   lines = 0;
   cur_page++;
   i = 0;
-  *buffer = '\0';
   for (chk = showstr_head; *chk; chk++) {
     if ((*chk == '\n' || *chk == '\r') && ((toggle = -toggle) < 0)) {
       lines++;
@@ -4130,7 +4120,7 @@ void Descriptor::show_string(const char *the_input, showNowT showNow, allowRepla
         case 'n':
         case 'N':
           if (allowRep) {
-            strcpy(buffer + i, character->getName());
+            buffer += character->getName();
             i += strlen(character->getName());
             chk += 2;
           } else {
@@ -4138,178 +4128,178 @@ void Descriptor::show_string(const char *the_input, showNowT showNow, allowRepla
           }
           break;
         case 'h':
-          strcpy(buffer + i, MUD_NAME);
-          i+= strlen(MUD_NAME);
+          buffer += MUD_NAME;
+          i += strlen(MUD_NAME);
           chk += 2;
           break;
         case 'H':
-          strcpy(buffer + i, MUD_NAME_VERS);
-          i+= strlen(MUD_NAME);
+          buffer += MUD_NAME_VERS;
+          i += strlen(MUD_NAME);
           chk += 2;
           break;
         case 'R':
-          strcpy(buffer + i, redBold());
-          i += strlen(redBold());
+          buffer += redBold();
+          i += redBold().length();
           chk += 2;
           break;
         case 'r':
-          strcpy(buffer + i, red());
-          i += strlen(red());
+          buffer += red();
+          i += red().length();
           chk += 2;
           break;
         case 'G':
-          strcpy(buffer + i, greenBold());
-          i += strlen(greenBold());
+          buffer += greenBold();
+          i += greenBold().length();
           chk += 2;
           break;
         case 'g':
-          strcpy(buffer + i, green());
-          i += strlen(green());
+          buffer += green();
+          i += green().length();
           chk += 2;
           break;
         case 'Y':
         case 'y':
-          strcpy(buffer + i, orangeBold());
-          i += strlen(orangeBold());
+          buffer += orangeBold();
+          i += orangeBold().length();
           chk += 2;
           break;
         case 'O':
         case 'o':
-          strcpy(buffer + i, orange());
-          i += strlen(orange());
+          buffer += orange();
+          i += orange().length();
           chk += 2;
           break;
         case 'B':
-          strcpy(buffer + i, blueBold());
-          i += strlen(blueBold());
+          buffer += blueBold();
+          i += blueBold().length();
           chk += 2;
           break;
         case 'b':
-          strcpy(buffer + i, blue());
-          i += strlen(blue());
+          buffer += blue();
+          i += blue().length();
           chk += 2;
           break;
         case 'P':
-          strcpy(buffer + i, purpleBold());
-          i += strlen(purpleBold());
+          buffer += purpleBold();
+          i += purpleBold().length();
           chk += 2;
           break;
         case 'p':
-          strcpy(buffer + i, purple());
-          i += strlen(purple());
+          buffer += purple();
+          i += purple().length();
           chk += 2;
           break;
         case 'C':
-          strcpy(buffer + i, cyanBold());
-          i += strlen(cyanBold());
+          buffer += cyanBold();
+          i += cyanBold().length();
           chk += 2;
           break;
         case 'c':
-          strcpy(buffer + i, cyan());
-          i += strlen(cyan());
+          buffer += cyan();
+          i += cyan().length();
           chk += 2;
           break;
         case 'W':
-          strcpy(buffer + i, whiteBold());
-          i += strlen(whiteBold());
+          buffer += whiteBold();
+          i += whiteBold().length();
           chk += 2;
           break;
         case 'w':
-          strcpy(buffer + i, white());
-          i += strlen(white());
+          buffer += white();
+          i += white().length();
           chk += 2;
           break;
         case 'K':
-          strcpy(buffer + i, black());
-          i += strlen(black());
+          buffer += black();
+          i += black().length();
           chk += 2;
           break;
         case 'k':
-          strcpy(buffer + i, blackBold());
-          i += strlen(blackBold());
+          buffer += blackBold();
+          i += blackBold().length();
           chk += 2;
           break;
         case 'A':
-          strcpy(buffer + i, underBold());
-          i += strlen(underBold());
+          buffer += underBold();
+          i += underBold().length();
           chk += 2;
           break;
         case 'a':
-          strcpy(buffer + i, under());
-          i += strlen(under());
+          buffer += under();
+          i += under().length();
           chk += 2;
           break;
         case 'D':
         case 'd':
-          strcpy(buffer + i, bold());
-          i += strlen(bold());
+          buffer += bold();
+          i += bold().length();
           chk += 2;
           break;
         case 'F':
         case 'f':
-          strcpy(buffer + i, flash());
-          i += strlen(flash());
+          buffer += flash();
+          i += flash().length();
           chk += 2;
           break;
         case 'I':
         case 'i':
-          strcpy(buffer + i, invert());
-          i += strlen(invert());
+          buffer += invert();
+          i += invert().length();
           chk += 2;
           break;
         case 'E':
         case 'e':
-          strcpy(buffer + i, BlackOnWhite());
-          i += strlen(BlackOnWhite());
+          buffer += BlackOnWhite();
+          i += BlackOnWhite().length();
           chk += 2;
           break;
         case 'j':
         case 'J':
-          strcpy(buffer + i, BlackOnBlack());
-          i += strlen(BlackOnBlack());
+          buffer += BlackOnBlack();
+          i += BlackOnBlack().length();
           chk += 2;
           break;
         case 'L':
         case 'l':
-          strcpy(buffer + i, WhiteOnRed());
-          i += strlen(WhiteOnRed());
+          buffer += WhiteOnRed();
+          i += WhiteOnRed().length();
           chk += 2;
           break;
         case 'Q':
         case 'q':
-          strcpy(buffer + i, WhiteOnGreen());
-          i += strlen(WhiteOnGreen());
+          buffer += WhiteOnGreen();
+          i += WhiteOnGreen().length();
           chk += 2;
           break;
         case 'T':
         case 't':
-          strcpy(buffer + i, WhiteOnOrange());
-          i += strlen(WhiteOnOrange());
+          buffer += WhiteOnOrange();
+          i += WhiteOnOrange().length();
           chk += 2;
           break;
         case 'U':
         case 'u':
-          strcpy(buffer + i, WhiteOnBlue());
-          i += strlen(WhiteOnBlue());
+          buffer += WhiteOnBlue();
+          i += WhiteOnBlue().length();
           chk += 2;
           break;
         case 'V':
         case 'v':
-          strcpy(buffer + i, WhiteOnPurple());
-          i += strlen(WhiteOnPurple());
+          buffer += WhiteOnPurple();
+          i += WhiteOnPurple().length();
           chk += 2;
           break;
         case 'X':
         case 'x':
-          strcpy(buffer + i, WhiteOnCyan());
-          i += strlen(WhiteOnCyan());
+          buffer += WhiteOnCyan();
+          i += WhiteOnCyan().length();
           chk += 2;
           break;
         case 'Z':
         case 'z':
         case '1':
-          strcpy(buffer + i, norm());
-          i += strlen(norm());
+          buffer += norm();
+          i += norm().length();
           chk += 2;
           break;
         default:
@@ -4324,23 +4314,19 @@ void Descriptor::show_string(const char *the_input, showNowT showNow, allowRepla
     showstr_head = NULL;
     cur_page = tot_pages = 0;
   }
-  buffer[i] = '\0';
-  strcat(buffer, norm());
+  buffer += norm();
 
   if (showNow) {
     if (tot_pages) {
-      sprintf(buffer + strlen(buffer),
-         "\n\r[ %sReturn%s to continue, %s(r)%sefresh, %s(b)%sack, page %s(%d/%d)%s, or %sany other key%s to quit ]\n\r", 
-            green(),  norm(),
-            green(),  norm(),
-            green(),  norm(),
-            green(),  
-            cur_page, tot_pages, norm(),
-            green(),  norm());
+      buffer += fmt("\n\r[ %sReturn%s to continue, %s(r)%sefresh, %s(b)%sack, page %s(%d/%d)%s, or %sany other key%s to quit ]\n\r") %
+            green() % norm() %
+            green() % norm() %
+            green() % norm() %
+            green() % cur_page % tot_pages % norm() %
+            green() % norm();
     } else {
-      sprintf(buffer + strlen(buffer),
-          "\n\r[ %sReturn%s to continue ]\n\r",
-            green(), norm());
+      buffer += fmt("\n\r[ %sReturn%s to continue ]\n\r") %
+            green() % norm();
     }
   }
   writeToQ(buffer);
@@ -4413,37 +4399,37 @@ char *Descriptor::badRaceMessage(int race)
 const sstring Descriptor::badClassMessage(int Class, bool multi, bool triple)
 {
   TBeing *ch;
-  char buf[512];
-
-  *buf = '\0';
+  sstring buf = "";
 
   if (!(ch = character)) {
-    vlogf(LOG_BUG, "Descriptor got to badClassMessage with no character!!! BUG BRUTIUS!");
+    vlogf(LOG_BUG, "Descriptor got to badClassMessage with no character!!! BUG MudAdmin!");
     return ("");
   }
   if (multi && !IS_SET(account->flags, ACCOUNT_ALLOW_DOUBLECLASS)) {
-    sprintf(buf, "You must obtain a L%d single-class character first.\n\r", MAX_MORT);
+    buf = fmt("You must obtain a L%d single-class character first.\n\r") % MAX_MORT;
     return (buf);
   }
   if (triple && !IS_SET(account->flags, ACCOUNT_ALLOW_TRIPLECLASS)) {
-    sprintf(buf, "You must obtain a L%d double-class character first.\n\r", MAX_MORT);
+    buf = fmt("You must obtain a L%d double-class character first.\n\r") % MAX_MORT;
     return (buf);
   }
 
   for(int i=0;i<MAX_CLASSES;++i){
     if(classInfo[i].class_num == Class &&
        classInfo[i].enabled == false){
-      strcat(buf, "This class is not currently enabled for play.\n\r");
+      buf += "This class is not currently enabled for play.\n\r";
       break;
     }
   }
 
+  /*
   if (Class & CLASS_RANGER) {
     if (rangerTerrainDeny(ch))
-      strcat(buf, "Rangers must come from a wilderness background.\n\r");
+      buf += "Rangers must come from a wilderness background.\n\r";
     if (ch->getRace() == RACE_OGRE)
-      strcat(buf, "Ogre's don't have the sensitivity to become Rangers.\n\r");
+      buf += "Ogre's don't have the sensitivity to become Rangers.\n\r";
   }
+  */
 
   return (buf);
 }
@@ -4721,8 +4707,8 @@ void setPrompts(fd_set out)
   TBeing *tank = NULL;
   TBeing *ch;
   TThing *obj;
-  char promptbuf[256] = "\0\0\0",
-       tString[256];
+  sstring promptbuf;
+  char tString[256];
   unsigned int update;
 
   for (d = descriptor_list; d; d = nextd) {
@@ -4737,22 +4723,22 @@ void setPrompts(fd_set out)
 
       if (ch && ch->task) {
         if (ch->task->task == TASK_PENANCE) {
-          sprintf(promptbuf, "\n\rPIETY : %5.2f > ", ch->getPiety());
-          d->output.putInQ(sstring(promptbuf).cap().c_str());
+          promptbuf = fmt("\n\rPIETY : %5.2f > ") % ch->getPiety();
+          d->output.putInQ(promptbuf.cap());
         } else
 
         if (ch->task->task == TASK_MEDITATE) {
-          sprintf(promptbuf, "\n\rMANA : %d > ", ch->getMana());
-          d->output.putInQ(sstring(promptbuf).cap().c_str());
+          promptbuf = fmt("\n\rMANA : %d > ") % ch->getMana();
+          d->output.putInQ(promptbuf.cap());
         } else
 
         if (ch->task->task == TASK_SACRIFICE) {
-          sprintf(promptbuf, "\n\rLIFEFORCE : %d > ", ch->getLifeforce());
-          d->output.putInQ(sstring(promptbuf).cap().c_str());
+          promptbuf = fmt("\n\rLIFEFORCE : %d > ") % ch->getLifeforce();
+          d->output.putInQ(promptbuf.cap());
         } else
 
         if (((ch->task->task == TASK_SHARPEN) || (ch->task->task == TASK_DULL)) && (obj = ch->heldInPrimHand())) {
-          sprintf(promptbuf, "\n\r%s > ", ch->describeSharpness(obj).c_str());
+          promptbuf = fmt("\n\r%s > ") % ch->describeSharpness(obj);
           d->output.putInQ(promptbuf);
         } else
 
@@ -4772,10 +4758,10 @@ void setPrompts(fd_set out)
 	  }
 
           if (tObj) {
-            sprintf(promptbuf, "\n\r%s (%s) > ", sstring(tObj->getName()).cap().c_str(), tObj->equip_condition(-1).c_str());
+            promptbuf = fmt("\n\r%s (%s) > ") % sstring(tObj->getName()).cap() % tObj->equip_condition(-1);
             d->output.putInQ(colorString(ch, d, promptbuf, NULL, COLOR_BASIC, FALSE));
           } else {
-            strcat(promptbuf, "\n\rERROR!  Unable to find repair target! > ");
+            promptbuf += "\n\rERROR!  Unable to find repair target! > ";
             d->output.putInQ(promptbuf);
             vlogf(LOG_OBJ, fmt("Unable to find repair item for (%s) for prompt report (%s)") % ch->getName() % ch->task->orig_arg);
           }
@@ -4792,13 +4778,12 @@ void setPrompts(fd_set out)
           d->output.putInQ("-> ");
         }
       } else if (d->pagedfile && (d->prompt_mode != DONT_SEND)) {
-        sprintf(promptbuf, "\n\r[ %sReturn%s to continue, %s(r)%sefresh, %s(b)%sack, page %s(%d/%d)%s, or %sany other key%s to quit ]\n\r", 
-            d->green(),  d->norm(),
-            d->green(),  d->norm(),
-            d->green(),  d->norm(),
-            d->green(),  
-            d->cur_page, d->tot_pages, d->norm(),
-            d->green(),  d->norm());
+        promptbuf = fmt("\n\r[ %sReturn%s to continue, %s(r)%sefresh, %s(b)%sack, page %s(%d/%d)%s, or %sany other key%s to quit ]\n\r") % 
+            d->green() % d->norm() %
+            d->green() % d->norm() %
+            d->green() % d->norm() %
+            d->green() % d->cur_page % d->tot_pages % d->norm() %
+            d->green() % d->norm();
         d->output.putInQ(promptbuf);
       } else if (!d->connected) {
         if (!ch) {
@@ -4806,13 +4791,12 @@ void setPrompts(fd_set out)
           continue;
         }
         if (d->showstr_head && (d->prompt_mode != DONT_SEND)) {
-          sprintf(promptbuf, "\n\r[ %sReturn%s to continue, %s(r)%sefresh, %s(b)%sack, page %s(%d/%d)%s, or %sany other key%s to quit ]\n\r", 
-            d->green(),  d->norm(),
-            d->green(),  d->norm(),
-            d->green(),  d->norm(),
-            d->green(),  
-            d->cur_page, d->tot_pages, d->norm(),
-            d->green(),  d->norm());
+          promptbuf = fmt("\n\r[ %sReturn%s to continue, %s(r)%sefresh, %s(b)%sack, page %s(%d/%d)%s, or %sany other key%s to quit ]\n\r") % 
+            d->green() % d->norm() %
+            d->green() % d->norm() %
+            d->green() % d->norm() %
+            d->green() % d->cur_page % d->tot_pages % d->norm() %
+            d->green() % d->norm();
           d->output.putInQ(promptbuf);
         } else {
           if (((d->m_bIsClient || IS_SET(d->prompt_d.type, PROMPT_CLIENT_PROMPT)) ||
@@ -4892,9 +4876,9 @@ void setPrompts(fd_set out)
 
           if (d->prompt_mode != DONT_SEND) {
             bool hasColor = IS_SET(d->prompt_d.type, PROMPT_COLOR);
-            *promptbuf = '\0';
+            promptbuf = "";
 
-            const char *StPrompts[] =
+            const sstring StPrompts[] =
             {
               "[Z:%d Pr:%s L:%d H:%d C:%d S:%s]\n\r", // Builder Assistant
               "%sH:%d%s ",           // Hit Points
@@ -4912,67 +4896,58 @@ void setPrompts(fd_set out)
             };
 
             if (ch->isImmortal() && IS_SET(d->prompt_d.type, PROMPT_BUILDER_ASSISTANT)) {
-              sprintf(promptbuf + strlen(promptbuf),
-                      StPrompts[0],
-                      ch->roomp->getZoneNum(),
-                      (ch->roomp->funct ? "Y" : "N"),
-                      ch->roomp->getLight(),
-                      ch->roomp->getRoomHeight(),
-                      ch->roomp->getMoblim(),
-                      TerrainInfo[ch->roomp->getSectorType()]->name);
+              promptbuf += fmt(StPrompts[0]) %
+                ch->roomp->getZoneNum() %
+                (ch->roomp->funct ? "Y" : "N") %
+                ch->roomp->getLight() %
+                ch->roomp->getRoomHeight() %
+                ch->roomp->getMoblim() %
+                TerrainInfo[ch->roomp->getSectorType()]->name;
             }
             if (IS_SET(d->prompt_d.type, PROMPT_HIT))
-              sprintf(promptbuf + strlen(promptbuf),
-                      StPrompts[1],
-                      (hasColor ? d->prompt_d.hpColor : ""),
-                      ch->getHit(),
-                      ch->norm());
+              promptbuf += fmt(StPrompts[1]) %
+                (hasColor ? d->prompt_d.hpColor : "") %
+                ch->getHit() %
+                ch->norm();
             if (IS_SET(d->prompt_d.type, PROMPT_MANA)) {
-                sprintf(promptbuf + strlen(promptbuf),
-                        StPrompts[3],
-                        (hasColor ? d->prompt_d.manaColor : ""),
-                        ch->getMana(),
-                        ch->norm());
+              promptbuf += fmt(StPrompts[3]) %
+                (hasColor ? d->prompt_d.manaColor : "") %
+                ch->getMana() %
+                ch->norm();
 	    }
             if (IS_SET(d->prompt_d.type, PROMPT_PIETY)) {	    
-                sprintf(promptbuf + strlen(promptbuf),
-                        StPrompts[2],
-                        (hasColor ? d->prompt_d.pietyColor : ""),
-                        ch->getPiety(),
-                        ch->norm());
+              promptbuf += fmt(StPrompts[2]) %
+                (hasColor ? d->prompt_d.pietyColor : "") %
+                ch->getPiety() %
+                ch->norm();
 	    }
             if (IS_SET(d->prompt_d.type, PROMPT_LIFEFORCE)) {	    
-                sprintf(promptbuf + strlen(promptbuf),
-                        StPrompts[12],
-                        (hasColor ? d->prompt_d.lifeforceColor : ""),
-                        ch->getLifeforce(),
-                        ch->norm());
+              promptbuf += fmt(StPrompts[12]) %
+                (hasColor ? d->prompt_d.lifeforceColor : "") %
+                ch->getLifeforce() %
+                ch->norm();
 	    }
             if (IS_SET(d->prompt_d.type, PROMPT_MOVE))
-              sprintf(promptbuf + strlen(promptbuf),
-                      StPrompts[4],
-                      (hasColor ? d->prompt_d.moveColor : ""),
-                      ch->getMove(),
-                      ch->norm());
+              promptbuf += fmt(StPrompts[4]) %
+                (hasColor ? d->prompt_d.moveColor : "") %
+                ch->getMove() %
+                ch->norm();
             if (IS_SET(d->prompt_d.type, PROMPT_GOLD))
-              sprintf(promptbuf + strlen(promptbuf),
-                      StPrompts[5],
-                      (hasColor ? d->prompt_d.moneyColor : ""),
-                      ch->getMoney(),
-                      ch->norm());
+              promptbuf += fmt(StPrompts[5]) %
+                (hasColor ? d->prompt_d.moneyColor : "") %
+                ch->getMoney() %
+                ch->norm();
             if (IS_SET(d->prompt_d.type, PROMPT_ROOM))
-              sprintf(promptbuf + strlen(promptbuf),
-                      StPrompts[6],
-                      (hasColor ? d->prompt_d.roomColor : ""),
-                      ch->roomp->number,
-                      ch->norm());
+              promptbuf += fmt(StPrompts[6]) %
+                (hasColor ? d->prompt_d.roomColor : "") %
+                ch->roomp->number %
+                ch->norm();
             if (IS_SET(d->prompt_d.type, PROMPT_EXP)) {
               strcpy(tString, ch->displayExp().comify().c_str());
-              sprintf(promptbuf + strlen(promptbuf),
-                      StPrompts[7],
-                      (hasColor ? d->prompt_d.expColor : ""),
-                      tString,
-                      ch->norm());
+              promptbuf += fmt(StPrompts[7]) %
+                (hasColor ? d->prompt_d.expColor : "") %
+                tString %
+                ch->norm();
             }
             if (IS_SET(d->prompt_d.type, PROMPT_EXPTONEXT_LEVEL)) {
               classIndT i;
@@ -4986,11 +4961,10 @@ void setPrompts(fd_set out)
 
                   sprintf(tString, "%.0f", need);
 		  strcpy(tString, sstring(tString).comify().c_str());
-                  sprintf(promptbuf + strlen(promptbuf),
-                          StPrompts[8],
-                          (hasColor ? ch->desc->prompt_d.expColor : ""),
-                          tString,
-                          ch->norm());
+                  promptbuf += fmt(StPrompts[8]) %
+                    (hasColor ? ch->desc->prompt_d.expColor : "") %
+                    tString %
+                    ch->norm();
                   break;
                 }
             }
@@ -5000,14 +4974,13 @@ void setPrompts(fd_set out)
                 int ratio = min(10, max(0, ((ch->fight()->getHit() * 9) /
                                 ch->fight()->hitLimit())));
 
-                sprintf(promptbuf + strlen(promptbuf),
-                        StPrompts[9],
-//                        (bracket_used ? "" : ">\n\r"),
-                        (bracket_used ? "" : " "),
-                        (hasColor ? d->prompt_d.oppColor : ""),
-                        (ch->isAffected(AFF_ENGAGER) ? "ENGAGED " : ""),
-                        ch->persfname(ch->fight()).c_str(), prompt_mesg[ratio],
-                        ch->norm());
+                promptbuf += fmt(StPrompts[9]) %
+//                (bracket_used ? "" : ">\n\r") %
+                  (bracket_used ? "" : " ") %
+                  (hasColor ? d->prompt_d.oppColor : "") %
+                  (ch->isAffected(AFF_ENGAGER) ? "ENGAGED " : "") %
+                  ch->persfname(ch->fight()) % prompt_mesg[ratio] %
+                  ch->norm();
                 bracket_used = true;
               }
             bool isOther = false;
@@ -5020,14 +4993,13 @@ void setPrompts(fd_set out)
                   if (ch->sameRoom(*tank)) {
                     int ratio = min(10, max(0, ((tank->getHit() * 9) / tank->hitLimit())));
 
-                    sprintf(promptbuf + strlen(promptbuf),
-                            StPrompts[10],
-//                        (bracket_used ? "" : ">\n\r"),
-                        (bracket_used ? "" : " "),
-                            (hasColor ? d->prompt_d.tankColor : ""),
-                            ch->persfname(tank).c_str(),
-                            prompt_mesg[ratio],
-                            ch->norm());
+                    promptbuf += fmt(StPrompts[10]) %
+//                    (bracket_used ? "" : ">\n\r") %
+                      (bracket_used ? "" : " ") %
+                      (hasColor ? d->prompt_d.tankColor : "") %
+                      ch->persfname(tank) %
+                      prompt_mesg[ratio] %
+                      ch->norm();
                     bracket_used = true;
                   }
                 }
@@ -5035,15 +5007,14 @@ void setPrompts(fd_set out)
             if (d->wait > 1) {
               float waittime = (float) (d->wait - 1) / ONE_SECOND;
 
-              sprintf(promptbuf + strlen(promptbuf),
-                      StPrompts[11],
-//                        (bracket_used ? "" : ">\n\r"),
-                        (bracket_used ? "" : " "),
-                      waittime,
-                      (IS_SET(d->autobits, AUTO_NOSPAM) ? "" : " secs lockout"));
+              promptbuf += fmt(StPrompts[11]) %
+//              (bracket_used ? "" : ">\n\r") %
+                (bracket_used ? "" : " ") %
+                waittime %
+                (IS_SET(d->autobits, AUTO_NOSPAM) ? "" : " secs lockout");
             }
 
-            strcat(promptbuf, "> ");
+            promptbuf += "> ";
             d->output.putInQ(promptbuf);
           }
         }
@@ -5110,7 +5081,7 @@ void processAllInput()
 
     // this is where PC wait gets handled
     if (!d->getHostResolved()) {
-      d->output.putInQ("\n\rWaiting for DNS resolution...");
+      d->output.putInQ("\n\rWaiting for DNS resolution...\n\r");
       continue;
     }
     if ((--(d->wait) <= 0) && (&d->input)->takeFromQ(comm, sizeof(comm))){
@@ -5250,7 +5221,8 @@ int bogusAccountName(const char *arg)
 // return DELETE_THIS
 int Descriptor::sendLogin(const char *arg)
 {
-  char buf[160], buf2[4096] = "\0\0\0";
+  char buf[160];
+  sstring buf2 = "";
   accountFile afp;
 
   if (m_bIsClient)
@@ -5261,8 +5233,8 @@ int Descriptor::sendLogin(const char *arg)
   else if (*arg == '?') {
     writeToQ("Accounts are used to store all characters belonging to a given person.\n\r");
     writeToQ("One account can hold multiple characters.  Creating more than one account\n\r");
-    sprintf(buf, "for yourself is a violation of %s multiplay rules and will lead to\n\r", MUD_NAME);
-    writeToQ(buf);
+    buf2 = fmt("for yourself is a violation of %s multiplay rules and will lead to\n\r") % MUD_NAME;
+    writeToQ(buf2);
     writeToQ("strict sanctions.  Your account holds information that is applied to all\n\r");
     writeToQ("characters that you own (including: generic terminal type, time zone\n\r");
     writeToQ("you play from, etc.).  You are required to enter a valid and unique\n\r");
@@ -5282,13 +5254,13 @@ int Descriptor::sendLogin(const char *arg)
       // strip off the terminating newline char
       buf[strlen(buf) - 1] = '\0';
 
-      sprintf(buf2 + strlen(buf2), "\n\r\n\rWelcome to %s:\n\r%s :\n\r", MUD_NAME_VERS, buf);
+      buf2 += fmt("\n\r\n\rWelcome to %s:\n\r%s :\n\r") % MUD_NAME_VERS % buf;
       fclose(fp);
     }
-    sprintf(buf2 + strlen(buf2), "Celebrating TWELVE years of quality mudding (est. 5-1-1992)\n\r\n\r");
-    sprintf(buf2 + strlen(buf2), "Please type NEW (case sensitive) for a new account, or ? for help.\n\r");
-    sprintf(buf2 + strlen(buf2), "If you need assistance you may email mudadmin@sneezy.saw.net.\n\r\n\r");
-    sprintf(buf2 + strlen(buf2), "\n\rLogin: ");
+    buf2 += "Celebrating TWELVE years of quality mudding (est. 5-1-1992)\n\r\n\r";
+    buf2 += "Please type NEW (case sensitive) for a new account, or ? for help.\n\r";
+    buf2 += "If you need assistance you may email mudadmin@sneezy.saw.net.\n\r\n\r";
+    buf2 += "\n\rLogin: ";
     output.putInQ(buf2);
     return FALSE;
   } else if (!strcasecmp(arg, "new")) {
@@ -5328,9 +5300,9 @@ int Descriptor::sendLogin(const char *arg)
       return (sendLogin("1"));
     }
     strcpy(account->name, arg);
-    sprintf(buf, "account/%c/%s/account", LOWER(arg[0]), sstring(arg).lower().c_str());
+    buf2 = fmt("account/%c/%s/account") % LOWER(arg[0]) % sstring(arg).lower();
     // If account exists, open and copy password, otherwise set pwd to \0
-    FILE * fp = fopen(buf, "r");
+    FILE * fp = fopen(buf2.c_str(), "r");
     if (fp) {
       fread(&afp, sizeof(afp), 1, fp);
       strcpy(account->name, afp.name);
@@ -5359,7 +5331,7 @@ int Descriptor::sendLogin(const char *arg)
 
 bool Descriptor::checkForAccount(char *arg, bool silent)
 {
-  char buf[256];
+  sstring buf;
   struct stat timestat;
 
   if (bogusAccountName(arg)) {
@@ -5367,9 +5339,9 @@ bool Descriptor::checkForAccount(char *arg, bool silent)
       writeToQ("Sorry, that is an illegal name for an account.\n\r");
     return TRUE;
   }
-  sprintf(buf, "account/%c/%s/account", LOWER(arg[0]), sstring(arg).lower().c_str());
+  buf = fmt("account/%c/%s/account") % LOWER(arg[0]) % sstring(arg).lower();
   
-  if (!stat(buf, &timestat)) {
+  if (!stat(buf.c_str(), &timestat)) {
     if (!silent)
       writeToQ("Account already exists, enter another name.\n\r");
     return TRUE;
@@ -5379,12 +5351,12 @@ bool Descriptor::checkForAccount(char *arg, bool silent)
 
 bool Descriptor::checkForCharacter(char *arg)
 {
-  char buf[256];
+  sstring buf;
   struct stat timestat;
 
-  sprintf(buf, "player/%c/%s", LOWER(arg[0]), sstring(arg).lower().c_str());
+  buf = fmt("player/%c/%s") % LOWER(arg[0]) % sstring(arg).lower();
  
-  if (!stat(buf, &timestat)) {
+  if (!stat(buf.c_str(), &timestat)) {
     if (!m_bIsClient)
       writeToQ("Character already exists, enter another name.\n\r--> ");
     return TRUE;
@@ -5392,13 +5364,11 @@ bool Descriptor::checkForCharacter(char *arg)
   return FALSE;
 }
 
-
-
 // return DELETE_THIS
 int Descriptor::doAccountStuff(char *arg)
 {
   char tmp_name[256];
-  char buf[256];
+  sstring buf;
   int count = 0;
   sstring lStr;
   struct stat timestat;
@@ -5487,7 +5457,7 @@ int Descriptor::doAccountStuff(char *arg)
       }
       strcpy(account->email, arg);
 
-      sprintf(buf, "%s is presently based in California (Pacific Time)\n\r", MUD_NAME);
+      buf = fmt("%s is presently based in California (Pacific Time)\n\r") % MUD_NAME;
       writeToQ(buf);
       writeToQ("For purposes of keeping track of time, please enter the difference\n\r");
       writeToQ("between your home site and Pacific Time.  For instance, players on\n\r");
@@ -5575,18 +5545,17 @@ int Descriptor::doAccountStuff(char *arg)
       }
       if (IS_SET(account->flags, ACCOUNT_BANISHED)) {
         writeToQ("Your account has been flagged banished.\n\r");
-        sprintf(buf, "If you do not know the reason for this, contact %s\n\r",
-              MUDADMIN_EMAIL);
+        buf = fmt("If you do not know the reason for this, contact %s\n\r") %
+              MUDADMIN_EMAIL;
         writeToQ(buf);
         outputProcessing();
         return DELETE_THIS;
       }
       if (IS_SET(account->flags, ACCOUNT_EMAIL)) {
         writeToQ("The email account you entered for your account is thought to be bogus.\n\r");
-        sprintf(buf, "You entered an email address of: %s\n\r", account->email);
+        buf = fmt("You entered an email address of: %s\n\r") % account->email;
         writeToQ(buf);
-        sprintf(buf,"To regain access to your account, please send an email\n\rto: %s\n\r",
-              MUDADMIN_EMAIL);
+        buf = fmt("To regain access to your account, please send an email\n\rto: %s\n\r") % MUDADMIN_EMAIL;
         writeToQ(buf);
         writeToQ("Indicate the name of your account, and the reason for the wrong email address.\n\r");
         outputProcessing();
@@ -5680,11 +5649,11 @@ int Descriptor::doAccountStuff(char *arg)
       }
 
       // lower() returns static buf, so add one at a time
-      sprintf(buf, "account/%c/%s", LOWER(account->name[0]), sstring(account->name).lower().c_str());
-      sprintf(buf + strlen(buf), "/%s", sstring(arg).lower().c_str());
+      buf = fmt("account/%c/%s") % LOWER(account->name[0]) % sstring(account->name).lower();
+      buf += fmt("/%s") % sstring(arg).lower();
       // sprintf(buf, "account/%c/%s/%s", LOWER(account->name[0]), 
       //                                  account->name.lower(), arg.lower());
-      if (stat(buf, &timestat)) {
+      if (stat(buf.c_str(), &timestat)) {
         writeToQ("No such character.\n\r");
         account->status = TRUE;
         rc = doAccountMenu("");
@@ -5778,10 +5747,9 @@ int Descriptor::doAccountStuff(char *arg)
       vlogf(LOG_PIO, fmt("Deleting mail for character %s.") %  delname);
       db.query("delete from mail where lower(mailto)=lower('%s')", delname);
 
-      sprintf(buf, "account/%c/%s/%s", LOWER(account->name[0]), 
-           sstring(account->name).lower().c_str(), delname);
-      if (unlink(buf) != 0)
-        vlogf(LOG_FILE, fmt("error in unlink (3) (%s) %d") %  buf % errno);
+      buf = fmt("account/%c/%s/%s") % LOWER(account->name[0]) % sstring(account->name).lower() % delname;
+      if (unlink(buf.c_str()) != 0)
+        vlogf(LOG_FILE, fmt("error in unlink (3) (%s) %d") % buf % errno);
       account->status = TRUE;
       rc = doAccountMenu("");
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -5810,7 +5778,7 @@ int Descriptor::doAccountStuff(char *arg)
       }
       deleteAccount();
       writeToQ("Your account has been deleted, including all characters and equipment.\n\r");
-      sprintf(buf, "Thank you for playing %s, and hopefully you will remake your character(s)!\n\r", MUD_NAME);
+      buf = fmt("Thank you for playing %s, and hopefully you will remake your character(s)!\n\r") % MUD_NAME;
       writeToQ(buf);
       outputProcessing();
       return DELETE_THIS;
@@ -6073,15 +6041,15 @@ int Descriptor::doAccountMenu(const char *arg)
           screen_size = tss;
         }
       } else {
-        char buf[256];
+        sstring buf;
 
         writeToQ("<C>onnect an existing character       <A>dd a new character\n\r");
         writeToQ("<D>elete account or character         <M>essage of the day\n\r");
-        sprintf(buf, "<N>ews of %-25.25s   <F>inger an account\n\r", MUD_NAME);
+        buf = fmt("<N>ews of %-25.25s   <F>inger an account\n\r") % MUD_NAME;
         writeToQ(buf);
         writeToQ("<W>ho is in the game                  <P>assword change\n\r");
         writeToQ("<L>ist characters in account          <H>elp\n\r");
-        sprintf(buf, "<E>xit %s\n\r", MUD_NAME);
+        buf = fmt("<E>xit %s\n\r") % MUD_NAME;
         writeToQ(buf);
         writeToQ("\n\r-> ");
       }
@@ -6093,21 +6061,21 @@ int Descriptor::doAccountMenu(const char *arg)
 void Descriptor::saveAccount()
 {
   FILE *fp;
-  char buf[256], buf2[256];
+  sstring buf, buf2;
   accountFile afp;
 
   if (!account || !account->name) {
     vlogf(LOG_BUG, "Bad descriptor in saveAccount");
     return;
   }
-  sprintf(buf, "account/%c/%s/account", LOWER(account->name[0]), sstring(account->name).lower().c_str());
-  if (!(fp = fopen(buf, "w"))) {
-    sprintf(buf2, "account/%c/%s", LOWER(account->name[0]), sstring(account->name).lower().c_str());
-    if (mkdir(buf2, 0770)) {
-      vlogf(LOG_FILE, fmt("Can't make directory for saveAccount (%s)") %  sstring(account->name).lower());
+  buf = fmt("account/%c/%s/account") % LOWER(account->name[0]) % sstring(account->name).lower();
+  if (!(fp = fopen(buf.c_str(), "w"))) {
+    buf2 = fmt("account/%c/%s") % LOWER(account->name[0]) % sstring(account->name).lower();
+    if (mkdir(buf2.c_str(), 0770)) {
+      vlogf(LOG_FILE, fmt("Can't make directory for saveAccount (%s)") % sstring(account->name).lower());
       return;
     }
-    if (!(fp = fopen(buf, "w"))) {
+    if (!(fp = fopen(buf.c_str(), "w"))) {
       vlogf(LOG_FILE, fmt("Big problems in saveAccount (s)") %  sstring(account->name).lower());
       return;
     }
@@ -6133,20 +6101,20 @@ void Descriptor::deleteAccount()
 {
   DIR *dfd;
   struct dirent *dp;
-  char buf[256];
+  sstring buf;
 
-  sprintf(buf, "account/%c/%s", LOWER(account->name[0]), sstring(account->name).lower().c_str());
-  if (!(dfd = opendir(buf))) {
-    vlogf(LOG_FILE, fmt("Unable to walk directory for delete account (%s account)") %  account->name);
+  buf = fmt("account/%c/%s") % LOWER(account->name[0]), sstring(account->name).lower();
+  if (!(dfd = opendir(buf.c_str()))) {
+    vlogf(LOG_FILE, fmt("Unable to walk directory for delete account (%s account)") % account->name);
     return;
   }
   while ((dp = readdir(dfd))) {
     if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
       continue;
 
-    sprintf(buf, "account/%c/%s/%s", LOWER(account->name[0]), sstring(account->name).lower().c_str(), dp->d_name);
-    if (unlink(buf) != 0)
-      vlogf(LOG_FILE, fmt("error in unlink (4) (%s) %d") %  buf % errno);
+    buf = fmt("account/%c/%s/%s") % LOWER(account->name[0]) % sstring(account->name).lower() % dp->d_name;
+    if (unlink(buf.c_str()) != 0)
+      vlogf(LOG_FILE, fmt("error in unlink (4) (%s) %d") % buf % errno);
 
     // these are in the dir, but are not "players"
     if (!strcmp(dp->d_name, "comment") ||
@@ -6157,8 +6125,8 @@ void Descriptor::deleteAccount()
     wipeRentFile(dp->d_name);
     wipeFollowersFile(dp->d_name);
   }
-  sprintf(buf, "account/%c/%s", LOWER(account->name[0]), sstring(account->name).lower().c_str());
-  rmdir(buf);
+  buf = fmt("account/%c/%s") % LOWER(account->name[0]), sstring(account->name).lower();
+  rmdir(buf.c_str());
   accStat.account_number--;
   closedir(dfd);
 }
@@ -6717,9 +6685,9 @@ promptData::promptData() :
   prompt(NULL),
   xptnl(0.0)
 {
-  *hpColor = *moneyColor = *manaColor = *moveColor = *expColor = '\0';
-  *roomColor = *oppColor = *tankColor = '\0';
-  *pietyColor = *lifeforceColor = '\0';
+  hpColor = moneyColor = manaColor = moveColor = expColor = "";
+  roomColor = oppColor = tankColor = "";
+  pietyColor = lifeforceColor = "";
 
 //  for (classIndT i = MIN_CLASS_IND; i < MAX_CLASSES; i++)
 //    xptnl[i] = 0.0;

@@ -263,14 +263,14 @@ void TBeing::postmasterReceiveMail(TMonster *me)
   }
 }
 
-void autoMail(TBeing *ch, const char *targ, const char *msg)
+void autoMail(TBeing *ch, const sstring targ, const sstring msg)
 {
   // from field limited to 15 chars by mail structure
 
   if (ch)
-    store_mail(ch->getName(), SNEEZY_ADMIN, msg);
-  else if (targ)
-    store_mail(targ, SNEEZY_ADMIN, msg);
+    store_mail(ch->getName(), SNEEZY_ADMIN, msg.c_str());
+  else if (!targ.empty())
+    store_mail(targ.c_str(), SNEEZY_ADMIN, msg.c_str());
   else
     vlogf(LOG_BUG, "Error in autoMail");
 

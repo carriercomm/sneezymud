@@ -361,19 +361,16 @@ int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
     if (caster->desc) {
       sstring str = identifyBeingStuff(caster, victim, SHOW_ME);
 
-      char buf[256];
       for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {
-        if (victim->getImmunity(i) == 0 || !*immunity_names[i])
+        if (victim->getImmunity(i) == 0 || immunity_names[i].empty())
           continue;
         if (victim->getImmunity(i) > 0) {
-          sprintf(buf, "%d%% resistant to %s.\n\r", victim->getImmunity(i),
-             immunity_names[i]);
-          str += buf;
+          str += fmt("%d%% resistant to %s.\n\r") % victim->getImmunity(i) %
+            immunity_names[i];
         }
         if (victim->getImmunity(i) < 0) {
-          sprintf(buf, "%d%% susceptible to %s.\n\r", victim->getImmunity(i),
-             immunity_names[i]);
-          str += buf;
+          str += fmt("%d%% susceptible to %s.\n\r") % victim->getImmunity(i) %
+            immunity_names[i];
         }
       }
       str += describeMaterial(victim);

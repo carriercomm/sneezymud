@@ -38,7 +38,7 @@ bool isLegalLoot(int tValue)
 }
 
 // Add names to this list to prevent that way
-bool isLegalLoot(const char * tString)
+bool isLegalLoot(const sstring tString)
 {
   if (isname("[quest]", tString))
     return false;

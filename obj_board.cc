@@ -353,8 +353,7 @@ int board_display_msg(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
       sb += buffer;
       sb += b->msgs[msg - 1];
       sb += "\n\r";
-      sprintf(buffer, "%sEnd of message %d.\n\r",ch->norm(), msg);
-      sb += buffer;
+      sb += fmt("%sEnd of message %d.\n\r") % ch->norm() % msg;
       if (ch->desc)
         ch->desc->page_string(sb);
 

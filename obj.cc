@@ -89,11 +89,11 @@ void TObj::swapToStrung()
   addObjStat(ITEM_STRUNG);
   name = mud_str_dup(obj_index[getItemIndex()].name);
   shortDescr = mud_str_dup(obj_index[getItemIndex()].short_desc);
-  if (obj_index[getItemIndex()].long_desc)
+  if (!obj_index[getItemIndex()].long_desc.empty())
     setDescr(mud_str_dup(obj_index[getItemIndex()].long_desc));
   else
     setDescr(NULL);
-  if (obj_index[getItemIndex()].description)
+  if (!obj_index[getItemIndex()].description.empty())
     action_description = mud_str_dup(obj_index[getItemIndex()].description);
   else
     action_description = NULL;

@@ -93,13 +93,11 @@ void Descriptor::send_client_room_objects()
     clientf(fmt("%d|%d|%s") % CLIENT_ROOMOBJS % ADD % t->getName());
 }
 
-
-
 void Descriptor::send_client_prompt(int, int update)
 {
   TBeing *ch, *tank;
-  char c_name[128], cond[128];
-  char t_name[128], t_cond[128];
+  sstring c_name, cond;
+  sstring t_name, t_cond;
   int ratio;
 
   *c_name = *cond = *t_name = *t_cond = '\0';
@@ -109,38 +107,38 @@ void Descriptor::send_client_prompt(int, int update)
 
   if (ch->fight() && ch->awake() && ch->sameRoom(*ch->fight())) {
     ratio=min(10, max(0, ((ch->fight()->getHit() * 9) / ch->fight()->hitLimit())));
-    strcpy(c_name, ch->persfname(ch->fight()).c_str());
-    strcpy(cond, prompt_mesg[ratio]);
+    c_name = ch->persfname(ch->fight());
+    cond = prompt_mesg[ratio];
     tank = ch->fight()->fight();
     if (tank) {
       if (ch->sameRoom(*tank)) {
-        strcpy(t_name, ch->persfname(tank).c_str());
+        t_name = ch->persfname(tank);
         ratio = min(10, max(0, ((tank->getHit() * 9) / tank->hitLimit())));
-        strcpy(t_cond, prompt_mesg[ratio]);
+        t_cond = prompt_mesg[ratio];
       }
     }
     clientf(fmt("%d|%s|%s|%s|%s") % CLIENT_FIGHT % c_name % 
 	    cond % t_name % t_cond);
   }
   if ((update & CHANGED_MANA) || (update & CHANGED_PIETY) || (update & CHANGED_LIFEFORCE)) {
-    char manaBuf[80], maxManaBuf[80];
+    sstring manaBuf, maxManaBuf;
     int iClientCode = CLIENT_MANA;
 
     if (ch->hasClass(CLASS_CLERIC) || ch->hasClass(CLASS_DEIKHAN)) {
-      sprintf(manaBuf, "%.1f", ch->getPiety());
-      strcpy(maxManaBuf, "100");
+      manaBuf = fmt("%.1f") % ch->getPiety();
+      maxManaBuf = "100";
 
       if (!m_bIsClient && IS_SET(prompt_d.type, PROMPT_CLIENT_PROMPT))
         iClientCode = CLIENT_PIETY;
     } else if (ch->hasClass(CLASS_SHAMAN)) {
-      sprintf(manaBuf, "%d", ch->getLifeforce());
-      strcpy(maxManaBuf, "32000");
+      manaBuf = fmt("%d") % ch->getLifeforce();
+      maxManaBuf = "32000";
 
       if (!m_bIsClient && IS_SET(prompt_d.type, PROMPT_CLIENT_PROMPT))
         iClientCode = CLIENT_LIFEFORCE;
     } else {
-      sprintf(manaBuf, "%d", ch->getMana());
-      sprintf(maxManaBuf, "%d", ch->manaLimit());
+      manaBuf = fmt("%d") % ch->getMana();
+      maxManaBuf = fmt("%d") % ch->manaLimit();
     }
 
     clientf(fmt("%d|%s|%s") % iClientCode % manaBuf % maxManaBuf);
@@ -168,14 +166,12 @@ void Descriptor::send_client_prompt(int, int update)
 	if (ch->getLevel(iClass)) {
           if (ch->getLevel(iClass) < MAX_MORT) {
 	    double iNeed = getExpClassLevel(iClass, ch->getLevel(iClass) + 1) - ch->getExp();
-            char   StTemp[2048];
-
-	    memset(&StTemp, 0, sizeof(StTemp));
+            sstring StTemp = "";
 
 	    if (ch->getExp() < 100)
-	      sprintf(StTemp, "%.3f", iNeed);
+	      StTemp = fmt("%.3f") % iNeed;
 	    else
-	      sprintf(StTemp, "%.0f", iNeed);
+	      StTemp = fmt("%.0f") % iNeed;
 
             clientf(fmt("%d|%d|%d|%s") % CLIENT_TONEXTLEVEL % iClass % (ch->getLevel(iClass) + 1) % StTemp);
           }

@@ -30,9 +30,9 @@ struct holdemPlayerInfo {
 void holdemStatus(TMonster *me, holdemPlayerInfo *hpi)
 {
   me->doEmote("suddenly snaps to rigid attention.");
-  me->doSay("Name        : %s", hpi->name.c_str());
-  me->doSay("Enabled     : %s", hpi->enabled?"<G>YES<1>":"<R>NO<1>");
-  me->doSay("Chip        : %s", obj_index[real_object(hpi->chip)].short_desc);
+  me->doSay(fmt("Name        : %s") % hpi->name);
+  me->doSay(fmt("Enabled     : %s") % (hpi->enabled?"<G>YES<1>":"<R>NO<1>"));
+  me->doSay(fmt("Chip        : %s") % obj_index[real_object(hpi->chip)].short_desc);
   me->doSay("All systems : <G>NOMINAL<1>");
   me->doEmote("resumes a relaxed pose.");
 }
@@ -104,8 +104,8 @@ int holdemPlayer(TBeing *ch, cmdTypeT cmd, const char *argument, TMonster *me, T
 	me->doSay("I can't find that chip.");
 	hpi->chip=CHIP_100;
       } else {
-	me->doSay("All your %s are belong to Gambler2000.",
-		  obj_index[real_object(hpi->chip)].short_desc);
+	me->doSay(fmt("All your %s are belong to Gambler2000.") %
+          obj_index[real_object(hpi->chip)].short_desc);
       }
     } else if(arg=="freechips"){
       if(hpi->free_chips){
@@ -120,8 +120,8 @@ int holdemPlayer(TBeing *ch, cmdTypeT cmd, const char *argument, TMonster *me, T
 	  }
 	}
 
-	me->doSay("I have %s [%i].",
-		  obj_index[real_object(hpi->chip)].short_desc, tcount);
+	me->doSay(fmt("I have %s [%i].") %
+		  obj_index[real_object(hpi->chip)].short_desc % tcount);
       } else {
 	hpi->free_chips=true;
 	me->doSay("I will now pull chips out of my ass.");
@@ -164,7 +164,7 @@ int holdemPlayer(TBeing *ch, cmdTypeT cmd, const char *argument, TMonster *me, T
 
   if(gHoldem.getLastBet()){
     if(gHoldem.getLastBet() != hpi->chip){
-      me->doSay("Sorry, I only play with '%s' right now.", 
+      me->doSay(fmt("Sorry, I only play with '%s' right now.") % 
 		obj_index[real_object(hpi->chip)].short_desc);
       gHoldem.fold(me);
       return false;

@@ -31,7 +31,6 @@ void TSmoke::doChoke()
   }
 }
 
-
 // merge with other smoke clouds in the room
 void TSmoke::doMerge()
 {

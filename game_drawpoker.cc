@@ -332,8 +332,7 @@ int DrawPokerGame::averagePlayerLevel() const
 void DrawPokerGame::peek(const TBeing *ch)
 {
   int    playerNum;
-  char   tArg[256];
-  sstring tString("");
+  sstring tString;
 
   if (!game) {
     ch->sendTo("No one has dealt yet, perhaps you should deal the cards yourself.\n\r");
@@ -350,17 +349,16 @@ void DrawPokerGame::peek(const TBeing *ch)
     return;
   }
 
-  tString += "You have the following cards:\n\r";
+  tString = "You have the following cards:\n\r";
   tString += "-----------------------------\n\r";
 
   for (int indexCard = 0; indexCard < 5; indexCard++) {
     if (!hands[playerNum][indexCard])
       break;
 
-    sprintf(tArg, "%2d) %-5s | %s\n\r",
-            (indexCard + 1), card_names[CARD_NUM(hands[playerNum][indexCard])],
-            suit(ch, hands[playerNum][indexCard]).c_str());
-    tString += tArg;
+    tString += fmt("%2d) %-5s | %s\n\r") %
+      (indexCard + 1) % card_names[CARD_NUM(hands[playerNum][indexCard])] %
+      suit(ch, hands[playerNum][indexCard]);
   }
 
   ch->sendTo(tString);

@@ -18,6 +18,6 @@ const int NAME_SIZE =15;
 extern bool has_mail(const char *);
 extern bool no_mail;
 
-extern void autoMail(TBeing *, const char *, const char *);
+extern void autoMail(TBeing *, const sstring, const sstring);
 
 #endif

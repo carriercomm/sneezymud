@@ -89,8 +89,9 @@ void GinGame::peek(const TBeing *ch)
 
   for (i = 0; i < 11; i++) {
     if (hands[which][i])
-      ch->sendTo(fmt("%2d) %-5s | %s\n\r") % (i+1) %		 card_names[CARD_NUM(hands[which][i])] %
-		 suit(ch, hands[which][i]));
+      ch->sendTo(fmt("%2d) %-5s | %s\n\r") % (i+1) %
+                   card_names[CARD_NUM(hands[which][i])] %
+                   suit(ch, hands[which][i]));
   }
   return;
 }
@@ -347,7 +348,7 @@ void GinGame::gin(TBeing *ch)
 {
   int which, low;
   TBeing *other;
-  char buf[256];
+  sstring buf;
 
   if ((which = index(ch)) < 0) {
     vlogf(LOG_BUG, fmt("%s got into gin() while not at a gin table!") %  ch->getName());
@@ -364,7 +365,7 @@ void GinGame::gin(TBeing *ch)
   act("$n calls a gin hand!", TRUE, ch, NULL, NULL, TO_ROOM);
   ch->sendTo(COLOR_MOBS, fmt("%s had %d points in %s hand!\n\r") % other->getName() % low % other->hshr());
   other->sendTo(fmt("You have %d points in your hand!\n\r") % low);
-  sprintf(buf, "$n gins, and $N had %d points in $S hand.", low);
+  buf = fmt("$n gins, and $N had %d points in $S hand.") % low;
   act(buf, FALSE, ch, NULL, other, TO_NOTVICT);
   other->sendTo("Here is your opponents winning hand.\n\r");
   ch->sendTo("Here is your opponents losing hand.\n\r");
@@ -387,7 +388,7 @@ void GinGame::knock(TBeing *ch, int low)
 {
   int which, other_low;
   TBeing *other;
-  char buf[256];
+  sstring buf;
 
   if ((which = index(ch)) < 0) {
     vlogf(LOG_BUG, fmt("%s got into () while not at a gin table!") %  ch->getName());
@@ -401,7 +402,7 @@ void GinGame::knock(TBeing *ch, int low)
     return;
 
   ch->sendTo(fmt("You knock with %d point%s!\n\r") % low % (low == 1 ? "" : "s"));
-  sprintf(buf, "$n calls a knock hand with %d point%s!", low, low == 1 ? "" : "s");
+  buf = fmt("$n calls a knock hand with %d point%s!") % low % (low == 1 ? "" : "s");
   act(buf, TRUE, ch, NULL, NULL, TO_ROOM);
   ch->sendTo(COLOR_MOBS, fmt("%s had %d points in %s hand!\n\r") % other->getName() % other_low %
 other->hshr());

@@ -56,8 +56,8 @@ const char * const CLASSHELP        ="help/classes overview";
 const char * const RACEHELP         ="help/races overview";
 const char * const STATHELP         ="help/characteristics overview";
 
-const char * const MUDADMIN_EMAIL   ="mudadmin@sneezy.stanford.edu";
-const char * const CODERS_EMAIL     ="coders@sneezy.stanford.edu";
+const char * const MUDADMIN_EMAIL   ="mudadmin@sneezy.saw.net";
+const char * const CODERS_EMAIL     ="coders@sneezy.saw.net";
 
 /* public procedures in db.c */
 
@@ -132,10 +132,10 @@ class indexData {
   int number;
   int max_num;
  public:
-  const char *name;
-  const char *short_desc;
-  const char *long_desc;
-  const char *description;
+  sstring name;
+  sstring short_desc;
+  sstring long_desc;
+  sstring description;
   
   short max_exist;        // for objs and mobs
   int spec;

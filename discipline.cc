@@ -499,7 +499,7 @@ bool enforceHolySym(const TBeing *ch, spellNumT spell, bool checkDamage)
 
   int sym_stress = level * level;
 
-  char buf[128];
+  sstring buf;
   bool tasking = FALSE;
   int rounds = 0;
 
@@ -553,7 +553,7 @@ bool enforceHolySym(const TBeing *ch, spellNumT spell, bool checkDamage)
         return TRUE;   // has holy and was a strong enough symbol
       } else {
         if (sym_stress >= curr_strength) {
-          sprintf(buf, "$p %sshatters%s from the stress of the prayer.", ch->red(), ch->norm());
+          buf = fmt("$p %sshatters%s from the stress of the prayer.") % ch->red() % ch->norm();
           act(buf, FALSE, ch, holy, NULL, TO_ROOM);
           act("$p shatters from the stress of the prayer!", 0, ch, holy, 0, TO_CHAR, ANSI_RED);
           delete holy;

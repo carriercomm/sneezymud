@@ -247,16 +247,16 @@ void TBeing::doPrompt(const char *arg)
       if (is_abbrev(caStat, "off")) {
         sendTo("Turning off color prompting.\n\r");
         REMOVE_BIT(desc->prompt_d.type, PROMPT_COLOR);
-        *desc->prompt_d.hpColor = '\0';
-        *desc->prompt_d.manaColor = '\0';
-        *desc->prompt_d.moveColor = '\0';
-        *desc->prompt_d.moneyColor = '\0';
-        *desc->prompt_d.expColor = '\0';
-        *desc->prompt_d.roomColor = '\0';
-        *desc->prompt_d.oppColor = '\0';
-        *desc->prompt_d.tankColor = '\0';
-        *desc->prompt_d.pietyColor = '\0';
-        *desc->prompt_d.lifeforceColor = '\0';
+        desc->prompt_d.hpColor = "";
+        desc->prompt_d.manaColor = "";
+        desc->prompt_d.moveColor = "";
+        desc->prompt_d.moneyColor = "";
+        desc->prompt_d.expColor = "";
+        desc->prompt_d.roomColor = "";
+        desc->prompt_d.oppColor = "";
+        desc->prompt_d.tankColor = "";
+        desc->prompt_d.pietyColor = "";
+        desc->prompt_d.lifeforceColor = "";
         return;
       }
       statnum = old_search_block(caStat, 0, strlen(caStat), stat_fields, 0);
@@ -600,7 +600,7 @@ void TBeing::doColor(const char *)
 
 void TPerson::doColor(const char *buf)
 {
-  char arg[160], arg2[160];
+  sstring arg, arg2;
   char  tempBuf[20];
   unsigned int i;
   int toggle = TRUE;
@@ -613,12 +613,11 @@ void TPerson::doColor(const char *buf)
     sendTo("Mobs can't have color.\n\r");
     return;
   } 
-  buf = one_argument(buf, arg);
-  strcpy(arg2, buf);
+  arg2 = one_argument(buf, arg);
 
-  if (!*arg) {
+  if (arg.empty()) {
     for (i = 0;i < (MAX_PLR_COLOR - 1);i++) {
-      if (*color_options[i]) {
+      if (!color_options[i].empty()) {
         if (isImmortal() || (!(i == PLR_COLOR_CODES) && !(i == PLR_COLOR_LOGS))) {  
           sendTo(fmt("%-45s : %s\n\r") % color_options[i] %
             ((IS_SET(desc->plr_color, (unsigned) (1<<i))) ? "on" : "off"));
@@ -652,7 +651,7 @@ void TPerson::doColor(const char *buf)
     sendTo(COLOR_BASIC, "This is red-2       : <a>test<1>\n\r");
     sendTo(COLOR_BASIC, "This is bold_red_2  : <A>test<1>\n\r");
     return;
-  } else if (is_abbrev(arg, "enabled") || !strcasecmp(arg, "on")) {
+  } else if (is_abbrev(arg, "enabled") || (arg == "on")) {
     // one_argument ignores "on", so 2nd option doesn't work at all
     if (IS_SET(desc->plr_color, PLR_COLOR_BASIC)) {
       sendTo("Your basic color is already turned on.\n\r");

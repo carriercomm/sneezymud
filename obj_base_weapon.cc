@@ -436,7 +436,7 @@ void TBaseWeapon::changeObjValue3(TBeing *ch)
 int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
 {
   int hardness;
-  char buf[256];
+  sstring buf;
   TThing *tt;
 
   tt = v->equipment[part_hit];
@@ -469,22 +469,22 @@ int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
           (::number(0, WEAPON_DAM_MAX_SHARP) <= sharp)) {
       if (isBluntWeapon()) {
         // The blunter the weapon, the easier to chip a bit - bat
-        sprintf(buf, "Your %s%s%s is %schipped%s by %s$n's %s.",
-              ch->blue(), fname(name).c_str(), ch->norm(),
-              ch->green(), ch->norm(), (item ? "$p on " : ""),
-              v->describeBodySlot(part_hit).c_str());
+        buf = fmt("Your %s%s%s is %schipped%s by %s$n's %s.") %
+          ch->blue() % fname(name) % ch->norm() %
+          ch->green() % ch->norm() % (item ? "$p on " : "") %
+          v->describeBodySlot(part_hit);
       } else if (isPierceWeapon()) {
         // The pointier the weapon, the easier to blunt a bit - bat
-        sprintf(buf, "Your %s%s%s is %sblunted%s by %s$n's %s.",
-              ch->blue(), fname(name).c_str(), ch->norm(),
-              ch->green(), ch->norm(), (item ? "$p on " : ""),
-              v->describeBodySlot(part_hit).c_str());
+        buf = fmt("Your %s%s%s is %sblunted%s by %s$n's %s.") %
+          ch->blue() % fname(name) % ch->norm() %
+          ch->green() % ch->norm() % (item ? "$p on " : "") %
+          v->describeBodySlot(part_hit);
       } else {
         // The sharper the weapon, the easier to notched a bit - Russ
-        sprintf(buf, "Your %s%s%s is %snotched%s by %s$n's %s.",
-        ch->blue(), fname(name).c_str(), ch->norm(),
-              ch->green(), ch->norm(), (item ? "$p on " : ""),
-              v->describeBodySlot(part_hit).c_str());
+        buf = fmt("Your %s%s%s is %snotched%s by %s$n's %s.") %
+          ch->blue() % fname(name) % ch->norm() %
+          ch->green() % ch->norm() % (item ? "$p on " : "") %
+          v->describeBodySlot(part_hit);
       }
       act(buf, TRUE, v, item, ch, TO_VICT);
       ch->sendTo(COLOR_OBJECTS, fmt("It is in %s condition.\n\r") %equip_condition(-1));
@@ -500,10 +500,10 @@ int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
           makeScraps();
           return DELETE_ITEM;
         } else {
-          sprintf(buf, "%s%s%s is %sdamaged%s by %s$N's %s.",
-               ch->purple(), sstring(getName()).cap().c_str(), ch->norm(),
-             ch->red(), ch->norm(), (item ? "$p on " : ""),
-               v->describeBodySlot(part_hit).c_str());
+          buf = fmt("%s%s%s is %sdamaged%s by %s$N's %s.") %
+            ch->purple() % sstring(getName()).cap() % ch->norm() %
+            ch->red() % ch->norm() % (item ? "$p on " : "") %
+            v->describeBodySlot(part_hit);
           act(buf, FALSE, ch, item, v, TO_CHAR);
 	  ch->sendTo(COLOR_OBJECTS, fmt("<R>It is in<1> %s <R>condition.<1>\n\r") %equip_condition(-1));
         }
@@ -526,7 +526,6 @@ int TBaseWeapon::swungObjectDamage(const TBeing *ch, const TBeing *v) const
   dam += ch->extraDam(v, this);
   return (int) dam;
 }
-
 
 spellNumT getWtype_kluge(weaponT t)
 {

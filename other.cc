@@ -559,7 +559,7 @@ void TBeing::doSplit(const char *argument, bool tell)
 
 void TBeing::doReport(const char *argument)
 {
-  char info[256];
+  sstring info;
   char target[80];
   TThing *t, *t2;
   int found = 0;
@@ -578,22 +578,22 @@ void TBeing::doReport(const char *argument)
   }
   memset(target, '\0', sizeof(target));
   strcpy(target, argument);
-  if (hasClass(CLASS_CLERIC) || hasClass(CLASS_DEIKHAN))
-    sprintf(info, "$n reports '%s%.1f%% H, %.2f%% P. I am %s%s'",
-           red(), getPercHit(), getPiety(),
-           DescMoves((((double) getMove()) / ((double) moveLimit()))),
-           norm());
-  else if (hasClass(CLASS_SHAMAN))
-    sprintf(info, "$n reports '%s%.1f%% H, %-4d LF. I am %s%s'",
-           red(), getPercHit(), getLifeforce(),
-           DescMoves((((double) getMove()) / ((double) moveLimit()))),
-           norm());
-  else
-    sprintf(info, "$n reports '%s%.1f%% H, %.1f%% M. I am %s%s'", 
-           red(), getPercHit(), getPercMana(), 
-           DescMoves((((double) getMove()) / ((double) moveLimit()))), 
-           norm());
-
+  if (hasClass(CLASS_CLERIC) || hasClass(CLASS_DEIKHAN)) {
+    info = fmt("$n reports '%s%.1f%% H, %.2f%% P. I am %s%s'") %
+      red() % getPercHit() % getPiety() %
+      DescMoves(((double) getMove()) / ((double) moveLimit())) %
+      norm();
+  } else if (hasClass(CLASS_SHAMAN)) {
+    info = fmt("$n reports '%s%.1f%% H, %-4d LF. I am %s%s'") %
+      red() % getPercHit() % getLifeforce() %
+      DescMoves(((double) getMove()) / ((double) moveLimit())) %
+      norm();
+  } else {
+    info = fmt("$n reports '%s%.1f%% H, %.1f%% M. I am %s%s'") %
+      red() % getPercHit() % getPercMana() % 
+      DescMoves(((double) getMove()) / ((double) moveLimit())) % 
+      norm();
+  }
 
   for (t = roomp->getStuff(); t; t = t2) {
     t2 = t->nextThing;
@@ -614,21 +614,22 @@ void TBeing::doReport(const char *argument)
       return;
     }
     sendTo(COLOR_MOBS, fmt("You report your status to %s.\n\r") % targ->getName());
-    if (hasClass(CLASS_CLERIC) || hasClass(CLASS_DEIKHAN))
-      sprintf(info, "<G>$n directly reports to you  '%s%.1f%% H, %.2f%% P. I am %s%s'<1>",
-           red(), getPercHit(), getPiety(),
-           DescMoves((((double) getMove()) / ((double) moveLimit()))),
-           norm());
-    else if (hasClass(CLASS_SHAMAN))
-      sprintf(info, "<G>$n directly reports to you  '%s%.1f%% H, %-4d LF. I am %s%s'<1>",
-           red(), getPercHit(), getLifeforce(),
-           DescMoves((((double) getMove()) / ((double) moveLimit()))),
-           norm());
-    else
-      sprintf(info, "<G>$n directly reports to you '%s%.1f%% H, %.1f%% M. I am %s%s'<1>",
-           red(), getPercHit(), getPercMana(),
-           DescMoves((((double) getMove()) / ((double) moveLimit()))),
-           norm());
+    if (hasClass(CLASS_CLERIC) || hasClass(CLASS_DEIKHAN)) {
+      info = fmt("%s$n directly reports to you  '%s%.1f%% H, %.2f%% P. I am %s%s'%s") %
+        greenBold() % red() % getPercHit() % getPiety() %
+        DescMoves(((double) getMove()) / ((double) moveLimit())) %
+        greenBold() % norm();
+    } else if (hasClass(CLASS_SHAMAN)) {
+      info = fmt("%s$n directly reports to you  '%s%.1f%% H, %-4d LF. I am %s%s'%s") %
+        greenBold() % red() % getPercHit() % getLifeforce() %
+        DescMoves(((double) getMove()) / ((double) moveLimit())) %
+        greenBold() % norm();
+    } else {
+      info = fmt("%s$n directly reports to you '%s%.1f%% H, %.1f%% M. I am %s%s'%s") %
+        greenBold() % red() % getPercHit() % getPercMana() %
+        DescMoves(((double) getMove()) / ((double) moveLimit())) %
+        greenBold() % norm();
+    }
 
     colorAct(COLOR_COMM, info, FALSE, this, 0, targ, TO_VICT);
     disturbMeditation(targ);
@@ -637,7 +638,6 @@ void TBeing::doReport(const char *argument)
     sendTo("You report your status to the room.\n\r");
   }
 }
-
 
 void TBeing::doTitle(const char *)
 {
@@ -802,15 +802,13 @@ void TBeing::doNotHere() const
 
 static const sstring describe_practices(TBeing *ch)
 {
-  char buf[1024];
-
-  *buf = '\0';
+  sstring buf = "";
 
   for(int i=0;i<MAX_CLASSES;i++){
     if(ch->hasClass(ch->getClassNum((classIndT)i)) || ch->practices.prac[i]){
-      sprintf(buf + strlen(buf), "You have %d %s practice%s left.\n\r", 
-	      ch->practices.prac[i], classInfo[i].name.c_str(), 
-	      ((ch->practices.prac[i] == 1) ? "" : "s"));
+      buf += fmt("You have %d %s practice%s left.\n\r") %
+        ch->practices.prac[i] % classInfo[i].name %
+        ((ch->practices.prac[i] == 1) ? "" : "s");
     }
   }
 
@@ -819,7 +817,7 @@ static const sstring describe_practices(TBeing *ch)
 
 void TBeing::doPractice(const char *argument)
 {
-  char buf[MAX_STRING_LENGTH * 2];
+  sstring buf;
   char arg[256];
   char skillbuf[40];
   int first, last;
@@ -838,24 +836,25 @@ void TBeing::doPractice(const char *argument)
   for (; isspace(*argument); argument++);
 
   if (!argument || !*argument) {
-    sprintf(buf, "The following disciplines are valid:\n\r");
+    buf = "The following disciplines are valid:\n\r";
     for (i=MIN_DISC; i < MAX_DISCS; i++) {
       cd = getDiscipline(i);
       if (cd && (isImmortal() || cd->ok_for_class || cd->getLearnedness())) {
         if (cd->getLearnedness()) {
           if (cd->getLearnedness() == cd->getNatLearnedness()) {
-            sprintf(buf + strlen(buf), "%30s : Learnedness: %3d%%\n\r",
-                disc_names[i], cd->getLearnedness());
+            buf += fmt("%30s : Learnedness: %3d%%\n\r" ) %
+              disc_names[i] % cd->getLearnedness();
           } else {
-            sprintf(buf + strlen(buf), "%30s : Learnedness: Current (%3d%%) Natural (%3d%%)\n\r", disc_names[i], cd->getLearnedness(), cd->getNatLearnedness());
+            buf += fmt("%30s : Learnedness: Current (%3d%%) Natural (%3d%%)\n\r" ) %
+              disc_names[i] % cd->getLearnedness() % cd->getNatLearnedness();
           }
         } else {
-          sprintf(buf + strlen(buf), "%30s : Learnedness: Unlearned\n\r",
-                  disc_names[i]);
+          buf += fmt("%30s : Learnedness: Unlearned\n\r" ) %
+            disc_names[i];
         }
       }
     }
-    sprintf(buf + strlen(buf), "%s", describe_practices(this).c_str());
+    buf += describe_practices(this);
     d->page_string(buf);
     return;
   }
@@ -878,26 +877,26 @@ void TBeing::doPractice(const char *argument)
       return;
     }
 
-    sprintf(buf, "The following disciplines are valid:\n\r");
+    buf = "The following disciplines are valid:\n\r";
     for (i=MIN_DISC; i < MAX_DISCS; i++) {
-      if (!strcmp(disc_names[i], "unused")) 
+      if (disc_names[i] == "unused") 
         continue;
-      if (!strcmp(disc_names[i], "Psionic Abilities"))
+      if (disc_names[i] == "Psionic Abilities")
 	continue;
       if (!(cd = getDiscipline(i))) {
         vlogf(LOG_BUG, fmt("Somehow %s was not assigned a discipline (%d), used prac class (%d).") % getName() % i % which);
       }
       if ((discNames[i].class_num == 0) || (IS_SET(discNames[i].class_num, which))) {
         if (cd && cd->getLearnedness() >= 0) {
-          sprintf(buf + strlen(buf), "%30s : (Learnedness: %3d%%)\n\r",
-              disc_names[i], cd->getLearnedness());
+          buf += fmt("%30s : (Learnedness: %3d%%)\n\r") %
+            disc_names[i] % cd->getLearnedness();
         } else {
-          sprintf(buf + strlen(buf), "%30s : (Learnedness: unlearned)\n\r",
-                  disc_names[i]);
+          buf += fmt("%30s : (Learnedness: unlearned)\n\r") %
+            disc_names[i];
         }
       }
     }
-    sprintf(buf + strlen(buf), "%s", describe_practices(this).c_str());
+    buf += describe_practices(this);
     d->page_string(buf);
     return;
   }
@@ -1001,7 +1000,7 @@ static const int MaxShapeShiftType = 10;
 
 void TBeing::sendSkillsList(discNumT which)
 {
-  char buf[MAX_STRING_LENGTH * 2], buffer[MAX_STRING_LENGTH * 2];
+  sstring buf, buffer, how_long = "";
   spellNumT i;
   Descriptor *d;
   CDiscipline *cd;
@@ -1009,11 +1008,8 @@ void TBeing::sendSkillsList(discNumT which)
 
   if (!(d = desc))
     return;
-  *buffer = '\0';
 
-  sprintf(buf, "You have knowledge of these abilities:\n\r");
-  strcat(buffer, buf);
-  char how_long[160];
+  buffer = "You have knowledge of these abilities:\n\r";
 
   vector<skillSorter>sortDiscVec(0);
 
@@ -1043,113 +1039,119 @@ void TBeing::sendSkillsList(discNumT which)
     int tmp_var = ((!cd || cd->getLearnedness() <= 0) ? 0 : cd->getLearnedness());
     tmp_var = min((int) MAX_DISC_LEARNEDNESS, tmp_var);
 
-    if (cd && !cd->ok_for_class && getSkillValue(i) <= 0) 
-      strcpy(how_long, "(Learned: Not in this Lifetime)");
-    else if ((getSkillValue(i) <= 0) &&
+    if (cd && !cd->ok_for_class && getSkillValue(i) <= 0) {
+      how_long = "(Learned: Not in this Lifetime)";
+    } else if ((getSkillValue(i) <= 0) &&
           (!tmp_var || (discArray[i]->start - tmp_var) > 0) &&
           (i != SKILL_WIZARDRY && i != SKILL_RITUALISM && i != SKILL_DEVOTION)) {
-      sprintf(how_long, "(Learned: %s)", 
-          skill_diff(discArray[i]->start - tmp_var));
+      how_long = fmt("(Learned: %s)") % 
+        (skill_diff(discArray[i]->start - tmp_var));
     } else if (discArray[i]->toggle && !hasQuestBit(discArray[i]->toggle)) {
       if(i==SKILL_ADVANCED_KICKING){
 	if(hasQuestBit(TOG_ELIGIBLE_ADVANCED_KICKING)){
-	  strcpy(how_long, "(Learned: When Teacher is Found)");
+	  how_long = "(Learned: When Teacher is Found)";
 	} else {
-	  strcpy(how_long, "(Learned: Not Eligible Yet)");
+	  how_long = "(Learned: Not Eligible Yet)";
 	}
       } else {
-	strcpy(how_long, "(Learned: When Teacher is Found)");
+	how_long = "(Learned: When Teacher is Found)";
       }
     } else if ((i == SKILL_WIZARDRY)) {
       wizardryLevelT wiz_lev = getWizardryLevel();
       if (wiz_lev < WIZ_LEV_COMP_PRIM_OTHER_FREE) {
         if (isRightHanded())
-          sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free", skill_diff(discArray[i]->start - tmp_var));
+          how_long = fmt("(Learned: %s)\tcomponent=right hand, left hand=free") %
+            (skill_diff(discArray[i]->start - tmp_var));
         else
-          sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free", skill_diff(discArray[i]->start - tmp_var));
+          how_long = fmt("(Learned: %s)\tcomponent=left hand, right hand=free") %
+            (skill_diff(discArray[i]->start - tmp_var));
       } else if (wiz_lev == WIZ_LEV_COMP_PRIM_OTHER_FREE) {
         if (isRightHanded())
-          strcpy(how_long, "\tcomponent=right hand, left hand=free");
+          how_long = "\tcomponent=right hand, left hand=free";
         else
-          strcpy(how_long, "\tcomponent=left hand, right hand=free");
+          how_long = "\tcomponent=left hand, right hand=free";
       } else if (wiz_lev == WIZ_LEV_COMP_EITHER_OTHER_FREE) {
-        strcpy(how_long,   "\tcomponent=either hand, other free");
+        how_long = "\tcomponent=either hand, other free";
       } else if (wiz_lev == WIZ_LEV_COMP_EITHER) {
-        strcpy(how_long, "\tcomponent=any hand");
+        how_long = "\tcomponent=any hand";
       } else if (wiz_lev == WIZ_LEV_COMP_INV) {
-        strcpy(how_long, "\tcomponent=any hand or inventory");
+        how_long = "\tcomponent=any hand or inventory";
       } else if (wiz_lev == WIZ_LEV_NO_GESTURES) {
-        strcpy(how_long, "\tcomponent=any hand or inventory; no gestures");
+        how_long = "\tcomponent=any hand or inventory; no gestures";
       } else if (wiz_lev == WIZ_LEV_NO_MANTRA) {
-        strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures");
+        how_long = "\tcomponent=any hand or inventory; no speak; no gestures";
       } else if (wiz_lev >= WIZ_LEV_COMP_BELT) {
-        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+        how_long = "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures";
       } else if (wiz_lev >= WIZ_LEV_COMP_NECK) {
-        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+        how_long = "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures";
       } else if (wiz_lev >= WIZ_LEV_COMP_WRIST) {
-        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+        how_long = "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures";
       }
     } else if ((i == SKILL_RITUALISM)) {
       ritualismLevelT wiz_lev = getRitualismLevel();
       if (wiz_lev < RIT_LEV_COMP_PRIM_OTHER_FREE) {
         if (isRightHanded())
-          sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free", skill_diff(discArray[i]->start - tmp_var));
+          how_long = fmt("(Learned: %s)\tcomponent=right hand, left hand=free") %
+            (skill_diff(discArray[i]->start - tmp_var));
         else
-          sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free", skill_diff(discArray[i]->start - tmp_var));
+          how_long = fmt("(Learned: %s)\tcomponent=left hand, right hand=free") %
+            (skill_diff(discArray[i]->start - tmp_var));
       } else if (wiz_lev == RIT_LEV_COMP_PRIM_OTHER_FREE) {
         if (isRightHanded())
-          strcpy(how_long, "\tcomponent=right hand, left hand=free");
+          how_long = "\tcomponent=right hand, left hand=free";
         else
-          strcpy(how_long, "\tcomponent=left hand, right hand=free");
+          how_long = "\tcomponent=left hand, right hand=free";
       } else if (wiz_lev == RIT_LEV_COMP_EITHER_OTHER_FREE) {
-        strcpy(how_long,   "\tcomponent=either hand, other free");
+        how_long = "\tcomponent=either hand, other free";
       } else if (wiz_lev == RIT_LEV_COMP_EITHER) {
-        strcpy(how_long, "\tcomponent=any hand");
+        how_long = "\tcomponent=any hand";
       } else if (wiz_lev == RIT_LEV_COMP_INV) {
-        strcpy(how_long, "\tcomponent=any hand or inventory");
+        how_long = "\tcomponent=any hand or inventory";
       } else if (wiz_lev == RIT_LEV_NO_GESTURES) {
-        strcpy(how_long, "\tcomponent=any hand or inventory; no gestures");
+        how_long = "\tcomponent=any hand or inventory; no gestures";
       } else if (wiz_lev == RIT_LEV_NO_MANTRA) {
-        strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures");
+        how_long = "\tcomponent=any hand or inventory; no speak; no gestures";
       } else if (wiz_lev >= RIT_LEV_COMP_BELT) {
-        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+        how_long = "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures";
       } else if (wiz_lev >= RIT_LEV_COMP_NECK) {
-        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+        how_long = "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures";
       } else if (wiz_lev >= RIT_LEV_COMP_WRIST) {
-        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+        how_long = "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures";
       }
     } else if (i == SKILL_DEVOTION) {
       devotionLevelT wiz_lev = getDevotionLevel();
       if (wiz_lev < DEV_LEV_SYMB_PRIM_OTHER_FREE) {
         if (isRightHanded())
-          sprintf(how_long, "(Learned: %s)\tsymbol=right hand, left hand=free", skill_diff(discArray[i]->start - tmp_var));
+          how_long = fmt("(Learned: %s)\tsymbol=right hand, left hand=free") %
+            (skill_diff(discArray[i]->start - tmp_var));
         else
-          sprintf(how_long, "(Learned: %s)\tsymbol=left hand, right hand=free", skill_diff(discArray[i]->start - tmp_var));
+          how_long = fmt("(Learned: %s)\tsymbol=left hand, right hand=free") %
+            (skill_diff(discArray[i]->start - tmp_var));
       } else if (wiz_lev == DEV_LEV_SYMB_PRIM_OTHER_FREE) {
         if (isRightHanded())
-          strcpy(how_long, "\tsymbol=right hand, left hand=free");
+          how_long = "\tsymbol=right hand, left hand=free";
         else
-          strcpy(how_long, "\tsymbol=left hand, right hand=free");
+          how_long = "\tsymbol=left hand, right hand=free";
       } else if (wiz_lev == DEV_LEV_SYMB_EITHER_OTHER_FREE) {
-        strcpy(how_long,   "\tsymbol=either hand, other free");
+        how_long = "\tsymbol=either hand, other free";
       } else if (wiz_lev == DEV_LEV_SYMB_PRIM_OTHER_EQUIP) {
         if (isRightHanded())
-          strcpy(how_long, "\tsymbol=right hand, left hand=no restrictions; or symbol=left hand, right hand free");
+          how_long = "\tsymbol=right hand, left hand=no restrictions; or symbol=left hand, right hand free";
         else
-          strcpy(how_long, "\tsymbol=left hand, right hand=no restrictions; or symbol=right hand, left hand free");
+          how_long = "\tsymbol=left hand, right hand=no restrictions; or symbol=right hand, left hand free";
       } else if (wiz_lev == DEV_LEV_SYMB_EITHER_OTHER_EQUIP) {
-        strcpy(how_long, "\tsymbol=any hand, no restrictions");
+        how_long = "\tsymbol=any hand, no restrictions";
       } else if (wiz_lev == DEV_LEV_SYMB_NECK) {
-        strcpy(how_long, "\tsymbol=any hand or neck");
+        how_long = "\tsymbol=any hand or neck";
       } else if (wiz_lev == DEV_LEV_NO_GESTURES) {
-        strcpy(how_long, "\tsymbol=any hand or neck; no gestures");
+        how_long = "\tsymbol=any hand or neck; no gestures";
       } else if (wiz_lev >= DEV_LEV_NO_MANTRA) {
-        strcpy(how_long, "\tsymbol=any hand or neck; pray silently; no gestures");
+        how_long = "\tsymbol=any hand or neck; pray silently; no gestures";
       }
     } else if (i == SPELL_SHAPESHIFT) {
 
-      strcpy(how_long, "\n\r\t");
-      strcpy(how_long, "\n\r\tYou may ShapeShift into the following creatures:\n\r\t");
+      how_long = "\n\r\t";
+      how_long = "\n\r\tYou may ShapeShift into the following creatures:\n\r\t";
       for (int tCount = 0; tCount < MaxShapeShiftType; tCount++) {
         if (ShapeShiftList[tCount].learning > getSkillValue(SPELL_SHAPESHIFT) ||
             ShapeShiftList[tCount].level    > GetMaxLevel())
@@ -1163,65 +1165,64 @@ void TBeing::sendSkillsList(discNumT which)
 
         one_argument(tStArg, tStRes);
 
-        if (strlen(how_long) != 3)
-          strcat(how_long, " - ");
+        if (how_long.length() != 3)
+          how_long += " - ";
 
-        strcat(how_long, tStRes.c_str());
+        how_long += tStRes;
       }
 
-      if (strlen(how_long) == 3)
-        strcpy(how_long, " ");
+      if (how_long.length() == 3)
+        how_long = " ";
     } else { 
-      strcpy(how_long, " ");
+      how_long = " ";
     }
 
     if (!isImmortal()) {
       if (doesKnowSkill(i)) {
         if ((i == SKILL_WIZARDRY) || (i == SKILL_RITUALISM) || (i == SKILL_DEVOTION)) {
-            sprintf(buf, "%s%-25.25s%s   Current: %-15s\n\r%-15s.\n\r",
-                   cyan(), discArray[i]->name, norm(),
-                   how_good(getSkillValue(i)), how_long);
+            buf = fmt("%s%-25.25s%s   Current: %-15s\n\r%-15s.\n\r") %
+              cyan() % discArray[i]->name % norm() %
+              how_good(getSkillValue(i)) % how_long;
         } else if (getMaxSkillValue(i) < MAX_SKILL_LEARNEDNESS) {
           if (discArray[i]->startLearnDo > 0) {
-            sprintf(buf, "%s%-25.25s%s   Current: %-12s Potential: %-12s%s\n\r",
-                 cyan(), discArray[i]->name, norm(), 
-                 how_good(getSkillValue(i)),
-                 how_good(getMaxSkillValue(i)), how_long);
+            buf = fmt("%s%-25.25s%s   Current: %-12s Potential: %-12s%s\n\r") %
+              cyan() % discArray[i]->name % norm() % 
+              how_good(getSkillValue(i)) %
+              how_good(getMaxSkillValue(i)) % how_long;
           } else {
-            sprintf(buf, "%s%-25.25s%s   Current: %-15s%s\n\r",
-                   cyan(), discArray[i]->name, norm(), 
-                   how_good(getSkillValue(i)), how_long);
+            buf = fmt("%s%-25.25s%s   Current: %-15s%s\n\r") %
+              cyan() % discArray[i]->name % norm() % 
+              how_good(getSkillValue(i)) % how_long;
           }
         } else {
-          sprintf(buf, "%s%-25.25s%s   Current: %-15s%s\n\r",
-            cyan(), discArray[i]->name, norm(), 
-            how_good(getSkillValue(i)), how_long);
+          buf = fmt("%s%-25.25s%s   Current: %-15s%s\n\r") %
+            cyan() % discArray[i]->name % norm() % 
+            how_good(getSkillValue(i)) % how_long;
         }
       } else {
-        sprintf(buf, "%s%-25.25s%s   %-25s\n\r", cyan(), discArray[i]->name, norm(), how_long);
+        buf = fmt("%s%-25.25s%s   %-25s\n\r") % cyan() % discArray[i]->name % norm() % how_long;
       }
     } else {
-      if (hasWizPower(POWER_GOD))
-        sprintf(buf, "%s%-22.22s%s Disc:[%3d] SkNum:[%3d] Learn:[%3d/%2d/%2d] Diff:%s\n\r",
-                cyan(), discArray[i]->name, norm(),
-                mapDiscToFile(discNumT(getDisciplineNumber(i, FALSE))),
-                i, discArray[i]->learn,
-                discArray[i]->startLearnDo,
-                discArray[i]->amtLearnDo,
-                displayDifficulty(i).c_str());
-      else
-        sprintf(buf, "%s%-22.22s%s Potential: %-12s (%2d) Current: %-12s (%2d)\n\r", 
-                cyan(), discArray[i]->name, norm(), 
-                how_good(getMaxSkillValue(i)),
-                getMaxSkillValue(i),
-                how_good(getSkillValue(i)),
-                getSkillValue(i));
+      if (hasWizPower(POWER_GOD)) {
+        buf = fmt("%s%-22.22s%s Disc:[%3d] SkNum:[%3d] Learn:[%3d/%2d/%2d] Diff:%s\n\r") %
+          cyan() % discArray[i]->name % norm() %
+          mapDiscToFile(discNumT(getDisciplineNumber(i, FALSE))) %
+          i % discArray[i]->learn %
+          discArray[i]->startLearnDo %
+          discArray[i]->amtLearnDo %
+          displayDifficulty(i);
+      } else {
+        buf = fmt("%s%-22.22s%s Potential: %-12s (%2d) Current: %-12s (%2d)\n\r") %
+          cyan() % discArray[i]->name % norm() % 
+          how_good(getMaxSkillValue(i)) %
+          getMaxSkillValue(i) %
+          how_good(getSkillValue(i)) %
+          getSkillValue(i);
+      }
     }
-    if (strlen(buf) + strlen(buffer) > (MAX_STRING_LENGTH * 2) - 2)
-      break;
-    strcat(buffer, buf);
+    buffer += buf;
   } 
-  strcat(buffer, describe_practices(this).c_str());
+  buffer += describe_practices(this);
   d->page_string(buffer);
 }
 
@@ -1230,8 +1231,7 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
   spellNumT skill = TYPE_UNDEFINED;
   int found = 0;
   int wiz = FALSE;
-  char buf[256];
-  char how_long[256];
+  sstring buf, how_long;
   int tmp_var = FALSE;
   CDiscipline *cd;
   discNumT das;
@@ -1286,17 +1286,23 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
         } else {
           found = 2;
           //break;
-          sprintf(buf, "%s%-25.25s%s   Current: %-12s Potential: %-12s\n\r", cyan(), discArray[skill]->name, norm(), how_good(getSkillValue(skill)), how_good(getMaxSkillValue(skill)));
+          buf = fmt("%s%-25.25s%s   Current: %-12s Potential: %-12s\n\r") %
+            cyan() % discArray[skill]->name % norm() %
+            how_good(getSkillValue(skill)) %
+            how_good(getMaxSkillValue(skill));
           sendTo(COLOR_BASIC, buf);
         } 
       }
     } 
   } 
   if (wiz && !(found == 1)) {
-    sprintf(buf, "%s%-25.25s%s   Current: %-12s Potential: %-12s\n\r", cyan(), discArray[skNum]->name, norm(), how_good(getSkillValue(skNum)), how_good(getMaxSkillValue(skNum)));
+    buf = fmt("%s%-25.25s%s   Current: %-12s Potential: %-12s\n\r") %
+      cyan() % discArray[skNum]->name % norm() %
+      how_good(getSkillValue(skNum)) %
+      how_good(getMaxSkillValue(skNum));
      sendTo(COLOR_BASIC, buf);
   } else if (found == 2 || (skill > TYPE_UNDEFINED)) {
-    //sprintf(buf, "%s%-25.25s%s   Current: %-12s Potential: %-12s\n\r", cyan(), discArray[skill]->name, norm(), how_good(getSkillValue(skill)), how_good(getMaxSkillValue(skill))); 
+    //buf = fmt("%s%-25.25s%s   Current: %-12s Potential: %-12s\n\r") % cyan() % discArray[skill]->name % norm() % how_good(getSkillValue(skill)) % how_good(getMaxSkillValue(skill)); 
     //sendTo(COLOR_BASIC, buf);
     return;
   } else if (found == 1 && skill > TYPE_UNDEFINED) {
@@ -1321,66 +1327,66 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
       ritualismLevelT wiz_lev = getRitualismLevel();
       if (wiz_lev < RIT_LEV_COMP_PRIM_OTHER_FREE) {
 	if (isRightHanded()) {
-	  sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	  how_long = fmt("(Learned: %s)\tcomponent=right hand, left hand=free.\n\r") % skill_diff(discArray[skNum]->start - tmp_var);
 	} else {
-	  sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	  how_long = fmt("(Learned: %s)\tcomponent=left hand, right hand=free.\n\r") % skill_diff(discArray[skNum]->start - tmp_var);
 	}
 	sendTo(COLOR_BASIC, how_long);
 	return;
       } else if (wiz_lev == RIT_LEV_COMP_PRIM_OTHER_FREE) {
 	if (isRightHanded())
-	  strcpy(how_long, "\tcomponent=right hand, left hand=free.\n\r");
+	  how_long = "\tcomponent=right hand, left hand=free.\n\r";
 	else
-	  strcpy(how_long, "\tcomponent=left hand, right hand=free.\n\r");
+	  how_long = "\tcomponent=left hand, right hand=free.\n\r";
       } else if (wiz_lev == RIT_LEV_COMP_EITHER_OTHER_FREE) {
-	strcpy(how_long,   "\tcomponent=either hand, other free.\n\r");
+	how_long = "\tcomponent=either hand, other free.\n\r";
       } else if (wiz_lev == RIT_LEV_COMP_EITHER) {
-	strcpy(how_long, "\tcomponent=any hand.\n\r");
+	how_long = "\tcomponent=any hand.\n\r";
       } else if (wiz_lev == RIT_LEV_COMP_INV) {
-	strcpy(how_long, "\tcomponent=any hand or inventory.\n\r");
+	how_long = "\tcomponent=any hand or inventory.\n\r";
       } else if (wiz_lev == RIT_LEV_NO_GESTURES) {
-	strcpy(how_long, "\tcomponent=any hand or inventory; no gestures.\n\r");
+	how_long = "\tcomponent=any hand or inventory; no gestures.\n\r";
       } else if (wiz_lev == RIT_LEV_NO_MANTRA) {
-	strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand or inventory; no speak; no gestures.\n\r";
       } else if (wiz_lev >= RIT_LEV_COMP_BELT) {
-	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r";
       } else if (wiz_lev >= RIT_LEV_COMP_NECK) {
-	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r";
       } else if (wiz_lev >= RIT_LEV_COMP_WRIST) {
-	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r";
       }
       sendTo(COLOR_BASIC, how_long);
     } else {
       wizardryLevelT wiz_lev = getWizardryLevel();
       if (wiz_lev < WIZ_LEV_COMP_PRIM_OTHER_FREE) {
 	if (isRightHanded()) {
-	  sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	  how_long = fmt("(Learned: %s)\tcomponent=right hand, left hand=free.\n\r") % skill_diff(discArray[skNum]->start - tmp_var);
 	} else {
-	  sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	  how_long = fmt("(Learned: %s)\tcomponent=left hand, right hand=free.\n\r") % skill_diff(discArray[skNum]->start - tmp_var);
 	}
 	sendTo(COLOR_BASIC, how_long);
 	return;
       } else if (wiz_lev == WIZ_LEV_COMP_PRIM_OTHER_FREE) {
 	if (isRightHanded())
-	  strcpy(how_long, "\tcomponent=right hand, left hand=free.\n\r");
+	  how_long = "\tcomponent=right hand, left hand=free.\n\r";
 	else
-	  strcpy(how_long, "\tcomponent=left hand, right hand=free.\n\r");
+	  how_long = "\tcomponent=left hand, right hand=free.\n\r";
       } else if (wiz_lev == WIZ_LEV_COMP_EITHER_OTHER_FREE) {
-	strcpy(how_long,   "\tcomponent=either hand, other free.\n\r");
+	how_long = "\tcomponent=either hand, other free.\n\r";
       } else if (wiz_lev == WIZ_LEV_COMP_EITHER) {
-	strcpy(how_long, "\tcomponent=any hand.\n\r");
+	how_long = "\tcomponent=any hand.\n\r";
       } else if (wiz_lev == WIZ_LEV_COMP_INV) {
-	strcpy(how_long, "\tcomponent=any hand or inventory.\n\r");
+	how_long = "\tcomponent=any hand or inventory.\n\r";
       } else if (wiz_lev == WIZ_LEV_NO_GESTURES) {
-	strcpy(how_long, "\tcomponent=any hand or inventory; no gestures.\n\r");
+	how_long = "\tcomponent=any hand or inventory; no gestures.\n\r";
       } else if (wiz_lev == WIZ_LEV_NO_MANTRA) {
-	strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand or inventory; no speak; no gestures.\n\r";
       } else if (wiz_lev >= WIZ_LEV_COMP_BELT) {
-	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r";
       } else if (wiz_lev >= WIZ_LEV_COMP_NECK) {
-	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r";
       } else if (wiz_lev >= WIZ_LEV_COMP_WRIST) {
-	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+	how_long = "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r";
       }
       sendTo(COLOR_BASIC, how_long);
     }
@@ -1388,29 +1394,29 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
     devotionLevelT wiz_lev = getDevotionLevel();
     if (wiz_lev < DEV_LEV_SYMB_PRIM_OTHER_FREE) {
       if (isRightHanded()) {
-        sprintf(how_long, "(Learned: %s)\tsymbol=right hand, left hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+        how_long = fmt("(Learned: %s)\tsymbol=right hand, left hand=free.\n\r") % skill_diff(discArray[skNum]->start - tmp_var);
       } else {
-        sprintf(how_long, "(Learned: %s)\tsymbol=left hand, right hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+        how_long = fmt("(Learned: %s)\tsymbol=left hand, right hand=free.\n\r") % skill_diff(discArray[skNum]->start - tmp_var);
       }
       sendTo(COLOR_BASIC, how_long);
       return;
     } else if (wiz_lev == DEV_LEV_SYMB_PRIM_OTHER_FREE) {
       if (isRightHanded())
-        strcpy(how_long, "\tsymbol=right hand, left hand=free.\n\r");
+        how_long = "\tsymbol=right hand, left hand=free.\n\r";
       else
-        strcpy(how_long, "\tsymbol=left hand, right hand=free.\n\r");
+        how_long = "\tsymbol=left hand, right hand=free.\n\r";
     } else if (wiz_lev == DEV_LEV_SYMB_EITHER_OTHER_FREE) {
-      strcpy(how_long,   "\tsymbol=either hand, other free.\n\r");
+      how_long = "\tsymbol=either hand, other free.\n\r";
     } else if (wiz_lev == DEV_LEV_SYMB_PRIM_OTHER_EQUIP) {
-      strcpy(how_long, "\tsymbol=any hand, primary hand free.\n\r");
+      how_long = "\tsymbol=any hand, primary hand free.\n\r";
     } else if (wiz_lev == DEV_LEV_SYMB_EITHER_OTHER_EQUIP) {
-      strcpy(how_long, "\tsymbol=any hand, no restrictions.\n\r");
+      how_long = "\tsymbol=any hand, no restrictions.\n\r";
     } else if (wiz_lev == DEV_LEV_SYMB_NECK) {
-      strcpy(how_long, "\tsymbol=any hand or neck.\n\r");
+      how_long = "\tsymbol=any hand or neck.\n\r";
     } else if (wiz_lev == DEV_LEV_NO_GESTURES) {
-      strcpy(how_long, "\tsymbol=any hand or neck; no gestures.\n\r");
+      how_long = "\tsymbol=any hand or neck; no gestures.\n\r";
     } else if (wiz_lev >= DEV_LEV_NO_MANTRA) {
-      strcpy(how_long, "\tsymbol=any hand or neck; pray silently; no gestures.\n\r");
+      how_long = "\tsymbol=any hand or neck; pray silently; no gestures.\n\r";
     }
     sendTo(COLOR_BASIC, how_long);
   }
@@ -1429,7 +1435,7 @@ void TBeing::doPracDisc(const char *arg, int classNum)
 //  arg = one_argument(arg, buf);
 
   for (discNumT i = MIN_DISC; (i < MAX_DISCS); i++) {
-    if (!*disc_names[i] || !(*discNames[i].practice)) {
+    if (disc_names[i].empty() || !(*discNames[i].practice)) {
       continue;
     }
     if (!is_abbrev(arg, discNames[i].practice, MULTIPLE_YES)) {
@@ -3294,7 +3300,7 @@ void TThing::extinguishMe(TBeing *ch)
   return;
 }
 
-void TBeing::doExtinguish(const sstring & argument)
+void TBeing::doExtinguish(const sstring &argument)
 {
   TThing *t = NULL;
   char tmpname[256], *tmp;
@@ -3947,8 +3953,6 @@ void Descriptor::add_comment(const char *who, const char *msg)
   fputs(buf, fp);
   fputs("\n", fp);
   fclose(fp);
-
-
 
   i=0;
   while(buf[i++]!='\n');

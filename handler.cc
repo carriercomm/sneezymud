@@ -25,11 +25,28 @@ extern "C" {
 #include "obj_base_clothing.h"
 
 
+const bool sstring::isWord() const
+{       
+  for(unsigned int i=0;i<size();++i){
+    if (!isalpha((*this)[i]))
+      return false;
+  }     
+  return true;
+}
 // fname will look for the first non-alpha character
 // I added - and ' as valid fname chars since this allows us to do better things
 // with items and mobs in the name field.  - Bat 6-30-97
 const sstring fname(const char *namelist)
 {
+  sstring buf = "";
+
+  for (; isalpha(*namelist) || (*namelist == '-') || (*namelist == '\''); namelist++) {
+    buf += *namelist;
+  }
+
+  return buf;
+
+  /*
   char holder[60];
   register char *point;
 
@@ -39,6 +56,7 @@ const sstring fname(const char *namelist)
   *point = '\0';
 
   return (holder);
+  */
 }
 
 // split up "str", using delimiters "sep" and place resulting sstrings in "argv"

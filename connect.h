@@ -362,17 +362,17 @@ class promptData
 {
   public:
     unsigned int type;
-    char hpColor[20];
-    char manaColor[20];
-    char moveColor[20];
-    char moneyColor[20];
-    char expColor[20];
-    char oppColor[20];
-    char roomColor[20];
-    char tankColor[20];
-    char pietyColor[20];
-    char lifeforceColor[20];
-    char *prompt;
+    sstring hpColor;
+    sstring manaColor;
+    sstring moveColor;
+    sstring moneyColor;
+    sstring expColor;
+    sstring oppColor;
+    sstring roomColor;
+    sstring tankColor;
+    sstring pietyColor;
+    sstring lifeforceColor;
+    sstring prompt;
 //    double xptnl[MAX_CLASSES];  getExpClassLevel is same for all classes
     double xptnl;
 
@@ -534,43 +534,43 @@ class Descriptor
     }
 
     const sstring doColorSub() const;
-    const sstring ansi_color_bold(const char *s) const;
-    const sstring ansi_color_bold(const char *s, unsigned int) const;
-    const sstring ansi_color(const char *s) const;
-    const sstring ansi_color(const char *s, unsigned int) const;
+    const sstring ansi_color_bold(const sstring &s) const;
+    const sstring ansi_color_bold(const sstring &s, unsigned int) const;
+    const sstring ansi_color(const sstring &s) const;
+    const sstring ansi_color(const sstring &s, unsigned int) const;
     bool hasColor() const;
     bool hasColorVt() const;
-    const char *highlight(char *s) const;
-    const char *whiteBold() const;
-    const char *blackBold() const;
-    const char *redBold() const;
-    const char *underBold() const;
-    const char *blueBold() const;
-    const char *cyanBold() const;
-    const char *greenBold() const;
-    const char *orangeBold() const;
-    const char *purpleBold() const;
-    const char *white() const;
-    const char *black() const;
-    const char *red() const;
-    const char *under() const;
-    const char *bold() const;
-    const char *norm() const;
-    const char *blue() const;
-    const char *cyan() const;
-    const char *green() const;
-    const char *orange() const;
-    const char *purple() const;
-    const char *invert() const;
-    const char *flash() const;
-    const char *BlackOnBlack() const;
-    const char *BlackOnWhite() const;
-    const char *WhiteOnBlue() const;
-    const char *WhiteOnCyan() const;
-    const char *WhiteOnGreen() const;
-    const char *WhiteOnOrange() const;
-    const char *WhiteOnPurple() const;
-    const char *WhiteOnRed() const;
+    const sstring highlight(sstring &s) const;
+    const sstring whiteBold() const;
+    const sstring blackBold() const;
+    const sstring redBold() const;
+    const sstring underBold() const;
+    const sstring blueBold() const;
+    const sstring cyanBold() const;
+    const sstring greenBold() const;
+    const sstring orangeBold() const;
+    const sstring purpleBold() const;
+    const sstring white() const;
+    const sstring black() const;
+    const sstring red() const;
+    const sstring under() const;
+    const sstring bold() const;
+    const sstring norm() const;
+    const sstring blue() const;
+    const sstring cyan() const;
+    const sstring green() const;
+    const sstring orange() const;
+    const sstring purple() const;
+    const sstring invert() const;
+    const sstring flash() const;
+    const sstring BlackOnBlack() const;
+    const sstring BlackOnWhite() const;
+    const sstring WhiteOnBlue() const;
+    const sstring WhiteOnCyan() const;
+    const sstring WhiteOnGreen() const;
+    const sstring WhiteOnOrange() const;
+    const sstring WhiteOnPurple() const;
+    const sstring WhiteOnRed() const;
 };
 
 #endif

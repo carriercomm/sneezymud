@@ -615,7 +615,6 @@ void Race::initRace(const char *whichRace)
 
 void Race::showTo(TBeing *caller)
 {
-  char buf[256];
   sstring str;
 
   if (!caller->desc)
@@ -629,41 +628,32 @@ void Race::showTo(TBeing *caller)
   str += proper_name;
   str += "\n\r";
 
-  sprintf(buf, "Race is of type %s\n\r", RaceNames[raceType]);
-  str += buf;
+  str += fmt("Race is of type %s\n\r") % RaceNames[raceType];
 
-  sprintf(buf, "Race belongs to the following Lore: %s\n\r", Lores[Kingdom]);
-  str += buf;
+  str += fmt("Race belongs to the following Lore: %s\n\r") % Lores[Kingdom];
 
-  sprintf(buf, "Race has body type %s\n\r", bodyNames[bodyType]);
-  str += buf;
+  str += fmt("Race has body type %s\n\r") % bodyNames[bodyType];
 
-  sprintf(buf, "Age = %d+%dd%d\n\r", baseAge, ageNumDice, ageDieSize);
-  str += buf;
+  str += fmt("Age = %d+%dd%d\n\r") % baseAge % ageNumDice % ageDieSize;
 
   str += "Male Dimensions:    ";
-  sprintf(buf, "Height: %d+%dd%d\tWeight: %d+%dd%d\n\r",
-		    baseMaleHeight, maleHtNumDice, maleHtDieSize,
-		    baseMaleWeight, maleWtNumDice, maleWtDieSize);
-  str += buf;
+  str += fmt("Height: %d+%dd%d\tWeight: %d+%dd%d\n\r") %
+    baseMaleHeight % maleHtNumDice % maleHtDieSize,
+    baseMaleWeight % maleWtNumDice % maleWtDieSize;
 
   str += "Female Dimensions:  ";
-  sprintf(buf, "Height: %d+%dd%d\tWeight: %d+%dd%d\n\r",
-		    baseFemaleHeight, femaleHtNumDice, femaleHtDieSize,
-		    baseFemaleWeight, femaleWtNumDice, femaleWtDieSize);
-  str += buf;
+  str += fmt("Height: %d+%dd%d\tWeight: %d+%dd%d\n\r") %
+    baseFemaleHeight % femaleHtNumDice % femaleHtDieSize,
+    baseFemaleWeight % femaleWtNumDice % femaleWtDieSize;
 
   str += "Modifiers:\n\r";
-  sprintf(buf, "\tHP:\t%d\tMV:\t%d\tMANA:\t%d\n\r", hpMod, moveMod, manaMod);
-  str += buf;
+  str += fmt("\tHP:\t%d\tMV:\t%d\tMANA:\t%d\n\r") % hpMod % moveMod % manaMod);
 
-  sprintf(buf, "\tSearch:\t%d\tSight:\t%d\tVision:\t%d\n\r", 
-        searchMod, lineOfSightMod, visionBonus);
-  str += buf;
+  str += fmt("\tSearch:\t%d\tSight:\t%d\tVision:\t%d\n\r") % 
+    searchMod % lineOfSightMod % visionBonus;
 
-  sprintf(buf, "\tDrink:\t%.2f\tFood:\t%.2f\n\r", 
-	  	    drinkMod, foodMod);
-  str += buf;
+  str += fmt("\tDrink:\t%.2f\tFood:\t%.2f\n\r") % 
+    drinkMod % foodMod;
 
   str += sstring("Move In: ") + moveMessageIn + sstring("\n\r");
   str += sstring("Move Out: ") + moveMessageOut + sstring("\n\r");
@@ -699,8 +689,7 @@ void Race::showTo(TBeing *caller)
   unsigned int i;
   for (i = 0; i < MAX_TALENTS; i++) {
     if (hasTalent(1<<i)) {
-      sprintf(buf, "TALENT: \t%s\n\r", ::talents[i]);
-      str+= buf;
+      str += fmt("TALENT: \t%s\n\r") % ::talents[i];
     }
   }
 
@@ -709,8 +698,7 @@ void Race::showTo(TBeing *caller)
   for (itt = MIN_IMMUNE; itt < MAX_IMMUNES; itt++) {
     byte val = naturalImmunities.getImmunity(itt);
     if (val) {
-      sprintf(buf, "IMMUNITY: \t%s by %d\n\r", immunity_names[itt], val);
-      str += buf;
+      str += fmt("IMMUNITY: \t%s by %d\n\r") % immunity_names[itt] % val;
     }
   }
 

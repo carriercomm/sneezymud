@@ -96,37 +96,37 @@ void TBeing::setColor(setColorFieldT num, setColorKolorT col)
 
   switch (num) {
     case SET_COL_FIELD_HIT:
-      strcpy(desc->prompt_d.hpColor, buf.c_str());
+      desc->prompt_d.hpColor = buf;
       break;
     case SET_COL_FIELD_MANA:
-      strcpy(desc->prompt_d.manaColor, buf.c_str());
+      desc->prompt_d.manaColor = buf;
       break;
     case SET_COL_FIELD_MOVE:
-      strcpy(desc->prompt_d.moveColor, buf.c_str());
+      desc->prompt_d.moveColor = buf;
       break;
     case SET_COL_FIELD_TALEN:
-      strcpy(desc->prompt_d.moneyColor, buf.c_str());
+      desc->prompt_d.moneyColor = buf;
       break;
     case SET_COL_FIELD_XP:
-      strcpy(desc->prompt_d.expColor, buf.c_str());
+      desc->prompt_d.expColor = buf;
       break;
     case SET_COL_FIELD_OPP:
-      strcpy(desc->prompt_d.oppColor, buf.c_str());
+      desc->prompt_d.oppColor = buf;
       break;
     case SET_COL_FIELD_ROOM:
-      strcpy(desc->prompt_d.roomColor, buf.c_str());
+      desc->prompt_d.roomColor = buf;
       break;
     case SET_COL_FIELD_TANK:
-      strcpy(desc->prompt_d.tankColor, buf.c_str());
+      desc->prompt_d.tankColor = buf;
       break;
     case SET_COL_FIELD_TANK_OTHER:
-      strcpy(desc->prompt_d.tankColor, buf.c_str());
+      desc->prompt_d.tankColor = buf;
       break;
     case SET_COL_FIELD_PIETY:
-      strcpy(desc->prompt_d.pietyColor, buf.c_str());
+      desc->prompt_d.pietyColor = buf;
       break;
     case SET_COL_FIELD_LIFEFORCE:
-      strcpy(desc->prompt_d.lifeforceColor, buf.c_str());
+      desc->prompt_d.lifeforceColor = buf;
       break;
   }
 }
@@ -141,7 +141,7 @@ bool TBeing::hasColorVt() const
   return (color() || ansi() || vt100());
 }
 
-const sstring TBeing::ansi_color_bold(const char *s) const
+const sstring TBeing::ansi_color_bold(const sstring &s) const
 {
   sstring buf;
 
@@ -149,93 +149,90 @@ const sstring TBeing::ansi_color_bold(const char *s) const
     buf = bold();
     buf += s;
   } else if (hasColorVt()) {
-      return "";
-//    return VT_BOLDTEX;
+    buf = "";
   } else {
-    s = "";
-    return s;
+    buf = "";
   }
   return buf;
 }
 
 const sstring TBeing::doColorSub() const
 {
-  char buf[80];
-      if (hasColor()) {
-        switch (desc->plr_colorSub) {
-          case COLOR_SUB_NONE:
-            return "";
-            break;
-          case COLOR_SUB_BLACK:
-            strcpy(buf, black());
-            break;
-          case COLOR_SUB_RED:
-            strcpy(buf, red());
-            break;
-          case COLOR_SUB_GREEN:
-            strcpy(buf, green());
-            break;
-          case COLOR_SUB_ORANGE:
-            strcpy(buf, orange());
-            break;
-          case COLOR_SUB_BLUE:
-            strcpy(buf, blue());
-            break;
-          case COLOR_SUB_PURPLE:
-            strcpy(buf, purple());
-            break;
-          case COLOR_SUB_CYAN:
-            strcpy(buf, cyan());
-            break;
-          case COLOR_SUB_WHITE:
-            strcpy(buf, white());
-            break;
-          case COLOR_SUB_YELLOW:
-            strcpy(buf, orangeBold());
-            break;
-          case COLOR_SUB_GRAY:
-            strcpy(buf, blackBold());
-            break;
-          case COLOR_SUB_BOLD_RED:
-            strcpy(buf, redBold());
-            break;
-          case COLOR_SUB_BOLD_GREEN:
-            strcpy(buf, greenBold());
-            break;
-          case COLOR_SUB_BOLD_BLUE:
-            strcpy(buf, blueBold());
-            break;
-          case COLOR_SUB_BOLD_PURPLE:
-            strcpy(buf, purpleBold());
-            break;
-          case COLOR_SUB_BOLD_CYAN:
-            strcpy(buf, cyanBold());
-            break;
-          case COLOR_SUB_BOLD_WHITE:
-            strcpy(buf, whiteBold());
-            break;
-          case COLOR_SUB_BOLD:
-            strcpy(buf, bold());
-            break;
-          default:
-            return "";
-            vlogf(LOG_BUG, fmt("Problem in color substituting (%s)") %  getName());
-            break;
-        }
-        return buf;
-      } else if (hasColorVt()) {
-        strcpy(buf, "");
-      } else {
-        strcpy(buf,"");
-      }
-      return buf;
+  sstring buf = "";
+
+  if (hasColor()) {
+    switch (desc->plr_colorSub) {
+      case COLOR_SUB_NONE:
+        buf = "";
+        break;
+      case COLOR_SUB_BLACK:
+        buf = black();
+        break;
+      case COLOR_SUB_RED:
+        buf = red();
+        break;
+      case COLOR_SUB_GREEN:
+        buf = green();
+        break;
+      case COLOR_SUB_ORANGE:
+        buf = orange();
+        break;
+      case COLOR_SUB_BLUE:
+        buf = blue();
+        break;
+      case COLOR_SUB_PURPLE:
+        buf = purple();
+        break;
+      case COLOR_SUB_CYAN:
+        buf = cyan();
+        break;
+      case COLOR_SUB_WHITE:
+        buf = white();
+        break;
+      case COLOR_SUB_YELLOW:
+        buf = orangeBold();
+        break;
+      case COLOR_SUB_GRAY:
+        buf = blackBold();
+        break;
+      case COLOR_SUB_BOLD_RED:
+        buf = redBold();
+        break;
+      case COLOR_SUB_BOLD_GREEN:
+        buf = greenBold();
+        break;
+      case COLOR_SUB_BOLD_BLUE:
+        buf = blueBold();
+        break;
+      case COLOR_SUB_BOLD_PURPLE:
+        buf = purpleBold();
+        break;
+      case COLOR_SUB_BOLD_CYAN:
+        buf = cyanBold();
+        break;
+      case COLOR_SUB_BOLD_WHITE:
+        buf = whiteBold();
+        break;
+      case COLOR_SUB_BOLD:
+        buf = bold();
+        break;
+      default:
+        buf = "";
+        vlogf(LOG_BUG, fmt("Problem in color substituting (%s)") % getName());
+        break;
+    }
+  } else if (hasColorVt()) {
+    buf = "";
+  } else {
+    buf = "";
+  }
+  return buf;
 }
 
-const sstring TBeing::ansi_color_bold(const char *s, unsigned int ans_color) const
+const sstring TBeing::ansi_color_bold(const sstring &s, unsigned int ans_color) const
 {
-  sstring buf;
+  sstring buf = "";
   int repFound = FALSE;
-
 
   if (desc) {
     if (IS_SET(desc->plr_colorOff, ans_color)) {
@@ -245,10 +242,7 @@ const sstring TBeing::ansi_color_bold(const char *s, unsigned int ans_color) con
 
   if (repFound) {
     if (desc->plr_colorSub) {
-      return doColorSub();
-    } else {
-      s = "";
-      return s;
+      buf = doColorSub();
     }
   } else {
     if (hasColor()) {
@@ -256,33 +250,30 @@ const sstring TBeing::ansi_color_bold(const char *s, unsigned int ans_color) con
       buf += s;
     } else if (hasColorVt()) {
       if (ans_color == COLOR_BOLD) {
-        return VT_BOLDTEX;
-      } else {
-        return "";
+        buf = VT_BOLDTEX;
       }
-    } else {
-      s = "";
-      return s;
     }
   }
   return buf;
 }
 
-const sstring TBeing::ansi_color(const char *s) const
+const sstring TBeing::ansi_color(const sstring &s) const
 {
+  sstring buf = "";
+
   if (hasColor()) {
-    return s;
+    buf = s;
   } else if (hasColorVt()) {
-    return "";
+    buf = "";
   } else {
-    return "";
+    buf = "";
   }
-  return "";
-//  return (hasColor() ? s : (hasColorVt() ? VT_BOLDTEX : ""));
+  return buf;
 }
 
-const sstring TBeing::ansi_color(const char *s, unsigned int ans_color) const
+const sstring TBeing::ansi_color(const sstring &s, unsigned int ans_color) const
 {
+  sstring buf = "";
   int repFound = FALSE;
 
   if (desc) {
@@ -293,241 +284,234 @@ const sstring TBeing::ansi_color(const char *s, unsigned int ans_color) const
 
   if (repFound) {
     if (desc->plr_colorSub) {
-      return doColorSub();
-    } else {
-      s = "";
-      return s;
+      buf = doColorSub();
     }
   } else {
     if (hasColor()) {
-      return s;
+      buf = s;
     } else if (hasColorVt()) {
       if (ans_color == COLOR_BOLD) {
-        return VT_BOLDTEX;
+        buf = VT_BOLDTEX;
       } else if (ans_color == COLOR_NONE) {
-        return ANSI_NORMAL;
-      } else {
-        return "";
+        buf = ANSI_NORMAL;
       }
-    } else {
-      return "";
     }
-//    return (hasColor() ? s : (hasColorVt() ? VT_BOLDTEX : ""));
   }
+  return buf;
 }
 
-const char *TBeing::highlight(char *s) const
+const sstring TBeing::highlight(sstring &s) const
 {
   return (hasColorVt() ? s : "");
 }
 
-const char *TBeing::whiteBold() const
+const sstring TBeing::whiteBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_WHITE, COLOR_BOLD_WHITE).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_WHITE, COLOR_BOLD_WHITE);
   return buf;
 }
 
-const char *TBeing::white() const
+const sstring TBeing::white() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WHITE, COLOR_WHITE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WHITE, COLOR_WHITE);
   return buf;
 }
 
-const char *TBeing::blackBold() const
+const sstring TBeing::blackBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_BLACK, COLOR_GRAY).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_BLACK, COLOR_GRAY);
   return buf;
 }
 
-const char *TBeing::black() const
+const sstring TBeing::black() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BLACK, COLOR_BLACK).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BLACK, COLOR_BLACK);
   return buf;
 }
 
-const char *TBeing::redBold() const
+const sstring TBeing::redBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_RED, COLOR_BOLD_RED).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_RED, COLOR_BOLD_RED);
   return buf;
 }
 
-const char *TBeing::red() const
+const sstring TBeing::red() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_RED, COLOR_RED).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_RED, COLOR_RED);
   return buf;
 }
 
-const char *TBeing::underBold() const
+const sstring TBeing::underBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_UNDER, COLOR_UNDER).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_UNDER, COLOR_UNDER);
   return buf;
 }
 
-const char *TBeing::under() const
+const sstring TBeing::under() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_UNDER, COLOR_UNDER).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_UNDER, COLOR_UNDER);
   return buf;
 }
 
-const char *TBeing::bold() const
+const sstring TBeing::bold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(VT_BOLDTEX, COLOR_BOLD).c_str());
+  static sstring buf;
+  buf = ansi_color(VT_BOLDTEX, COLOR_BOLD);
   return buf;
 }
 
-const char *TBeing::norm() const
+const sstring TBeing::norm() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_NORMAL, COLOR_NONE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_NORMAL, COLOR_NONE);
   return buf;
 }
 
-const char *TBeing::blueBold() const
+const sstring TBeing::blueBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_BLUE, COLOR_BOLD_BLUE).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_BLUE, COLOR_BOLD_BLUE);
   return buf;
 }
 
-const char *TBeing::blue() const
+const sstring TBeing::blue() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BLUE, COLOR_BLUE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BLUE, COLOR_BLUE);
   return buf;
 }
 
-const char *TBeing::cyanBold() const
+const sstring TBeing::cyanBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_CYAN, COLOR_BOLD_CYAN).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_CYAN, COLOR_BOLD_CYAN);
   return buf;
 }
 
-const char *TBeing::cyan() const
+const sstring TBeing::cyan() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_CYAN, COLOR_CYAN).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_CYAN, COLOR_CYAN);
   return buf;
 }
 
-const char *TBeing::greenBold() const
+const sstring TBeing::greenBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_GREEN, COLOR_BOLD_GREEN).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_GREEN, COLOR_BOLD_GREEN);
   return buf;
 }
 
-const char *TBeing::green() const
+const sstring TBeing::green() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_GREEN, COLOR_GREEN).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_GREEN, COLOR_GREEN);
   return buf;
 }
 
-const char *TBeing::orangeBold() const
+const sstring TBeing::orangeBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_ORANGE, COLOR_YELLOW).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_ORANGE, COLOR_YELLOW);
   return buf;
 }
 
-const char *TBeing::orange() const
+const sstring TBeing::orange() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_ORANGE, COLOR_ORANGE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_ORANGE, COLOR_ORANGE);
   return buf;
 }
 
-const char *TBeing::purpleBold() const
+const sstring TBeing::purpleBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_PURPLE, COLOR_BOLD_PURPLE).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_PURPLE, COLOR_BOLD_PURPLE);
   return buf;
 }
 
-const char *TBeing::purple() const
+const sstring TBeing::purple() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_PURPLE, COLOR_PURPLE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_PURPLE, COLOR_PURPLE);
   return buf;
 }
 
-const char *TBeing::invert() const
+const sstring TBeing::invert() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(VT_INVERTT).c_str());
+  static sstring buf;
+  buf = ansi_color(VT_INVERTT);
   return buf;
 }
 
-const char *TBeing::flash() const
+const sstring TBeing::flash() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_FLASH).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_FLASH);
   return buf;
 }
 
-const char *TBeing::BlackOnBlack() const
+const sstring TBeing::BlackOnBlack() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BK_ON_BK).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BK_ON_BK);
   return buf;
 }
 
-const char *TBeing::BlackOnWhite() const
+const sstring TBeing::BlackOnWhite() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BK_ON_WH).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BK_ON_WH);
   return buf;
 }
 
-const char *TBeing::WhiteOnBlue() const
+const sstring TBeing::WhiteOnBlue() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_BL).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_BL);
   return buf;
 }
 
-const char *TBeing::WhiteOnCyan() const
+const sstring TBeing::WhiteOnCyan() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_CY).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_CY);
   return buf;
 }
 
-const char *TBeing::WhiteOnGreen() const
+const sstring TBeing::WhiteOnGreen() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_GR).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_GR);
   return buf;
 }
 
-const char *TBeing::WhiteOnOrange() const
+const sstring TBeing::WhiteOnOrange() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_OR).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_OR);
   return buf;
 }
 
-const char *TBeing::WhiteOnPurple() const
+const sstring TBeing::WhiteOnPurple() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_PR).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_PR);
   return buf;
 }
 
-const char *TBeing::WhiteOnRed() const
+const sstring TBeing::WhiteOnRed() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_RD).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_RD);
   return buf;
 }
 
@@ -541,145 +525,97 @@ bool Descriptor::hasColorVt() const
   return ((plr_act & PLR_COLOR) || (plr_act & PLR_ANSI) || (plr_act & PLR_VT100));
 }
 
-
 const sstring Descriptor::doColorSub() const
 {
-  char buf[80];
-      if (hasColor()) {
-        switch (plr_colorSub) {
-          case COLOR_SUB_NONE:
-            return "";
-            break;
-          case COLOR_SUB_BLACK:
-            strcpy(buf, black());
-            break;
-          case COLOR_SUB_RED:
-            strcpy(buf, red());
-            break;
-          case COLOR_SUB_GREEN:
-            strcpy(buf, green());
-            break;
-          case COLOR_SUB_ORANGE:
-            strcpy(buf, orange());
-            break;
-          case COLOR_SUB_BLUE:
-            strcpy(buf, blue());
-            break;
-          case COLOR_SUB_PURPLE:
-            strcpy(buf, purple());
-            break;
-          case COLOR_SUB_CYAN:
-            strcpy(buf, cyan());
-            break;
-          case COLOR_SUB_WHITE:
-            strcpy(buf, white());
-            break;
-          case COLOR_SUB_YELLOW:
-            strcpy(buf, orangeBold());
-            break;
-          case COLOR_SUB_GRAY:
-            strcpy(buf, blackBold());
-            break;
-          case COLOR_SUB_BOLD_RED:
-            strcpy(buf, redBold());
-            break;
-          case COLOR_SUB_BOLD_GREEN:
-            strcpy(buf, greenBold());
-            break;
-          case COLOR_SUB_BOLD_BLUE:
-            strcpy(buf, blueBold());
-            break;
-          case COLOR_SUB_BOLD_PURPLE:
-            strcpy(buf, purpleBold());
-            break;
-          case COLOR_SUB_BOLD_CYAN:
-            strcpy(buf, cyanBold());
-            break;
-          case COLOR_SUB_BOLD_WHITE:
-            strcpy(buf, whiteBold());
-            break;
-          case COLOR_SUB_BOLD:
-            strcpy(buf, bold());
-            break;
-          default:
-            return "";
-            vlogf(LOG_BUG, "Problem in color substituting/desc");
-            break;
-        }
-        return buf;
-      } else if (hasColorVt()) {
-        strcpy(buf, "");
-      } else {
-        strcpy(buf,"");
-      }
-      return buf;
+  sstring buf = "";
+
+  if (hasColor()) {
+    switch (plr_colorSub) {
+      case COLOR_SUB_NONE:
+        buf = "";
+        break;
+      case COLOR_SUB_BLACK:
+        buf = black();
+        break;
+      case COLOR_SUB_RED:
+        buf = red();
+        break;
+      case COLOR_SUB_GREEN:
+        buf = green();
+        break;
+      case COLOR_SUB_ORANGE:
+        buf = orange();
+        break;
+      case COLOR_SUB_BLUE:
+        buf = blue();
+        break;
+      case COLOR_SUB_PURPLE:
+        buf = purple();
+        break;
+      case COLOR_SUB_CYAN:
+        buf = cyan();
+        break;
+      case COLOR_SUB_WHITE:
+        buf = white();
+        break;
+      case COLOR_SUB_YELLOW:
+        buf = orangeBold();
+        break;
+      case COLOR_SUB_GRAY:
+        buf = blackBold();
+        break;
+      case COLOR_SUB_BOLD_RED:
+        buf = redBold();
+        break;
+      case COLOR_SUB_BOLD_GREEN:
+        buf = greenBold();
+        break;
+      case COLOR_SUB_BOLD_BLUE:
+        buf = blueBold();
+        break;
+      case COLOR_SUB_BOLD_PURPLE:
+        buf = purpleBold();
+        break;
+      case COLOR_SUB_BOLD_CYAN:
+        buf = cyanBold();
+        break;
+      case COLOR_SUB_BOLD_WHITE:
+        buf = whiteBold();
+        break;
+      case COLOR_SUB_BOLD:
+        buf = bold();
+        break;
+      default:
+        buf = "";
+        vlogf(LOG_BUG, "Problem in color substituting/desc");
+        break;
+    }
+  } else if (hasColorVt()) {
+    buf = "";
+  } else {
+    buf = "";
+  }
+  return buf;
 }
 
-
-const sstring Descriptor::ansi_color_bold(const char *s) const
+const sstring Descriptor::ansi_color_bold(const sstring &s) const
 {
   sstring buf;
 
   if (hasColor()) {
     buf = bold();
     buf += s;
-  } else if (hasColorVt()) 
-    return "";
-  else 
-    return"";
-
-  return buf;
-}
-
-const sstring Descriptor::ansi_color_bold(const char *s, unsigned int color) const
-{
-  sstring buf;
-  int repFound = FALSE;
-
-  if (IS_SET(plr_colorOff, color)) 
-    repFound = TRUE;
-
-  if (repFound) {
-    if (plr_colorSub) 
-      return doColorSub();
-    else {
-      s = "";
-      return s;
-    }
-  } else {
-    if (hasColor()) {
-      buf = bold();
-      buf += s;
-    } else if (hasColorVt()) {
-      if (color == COLOR_BOLD) 
-        return VT_BOLDTEX;
-      else {
-        s = "";
-        return s;
-      }
-    } else {
-      s = "";
-      return s;
-    }
-  }
-  return buf;
-}
-
-const sstring Descriptor::ansi_color(const char *s) const
-{
-  if (hasColor()) {
-    return s;
   } else if (hasColorVt()) {
-    return "";
-//    return VT_BOLDTEX;
+    buf = "";
   } else {
-    return "";
+    buf = "";
   }
-//  return (hasColor() ? s : (hasColorVt() ? VT_BOLDTEX : ""));
+  return buf;
 }
 
-const sstring Descriptor::ansi_color(const char *s, unsigned int color) const
+const sstring Descriptor::ansi_color_bold(const sstring &s, unsigned int color) const
 {
+  sstring buf = "";
   int repFound = FALSE;
 
   if (IS_SET(plr_colorOff, color)) {
@@ -688,242 +624,275 @@ const sstring Descriptor::ansi_color(const char *s, unsigned int color) const
 
   if (repFound) {
     if (plr_colorSub) {
-      return doColorSub();
-    } else {
-      s = "";
-      return s;
+      buf = doColorSub();
     }
   } else {
-//    return (hasColor() ? s : (hasColorVt() ? VT_BOLDTEX : ""));
     if (hasColor()) {
-      return s;
+      buf = bold();
+      buf += s;
     } else if (hasColorVt()) {
       if (color == COLOR_BOLD) {
-        return VT_BOLDTEX;
-      } else if (color == COLOR_NONE) {
-        return ANSI_NORMAL;
-      } else {
-        return "";
+        buf = VT_BOLDTEX;
       }
-    } else {
-      return "";
     }
   }
+  return buf;
+}
+
+const sstring Descriptor::ansi_color(const sstring &s) const
+{
+  sstring buf;
+
+  if (hasColor()) {
+    buf = s;
+  } else if (hasColorVt()) {
+    buf = "";
+  } else {
+    buf = "";
+  }
+  return buf;
+}
+
+const sstring Descriptor::ansi_color(const sstring &s, unsigned int color) const
+{
+  sstring buf = "";
+  int repFound = FALSE;
+
+  if (IS_SET(plr_colorOff, color)) {
+    repFound = TRUE;
+  }
+
+  if (repFound) {
+    if (plr_colorSub) {
+      buf = doColorSub();
+    }
+  } else {
+    if (hasColor()) {
+      buf = s;
+    } else if (hasColorVt()) {
+      if (color == COLOR_BOLD) {
+        buf = VT_BOLDTEX;
+      } else if (color == COLOR_NONE) {
+        buf = ANSI_NORMAL;
+      }
+    }
+  }
+  return buf;
 }
 
 
-const char *Descriptor::highlight(char *s) const
+const sstring Descriptor::highlight(sstring &s) const
 {
   return (hasColorVt() ? s : "");
 }
 
-const char *Descriptor::whiteBold() const
+const sstring Descriptor::whiteBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_WHITE, COLOR_BOLD_WHITE).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_WHITE, COLOR_BOLD_WHITE);
   return buf;
 }
 
-const char *Descriptor::white() const
+const sstring Descriptor::white() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WHITE, COLOR_WHITE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WHITE, COLOR_WHITE);
   return buf;
 }
 
-const char *Descriptor::blackBold() const
+const sstring Descriptor::blackBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_BLACK, COLOR_GRAY).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_BLACK, COLOR_GRAY);
   return buf;
 }
 
-const char *Descriptor::black() const
+const sstring Descriptor::black() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BLACK, COLOR_BLACK).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BLACK, COLOR_BLACK);
   return buf;
 }
 
-const char *Descriptor::redBold() const
+const sstring Descriptor::redBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_RED, COLOR_BOLD_RED).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_RED, COLOR_BOLD_RED);
   return buf;
 }
 
-const char *Descriptor::red() const
+const sstring Descriptor::red() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_RED, COLOR_RED).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_RED, COLOR_RED);
   return buf;
 }
 
-const char *Descriptor::underBold() const
+const sstring Descriptor::underBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_UNDER).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_UNDER);
   return buf;
 }
 
-const char *Descriptor::under() const
+const sstring Descriptor::under() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_UNDER).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_UNDER);
   return buf;
 }
 
-const char *Descriptor::bold() const
+const sstring Descriptor::bold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(VT_BOLDTEX, COLOR_BOLD).c_str());
+  static sstring buf;
+  buf = ansi_color(VT_BOLDTEX, COLOR_BOLD);
   return buf;
 }
 
-const char *Descriptor::norm() const
+const sstring Descriptor::norm() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_NORMAL, COLOR_NONE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_NORMAL, COLOR_NONE);
   return buf;
 }
 
-const char *Descriptor::blueBold() const
+const sstring Descriptor::blueBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_BLUE, COLOR_BOLD_BLUE).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_BLUE, COLOR_BOLD_BLUE);
   return buf;
 }
 
-const char *Descriptor::blue() const
+const sstring Descriptor::blue() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BLUE, COLOR_BLUE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BLUE, COLOR_BLUE);
   return buf;
 }
 
-const char *Descriptor::cyanBold() const
+const sstring Descriptor::cyanBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_CYAN, COLOR_BOLD_CYAN).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_CYAN, COLOR_BOLD_CYAN);
   return buf;
 }
 
-const char *Descriptor::cyan() const
+const sstring Descriptor::cyan() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_CYAN, COLOR_CYAN).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_CYAN, COLOR_CYAN);
   return buf;
 }
 
-const char *Descriptor::greenBold() const
+const sstring Descriptor::greenBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_GREEN, COLOR_BOLD_GREEN).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_GREEN, COLOR_BOLD_GREEN);
   return buf;
 }
 
-const char *Descriptor::green() const
+const sstring Descriptor::green() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_GREEN, COLOR_GREEN).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_GREEN, COLOR_GREEN);
   return buf;
 }
 
-const char *Descriptor::orangeBold() const
+const sstring Descriptor::orangeBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_ORANGE, COLOR_YELLOW).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_ORANGE, COLOR_YELLOW);
   return buf;
 }
 
-const char *Descriptor::orange() const
+const sstring Descriptor::orange() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_ORANGE, COLOR_ORANGE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_ORANGE, COLOR_ORANGE);
   return buf;
 }
 
-const char *Descriptor::purpleBold() const
+const sstring Descriptor::purpleBold() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color_bold(ANSI_PURPLE, COLOR_BOLD_PURPLE).c_str());
+  static sstring buf;
+  buf = ansi_color_bold(ANSI_PURPLE, COLOR_BOLD_PURPLE);
   return buf;
 }
 
-const char *Descriptor::purple() const
+const sstring Descriptor::purple() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_PURPLE, COLOR_PURPLE).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_PURPLE, COLOR_PURPLE);
   return buf;
 }
 
-const char *Descriptor::invert() const
+const sstring Descriptor::invert() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(VT_INVERTT).c_str());
+  static sstring buf;
+  buf = ansi_color(VT_INVERTT);
   return buf;
 }
 
-const char *Descriptor::flash() const
+const sstring Descriptor::flash() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_FLASH).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_FLASH);
   return buf;
 }
 
-const char *Descriptor::BlackOnBlack() const
+const sstring Descriptor::BlackOnBlack() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BK_ON_BK).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BK_ON_BK);
   return buf;
 }
 
-const char *Descriptor::BlackOnWhite() const
+const sstring Descriptor::BlackOnWhite() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_BK_ON_WH).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_BK_ON_WH);
   return buf;
 }
 
-const char *Descriptor::WhiteOnBlue() const
+const sstring Descriptor::WhiteOnBlue() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_BL).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_BL);
   return buf;
 }
 
-const char *Descriptor::WhiteOnCyan() const
+const sstring Descriptor::WhiteOnCyan() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_CY).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_CY);
   return buf;
 }
 
-const char *Descriptor::WhiteOnGreen() const
+const sstring Descriptor::WhiteOnGreen() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_GR).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_GR);
   return buf;
 }
 
-const char *Descriptor::WhiteOnOrange() const
+const sstring Descriptor::WhiteOnOrange() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_OR).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_OR);
   return buf;
 }
 
-const char *Descriptor::WhiteOnPurple() const
+const sstring Descriptor::WhiteOnPurple() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_PR).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_PR);
   return buf;
 }
 
-const char *Descriptor::WhiteOnRed() const
+const sstring Descriptor::WhiteOnRed() const
 {
-  static char buf[256];
-  strcpy(buf, ansi_color(ANSI_WH_ON_RD).c_str());
+  static sstring buf;
+  buf = ansi_color(ANSI_WH_ON_RD);
   return buf;
 }
 

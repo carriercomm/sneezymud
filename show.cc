@@ -669,17 +669,16 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
 
 void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
 {
-  char buffer[10000];
-  char buf[80], capbuf[256];
+  sstring buffer, buf, capbuf;
   int found, percent;
   TThing *t;
 
   if (mode == SHOW_MODE_DESC_PLUS) {
     if (!ch->canSee(this)) {
       if (ch->canSee(this, INFRA_YES)) {
-        sprintf(buffer,"A blob of heat is here in the shape of %s %s.\n\r",
-          getMyRace()->getSingularName().startsVowel() ? "an" : "a",
-          getMyRace()->getSingularName().c_str());
+        buffer = fmt("A blob of heat is here in the shape of %s %s.\n\r") %
+          (getMyRace()->getSingularName().startsVowel() ? "an" : "a") %
+          getMyRace()->getSingularName();
         ch->sendTo(buffer);
       } else if (ch->isAffected(AFF_SENSE_LIFE) && (GetMaxLevel() < 51))
         ch->sendTo("You sense a hidden life form in the room.\n\r");
@@ -694,208 +693,199 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
       // A player char or a mobile without long descr, or not in default pos. 
       if (hasColorStrings(NULL, getName(), 2)) {
         if (dynamic_cast<const TPerson *>(this))
-          sprintf(buffer, "%s", colorString(ch, ch->desc, getName(), NULL, COLOR_MOBS, FALSE).c_str());
+          buffer = colorString(ch, ch->desc, getName(), NULL, COLOR_MOBS, FALSE);
         else 
-          sprintf(buffer, "%s", colorString(ch, ch->desc, sstring(getName()).cap().c_str(),NULL, COLOR_MOBS, FALSE).c_str());
+          buffer = colorString(ch, ch->desc, sstring(getName()).cap(), NULL, COLOR_MOBS, FALSE);
       } else 
-        sprintf(buffer, "%s%s%s", ch->cyan(), sstring(getName()).cap().c_str(), ch->norm());
+        buffer = fmt("%s%s%s") % ch->cyan() % sstring(getName()).cap() % ch->norm();
       
       if (isAffected(AFF_INVISIBLE) || getInvisLevel() > MAX_MORT)
-        strcat(buffer, " (invisible)");
+        buffer +=" (invisible)";
       if (isAffected(AFF_SHADOW_WALK))
-        strcat(buffer, " (shadow)");
+        buffer +=" (shadow)";
       if (isPet(PETTYPE_THRALL))
-        strcat(buffer, " (thrall)");
+        buffer +=" (thrall)";
       if (isPet(PETTYPE_CHARM))
-        strcat(buffer, " (charm)");
+        buffer +=" (charm)";
       if (isPet(PETTYPE_PET))
-        strcat(buffer, " (pet)");
+        buffer +=" (pet)";
       if ((ch->isImmortal() || affectedBySpell(AFFECT_PLAYERKILL)) && 
 	  isLinkdead())
-        strcat(buffer, " (link-dead)");
+        buffer +=" (link-dead)";
       if (getTimer() >= 10)
-        strcat(buffer, " (AFK)");
+        buffer +=" (AFK)";
       if (desc && desc->connected)
-        strcat(buffer, " (editing)");
+        buffer +=" (editing)";
       if (ch->isImmortal() && isDiurnal())
-        strcat(buffer, " (diurnal)");
+        buffer +=" (diurnal)";
       if (ch->isImmortal() && isNocturnal())
-        strcat(buffer, " (nocturnal)");
+        buffer +=" (nocturnal)";
       if (spelltask) {
         if (((discArray[(spelltask->spell)])->typ) == SPELL_MAGE) 
-          strcat(buffer, " is here, casting a spell.");
+          buffer +=" is here, casting a spell.";
         else if (((discArray[(spelltask->spell)])->typ) == SPELL_CLERIC) 
-          strcat(buffer, " is here, reciting a prayer.");
+          buffer +=" is here, reciting a prayer.";
         else if (((discArray[(spelltask->spell)])->typ) == SPELL_SHAMAN) 
-          strcat(buffer, " is here, invoking a ritual.");
+          buffer +=" is here, invoking a ritual.";
       } else if (fight()) {
-        strcat(buffer, " is here, fighting ");
+        buffer +=" is here, fighting ";
         if (fight() == ch)
-          strcat(buffer, "YOU!");
+          buffer +="YOU!";
         else {
           if (sameRoom(*fight())) {
-            strcat(buffer, ch->pers(fight()));
-            strcat(buffer, ".");
+            buffer += ch->pers(fight());
+            buffer +=".";
           } else
-            strcat(buffer, "someone who has already left.");
+            buffer +="someone who has already left.";
         }
       } else {
         TBeing *tbr;
         switch (getPosition()) {
           case POSITION_STUNNED:
-            strcat(buffer, " is lying here, stunned.");
+            buffer +=" is lying here, stunned.";
             break;
           case POSITION_INCAP:
-            strcat(buffer, " is lying here, incapacitated.");
+            buffer +=" is lying here, incapacitated.";
             break;
           case POSITION_MORTALLYW:
-            strcat(buffer, " is lying here, mortally wounded.");
+            buffer +=" is lying here, mortally wounded.";
             break;
           case POSITION_DEAD:
-            strcat(buffer, " is lying here, dead.");
+            buffer +=" is lying here, dead.";
             break;
           case POSITION_MOUNTED:
             tbr = dynamic_cast<TBeing *>(riding);
             if (tbr &&
                 dynamic_cast<const TBeing *>(riding->horseMaster()) == this) {
-              strcat(buffer, " is here, riding ");
-              strcat(buffer, ch->pers(riding));
+              buffer +=" is here, riding ";
+              buffer += ch->pers(riding);
               if (tbr->isAffected(AFF_INVISIBLE))
-                strcat(buffer, " (invisible)");
+                buffer +=" (invisible)";
               if (tbr->isAffected(AFF_SHADOW_WALK))
-                strcat(buffer, " (shadow)");
-              strcat(buffer, ".");
+                buffer +=" (shadow)";
+              buffer +=".";
             } else if (tbr && tbr->horseMaster()) {
               if (ch == tbr->horseMaster())
-                sprintf(buffer+strlen(buffer)," is here, also riding your ");
+                buffer +=" is here, also riding your ";
               else
-                sprintf(buffer+strlen(buffer)," is here, also riding on %s's ",
-                    ch->pers(tbr->horseMaster()));
-              strcat(buffer, ch->persfname(riding).c_str());
+                buffer += fmt(" is here, also riding on %s's ") %
+                  ch->pers(tbr->horseMaster());
+              buffer += ch->persfname(riding);
               if (tbr->isAffected(AFF_INVISIBLE))
-                strcat(buffer, " (invisible)");
+                buffer +=" (invisible)";
               if (tbr->isAffected(AFF_SHADOW_WALK))
-                strcat(buffer, " (shadow)");
-              strcat(buffer, ".");
+                buffer +=" (shadow)";
+              buffer +=".";
             } else
-              strcat(buffer, " is standing here.");
+              buffer +=" is standing here.";
 
             break;
           case POSITION_FLYING:
             if (roomp && roomp->isUnderwaterSector()) 
-              strcat(buffer, " is swimming about.");
+              buffer +=" is swimming about.";
 	    else
-	      strcat(buffer, " is flying about.");
+	      buffer +=" is flying about.";
             break;
           case POSITION_STANDING:
             if(roomp->isWaterSector())
-              strcat(buffer, " is floating here.");
+              buffer +=" is floating here.";
             else if (isCombatMode(ATTACK_BERSERK))
-              sprintf(buffer + strlen(buffer), " is standing here with a crazy glint in %s eye.", hshr());
+              buffer += fmt(" is standing here with a crazy glint in %s eye.") % hshr();
             else
-              strcat(buffer, " is standing here.");
+              buffer +=" is standing here.";
             break;
           case POSITION_CRAWLING:
-            strcat(buffer, " is crawling here.");
+            buffer +=" is crawling here.";
             break;
           case POSITION_SITTING:
             if (riding) {
-              strcat(buffer, " is sitting on ");
+              buffer +=" is sitting on ";
               if (riding->getName())
-                strcat(buffer,ch->objs(riding));
+                buffer += ch->objs(riding);
               else
-                strcat(buffer, "A bad object");
+                buffer +="A bad object";
 
-              strcat(buffer,".");
+              buffer +=".";
             } else
-              strcat(buffer, " is sitting here.");
+              buffer +=" is sitting here.";
             break;
           case POSITION_RESTING:
             if (roomp->isWaterSector())
-              strcat(buffer, "is resting here in the water.");
+              buffer +="is resting here in the water.";
             else if (riding) {
-              strcat(buffer, " is resting on ");
+              buffer +=" is resting on ";
               if (riding->getName())
-                strcat(buffer,ch->objs(riding));
+                buffer += ch->objs(riding);
               else
-                strcat(buffer, "A bad object");
+                buffer +="A bad object";
 
-              strcat(buffer,".");
+              buffer +=".";
             } else
-              strcat(buffer, " is resting here.");
+              buffer +=" is resting here.";
             break;
           case POSITION_SLEEPING:
             if(roomp->isWaterSector())
-              strcat(buffer, " is sleeping here in the water.");
+              buffer +=" is sleeping here in the water.";
             else if (riding) {
-              strcat(buffer, " is sleeping on ");
+              buffer +=" is sleeping on ";
               if (riding->getName())
-                strcat(buffer,ch->objs(riding));
+                buffer += ch->objs(riding);
               else
-                strcat(buffer, "A bad object");
+                buffer +="A bad object";
 
-              strcat(buffer,".");
+              buffer +=".";
             } else
-              strcat(buffer, " is sleeping here.");
+              buffer +=" is sleeping here.";
             break;
           default:
-            strcat(buffer, " is floating here.");
+            buffer +=" is floating here.";
             break;
         }
       }
-      strcat(buffer, "\n\r");
-      sprintf(buffer,"%s",colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE).c_str());
+      buffer +="\n\r";
+      buffer = colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE);
       ch->sendTo(buffer);
     } else {        // npc with long 
       if (isAffected(AFF_INVISIBLE))
-        strcpy(buffer, "*");
+        buffer = "*";
       else
-        *buffer = '\0';
+        buffer = "";
 
-      sprintf(capbuf, "%s",
-              addNameToBuf(ch, ch->desc, this, getLongDesc(), COLOR_MOBS).c_str());
-      sstring Strng = capbuf;
+      capbuf = addNameToBuf(ch, ch->desc, this, getLongDesc(), COLOR_MOBS);
       // let's concat the name of a loser god that didn't put it in their
       // long desc
-      if (isPc() && (Strng.find(getName()) == sstring::npos) && ch->isImmortal() &&
+      if (isPc() && (capbuf.find(getName()) == sstring::npos) && ch->isImmortal() &&
           (hasWizPower(POWER_WIZARD) || ch->GetMaxLevel() > GetMaxLevel()) &&
           ch->isPc())
-        sprintf(capbuf + strlen(capbuf), " (%s)", getName());
-      Strng = capbuf;
-      while (Strng.find("$$g") != sstring::npos)
-        Strng.replace(Strng.find("$$g"), 3,
-                      (roomp ? roomp->describeGround().c_str() : "TELL A GOD"));
-      while (Strng.find("$g") != sstring::npos)
-        Strng.replace(Strng.find("$g"), 2,
-                      (roomp ? roomp->describeGround().c_str() : "TELL A GOD"));
-      strcpy(capbuf, Strng.c_str());
-      strcpy(capbuf, sstring(capbuf).cap().c_str());
-      strcat(buffer, capbuf);
+        capbuf += fmt(" (%s)") % getName();
+      while (capbuf.find("$$g") != sstring::npos)
+        capbuf.replace(capbuf.find("$$g"), 3,
+                      (roomp ? roomp->describeGround() : "TELL A GOD"));
+      while (capbuf.find("$g") != sstring::npos)
+        capbuf.replace(capbuf.find("$g"), 2,
+                      (roomp ? roomp->describeGround() : "TELL A GOD"));
+      buffer += capbuf.cap();
+      buffer.assign(buffer, 0, buffer.find_last_not_of("\n\r "));
    
-      while ((buffer[strlen(buffer) - 1] == '\r') ||
-             (buffer[strlen(buffer) - 1] == '\n') ||
-             (buffer[strlen(buffer) - 1] == ' ')) {
-        buffer[strlen(buffer) - 1] = '\0';
-      }
       if (isPet(PETTYPE_THRALL))
-        strcat(buffer, " (thrall)");
+        buffer += " (thrall)";
       if (isPet(PETTYPE_CHARM))
-        strcat(buffer, " (charm)");
+        buffer += " (charm)";
       if (isPet(PETTYPE_PET))
-        strcat(buffer, " (pet)");
+        buffer += " (pet)";
       if (ch->isImmortal() && isLinkdead())
-        strcat(buffer, " (link-dead)");
+        buffer += " (link-dead)";
       if (getTimer() >= 10)
-        strcat(buffer, " (AFK)");
+        buffer += " (AFK)";
       if (desc && desc->connected)
-        strcat(buffer, " (editing)");
+        buffer += " (editing)";
       if (ch->isImmortal() && isDiurnal())
-        strcat(buffer, " (diurnal)");
+        buffer += " (diurnal)";
       if (ch->isImmortal() && isNocturnal())
-        strcat(buffer, " (nocturnal)");
+        buffer += " (nocturnal)";
 
-      strcat(buffer, "\n\r");
-      sprintf(buffer,"%s",colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE).c_str());
+      buffer += "\n\r";
+      buffer = colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE);
       ch->sendTo(buffer);
     }
 
@@ -909,16 +899,14 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
       describeSpellEffects(this, ch, FALSE);
   } else if (mode == SHOW_MODE_SHORT_PLUS) {
     if (getDescr()) {
-      sprintf(capbuf, "%s", addNameToBuf(ch, ch->desc, this, getDescr(), COLOR_MOBS).c_str());
-      sstring cStrbuf = capbuf;
-      while (cStrbuf.find("$$g") != sstring::npos)
-        cStrbuf.replace(cStrbuf.find("$$g"), 3,
-                        (roomp ? roomp->describeGround().c_str() : "TELL A GOD"));
-      while (cStrbuf.find("$g") != sstring::npos)
-        cStrbuf.replace(cStrbuf.find("$g"), 2,
-                        (roomp ? roomp->describeGround().c_str() : "TELL A GOD"));
-      strcpy(capbuf, cStrbuf.c_str());
-      strcpy(capbuf, sstring(capbuf).cap().c_str());
+      capbuf = addNameToBuf(ch, ch->desc, this, getDescr(), COLOR_MOBS);
+      while (capbuf.find("$$g") != sstring::npos)
+        capbuf.replace(capbuf.find("$$g"), 3,
+                        (roomp ? roomp->describeGround() : "TELL A GOD"));
+      while (capbuf.find("$g") != sstring::npos)
+        capbuf.replace(capbuf.find("$g"), 2,
+                        (roomp ? roomp->describeGround() : "TELL A GOD"));
+      capbuf = capbuf.cap();
       ch->sendTo(COLOR_MOBS, fmt("%s") % capbuf);
     } else 
       act("You see nothing special about $m.", FALSE, this, 0, ch, TO_VICT);
@@ -926,31 +914,30 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
     describeSpellEffects(this, ch, TRUE);
 
     if (isPc() || (getRace() <= RACE_OGRE)) {
-      sprintf(buffer, "$n is of the %s race.",
-	      race->proper_name.uncap().c_str());
-      sprintf(buffer,"%s",colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE).c_str());
+      buffer = fmt("$n is of the %s race.") % sstring(race->proper_name).uncap();
+      buffer = colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE);
       act(buffer, FALSE, this, 0, ch, TO_VICT);
     }
     if (riding && dynamic_cast<TObj *>(riding)) {
-      sprintf(buffer, "$n is %s on %s.", 
-            sstring(position_types[getPosition()]).uncap().c_str(), 
-            riding->getName());
-      sprintf(buffer,"%s",colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE).c_str());
+      buffer = fmt("$n is %s on %s.") % 
+        sstring(position_types[getPosition()]).uncap() % 
+        riding->getName();
+      buffer = colorString(ch,ch->desc,buffer,NULL,COLOR_MOBS, TRUE);
       act(buffer, FALSE, this, 0, ch, TO_VICT);
     }
     if (riding && dynamic_cast<TBeing *>(riding)) {
-      sprintf(buffer, "$n is mounted on $p.");
+      buffer = fmt("$n is mounted on $p.");
       act(buffer, FALSE, this, riding, ch, TO_VICT);
     }
     if (rider && dynamic_cast<TBeing *>(rider)) {
-      sprintf(buffer, "$n is ridden by $p.");
+      buffer = fmt("$n is ridden by $p.");
       act(buffer, FALSE, this, horseMaster(), ch, TO_VICT);
       for (t = rider; t; t = t->nextRider) {
         if (t == horseMaster())
           continue;
         if (!dynamic_cast<TBeing *>(t))
           continue;
-        sprintf(buffer, "$n is also being ridden by $p.");
+        buffer = fmt("$n is also being ridden by $p.");
         act(buffer, FALSE, this, t, ch, TO_VICT);
       }
     }
@@ -961,104 +948,106 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
       percent = -1;        // How could MAX_HIT be < 1?? 
 
     if (percent >= 100)
-      strcpy(buffer, "$n looks healthy.");
+      buffer = "$n looks healthy.";
     else if (percent >= 90)
-      strcpy(buffer, "$n looks slightly scratched.");
+      buffer = "$n looks slightly scratched.";
     else if (percent >= 75)
-      strcpy(buffer, "$n has some small wounds and bruises.");
+      buffer = "$n has some small wounds and bruises.";
     else if (percent >= 50)
-      strcpy(buffer, "$n has many wounds.");
+      buffer = "$n has many wounds.";
     else if (percent >= 30)
-      strcpy(buffer, "$n has large wounds and scratches.");
+      buffer = "$n has large wounds and scratches.";
     else if (percent >= 15)
-      strcpy(buffer, "$n looks very hurt.");
+      buffer = "$n looks very hurt.";
     else if (percent >= 0)
-      strcpy(buffer, "$n is in awful condition.");
+      buffer = "$n is in awful condition.";
     else
-      strcpy(buffer, "$n has many large wounds and is near death.");
+      buffer = "$n has many large wounds and is near death.";
     act(buffer, FALSE, this, 0, ch, TO_VICT);
 
     if (!isPc()) {
       percent = dynamic_cast<const TMonster *>(this)->anger();
       if (percent >= 95)
-        strcpy(buffer,"$n is raving mad!");
+        buffer = "$n is raving mad!";
       else if (percent >= 80)
-        strcpy(buffer,"$n is infuriated.");
+        buffer = "$n is infuriated.";
       else if (percent >= 65)
-        strcpy(buffer,"$n is fuming.");
+        buffer = "$n is fuming.";
       else if (percent >= 50)
-        strcpy(buffer,"$n is really angry.");
+        buffer = "$n is really angry.";
       else if (percent >= 35)
-        strcpy(buffer,"$n seems mad.");
+        buffer = "$n seems mad.";
       else if (percent >= 20)
-        strcpy(buffer,"$n seems irritated.");
+        buffer = "$n seems irritated.";
       else if (percent >= 5)
-        strcpy(buffer,"$n is displeased.");
+        buffer = "$n is displeased.";
       else 
-        strcpy(buffer,"$n seems peaceful.");
+        buffer = "$n seems peaceful.";
       act(buffer, FALSE,this, 0,ch,TO_VICT);
     }
     if (curStats.get(STAT_STR) > 190)
-      strcpy(buffer,"$e is unhumanly muscular, ");
+      buffer = "$e is unhumanly muscular, ";
     else if (curStats.get(STAT_STR) > 170)
-      strcpy(buffer,"$e is extremely brawny, ");
+      buffer = "$e is extremely brawny, ";
     else if (curStats.get(STAT_STR) > 150)
-      strcpy(buffer,"$e is brawny, ");
+      buffer = "$e is brawny, ";
     else if (curStats.get(STAT_STR) > 130)
-      strcpy(buffer,"$e is muscular, ");
+      buffer = "$e is muscular, ";
     else if (curStats.get(STAT_STR) > 110)
-      strcpy(buffer,"$e is fairly muscular, ");
+      buffer = "$e is fairly muscular, ";
     else if (curStats.get(STAT_STR) > 90)
-      strcpy(buffer,"$e has an average build, ");
+      buffer = "$e has an average build, ";
     else if (curStats.get(STAT_STR) > 70)
-      strcpy(buffer,"$e is somewhat frail, ");
+      buffer = "$e is somewhat frail, ";
     else if (curStats.get(STAT_STR) > 50)
-      strcpy(buffer,"$e is frail, ");
+      buffer = "$e is frail, ";
     else if (curStats.get(STAT_STR) > 30)
-      strcpy(buffer,"$e is feeble, ");
+      buffer = "$e is feeble, ";
     else
-      strcpy(buffer,"$e is extremely feeble, ");
+      buffer = "$e is extremely feeble, ";
 
     if (curStats.get(STAT_AGI) > 190)
-      strcat(buffer,"astoundingly agile, and ");
+      buffer += "astoundingly agile, and ";
     else if (curStats.get(STAT_AGI) > 160)
-      strcat(buffer,"amazingly agile, and ");
+      buffer += "amazingly agile, and ";
     else if (curStats.get(STAT_AGI) > 140)
-      strcat(buffer,"agile, and ");
+      buffer += "agile, and ";
     else if (curStats.get(STAT_AGI) > 120)
-      strcat(buffer,"graceful, and ");
+      buffer += "graceful, and ";
     else if (curStats.get(STAT_AGI) > 80)
-      strcat(buffer,"able-bodied, and ");
+      buffer += "able-bodied, and ";
     else if (curStats.get(STAT_AGI) > 60)
-      strcat(buffer,"clumsy, and ");
+      buffer += "clumsy, and ";
     else if (curStats.get(STAT_AGI) > 30)
-      strcat(buffer,"awkward and clumsy, and ");
+      buffer += "awkward and clumsy, and ";
     else
-      strcat(buffer,"a bumbling clutz, and ");
+      buffer += "a bumbling clutz, and ";
    
     if (curStats.get(STAT_CHA) > 190)
-      strcat(buffer,"has godlike grace.");
+      buffer += "has godlike grace.";
     else if (curStats.get(STAT_CHA) > 160)
-      strcat(buffer, "is exceptionally well-favored.");
+      buffer += "is exceptionally well-favored.";
     else if (curStats.get(STAT_CHA) > 140)
-      strcat(buffer, "is well-favored.");
+      buffer += "is well-favored.";
     else if (curStats.get(STAT_CHA) > 120)
-      strcat(buffer, "is attractive.");
+      buffer += "is attractive.";
     else if (curStats.get(STAT_CHA) > 100)
-      strcat(buffer, "is comely.");
+      buffer += "is comely.";
     else if (curStats.get(STAT_CHA) > 80)
-      strcat(buffer, "is average looking.");
+      buffer += "is average looking.";
     else if (curStats.get(STAT_CHA) > 60)
-      strcat(buffer, "is dumpy.");
+      buffer += "is dumpy.";
     else if (curStats.get(STAT_CHA) > 40)
-      strcat(buffer, "is ill-favored.");
+      buffer += "is ill-favored.";
     else
-      strcat(buffer, "is extremely ill-favored.");
+      buffer += "is extremely ill-favored.";
 
     if (isHumanoid())
       act(buffer, TRUE,this, 0,ch,TO_VICT);
 
-    sprintf(buffer, "$e is about %d'%d\" tall and weighs around %d pounds.",getHeight()/INCHES_PER_FOOT,getHeight()%INCHES_PER_FOOT,(int) getWeight());
+    buffer = fmt("$e is about %d'%d\" tall and weighs around %d pounds.") %
+      (getHeight()/INCHES_PER_FOOT) % (getHeight()%INCHES_PER_FOOT) %
+      ((int) getWeight());
     act(buffer, TRUE,this,0,ch,TO_VICT);
 
     act("\n\r",FALSE,this,0,ch,TO_VICT);
@@ -1086,19 +1075,19 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
       for (ij = MIN_WEAR; ij < MAX_WEAR; ij++) {
         if (isLimbFlags(ij, PART_TRANSFORMED)) {
           if (shouldDescTransLimb(ij)) {
-            sprintf(buf, "<%s>", describeTransEquipSlot(ij).c_str());
+            buf = fmt("<%s>") % describeTransEquipSlot(ij);
             ch->sendTo(fmt("%s\n\r") % buf);
           }
         }
         if (equipment[ij] && ch->canSee(equipment[ij])) {
           if (!equipment[ij]->shouldntBeShown(ij)) {
-            sprintf(buf, "<%s>", describeEquipmentSlot(ij).c_str());
+            buf = fmt("<%s>") % describeEquipmentSlot(ij);
             ch->sendTo(fmt("%-26s") % buf);
             ch->showTo(equipment[ij], SHOW_MODE_SHORT_PLUS);
           }
         } else if(tattoos[ij]!=""){
 	  sstring slot = describeEquipmentSlot(ij);
-	  sprintf(buf, "<%s>", (slot.find("Worn") != sstring::npos ? slot.replace(slot.find("Worn"),4,"Tattooed").c_str() : slot.c_str()));
+	  buf = fmt("<%s>") % (slot.find("Worn") != sstring::npos ? slot.replace(slot.find("Worn"),4,"Tattooed") : slot);
 
 
 	  //	  sprintf(buf, "<%s>", describeEquipmentSlot(ij).c_str());
@@ -1144,13 +1133,11 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
   }
 }
 
-
 void TBeing::show_me_mult_to_char(TBeing *ch, showModeT, unsigned int num) const
 {
   char buffer[MAX_STRING_LENGTH];
   char tmp[10];
   char capbuf[256];
-
 
   if (!ch->canSee(this)) {
     if (ch->canSee(this, INFRA_YES)) {

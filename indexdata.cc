@@ -37,14 +37,16 @@ indexData & indexData::operator= (const indexData &a)
   virt = a.virt;
   pos = a.pos;
   number = a.number;
+  /*
   delete [] name;
   delete [] short_desc;
   delete [] long_desc;
   delete [] description;
-  name = mud_str_dup(a.name);
-  short_desc = mud_str_dup(a.short_desc);
-  long_desc = mud_str_dup(a.long_desc);
-  description = mud_str_dup(a.description);
+  */
+  name = a.name;
+  short_desc = a.short_desc;
+  long_desc = a.long_desc;
+  description = a.description;
 
   max_exist = a.max_exist;
   spec = a.spec;
@@ -57,22 +59,24 @@ indexData::indexData(const indexData &a) :
   virt(a.virt),
   pos(a.pos),
   number(a.number),
+  name(a.name),
+  short_desc(a.short_desc),
+  long_desc(a.long_desc),
+  description(a.description),
   max_exist(a.max_exist),
   spec(a.spec),
   weight(a.weight)
 {
-  name = mud_str_dup(a.name);
-  short_desc = mud_str_dup(a.short_desc);
-  long_desc = mud_str_dup(a.long_desc);
-  description = mud_str_dup(a.description);
 }
 
 indexData::~indexData()
 {
+  /*
   delete [] name;
   delete [] short_desc;
   delete [] long_desc;
   delete [] description;
+  */
 }
 
 mobIndexData::mobIndexData() :
@@ -217,9 +221,9 @@ void generate_obj_index()
     }
     
     tmpi->virt=convertTo<int>(db["vnum"]);
-    tmpi->name=mud_str_dup(db["name"]);
-    tmpi->short_desc=mud_str_dup(db["short_desc"]);
-    tmpi->long_desc=mud_str_dup(db["long_desc"]);
+    tmpi->name=db["name"];
+    tmpi->short_desc=db["short_desc"];
+    tmpi->long_desc=db["long_desc"];
     tmpi->max_exist=convertTo<int>(db["max_exist"]);
 
     // use 327 so we don't go over 32765 in calculation
@@ -238,7 +242,7 @@ void generate_obj_index()
     tmpi->itemtype=convertTo<int>(db["type"]);
     tmpi->value=convertTo<int>(db["price"]);
     if(!db["action_desc"].empty())
-      tmpi->description=mud_str_dup(db["action_desc"]);
+      tmpi->description=db["action_desc"];
     else tmpi->description=NULL;
 
     while(!extra_db["vnum"].empty() && convertTo<int>(extra_db["vnum"]) < tmpi->virt){
@@ -248,8 +252,8 @@ void generate_obj_index()
     while(!extra_db["vnum"].empty() &&
 	  convertTo<int>(extra_db["vnum"])==tmpi->virt){
       new_descr = new extraDescription();
-      new_descr->keyword = mud_str_dup(extra_db["name"]);
-      new_descr->description = mud_str_dup(extra_db["description"]);
+      new_descr->keyword = extra_db["name"].c_str();
+      new_descr->description = extra_db["description"].c_str();
       new_descr->next = tmpi->ex_description;
       tmpi->ex_description = new_descr;
 
@@ -286,8 +290,6 @@ void generate_obj_index()
 
   return;
 }
-
-
 
 // generate index table for monster file 
 void generate_mob_index()
@@ -465,4 +467,3 @@ void generate_mob_index()
   }
   return;
 }
-

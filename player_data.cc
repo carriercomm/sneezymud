@@ -513,16 +513,16 @@ void TPerson::storeToSt(charFile *st)
   st->fatigue = 0;
   st->hero_num = getHeroNum();
   st->p_type = desc->prompt_d.type;
-  strcpy(st->hpColor, desc->prompt_d.hpColor);
-  strcpy(st->manaColor, desc->prompt_d.manaColor);
-  strcpy(st->moveColor, desc->prompt_d.moveColor);
-  strcpy(st->moneyColor, desc->prompt_d.moneyColor);
-  strcpy(st->expColor, desc->prompt_d.expColor);
-  strcpy(st->roomColor, desc->prompt_d.roomColor);
-  strcpy(st->oppColor, desc->prompt_d.oppColor);
-  strcpy(st->tankColor, desc->prompt_d.tankColor);
-  strcpy(st->pietyColor, desc->prompt_d.pietyColor);
-  strcpy(st->lifeforceColor, desc->prompt_d.lifeforceColor);
+  strlcpy(st->hpColor, desc->prompt_d.hpColor.c_str(), sizeof(st->hpColor));
+  strlcpy(st->manaColor, desc->prompt_d.manaColor.c_str(), sizeof(st->manaColor));
+  strlcpy(st->moveColor, desc->prompt_d.moveColor.c_str(), sizeof(st->moveColor));
+  strlcpy(st->moneyColor, desc->prompt_d.moneyColor.c_str(), sizeof(st->moneyColor));
+  strlcpy(st->expColor, desc->prompt_d.expColor.c_str(), sizeof(st->expColor));
+  strlcpy(st->roomColor, desc->prompt_d.roomColor.c_str(), sizeof(st->roomColor));
+  strlcpy(st->oppColor, desc->prompt_d.oppColor.c_str(), sizeof(st->oppColor));
+  strlcpy(st->tankColor, desc->prompt_d.tankColor.c_str(), sizeof(st->tankColor));
+  strlcpy(st->pietyColor, desc->prompt_d.pietyColor.c_str(), sizeof(st->pietyColor));
+  strlcpy(st->lifeforceColor, desc->prompt_d.lifeforceColor.c_str(), sizeof(st->lifeforceColor));
 
   st->plr_act = desc->plr_act;
   st->plr_color = desc->plr_color;
@@ -755,17 +755,16 @@ void TPerson::loadFromSt(charFile *st)
 
   desc->prompt_d.type = st->p_type;
 
-  strcpy(desc->prompt_d.hpColor, st->hpColor);
-  strcpy(desc->prompt_d.manaColor, st->manaColor);
-  strcpy(desc->prompt_d.moveColor, st->moveColor);
-  strcpy(desc->prompt_d.moneyColor, st->moneyColor);
-  strcpy(desc->prompt_d.expColor, st->expColor);
-  strcpy(desc->prompt_d.roomColor, st->roomColor);
-  strcpy(desc->prompt_d.oppColor, st->oppColor);
-  strcpy(desc->prompt_d.tankColor, st->tankColor);
-  strcpy(desc->prompt_d.pietyColor, st->pietyColor);
-  strcpy(desc->prompt_d.lifeforceColor, st->lifeforceColor);
-
+  desc->prompt_d.hpColor = st->hpColor;
+  desc->prompt_d.manaColor = st->manaColor;
+  desc->prompt_d.moveColor = st->moveColor;
+  desc->prompt_d.moneyColor = st->moneyColor;
+  desc->prompt_d.expColor = st->expColor;
+  desc->prompt_d.roomColor = st->roomColor;
+  desc->prompt_d.oppColor = st->oppColor;
+  desc->prompt_d.tankColor = st->tankColor;
+  desc->prompt_d.pietyColor = st->pietyColor;
+  desc->prompt_d.lifeforceColor = st->lifeforceColor;
 
   desc->plr_act = st->plr_act;
   desc->plr_color = st->plr_color;

@@ -9,6 +9,7 @@
 #ifndef __PARSE_H
 #define __PARSE_H
 
+int search_block(const sstring &, const sstring *, bool);
 int search_block(const sstring &arg, const char * const *, bool);
 int old_search_block(const char *, int, int, const char * const *, bool);
 void argument_interpreter(const char *, char *, char *);

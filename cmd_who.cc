@@ -79,15 +79,15 @@ static const sstring getWizDescriptLev(const TBeing *ch)
 
 static const sstring getWhoLevel(const TBeing *ch, TBeing *p)
 {
-  char tempbuf[256];
-  char colorBuf[256] = "\0";
+  sstring tempbuf;
+  sstring colorBuf = "";
 
   if (p->hasWizPower(POWER_WIZARD))
-    strcpy(colorBuf, ch->purple());
+    colorBuf = ch->purple();
   else if (p->hasWizPower(POWER_GOD))
-    strcpy(colorBuf, ch->red());
+    colorBuf = ch->red();
   else if (p->hasWizPower(POWER_BUILDER))
-    strcpy(colorBuf, ch->cyan());
+    colorBuf = ch->cyan();
 
   // Do it this way so you get the default-titles also.
   if (p && p->GetMaxLevel() > MAX_MORT) {
@@ -98,17 +98,18 @@ static const sstring getWhoLevel(const TBeing *ch, TBeing *p)
     for (unsigned int iter = 0; iter < frontpadding; iter++)
       str.insert(0, " ");
     
-    sprintf(tempbuf, "%sLevel:[%-14s%s][%s] %s",
-            colorBuf, str.c_str(),
-            colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
+    tempbuf = fmt("%sLevel:[%-14s%s][%s] %s") %
+      colorBuf % str %
+      colorBuf % getWizDescriptLev(p) % ch->norm();
   } else {
     sstring tmpstring;
 
-    if(p->isPlayerAction(PLR_ANONYMOUS) && !ch->isImmortal()){
+    if (p->isPlayerAction(PLR_ANONYMOUS) && !ch->isImmortal()) {
       tmpstring = "Anonymous";
     } else {
-      sprintf(tempbuf, "%-5s Lev %2d", p->getProfAbbrevName(), p->GetMaxLevel());
-      tmpstring += tempbuf;
+      tmpstring = fmt("%-5s Lev %2d") %
+        p->getProfAbbrevName() %
+        p->GetMaxLevel();
     }
 
     while (tmpstring.length() < 13)
@@ -116,16 +117,16 @@ static const sstring getWhoLevel(const TBeing *ch, TBeing *p)
     if (tmpstring.length() < 14)
       tmpstring += " ";
 
-    sprintf(tempbuf, "Level:[%s] ", tmpstring.c_str());
+    tempbuf = fmt("Level:[%s] ") % tmpstring;
     TFaction *f = NULL;
     if((f = p->newfaction()) && TestCode5) {
       if (f->ID && (IS_SET(f->flags, FACT_ACTIVE) || ch->newfaction() == p->newfaction() || ch->isImmortal()) &&
 	  (!IS_SET(f->flags, FACT_HIDDEN) || ch->newfaction() == p->newfaction() || ch->isImmortal()) &&
 	  (!p->isImmortal() || ch->isImmortal())) {
-	sprintf(tempbuf, "%s %s[<1>%s%s]<1>", tempbuf,
-		heraldcodes[p->newfaction()->colors[0]],
-		p->newfaction()->getName(),
-		heraldcodes[p->newfaction()->colors[0]]);
+	tempbuf = fmt("%s %s[<1>%s%s]<1>") % tempbuf %
+          heraldcodes[p->newfaction()->colors[0]] %
+          p->newfaction()->getName() %
+          heraldcodes[p->newfaction()->colors[0]];
       }
     }
        

@@ -690,8 +690,6 @@ TObj *ItemLoad::raw_read_item()
     version = 6;
   }
 
-      
-
   if (!(o = read_object(item.item_number, VIRTUAL))) {
     vlogf(LOG_BUG, fmt("Unable to load object Vnum = %d from rent.") %  item.item_number);
     return NULL;
@@ -701,7 +699,6 @@ TObj *ItemLoad::raw_read_item()
   if (version >= 7 || 
       // discard 0-cost components and symbols due to overhaul
       dynamic_cast<TNote *>(o)) {
-
 
     if(version<9 && dynamic_cast<TOpenContainer *>(o)){
       item.value[1]=((item.value[1]>>8)<<16) ^ ((item.value[1]<<24)>>24);
@@ -720,8 +717,6 @@ TObj *ItemLoad::raw_read_item()
       o->assignFourValues(item.value[0],item.value[1],item.value[2],item.value[3]);
     }
 
-
-    
     o->setObjStat(item.extra_flags);
     o->setWeight((float) item.weight);
     o->weightCorrection();
@@ -782,7 +777,7 @@ TObj *ItemLoad::raw_read_item()
     
     if (action_description) 
       o->action_description = action_description;
-    else if (obj_index[o->getItemIndex()].description) 
+    else if (!obj_index[o->getItemIndex()].description.empty()) 
       o->action_description = mud_str_dup(obj_index[o->getItemIndex()].description);
     else 
       o->action_description = NULL;
@@ -3114,14 +3109,13 @@ void printLimitedInRent(void)
       if (obj_index[i].getNumber() > obj_index[i].max_exist &&
           obj_index[i].max_exist) {
         // latter condition is because DEITY_TOKEN max exist = 0
-        char buf[1024];
-        sprintf(buf, "Item (%s:%d) is over max (%d).  Num: (%d).\n\r", 
-            obj_index[i].name, obj_index[i].virt,
-            obj_index[i].max_exist, obj_index[i].getNumber());
+        sstring buf;
+        buf = fmt("Item (%s:%d) is over max (%d).  Num: (%d).\n\r") %
+          obj_index[i].name % obj_index[i].virt %
+          obj_index[i].max_exist % obj_index[i].getNumber();
 	// these have to be lower case
         // autoMail(NULL, "jesus", buf);
         autoMail(NULL, "damescena", buf);
-
       }
     }
   }
@@ -4353,7 +4347,6 @@ int TBeing::doRent(const sstring &argument)
     if (is_abbrev(argument, "credit")) {
       int lev;
       sstring sb;
-      char buf[256];
 
       if (FreeRent) {
 	sb = "Rent is free! Who needs credit?\n\r";
@@ -4370,32 +4363,28 @@ int TBeing::doRent(const sstring &argument)
 	  int lev3 = lev0 + 3*(MAX_MORT/4 +1);
 	  
 	  if (lev0 <= MAX_MORT) {
-	    sprintf(buf, "%s[%2d]%s %s%10d%s ",
-		    cyan(), lev0, norm(), orange(),
-		    rent_credit(getClass(), lev0, howManyClasses()),
-		    norm());
-	    sb += buf;
+	    sb += fmt("%s[%2d]%s %s%10d%s ") %
+              cyan() % lev0 % norm() % orange() %
+              rent_credit(getClass(), lev0, howManyClasses()) %
+              norm();
 	  }
 	  if (lev1 <= MAX_MORT) {
-	    sprintf(buf, "%s[%2d]%s %s%10d%s ",
-		    cyan(), lev1, norm(), orange(),
-		    rent_credit(getClass(), lev1, howManyClasses()),
-		    norm());
-	    sb += buf;
+	    sb += fmt("%s[%2d]%s %s%10d%s ") %
+              cyan() % lev1 % norm() % orange() %
+              rent_credit(getClass(), lev1, howManyClasses()) %
+              norm();
 	  }
 	  if (lev2 <= MAX_MORT) {
-	    sprintf(buf, "%s[%2d]%s %s%10d%s ",
-		    cyan(), lev2, norm(), orange(),
-		    rent_credit(getClass(), lev2, howManyClasses()),
-		    norm());
-	    sb += buf;
+	    sb += fmt("%s[%2d]%s %s%10d%s ") %
+              cyan() % lev2 % norm() % orange() %
+              rent_credit(getClass(), lev2, howManyClasses()) %
+              norm();
 	  }
 	  if (lev3 <= MAX_MORT) {
-	    sprintf(buf, "%s[%2d]%s %s%10d%s\n\r",
-		    cyan(), lev3, norm(), orange(),
-		    rent_credit(getClass(), lev3, howManyClasses()),
-		    norm());
-	    sb += buf;
+	    sb += fmt("%s[%2d]%s %s%10d%s\n\r") %
+              cyan() % lev3 % norm() % orange() %
+              rent_credit(getClass(), lev3, howManyClasses()) %
+              norm();
 	  } else {
 	    sb += "\n\r";
 	  }

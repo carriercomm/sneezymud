@@ -1438,7 +1438,7 @@ static void change_mob_immune(TBeing *ch, TMonster *mob, const char *arg, editor
       return;
     }
 
-    if (immune == IMMUNE_UNUSED2 || !*immunity_names[immune]) {
+    if (immune == IMMUNE_UNUSED2 || immunity_names[immune].empty()) {
       ch->sendTo("Please don't set these until they are defined.\n\r");
       return;
     }
@@ -1448,7 +1448,7 @@ static void change_mob_immune(TBeing *ch, TMonster *mob, const char *arg, editor
   ch->sendTo(VT_HOMECLR);
   row = 0;
   for (i = 0, j = 0; i < MAX_IMMUNES; i++) {
-    if (!*immunity_names[i])
+    if (immunity_names[i].empty())
       continue;
     sprintf(buf, VT_CURSPOS, row + 2, (((j % 4) * 20) + 1));
     if (!((j + 1) % 4))
@@ -2027,10 +2027,10 @@ int TMonster::readMobFromFile(FILE *fp, bool should_alloc)
     player.longDescr = fread_string(fp);
     setDescr(fread_string(fp));
   } else {
-    name = mob_index[number].name;
-    shortDescr = mob_index[number].short_desc;
-    player.longDescr = mob_index[number].long_desc;
-    setDescr(mob_index[number].description);
+    name = mob_index[number].name.c_str();
+    shortDescr = mob_index[number].short_desc.c_str();
+    player.longDescr = mob_index[number].long_desc.c_str();
+    setDescr(mob_index[number].description.c_str());
 
     // We allocated the names and sstrings in the indeces, don't do it again!
     readStringNoAlloc(fp);

@@ -144,9 +144,9 @@ void CardGame::setup_deck()
 
 const sstring CardGame::pretty_card_printout(const TBeing *ch, int card) const
 {
-  char buf[80];
+  sstring buf;
 
-  strcpy(buf, card_names[card & 0x0f]);
+  buf = card_names[card & 0x0f];
   add_suit(ch, buf, card);
 
   return buf;
@@ -184,66 +184,64 @@ bool CardGame::has_suit(int *hand, int suitnum)
   return FALSE;
 }
 
-int CardGame::add_suit(const TBeing *ch, char *cat_msg, int card) const
+int CardGame::add_suit(const TBeing *ch, sstring cat_msg, int card) const
 {
   if (ch) {
-    if (card & CARD_WATER)
-      sprintf(cat_msg + strlen(cat_msg), " of <b>Blue Water<z>");
-    if (card & CARD_FIRE)
-      sprintf(cat_msg + strlen(cat_msg), " of <r>Red Fire<z>");
-    if (card & CARD_EARTH)
-      sprintf(cat_msg + strlen(cat_msg), " of <g>Green Earth<z>");
-    if (card & CARD_ETHER)
-      sprintf(cat_msg + strlen(cat_msg), " of <p>Purple Ether<z>");
     /*
     if (card & CARD_WATER)
-      sprintf(cat_msg + strlen(cat_msg), " of %sBlue Water%s", ch->blue(), ch->norm());
+      cat_msg += " of <b>Blue Water<z>";
     if (card & CARD_FIRE)
-      sprintf(cat_msg + strlen(cat_msg), " of %sRed Fire%s", ch->red(), ch->norm());
+      cat_msg += " of <r>Red Fire<z>";
     if (card & CARD_EARTH)
-      sprintf(cat_msg + strlen(cat_msg), " of %sGreen Earth%s", ch->green(), ch->norm());
+      cat_msg += " of <g>Green Earth<z>";
     if (card & CARD_ETHER)
-      sprintf(cat_msg + strlen(cat_msg), " of %sPurple Ether%s", ch->purple(), ch->norm());
+      cat_msg += " of <p>Purple Ether<z>";
     */
+    if (card & CARD_WATER)
+      cat_msg += fmt(" of %sBlue Water%s") % ch->blue() % ch->norm();
+    if (card & CARD_FIRE)
+      cat_msg += fmt(" of %sRed Fire%s") % ch->red() % ch->norm();
+    if (card & CARD_EARTH)
+      cat_msg += fmt(" of %sGreen Earth%s") % ch->green() % ch->norm();
+    if (card & CARD_ETHER)
+      cat_msg += fmt(" of %sPurple Ether%s") % ch->purple() % ch->norm();
   } else {
     if (card & CARD_WATER)
-      strcat(cat_msg, " of Blue Water");
+      cat_msg += " of Blue Water";
     if (card & CARD_FIRE)
-      strcat(cat_msg, " of Red Fire");
+      cat_msg += " of Red Fire";
     if (card & CARD_EARTH)
-      strcat(cat_msg, " of Green Earth");
+      cat_msg += " of Green Earth";
     if (card & CARD_ETHER)
-      strcat(cat_msg, " of Purple Ether");
+      cat_msg += " of Purple Ether";
   }
   return TRUE;
 }
 
 const sstring CardGame::suit(const TBeing *ch, int card) const
 {
-  char buf[80];
+  sstring buf = "";
 
   if (ch) {
     if (card & CARD_WATER)
-      sprintf(buf, "%sBlue Water%s", ch->blue(), ch->norm());
+      buf = fmt("%sBlue Water%s") % ch->blue() % ch->norm();
     if (card & CARD_FIRE)
-      sprintf(buf, "%sRed Fire%s", ch->red(), ch->norm());
+      buf = fmt("%sRed Fire%s") % ch->red() % ch->norm();
     if (card & CARD_EARTH)
-      sprintf(buf, "%sGreen Earth%s", ch->green(), ch->norm());
+      buf = fmt("%sGreen Earth%s") % ch->green() % ch->norm();
     if (card & CARD_ETHER)
-      sprintf(buf, "%sPurple Ether%s", ch->purple(), ch->norm());
-
-    return buf;
+      buf = fmt("%sPurple Ether%s") % ch->purple() % ch->norm();
   } else {
     if (card & CARD_WATER)
-      return "Blue Water";
+      buf = "Blue Water";
     if (card & CARD_FIRE)
-      return "Red Fire";
+      buf = "Red Fire";
     if (card & CARD_EARTH)
-      return "Green Earth";
+      buf = "Green Earth";
     if (card & CARD_ETHER)
-      return "Purple Ether";
+      buf = "Purple Ether";
   }
-  return "";
+  return buf;
 }
 
 

@@ -34,6 +34,4 @@ class TSmoke : public TObj {
     virtual ~TSmoke();
 };
 
-
-
 #endif

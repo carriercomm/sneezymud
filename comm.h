@@ -86,13 +86,8 @@ const int SECS_PER_MUD_YEAR  = (12*SECS_PER_MUD_MONTH);
 const int UPDATES_PER_TICK = (PULSE_UPDATE/PULSE_COMBAT);
 const int UPDATES_PER_MUDHOUR = (PULSE_MUDHOUR/PULSE_COMBAT);
 
-extern const char * const prompt_mesg[];
+extern const sstring prompt_mesg[];
 extern void signalSetup(void);
 extern int noSpecials;
 
 #endif
-
-
-
-
-

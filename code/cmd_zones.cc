@@ -76,7 +76,7 @@ void TBeing::doZonesSingle(string tStString)
     }
   }
 
-  desc->page_string(tStBuffer.c_str(), 0);
+  desc->page_string(tStBuffer.c_str());
 }
 
 void TBeing::doZones(string tStString)
@@ -149,5 +149,5 @@ void TBeing::doZones(string tStString)
       cIndex = 0;
   }
 
-  desc->page_string(str.c_str(), 0);
+  desc->page_string(str.c_str());
 }

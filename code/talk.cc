@@ -9,6 +9,35 @@
 #include "stdsneezy.h"
 #include "disease.h"
 
+// many of the talk features colorize the says/tells/etc for easier viewing
+// If I do "say this <r>color<z> is cool", I would expect to see color in
+// red, and "this ", " is cool" be the 'normal' say color.
+// unfortunately, turning off red (<z>) makes everything go back to
+// normal, and we lose the 'normal' color.
+// To get around this, we parse the say statement, and convert any <z>, <Z>,
+// or <1> to a 'replacement' color string and then send it out.
+// unfortunately, we also need to "unbold", so we need to send both the
+// normal <z> as well as the replacement
+static void convertStringColor(const string replacement, string & str)
+{
+  // we use <tmpi> to represent a dummy placeholder which we convert to
+  // <z> at the end
+  string repl = "<tmpi>";
+  repl += replacement;
+ 
+  while (str.find("<z>") != string::npos)  
+    str.replace(str.find("<z>"), 3, repl);
+
+  while (str.find("<Z>") != string::npos)  
+    str.replace(str.find("<Z>"), 3, repl);
+
+  while (str.find("<1>") != string::npos)  
+    str.replace(str.find("<1>"), 3, repl);
+
+  while (str.find("<tmpi>") != string::npos)  
+    str.replace(str.find("<tmpi>"), 6, "<z>");
+}
+
 void TBeing::disturbMeditation(TBeing *vict) const
 {
   mud_assert(vict != NULL, "No vict in disturbMeditation");
@@ -217,6 +246,67 @@ int TBeing::doSay(const char *arg)
   return FALSE;
 }
 
+void Descriptor::sendShout(TBeing *ch, const char *arg)
+{
+  Descriptor *i;
+  char capbuf[256];
+  char namebuf[100];
+
+  for (i = descriptor_list; i; i = i->next) {
+    if (i->connected != CON_PLYNG)
+      continue;
+
+    TBeing *b = i->character;
+    if (!b)
+      continue;
+    if (b == ch)
+      continue;
+    if (b->checkSoundProof())
+      continue;
+    if (b->isPlayerAction(PLR_MAILING | PLR_BUGGING))
+      continue;
+
+    // don't use awake(), paralyzed should hear, asleep should not
+    if (b->getPosition() <= POS_SLEEPING)
+      continue;
+
+    // polys and switched always hear everything
+    // if it's a god shouting (and I am mortal), hear it
+    // if i'm not set noshout, hear it
+    if (dynamic_cast<TMonster *>(b) ||
+        (!b->isImmortal() && ch->isImmortal()) ||
+        (b->desc && !IS_SET(i->autobits, AUTO_NOSHOUT))) {
+      strcpy(capbuf, b->pers(ch));
+      if (!capbuf) {
+        forceCrash("No capbuf in sendShout!");
+        continue;
+      }
+      string argbuf = colorString(b, i, arg, NULL, COLOR_NONE, FALSE);
+      sprintf(namebuf, "<g>%s<z>", cap(capbuf));
+      string nameStr = colorString(b, i, namebuf, NULL, COLOR_NONE, FALSE);
+      if(hasColorStrings(NULL, capbuf, 2)) {
+        if (IS_SET(b->desc->plr_color, PLR_COLOR_MOBS)) {
+          string tmpbuf = colorString(b, i, cap(capbuf), NULL, COLOR_MOBS, FALSE);
+          string tmpbuf2 = colorString(b, i, cap(capbuf), NULL, COLOR_NONE, FALSE);
+
+          if (i->client)
+            i->clientf("%d|%s|%s", CLIENT_SHOUT, tmpbuf2.c_str(), argbuf.c_str());
+          b->sendTo(COLOR_SHOUTS, "%s shouts, \"%s<1>\"\n\r",tmpbuf.c_str(), arg);
+        } else {
+          if (i->client)
+            i->clientf("%d|%s|%s%s", CLIENT_SHOUT, nameStr.c_str(), argbuf.c_str());
+
+          b->sendTo(COLOR_SHOUTS, "<g>%s<z> shouts, \"%s<1>\"\n\r", cap(capbuf), arg);
+        }
+      } else {
+        if (i->client)
+          i->clientf("%d|%s|%s", CLIENT_SHOUT, nameStr.c_str(), argbuf.c_str());
+
+        b->sendTo(COLOR_SHOUTS, "<g>%s<z> shouts, \"%s<1>\"\n\r", cap(capbuf), arg);
+      }
+    }
+  }
+}
 void TBeing::doShout(const char *arg)
 {
   char garbed[256];
@@ -228,12 +318,6 @@ void TBeing::doShout(const char *arg)
     sendTo("Sorry, you must be of higher level to shout.\n\r");
     return;
   }
-#if 0
-  if (GetMaxLevel() > MAX_MORT) {
-    sendTo("Please use the system command for global communications.\n\r");
-    return;
-  }
-#endif
 
   if (isAffected(AFF_SILENT)) {
     sendTo("You can't make a sound!\n\r");
@@ -289,9 +373,6 @@ void TBeing::doShout(const char *arg)
   else
     strcpy(garbed, garble(arg, getCond(DRUNK)).c_str());
 
-//   if (QuestCode)
-//     strcpy(garbed, garble(arg, 10));
-
   sendTo(COLOR_COMM, "<g>You shout<Z>, \"%s%s\"\n\r", colorString(this, desc, garbed, NULL, COLOR_BASIC, FALSE).c_str(), norm());
   act("$n rears back $s head and shouts loudly.", FALSE, this, 0, 0, TO_ROOM);
 
@@ -304,37 +385,10 @@ void TBeing::doShout(const char *arg)
   descriptor_list->sendShout(this, garbed);
 }
 
-// many of the talk features colorize the says/tells/etc for easier viewing
-// If I do "say this <r>color<z> is cool", I would expect to see color in
-// red, and "this ", " is cool" be the 'normal' say color.
-// unfortunately, turning off red (<z>) makes everything go back to
-// normal, and we lose the 'normal' color.
-// To get around this, we parse the say statement, and convert any <z>, <Z>,
-// or <1> to a 'replacement' color string and then send it out.
-static void convertStringColor(const char replacement, char * str)
-{
-  unsigned int iter;
-  for (iter = 0; iter < strlen(str) - 2; iter++) {
-    // look for the start of a colorized string
-    if (str[iter] == '<' and str[iter+2] == '>') {
-      switch (str[++iter]) {
-        case 'z':
-        case 'Z':
-        case '1':
-          str[iter] = replacement;
-          break;
-        default:
-          break;
-      }
-      iter++;
-      continue;
-    }
-  }
-}
-
 void TBeing::doGrouptell(const char *arg)
 {
-  char buf[256], garbed[256];
+  char buf[256];
+  string garbed;
   followData *f;
   TBeing *k;
 
@@ -357,7 +411,7 @@ void TBeing::doGrouptell(const char *arg)
     sendTo("You don't seem to have a group.\n\r");
     return;
   }
-  *buf = *garbed = '\0';
+  *buf = '\0';
 
   if (!(k = master))
     k = this;
@@ -368,27 +422,27 @@ void TBeing::doGrouptell(const char *arg)
     sendTo("Grouptell is a good command, but you need to tell your group SOMEthing!\n\r");
     return;
   } else {
-    strcpy(garbed, garble(arg, getCond(DRUNK)).c_str());
+    garbed = garble(arg, getCond(DRUNK));
 
-    convertStringColor('r', garbed);
+    convertStringColor("<r>", garbed);
 
-    sendTo("You tell your group: %s%s%s\n\r", red(), colorString(this, desc, garbed, NULL, COLOR_BASIC, FALSE).c_str(), norm());
+    sendTo("You tell your group: %s%s%s\n\r", red(), colorString(this, desc, garbed.c_str(), NULL, COLOR_BASIC, FALSE).c_str(), norm());
   }
   if (k->isAffected(AFF_GROUP) && !k->checkSoundproof()) {
     if (k->desc && k->desc->client && (k != this)) {
       k->desc->clientf("%d|%s|%s", CLIENT_GROUPTELL, getName(), 
-        colorString(this, k->desc, garbed, NULL, COLOR_NONE, FALSE).c_str());
+        colorString(this, k->desc, garbed.c_str(), NULL, COLOR_NONE, FALSE).c_str());
     }
-    sprintf(buf, "$n: %s%s%s", k->red(), colorString(this, k->desc, garbed, NULL, COLOR_COMM, FALSE).c_str(), k->norm());
+    sprintf(buf, "$n: %s%s%s", k->red(), colorString(this, k->desc, garbed.c_str(), NULL, COLOR_COMM, FALSE).c_str(), k->norm());
     act(buf, 0, this, 0, k, TO_VICT);
   }
   for (f = k->followers; f; f = f->next) {
     if ((f->follower != this) && f->follower->isAffected(AFF_GROUP) && !f->follower->checkSoundproof()) {
       if (f->follower->desc && f->follower->desc->client) {
         f->follower->desc->clientf("%d|%s|%s", CLIENT_GROUPTELL, getName(), 
-          colorString(this, f->follower->desc, garbed, NULL, COLOR_NONE, FALSE).c_str());
+          colorString(this, f->follower->desc, garbed.c_str(), NULL, COLOR_NONE, FALSE).c_str());
       }
-      sprintf(buf, "$n: %s%s%s", f->follower->red(), colorString(this, f->follower->desc, garbed, NULL, COLOR_COMM, FALSE).c_str(), f->follower->norm());
+      sprintf(buf, "$n: %s%s%s", f->follower->red(), colorString(this, f->follower->desc, garbed.c_str(), NULL, COLOR_COMM, FALSE).c_str(), f->follower->norm());
       act(buf, 0, this, 0, f->follower, TO_VICT);
     }
   }
@@ -457,16 +511,19 @@ void TBeing::doCommune(const char *arg)
       } else
         critter = i->character;
 
+      string str = colorString(this, i, arg, NULL, COLOR_COMM, FALSE);
+      convertStringColor("<c>", str);
+
       if (!levnum) {
         if (critter->GetMaxLevel() >= GOD_LEVEL1 && WizBuild) {
           sprintf(buf, "%s$n: %s%s%s",
                  i->purple(), i->cyan(),
-                 colorString(this, i, arg, NULL, COLOR_COMM, FALSE).c_str(), i->norm());
+                 str.c_str(), i->norm());
           act(buf, 0, this, 0, i->character, TO_VICT);
         } else if (critter->hasWizPower(POWER_WIZNET_ALWAYS)) {
           sprintf(buf, "[nobuilders] %s$n: %s%s%s",
                  i->purple(), i->cyan(),
-                 colorString(this, i, arg, NULL, COLOR_COMM, FALSE).c_str(), i->norm());
+                 str.c_str(), i->norm());
           act(buf, 0, this, 0, i->character, TO_VICT);
         }
       } else {
@@ -474,13 +531,13 @@ void TBeing::doCommune(const char *arg)
             critter->GetMaxLevel() >= levnum) {
           sprintf(buf, "%s[builders] (level: %d) $n: %s%s%s",
                  i->purple(), levnum, i->cyan(),
-                 colorString(this, i, arg, NULL, COLOR_COMM, FALSE).c_str(), i->norm());
+                 str.c_str(), i->norm());
           act(buf, 0, this, 0, i->character, TO_VICT);
         } else if (critter->hasWizPower(POWER_WIZNET_ALWAYS) &&
                    critter->GetMaxLevel() >= levnum) {
           sprintf(buf, "%s(level: %d) $n: %s%s%s", 
                  i->purple(), levnum, i->cyan(),
-                 colorString(this, i, arg, NULL, COLOR_COMM, FALSE).c_str(), i->norm());
+                 str.c_str(), i->norm());
           act(buf, 0, this, 0, i->character, TO_VICT);
         }
       }
@@ -662,7 +719,6 @@ int TBeing::doTell(const char *arg, bool visible)
     if (!(vict = get_pc_world(this, name, EXACT_NO, INFRA_NO, visible))) {
       if (!(vict = get_char_vis_world(this, name, NULL, EXACT_YES))) {
         if (!(vict = get_char_vis_world(this, name, NULL, EXACT_NO))) {
-          sendTo("No-one by that name here...\n\r");
           return FALSE;
         }
       }
@@ -711,9 +767,10 @@ int TBeing::doTell(const char *arg, bool visible)
   }
 
   int drunkNum = getCond(DRUNK);
-  strcpy(garbed, garble(message, drunkNum).c_str());
+  string garbed;
+  garbed = garble(message, drunkNum);
 
-  rc = vict->triggerSpecialOnPerson(this, CMD_OBJ_TOLD_TO_PLAYER, garbed);
+  rc = vict->triggerSpecialOnPerson(this, CMD_OBJ_TOLD_TO_PLAYER, garbed.c_str());
   if (IS_SET_DELETE(rc, DELETE_THIS)) {
     delete vict;
     vict = NULL;
@@ -730,51 +787,35 @@ int TBeing::doTell(const char *arg, bool visible)
 
   strcpy(capbuf, vict->pers(this));  // Use Someone for tells (invis gods, etc)
 
+  convertStringColor("<c>", garbed);
+
   Descriptor *d = vict->desc;
   char garbedBuf[256];
   char nameBuf[256];
   if (vict->hasColor()) {
     if (hasColorStrings(NULL, capbuf, 2)) {
       if (IS_SET(vict->desc->plr_color, PLR_COLOR_MOBS)) {
-        vict->sendTo(COLOR_COMM, "%s tells you, \"<c>%s<z>\"\n\r",
-            (colorString(vict, vict->desc, cap(capbuf), NULL, COLOR_MOBS, FALSE).c_str()), garbed);
-
-        if (d->client) {
-          sprintf(garbedBuf, "<c>%s<z>", garbed);
-          d->clientf("%d|%s|%s", CLIENT_TELL,
-            colorString(vict, vict->desc, cap(capbuf), NULL, COLOR_NONE, FALSE).c_str(),
-            colorString(vict, vict->desc, garbedBuf, NULL, COLOR_NONE, FALSE).c_str());
-        }
+        sprintf(nameBuf, "%s", colorString(vict, vict->desc, cap(capbuf), NULL, COLOR_MOBS, FALSE).c_str());
       } else {
-        vict->sendTo(COLOR_COMM, "<p>%s<z> tells you, \"<c>%s<z>\"\n\r",
-            (colorString(vict, vict->desc, cap(capbuf), NULL, COLOR_MOBS, FALSE).c_str()), garbed);
-        if (d->client) {
-          sprintf(garbedBuf, "<c>%s<z>", garbed);
-          sprintf(nameBuf, "<p>%s<z>", colorString(vict, vict->desc, cap(capbuf), NULL, COLOR_NONE, FALSE).c_str());
-          d->clientf("%d|%s|%s", CLIENT_TELL,
-            colorString(vict, vict->desc, nameBuf, NULL, COLOR_NONE, FALSE).c_str(),
-            colorString(vict, vict->desc, garbedBuf, NULL, COLOR_NONE, FALSE).c_str());
-        }
+        sprintf(nameBuf, "<p>%s<z>", colorString(vict, vict->desc, cap(capbuf), NULL, COLOR_NONE, FALSE).c_str());
       }
     } else {
-      vict->sendTo(COLOR_COMM, "<p>%s<z> tells you, \"<c>%s<z>\"\n\r", cap(capbuf), garbed);
-      if (d->client) {
-        sprintf(garbedBuf, "<c>%s<z>", garbed);
-        sprintf(nameBuf, "<p>%s<z>", cap(capbuf));
-        d->clientf("%d|%s|%s", CLIENT_TELL,
-          colorString(vict, vict->desc, nameBuf, NULL, COLOR_NONE, FALSE).c_str(),
-          colorString(vict, vict->desc, garbedBuf, NULL, COLOR_NONE, FALSE).c_str());
-      }
+      sprintf(nameBuf, "<p>%s<z>", cap(capbuf));
     }
   } else {
-    vict->sendTo("%s tells you, \"%s\"\n\r", cap(capbuf), 
-          colorString(vict, vict->desc, garbed, NULL, COLOR_COMM, FALSE).c_str());
-    if (d->client) {
-      d->clientf("%d|%s|%s", CLIENT_TELL, 
-        colorString(vict, vict->desc, cap(capbuf), NULL, COLOR_NONE, FALSE).c_str(),
-        colorString(vict, vict->desc, garbed, NULL, COLOR_NONE, FALSE).c_str());
-    }
+    sprintf(nameBuf, "%s", cap(capbuf));
   }
+
+  vict->sendTo(COLOR_COMM, "%s tells you, \"<c>%s<z>\"\n\r",
+            nameBuf, garbed.c_str());
+
+  if (d->client) {
+    sprintf(garbedBuf, "<c>%s<z>", garbed.c_str());
+    d->clientf("%d|%s|%s", CLIENT_TELL,
+        colorString(vict, vict->desc, nameBuf, NULL, COLOR_NONE, FALSE).c_str(),
+        colorString(vict, vict->desc, garbedBuf, NULL, COLOR_NONE, FALSE).c_str());
+  }
+
   sendTo(COLOR_COMM, "<G>You tell %s<z>, \"%s\"\n\r", vict->getName(), colorString(this, desc, garbed, NULL, COLOR_BASIC, FALSE).c_str());
 
   // set up last teller for reply's use

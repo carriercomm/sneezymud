@@ -346,7 +346,7 @@ int divinationBeing(TBeing *caster, TBeing * victim)
 
 int castDivinationBeing(TBeing *caster, TBeing * victim)
 {
-  if (caster->GetMaxLevel() > MAX_MORT) {
+  if (caster->GetMaxLevel() > MAX_MORT && !caster->hasWizPower(POWER_WIZARD)) {
     caster->sendTo("Shame, Shame.  You shouldn't do this...\n\r");
     vlogf(LOG_CHEAT, "%s used Divination Being on: %s",
           caster->getName(), victim->getName());

@@ -216,6 +216,12 @@ void TPerson::doSet(const char *argument)
     // this number is simply 1 larger than the enum in use
     wizPowerT wpt = wizPowerT(prm-1);
     if (mob->isPc() || mob->GetMaxLevel() <= MAX_MORT) {
+#if 1
+      if (wpt == POWER_IDLED && !hasWizPower(POWER_WIZARD)) {
+        sendTo("You do not have the authority to modify this power.\n\r");
+        return;
+      }
+#else
       if (wpt == POWER_IDLED &&
           (!hasWizPower(POWER_WIZARD) ||
            (mob->hasWizPower(POWER_GOD) && strcmp(getName(), WP_OPMAN)) ||
@@ -223,6 +229,7 @@ void TPerson::doSet(const char *argument)
         sendTo("You do not have the authority to modify this power.\n\r");
         return;
       }
+#endif
 
       if (!mob->hasWizPower(wpt)) {
         sendTo("Wiz-Power Set: %s\n\r", getWizPowerName(wpt).c_str());

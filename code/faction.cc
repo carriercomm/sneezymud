@@ -715,15 +715,18 @@ void TBeing::doFactions(const char *arg)
 
   sprintf(buf, "You are allied to: %s\n\r", FactionInfo[which].faction_name);  
   if (which != FACT_NONE) {
+#if 0
     sprintf(buf + strlen(buf), "Your faction has a potency of: %.2f, which is %s.\n\r",
       FactionInfo[which].faction_power,
       ((FactionInfo[which].faction_power == avg_faction_power) ? "average" :
        ((FactionInfo[which].faction_power > avg_faction_power) ?
           "above average" :"below average")));
+#endif
     sprintf(buf + strlen(buf), "Your faction has %ld talens of wealth, and a tithe percentage of %.2f%%.\n\r",
                     FactionInfo[which].faction_wealth,
                     FactionInfo[which].faction_tithe);
   }
+#if 0
   if (which != FACT_NONE || isImmortal()) {
     sprintf(buf + strlen(buf),
             "\n\rOne of your faction's caravans departed %d hour%s ago bound for %s.\n\r",
@@ -775,6 +778,8 @@ void TBeing::doFactions(const char *arg)
             FactionInfo[which].faction_array[i][OFF_HELP],
             FactionInfo[which].faction_array[i][OFF_HURT]);
   }
+#endif
+
   if (which != FACT_NONE) {
     sprintf(buf + strlen(buf), "%-50.50s:     %-20.20s\n\r",
           factionLeaderTitle(which, 0).c_str(), FactionInfo[which].leader[0]);

@@ -171,7 +171,11 @@ void TBed::bedRegen(TBeing *ch, int *gain, silentTypeT silent) const
     *gain += max(1,getRegen() * *gain / 100);
   }
   if ((ch->getHeight() - 6)  > getMaxSize()) {
-    *gain = -min(1,(ch->getHeight() - getMaxSize())/3);
+    // reduce gain based on how uncomfy bed is
+    *gain -= max(1,(ch->getHeight() - getMaxSize())/3);
+    // but don't let it kill you
+    *gain = max(*gain, 0);
+
     sprintf(buf, "The $o $q too small and uncomfortable for you.");
     if (!silent)
       act(buf,FALSE,ch,this,0,TO_CHAR);
@@ -184,6 +188,7 @@ void TBed::bedRegen(TBeing *ch, int *gain, silentTypeT silent) const
           ch->sendTo("You are much too uncomfortable to continue to sleep well.\n\r");
         // we are inside a task_xxx think, so do NOTHING that changes task
         // state.  i.e. don't set them resting or something
+        *gain = 0;
       }
       return;
     }
@@ -200,7 +205,7 @@ void TBed::bedRegen(TBeing *ch, int *gain, silentTypeT silent) const
   }
 
   // the bed is comfy
-  if (getHit() < hitLimit()) {
+  if (ch->getHit() < ch->hitLimit()) {
     // act() is suppressed if person is !awake(), use a sendTo
     if (!silent)
       ch->sendTo("Your rest on %s rejuvenates you.\n\r", getName());

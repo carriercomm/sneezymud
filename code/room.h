@@ -192,8 +192,13 @@ class TRoom : public TThing {
     int roomHeight;         // room height
     unsigned int roomFlags; // Bitvector os flags for room
     long descPos;           // File offset for the description.
+    TThing *tBornInsideMe;  // List of mobs born inside me.
 
   public:
+    void operator << (      TThing *); // Add a mob to the born list.
+    bool operator |= (const TThing *); // See if a mob is on the born list.
+    void operator >> (const TThing *); // Remove mob from the born list.
+
 //    WeatherStuff weather;   // not ready yet - bat
     roomDirData *dir_option[MAX_DIR]; // Exits
 

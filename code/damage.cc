@@ -580,6 +580,9 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
         case SPELL_LIGHTNING_BREATH:
           strcpy(buf2, "lightning breath");
           break;
+        case SPELL_DUST_BREATH:
+          strcpy(buf2, "dust breath");
+          break;
         default:
           sprintf(buf2, "damage type: %d", dmg_type);
           break;

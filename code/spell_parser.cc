@@ -2209,6 +2209,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SPELL_FROST_BREATH:
     case SPELL_ACID_BREATH:
     case SPELL_LIGHTNING_BREATH:
+    case SPELL_DUST_BREATH:
     case LAST_BREATH_WEAPON:
     case AFFECT_DUMMY:
     case AFFECT_DRUNK:

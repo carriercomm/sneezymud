@@ -188,6 +188,9 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_CHLORINE_BREATH:
         sprintf(buf, "%s's corpse is here, melting with a wisp of caustic smoke.  The face looks strangled.",namebuf);
         break;
+      case SPELL_DUST_BREATH:
+        sprintf(buf, "%s's corpse has been shredded by some unseen force.", namebuf);
+        break;
       case SPELL_POISON_DEIKHAN:
       case SPELL_POISON:
       case DAMAGE_TRAP_POISON:

@@ -840,6 +840,7 @@ int mapSpellnumToFile(spellNumT stt)
     case SPELL_FROST_BREATH:
     case SPELL_ACID_BREATH:
     case SPELL_LIGHTNING_BREATH:
+    case SPELL_DUST_BREATH:
     case LAST_BREATH_WEAPON:
     case MAX_SKILL:
     case DAMAGE_NORMAL:

@@ -509,6 +509,7 @@ enum spellNumT {
      SPELL_FROST_BREATH,
      SPELL_ACID_BREATH,
      SPELL_LIGHTNING_BREATH,
+  SPELL_DUST_BREATH,
      LAST_BREATH_WEAPON,
 
      // these represent oddball affects, mostly used for affectData stuff

@@ -1120,6 +1120,7 @@ CSkill *TBeing::getSkill(spellNumT skill) const
     case SPELL_FROST_BREATH:
     case SPELL_ACID_BREATH:
     case SPELL_LIGHTNING_BREATH:
+    case SPELL_DUST_BREATH:
     case LAST_BREATH_WEAPON:
     case AFFECT_PET:
     case AFFECT_CHARM:

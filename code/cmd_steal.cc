@@ -163,8 +163,7 @@ static int steal(TBeing * thief, TBeing * victim)
       thief->removeSkillAttempt(skill);
       if (thief->affectedBySpell(skill))
 	thief->affectFrom(skill);
-      return FALSE;
-    }
+     }
   
     act("$n tries to steal money from $N.", TRUE, thief, 0, victim, TO_NOTVICT);
     if (victim->getPosition() == POSITION_SLEEPING && 
@@ -358,7 +357,6 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
       thief->removeSkillAttempt(skill);
       if (thief->affectedBySpell(skill))
         thief->affectFrom(skill);
-      return FALSE;
     }
 
     act("$n fails to steal $N's $o.",FALSE,thief,obj,victim,TO_NOTVICT);

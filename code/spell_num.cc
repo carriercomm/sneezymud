@@ -920,6 +920,7 @@ int mapSpellnumToFile(spellNumT stt)
     case TYPE_KICK:
     case TYPE_MAUL:
     case TYPE_MAX_HIT:
+    case AFFECT_HORSEOWNED:
     case LAST_ODDBALL_AFFECT:
       break;
   }

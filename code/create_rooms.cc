@@ -229,8 +229,12 @@ void TPerson::doEdit(const char *arg)
     case  1: // Description
       desc->str = &roomp->descr;
       desc->max_str = MAX_STRING_LENGTH;
-      if (desc->client)
+#if 0
+// as is, this will cause it to send the descr as a "bug"
+      if (desc->client) {
         desc->clientf("%d", CLIENT_STARTEDIT, 4000);
+      }
+#endif
       break;
     case  2: // Exdscr
       if (sscanf(string, "%d", &rdir) != 1) {

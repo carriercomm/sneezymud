@@ -5,6 +5,7 @@
 //      "immortal.cc" - All commands reserved for wizards
 //  
 //////////////////////////////////////////////////////////////////////////
+
 #include "stdsneezy.h"
 
 extern "C" {
@@ -4223,7 +4224,7 @@ void TBeing::doInfo(const char *arg)
         buf += buf2;
         sprintf(buf2, "Modifier: Equip : %2.2f (Factor: %6.2f%%)\n\r",
                 stats.equip,
-                100.0 * (getPosGold(GOLD_SHOP_WEAPON) + getPosGold(GOLD_SHOP_ARMOR) / tTotalGlobal));
+                100.0 * (getPosGold(GOLD_SHOP_WEAPON) + getPosGold(GOLD_SHOP_ARMOR)) / tTotalGlobal);
         buf += buf2;
         buf += "\n\r";
 

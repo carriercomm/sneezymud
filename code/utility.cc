@@ -1053,8 +1053,14 @@ bool TObj::canGetMe(const TBeing *ch, silentTypeT silent) const
 
   // This is a safty bit, mostly auto-done by the storage
   // monitoring code.
-  if (isname("[wizard]", name) && !hasWizPower(POWER_WIZARD))
-    return;
+  if ((isname("[wizard]", name) ||
+       (parent && isname("[wizard]", parent->name))) &&
+      !ch->hasWizPower(POWER_WIZARD)) {
+    ch->sendTo("I'm afraid you are not permitted to touch this.");
+    vlogf(LOG_OBJ, "%s tried to pick up wizard set object %s",
+          ch->getNameNOC(ch).c_str(), getNameNOC(ch).c_str());
+    return FALSE;
+  }
 
   if (ch->isImmortal() || 
       (canWear(ITEM_TAKE) && !isObjStat(ITEM_PROTOTYPE))) {

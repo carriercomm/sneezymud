@@ -503,6 +503,7 @@ int TBeing::updateAffects()
   return 0;
 }
 
+// this is called once per mud hour (about 144 real seconds)
 // returns DELETE_THIS
 int TBeing::updateTickStuff()
 {
@@ -714,6 +715,7 @@ int TBeing::updateBodyParts()
   return TRUE;
 }
 
+// this is called once per tick (about 36 real seconds)
 // DELETE_THIS implies this should be deleted
 int TBeing::updateHalfTickStuff()
 {

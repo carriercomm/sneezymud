@@ -89,7 +89,7 @@ int TBeing::doTurn(const char *argument, TBeing *vict)
 	act("$N is blasted into oblivion!", FALSE, this, 0, victim, TO_NOTVICT);
 	act("$N is blasted into oblivion!", FALSE, this, 0, victim, TO_VICT);
 	act("$N is blasted into oblivion!", FALSE, this, 0, victim, TO_CHAR);
-	victim->rawKill(SKILL_TURN);
+	victim->rawKill(SKILL_TURN, this);
         if (vict)
           return DELETE_VICT;
         delete victim;

@@ -253,6 +253,15 @@ const unsigned int ARROW_CARVED        = (1 << 1);
 const unsigned int ARROW_SCRAPED       = (1 << 2);
 const unsigned int ARROW_SMOOTHED      = (1 << 3);
 
+
+// NOTE:::
+// I cleared way for 4 new extra flags to be used. The last flag
+// I added (nolocate) in my opinion was done improperly however
+// it works so should remain unchanged. Please remove the last part
+// of the comment on the line you use for your extra flag because
+// I use them as a marker for quick search...Thank you
+// -Jesus 10-19-2000
+
 const unsigned int ITEM_GLOW            = (1<<0);     // 1
 const unsigned int ITEM_HUM             = (1<<1);     // 2
 const unsigned int ITEM_STRUNG          = (1<<2);     // 4
@@ -262,7 +271,7 @@ const unsigned int ITEM_INVISIBLE       = (1<<5);     // 32
 const unsigned int ITEM_MAGIC           = (1<<6);     // 64
 const unsigned int ITEM_NODROP          = (1<<7);     // 128
 const unsigned int ITEM_BLESS           = (1<<8);     // 256
-const unsigned int ITEM_UNUSED          = (1<<9);     // 512  check before using    
+const unsigned int ITEM_NOT_USED4       = (1<<9);     // 512  USE THIS SPOT FOR EXTRA
 const unsigned int ITEM_HOVER           = (1<<10);    // 1024
 const unsigned int ITEM_RUSTY           = (1<<11);    // 2048
 const unsigned int ITEM_ANTI_CLERIC     = (1<<12);    // 4096
@@ -278,9 +287,9 @@ const unsigned int ITEM_NORENT          = (1<<21);    // 2097152
 const unsigned int ITEM_FLOAT           = (1<<22);    // 4194304
 const unsigned int ITEM_NOPURGE         = (1<<23);    // 8388608
 const unsigned int ITEM_NEWBIE          = (1<<24);    // 16777216
-const unsigned int ITEM_NOT_USED1       = (1<<25);    // 33554432
-const unsigned int ITEM_NOT_USED2       = (1<<26);    // 67108864
-const unsigned int ITEM_NOT_USED3       = (1<<27);    // 134217728 
+const unsigned int ITEM_NOT_USED1       = (1<<25);    // 33554432 USE THIS SPOT FOR EXTRA
+const unsigned int ITEM_NOT_USED2       = (1<<26);    // 67108864 USE THIS SPOT FOR EXTRA
+const unsigned int ITEM_NOT_USED3       = (1<<27);    // 134217728  USE THIS SPOT FOR EXTRA
 const unsigned int ITEM_ATTACHED        = (1<<28);    // 268435456 
 const unsigned int ITEM_BURNING         = (1<<29);    // 536870912
 const unsigned int ITEM_CHARRED         = (1<<30);    // 1073741824

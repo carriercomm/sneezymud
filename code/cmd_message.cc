@@ -285,7 +285,8 @@ bool TMessages::operator==(messageTypeT tValue)
   return true;
 }
 
-TMessages & TMessages::operator()(messageTypeT tValue, string tStString)
+// TMessages & TMessages::operator()(messageTypeT tValue, string tStString)
+void TMessages::operator()(messageTypeT tValue, string tStString)
 {
   // look for "~R" and replace with newlines
   while (tStString.find("~R") != string::npos)

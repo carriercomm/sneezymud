@@ -480,6 +480,28 @@ int summon(TBeing * caster, TBeing * victim, int level, byte bKnown)
     return SPELL_FAIL;
   }
 
+  /* M = Max-Exist / PL = Player Level / ML = Monster Level
+   *
+   * M9999 : PL 10 : ML 10 : ( 0) - (  0) =  0
+   * M 100 : PL 10 : ML 10 : ( 0) - (  0) =  0
+   * M  10 : PL 10 : ML 10 : (40) - (  0) =  0
+   * M   1 : PL 10 : ML 10 : (49) - (  0) =  0
+   * M   1 : PL 50 : ML 10 : (49) - ( 40) =  9
+   * M   1 : PL 10 : ML 50 : (49) - (-40) = 89
+   *
+   * The higher the result, the harder it is to summon
+   */
+  if (tmon && !caster->isImmortal()) {
+    int tDiff = ((50 - min((short) 50, mob_index[tmon->getMobIndex()].max_exist)) +
+                 (caster->GetMaxLevel() - victim->GetMaxLevel()));
+
+    if ((tDiff > 0) && ::number(0, tDiff)) {
+      caster->sendTo("Your prayer meets opposition and fails!");
+      act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
+      return SPELL_FAIL;
+    }
+  }
+
   if (caster == victim) {
     caster->sendTo("Yeah whatever. Good one.\n\r");
     act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);

@@ -1932,6 +1932,7 @@ void assign_rooms(void)
     {23575, sleepTagRoom},
     {23576, sleepTagRoom},
     {23577, sleepTagRoom},
+#if 0
     {23578, sleepTagRoom},
     {23579, sleepTagRoom},
     {23580, sleepTagRoom},
@@ -1953,6 +1954,7 @@ void assign_rooms(void)
     {23596, sleepTagRoom},
     {23597, sleepTagRoom},
     {23598, sleepTagRoom},
+#endif
     {23599, sleepTagControl},
     {27103, SecretDoors},
     {27104, SecretDoors},

@@ -789,6 +789,26 @@ TO_CHAR);
         act("$N is already of a faction, you cannot let them join another.",
             FALSE, this, 0, victim, TO_CHAR);
     }
+  } else if (is_abbrev(buf2, "immortal")) {
+    if (powerCheck(POWER_FLAG_IMP_POWER))
+      return;
+
+    if (!victim->desc) {
+      sendTo("You can not flag them for this.\n\r");
+      return;
+    }
+
+    if (victim->GetMaxLevel() > MAX_MORT) {
+      sendTo("That person is an immortal...Are you crazy??");
+      return;
+    }
+
+    if (IS_SET(victim->desc->account->flags, ACCOUNT_IMMORTAL)) {
+      REMOVE_BIT(victim->desc->account->flags, ACCOUNT_IMMORTAL);
+      act("$N is no longer flagged as an immortal.", false, this, 0, victim, TO_CHAR);
+      victim->doSave(SILENT_YES);
+    } else
+      sendTo("This flag is setup Automatically.  You Can Not simply add it.\n\r");
   } else {
     sendTo("Syntax: flag <player> <\"banished\" | \"killable\" | \"solo\" | \"group\" | \"newbiehelper\" | \"nosnoop\" | \"double\" | \"triple\" | \"faction\">\n\r");
     return;
@@ -5323,9 +5343,10 @@ void TBeing::doSysChecklog(const char *arg)
   }
 
   for (tIndex = 0; tIndex < strlen(tLog); tIndex++)
-    if (tLog[tIndex] == '.' ||
-        tLog[tIndex] == '/') {
-      sendTo("Illegial log specified.  Bad, Bad god!\n\r");
+    // need to be able to type "log.121299.0000" but not "../" or "."
+    if ( tLog[tIndex] == '/' ||
+         (tLog[tIndex] == '.' && (tIndex == 0))) {
+      sendTo("Illegal log specified.  Bad, Bad god!\n\r");
       return;
     }
 

@@ -124,7 +124,7 @@ sprintf(buf, "Ranged debug: max_distance: %d\n\racceleration: %6.2f, velocity: %
 vlogf(LOG_BUG, buf);
 #endif
 
-  ch->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_BOW, 20);
+  ch->learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_RANGED_PROF, 20);
   
   strcpy(local_vict, vict);
 
@@ -272,13 +272,13 @@ int get_range_actual_damage(TBeing *ch, TBeing *victim, TObj *o, int dam, spellN
     if (dynamic_cast<TArrow *>(o)) {
       // shot objects are here
       // ranged spec basically allows arrow to do extra damage...
-      q = 100 + ch->getSkillValue(SKILL_BOW);
+      q = 100 + ch->getSkillValue(SKILL_RANGED_PROF);
       q += 2 * ch->getSkillValue(SKILL_RANGED_SPEC);
       dam *= q;
       dam /= 200;
     } else {
       // thrown objects are here
-      q = ch->getSkillValue(SKILL_BOW);
+      q = ch->getSkillValue(SKILL_RANGED_PROF);
       dam *= q;
       dam /= 100;
     }
@@ -457,7 +457,7 @@ int TThing::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int mdis
           ch->setCharFighting(tbt, 0);
         return resCode;
       } else if (!ch->isImmortal() &&
-                  (!(i = ch->specialAttack(tbt, SKILL_BOW)) || 
+                  (!(i = ch->specialAttack(tbt, SKILL_RANGED_PROF)) || 
                    i == GUARANTEED_FAILURE)) {
         act("$n dodges out of the way of $p.", FALSE, tbt, this, NULL, TO_ROOM);
         tbt->sendTo("You dodge out of its way.\n\r");
@@ -1405,7 +1405,7 @@ int TBeing::doShoot(const char *arg)
     return FALSE;
   }
 #endif
-  if (getSkillValue(SKILL_BOW) <= 0) {
+  if (getSkillValue(SKILL_RANGED_PROF) <= 0) {
     sendTo("You almost shoot yourself in the foot!\n\r");
     sendTo("You realize you don't have any clue what you're doing...get some training.\n\r");
     return FALSE;

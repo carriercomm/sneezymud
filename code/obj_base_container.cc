@@ -83,3 +83,19 @@ void TBaseContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tS
 {
   TObj::purchaseMe(ch, tKeeper, tCost, tShop);
 }
+
+void TBaseContainer::examineObj(TBeing *ch) const
+{
+  int bits = FALSE;
+
+  if (parent && (ch == parent)) {
+    bits = FIND_OBJ_INV;
+  } else if (equippedBy && (ch == equippedBy)) {
+    bits = FIND_OBJ_EQUIP;
+  } else if (parent && (ch->roomp == parent)) {
+    bits = FIND_OBJ_ROOM;
+  }
+
+  ch->sendTo("When you look inside, you see:\n\r");
+  lookObj(ch, bits);
+}

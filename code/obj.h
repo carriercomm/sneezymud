@@ -279,15 +279,13 @@ const unsigned int ITEM_NOPURGE         = (1<<23);    // 8388608
 const unsigned int ITEM_NEWBIE          = (1<<24);    // 16777216
 const unsigned int ITEM_ONLY_MALE       = (1<<25);    // 33554432
 const unsigned int ITEM_ONLY_FEMALE     = (1<<26);    // 67108864
-const unsigned int ITEM_ONLY_NEUTER     = (1<<27);    // 134217728
+const unsigned int ITEM_NOLOCATE        = (1<<27);    // 134217728 Used to be ONLY_NEUTER
 const unsigned int ITEM_ATTACHED        = (1<<28);    // 268435456 
 const unsigned int ITEM_BURNING         = (1<<29);    // 536870912
 const unsigned int ITEM_CHARRED         = (1<<30);    // 1073741824
-const long int ITEM_NOLOCATE            = (1<<31);    // 2147483647 
-// The above should be 2147483647 but for some reason that I couldn't
-// seem to locate being new to this code returns a negitive int. That
-// is why I made it a long int and not unsigned in case there is question.
-// -jh 8-29-2000
+// const long int ITEM_NOLOCATE            = (1<<31);    // 2147483647 
+// Under Batopr's advice i commented the above in favor of using 
+// a different slot --jh
 
 const int MAX_OBJ_STAT        = 32;        // move and change
 

@@ -11,10 +11,6 @@
  *****************************************************************************/
 
 #include "stdsneezy.h"
-#include "create.h"
-#include "room.h"
-
-extern bool in_range(int, int, int);
 
 const char *room_fields[] =
 {

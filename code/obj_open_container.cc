@@ -8,7 +8,6 @@
 
 
 #include "stdsneezy.h"
-#include "create.h"
 #include "disc_looting.h"
 
 TOpenContainer::TOpenContainer() :
@@ -432,7 +431,6 @@ void TOpenContainer::lookObj(TBeing *ch, int bits) const
 
   // list_in_heap uses sequential sendTo's, so lets string it to them for
   // easier browsing
-                                                              53,7           7%
   ch->makeOutputPaged();
 }
 

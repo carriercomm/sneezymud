@@ -5550,7 +5550,7 @@ int Witherer(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
 
   if (number(1,5)>2) {
     int ret = witherLimb(me, vict);
-    if (IS_SET(ret, DELETE_VICT)) {
+    if (IS_SET_DELETE(ret, DELETE_VICT)) {
       delete vict;
       vict = NULL;
     }

@@ -973,13 +973,19 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
 #if 1
   else {
     string tmpstring;
+
     if(p->isPlayerAction(PLR_ANONYMOUS) && !ch->isImmortal()){
       tmpstring = "Anonymous";
     } else {
+#if 1
+      sprintf(tempbuf, "%-4s Lev %2d", p->getProfAbbrevName(), p->GetMaxLevel());
+      tmpstring += tempbuf;
+#else
       tmpstring = p->getProfAbbrevName();
       tmpstring += " Lev ";
       sprintf(tempbuf, "%d", p->GetMaxLevel());
       tmpstring += tempbuf;
+#endif
     }
 
     while (tmpstring.length() < 13)

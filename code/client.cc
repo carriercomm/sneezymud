@@ -768,6 +768,9 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       account = new TAccount;
       // Does account exist or is it a bogus name? This function will return TRUE is so
       if (checkForAccount(aname, TRUE)) {
+        clientf("%d|Account name already exists! Please try another.", CLIENT_ERROR);
+        delete account;
+        account = NULL;
       } 
       if (strlen(aname) >= 10) {
       }

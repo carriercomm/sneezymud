@@ -174,6 +174,7 @@ int TRealContainer::disarmMe(TBeing *thief)
 
   strcpy(trap_type_buf, trap_types[getContainerTrapType()]);
   learnedness = min((int) MAX_SKILL_LEARNEDNESS, 3*bKnown/2);
+  addContainerFlag(CONT_EMPTYTRAP);
 
   if (bSuccess(thief, learnedness, SKILL_DISARM_TRAP)) {
     sprintf(buf, "Click.  You disarm the %s trap in the $o.", trap_type_buf);

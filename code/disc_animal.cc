@@ -5,9 +5,8 @@
 
 int beastSoother(TBeing *caster, TBeing *victim, TMagicItem *tObj)
 {
-  int tLevel = tObj->getMagicLevel(),
-    tKnown = tObj->getMagicLearnedness(),
-    tReturn = 0;
+  int tKnown = tObj->getMagicLearnedness(),
+      tReturn = 0;
 
   tReturn = beastSoother(caster, victim, 1, tKnown);
 

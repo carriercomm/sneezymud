@@ -1105,7 +1105,7 @@ class TBeing : public TThing {
     bool willBumpHead(TRoom *) const;
     bool willBumpHeadDoor(roomDirData *, int *) const;
     void sendTrapMessage(const char *, trap_targ_t, int);
-    bool hasTrapComps(const char *, trap_targ_t, int, int *price);
+    bool hasTrapComps(const char *, trap_targ_t, int, int *price = NULL);
     int goofUpTrap(doorTrapT, trap_targ_t);
     int springTrap(TTrap *);
     int triggerTrap(TTrap *);

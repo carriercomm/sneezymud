@@ -1009,33 +1009,32 @@ void TBeing::gainCondition(condTypeT condition, int value)
       case FULL:
         value = (int) (value * getMyRace()->getFoodMod()); 
         value = max(1, value);
+	// lets take body mass into consideration for hunger
+	value = (int) (value * 180.0 / getWeight());
+	value = max(1, value);
+
         break;
       case THIRST:
+	// lets take body mass into consideration for thirst
+	value = (int) (value * 180.0 / getWeight());
+	value = max(1, value);
+	break;
       case DRUNK:
         value = (int) (value * getMyRace()->getDrinkMod()); 
         value = max(1, value);
+	// lets take body mass into consideration for drunkenness
+	// this may need some revision
+	// At the momeny we are scaling linearly and taking drunkenness factors
+	// normalized to a 180LB person
+	value = (int) (value * 180.0 / getWeight());
+	value = max(1, value);
+
+	// modify for SKILL_ALCOHOLISM
+	value *= ((100 - getSkillValue(SKILL_ALCOHOLISM)) / 200);
+
         break;
       case MAX_COND_TYPE:
         break;
-    }
-
-    // lets take body mass into consideration for drunkenness
-    if (condition == DRUNK) {
-      // this may need some revision
-      // At the momeny we are scaling linearly and taking drunkenness factors
-      // normalized to a 180LB person
-      value = (int) (value * 180.0 / getWeight());
-      value = max(1, value);
-    }
-    // lets take body mass into consideration for thirst
-    if (condition == THIRST) {
-      value = (int) (value * 180.0 / getWeight());
-      value = max(1, value);
-    }
-    // lets take body mass into consideration for hunger
-    if (condition == FULL) {
-      value = (int) (value * 180.0 / getWeight());
-      value = max(1, value);
     }
   }
   value = min(value, 24);

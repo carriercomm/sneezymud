@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: doors.cc,v $
+// Revision 5.1.1.3  1999/10/25 19:42:11  mithros
+// Fixing my mistakes hopefully :)
+//
 // Revision 5.1.1.2  1999/10/25 19:24:27  mithros
 // Added unique doors for 774, 9050, & 9064.
 //
@@ -1114,8 +1117,9 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       }
       break;
   case 9050:
-      if (cmd != CMD_TWIST)
+      if ((cmd != CMD_TWIST) && (cmd != CMD_TURN))
         return FALSE;
+      if (cmd == CMD_TWIST) {
       if (is_abbrev(buf, "lid")) {
         ch->openUniqueDoor(DIR_DOWN, DOOR_UNIQUE_DEF,
           "",
@@ -1129,10 +1133,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
         );
         return TRUE;
       }
-      break;
-  case 9050:
-      if (cmd != CMD_TURN)
-        return FALSE;
+    } else {
       if (is_abbrev(buf, "bracket")) {
         ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_DEF,
               "",
@@ -1145,8 +1146,9 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
             "The passage to the east is concealed."
         );
         return TRUE;
-      }
-      break;
+      }  
+    }
+    break;
   case 9064:
       if (cmd != CMD_TURN)
         return FALSE;

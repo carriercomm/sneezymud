@@ -238,7 +238,12 @@ int DragonBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   for (i = 0; dragons[i].vnum != -1 && dragons[i].vnum != myself->mobVnum();i++);
 
   if (dragons[i].vnum == -1) {
-    forceCrash("Dragon has no defined breath. (%d)", myself->mobVnum());
+    // in general, this is bad, but dumn builders often "test"
+    if (myself->number == -1)
+      vlogf(LOG_LOW, "Dragon (%s:%d) trying to breathe in room %d and not hard coded.",
+            myself->getName(), myself->mobVnum(), myself->inRoom());
+    else
+      forceCrash("Dragon has no defined breath. (%d)", myself->mobVnum());
     return FALSE;
   }
   if (myself->hasDisease(DISEASE_DROWNING) ||

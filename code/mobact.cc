@@ -2686,7 +2686,7 @@ int TMonster::notFightingMove(int pulse)
   if (!IS_SET(specials.act, ACT_SENTINEL)) {
     // Change this to increase or decrease the chance of mobs moving about
     // each check.
-    const int DEF_MOBILE_WANDER_CHANCE = 10;
+    const int DEF_MOBILE_WANDER_CHANCE = 14;
     
     if (!::number(0,DEF_MOBILE_WANDER_CHANCE)) {
       rc = wanderAround();

@@ -212,7 +212,7 @@ int TFuel::chiMe(TBeing *tLunatic)
   act("$n concentrates upon $p, causing it to blow up violently",
       TRUE, tLunatic, this, NULL, TO_ROOM);
 
-  tDamage = ::number((getCurFuel() / 2), getCurFuel());
+  tDamage = max(1, (::number((getCurFuel() / 2), getCurFuel()) / 10));
 
   for (tThing = roomp->stuff; tThing; tThing = tNextThing) {
     tNextThing = tThing->nextThing;

@@ -296,7 +296,7 @@ const int TOG_BOUGHT_CALDONIA_SHOT  = 214;
 
 // Warrior lvl 40 quest
 
-const int TOG_ELGIABLE_WARRIOR_L41 = 219; //f
+const int TOG_ELIGIBLE_WARRIOR_L41 = 219; //f
 const int TOG_KILL_SHAMAN = 220; // c
 const int TOG_KILL_CHIEF = 221;
 const int TOG_GAVE_HEAD_CHIEF = 222; // d

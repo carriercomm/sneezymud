@@ -170,6 +170,8 @@ int TBaseCup::drinkMe(TBeing *ch)
     // use leftover as chance to go 1 more unit up/down
     if (::number(0,9) < ((abs(getLiqDrunk()) * amount) % 10))
       ch->gainCondition(DRUNK, (getLiqDrunk() > 0 ? 1 : -1));
+
+    bSuccess(ch, ch->getSkillValue(SKILL_ALCOHOLISM), SKILL_ALCOHOLISM);
   }
 
   if (ch->getCond(FULL) >= 0) {
@@ -524,10 +526,12 @@ void TBaseCup::sipMe(TBeing *ch)
   act("$n sips from the $o.", TRUE, ch, this, 0, TO_ROOM);
   ch->sendTo(COLOR_OBJECTS, "It tastes like %s.\n\r", DrinkInfo[getDrinkType()]->name);
 
-  ch->gainCondition(DRUNK, (getLiqDrunk() / 10));
-  // use leftover as chance to go 1 more unit up/down
-  if (::number(0,9) < (abs(getLiqDrunk()) % 10))
-    ch->gainCondition(DRUNK, (getLiqDrunk() > 0 ? 1 : -1));
+  if (getLiqDrunk()) {
+    ch->gainCondition(DRUNK, (getLiqDrunk() / 10));
+    // use leftover as chance to go 1 more unit up/down
+    if (::number(0,9) < (abs(getLiqDrunk()) % 10))
+      ch->gainCondition(DRUNK, (getLiqDrunk() > 0 ? 1 : -1));
+  }
 
   ch->gainCondition(FULL, (getLiqHunger() / 10));
   // use leftover as chance to go 1 more unit up/down

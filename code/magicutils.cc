@@ -1109,6 +1109,11 @@ int TBeing::rawSleep(int level, int duration, int crit, saveTypeT save)
   aff.duration *= crit;
   aff.duration /= (save ? 2 : 1);
 
+  // we've already applied a raw immunity check to prevent entirely
+  // however, let immunities also decrease duration
+  aff.duration *= (100 - getImmunity(IMMUNE_SLEEP));
+  aff.duration /= 100;
+
   affectTo(&aff);
 
   if (getPosition() > POSITION_SLEEPING) {
@@ -1183,27 +1188,34 @@ int TBeing::dropBloodLimb(wearSlotT limb)
 // assumes you have already checked for immunites, etc
 int TBeing::rawBleed(wearSlotT pos, int duration, silentTypeT silent, checkImmunityT immcheck)
 {
-  affectedData af;
+  affectedData aff;
   char buf[256];
 
   mud_assert(pos >= MIN_WEAR && pos < MAX_WEAR && 
              pos != HOLD_RIGHT && pos != HOLD_LEFT &&
              slotChance(pos), "Bogus slot on raw bleed");
 
+  // not sure what this is for???
   if (immcheck) {
     if (isImmune(IMMUNE_BLEED,
         duration == PERMANENT_DURATION ? 100 : (duration - 100)/6))
       return FALSE;
   }
 
-  af.type = AFFECT_DISEASE;
-  af.level = pos;
-  af.duration = duration;
-  af.location = APPLY_NONE;
-  af.modifier = DISEASE_BLEEDING;
-  af.bitvector = 0;
-  affectTo(&af);
-  disease_start(this, &af);
+  aff.type = AFFECT_DISEASE;
+  aff.level = pos;
+  aff.duration = duration;
+  aff.location = APPLY_NONE;
+  aff.modifier = DISEASE_BLEEDING;
+  aff.bitvector = 0;
+
+  // we've already applied a raw immunity check to prevent entirely
+  // however, let immunities also decrease duration
+  aff.duration *= (100 - getImmunity(IMMUNE_BLEED));
+  aff.duration /= 100;
+
+  affectTo(&aff);
+  disease_start(this, &aff);
 
   dropBloodLimb(pos);
 
@@ -1220,7 +1232,7 @@ int TBeing::rawBleed(wearSlotT pos, int duration, silentTypeT silent, checkImmun
 // assumes you have already checked for immunities, etc
 int TBeing::rawInfect(wearSlotT pos, int duration, silentTypeT silent, checkImmunityT immcheck)
 {
-  affectedData af;
+  affectedData aff;
   char buf[256];
 
   if (immcheck) {
@@ -1229,14 +1241,20 @@ int TBeing::rawInfect(wearSlotT pos, int duration, silentTypeT silent, checkImmu
       return FALSE;
   }
 
-  af.type = AFFECT_DISEASE;
-  af.level = pos;
-  af.duration = duration;
-  af.modifier = DISEASE_INFECTION;
-  af.location = APPLY_NONE;
-  af.bitvector = 0;
-  affectTo(&af);
-  disease_start(this, &af);
+  aff.type = AFFECT_DISEASE;
+  aff.level = pos;
+  aff.duration = duration;
+  aff.modifier = DISEASE_INFECTION;
+  aff.location = APPLY_NONE;
+  aff.bitvector = 0;
+
+  // we've already applied a raw immunity check to prevent entirely
+  // however, let immunities also decrease duration
+  aff.duration *= (100 - getImmunity(IMMUNE_DISEASE));
+  aff.duration /= 100;
+
+  affectTo(&aff);
+  disease_start(this, &aff);
 
   if (!silent) {
     sendTo("Your %s has become totally infected!\n\r", describeBodySlot(pos).c_str());
@@ -1593,6 +1611,12 @@ void genericDisease(TBeing *v, int level)
       aff.duration = level * UPDATES_PER_MUDHOUR / 3;
     }
   }
+
+  // we've already applied a raw immunity check to prevent entirely
+  // however, let immunities also decrease duration
+  aff.duration *= (100 - getImmunity(IMMUNE_DISEASE));
+  aff.duration /= 100;
+
   v->affectTo(&aff);
   disease_start(v, &aff);
 }

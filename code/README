@@ -74,6 +74,12 @@
   a max greater than 10.
 - Re-Enabled the cheat-on-talens check for dropped/gotten talens.
 - Fixed up bags/pouchs to react on cheat-on-talens check.
+- Fixed the problem with "self"/"me" not reverting to user.
+- Added "tank" to the parse checker, only works under special conditions.
+- For cleanness of code the "self"/"me"/"tank" is case-senative and Must
+  be complete "tan" won't work.
+- Moved the 'is limited' check on items for immortal mortals to display
+  for any item with a cap due to the current imm recycle code.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

@@ -472,6 +472,10 @@ charFile::charFile() :
   autobits(0),
   best_rent_credit(0),
 //  point data members
+  mana(0),
+  maxMana(0),
+  piety(0.0),
+  lifeforce(0),
   hit(0),
   maxHit(0),
   move(0),

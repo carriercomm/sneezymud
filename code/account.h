@@ -8,9 +8,24 @@
 #ifndef __ACCOUNT_H
 #define __ACCOUNT_H
 
-extern unsigned int account_number;
-extern unsigned int player_count;
-extern unsigned int active_player;
+class TAccountStats
+{
+  public:
+    unsigned int account_number;
+    unsigned int player_count;
+    unsigned int active_player;
+    unsigned int player_num;
+    unsigned int max_player_since_reboot;
+
+    TAccountStats() :
+      account_number(0),
+      player_count(0),
+      active_player(0),
+      player_num(0),
+      max_player_since_reboot(0)
+    {}
+};
+extern TAccountStats accStat;
 
 class TAccount
 {

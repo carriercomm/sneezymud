@@ -4931,6 +4931,9 @@ int Descriptor::doAccountStuff(char *arg)
       }
       saveAccount();
       accStat.account_number++;
+
+      vlogf(LOG_MISC, "New Account: '%s' with email '%s'", account->name, account->email);
+
       account->status = TRUE;
       rc = doAccountMenu("");
       if (IS_SET_DELETE(rc, DELETE_THIS))

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: drinkcon.cc,v $
+// Revision 5.1.1.2  2000/01/27 17:49:53  batopr
+// renamed classes project
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -43,7 +46,7 @@ TDrinkCon::~TDrinkCon()
 {
 }
 
-void TDrinkCon::findSomeDrink(TDrinkCon **last_good, TContainer **last_cont, TContainer *cont)
+void TDrinkCon::findSomeDrink(TDrinkCon **last_good, TBaseContainer **last_cont, TBaseContainer *cont)
 {
   if ((getDrinkUnits() > 0) && (getLiqThirst() > 0)) {
     *last_good = this;

@@ -1111,16 +1111,20 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
   } else if (cost->total_cost > getMoney()) {
     if (recep) {
       act("$n tells you '... Your bank account is footing part of the bill.'", FALSE, recep, 0, this, TO_VICT);
-      sprintf(buf, "$n tells you 'You can afford to rent for at most %d days.'",
-        (getMoney() + getBank()) / (cost->total_cost));
+      sprintf(buf, "$n tells you 'You can afford to rent for at most %d day%s.'",
+        (getMoney() + getBank()) / (cost->total_cost),
+        (((getMoney() + getBank()) / (cost->total_cost)) == 1 ? "" : "s"));
       act(buf, FALSE, recep, 0, this, TO_VICT);
     }
   } else if (cost->total_cost) {
     if (recep) {
-      sprintf(buf, "$n tells you 'You can afford to rent for at most %d days.'",
-        (getMoney() + getBank()) / (cost->total_cost));
+      sprintf(buf, "$n tells you 'You can afford to rent for at most %d day%s.'",
+        (getMoney() + getBank()) / (cost->total_cost),
+        (((getMoney() + getBank()) / (cost->total_cost)) == 1 ? "" : "s"));
       act(buf, FALSE, recep, 0, this, TO_VICT);
-      sprintf(buf, "$n tells you 'After %d days, money will be drawn against your bank balance.",getMoney()/(cost->total_cost));
+      sprintf(buf, "$n tells you 'After %d day%s, money will be drawn against your bank balance.",
+              getMoney() / (cost->total_cost),
+              ((getMoney() / (cost->total_cost)) == 1 ? "" : "s"));
       act(buf, FALSE, recep, 0, this, TO_VICT);
     }
   } else {

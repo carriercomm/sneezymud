@@ -133,39 +133,52 @@ int castIdentify(TBeing *caster, TObj *obj)
     return TRUE;
 }
 
+static void identifyBeingStuff(const TBeing *caster, const TBeing *victim)
+{
+  caster->sendTo("You sense that %s is a %s %s.\n\r", victim->hssh(), 
+              describe_level(victim->GetMaxLevel()), 
+              victim->getMyRace()->getPluralName().c_str());
+
+  if (dynamic_cast<TPerson *>(victim))
+    caster->sendTo("%d years, %d months, %d days, %d hours old.\n\r",
+             victim->age()->year, victim->age()->month, 
+             victim->age()->day, victim->age()->hours / 2);
+
+  caster->sendTo("Height %d inches, weight %d pounds.\n\r", victim->getHeight(), (int) victim->getWeight());
+
+  caster->sendTo(COLOR_MOBS, "%s is %s.\n\r", good_cap(victim->getName()), ac_for_score(victim->getArmor()));
+
+  Stats tempStat;
+  tempStat = victim->getCurStats();
+
+  for(statTypeT the_stat=MIN_STAT; the_stat<MAX_STATS; the_stat++) {
+    int temp = caster->plotStat(STAT_CURRENT,STAT_PER, 0, 30, 20);
+    temp = ::number(0, temp) - 10;
+    if (temp > 0) {
+      continue;
+    } else {  
+      tempStat.add(the_stat, temp);
+    }
+  }
+  caster->sendTo(COLOR_MOBS,"<c>Current:<z>");
+  caster->sendTo(COLOR_MOBS, tempStat.printStatHeader().c_str());
+  caster->sendTo("        ");
+  caster->sendTo(COLOR_MOBS, tempStat.printRawStats(caster).c_str());
+
+  char buf[256];
+  sprintbit(victim->specials.affectedBy, affected_bits, buf);
+  caster->sendTo("Affected by: ");
+  caster->sendTo(buf);
+  caster->sendTo("\n\r");
+}
+
 int identify(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
   char buf[80];
 
   if (bSuccess(caster, bKnown, SPELL_IDENTIFY)) {
-    if (dynamic_cast<TPerson *>(victim))
-      caster->sendTo("%d years, %d months, %d days, %d hours old.\n\r",
-               victim->age()->year, victim->age()->month, 
-               victim->age()->day, victim->age()->hours / 2);
 
-    caster->sendTo("Height %d inches, weight %d pounds.\n\r", victim->getHeight(), (int) victim->getWeight());
-    strcpy(buf, victim->getName());
-    caster->sendTo(COLOR_MOBS, "%s is %s.\n\r", cap(buf), ac_for_score(victim->getArmor()));
-
-#if 1
-    Stats tempStat;
-    tempStat = victim->getCurStats();
-
-    for(statTypeT the_stat=MIN_STAT; the_stat<MAX_STATS; the_stat++) {
-      int temp = caster->plotStat(STAT_CURRENT,STAT_PER, 0, 30, 20);
-      temp = ::number(0, temp) - 10;
-      if (temp > 0) {
-        continue;
-      } else {  
-        tempStat.add(the_stat, temp);
-      }
-    }
-    caster->sendTo(COLOR_MOBS,"<c>Current:<z>");
-    caster->sendTo(COLOR_MOBS, tempStat.printStatHeader().c_str());
-    caster->sendTo("        ");
-    caster->sendTo(COLOR_MOBS, tempStat.printRawStats(caster).c_str());
-
-#endif
+    identifyBeingStuff(caster, victim);
     caster->describeImmunities(victim, bKnown);
 
     return SPELL_SUCCESS;
@@ -309,9 +322,7 @@ int castDivinationObj(TBeing *caster, const TObj *obj)
 int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
   if (bSuccess(caster, bKnown, SPELL_DIVINATION)) {
-    caster->sendTo("You sense that %s is a %s %s.\n\r", victim->hssh(), 
-              describe_level(victim->GetMaxLevel()), 
-              victim->getMyRace()->getPluralName().c_str());
+    identifyBeingStuff(caster, victim);
 
     for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {
       if (victim->getImmunity(i) == 0 || !*immunity_names[i])
@@ -324,13 +335,6 @@ int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
            immunity_names[i]);
     }
     caster->describeMaterial(victim);
-
-    char buf[256], buf2[256];
-    sprintbit(victim->specials.affectedBy, affected_bits, buf2);
-    strcat(buf, "Affected by: ");
-    strcat(buf, buf2);
-    strcat(buf, "\n\r");
-    caster->sendTo(buf);
 
     return SPELL_SUCCESS;
   } else {

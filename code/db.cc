@@ -18,10 +18,6 @@
 #include "stdsneezy.h"
 #include "loadset.h"
 
-#if USE_SQL
-MYSQL *db;  
-#endif
-
 int top_of_world = 0;         // ref to the top element of world 
 
 TRoom *room_db[WORLD_SIZE];
@@ -1373,7 +1369,6 @@ TObj *read_object(int nr, readFileTypeT type)
 {
   TObj *obj = NULL;
   int i, rc;
-  char buf[512];
   MYSQL_RES *res;
   MYSQL_ROW row;
 
@@ -1386,26 +1381,12 @@ TObj *read_object(int nr, readFileTypeT type)
     return NULL;
   }
 
-  if(!db){
-    vlogf(LOG_MISC, "read_object: Initializing database.");
-    db=mysql_init(NULL);
-
-    vlogf(LOG_MISC, "read_object: Connecting to database.");
-    if(!mysql_real_connect(db, NULL, "sneezy", NULL, 
-	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
-      vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
-      exit(0);
-    }
+  if((rc=dbquery(&res, "sneezy", "read_object(1)", "select type, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from object where vnum=%i", obj_index[nr].virt))){
+    if(rc==-1)
+      vlogf(LOG_BUG, "Database error in read_object");
+    return NULL;
   }
-
-  sprintf(buf, "select type, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from object where vnum=%i", obj_index[nr].virt);
-  if(mysql_query(db, buf)){
-    vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
-    exit(0);
-  }
-  res=mysql_store_result(db);
   if(!(row=mysql_fetch_row(res))){
-    //    vlogf(LOG_BUG, "No such object in read_object: %i", nr);
     return NULL;
   }
 
@@ -2828,4 +2809,67 @@ extern void cleanUpMail();
   cleanUpMail();
 #endif
 }
+
+// -1=db error, 0=no error, 1=query error
+int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *query,...){
+  char buf[MAX_STRING_LENGTH+MAX_STRING_LENGTH];
+  va_list ap;
+  static MYSQL *sneezydb, *immodb;
+  MYSQL *db=NULL;
+
+  if(res) *res=NULL;
+
+  va_start(ap, query);
+  vsprintf(buf, query, ap);
+  va_end(ap);
+  
+  if(!strcmp(dbname, "sneezy")){
+    if(!sneezydb){
+      vlogf(LOG_MISC, "%s: Initializing database '%s'.", msg,
+	    (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"));
+      sneezydb=mysql_init(NULL);
+      
+      vlogf(LOG_MISC, "%s: Connecting to database.", msg);
+      if(!mysql_real_connect(sneezydb, NULL, "sneezy", NULL, 
+	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+	vlogf(LOG_BUG, "Could not connect to database '%s'.",
+	      (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"));
+	return -1;
+      }
+    }    
+
+    db=sneezydb;
+  } else if(!strcmp(dbname, "immortal")){
+    if(!immodb){
+      vlogf(LOG_MISC, "%s: Initializing database 'immortal'.", msg);
+      immodb=mysql_init(NULL);
+      
+      vlogf(LOG_MISC, "%s: Connecting to database.", msg);
+      if(!mysql_real_connect(immodb, NULL, "sneezy", NULL, 
+			     "immortal", 0, NULL, 0)){
+	vlogf(LOG_BUG, "Could not connect to database 'immortal'.");
+	return -1;
+      }
+    }    
+
+    db=immodb;
+  } else {
+    vlogf(LOG_BUG, "%s: Unknown database %s", msg, dbname);
+    return -1;
+  }
+
+  if(mysql_query(db, buf)){
+    vlogf(LOG_BUG, "%s: Database query failed: %s", msg, mysql_error(db));
+    vlogf(LOG_BUG, "%s: %s", msg, buf);
+    return 1;
+  }
+  if(res){
+    *res=mysql_store_result(db);
+    if(!mysql_num_rows(*res) && mysql_field_count(db)) 
+      return 1;
+  }  
+
+  return 0;
+}
+
 

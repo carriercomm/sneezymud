@@ -352,7 +352,7 @@ void TPerson::doToggle(const char *arg)
     }
 
   } else if (is_abbrev(arg, "turbomode")) {
-    if (strcmp(getName(), "Batopr")) {
+    if (strcmp(getName(), "Batopr") || strcmp(getName(), "Dash")) {
       sendTo("Please contact a coder if the game speed is not correct.\n\r");
       return;
     }

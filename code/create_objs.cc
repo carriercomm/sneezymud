@@ -3538,7 +3538,8 @@ int TBeing::editAverageMe(TBeing *tBeing, const char *tString)
   tMonster->setDamLevel(tLevel);
   tMonster->setACLevel(tLevel);
   tMonster->setACFromACLevel();
-  tMonster->setHitroll(10.0 * tLevel);
+  //tMonster->setHitroll(10.0 * tLevel);
+  tMonster->setHitroll(0); // hitroll is a bonus ABOVE your level
 
   return FALSE;
 }

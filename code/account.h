@@ -2,25 +2,15 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: account.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
 #ifndef __ACCOUNT_H
 #define __ACCOUNT_H
 
-extern int account_number;
-extern int player_count;
+extern unsigned int account_number;
+extern unsigned int player_count;
+extern unsigned int active_player;
 
 class TAccount
 {

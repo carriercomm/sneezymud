@@ -91,11 +91,6 @@ void doSaveMOEdit(TBeing *ch, const char *tArg)
 void TBeing::doSave(silentTypeT silent, const char *tArg = NULL)
 {
   objCost  tCost;
-  TPerson *tPerson;
-  TThing  *tThing,
-          *tEq[MAX_WEAR],
-          *tObj;
-  wearSlotT wearIndex;
 
   verifyWeightVolume();
 
@@ -126,64 +121,58 @@ void TBeing::doSave(silentTypeT silent, const char *tArg = NULL)
     sendTo("Saving.\n\r");
 
   if (dynamic_cast<TMonster *>(this) && IS_SET(specials.act, ACT_POLYSELF)) {
-    if (!(tPerson = desc->original)) {
+    TPerson *tPerson = desc->original;
+    if (!tPerson) {
       vlogf(LOG_BUG, "BAD SAVE OF POLY!");
       return;
     }
 
-    tThing         = tPerson->stuff;
-    tPerson->stuff = stuff;
-
-    for (wearIndex = MIN_WEAR; wearIndex < MAX_WEAR; wearIndex++) {
-      tEq[wearIndex]                = tPerson->equipment[wearIndex];
-      tPerson->equipment[wearIndex] = equipment[wearIndex];
+    // for a poly, we want to swap all the gear that is on the poly back
+    // to the original char, save the person in that state, and then swap
+    // it all back.  Fortunately, the original person shouldn't have anything
+    // on them, so we can pretty much blindly dump back and forth.
+    TThing * t;
+    while ((t = stuff)) {
+      --(*t);
+      *tPerson += *t;
     }
+
+    wearSlotT wearIndex;
+    for (wearIndex = MIN_WEAR; wearIndex < MAX_WEAR; wearIndex++) {
+      if (equipment[wearIndex]) {
+        TObj * obj = unequip(wearIndex);
+        tPerson->equipChar(obj, wearIndex, SILENT_YES);
+      }
+    }
+
     tPerson->setExp(getExp());
     tPerson->setMoney(getMoney());
     tPerson->classSpecificStuff();
     tPerson->recepOffer(NULL, &tCost);
     tPerson->saveRent(&tCost, FALSE, 0);
 
-    // Lets try something diffrent
-    // save the room they are in so they come back there.
-    // check the room for HAVE_TO_WALK and don't save them there as this implies
-    // beyond locked door
-#if 1
     saveChar(ROOM_AUTO_RENT);
-#else
-    if (roomp->isRoomFlag(HAVE_TO_WALK))
-      saveChar(ROOM_AUTO_RENT);
-    else
-      saveChar(in_room);
-#endif
 
-    tPerson->stuff = tThing;
+    // now that we've saved, put all equipment back on the poly
+    while ((t = tPerson->stuff)) {
+      --(*t);
+      *this += *t;
+    }
+
+    wearSlotT wearIndex;
     for (wearIndex = MIN_WEAR; wearIndex < MAX_WEAR; wearIndex++) {
-      tPerson->equipment[wearIndex] = tEq[wearIndex];
-      if (equipment[wearIndex] && equipment[wearIndex]->in_room != -1) {
-        tObj = equipment[wearIndex];
-        equipment[wearIndex] = 0;
-        --(*tObj);
-        equipChar(tObj, wearIndex, SILENT_YES);        // equip the correct slot
+      if (tPerson->equipment[wearIndex]) {
+        TObj * obj = tPerson->unequip(wearIndex);
+        equipChar(obj, wearIndex, SILENT_YES);
       }
     }
+
     return;
   } else {
     classSpecificStuff();
     recepOffer(NULL, &tCost);
     dynamic_cast<TPerson *>(this)->saveRent(&tCost, FALSE, 0);
 
-    // Lets try something diffrent
-    // save the room they are in so they come back there.
-    // check the room for HAVE_TO_WALK and don't save them there as this implies
-    // beyond locked door
-#if 1
     saveChar(ROOM_AUTO_RENT);
-#else
-    if (roomp->isRoomFlag(HAVE_TO_WALK))
-      saveChar(ROOM_AUTO_RENT);
-    else
-      saveChar(in_room);
-#endif
   }
 }

@@ -1737,7 +1737,6 @@ bool is_number(char *str)
 
 const char *one_argument(const char *argument, char *first_arg)
 {
-  vlogf(LOG_FILE, "const char one_argument in parse.cc");
   try {
     string tmp_fa;
     string s = one_argument(argument, tmp_fa);
@@ -1787,8 +1786,6 @@ string one_argument(string argument, string & first_arg)
       first_arg = "";
       argument = "";
     }
-    vlogf(LOG_FILE, "parse.cc:1790");
-
   } while (fill_word(first_arg.c_str()));
   return argument;
 }

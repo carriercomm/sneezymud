@@ -1256,6 +1256,8 @@ void fixup_players(void)
   bootPulse(".", false);
 
   bootPulse(NULL, true);
+
+  vlogf(LOG_FILE, "There are %d active players.", accStat.active_player);
   return;
 }
 

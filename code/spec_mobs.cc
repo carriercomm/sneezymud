@@ -3032,6 +3032,9 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
   if (cmd == CMD_GENERIC_PULSE)
       ch->aiMaintainCalm();
 
+  if (ch->task || ch->spelltask)
+    return FALSE;
+
   if (ch->fight() && ch->fight()->isPc() && ch->canSpeak()) {
     if (::number(0,99) < 65)
       return FALSE;   // have them shout a bit less 

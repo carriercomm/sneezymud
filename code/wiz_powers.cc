@@ -11,6 +11,91 @@ bool TBeing::powerCheck(wizPowerT wpt) const
   return false;
 }
 
+bool TBeing::limitPowerCheck(cmdTypeT cmd, int checknum) {
+  if (hasWizPower(POWER_NO_LIMITS))
+    return TRUE;
+  int as, ae, bs, be, o;
+  as = desc->blockastart;
+  ae = desc->blockaend;
+  bs = desc->blockbstart;
+  be = desc->blockbend;
+  o = desc->office;
+
+  switch(cmd) {
+    case CMD_FORCE:
+    case CMD_TRANSFER:
+    case CMD_RESTORE:
+    case CMD_SWITCH:
+    case CMD_MEDIT:
+    case CMD_GIVE:
+    case CMD_OUTFIT:
+    case CMD_STEAL:
+      if ((vnum >= as && vnum <= ae) || (vnum >= bs && vnum <= be)) 
+	return TRUE;
+      break;
+    case CMD_GOTO:
+      if ((vnum >= as && vnum <= ae) || (vnum >= bs && vnum <= be) ||
+	  vnum == o || (vnum >= 0 && vnum <= 100))
+	return TRUE;
+      break;
+    case CMD_EDIT:
+    case CMD_REDIT:
+      if ((vnum >= as && vnum <= ae) || (vnum >= bs && vnum <= be) ||
+	  vnum == o)
+        return TRUE;
+      break;
+    case CMD_STAT:
+      if ((vnum >= as && vnum <= ae) || (vnum >= bs && vnum <= be) ||
+          vnum == o || isGenericMob(vnum) || isGenericObj(vnum))
+        return TRUE;
+      break;
+    case CMD_LOAD:
+    case CMD_SHOW:
+      if ((vnum >= as && vnum <= ae) || (vnum >= bs && vnum <= be) ||
+          isGenericMob(vnum) || isGenericObj(vnum))
+        return TRUE;
+      break;
+    case CMD_OEDIT:
+      if ((vnum >= as && vnum <= ae) || (vnum >= bs && vnum <= be) ||
+          isGenericObj(vnum))
+        return TRUE;
+      break;
+    case CMD_MEDIT:
+      if ((vnum >= as && vnum <= ae) || (vnum >= bs && vnum <= be) ||
+          isGenericMob(vnum) || isGenericObj(vnum))
+        return TRUE;
+      break;
+    default:
+      vlogf(LOG_DASH, "%s called limits check with undefined command type (%d)",
+	    getName(), (int)cmd);
+      break;
+  }
+  return FALSE;
+}
+
+bool TBeing::isGenericObj(int vnum)
+{
+  if ((vnum >= 950 && vnum <= 1013) // training eq
+      || (vnum >= 20 && vnum <= 34) // generic furniture
+      || (vnum >= 100 && vnum <= 110) // generic lightables, window
+      || (vnum >= 130 && vnum <= 139) // generic windows
+      || (vnum >= 300 && vnum <= 342) // generic weapons
+      || (vnum >= 400 && vnum <= 417) // generic food
+      || (vnum >= 420 && vnum <= 443) // generic drink
+      ) // add other generics here
+    return TRUE;
+  return FALSE;
+}
+
+bool TBeing::isGenericMob(int vnum)
+{
+  if ((vnum >= 1701 && vnum <= 1750) // testmobs
+      ) // add other generics here
+    return TRUE;
+  return FALSE;
+}
+
+
 void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
 {
   // this is intended to "package" powers into groupings.  Yes, it's sort
@@ -175,6 +260,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_LOGLIST);
     ch->setWizPower(POWER_REPLACE);
     ch->setWizPower(POWER_RESIZE);
+    ch->setWizPower(POWER_NO_LIMITS);
   } else if (!strcmp(arg, "remgod")) {
     ch->remWizPower(POWER_LOW);
     ch->remWizPower(POWER_GOD);
@@ -192,6 +278,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->remWizPower(POWER_LOGLIST);
     ch->remWizPower(POWER_REPLACE);
     ch->remWizPower(POWER_RESIZE);
+    ch->remWizPower(POWER_NO_LIMITS);
   } else if (!strcmp(arg, "allpowers")) {
     wizPowerT wpt;
     for (wpt = MIN_POWER_INDEX; wpt < MAX_POWER_INDEX; wpt++)
@@ -644,6 +731,8 @@ const string getWizPowerName(wizPowerT wpt)
       return "Setsev-Advanced";
     case POWER_IDLED:
       return "Inactive";
+    case POWER_NO_LIMITS:
+      return "No Limitations";
     case MAX_POWER_INDEX:
       break;
   }

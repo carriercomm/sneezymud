@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj_open_container.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -210,6 +199,12 @@ void TRealContainer::lowCheck()
             getName(), carryVolumeLimit());
   }
 
+  if (isContainerFlag(CONT_TRAPPED)) {
+    if (getContainerTrapType() == 0) {
+      vlogf(LOW_ERROR, "Container (%s) trapped with no trap type.",
+           getName());
+    }
+  }
   TContainer::lowCheck();
 }
 

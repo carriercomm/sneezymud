@@ -192,6 +192,7 @@ class TRoom : public TThing {
     int roomHeight;         // room height
     unsigned int roomFlags; // Bitvector os flags for room
     long descPos;           // File offset for the description.
+    int x, y, z;            // x,y,z location in the world
 
   public:
     TThing *tBornInsideMe;  // List of mobs born inside me.
@@ -284,6 +285,15 @@ class TRoom : public TThing {
     }
     unsigned int getRoomFlags() const {
       return roomFlags;
+    }
+    int getXCoord() const {
+      return x;
+    }
+    int getYCoord() const {
+      return x;
+    }
+    int getZCoord() const {
+      return x;
     }
 
     bool isCitySector() const;

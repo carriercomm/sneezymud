@@ -433,7 +433,11 @@ void TMonster::setHPFromHPLevel()
   else
     amt = (int) (4.5 * getHPLevel());
 
-  amt += (int) (11 * getHPLevel());
+  if(getHPLevel()<=70)
+    amt += (int) (11 * getHPLevel());
+  else
+    amt += (int) ((11 * ((getHPLevel()-70) * (getHPLevel() - 70)) / 150) * getHPLevel());
+
 
   // balance stuff:
   // HP for mobs should roughly balance with damage for PCs

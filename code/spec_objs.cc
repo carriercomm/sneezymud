@@ -525,9 +525,7 @@ int glowCutlass(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
     return FALSE;       // weapon not equipped (carried or on ground)
 
-  bool primary = FALSE;
-  if (ch->heldInPrimHand() == o)
-    primary = TRUE;
+  primaryTypeT primary = (ch->heldInPrimHand() == o) ? HAND_PRIMARY : HAND_SECONDARY;
   
   if (!::number(0,9)) {
     // this potentially sets up infinite loop

@@ -1217,21 +1217,23 @@ int TBeing::eyeSight(TRoom *rp) const
   if (!rp)
     rp = roomp;
 
-  vision += rp->getLight();
-
   if (isAffected(AFF_TRUE_SIGHT)) 
     vision += 25;
   
-  if (rp->getWeather() == WEATHER_RAINY)
-    vision -= 1;
-  else if (rp->getWeather() == WEATHER_SNOWY)
-    vision -= 2;
-  else if (rp->getWeather() == WEATHER_LIGHTNING)
-    vision -= 1;
+  if (rp) {
+    vision += rp->getLight();
 
-  // if they are indoors, the lighting of the room should be "subdued"
-  if (rp->isRoomFlag(ROOM_INDOORS))
-    vision -= rp->getLight() / 2;
+    if (rp->getWeather() == WEATHER_RAINY)
+      vision -= 1;
+    else if (rp->getWeather() == WEATHER_SNOWY)
+      vision -= 2;
+    else if (rp->getWeather() == WEATHER_LIGHTNING)
+      vision -= 1;
+  
+    // if they are indoors, the lighting of the room should be "subdued"
+    if (rp->isRoomFlag(ROOM_INDOORS))
+      vision -= rp->getLight() / 2;
+  }
 
   return vision;
 }

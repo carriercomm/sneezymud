@@ -3075,6 +3075,12 @@ int TMonster::mobileActivity(int pulse)
 // otherwise, it is basically a roomenter case
 int TMonster::fearCheck(const TBeing *ch, bool mobpulse)
 {
+  // this function causes the mobs to flee
+  // since this is semi-annoying for players, lets have it "miss" flees
+  // a lot of the time.
+  if (::number(0,1))
+    return false;
+
   if (IS_SET(specials.act, ACT_AFRAID)) {
     if (!ch) {
       // see if anyone nearby is someone I fear

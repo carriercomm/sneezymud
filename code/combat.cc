@@ -2,39 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: combat.cc,v $
-// Revision 5.1.1.2  1999/10/17 14:56:12  batopr
-// Enhanced checkSmashed to deal with an alternative blunt limb
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.7  1999/10/14 04:45:39  cosmo
-// *** empty log message ***
-//
-// Revision 1.6  1999/10/14 03:49:57  cosmo
-// Made Fix so that any magic weapon is considered a magic weapon.
-//
-// Revision 1.5  1999/10/12 00:35:25  lapsos
-// Added vlogf for shopkeeper kills and invenotry nuking.
-//
-// Revision 1.3  1999/09/30 01:07:10  lapsos
-// Added code for the new mobile strings.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
-//
 //      "combat.cc" - All functions and routines related to combat
 //
 //////////////////////////////////////////////////////////////////////////
@@ -1081,7 +1048,7 @@ static void absorb_damage(TBeing *v, wearSlotT part_hit, int *dam)
 }
 
 // this = v, ch = hitter
-int TBeing::damageItem(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThing *weapon, int dam)
+int TBeing::damageItem(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThing *weapon, int dam, const char * altPart)
 {
   TThing *tt;
   TObj *item;
@@ -1106,7 +1073,7 @@ int TBeing::damageItem(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThing *
     if (checkCut(ch, part_hit, wtype, weapon, dam))
       return TRUE;
   } else if (bluntType(wtype)) {
-    if (checkSmashed(ch, part_hit, wtype, weapon, dam))
+    if (checkSmashed(ch, part_hit, wtype, weapon, dam, altPart))
       return TRUE;
   } else if (pierceType(wtype)) {
     if (checkPierced(ch, part_hit, wtype, weapon, dam))

@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: being.h,v $
-// Revision 5.1.1.2  1999/10/17 14:53:30  batopr
-// checkSmashed : added optional arg for const char * part
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -1380,7 +1366,7 @@ class TBeing : public TThing {
     bool isHitableAggr(TBeing *);
     void normalHitMessage(TBeing *, TThing *, spellNumT, int, wearSlotT);
     int monkDodge(TBeing *, TThing *, int *, int, wearSlotT);
-    int damageItem(TBeing *, wearSlotT, spellNumT, TThing *, int);
+    int damageItem(TBeing *, wearSlotT, spellNumT, TThing *, int, const char * = NULL);
     int damageWeapon(TBeing *, wearSlotT, TThing **);
     void damageArm(bool, int);
     int acForEq() const;

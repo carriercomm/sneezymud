@@ -943,6 +943,13 @@ int TBeing::affectJoin(TBeing * caster, affectedData *af, avgDurT avg_dur, avgEf
   bool found = FALSE;
   int renew = 0;
 
+  // Remove any 'bit' that the player may already have set.
+  // This prevents a number of casts == lose ability.
+  // This is better than tracking down each one and dealing with it.
+  if (af->bitvector && isAffected(af->bitvector) &&
+      !affectedBySpell(af->type))
+    af->bitvector = 0;
+
   for (hjp = affected; !found && hjp; hjp = hjp->next) {
     if ((hjp->type == af->type) &&
         (hjp->location == af->location)) {

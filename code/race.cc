@@ -2,21 +2,9 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: race.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+// race.cc
 //
 //////////////////////////////////////////////////////////////////////////
-
-
-// race.cc
 
 #include "stdsneezy.h"
 #include "race.h"
@@ -35,7 +23,7 @@ const char * RaceNames[MAX_RACIAL_TYPES] = {
   "RACE_GIANT", "RACE_BIRDMAN", "RACE_PARASITE","RACE_SLIME", "RACE_DEMON",
   "RACE_SNAKE", "RACE_HIPPOPOTAMUS", "RACE_TREE", "RACE_VEGGIE", "RACE_ELEMENT",
   "RACE_ANT", "RACE_DEVIL", "RACE_FROGMAN", "RACE_GOBLIN", "RACE_TROLL",
-  "RACE_VEGMAN", "RACE_MFLAYER", "RACE_PRIMATE", "RACE_FAERIE", "RACE_DROW",
+  "RACE_ANGEL", "RACE_MFLAYER", "RACE_PRIMATE", "RACE_FAERIE", "RACE_DROW",
   "RACE_GOLEM", "RACE_MYTHIC", "RACE_PANTATH", "RACE_MERMAID", "RACE_RODENT",
   "RACE_FISHMAN", "RACE_TYTAN", "RACE_WOODELF", "RACE_FELINE", "RACE_CANINE",
   "RACE_HORSE", "RACE_AMPHIB", "RACE_MAMMAL", "RACE_REPTILE", "RACE_UNCERT",

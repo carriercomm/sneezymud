@@ -57,8 +57,6 @@
 - Setup the drift code to make a canSwim check for 'fights the current'
   instead of simply shifting them around.
 - Fixed bash so you can bash a flying mob if you are also flying.
-- Modified the non-bold ansi colors to terminate affects on use.  This
-  should correct the 'bleed' problem.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

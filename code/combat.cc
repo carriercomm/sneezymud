@@ -3416,6 +3416,25 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
 	}
       }
 
+	// handle proc on glove/gauntlet of unarmed hitters hitting hand. Dash - 10/17/00
+      wearSlotT which_hand;
+
+      if ((isRightHanded() && isprimary) || (!isRightHanded() && !isprimary))
+	   which_hand = WEAR_HAND_R;
+      else 
+	   which_hand = WEAR_HAND_L;
+
+      if (!weapon && equipment[which_hand] && equipment[which_hand]->spec) {
+  	  rc = equipment[which_hand]->checkSpec(vict, CMD_OBJ_HIT, (const char *) part_hit, this);
+	  if (IS_SET_ONLY(rc, DELETE_VICT)) 
+	    retCode |= DELETE_THIS;
+	  if (IS_SET_ONLY(rc, DELETE_ITEM))
+	    retCode |= DELETE_ITEM;
+	  if (IS_SET_ONLY(rc, DELETE_THIS)){
+	    retCode |= DELETE_VICT;
+	    return retCode;
+	  }
+      }
 
       // this was developed with poison weapons in mind, but may be generic
       // enough for other stuff   - bat

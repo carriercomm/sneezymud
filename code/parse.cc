@@ -293,11 +293,21 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
 	 strcmp(ch->name, "Peel") &&
 	 strcmp(ch->name, "Damescena"))) { 
 
-        if (ch == this)
+        TPerson * tPerson = dynamic_cast<TPerson *>(ch);
+
+        if (ch == this) {
           vlogf(LOG_SILENT, "%s:%s %s", name, commandArray[cmd]->name, newarg);
-        else
+
+          if (tPerson)
+            tPerson->logf("%s:%s %s", name, commandArray[cmd]->name, newarg);
+        } else {
           vlogf(LOG_SILENT, "%s (%s):%s %s", name, desc->original->name, 
                 commandArray[cmd]->name, newarg);
+
+          if (tPerson)
+            tPerson->logf("%s:%s %s", name, desc->original->name,
+                           commandArray[cmd]->name, newarg);
+        }
       } else if (ch->isPc() && ch->isPlayerAction(PLR_LOGGED))
         vlogf(LOG_SILENT, "%s %s%s", name, commandArray[cmd]->name, newarg);
       else if (numberLogHosts && desc) {

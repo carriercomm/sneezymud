@@ -1692,6 +1692,7 @@ void TBeing::saveCareerStats()
 // version 15 : 12/04/98
 // version 16 : 12/13/98
 // version 17 : 02/15/00
+  // version 18 : opening of game version 5.2
   int i;
 
   if (!isPc() || !desc)

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: connect.cc,v $
+// Revision 5.1.1.3  1999/10/23 03:02:37  mithros
+// Removed some other old builder's room loads.
+//
 // Revision 5.1.1.2  1999/10/23 01:47:50  mithros
 // Removed Lothar's room assignment, Added Demo's and Kechara's (Quelara)
 //
@@ -2428,8 +2431,6 @@ int TPerson::genericLoadPC()
         rp = real_roomp(31);
       else if (!strcmp(name, "Custer"))
         rp = real_roomp(32);
-      else if (!strcmp(name, "Gish"))
-        rp = real_roomp(33);
       else if (!strcmp(name, "Smyrke"))
         rp = real_roomp(34);
       else if (!strcmp(name, "Shota"))
@@ -2440,18 +2441,8 @@ int TPerson::genericLoadPC()
         rp = real_roomp(38);
       else if (!strcmp(name, "Omen"))
         rp = real_roomp(39);
-      else if (!strcmp(name, "Drentar"))
-        rp = real_roomp(40);
-      else if (!strcmp(name, "Albria"))
-        rp = real_roomp(41);
       else if (!strcmp(name, "Rixanne"))
         rp = real_roomp(42);
-      else if (!strcmp(name, "Ghosks"))
-        rp = real_roomp(43);
-      else if (!strcmp(name, "Wrayth"))
-        rp = real_roomp(44);
-      else if (!strcmp(name, "Theodoric"))
-        rp = real_roomp(45);
       else if (!strcmp(name, "Moath"))
         rp = real_roomp(46);
       else if (!strcmp(name, "Urvile"))

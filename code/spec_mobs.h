@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spec_mobs.h,v $
+// Revision 5.1.1.2  1999/10/24 20:10:53  lapsos
+// Added new procs.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -90,6 +93,7 @@ const int SPEC_TRAINER_SLASH    =82;
 const int SPEC_TRAINER_BLUNT    =83;
 const int SPEC_TRAINER_PIERCE   =84;
 const int SPEC_TRAINER_RANGED   =85;
+const int SPEC_QUAKETUNNELER    =86;
 const int SPEC_TRAINER_DEIKHAN  =87;
 const int SPEC_LAMPBOY          =96;
 const int SPEC_AIR_MAGI         =98;
@@ -143,7 +147,9 @@ const int SPEC_NEWBIE_EQUIPPER   =147;
 const int SPEC_TRAINER_LORE   =148;
 const int SPEC_TRAINER_THEOLOGY  =149;
 const int SPEC_ATTUNER  =150;
-const int NUM_MOB_SPECIALS     =151;
+const int SPEC_DOPPLEGANGER    =152;
+const int SPEC_TUSKGORE        =153;
+const int NUM_MOB_SPECIALS     =154;
 
 extern const int GET_MOB_SPE_INDEX(int d);
 
@@ -181,6 +187,9 @@ extern int CDGenericTrainer(TBeing *, cmdTypeT, const char *, TMonster *, TObj *
 extern int bounty_hunter(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int DragonBreath(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int doNewbieEquipLoad(int, int, int);
+extern int doppleganger(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int tunnelerEarthquake(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int tuskGoring(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 
 class attune_struct {
   public:

@@ -1984,7 +1984,7 @@ int TBeing::hit(TBeing *target, int pulse)
 
   while (fx > 0.999) {
     checkLearnFromHit(this, tarLevel, o, true, w_type);
-    if ((rc = oneHit(target, TRUE, o,mod, fx))) {
+    if ((rc = oneHit(target, HAND_PRIMARY, o,mod, fx))) {
       if (IS_SET_ONLY(rc, DELETE_ITEM)) {
         delete o;
         o = NULL;
@@ -2000,7 +2000,7 @@ int TBeing::hit(TBeing *target, int pulse)
     if (o && !dynamic_cast<TBaseWeapon *>(o))
       return FALSE;  // lose the partial attack
     checkLearnFromHit(this, tarLevel, o, true, w_type);
-    if ((rc = oneHit(target, TRUE, o,mod, fx))) {
+    if ((rc = oneHit(target, HAND_PRIMARY, o,mod, fx))) {
       if (IS_SET_ONLY(rc, DELETE_ITEM)) {
         delete o;
         o = NULL;
@@ -2015,7 +2015,7 @@ int TBeing::hit(TBeing *target, int pulse)
 
   while (fy > 0.999) {
     checkLearnFromHit(this, tarLevel, o2, false, w_type);
-    if ((rc = oneHit(target, FALSE, o2,mod, fy))) {
+    if ((rc = oneHit(target, HAND_SECONDARY, o2,mod, fy))) {
       if (IS_SET_ONLY(rc, DELETE_ITEM)) {
         delete o2;
         o2 = NULL;
@@ -2031,7 +2031,7 @@ int TBeing::hit(TBeing *target, int pulse)
       return FALSE;  // lose the partial attack
 
     checkLearnFromHit(this, tarLevel, o2, false, w_type);
-    if ((rc = oneHit(target, FALSE, o2,mod, fy))) {
+    if ((rc = oneHit(target, HAND_SECONDARY, o2,mod, fy))) {
       if (IS_SET_ONLY(rc, DELETE_ITEM)) {
         delete o2;
         o2 = NULL;
@@ -2929,7 +2929,7 @@ int TBeing::checkShield(TBeing *v, TThing *weapon, wearSlotT part_hit, spellNumT
 
   // insure arm isn't paralyzed, etc.
   // shields must be in secondary hand, so this should be legitimate
-  if (!v->canUseArm(false))
+  if (!v->canUseArm(HAND_SECONDARY))
     return retCode;
 
   if (!v->desc || !(v->desc->autobits & AUTO_NOSPAM))
@@ -3059,7 +3059,8 @@ bool TBeing::canAttack(primaryTypeT isprimary)
       // if one hand broken, and not CLEARLY possessing an advantage, flee
       TBeing *v = fight();
       if (tmon->isSmartMob(0) && v &&
-          (!tmon->canUseArm(!isprimary) ||
+          // if other hand broken
+          (!tmon->canUseArm(isprimary ? HAND_SECONDARY : HAND_PRIMARY) ||
           ((tmon->getPercHit() / v->getPercHit()) < 0.8))) {
         tmon->addFeared(v);
       }
@@ -3139,7 +3140,9 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
 
   // Special case for two-handed weapons.
   TObj *tobj = dynamic_cast<TObj *>(weapon);
-  if (tobj && tobj->isPaired() && !canUseArm(!isprimary)) 
+
+  // if can't use other hand
+  if (tobj && tobj->isPaired() && !canUseArm(isprimary ? HAND_SECONDARY : HAND_PRIMARY)) 
     return retCode;
 
   TBaseClothing *tbc = dynamic_cast<TBaseClothing *>(weapon);
@@ -3180,7 +3183,7 @@ int TBeing::oneHit(TBeing *v, primaryTypeT isprimary, TThing *weapon, int mod, d
   bool victimCanAttack = FALSE;
 
   if (v->isPc() && v->desc) {
-    if ((v->canAttack(TRUE) || v->canAttack(FALSE)) &&
+    if ((v->canAttack(HAND_PRIMARY) || v->canAttack(HAND_SECONDARY)) &&
         ((!v->heldInPrimHand() || dynamic_cast<TBaseWeapon *>(v->heldInPrimHand())) || (!v->heldInSecHand() || dynamic_cast<TBaseWeapon *>(v->heldInSecHand())))) {
        victimCanAttack = TRUE;
     }

@@ -45,7 +45,7 @@ class TRealContainer : public TContainer {
   private:
     float max_weight;
     unsigned char container_flags;
-    unsigned char trap_type;
+    doorTypeT trap_type;
     char trap_dam;
     int key_num;
     int max_volume;
@@ -82,8 +82,8 @@ class TRealContainer : public TContainer {
     void addContainerFlag(unsigned char r);
     void remContainerFlag(unsigned char r);
     bool isContainerFlag(unsigned char r) const;
-    unsigned char getContainerTrapType() const;
-    void setContainerTrapType(unsigned char r);
+    doorTrapT getContainerTrapType() const;
+    void setContainerTrapType(doorTrapT r);
     char getContainerTrapDam() const;
     void setContainerTrapDam(char r);
     void setKeyNum(int);

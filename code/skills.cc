@@ -844,8 +844,14 @@ CSkill *TBeing::getSkill(spellNumT skill) const
       return &((CDStealth *) cd)->skDisguise;
 
 // disc_traps
-    case SKILL_SET_TRAP:
-      return &((CDTraps *) cd)->skSetTraps;
+    case SKILL_SET_TRAP_CONT:
+      return &((CDTraps *) cd)->skSetTrapsCont;
+    case SKILL_SET_TRAP_DOOR:
+      return &((CDTraps *) cd)->skSetTrapsDoor;
+    case SKILL_SET_TRAP_MINE:
+      return &((CDTraps *) cd)->skSetTrapsMine;
+    case SKILL_SET_TRAP_GREN:
+      return &((CDTraps *) cd)->skSetTrapsGren;
 
 
 

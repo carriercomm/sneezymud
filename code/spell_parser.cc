@@ -1817,24 +1817,24 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       rc = rainBrimstone(this, ch);
       break;
 
-      case SPELL_HARM_LIGHT:
-      case SPELL_HARM_LIGHT_DEIKHAN:
-        rc = harmLight(this, ch);
-        break;
-      case SPELL_HARM_SERIOUS:
-      case SPELL_HARM_SERIOUS_DEIKHAN:
-        rc = harmSerious(this, ch);
-        break;
-      case SPELL_HARM_CRITICAL:
-      case SPELL_HARM_CRITICAL_DEIKHAN:
-        rc = harmCritical(this, ch);
-        break;
-      case SPELL_HARM:
-      case SPELL_HARM_DEIKHAN:
-        rc = harm(this, ch);
-        break;
-      case SPELL_POISON:
-      case SPELL_POISON_DEIKHAN:
+    case SPELL_HARM_LIGHT:
+    case SPELL_HARM_LIGHT_DEIKHAN:
+      rc = harmLight(this, ch);
+      break;
+    case SPELL_HARM_SERIOUS:
+    case SPELL_HARM_SERIOUS_DEIKHAN:
+      rc = harmSerious(this, ch);
+      break;
+    case SPELL_HARM_CRITICAL:
+    case SPELL_HARM_CRITICAL_DEIKHAN:
+      rc = harmCritical(this, ch);
+      break;
+    case SPELL_HARM:
+    case SPELL_HARM_DEIKHAN:
+      rc = harm(this, ch);
+      break;
+    case SPELL_POISON:
+    case SPELL_POISON_DEIKHAN:
         if (!o)
           poison(this, ch);
         else
@@ -2061,6 +2061,12 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       else
         removeCurseObj(o);
       break;
+#if 0
+    case SPELL_EARTHMAW:
+    case SPELL_CREEPING_DOOM:
+    case SPELL_FERAL_WRATH:
+    case SPELL_SKY_SPIRIT:
+#endif
     case MAX_SKILL:
     case DAMAGE_NORMAL:
     case DAMAGE_BEHEADED:

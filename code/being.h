@@ -710,7 +710,7 @@ class TBeing : public TThing {
 
     int goDirection(dirTypeT); // for hunt?
     void fixClientPlayerLists(bool);
-    void gainExpPerHit(TBeing *, double);
+    void gainExpPerHit(TBeing *, double, int);
 
     void moneyCheck();
     int rideCheck(int);

@@ -133,7 +133,7 @@ extern void change_hands(TBeing *, const char *);
 extern void SwitchStuff(TBeing *, TBeing *);
 extern void DisguiseStuff(TBeing *, TBeing *);
 extern void CreateOneRoom(int);
-extern void gain_exp(TBeing *, double gain);
+extern void gain_exp(TBeing *, double gain, int rawdamage);
 extern int check_sinking_obj(TObj *obj, int room);
 extern int ctoi(char c);
 extern void update_time(void);

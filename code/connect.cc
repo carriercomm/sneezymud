@@ -757,7 +757,7 @@ void TPerson::autoDeath()
   sprintf(buf + strlen(buf), "contact a god.  Type WHO -G to see if any gods are connected.\n\r");
             
   autoMail(this, NULL, buf);
-  gain_exp(this, -deathExp());
+  gain_exp(this, -deathExp(), -1);
   genericKillFix();
   return;
 }

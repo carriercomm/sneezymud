@@ -686,6 +686,7 @@ void TPerson::setTitle(bool tForm)
 // being pleveled) then gainmod is too lenient.             Dash - Jan 2001
 
 // NOTE, gainmod is defined in multiple places, if you change it, change all of them please
+// adding a small change so that low levs don't have a cap of 0 (max(lev*2,newgain))
 
 void gain_exp(TBeing *ch, double gain, int dam)
 {
@@ -719,62 +720,57 @@ void gain_exp(TBeing *ch, double gain, int dam)
               return;
             } else if (ch->getExp() >= peak) {
               // do nothing..this rules! Tell Brutius Hey, I didnt get any exp? 
-            } else if ((ch->getExp() + gain >= peak) &&
-                 (ch->GetMaxLevel() < MAX_MORT)) {
+            } else if ((ch->getExp() + gain >= peak) && (ch->GetMaxLevel() < MAX_MORT)) {
               ch->sendTo(COLOR_BASIC, "<G>You have gained enough to be a Level %d %s.<1>\n\r", 
-#if 0
-       (startsVowel(ch->getClassTitle(i, ch->getLevel(i) + 1)) ? "an" : "a"), 
-        ch->getClassTitle(i, ch->getLevel(i) + 1));
-#else
-                   ch->getLevel(i)+1, classNames[i].capName);
-#endif
+			 ch->getLevel(i)+1, classNames[i].capName);
               ch->sendTo("<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
               if (ch->getExp() + gain >= peak2) {
                 ch->setExp(peak2- 1);
                 return;
               }
-	      // if(gain > ((peak - curr) / gainmod)) {
-	      if (gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) && dam > 0) { 
-		// the 100 turns dam into a %
-		newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000);
-		vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
-		vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]", 
-		      ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
-                vlogf(LOG_DASH, "Experience cap reached by %s!", ch->getName());
-                vlogf(LOG_DASH, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]",
-                      ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
-	      }  
+	    }
+	    // if(gain > ((peak - curr) / gainmod)) {
+	    if (gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) && dam > 0) { 
+	      // the 100 turns dam into a %
+	      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
+	      vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
+	      vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]", 
+		    ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+	      vlogf(LOG_DASH, "Experience cap reached by %s!", ch->getName());
+	      vlogf(LOG_DASH, "[ Level: %d / Dam: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]",
+		    ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+	    }  
 	  }
 	}
+	
       }
-    }
 #ifdef SNEEZY2000
-    // Theoretically, a players peak - curr / gainmod is extremely reasonable
-    // for a veteran player hitting mobs above thier level but not too far
-    // We may need to watch for the backstabbers
-    if(dam > 0) {
-      double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
-      double curr = getExpClassLevel(i,ch->getLevel(i));
-      double gainmod = ((ch->getLevel(i) + 1));
-      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000); 
-      // the 100 compensates for dam
-      gain = min(gain, newgain); 
-      gain += (rand()%(gain*.1))-(gain*.05));
+      // Theoretically, a players peak - curr / gainmod is extremely reasonable
+      // for a veteran player hitting mobs above thier level but not too far
+      // We may need to watch for the backstabbers
+      if(dam > 0) {
+	double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
+	double curr = getExpClassLevel(i,ch->getLevel(i));
+	double gainmod = ((ch->getLevel(i) + 1));
+	newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
+	// the 100 compensates for dam
+	gain = min(gain, newgain); 
+	gain += (rand()%(gain*.1))-(gain*.05);
     }
 #else
 #endif
-    ch->addToExp(gain);
+      ch->addToExp(gain);
       // we check mortal level here...
       // an imm can go mort to test xp gain (theoretically)
       // for level > 50, the peak would have flipped over, which is bad
       if (ch->isPc() && ch->GetMaxLevel() <= MAX_MORT) {
-        for (i = MIN_CLASS_IND; i < MAX_CLASSES; i++) {
-          double peak2 = getExpClassLevel(i,ch->getLevel(i) + 2);
-          if (ch->getLevel(i)) {
-            if (ch->getExp() > peak2)
+	for (i = MIN_CLASS_IND; i < MAX_CLASSES; i++) {
+	  double peak2 = getExpClassLevel(i,ch->getLevel(i) + 2);
+	  if (ch->getLevel(i)) {
+	    if (ch->getExp() > peak2)
               ch->setExp(peak2 - 1);
-          }
-        }
+	  }
+	}
       }
     }
     if (gain < 0) {
@@ -783,7 +779,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
         ch->setExp(0);
     }
   }
-}
+  }
 
 void TFood::findSomeFood(TFood **last_good, TBaseContainer **last_cont, TBaseContainer *cont) 
 {

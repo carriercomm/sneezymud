@@ -266,7 +266,7 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
     if (percent < 0)
       vlogf(LOG_BUG, "Error: %% < 0 in applyDamage() : %s fighting %s.", getName(),v->getName());
     else 
-      gainExpPerHit(v, percent);
+      gainExpPerHit(v, percent, dam);
   } else {
     // this == v
 
@@ -302,7 +302,7 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
 
   // award leftover xp from any roundoff problems
   if ((v->getPosition() == POSITION_DEAD) && !v->isPc())
-    gain_exp(this, v->getExp());
+    gain_exp(this, v->getExp(), dam*10000/v->hitLimit());
 
   if (v->getPosition() == POSITION_DEAD && isPc() && (v->GetMaxLevel() >= GetMaxLevel())) {
     if (v->isAnimal() && doesKnowSkill(SKILL_CONS_ANIMAL)) {

@@ -476,11 +476,11 @@ int TBeing::die(spellNumT dam_type, TBeing *tKiller = NULL)
                getName(), deathExp(), val_num, getExp(),getMoney());
       //      vlogf(LOG_COMBAT,"Average skill loss: %f", deathSkillLoss());
       age_mod += val_num;
-      gain_exp(this, -deathExp());
+      gain_exp(this, -deathExp(), -1);
     }
   } else {
     vlogf(LOG_COMBAT, "Death called with ch (%s) in ROOM_NOWHERE!", getName());
-    gain_exp(this, -deathExp());
+    gain_exp(this, -deathExp(), -1);
   }
 
   // affectedData *aff;
@@ -4615,7 +4615,7 @@ static int FRACT(TBeing *ch, TBeing *v)
 
    
 #define EXP_DEBUG      0 
-void TBeing::gainExpPerHit(TBeing *v, double percent)
+void TBeing::gainExpPerHit(TBeing *v, double percent, int dam)
 {
   double no_levels = 0;
   double tmp_exp, tmp_perc;
@@ -4655,7 +4655,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
 #if EXP_DEBUG
       vlogf(LOG_COMBAT,"%s destroyed %d xp of %s's.", getName(), exp_received, v->getName());
 #endif
-      gain_exp(v, -exp_received );
+      gain_exp(v, -exp_received, -1);
       return;
     }
 
@@ -4663,8 +4663,8 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
 #if EXP_DEBUG
     vlogf(LOG_COMBAT, "%s got %d.  perc  %f, %s lost %d",getName(),exp_received * fract / 100, percent, v->getName(), exp_received);
 #endif
-    gain_exp(this, exp_received * fract/ 100);
-    gain_exp(v, -exp_received);
+    gain_exp(this, exp_received * fract/ 100, dam*10000/v->hitLimit());
+    gain_exp(v, -exp_received, -1);
     return;
 
   } else { // grouped
@@ -4680,15 +4680,15 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
 #if EXP_DEBUG
         vlogf(LOG_COMBAT, "%s destroyed %d xp of %s's.", getName(), exp_received, v->getName());
 #endif
-        gain_exp(v, -exp_received);
+        gain_exp(v, -exp_received, -1);
         return;
       }
       // give and take the experience
 #if EXP_DEBUG
       vlogf(LOG_COMBAT, "%s got %d.  perc  %f, %s lost %d",getName(),exp_received * fract / 100, percent, v->getName(), exp_received);
 #endif
-      gain_exp(this, exp_received * fract/ 100);
-      gain_exp(v, -exp_received );
+      gain_exp(this, exp_received * fract/ 100, dam*10000/v->hitLimit());
+      gain_exp(v, -exp_received, -1 );
       return;
     } else {  //more than one in my group in room
       if (tank && (tank == this || inGroup(*tank))) {
@@ -4698,14 +4698,14 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
         // my group can get experience
       } else {
         // else no experience for my groupmembers
-        gain_exp(v, -exp_received);
+        gain_exp(v, -exp_received, -1);
         return;
       }
       // take the experience from the mob /split will take place below
 #if EXP_DEBUG
       vlogf(LOG_COMBAT, "%s lost %d.  perc  %f, %s's group got exp",v->getName(),exp_received, percent, getName(), exp_received);
 #endif
-      gain_exp(v, -exp_received );
+      gain_exp(v, -exp_received, -1 );
     }
   }
   // Anything below here is for splitting experience when there is more
@@ -4746,7 +4746,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
   // Gain exp for master if in room with ch
   if (sameRoom(*real_master) && inGroup(*real_master)) {
     exp_received = (tmp_exp * real_master->getExpShare());
-    gain_exp(real_master, exp_received * fract/ 100);
+    gain_exp(real_master, exp_received * fract/ 100, dam*10000/v->hitLimit());
 #if EXP_DEBUG
     vlogf(LOG_COMBAT, "%s got %d.  perc  %f, %s lost %d",real_master->getName(),exp_received * fract / 100, percent, v->getName(), exp_received);
 #endif
@@ -4755,7 +4755,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
   for (f = real_master->followers; f; f = f->next) {
     if (inGroup(*f->follower) && sameRoom(*f->follower)) {
       exp_received = (tmp_exp * f->follower->getExpShare());
-      gain_exp(f->follower, exp_received * fract/ 100);
+      gain_exp(f->follower, exp_received * fract/ 100, dam*10000/v->hitLimit());
 #if EXP_DEBUG
       vlogf(LOG_COMBAT, "%s got %d.  perc  %f, %s lost %d",f->follower->getName(),exp_received * fract / 100, percent, v->getName(), exp_received);
 #endif

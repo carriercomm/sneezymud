@@ -154,7 +154,7 @@ static int chop(TBeing *c, TBeing *v)
 {
   int rc;
   int percent;
-  int i,level;
+  int i;//level;
   const int CHOP_MOVE = 9;
 
   if (c->checkPeaceful("You feel too peaceful to contemplate violence.\n\r"))
@@ -206,7 +206,7 @@ v->getName(), v->riding->getName());
     return FALSE;
   }
   percent = 0;
-  level = c->getSkillLevel(SKILL_CHOP);
+  //  level = c->getSkillLevel(SKILL_CHOP);
   int bKnown = c->getSkillValue(SKILL_CHOP);
 
   if (!c->isImmortal())

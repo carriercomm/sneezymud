@@ -325,7 +325,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 {
   char buf[256], buf2[256];
   int rc, questmob;
-  TBeing *k, *ThTank=v->fight();
+  TBeing *k;
   followData *f;
   TThing *t, *t2;
   affectedData *af, *af2;
@@ -761,7 +761,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
           !(desc->autobits & AUTO_LOOT_NOTMONEY)) {
         sprintf(buf, "get all.talen %s-autoloot", buf2);
         addCommandToQue(buf);
-      } else if ((dynamic_cast<TMonster *>(this) && !v->isPc() && this==ThTank)|| 
+      } else if ((dynamic_cast<TMonster *>(this) && !v->isPc())|| 
 		 (desc && (desc->autobits & AUTO_LOOT_NOTMONEY))) {
         sprintf(buf, "get all %s-autoloot", buf2);
         addCommandToQue(buf);

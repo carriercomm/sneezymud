@@ -823,6 +823,8 @@ int mapSpellnumToFile(spellNumT stt)
       return 667;
     case SKILL_ALCOHOLISM:
       return 668;
+    case SKILL_FISHING:
+      return 669;
     case AFFECT_DISEASE:
       return 2500;
     case AFFECT_COMBAT:

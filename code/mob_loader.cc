@@ -822,7 +822,7 @@ void TMonster::buffMobLoader()
 //  sprintf(buf, "%s made it thru buffMob.\n\r", getName());
   int obj_lev = -1;
 
-  num = ::number(1,19);
+  num = ::number(1,25);
   switch (num) {
     case 1:
     case 14:
@@ -832,6 +832,14 @@ void TMonster::buffMobLoader()
     case 18:
     case 19:
       vnum = YOUTH_POTION;
+      break;
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
+    case 25:
+      vnum = MYSTERY_POTION;
       break;
     case 2:
       vnum = STATS_POTION;

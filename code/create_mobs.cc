@@ -2276,9 +2276,14 @@ void TPerson::doMedit(const char *argument)
     sendTo("You have not been granted the power to edit mobs.\n\r");
     return;
   }
+
+  // Sanity check.
+  if (!desc)
+    return;
+
   bisect_arg(argument, &field, string, editor_types_medit);
 
-switch (field) {
+  switch (field) {
     case 1:        // save 
       // zGot, cMob, tString are additions for Mithros for:
       //   load mob 100
@@ -2311,12 +2316,13 @@ switch (field) {
         return;
       }
       if (!hasWizPower(POWER_MEDIT_LOAD_ANYWHERE)) {
-        if ((in_room == 9) || (in_room == 2))
+        if ((in_room == 9) || (in_room == 2) || (in_room == desc->office))
           TBeingLoad(this, vnum);
         else
-          sendTo("You must be in the lab(room 9) or lounge(room 2) to load mobs.\n\r");
+          sendTo("You must be in the lab(room 9), lounge(room 2) or office(room %d) to load mobs.\n\r", desc->office);
       } else
         TBeingLoad(this, vnum);
+
       return;
       break;
     case 3:        // modify 

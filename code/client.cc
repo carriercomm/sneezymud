@@ -754,11 +754,17 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
     case CLIENT_NEWACCOUNT: {
       char aname[256];
       char apassword[256];
-      char email[256]l
+      char email[256];
+      char timezone[256];
+      char listserver[256];
       static char *crypted;
+
       strcpy(aname, nextToken('|', 255, str2).c_str());
       strcpy(apassword, nextToken('|', 255, str2).c_str());
       strcpy(email, nextToken('|', 255, str2).c_str());k
+      strcpy(timezone, nextToken('|', 255, str2).c_str());
+      strcpy(listserver, nextToken('|', 255, str2).c_str());k
+
 
       account = new TAccount;
       // Does account exist or is it a bogus name? This function will return TRUE is so
@@ -781,7 +787,18 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       }
       strcpy(account->email, email);
 
+      if (!*timezone || (atoi(arg) > 23) || (atoi(arg) < -23)) {
+      }
+      account->time_adjust = atoi(arg);
 
+      switch(*listserver) {
+        case '1':
+          sprintf(buf,  "/usr/lib/sendmail -f%s russrussell@icqmail.com < listserver.temp", account->email);      
+          vsystem(buf);                                                                                           
+          break;                                                                                                  
+        case '2':                                                                                                 
+          break;                                                                                                  
+      }                                                                                                           
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
       break;
     } 

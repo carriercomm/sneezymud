@@ -39,12 +39,16 @@ int limb_heal_price(TBeing *ch, wearSlotT pos)
     case WEAR_HAND_L:
     case WEAR_FOOT_R:
     case WEAR_FOOT_L:
+    case WEAR_EX_FOOT_R:
+    case WEAR_EX_FOOT_L:
       return (basenum);
     case WEAR_ARM_R:
     case WEAR_ARM_L:
       return (basenum * 2);
     case WEAR_LEGS_R:
     case WEAR_LEGS_L:
+    case WEAR_EX_LEG_R:
+    case WEAR_EX_LEG_L:
       return (basenum * 3);
     case WEAR_NECK:
     case WEAR_HEAD:
@@ -54,7 +58,8 @@ int limb_heal_price(TBeing *ch, wearSlotT pos)
     case WEAR_WRIST_L:
     case WEAR_WAISTE:
       return (basenum * 4);
-    default:
+    case WEAR_NOWHERE:
+    case MAX_WEAR:
       forceCrash("Bad pos (%d) in limb_heal_price for %s!", pos, ch->getName());
       return (basenum * 10);
   }
@@ -77,11 +82,9 @@ int TThing::expelPrice(const TBeing *ch, int pos) const
   return (1000000);
 }
 
-int limb_wound_price(TBeing *ch, int pos, unsigned short int wound)
+int limb_wound_price(TBeing *ch, wearSlotT pos, unsigned short int wound)
 {
-  int price;
-
-  price = ch->GetMaxLevel() * ch->GetMaxLevel();
+  int price = ch->GetMaxLevel() * ch->GetMaxLevel();
 
   if (IS_SET(wound, PART_BLEEDING))
     price *= 3;
@@ -113,12 +116,16 @@ int limb_wound_price(TBeing *ch, int pos, unsigned short int wound)
     case WEAR_HAND_L:
     case WEAR_FOOT_R:
     case WEAR_FOOT_L:
+    case WEAR_EX_FOOT_R:
+    case WEAR_EX_FOOT_L:
       return (price * 1);
     case WEAR_ARM_R:
     case WEAR_ARM_L:
       return (price * 2);
     case WEAR_LEGS_R:
     case WEAR_LEGS_L:
+    case WEAR_EX_LEG_R:
+    case WEAR_EX_LEG_L:
       return (price * 3);
     case WEAR_NECK:
     case WEAR_HEAD:
@@ -128,7 +135,8 @@ int limb_wound_price(TBeing *ch, int pos, unsigned short int wound)
     case WEAR_WRIST_L:
     case WEAR_WAISTE:
       return (price * 4);
-    default:
+    case WEAR_NOWHERE:
+    case MAX_WEAR:
       vlogf(LOG_BUG, "Bad pos (%d) in limb_wound_price!", pos);
       return (1000000);
   }
@@ -139,17 +147,15 @@ int spell_regen_price(TBeing *ch, spellNumT spell)
   int price = 1;
 
   if (spell == SPELL_BLINDNESS) {
-    price = ch->GetMaxLevel() * max(ch->GetMaxLevel(), 20) * 1;
+    price = ch->GetMaxLevel() * max((int) ch->GetMaxLevel(), 20) * 1;
   }
 
   return price;
 }
 
-int limb_regen_price(TBeing *ch, int pos)
+int limb_regen_price(TBeing *ch, wearSlotT pos)
 {
-  int price;
-
-  price = ch->GetMaxLevel() * max(20,ch->GetMaxLevel()) * 3;
+  int price = ch->GetMaxLevel() * max(20, (int) ch->GetMaxLevel()) * 3;
 
   switch (pos) {
     case WEAR_FINGER_R:
@@ -158,12 +164,16 @@ int limb_regen_price(TBeing *ch, int pos)
     case WEAR_HAND_L:
     case WEAR_FOOT_R:
     case WEAR_FOOT_L:
+    case WEAR_EX_FOOT_R:
+    case WEAR_EX_FOOT_L:
       return (price * 1);
     case WEAR_ARM_R:
     case WEAR_ARM_L:
       return (price * 2);
     case WEAR_LEGS_R:
     case WEAR_LEGS_L:
+    case WEAR_EX_LEG_R:
+    case WEAR_EX_LEG_L:
       return (price * 3);
     case WEAR_NECK:
     case WEAR_HEAD:
@@ -173,7 +183,8 @@ int limb_regen_price(TBeing *ch, int pos)
     case WEAR_WRIST_L:
     case WEAR_WAISTE:
       return (price * 4);
-    default:
+    case WEAR_NOWHERE:
+    case MAX_WEAR:
       vlogf(LOG_BUG, "Bad pos (%d) in limb_regen_price!", pos);
       return (1000000);
   }
@@ -506,7 +517,7 @@ int doctor(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)
           }
         } else if (aff->type == SPELL_BLINDNESS) {
           if (++count == bought) {
-            cost = spell_regen_price(ch, SPELL_BLINDNESS));
+            cost = spell_regen_price(ch, SPELL_BLINDNESS);
 
             if ((ch->getMoney() + ch->getBank()) < cost) {
               sprintf(buf, "%s You don't have enough money to cure %s!",

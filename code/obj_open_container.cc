@@ -15,7 +15,7 @@ TRealContainer::TRealContainer() :
   TContainer(),
   max_weight(0.0),
   container_flags(0),
-  trap_type(0),
+  trap_type(DOOR_TRAP_NONE),
   trap_dam(0),
   key_num(-1),
   max_volume(0)
@@ -54,7 +54,7 @@ void TRealContainer::assignFourValues(int x1, int x2, int x3, int x4)
 {
   setCarryWeightLimit((float) x1);
   setContainerFlags(GET_BITS(x2, 7, 8));
-  setContainerTrapType(GET_BITS(x2, 15, 8));
+  setContainerTrapType(mapFileToDoorTrap(GET_BITS(x2, 15, 8)));
   setContainerTrapDam(GET_BITS(x2, 23, 8));
   setKeyNum(x3);
   setCarryVolumeLimit(x4);
@@ -66,7 +66,7 @@ void TRealContainer::getFourValues(int *x1, int *x2, int *x3, int *x4) const
 
   int r = 0;
   SET_BITS(r, 7, 8, getContainerFlags());
-  SET_BITS(r, 15, 8, getContainerTrapType());
+  SET_BITS(r, 15, 8, mapDoorTrapToFile(getContainerTrapType()));
   SET_BITS(r, 23, 8, getContainerTrapDam());
   *x2 = r;
   *x3 = getKeyNum();
@@ -135,12 +135,12 @@ bool TRealContainer::isContainerFlag(unsigned char r) const
   return ((container_flags & r) != 0);
 }
 
-unsigned char TRealContainer::getContainerTrapType() const
+doorTrapT TRealContainer::getContainerTrapType() const
 {
   return trap_type;
 }
 
-void TRealContainer::setContainerTrapType(unsigned char r)
+void TRealContainer::setContainerTrapType(doorTrapT r)
 {
   trap_type = r;
 }

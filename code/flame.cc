@@ -698,7 +698,7 @@ int TBeing::pourWaterOnMe(TBeing *ch, TObj *sObj)
     
     for (i = MIN_WEAR;i < MAX_WEAR;i++) {
       if (!(t = equipment[i]) || !(obj = dynamic_cast<TObj *>(t)) ||
-	  !obj->isObjStat(ITEM_BURNING) || !::number(0,2))
+	  !obj->isObjStat(ITEM_BURNING) || ::number(0,3))
 	continue;
       obj->remBurning(ch);
       act("Your $p is extinguished.", FALSE, this, obj, 0, TO_CHAR);

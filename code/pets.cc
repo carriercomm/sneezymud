@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: pets.cc,v $
-// Revision 5.1.1.2  1999/10/29 03:14:52  cosmo
-// Just adding a log message to see if can isolate bad orphan pet affects
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -166,7 +152,7 @@ bool TBeing::doRetrainPet(const char *argument, TBeing *vict)
 
   if (!(v = dynamic_cast<TMonster *>(mob))) {
     act("You cant retrain $N.",
-        FALSE, this, NULL, v, TO_CHAR);
+        FALSE, this, NULL, mob, TO_CHAR);
     return FALSE;
   }
 

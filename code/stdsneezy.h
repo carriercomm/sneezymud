@@ -84,6 +84,7 @@
 extern const int PROD_GAMEPORT;
 extern const int BETA_GAMEPORT;
 extern const int ALPHA_GAMEPORT;
+extern const int BUILDER_GAMEPORT;
 
 // causes player/rent files to be automatically purged if inactive for
 // more then a few weeks.  Conserves disk space and speeds up the boot

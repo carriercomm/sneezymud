@@ -7,6 +7,7 @@
 
 #include "stdsneezy.h"
 #include "statistics.h"
+#include <libpq++.H>
 
 extern FILE *obj_f;
 extern FILE *mob_f;
@@ -166,6 +167,8 @@ objIndexData::~objIndexData()
   }
 }
 
+
+#if 1
 // generate index table for object
 void generate_obj_index()
 {
@@ -230,6 +233,59 @@ void generate_obj_index()
 
   return;
 }
+#else
+// generate index table for object
+void generate_obj_index()
+{
+  int i, vnum;
+  objIndexData *tmpi = NULL;
+  extraDescription *new_descr = NULL;
+
+  // to prevent constant resizing (slows boot), declare an appropriate initial
+  // size.  Should be smallest power of 2 that will hold everything
+  obj_index.reserve(8192);
+
+  PgDatabase data("dbname=objects");
+  if(data.ConnectionBad()) {
+    vlogf(0, "Could not connect to database 'objects'.\n");
+    exit(0);
+  }
+
+  if(data.Exec("select o.vnum, o.name, o.short_desc, o.long_desc, e.name, e.description from object o, extra e") != PGRES_TUPLES_OK){
+    vlogf(0, "Database query failed: %s\n", data.ErrorMessage());
+    exit(0);
+  }
+    
+  for (i=0;i<data.Tuples();i++){
+    vnum=atoi(data.GetValue(i,0));
+    if(!tmpi || tmpi->virt!=vnum){
+      obj_index.push_back(*tmpi);
+      delete tmpi;
+
+      tmpi = new objIndexData();
+      if (!tmpi) {
+	perror("indexData");
+	exit(0);
+      }
+    
+      tmpi->virt=vnum;
+      tmpi->name=mud_str_dup(data.GetValue(i,1));
+      tmpi->short_desc=mud_str_dup(data.GetValue(i,2));
+      tmpi->long_desc=mud_str_dup(data.GetValue(i,3));
+    }
+
+    new_descr = new extraDescription();
+    new_descr->keyword = mud_str_dup(data.GetValue(i,4));
+    new_descr->description = mud_str_dup(data.GetValue(i,5));
+    new_descr->next = tmpi->ex_description;
+    tmpi->ex_description = new_descr;
+  }
+
+  return;
+}
+#endif
+
+
 
 // generate index table for monster file 
 void generate_mob_index()

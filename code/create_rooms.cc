@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: create_rooms.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /*****************************************************************************
  **                                                                         **
  ** SneezyMUD  - All rights reserved, SneezyMUD Coding Team.                **
@@ -48,6 +30,7 @@ const char *room_fields[] =
   "teleport",     // 12
   "copy",         // 13
   "replace",      // 14
+  "list",         // 15
   "\n"
 };
 
@@ -85,7 +68,8 @@ int room_length[] =
 
 static void update_room_menu(const TBeing *ch)
 {
-  const char *edit_menu = "    1) Name                       2) Description\n\r"
+  const char *edit_menu =
+"    1) Name                       2) Description\n\r"
 "    3) Flags                      4) Sector Type\n\r"
 "    5) Exits                      6) Extra Description\n\r"
 "    7) Maximum Capacity           8) Room Height\n\r"
@@ -131,6 +115,7 @@ void TPerson::doEdit(const char *arg)
   extraDescription *ed,
                    *prev;
   TRoom *newrp, *newrpTo;
+  FILE  *tFile;
 
   if (!hasWizPower(POWER_EDIT)) {
     incorrectCommand();
@@ -154,7 +139,7 @@ void TPerson::doEdit(const char *arg)
    *                              -Lapsos        *
    ***********************************************/
 
-  if (!field || field > 14) {
+  if (!field || field > 15) {
     tStr = "\0";
     tStr += "Supported Fields:\n\r";
     tStr += "  description             Will prompt for text.\n\r";
@@ -173,10 +158,12 @@ void TPerson::doEdit(const char *arg)
     tStr += "    <dir> = 0=n, 1=e, 2=s, 3=w, 4=u, 5=d, 6=ne, 7=nw, 8=se, 9=sw\n\r";
     tStr += "  copy <field> <room(s)>  Will copy <field> into room(s) specified.\n\r";
     tStr += "  replace <desc/extra> <\"extra\"/\"text\"> <\"text\"> <\"text\">";
+    tStr += "  list <2>                Will list all rooms in the rooms file.\n\r";
     tStr += "Please see HELP EDIT for more information.\n\r";
     sendTo(tStr.c_str());
     return;
   }
+
   r_flags = -1;
   s_type  = -1;
 
@@ -1047,6 +1034,43 @@ void TPerson::doEdit(const char *arg)
 
         delete [] ed->description;
         ed->description = mud_str_dup(tStr.c_str());
+      }
+      return;
+      break;
+    case 15: // edit list <2>
+      sprintf(tString, "immortals/%s/rooms%s",
+              good_cap(getNameNOC(this).c_str()).c_str(),
+              (*string ? "_2" : ""));
+
+      if (!(tFile = fopen(tString, "r"))) {
+        sendTo("You don't have a %srooms file.\n\r",
+               (*string ? "2nd " : ""));
+      } else {
+        tStr = "Room List:\n\r";
+
+        while (!feof(tFile)) {
+          if (fscanf(tFile, "#%d\n\r", &cRoom) != 1) {
+            fgets(tString, 256, tFile);
+            continue;
+          }
+
+          sprintf(tString, "%6d: ", cRoom);
+          tStr += tString;
+          tBuf = fread_string(tFile);
+
+          if (tBuf && *tBuf) {
+            tStr += tBuf;
+            tStr += "\n\r";
+          } else
+            tStr += "Unknown\n\r";
+
+          if (tBuf) {
+            delete [] tBuf;
+            tBuf = NULL;
+          }
+	}
+
+        desc->page_string(tStr.c_str(), 0, FALSE);
       }
       return;
       break;

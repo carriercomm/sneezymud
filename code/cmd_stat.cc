@@ -12,8 +12,8 @@
 void TBeing::statZone(const char *zoneNumber)
 {
   int zNum,
-    cnDesc[2]  = {0, 0},
-    cnTitle[2] = {0, 0},
+    cnDesc[3]  = {0, 0, 0},
+    cnTitle[3] = {0, 0, 0},
     cnExtra[2] = {0, 0},
     cnFlags[7] = {0, 0, 0, 0, 0, 0, 0},
     rzCount    = 0;
@@ -52,14 +52,22 @@ void TBeing::statZone(const char *zoneNumber)
     if ((curRoomCntr = real_roomp(Runner))) {
       rzCount++;
 
-      if (curRoomCntr->getDescr())// Count Descriptions
+      if (curRoomCntr->getDescr()) {// Count Descriptions
         cnDesc[0]++;
-      else
+
+        if (!strncmp(curRoomCntr->getDescr(), "Empty", 5))
+          cnDesc[2]++;
+      } else
         cnDesc[1]++;
 
-      if (curRoomCntr->name)// Count Titles
+      if (curRoomCntr->name) {// Count Titles
         cnTitle[0]++;
-      else
+
+        sprintf(tString, "%d", curRoomCntr->number);
+
+        if (strstr(curRoomCntr->name, tString))
+          cnTitle[2]++;
+      } else
         cnTitle[1]++;
 
       if (curRoomCntr->ex_description)// Count Rooms with extra descriptions
@@ -88,14 +96,15 @@ void TBeing::statZone(const char *zoneNumber)
           rNums[0], rNums[1], (rNums[1] - rNums[0] + 1), rzCount);
   sb += tString;
   sb += "Key Information:\n\r--------------------\n\r";
-  sprintf(tString, "DescrCount: %3d     NoDescr: %3d\n\r",
-          cnDesc[0], cnDesc[1]);
+  sprintf(tString, "DescrCount: %3d     NoDescr: %3d     InDescr: %3d\n\r",
+          cnDesc[0], cnDesc[1], cnDesc[2]);
   sb += tString;
-  sprintf(tString, "TitleCount: %3d     NoTitle: %3d\n\r",
-          cnTitle[0], cnTitle[1]);
+  sprintf(tString, "TitleCount: %3d     NoTitle: %3d     InTitle: %3d\n\r",
+          cnTitle[0], cnTitle[1], cnTitle[2]);
   sb += tString;
   sprintf(tString, "ExtraCount: %3d     NoExtra: %3d     (Room Counts)\n\r",
           cnExtra[0], cnExtra[1]);
+  sb += tString;
   sb += "Key Flags:\n\r--------------------\n\r";
   if (cnFlags[0]) {
     sprintf(tString, "Death-Rooms: %3d\n\r", cnFlags[0]);

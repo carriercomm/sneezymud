@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj_board.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -703,8 +692,14 @@ boardStruct::~boardStruct()
   unsigned int i;
   for (i = 0; i < MAX_MSGS; i++) {
     delete [] writer[i];
+    writer[i] = NULL;
+
     delete [] msgs[i];
+    msgs[i] = NULL;
+
     delete [] head[i];
+    head[i] = NULL;
   }
   delete [] filename;
+  filename = NULL;
 }

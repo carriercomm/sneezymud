@@ -768,6 +768,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case AFFECT_HORSEOWNED:
       case AFFECT_GROWTH_POTION:
       case LAST_ODDBALL_AFFECT:
+      case SKILL_ALCOHOLISM:
         break;
     }
   }

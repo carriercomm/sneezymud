@@ -1512,6 +1512,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case TYPE_BITE:
       case TYPE_UNDEFINED:
       case TYPE_MAX_HIT:
+      case SKILL_ALCOHOLISM:
         forceCrash("BOGUS AFFECT (%d) on %s.", aff->type, ch->getName());
         ch->affectRemove(aff);
         break;

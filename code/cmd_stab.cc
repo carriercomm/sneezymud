@@ -2,6 +2,7 @@
 #include "combat.h"
 
 //#define ALLOW_STAB_SEVER
+#define ALLOW_NEW_STAB
 
 spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSlotT tLimb, int & tDamage, int tSever)
 {
@@ -90,7 +91,9 @@ spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSl
   act(tStringVict, FALSE, tThief, tWeapon, tSucker, TO_VICT);
   act(tStringOthr, FALSE, tThief, tWeapon, tSucker, TO_NOTVICT);
 
-  if (tKill) {
+  // This is like this cuz you do Not cave in the skull of
+  // a ghost or behead them.
+  if (tKill && !IS_SET(tSucker->specials.act, ACT_GHOST)) {
     switch (tLimb) {
       case WEAR_HEAD:
         sprintf(tStringChar, "You cause $N's skull to cave in!");
@@ -135,6 +138,8 @@ spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSl
 
     if (tLimb == WEAR_NECK)
       tSucker->makeBodyPart(WEAR_HEAD);
+  } else if (tKill) {
+    ; // Do nothing, this is a safty catch for killing ghost mobs.
   } else {
     // Apply some limb damage and have a *Very* remote chance of whacking the limb off.
 
@@ -290,11 +295,13 @@ static int stab(TBeing *thief, TBeing * victim)
     thief->sendTo("You are too tired to stab.\n\r");
     return FALSE;
   }
+  /*
   if (IS_SET(victim->specials.act, ACT_GHOST)) {
     // mostly because kill is "you slit the throat", etc.
     thief->sendTo("Ghosts can not be stabbed!\n\r");
     return FALSE;
   }
+  */
 
   thief->addToMove(-STAB_MOVE);
 
@@ -309,82 +316,80 @@ static int stab(TBeing *thief, TBeing * victim)
   int i = thief->specialAttack(victim,SKILL_STABBING);
 
 
+#ifdef ALLOW_NEW_STAB
   // Start of test stab-limb code.
 
+  wearSlotT tLimb  = victim->getPartHit(thief, FALSE);
+  int       tSever = 0;
 
-  if (gamePort != PROD_GAMEPORT) {
-    wearSlotT tLimb  = victim->getPartHit(thief, FALSE);
-    int       tSever = 0;
+  if (!victim->hasPart(tLimb))
+    tLimb = victim->getCritPartHit();
 
-    if (!victim->hasPart(tLimb))
-      tLimb = victim->getCritPartHit();
-
-    if (!victim->awake() ||
-        (i && (i != GUARANTEED_FAILURE) && bSuccess(thief, bKnown, SKILL_STABBING))) {
-      switch (critSuccess(thief, SKILL_STABBING)) {
-        case CRIT_S_KILL:
-          CS(SKILL_STABBING);
-          dam   *=  4;
-          tSever = 30;
-          break;
-        case CRIT_S_TRIPLE:
-          CS(SKILL_STABBING);
-          dam   *=  3;
-          tSever = 15;
-          break;
-        case CRIT_S_DOUBLE:
-          CS(SKILL_STABBING);
-          dam   *= 2;
-          tSever = 5;
-          break;
-        case CRIT_S_NONE:
-          tSever = 0;
-          break;
-      }
-
-      spellNumT tDamageType = doStabMsg(thief, victim, obj, tLimb, dam, tSever);
-
-      // If they got nuked in doStabMsg then work with that.
-      if (dam == -1 || thief->reconcileDamage(victim, dam, tDamageType) == -1)
-        return DELETE_VICT;
-
-      return FALSE;
-    } else {
-      switch (critFail(thief, SKILL_STABBING)) {
-        case CRIT_F_HITSELF:
-        case CRIT_F_HITOTHER:
-          act("You over thrust and fall flat on your face!",
-              FALSE, thief, obj, victim, TO_CHAR);
-          act("$n misses $s thrust into $N and falls flat on their face!",
-              FALSE, thief, obj, victim, TO_NOTVICT);
-          act("$n misses $s thrust into you and falls flat on their face!",
-              FALSE, thief, obj, victim, TO_VICT);
-          rc = thief->crashLanding(POSITION_SITTING);
-
-          if (IS_SET_DELETE(rc, DELETE_THIS))
-            return DELETE_THIS;
-
-          break;
-        case CRIT_F_NONE:
-        default:
-          act("You miss your thrust into $N.",
-              FALSE, thief, obj, victim, TO_CHAR);
-          act("$n misses $s thrust into $N.",
-              FALSE, thief, obj, victim, TO_NOTVICT);
-          act("$n misses $s thrust into you.",
-              FALSE, thief, obj, victim, TO_NOTVICT);
-          break;
-      }
-
-      thief->reconcileDamage(victim, 0, SKILL_STABBING);
+  if (!victim->awake() ||
+      (i && (i != GUARANTEED_FAILURE) && bSuccess(thief, bKnown, SKILL_STABBING))) {
+    switch (critSuccess(thief, SKILL_STABBING)) {
+      case CRIT_S_KILL:
+        CS(SKILL_STABBING);
+        dam   *=  4;
+        tSever = 30;
+        break;
+      case CRIT_S_TRIPLE:
+        CS(SKILL_STABBING);
+        dam   *=  3;
+        tSever = 15;
+        break;
+      case CRIT_S_DOUBLE:
+        CS(SKILL_STABBING);
+        dam   *= 2;
+        tSever = 5;
+        break;
+      case CRIT_S_NONE:
+        tSever = 0;
+        break;
     }
 
-    return FALSE;
+    spellNumT tDamageType = doStabMsg(thief, victim, obj, tLimb, dam, tSever);
+
+    // If they got nuked in doStabMsg then work with that.
+    if (dam == -1 || thief->reconcileDamage(victim, dam, tDamageType) == -1)
+      return DELETE_VICT;
+
+    return TRUE;
+  } else {
+    switch (critFail(thief, SKILL_STABBING)) {
+      case CRIT_F_HITSELF:
+      case CRIT_F_HITOTHER:
+        act("You over thrust and fall flat on your face!",
+            FALSE, thief, obj, victim, TO_CHAR);
+        act("$n misses $s thrust into $N and falls flat on their face!",
+            FALSE, thief, obj, victim, TO_NOTVICT);
+        act("$n misses $s thrust into you and falls flat on their face!",
+            FALSE, thief, obj, victim, TO_VICT);
+        rc = thief->crashLanding(POSITION_SITTING);
+
+        if (IS_SET_DELETE(rc, DELETE_THIS))
+          return DELETE_THIS;
+
+        break;
+      case CRIT_F_NONE:
+      default:
+        act("You miss your thrust into $N.",
+            FALSE, thief, obj, victim, TO_CHAR);
+        act("$n misses $s thrust into $N.",
+            FALSE, thief, obj, victim, TO_NOTVICT);
+        act("$n misses $s thrust into you.",
+            FALSE, thief, obj, victim, TO_NOTVICT);
+        break;
+    }
+
+    thief->reconcileDamage(victim, 0, SKILL_STABBING);
   }
 
+  return TRUE;
 
   // End of test stab-limb code.
-
+#else
+  // Start of old stab code.
 
   if (!victim->awake() || 
       (i &&
@@ -474,7 +479,10 @@ static int stab(TBeing *thief, TBeing * victim)
         act("$n misses $s thrust into you.", FALSE, thief, obj, victim, TO_VICT);
         thief->reconcileDamage(victim, 0, SKILL_STABBING);
     }
-  }
+
+    // End of old stab code.
+#endif
+
   return TRUE;
 }
 
@@ -501,7 +509,7 @@ int TBeing::doStab(const char * argument, TBeing *vict)
       }
     }
   }
-  if (!sameRoom(victim)) {
+  if (!sameRoom(*victim)) {
     sendTo("That person isn't around.\n\r");
     return FALSE;
   }

@@ -414,7 +414,7 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
 
   if ((mod == -1) && v->isImmune(getTypeImmunity(wtype), 0))
     return FALSE;
-
+#ifdef DASHO
   if (mod == -1 && v->isAffected(AFFECT_DUMMY)) {
     affectedData aff;
     for(aff = (*v->affected); aff.next != NULL; aff = (*aff.next)) {
@@ -424,7 +424,7 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
       }
     }
   }
-
+#endif
   // get wtype back so it fits in array  
   new_wtype = wtype - TYPE_HIT;
 

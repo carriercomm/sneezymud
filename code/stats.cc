@@ -949,8 +949,8 @@ double TBeing::plotStat(statSetT whichSet, statTypeT whichStat, double min_value
     cleared = true;
   }
  
-  int MAXSTAT = 200;
-  int MINSTAT = 010;
+  int MAXSTAT = 205;
+  int MINSTAT = 005;
   if (whichSet == STAT_CHOSEN) {
     MAXSTAT = 25;
     MINSTAT = -25;
@@ -969,10 +969,14 @@ double TBeing::plotStat(statSetT whichSet, statTypeT whichStat, double min_value
   // A = (max_value - avg)/(MAXSTAT ^ power - midline ^ power)
   // B = avg - (midline^power) * A 
 
+  // March, 2001:
+  // this is incorrect, A = (max_value - avg)/(MAXSTAT-midline)^power
+
+
   int stat = getStat(whichSet, whichStat);
   // pin the value if necessary
   stat = min(max(stat, MINSTAT), MAXSTAT);
-
+#if 0
   if (power == 1.4 && whichSet != STAT_CHOSEN) {
     // we only store for the default value of power
     // storedPlot will represent the curve as normalized to -1,1,0
@@ -983,8 +987,10 @@ double TBeing::plotStat(statSetT whichSet, statTypeT whichStat, double min_value
       if (stat >= midline) {
         A = 1  / (pow(MAXSTAT, power) - pow(midline, power)); 
       } else {
-        A = -1 / (pow(MINSTAT, power) - pow(midline, power)); 
+        A = 1 / (pow(midline, power) - pow(MINSTAT, power)); 
       }
+
+      // this if statment is equiv to A = abs(1 / (pow(midline,power) - pow(MAXSTAT,power)))
       B = - pow(midline, power) * A;
       num = A * pow(stat, power) + B;
       storedPlots[stat] = num;
@@ -996,18 +1002,18 @@ double TBeing::plotStat(statSetT whichSet, statTypeT whichStat, double min_value
     else
       return (num * (avg-min_value))+avg;
   }
-
+#endif
   double A, B;
   double num; 
 
   if (stat >= midline) {
-    A = (max_value - avg) / (pow(MAXSTAT, power) - pow(midline, power)); 
-    B = avg - pow(midline, power) * A;
-    num = A * pow(stat, power) + B;
+    A = (max_value - avg) / (pow(MAXSTAT - midline, power)); 
+    B = avg;
+    num = A * pow(stat - midline, power) + B;
   } else {
-    A = (min_value - avg) / (pow(MINSTAT, power) - pow(midline, power)); 
-    B = avg - pow(midline, power) * A;
-    num = A * pow(stat, power) + B;
+    A = (min_value - avg) / (pow(midline - MINSTAT, power)); 
+    B =  avg;
+    num = A * pow(midline - stat, power) + B;
   }
   return num;
 }
@@ -1048,7 +1054,12 @@ float TBeing::getConHpModifier() const
   // High con should give 5/4 more HP than normal, and low con should be 4/5
   // assuming that warriors have 8 HP/lev, we want -1.6 and +2.0 as the
   // values
-  return plotStat(STAT_NATURAL, STAT_CON, (float) -1.6, (float) 2.0, (float) 0.0);
+
+  // i think this would work more predictably if we actually just factored in
+  // the values and used our standards - Dash
+  // (and its still following balance notes)
+
+  return plotStat(STAT_NATURAL, STAT_CON, (float) 4.0/5.0, (float) 5.0/4.0, (float) 1.0);
 }
 
 Stats TBeing::getCurStats() const

@@ -723,6 +723,14 @@ int throwThing(TThing *t, dirTypeT dir, int from, TBeing **targ, int dist, int m
       act("$p hit a magic barrier and dropped to the $g.", FALSE, ch, t, 0, TO_CHAR); 
       return FALSE;
     }
+
+    if (newrp->isRoomFlag(ROOM_NO_HEAL)) {
+      act("Strangely, $n hits a magical barrier and falls to the $g.",
+	  FALSE, t, 0, 0, TO_ROOM);
+      act("$p hit a magic barrier and dropped to the $g.", FALSE, ch, t, 0, TO_CHAR);
+      return FALSE;
+    }
+
     sprintf(capbuf, "$n %s %s out of the room.", (dir == 5 ? "drops" : "flies"), directions[dir][0]);
     act(capbuf, TRUE, t, 0, 0, TO_ROOM);
     --(*t);

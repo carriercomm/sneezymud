@@ -2,32 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: movement.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.5  1999/10/09 05:42:11  batopr
-// Fixed dismount when not mounted call
-//
-// Revision 1.4  1999/09/29 07:46:14  lapsos
-// Added code for the Mobile Strings stuff.
-//
-// Revision 1.3  1999/09/29 01:13:46  lapsos
-// Modified to allow for mounted opening of doors.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "movement.cc" - All functions and routines related to movement
 //         or changing position
 //

@@ -1670,6 +1670,7 @@ TBeing *get_char_room_vis(const TBeing *ch, const char *name, int *count, exactT
   int j, numx;
   char tmpname[MAX_INPUT_LENGTH];
   char *tmp;
+  string tStName("");
 
   if (!ch) {
     vlogf(LOG_BUG,"NULL ch in get_char_room_vis");
@@ -1680,6 +1681,7 @@ TBeing *get_char_room_vis(const TBeing *ch, const char *name, int *count, exactT
 
   strcpy(tmpname, name);
   tmp = tmpname;
+
   if (!(numx = get_number(&tmp)))
     return NULL;
 
@@ -1698,7 +1700,15 @@ TBeing *get_char_room_vis(const TBeing *ch, const char *name, int *count, exactT
           return (mob);
       }
     }
+
+    tStName += "blobs";
+    tStName += mob->getMyRace()->getSingularName();
+
+#if 1
+    if (isname(tmp, tStName.c_str())) {
+#else
     if (is_abbrev(tmp, "blobs")) {
+#endif
       if ((mob != ch) && !ch->canSee(mob) && ch->canSee(mob, INFRA_YES)) {
         j++;
         if (j == numx)

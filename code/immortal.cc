@@ -4037,7 +4037,27 @@ void TBeing::doInfo(const char *arg)
       sendTo("  Typo file accessed %d times.\n\r", typo_used_num);
       sendTo("  Bugs file accessed %d times.\n\r", bug_used_num);
       sendTo("  Idea file accessed %d times.\n\r", idea_used_num);
-    } else if (is_abbrev(arg1, "deaths")) {
+    } 
+#if 1
+    else if (is_abbrev(arg1, "tweak")) {
+      if (!hasWizPower(POWER_INFO_TRUSTED)) {
+        sendTo("You should not attempt to change that.\n\r");
+	return;
+      }
+      char arg2[80];
+      arg = one_argument(arg,arg2);
+      if (is_abbrev(arg2, "loadrate")) {
+        char opt[80];
+	arg = one_argument(arg,opt);
+	if (is_abbrev(opt, "up"))
+	  stats.equip += .05;
+	else
+	  stats.equip -= .05;
+	save_game_stats();
+      }
+#endif
+    } 
+      else if (is_abbrev(arg1, "deaths")) {
       if (!hasWizPower(POWER_INFO_TRUSTED)) {
         sendTo("You cannot access that information.\n\r");
         return;

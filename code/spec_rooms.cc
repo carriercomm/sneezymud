@@ -1757,6 +1757,8 @@ void assign_rooms(void)
     {13773, duergarWater},
     {14152, SecretDoors},
     {14153, SecretDoors},
+    {14296, SecretDoors},
+    {14299, SecretDoors},
     {14302, SecretDoors},
     {14319, SecretDoors},
     {15257, SecretDoors},

@@ -23,7 +23,7 @@
 const int SPEC_FOUNTAIN     =     1;     // spec number for a fountain
 const int SPEC_BOARD        =     2 ;    // spec number for a bulletin board
 
-const int NUM_OBJ_SPECIALS = 60;
+const int NUM_OBJ_SPECIALS = 80;
 
 struct TObjSpecs {
   bool assignable;

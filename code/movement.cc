@@ -1424,7 +1424,8 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
 // was_in should equal -1 if you don't want player being returned to original rm
 // gets called recursively for all riders, so initial call should be for
 // lowest level of riding
-int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in)
+int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in, 
+     checkFallingT checkFall)
 {
   TThing *t, *t2;
   int rc;
@@ -1530,9 +1531,15 @@ int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in)
     act("$n says, \"We shall soon see about that.\"", FALSE, mob, 0, this, TO_ROOM);
   }
 
-  rc = checkFalling();
-  if (IS_SET_DELETE(rc, DELETE_THIS))
-    return DELETE_THIS;
+  if (checkFall) {
+    // since falling causes this function to be called (with -1 arg)
+    // we don't want to go into endless loop.  Since checkFalling will
+    // keep looping until splat, we avoid this routine.
+
+    rc = checkFalling();
+    if (IS_SET_DELETE(rc, DELETE_THIS))
+      return DELETE_THIS;
+  }
 
   return TRUE;
 }

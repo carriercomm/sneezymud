@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: comm.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -47,52 +36,54 @@ bool isEmpty(int);
 const int PULSE_COMMAND     =0;
 const int PULSE_TICK        =1;
 
-#if defined(SLOW)
-// this is for slow running machines
-const int PULSE_MOBACT      =6;
-const int PULSE_TELEPORT    =6;
-const int PULSE_COMBAT      =6;
-const int PULSE_DROWNING    =12;
-const int PULSE_SPEC_PROCS  =18;
-const int PULSE_NOISES      =24;
-const int PULSE_UPDATES     =75;
-const int PULSE_TICKS       =150;
-const int ONE_SECOND        =2;
-
-#elif defined(FAST)
 // These things should be changed if machine changes to make ticks
 // as even as possible. They have been tweaked to make the current Linux
 // machine work correctly. They were 2* normal mode before tweaking
 // desired goal is combat round <= 3 secs
 // I cut these by 25% for v5.1 - Bat
 // - To test real time to pulse conversion, look at bottom of gameLoop
-// - 9600 pulses take 1237 secs : Bat 5/5/99  (low load)
+// - 9600 pulses take 1237 secs : Bat 05/05/99  (low load)
+// - 7200 pulses take 2744 secs : Bat 01/12/00  (avg load, 1 day uptime)
+
+#if 1
+const int ONE_SECOND        =3;
+const int PULSE_MOBACT      =ONE_SEC * 3;
+const int PULSE_TELEPORT    =ONE_SEC * 3;
+const int PULSE_COMBAT      =ONE_SEC * 3;
+const int PULSE_DROWNING    =ONE_SEC * 9;
+const int PULSE_SPEC_PROCS  =ONE_SEC * 9;
+const int PULSE_NOISES      =ONE_SEC * 12;
+const int PULSE_UPDATES     =ONE_SEC * 36;
+const int PULSE_TICKS       =PULSE_UPDATE * 2;
+
+// there are 2 ticks per "hour"
+const int SECS_PER_MUD_HOUR  = PULSE_UPDATES/ONE_SECOND;
+const int SECS_PER_MUD_DAY   = (48*SECS_PER_MUD_HOUR);
+const int SECS_PER_MUD_MONTH = (28*SECS_PER_MUD_DAY);
+const int SECS_PER_MUD_YEAR  = (12*SECS_PER_MUD_MONTH);
+
+#else
+const int ONE_SECOND        =7;
 const int PULSE_MOBACT      =18;  // ONE_SEC * 2.5
 const int PULSE_TELEPORT    =18;  // ONE_SEC * 2.5
 const int PULSE_COMBAT      =18;  // ONE_SEC * 2.5
-const int PULSE_DROWNING    =35;  // ONE_SEC * 5
+const int PULSE_DROWNING    =35;  // ONE_SEC * 7.5
 const int PULSE_SPEC_PROCS  =53;  // ONE_SEC * 7.5
 const int PULSE_NOISES      =105;  // ONE_SEC * 15
 const int PULSE_UPDATES     =280;  // ONE_SEC * 40
 const int PULSE_TICKS       =560;  // PULSE_UPDATE * 2
-const int ONE_SECOND        =7;
 
-#else
-// this is normal mode
-const int PULSE_MOBACT      =12;
-const int PULSE_TELEPORT    =12;
-const int PULSE_COMBAT      =12;
-const int PULSE_DROWNING    =24;
-const int PULSE_SPEC_PROCS  =36;
-const int PULSE_NOISES      =48;
-const int PULSE_UPDATES     =150;
-const int PULSE_TICKS       =300;
-const int ONE_SECOND        =4;
+const int SECS_PER_MUD_HOUR  = 75;
+const int SECS_PER_MUD_DAY   = (48*SECS_PER_MUD_HOUR);
+const int SECS_PER_MUD_MONTH = (28*SECS_PER_MUD_DAY);
+const int SECS_PER_MUD_YEAR  = (12*SECS_PER_MUD_MONTH);
 
 #endif
 
-// updateAffects() called on combat counter (socket.cc)
-// = 25 for all speeds
+// updateAffects() is called on combat counter (socket.cc)
+// this will tell us how many combat-calls needed to simulate a "tick"
+// The reason for this is that we sometimes want to say "it takes a mud-hour"
+// and the mud-hour must be represented as a number of combat-pulse calls
 const int UPDATES_PER_TICK    = (PULSE_TICKS/PULSE_COMBAT);
 
 extern const char * const prompt_mesg[];

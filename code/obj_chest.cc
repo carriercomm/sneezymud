@@ -56,4 +56,12 @@ bool TChest::objectRepair(TBeing *ch, TMonster *repair, silentTypeT silent)
   return TRUE;
 }
 
-
+void TChest::lowCheck()
+{
+  if (canWear(ITEM_TAKE)) {
+    vlogf(LOG_LOW, "Chest (%s:%d) set takeable.  Removing",
+           getName(), objVnum());                             
+    remObjStat(ITEM_TAKE);
+  }                                                           
+  TRealContainer::lowCheck();                                     
+}

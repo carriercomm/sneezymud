@@ -9,24 +9,24 @@
 #include "disease.h"
 #include "combat.h"
 #include "spelltask.h"
-#include "disc_armadillo.h"
+#include "disc_shaman_armadillo.h"
 
 
 static struct PolyType ShapeShiftList[] =
 {
-  {"gopher"   , 30,   1, 25401, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"deer"     , 31,   1, 14105, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"wolf"     , 35,  10,  3400, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"snake"    , 37,  20,  3412, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"moose"    , 39,  30, 10200, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"dolphin"  , 40,  45, 12432, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"bear"     , 42,  75,  3403, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"crow"     , 44,  70, 14350, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"shark"    , 40,  60, 12413, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"hawk"     , 48, 100, 14440, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"saberfish", 49,  80,  5503, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"spider"   , 49,  80,  7717, DISC_SHAMAN_ARMADILLO, RACE_NORACE},
-  {"\n"        , -1,  -1,    -1, DISC_SHAMAN_ARMADILLO, RACE_NORACE}
+  {"gopher"   , 30,   1, 25401, DISC_SHAMAN, RACE_NORACE},
+  {"deer"     , 31,   1, 14105, DISC_SHAMAN, RACE_NORACE},
+  {"wolf"     , 35,  10,  3400, DISC_SHAMAN, RACE_NORACE},
+  {"snake"    , 37,  20,  3412, DISC_SHAMAN, RACE_NORACE},
+  {"moose"    , 39,  30, 10200, DISC_SHAMAN, RACE_NORACE},
+  {"dolphin"  , 40,  45, 12432, DISC_SHAMAN, RACE_NORACE},
+  {"bear"     , 42,  75,  3403, DISC_SHAMAN, RACE_NORACE},
+  {"crow"     , 44,  70, 14350, DISC_SHAMAN, RACE_NORACE},
+  {"shark"    , 40,  60, 12413, DISC_SHAMAN, RACE_NORACE},
+  {"hawk"     , 48, 100, 14440, DISC_SHAMAN, RACE_NORACE},
+  {"saberfish", 49,  80,  5503, DISC_SHAMAN, RACE_NORACE},
+  {"spider"   , 49,  80,  7717, DISC_SHAMAN, RACE_NORACE},
+  {"\n"        , -1,  -1,    -1, DISC_SHAMAN, RACE_NORACE}
 };
 
 int shapeShift(TBeing *caster, int level, byte bKnown)

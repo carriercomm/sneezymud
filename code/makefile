@@ -226,7 +226,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	task_smythe.o task_dull.o task_picklock.o task_sharpen.o \
 	task_spell_friends.o task_get.o task_rest.o task_sit.o task_track.o \
 	task_whittle.o task_stavecharge.o thing.o toggle.o trap.o \
-	utility.o weather.o \
+	utility.o weather.o sys_loot.o \
 	wiz_data.o wiz_powers.o
 
 #	rewrite_obj_file.o \
@@ -343,6 +343,7 @@ $(OBJDIR)create_rooms.o: room.h
 $(OBJDIR)crit_combat.o: combat.h statistics.h
 $(OBJDIR)damage.o: combat.h statistics.h
 $(OBJDIR)db.o: components.h help.h board.h statistics.h mail.h loadset.h
+$(OBJDIR)db.o: sys_loot.h
 $(OBJDIR)disc_adventuring.o: disc_adventuring.h combat.h
 $(OBJDIR)disc_aegis.o: disc_aegis.h combat.h
 $(OBJDIR)disc_afflictions.o: disc_afflictions.h combat.h
@@ -476,6 +477,7 @@ $(OBJDIR)spell_parser.o: $(DISC_HEADS)
 $(OBJDIR)spelltask.o: $(DISC_HEADS) combat.h spelltask.h
 $(OBJDIR)statistics.o: statistics.h systemtask.h
 $(OBJDIR)structs.o: combat.h board.h statistics.h $(CASINO_HEADS)
+$(OBJDIR)sys_loot.o: sys_loot.h
 $(OBJDIR)systemtask.o: systemtask.h
 $(OBJDIR)task.o: disc_alchemy.h
 $(OBJDIR)task.o: disc_looting.h disc_air.h

@@ -1446,31 +1446,12 @@ void TThing::addToCarriedVolume(int num)
   carried_volume += num;
 }
 
-bool TBeing::isCharm() const
-{
-  return (!isPc() && master && isAffected(AFF_CHARM) &&
-          affectedBySpell(SPELL_ENSORCER) &&
-          !isUndead());
-}
-
-bool TBeing::isZombie() const
-{
-  return (!isPc() &&  master && isAffected(AFF_CHARM) &&
-          isUndead());
-}
-
 bool TBeing::isElemental() const
 {
   int  mVn         = mobVnum();
   bool isElemental = (mVn == FIRE_ELEMENTAL  || mVn == WATER_ELEMENTAL ||
                         mVn == EARTH_ELEMENTAL || mVn == AIR_ELEMENTAL);
   return isElemental;
-}
-
-bool TBeing::isPet() const
-{
-  return (!isPc() && master && isAffected(AFF_CHARM) &&
-          !affectedBySpell(SPELL_ENSORCER));
 }
 
 // checks a room looking for pcs present

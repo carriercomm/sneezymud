@@ -1537,7 +1537,9 @@ void TBeing::checkCharmMana()
       vlogf(LOG_BUG, "Non-Tbeing in followers of %s", getName());
       return;
     }
-    if (!ch->isCharm() && !ch->isThrall())
+    bool ischarm = isPet(PETTYPE_CHARM);
+    bool isthrall = isPet(PETTYPE_THRALL);
+    if (!ischarm && !isthrall)
       continue;
  
     if (!sameRoom(*ch)) {
@@ -1552,7 +1554,7 @@ void TBeing::checkCharmMana()
     mana += plotStat(STAT_CURRENT, STAT_CHA, 16, 1, 8);
 
     // thralls owe lifeforce to master, so don't fight master's will as much
-    if (ch->isThrall())
+    if (isthrall)
       mana = 2*mana/3;
 
     if (!hasClass(CLASS_CLERIC) && !hasClass(CLASS_DEIKHAN)) {
@@ -1568,7 +1570,7 @@ void TBeing::checkCharmMana()
         }
         setMana(0);
       } else {
-        if (ch->isThrall())
+        if (isthrall)
           act("The effort of keeping $N enthralled weakens you.", 
                FALSE, this, 0, ch, TO_CHAR);
         else
@@ -1593,7 +1595,7 @@ void TBeing::checkCharmMana()
         }
         setPiety(0.0);
       } else {
-        if (ch->isThrall())
+        if (isthrall)
           act("The effort of keeping $N enthralled weakens you.", 
                FALSE, this, 0, ch, TO_CHAR);
         else

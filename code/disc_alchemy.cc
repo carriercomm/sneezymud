@@ -452,13 +452,14 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
 	// added to skip on items flagged with nolocate 8-28-2000 -jh
 	if (obj->isObjStat(ITEM_NOLOCATE))
 	  continue;
-
 	if (obj->objVnum() == YOUTH_POTION ||
             obj->objVnum() == STATS_POTION ||
             obj->parent    == caster       ||
             (tMon && mob_index[tMon->getMobIndex()].spec == SPEC_SHOPKEEPER))
 	  continue;
-
+        //added to skip items on gods 10-19-00 -dash
+        if (obj->parent->isImmortal())
+	  continue;
         if (dynamic_cast<TBeing *>(obj->parent)) {
           if (strlen(caster->pers(obj->parent)) > 0) {
             strcpy(capbuf, obj->getName());
@@ -486,8 +487,7 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
           if (obj->in_room == ROOM_NOWHERE || !caster->canSee(obj)) {
             act("$p is in use but you can't tell the location.", TRUE, caster, obj,NULL, TO_CHAR);
           } else if (obj->inImperia() && !caster->isImmortal()) {
-            act("$p is among the gods, you can not look there!",
-                FALSE, caster, obj, NULL, TO_CHAR);
+            continue;
           } else {
             if (IS_SET(caster->desc->plr_color, PLR_COLOR_ROOM_NAME)) {
               if (hasColorStrings(NULL, obj->roomp->getName(), 2)) {
@@ -520,8 +520,7 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
         if (ch->in_room == ROOM_NOWHERE || !caster->canSee(ch)) {
           act("$N is somewhere but you can't tell the location.", TRUE, caster, NULL, ch, TO_CHAR);
         } else if (ch->inImperia() && !caster->isImmortal()) {
-          act("$N is among the gods, you can not look there!",
-              FALSE, caster, NULL, ch, TO_CHAR);
+	  continue;
         } else {
           if (IS_SET(caster->desc->plr_color, PLR_COLOR_ROOM_NAME)) {
             if (hasColorStrings(NULL, ch->roomp->getName(), 2)) {

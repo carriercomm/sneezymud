@@ -412,7 +412,11 @@ int wordOfRecall(TBeing * caster, TBeing * victim, int, byte bKnown)
     act("You hear a small \"pop\" as $n appears in the middle of the room.", 
         TRUE, victim, NULL, NULL, TO_ROOM);
     victim->doLook("", CMD_LOOK);
-    victim->addToMove(max(-100, -victim->getMove()));
+
+    // take up to 100 move for recalling
+    // however, leave them with at least 10 mv
+    victim->addToMove(max(-100, -(victim->getMove()-10)));
+
     victim->updatePos();
     act("You are exhausted from interplanar travel.", 
         FALSE, victim, NULL, NULL, TO_CHAR);

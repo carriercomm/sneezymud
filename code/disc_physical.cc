@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_physical.cc,v $
+// Revision 5.1.1.2  2000/10/26 05:39:02  jesus
+// dual wield for warriors
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -22,6 +25,7 @@
 CDPhysical::CDPhysical() :
       CDiscipline(),
       skDoorbash(),
+      skDualWieldWarrior(),
       skDeathstroke()
 {
 }
@@ -29,6 +33,7 @@ CDPhysical::CDPhysical() :
 CDPhysical::CDPhysical(const CDPhysical &a) :
       CDiscipline(a),
       skDoorbash(a.skDoorbash),
+      skDualWieldWarrior(a.skDualWieldWarrior),
       skDeathstroke(a.skDeathstroke)
 {
 }
@@ -38,6 +43,7 @@ CDPhysical & CDPhysical::operator=(const CDPhysical &a)
   if (this == &a) return *this;
   CDiscipline::operator=(a);
   skDoorbash = a.skDoorbash;
+  skDualWieldWarrior = a.skDualWieldWarrior;
   skDeathstroke = a.skDeathstroke;
   return *this;
 }
@@ -45,4 +51,7 @@ CDPhysical & CDPhysical::operator=(const CDPhysical &a)
 CDPhysical::~CDPhysical()
 {
 }
+
+
+
 

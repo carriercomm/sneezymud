@@ -515,6 +515,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
 
 // disc_physical
 
+    case SKILL_DUAL_WIELD_WARRIOR:  // needs to be moved   666
+      return &((CDPhysical *) cd)->skDualWieldWarrior;
     case SKILL_DOORBASH:
       return &((CDPhysical *) cd)->skDoorbash;
     case SKILL_DEATHSTROKE:

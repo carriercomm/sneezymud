@@ -622,6 +622,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SKILL_PENANCE:
     case SKILL_BLUNT_SPEC:
     case SKILL_BAREHAND_SPEC:
+    case SKILL_DUAL_WIELD_WARRIOR:
     case DAMAGE_NORMAL:
     case DAMAGE_BEHEADED:
     case DAMAGE_RAMMED:

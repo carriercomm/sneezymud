@@ -26,6 +26,9 @@ int TBeing::backstabHit(TBeing *victim, TThing *obj)
     "Your $o sinks deep into $N's lower back, killing $M.",
     "$n sinks $s $o deep into $N's lower back, killing $M.",
 
+    "$N screams in extreme agony and then falls lifeless as you quickly place your $p into $S back.",
+    "$N screams in extreme agony and then falls lifeless as $n quickly places $s $p into $N's back.",
+
     "Blood splatters you, as you thrust $p into $N's back, killing $M.",
     "Blood splatters as $n thrusts $p into $N's back, killing $M.",
 

@@ -2,29 +2,8 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: ai_utility.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:29:21  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "ai_utility.cc" - handles utility routines needed by the mob AI
 //        code.
-//
-//      The SneezyMUD mob AI was coded by Jeff Bennett, August 1994.
-//      Last revision, December 24th, 1994.
 //
 //////////////////////////////////////////////////////////////////////////
 

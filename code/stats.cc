@@ -107,7 +107,7 @@ const string Stats::printRawStats(const TBeing *) const
   return rawStats;
 }
 
-static int age_mod_for_stat(int age_num, statTypeT whichStat)
+int age_mod_for_stat(int age_num, statTypeT whichStat)
 {
   // age_num is the "human" age, realize non-humans have been adjusted
   // to the human age, so no need to modify for race.

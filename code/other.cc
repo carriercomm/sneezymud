@@ -1977,7 +1977,10 @@ int TBeing::doQuaff(const char *argument)
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     return DELETE_THIS;
   }
+
+  // add some lag.  Prevents multiple quaffs per round
   addToWait(combatRound(1));
+
   return FALSE;
 }
 
@@ -2513,7 +2516,10 @@ int TBeing::doRecite(const char *argument)
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     return DELETE_THIS;
   }
+
+  // add some lag.  Prevents multiple recites per round
   addToWait(combatRound(1));
+
   return FALSE;
 }
 
@@ -2633,7 +2639,10 @@ int TBeing::doUse(const char *argument)
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     return DELETE_THIS;
   }
+
+  // add some lag.  Prevents multiple uses per round
   addToWait(combatRound(1));
+
   return FALSE;
 }
 

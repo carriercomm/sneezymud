@@ -314,7 +314,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
           }
 
           // if nobody died from the hit, stop the fight
-          if (tbt != this) {
+          if (tbt && tbt != this) {
             act("In the confusion, you and $N stop fighting.",
                   FALSE, this, 0, tbt, TO_CHAR);
             act("In the confusion, $n and you stop fighting.",

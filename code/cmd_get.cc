@@ -437,7 +437,23 @@ int TBeing::doGet(const char *argument)
           TBaseCorpse *tbc = dynamic_cast<TBaseCorpse *>(t);
           // we do no name check here, since "pile dust" won't hit "corpse"
           if (tbc) {
-            rc = tbc->getAllFrom(this, tbc->name);
+	    char namebuf[MAX_STRING_LENGTH];
+	    char namebuf2[MAX_STRING_LENGTH];
+	    TThing *tt;
+	    int counter=1;
+	    for (tt = roomp->stuff; tt; tt = tt->nextThing) {
+	      if(dynamic_cast<TBaseCorpse *>(tt) == tbc)
+		break;
+	      if(dynamic_cast<TBaseCorpse *>(tt) &&
+		 !strcmp(tbc->name, tt->name)){
+		++counter;
+	      }
+	    }
+	    strcpy(namebuf2, tbc->name);
+	    add_bars(namebuf2);
+	    sprintf(namebuf, "all %i.%s", counter, namebuf2);
+	    
+            rc = tbc->getAllFrom(this, namebuf);
             if (IS_SET_DELETE(rc, DELETE_VICT))
               return DELETE_THIS;
           }

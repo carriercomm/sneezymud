@@ -472,7 +472,7 @@ int TBeing::doKill(const char *argument, TBeing *vict)
           FALSE, v, 0, this, TO_CHAR);
       act(msgVariables(MSG_SLAY, v).c_str(), 
           FALSE, this, 0, v, TO_NOTVICT);
-      v->rawKill(DAMAGE_NORMAL);
+      v->rawKill(DAMAGE_NORMAL, this);
       if (vict)
         return DELETE_VICT;
       v->reformGroup();

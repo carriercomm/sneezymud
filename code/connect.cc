@@ -513,7 +513,7 @@ Descriptor::~Descriptor()
   TThing *th, *th2;
   TRoom *rp;
 
-  if (close(socket->sock))
+  if (close(socket->m_sock))
     vlogf(LOG_BUG, "Close() exited with errno (%d) return value in ~Descriptor", errno);
   
   // clear out input/output buffers
@@ -521,7 +521,7 @@ Descriptor::~Descriptor()
 
   // This is a semi-kludge to fix some extra crap we had being sent
   // upon reconnect - Russ 6/15/96
-  if (socket->sock == maxdesc) 
+  if (socket->m_sock == maxdesc) 
     --maxdesc;
 
   // clear up any editing strings
@@ -2842,7 +2842,7 @@ void Descriptor::EchoOn()
 
   char echo_on[6] = {IAC, WONT, TELOPT_ECHO, '\n', '\r', '\0'};
 
-  write(socket->sock, echo_on, 6);
+  write(socket->m_sock, echo_on, 6);
 }
 
 void Descriptor::EchoOff()
@@ -2852,7 +2852,7 @@ void Descriptor::EchoOff()
 
   char echo_off[4] = {IAC, WILL, TELOPT_ECHO, '\0'};
 
-  write(socket->sock, echo_off, 4);
+  write(socket->m_sock, echo_off, 4);
 }
 
 void Descriptor::sendHomeList()
@@ -4284,7 +4284,7 @@ void Descriptor::fdSocketClose(int desc)
 
   for (d = this; d; d = d2) {
     d2 = d->next;
-    if (d->socket->sock == desc) {
+    if (d->socket->m_sock == desc) {
       delete d;
       d = NULL;
     }
@@ -4304,7 +4304,7 @@ void setPrompts(fd_set out)
 
   for (d = descriptor_list; d; d = nextd) {
     nextd = d->next;
-    if ((FD_ISSET(d->socket->sock, &out) && d->output.getBegin()) || d->prompt_mode) {
+    if ((FD_ISSET(d->socket->m_sock, &out) && d->output.getBegin()) || d->prompt_mode) {
       update = 0;
       if (!d->connected && (ch = d->character) && ch->isPc() &&
           !(ch->isPlayerAction(PLR_COMPACT)))
@@ -4589,7 +4589,7 @@ void afterPromptProcessing(fd_set out)
 
   for (d = descriptor_list; d; d = next_d) {
     next_d = d->next;
-    if (FD_ISSET(d->socket->sock, &out) && d->output.getBegin())
+    if (FD_ISSET(d->socket->m_sock, &out) && d->output.getBegin())
       if (d->outputProcessing() < 0) {
         delete d;
         d = NULL;
@@ -5680,7 +5680,7 @@ int Descriptor::inputProcessing()
   bgin = strlen(raw);
 
   do {
-    if ((thisround = read(socket->sock, raw + bgin + sofar,
+    if ((thisround = read(socket->m_sock, raw + bgin + sofar,
                           4096 - (bgin + sofar) - 1)) > 0) {
       sofar += thisround;
     } else {

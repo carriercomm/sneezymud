@@ -1261,6 +1261,22 @@ int TThing::visibility() const
       if (tbt->roomp->isForestSector())
         cbs += 5;
     }
+
+  // shadowy eq
+    int eqbonus=0, j;
+    TObj *to;
+    for (j = MIN_WEAR; j < MAX_WEAR; j++) {
+      TThing *tt = tbt->equipment[j];
+      if((to=dynamic_cast<TObj *>(tt)) && to->isObjStat(ITEM_SHADOWY)){
+	// silly to use getVolume; that'd make ogres sneakier than elves
+	eqbonus+=race_vol_constants[j+1];
+      }
+    }
+    if(tbt->isAffected(AFF_SNEAK) || tbt->isAffected(AFF_HIDE))
+      cbs += (eqbonus/2000);
+    else
+      cbs += (eqbonus/6000);
+
   }
 
   if (roomp->isForestSector())

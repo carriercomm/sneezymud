@@ -123,7 +123,7 @@ spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSl
         break;
 
       default:
-        sprintf(tStringChar, "Your stab to $N's %s ceasing their existance!", tStLimb.c_str());
+        sprintf(tStringChar, "Your stab to $N's %s ceases their existance!", tStLimb.c_str());
         sprintf(tStringVict, "$n stabs you in your %s, ceasing your existance!", tStLimb.c_str());
         sprintf(tStringOthr, "$n stabs $N in $S %s, ceasing their existance!", tStLimb.c_str());
         break;

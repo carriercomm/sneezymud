@@ -263,8 +263,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
         sprintf(buf, "%s's forehead has been caved in by some massive force.", namebuf);
         break;
       case SPELL_GRANITE_FISTS:
-        sprintf(buf, "It appears %s was punched incredibly hard by someone with a hard hand.",
-           getName());
+        sprintf(buf, "It appears %s was punched incredibly hard by someone with a hard hand.", getName());
         break;
       case SPELL_ENERGY_DRAIN:
       case SPELL_SYNOSTODWEOMER:
@@ -720,7 +719,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SKILL_PIERCE_SPEC:
       case SKILL_BAREHAND_SPEC:
       case SKILL_RANGED_SPEC:
-      case SKILL_BOW:
+      case SKILL_RANGED_PROF:
       case SKILL_FAST_LOAD:
       case SKILL_SHARPEN:
       case SKILL_DULL:

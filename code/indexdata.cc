@@ -296,8 +296,8 @@ void generate_obj_index()
 
     while(extra_row && atoi(extra_row[0])==tmpi->virt){
       new_descr = new extraDescription();
-      new_descr->keyword = mud_str_dup(row[1]);
-      new_descr->description = mud_str_dup(row[2]);
+      new_descr->keyword = mud_str_dup(extra_row[1]);
+      new_descr->description = mud_str_dup(extra_row[2]);
       new_descr->next = tmpi->ex_description;
       tmpi->ex_description = new_descr;
 

@@ -322,8 +322,8 @@ dirTypeT TBeing::dirTrack(TBeing *vict)
     }
   }
 
-  if ((GetMaxLevel() >= MIN_GLOB_TRACK_LEV) ||
-      affectedBySpell(SPELL_TRAIL_SEEK)) {
+  if ((GetMaxLevel() >= MIN_GLOB_TRACK_LEV) || affectedBySpell(SPELL_TRAIL_SEEK)
+      || IS_SET(specials.act, ACT_HUNTING)) {
     code = choose_exit_global(in_room, vict->in_room, hunt_dist);
   } else
     code = choose_exit_in_zone(in_room, vict->in_room, hunt_dist);

@@ -192,11 +192,11 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
           // Guess we have a hunt target, lets find them.
           if (ch->isImmortal())
             code = choose_exit_global(ch->in_room, ch->specials.hunting->in_room, -ch->hunt_dist);
-          else if ((ch->GetMaxLevel() < MIN_GLOB_TRACK_LEV) ||
-                   ch->affectedBySpell(SPELL_TRAIL_SEEK))
-            code = choose_exit_in_zone(ch->in_room, ch->specials.hunting->in_room, ch->hunt_dist);
-          else
+          else if ((ch->GetMaxLevel() >= MIN_GLOB_TRACK_LEV) || ch->affectedBySpell(SPELL_TRAIL_SEEK)
+		   || !ch->isPc())
             code = choose_exit_global(ch->in_room, ch->specials.hunting->in_room, ch->hunt_dist);
+          else
+            code = choose_exit_in_zone(ch->in_room, ch->specials.hunting->in_room, ch->hunt_dist);
         }
         // This is actually checked in track(), which should have been called before
         // us.  But you never know, bad things Do happen.

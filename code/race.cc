@@ -285,8 +285,10 @@ void Race::initRace(const char *whichRace)
   // into the appropriate data member.
   // COSMO STRING
   string buf_string;
+  const char *buf2;
+  
   while (fgets(buf, 256, raceFile)) {
-    const char * buf2 = one_argument(buf, keyword);
+    buf2 = one_argument(buf, keyword);
     strcpy(buf, buf2);
     if (!keyword || !*keyword || *keyword == '#')
       continue;

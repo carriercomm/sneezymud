@@ -326,7 +326,6 @@ int TPerson::hitGain()
 
   stats.hit_gained_attempts++;
   stats.hit_gained += gain;
-
   return (gain);
 }
 

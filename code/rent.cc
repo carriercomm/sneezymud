@@ -3606,12 +3606,12 @@ void chargeRent(const char *who)
       vlogf(LOG_BUG,"ERROR: %s   daily cost: %d    days: %d    secs: %d    total: %d",h.owner,h.total_cost,days_passed,secs_lost,-total);
     }
 
-    if (total > (h.gold_left + pd.points.bankmoney)) {
+    if (total > (h.gold_left + pd.bankmoney)) {
       vlogf(LOG_MISC, "   %s will run out of money on login.", h.owner);
       vlogf(LOG_MISC, "   %s had %d total cost and %d gold left(including bank)",
-                h.owner, total, (h.gold_left + pd.points.bankmoney));
-      pd.points.money = 0;
-      pd.points.bankmoney = 0;
+                h.owner, total, (h.gold_left + pd.bankmoney));
+      pd.money = 0;
+      pd.bankmoney = 0;
       pd.load_room = ROOM_NOWHERE;
       if (!noteLimitedItems(fp, who, h.version, immortal)) {
         vlogf(LOG_BUG, "cannot count (2) limited items for %s", h.owner);
@@ -3644,7 +3644,7 @@ void chargeRent(const char *who)
         vlogf(LOG_SILENT, "   same day %d coin update of %s", total, h.owner);
 #endif
 
-      vlogf(LOG_PIO, "   charged %s %d talens rent.  (%d per day)(left: %d)(bank: %d)", h.owner, total, h.total_cost, h.gold_left, pd.points.bankmoney);
+      vlogf(LOG_PIO, "   charged %s %d talens rent.  (%d per day)(left: %d)(bank: %d)", h.owner, total, h.total_cost, h.gold_left, pd.bankmoney);
     }
 #endif
   }

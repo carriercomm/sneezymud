@@ -2244,6 +2244,10 @@ void TBeing::makeRentNote(TBeing *recip)
     sprintf(buf, "Daily Rent Cost : %d\n\r",
                max((int) ((cost.total_cost-credit)*gold_modifier[GOLD_RENT]), 0));
     tStBuffer += buf;
+    sprintf(buf, "Total Days Rentable: On-Hand: %d / Total: %d\n\r",
+            (int) (getMoney() / ((cost.total_cost - credit) * gold_modifier[GOLD_RENT])),
+            (int) ((getMoney() + getBank()) / ((cost.total_cost - credit) * gold_modifier[GOLD_RENT])));
+    tStBuffer += buf;
   }
 
   // semi-weird : we want the note to have the summary, the itemized list,

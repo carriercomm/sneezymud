@@ -234,3 +234,108 @@ string TOpenContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
   return tString;                                             
 }                                                             
 
+void TOpenContainer::putMoneyInto(TBeing *ch, int amount)
+{
+  if (isClosed()) {
+    act("$p is closed.", FALSE, ch, this, 0, TO_CHAR);
+    return;
+  }
+  ch->sendTo("OK.\n\r");
+
+  act("$n puts some money into $p.", FALSE, ch, this, 0, TO_ROOM);
+  *this += *create_money(amount);
+  ch->addToMoney(-amount, GOLD_INCOME);
+  if (ch->fight())
+    ch->addToWait(combatRound(1 + amount/5000));
+  ch->doSave(SILENT_YES);
+}
+
+int TOpenContainer::openMe(TBeing *ch)
+{
+  char buf[256];
+
+  if (!isClosed()) {
+    ch->sendTo("But it's already open!\n\r");
+    return FALSE;
+  } else if (!isCloseable() && !isClosed()) {
+    ch->sendTo("You can't do that.\n\r");
+    return FALSE;
+  } else if (isContainerFlag(CONT_LOCKED)) {
+    ch->sendTo("It seems to be locked.\n\r");
+    return FALSE;                                             
+  } else if (isContainerFlag(CONT_TRAPPED) ||                 
+             !isContainerFlag(CONT_EMPTYTRAP) ||              
+             isContainerFlag(CONT_GHOSTTRAP)) {               
+    if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {               
+      if (detectTrapObj(ch, this) || isContainerFlag(CONT_GHOSTTRAP)) {      
+        sprintf(buf, "You start to open $p, but then notice an insidious %s trap...",
+              good_uncap(trap_types[getContainerTrapType()]).c_str());
+        act(buf, TRUE, ch, this, NULL, TO_CHAR);
+
+        return FALSE;
+      } else if (!isContainerFlag(CONT_TRAPPED) &&
+                 !bSuccess(ch, ch->getSkillValue(SKILL_DETECT_TRAP), SKILL_DETECT_TRAP)) {
+        setContainerTrapType(doorTrapT(::number((DOOR_TRAP_NONE + 1), (MAX_TRAP_TYPES - 1))));
+        setContainerTrapDam(0);
+        addContainerFlag(CONT_GHOSTTRAP);
+
+        sprintf(buf, "You start to open $p, but then notice an insidious %s trap...",
+                good_uncap(trap_types[getContainerTrapType()]).c_str());
+        act(buf, TRUE, ch, this, NULL, TO_CHAR);
+
+        return FALSE;
+      }
+    }
+    act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
+    act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);
+    remContainerFlag(CONT_CLOSED);
+    remContainerFlag(CONT_GHOSTTRAP);
+    addContainerFlag(CONT_EMPTYTRAP);
+
+    if (isContainerFlag(CONT_TRAPPED)) {
+      int rc = ch->triggerContTrap(this);
+      int res = 0;
+      if (IS_SET_DELETE(rc, DELETE_ITEM))
+        ADD_DELETE(res, DELETE_THIS);
+
+      if (IS_SET_DELETE(rc, DELETE_THIS))
+        ADD_DELETE(res, DELETE_VICT);
+
+      return res;
+    }
+
+    return TRUE;
+  } else {
+    remContainerFlag(CONT_CLOSED);
+    remContainerFlag(CONT_GHOSTTRAP);
+    addContainerFlag(CONT_EMPTYTRAP);
+    act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
+    act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);
+    return TRUE;
+  }
+}
+
+int TOpenContainer::putSomethingInto(TBeing *ch, TThing *obj)
+{
+  int rc = obj->putSomethingIntoContainer(ch, this);
+
+  int ret = 0;
+  if (IS_SET_DELETE(rc, DELETE_THIS))
+    ret |= DELETE_ITEM;
+  if (IS_SET_DELETE(rc, DELETE_ITEM))
+    ret |= DELETE_THIS;
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    ret |= DELETE_VICT;
+
+  return ret;
+}
+
+bool TOpenContainer::getObjFromMeCheck(TBeing *ch)
+{
+  if (isClosed()) {
+    act("$P must be opened first.", 1, ch, 0, this, TO_CHAR);
+    return TRUE;
+  }
+  return FALSE;
+}
+

@@ -25,6 +25,11 @@ int TBeing::doBerserk()
     sendTo("You are unable to work up the bloodlust at this time.\n\r");
     return FALSE;
   }
+  if (affectedBySpell(SKILL_DISGUISE)){
+    sendTo("You can't work up the bloodlust while pretending to be someone else.\n\r");
+    return FALSE;
+  }
+
   rc = berserk(this);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;

@@ -322,6 +322,8 @@ enum territoryT {
   HOME_TER_HOBBIT_WOODLAND,     HOME_TER_HOBBIT_MARITIME,
   MAX_HOME_TERS
 };
+extern territoryT & operator++(territoryT &c, int);
+
 
 enum moneyTypeT {
      GOLD_XFER,

@@ -688,8 +688,8 @@ int disguise(TBeing *caster, char * buffer)
   mob->setWeight(caster->getWeight());
 
   for (statTypeT tStat = MIN_STAT; tStat < MAX_STATS; tStat++) {
-    mob->setStat(STAT_CHOSEN , tStat, caster->getStat(STAT_CHOSEN , tStat));
-    mob->setStat(STAT_NATURAL, tStat, caster->getStat(STAT_NATURAL, tStat));
+    //    mob->setStat(STAT_CHOSEN , tStat, caster->getStat(STAT_CHOSEN , tStat));
+    //    mob->setStat(STAT_NATURAL, tStat, caster->getStat(STAT_NATURAL, tStat));
     mob->setStat(STAT_CURRENT, tStat, caster->getStat(STAT_CURRENT, tStat));
   }
 

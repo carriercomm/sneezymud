@@ -575,8 +575,8 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
 
   strcat(buf, message);
 
-  fprintf(stderr, "%2.2d%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
-          this_time->tm_year, this_time->tm_mon + 1, this_time->tm_mday,
+  fprintf(stderr, "%4.4d%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
+          this_time->tm_year + 1900, this_time->tm_mon + 1, this_time->tm_mday,
           this_time->tm_hour, this_time->tm_min, this_time->tm_sec, buf);
 
   if (tError >= 0)

@@ -93,14 +93,21 @@ class lag_data
     time_t lagstart[10];
     time_t lagtime[10];
     unsigned long lagcount[10];
+    time_t mob_time;
+    unsigned int mob_count;
 
   lag_data() :
     high(0),
     low(99999),
     total(0),
     current(0),
-    count(0)
+    count(0),
+    mob_time(0),
+    mob_count(0),
   {
+    memset(&lagstart, 0, sizeof(lagstart));
+    memset(&lagtime, 0, sizeof(lagtime));
+    memset(&lagcount, 0, sizeof(lagcount));
   }
 };
 extern lag_data lag_info;

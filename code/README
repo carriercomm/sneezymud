@@ -1,3 +1,8 @@
+01-27-00 - Bat
+- For clarity and consistency with other obj classes, I renamed:
+  TContainer to TBaseContainer
+  TRealContainer to TOpenContainer
+
 01-20-00 - Bat
 - Found some whacky time-related code caused by the confusion over "ticks"
   versus "mudhours".  I changed some things in comm.h so we have

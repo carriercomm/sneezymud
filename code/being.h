@@ -1747,7 +1747,7 @@ class TBeing : public TThing {
     bool isPet() const;
     bool isElemental() const;
     bool isCharm() const;
-    bool isZombie() const;
+    bool isThrall() const;
     int doBash(const char *, TBeing *);
     virtual void doSnoop(const char *);
     virtual int doAt(const char *, bool);

@@ -308,7 +308,8 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
 
           tAff.type     = AFFECT_PLAYERLOOT;
           tAff.duration = (24 * UPDATES_PER_MUDHOUR);
-          thief->affectTo(&tAff);
+          thief->affectJoin(thief, &tAff, AVG_DUR_NO, AVG_EFF_NO);
+          vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (4)", thief->getName());
         }
 
         thief->doSave(SILENT_YES);

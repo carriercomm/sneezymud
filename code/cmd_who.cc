@@ -7,6 +7,8 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdsneezy.h"
+#include "statistics.h"
+#include "games.h"
 
 void TBeing::parseTitle(char *arg, Descriptor *)
 {

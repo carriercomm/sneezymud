@@ -2058,7 +2058,7 @@ void reset_zone(int zone, bool bootTime)
           if (obj_index[rs.arg1].number < obj_index[rs.arg1].max_exist) {
             obj = read_object(rs.arg1, REAL);
             obj_to = get_obj_num(rs.arg3);
-            if (obj_to && obj && dynamic_cast<TContainer *>(obj_to)) {
+            if (obj_to && obj && dynamic_cast<TBaseContainer *>(obj_to)) {
               *obj_to += *obj;
               obj->onObjLoad();
               last_cmd = 1;
@@ -2106,7 +2106,7 @@ void reset_zone(int zone, bool bootTime)
               rp->dir_option[rs.arg2]->trap_dam = rs.arg4;
             }
           } else {
-            TRealContainer *trc = dynamic_cast<TRealContainer *>(obj);
+            TOpenContainer *trc = dynamic_cast<TOpenContainer *>(obj);
             if (trc) {
               trc->addContainerFlag(CONT_TRAPPED);
               trc->setContainerTrapType(mapFileToDoorTrap(rs.arg1));

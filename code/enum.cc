@@ -1031,6 +1031,8 @@ int mapWizPowerToFile(wizPowerT att)
       return 107;
     case POWER_SETSEV_IMM:
       return 108;
+    case POWER_IDLED:
+      return 109;
     case MAX_POWER_INDEX:
       break;
   }
@@ -1259,6 +1261,8 @@ wizPowerT mapFileToWizPower(int att)
       return POWER_SETSEV;
     case 108:
       return POWER_SETSEV_IMM;
+    case 109:
+      return POWER_IDLED;
     default:
       break;
   }

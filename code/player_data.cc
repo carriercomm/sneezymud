@@ -837,7 +837,11 @@ void do_the_player_stuff(const char *name)
   char *tmp;
   int i,
       tLevel = -1;
+  bool isGagged = false;
   FILE *fp = NULL;
+  bool tPowers[MAX_POWER_INDEX];
+
+  memset(&tPowers, 0, sizeof(tPowers));
 
   // skip toggle data
   if (strlen(name) > 7 && !strcmp(&name[strlen(name) - 7], ".toggle"))
@@ -869,15 +873,49 @@ void do_the_player_stuff(const char *name)
 
       while (fscanf(fp, "%u ", &tValue) == 1) {
         wizPowerT wpt = mapFileToWizPower(tValue);
+
+        tPowers[wpt] = true;
+
         if (wpt == POWER_BUILDER)
           tLevel = 3;
         else if (wpt == POWER_GOD)
           tLevel = 2;
         else if (wpt == POWER_WIZARD)
           tLevel = 1;
+        else if (wpt == POWER_IDLED && !tPowers[POWER_WIZARD]) {
+          tLevel = 0;
+          isGagged = true;
+        }
       }
 
       fclose(fp);
+
+      charFile tChar;
+
+      if (!tPowers[POWER_WIZARD] && load_char(longbuf, &tChar)) {
+        double tMIdle = (60.0 * 60.0 * 24.0 * 30.0);
+        int tCount = 0;
+        wizPowerT tWiz = MIN_POWER_INDEX;
+
+        if (difftime(time(0), tChar.last_logon) >= tMIdle) {
+          tPowers[POWER_IDLED] = true;
+          isGagged = true;
+          tLevel = 0;
+
+          vlogf(LOG_LOW, "Immortal %s has been idled.", longbuf);
+
+          if ((fp = fopen(tString, "w"))) {
+            for (; tWiz < MAX_POWER_INDEX; tWiz++)
+              if (tPowers[tWiz]) {
+                tCount++;
+                fprintf(fp, "%u ", mapWizPowerToFile(tWiz));
+              }
+
+            fclose(fp);
+          } else
+            vlogf(LOG_FILE, "Unable to re-open [%s] for wizlist.", name);
+        }
+      }
 
       if (tLevel == 1) {
         // vlogf(LOG_MISC, "Adding Creator: %s", longbuf);
@@ -897,7 +935,7 @@ void do_the_player_stuff(const char *name)
         sprintf(tmp, "%s %s", wiz->buf3, longbuf);
         delete [] wiz->buf3;
         wiz->buf3 = tmp;
-      } else
+      } else if (!isGagged)
         vlogf(LOG_BUG, "%s has powerfile but doesn't have a power title.", longbuf);
 
     } else

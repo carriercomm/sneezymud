@@ -1112,6 +1112,12 @@ int TPerson::doAt(const char *argument, bool isFarlook)
     return FALSE;
   }
 
+  if (hasWizPower(POWER_IDLED) && real_roomp(location) &&
+      !real_roomp(location)->inImperia()) {
+    sendTo("I'm afraid you can not do this right now.\n\r");
+    return FALSE;
+  }
+
   original_loc = in_room;
   --(*this);
   if (riding) {

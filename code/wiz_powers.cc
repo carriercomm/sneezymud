@@ -141,6 +141,18 @@ bool TPerson::hasWizPower(wizPowerT value) const
     return FALSE;
   }
 
+  if (wizPowers[POWER_IDLED] && !wizPowers[POWER_WIZARD])
+    switch (value) {
+      case POWER_BUILDER:
+      case POWER_GOD:
+      case POWER_WIZARD:
+      case POWER_GOTO:
+      case POWER_IDLED:
+        break;
+      default:
+        return false;
+    }
+
   return (wizPowers[value]);
 }
 
@@ -173,6 +185,9 @@ void TPerson::saveWizPowers()
   FILE *fp;
 
   sprintf(caFilebuf, "player/%c/%s.wizpower", LOWER(name[0]), lower(name).c_str());
+
+  if (hasWizPower(POWER_IDLED))
+    return;
 
   if (!(fp = fopen(caFilebuf, "w")))
     return;
@@ -528,6 +543,8 @@ const string getWizPowerName(wizPowerT wpt)
       return "Setsev";
     case POWER_SETSEV_IMM:
       return "Setsev-Advanced";
+    case POWER_IDLED:
+      return "Inactive";
     case MAX_POWER_INDEX:
       break;
   }

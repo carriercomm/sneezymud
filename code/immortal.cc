@@ -985,6 +985,7 @@ void TPerson::doTrans(const char *argument)
 	sendTo("You are not allowed to transfer that being.\n\r");
 	return;
       }
+
       // used to track down: XXX trans'd me outta inn and got me killed!
       vlogf(LOG_SILENT, "%s transferring %s from %d to %d.", getName(), victim->getName(), victim->inRoom(), inRoom());
 
@@ -1206,10 +1207,14 @@ int TBeing::doGoto(const string & argument)
         sendTo("No room exists with that number.\n\r");
         return FALSE;
       } else {
+
 	if (!limitPowerCheck(CMD_GOTO, loc_nr)) {
 	  sendTo("You are currently forbidden from going there.\n\r");
 	  return FALSE;
 	} else if (loc_nr < WORLD_SIZE) {
+
+
+
           sendTo("You form order out of chaos.\n\r");
           CreateOneRoom(loc_nr);
         } else {
@@ -1588,10 +1593,12 @@ void TPerson::doSwitch(const char *argument)
       return;
     }
 
+
     if(!limitPowerCheck(CMD_SWITCH, tBeing->number)) {
       sendTo("You're not allowed to switch/load that mobile.\n\r");
       return;
     }
+
 
     *roomp += *tBeing;
     (dynamic_cast<TMonster *>(tBeing))->oldRoom = inRoom();
@@ -1613,6 +1620,7 @@ void TPerson::doSwitch(const char *argument)
     sendTo("You're not allowed to switch into that mobile.\n\r");
     return;
   }
+
 
 
   if (this == tBeing) {
@@ -2162,10 +2170,12 @@ void TPerson::doForce(const char *argument)
     return;
       }
     }
+
     if (!limitPowerCheck(CMD_FORCE, (vict->isPc()) ? -1 : vict->number)) {
       sendTo("You are not allowed to force that being.\n\r");
       return;
     }
+
     if ((GetMaxLevel() <= vict->GetMaxLevel()) && dynamic_cast<TPerson *>(vict))
       sendTo("Oh no you don't!!\n\r");
     else {

@@ -277,6 +277,7 @@ void bootDb(void)
   bootPulse("Processing corpse-save files.");
   processCorpseFiles();
 
+
   bootPulse("Booting mail system:", false);
   if (!scan_file(SILENT_NO)) {
     vlogf(LOG_MISC, "   Mail system error -- mail system disabled!");

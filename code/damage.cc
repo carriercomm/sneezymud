@@ -573,7 +573,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
                 ((v->GetMaxLevel() <= 5 && v != this) ? "NEWBIE " : ""));
           total_player_kills++;
 
-	  if(this!=v){
+	  if(this!=v && this->roomp && !this->roomp->isRoomFlag(ROOM_ARENA)){
 	    affectedData aff;
 	    aff.type = AFFECT_PLAYERKILL;
 	    aff.duration = 24 * UPDATES_PER_TICK;

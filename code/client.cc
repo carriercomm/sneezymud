@@ -605,28 +605,34 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       clientCreateChar(str2);
       break;
     case CLIENT_NORMAL:
-      if (character->isCombatMode(ATTACK_BERSERK)) {
-        character->sendTo("You are berserking.\n\r");
-        break;
+      if (character) {
+        if (character->isCombatMode(ATTACK_BERSERK)) {
+          character->sendTo("You are berserking.\n\r");
+          break;
+        }
+        character->sendTo("Setting attack mode to %snormal%s\n\r", character->redBold(), character->norm());
+        character->setCombatMode(ATTACK_NORMAL);
       }
-      character->sendTo("Setting attack mode to %snormal%s\n\r", character->redBold(), character->norm());
-      character->setCombatMode(ATTACK_NORMAL);
       break;
     case CLIENT_OFFENSIVE:
-      if (character->isCombatMode(ATTACK_BERSERK)) {
-        character->sendTo("You are berserking.\n\r");
-        break;
+      if (character) {
+        if (character->isCombatMode(ATTACK_BERSERK)) {
+          character->sendTo("You are berserking.\n\r");
+          break;
+        }
+        character->sendTo("Setting attack mode to %soffensive%s\n\r", character->redBold(), character->norm());
+        character->setCombatMode(ATTACK_OFFENSE);
       }
-      character->sendTo("Setting attack mode to %soffensive%s\n\r", character->redBold(), character->norm());
-      character->setCombatMode(ATTACK_OFFENSE);
       break;
     case CLIENT_DEFENSIVE:
-      if (character->isCombatMode(ATTACK_BERSERK)) {
-        character->sendTo("You are berserking.\n\r");
-        break;
+      if (character) {
+        if (character->isCombatMode(ATTACK_BERSERK)) {
+          character->sendTo("You are berserking.\n\r");
+          break;
+        }
+        character->sendTo("Setting attack mode to %sdefensive%s\n\r", character->redBold(), character->norm());
+        character->setCombatMode(ATTACK_DEFENSE);
       }
-      character->sendTo("Setting attack mode to %sdefensive%s\n\r", character->redBold(), character->norm());
-      character->setCombatMode(ATTACK_DEFENSE);
       break;
     case CLIENT_CHECKCHARNAME:
       strcpy(buf, nextToken('|', 255, str2).c_str());

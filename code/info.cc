@@ -4671,6 +4671,11 @@ void TBeing::doWorld()
   sendTo("Total number of registered players:%s           %d%s\n\r", 
          blue(), player_count, norm());
 
+  if (hasWizPower(POWER_WIZARD)) {
+    sendTo("Total number of active players:%s           %d%s\n\r", 
+           blue(), active_player, norm());
+  }
+
   char timebuf[256];
 
   strcpy(timebuf, ctime(&stats.first_login));

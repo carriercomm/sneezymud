@@ -133,7 +133,7 @@ int castIdentify(TBeing *caster, TObj *obj)
     return TRUE;
 }
 
-static string identifyBeingStuff(const TBeing *caster, const TBeing *victim)
+static string identifyBeingStuff(const TBeing *caster, const TBeing *victim, showMeT show)
 {
   string str;
   char buf[256];
@@ -180,19 +180,7 @@ static string identifyBeingStuff(const TBeing *caster, const TBeing *victim)
   str += buf;
   str += "\n\r";
 
-  affectedData *aff;
-  for (aff = victim->affected; aff; aff = aff->next) {
-    if (aff->type == AFFECT_PET) {
-      sprintf(buf, "pet of: '%s'\n\r", ((char *) aff->be));
-      str += buf;
-    } else if (aff->type == AFFECT_THRALL) {
-      sprintf(buf, "thrall of: '%s'\n\r", ((char *) aff->be));
-      str += buf;
-    } else if (aff->type == AFFECT_ORPHAN_PET) {
-      sprintf(buf, "orphan pet of: '%s'\n\r", ((char *) aff->be));
-      str += buf;
-    }
-  }
+  str += caster->describeAffects(victim, show);
 
   return str;
 }
@@ -201,7 +189,7 @@ int identify(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
   if (bSuccess(caster, bKnown, SPELL_IDENTIFY)) {
     if (caster->desc) {
-      string str = identifyBeingStuff(caster, victim);
+      string str = identifyBeingStuff(caster, victim, DONT_SHOW);
       str += caster->describeImmunities(victim, bKnown);
 
       caster->desc->page_string(str.c_str());
@@ -350,7 +338,7 @@ int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
   if (bSuccess(caster, bKnown, SPELL_DIVINATION)) {
     if (caster->desc) {
-      string str = identifyBeingStuff(caster, victim);
+      string str = identifyBeingStuff(caster, victim, SHOW_ME);
 
       char buf[256];
       for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {

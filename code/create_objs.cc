@@ -2282,6 +2282,16 @@ void change_weapon_value1(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT
   o->changeBaseWeaponValue1(ch, arg, type);
 }
 
+void change_weapon_value2(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT type)
+{
+  //o->changeBaseWeaponValue2(ch, arg, type);
+}
+
+void change_weapon_value3(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT type)
+{
+  //  o->changeBaseWeaponValue3(ch, arg, type);
+}
+
 void change_trap_value3(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT type)
 {
   o->changeTrapValue3(ch, arg, type);
@@ -2794,6 +2804,16 @@ void obj_edit(TBeing *ch, const char *arg)
     case CHANGE_WEAPON_MAX_SHARP:
     case CHANGE_WEAPON_SHARP:
       change_weapon_value1(ch, ch->desc->obj, arg, ENTER_REENTRANT);
+      return;
+    case CHANGE_WEAPON_VALUE2:
+    case CHANGE_WEAPON_DAMAGE_LEV:
+    case CHANGE_WEAPON_TYPE:
+      change_weapon_value2(ch, ch->desc->obj, arg, ENTER_REENTRANT);
+      return;
+    case CHANGE_WEAPON_VALUE3:
+    case CHANGE_WEAPON_DAMAGE_PREC:
+    case CHANGE_WEAPON_QUALITY:
+      change_weapon_value3(ch, ch->desc->obj, arg, ENTER_REENTRANT);
       return;
     case CHANGE_MAGICITEM_LEVEL:
     case CHANGE_MAGICITEM_LEARNEDNESS:

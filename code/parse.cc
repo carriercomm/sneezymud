@@ -1491,6 +1491,7 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
 	case CMD_RESP_MOVETO:
 	case CMD_RESP_DESTINATION:
         case CMD_GENERIC_PULSE:
+        case CMD_GENERIC_QUICK_PULSE:
         case CMD_GENERIC_CREATED:
         case CMD_GENERIC_RESET:
         case CMD_GENERIC_INIT:

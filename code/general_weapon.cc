@@ -82,8 +82,12 @@ string TGenWeapon::statObjInfo() const
 
   sprintf(buf, "Type : %s (%d)",
                attack_hit_text[(getWtype() - TYPE_MIN_HIT)].singular,
-               getWeaponType());
+	  getWeaponType());
   a += buf;
+
+  //  sprintf(buf, "New weapons system stats:\n\r Weapon type: %d\n\r Weapon quality: %d\n\r",
+  //	  getWeapType(),
+  //	  getWeapQual());
 
   return a;
 }

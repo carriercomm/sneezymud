@@ -25,7 +25,8 @@ extern void change_bed_value1(TBeing *, TObj *, const char *, editorEnterTypeT);
 extern void change_trap_value2(TBeing *, TObj *, const char *, editorEnterTypeT);
 extern void change_trap_value3(TBeing *, TObj *, const char *, editorEnterTypeT);
 extern void change_weapon_value1(TBeing *, TObj *, const char *, editorEnterTypeT);
-
+extern void change_weapon_value2(TBeing *, TObj *, const char *, editorEnterTypeT);
+extern void change_weapon_value3(TBeing *, TObj *, const char *, editorEnterTypeT);
 
 
 enum editorChangeTypeT {
@@ -169,6 +170,12 @@ enum editorChangeTypeT {
      CHANGE_WEAPON_VALUE1,
      CHANGE_WEAPON_MAX_SHARP,
      CHANGE_WEAPON_SHARP,
+     CHANGE_WEAPON_VALUE2,
+     CHANGE_WEAPON_DAMAGE_LEV,
+     CHANGE_WEAPON_TYPE,
+     CHANGE_WEAPON_VALUE3,
+     CHANGE_WEAPON_DAMAGE_PREC,
+     CHANGE_WEAPON_QUALITY,
      CHANGE_OBJ_SPEC,
      CHANGE_OBJ_MAX_EXIST,
      CHANGE_MAGICITEM_VALUE1,

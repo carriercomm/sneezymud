@@ -1715,6 +1715,11 @@ int TBeing::doDonate(const char *argument)
   int num;
   int p;
   char buf[256];
+  // this next if controls if people can donate or not - dash
+#if 1
+  sendTo("The donate command has been disabled.\n\r");
+  return FALSE;
+#endif
 
   only_argument(argument, arg);
   if (!*arg) {

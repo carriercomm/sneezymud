@@ -173,6 +173,11 @@ applyTypeT mapFileToApply(int att)
   return APPLY_NONE;
 }
 
+territoryT & operator++(territoryT &c, int)
+{
+  return c = (c == MAX_HOME_TERS) ? HOME_TER_NONE : territoryT(c+1);
+}
+
 applyTypeT & operator++(applyTypeT &c, int)
 {
   return c = (c == MAX_APPLY_TYPES) ? MIN_APPLY : applyTypeT(c+1);

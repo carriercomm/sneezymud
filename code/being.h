@@ -1261,7 +1261,7 @@ class TBeing : public TThing {
     void doScratch(const char *);
     void doPee(const char *);
     void doPoint(const char *);
-    void doJump(const char *);
+    int doJump(const char *);
     int doPick(const char *);
     int doSearch(const char *);
     int doSpy();

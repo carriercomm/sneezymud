@@ -1356,7 +1356,8 @@ void TBeing::statBeing(TBeing *k)
         sprintf(buf + strlen(buf), "renew %i\n\r", aff->renew);
         break;
       case AFFECT_COMBAT:
-        sprintf(buf + strlen(buf), "Combat: '%s'\n\r", aff->be->getName());
+        sprintf(buf + strlen(buf), "Combat: '%s'\n\r", 
+            aff->be ? aff->be->getName() : "No aff->be!");
         sprintf(buf + strlen(buf), 
                   "     Expires in %d updates.  Status = %d.\n\r",
             aff->duration , aff->level);

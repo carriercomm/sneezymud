@@ -2757,10 +2757,14 @@ void TBeing::doWorld()
          blue(), accStat.player_count, norm());
 
   if (hasWizPower(POWER_WIZARD)) {
-    sendTo("Total number of active accounts:%s              %d%s\n\r", 
-           blue(), accStat.active_account, norm());
-    sendTo("Total number of active players:%s               %d%s\n\r", 
-           blue(), accStat.active_player, norm());
+    sendTo("Total number of 7-day active accounts:%s        %d%s\n\r", 
+           blue(), accStat.active_account7, norm());
+    sendTo("Total number of 7-day active players:%s         %d%s\n\r", 
+           blue(), accStat.active_player7, norm());
+    sendTo("Total number of 30-day active accounts:%s       %d%s\n\r", 
+           blue(), accStat.active_account30, norm());
+    sendTo("Total number of 30-day active players:%s        %d%s\n\r", 
+           blue(), accStat.active_player30, norm());
   }
 
   char timebuf[256];

@@ -640,7 +640,19 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 
         // create grave marker
         if (!v->inGrimhaven() && !inPkZone()) {
+#if 1
+// builder port uses stripped down database which was causing problems
+// hence this setup instead.
+          int robj = real_object(OBJ_GENERIC_GRAVE);
+          if (robj < 0 || robj >= (signed int) obj_index.size()) {
+            vlogf(LOG_BUG, "damageEpilog(): No object (%d) in database!", OBJ_GENERIC_GRAVE);
+            return false;
+          }
+
+          TObj * grave = read_object(robj, REAL);
+#else
           TObj * grave = read_object(OBJ_GENERIC_GRAVE, VIRTUAL);
+#endif
           if (grave) {
             string graveDesc = "Here lies ";
             graveDesc += v->getName();

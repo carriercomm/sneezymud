@@ -187,8 +187,10 @@ spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSl
     act(tStringVict, FALSE, tThief, tWeapon, tSucker, TO_VICT);
     act(tStringOthr, FALSE, tThief, tWeapon, tSucker, TO_NOTVICT);
 
-    if (tStringMess[0] != '\0')
+    if (tStringMess[0] != '\0') {
+      act(tStringMess, FALSE, tThief, tWeapon, tSucker, TO_CHAR);
       act(tStringMess, FALSE, tThief, tWeapon, tSucker, TO_ROOM);
+    }
 
     if (tLimb == WEAR_NECK)
       if (tDamageType == DAMAGE_BEHEADED)
@@ -350,11 +352,13 @@ static int stab(TBeing *thief, TBeing * victim)
     thief->sendTo("You are too tired to stab.\n\r");
     return FALSE;
   }
+  /*
   if (IS_SET(victim->specials.act, ACT_GHOST)) {
     // mostly because kill is "you slit the throat", etc.
     thief->sendTo("Ghosts can not be stabbed!\n\r");
     return FALSE;
   }
+  */
 
   thief->addToMove(-STAB_MOVE);
 
@@ -439,7 +443,7 @@ static int stab(TBeing *thief, TBeing * victim)
     thief->reconcileDamage(victim, 0, SKILL_STABBING);
   }
 
-  return FALSE;
+  return TRUE;
 
   // End of test stab-limb code.
 #else

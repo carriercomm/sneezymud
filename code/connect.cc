@@ -100,7 +100,6 @@ Descriptor::Descriptor(TSocket *s) :
   blockbstart(0),
   blockbend(0),
   last(),
-  poof(),
   deckSize(0),
   prompt_d(),
   plr_act(0),
@@ -155,7 +154,6 @@ Descriptor::Descriptor(const Descriptor &a) :
   blockbstart(a.blockbstart),
   blockbend(a.blockbend),
   last(a.last),
-  poof(a.poof),
   deckSize(a.deckSize),
   prompt_d(a.prompt_d),
   plr_act(a.plr_act),
@@ -227,7 +225,6 @@ Descriptor & Descriptor::operator=(const Descriptor &a)
   blockbstart = a.blockbstart;
   blockbend = a.blockbend;
   last = a.last;
-  poof = a.poof;
   deckSize = a.deckSize;
   prompt_d = a.prompt_d;
   plr_act = a.plr_act;
@@ -2379,7 +2376,9 @@ int TPerson::genericLoadPC()
         player.hometown = ROOM_CS;
       }
     } else {
-      rp = real_roomp((d ? d->office : ROOM_IMPERIA));
+      wizFileRead(); // Needed for office
+
+      rp = real_roomp((desc ? desc->office : ROOM_IMPERIA));
       /*
       if (!strcmp(name, "Bump"))
         rp = real_roomp(3);
@@ -2473,7 +2472,6 @@ int TPerson::genericLoadPC()
       in_room = ROOM_NOWHERE;  // change it so it doesn't error in +=
       *rp += *this;
       player.hometown = ROOM_IMPERIA;
-      wizFileRead();
       if (!isImmortal())   // they turned it off
         doImmortal();
 

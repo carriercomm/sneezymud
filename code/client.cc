@@ -764,6 +764,8 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       if (strlen(aname) >= 10) {
       }
       strcpy(account->name, aname);
+
+
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
       break;
     } 

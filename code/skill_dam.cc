@@ -34,7 +34,13 @@ double getSkillDiffModifier(spellNumT skill)
       amt = 25;
       break;
   }
+#if 1
+  // for time being, make everything "easy".
+  // too much complaining about skill failure, so screw it  - bat 2/3/00
+  return 100;
+#else
   return amt;
+#endif
 }
 
 void getSkillLevelRange(spellNumT skill, int &min_lev, int &max_lev, int adv_learn)

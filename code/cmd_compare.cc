@@ -142,7 +142,7 @@ string compareNoise(TObj *tObj1, TObj *tObj2, TBeing *ch)
   {
     " is incredibly more noisier than ",
     " is much more noisier than ",
-    " is slighy noisier than ",
+    " is slightly noisier than ",
     " makes no more noise than ",
     " makes less noise than ",
     " makes much less noise compared to ",

@@ -30,10 +30,10 @@ static int trapGuardCheck(TBeing *ch)
     else if (IS_SET_DELETE(rc, DELETE_THIS)) {
       delete guard;
       guard = NULL;
-    } else if (!rc)
-      // on the outside chance that the hit fails, send a disrupt message.
-      act("$n disrupts your attempt to make a trap.", FALSE, guard, 0, ch, TO_VICT);
     }
+
+    // force the trap to be disrupted.
+    ch->stopTask();
 
     return true;
   }

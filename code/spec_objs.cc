@@ -2283,7 +2283,7 @@ int daySword(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   TBeing *ch;
   int rc;
 
-  ch = genericWeaponProcCheck(vict, cmd, o, 3);
+  ch = genericWeaponProcCheck(vict, cmd, o, 6);
   if (!ch)
     return FALSE;
 

@@ -4,6 +4,7 @@
   anything But log-low.  Seeing the results of this I can only assume,
   bad lapsos bad, that it was a mistake.  Changed it so it's only
   triggered if they don't have setsev-imm and try to set log-low.
+  Mimic'ed the changes in utility/vlogf also.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

@@ -303,6 +303,11 @@ int TMonster::mobileWander(dirTypeT door)
   if (rider || (riding && riding->horseMaster() != this))
     return 0;
 
+  // let's not go through unrevealed secret doors
+  if (IS_SET(exitp->condition, EX_SECRET) &&
+      IS_SET(exttp->condition, EX_CLOSED))
+    return 0;
+  
   if ((rp->isWaterSector() &&
           !(isFlying() || isLevitating() || isAffected(AFF_SWIM))) ||
       (rp->isVertSector() &&

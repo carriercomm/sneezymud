@@ -2,29 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disease.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/12 00:06:40  lapsos
-// Prevented shopkeepers from getting diseases.
-//
-// Revision 1.2  1999/10/08 18:31:04  peel
-// Disease spreading no longer logged
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "disease.cc" - functions handling disease affects
 //
 ///////////////////////////////////////////////////////////////////////////
@@ -35,17 +12,21 @@
 //  use reconcileDamage to apply damage to victims.
 //  if victim dies, leave victim valid (do not delete) annd return a -1
 
-sbyte DISEASE_INDEX(sbyte d)
+diseaseTypeT affToDisease(affectedData &af)
 {
-  return ((d < 0) ? DISEASE_NULL : ((d >= MAX_DISEASE) ? DISEASE_NULL : d));
+  diseaseTypeT dtt = diseaseTypeT(af.modifier);
+  if (dtt < DISEASE_NULL || dtt >= MAX_DISEASE)
+    dtt = DISEASE_NULL;
+
+  return dtt;
 }
 
 int disease_start(TBeing *victim, affectedData *af)
 {
-  return (*(DiseaseInfo[DISEASE_INDEX(af->modifier)].code)) (victim, DISEASE_BEGUN, af);
+  return (*(DiseaseInfo[affToDisease(*af)].code)) (victim, DISEASE_BEGUN, af);
 }
 
-bool TBeing::hasDisease(int disease) const
+bool TBeing::hasDisease(diseaseTypeT disease) const
 {
   affectedData *aff;
 
@@ -58,7 +39,7 @@ bool TBeing::hasDisease(int disease) const
   return FALSE;
 }
 
-void TBeing::diseaseFrom(int disease)
+void TBeing::diseaseFrom(diseaseTypeT disease)
 {
   affectedData *aff, *anext;
 
@@ -75,7 +56,7 @@ void TBeing::diseaseFrom(int disease)
 
 int TBeing::diseaseStop(affectedData *af)
 {
-  return (*(DiseaseInfo[DISEASE_INDEX(af->modifier)].code)) (this, DISEASE_DONE, af);
+  return (*(DiseaseInfo[affToDisease(*af)].code)) (this, DISEASE_DONE, af);
 }
 
 int disease_null(TBeing *victim, int, affectedData *)
@@ -114,7 +95,7 @@ void spread_affect(TBeing *ch, int chance_to_spread, bool race, bool not_race, a
       continue;
 
     if ((af->type != AFFECT_DISEASE && !v->affectedBySpell(af->type)) ||
-        (af->type == AFFECT_DISEASE && !v->hasDisease(af->modifier))) {
+        (af->type == AFFECT_DISEASE && !v->hasDisease(affToDisease(*af)))) {
 
 #if 0
       vlogf(0, "%s (%s:%d) spreading from %s to %s at %d",

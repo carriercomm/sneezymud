@@ -2351,6 +2351,7 @@ int nightBlade(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   return TRUE;
 }
 
+
 int bloodDrain(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -2373,6 +2374,33 @@ int bloodDrain(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
     return DELETE_VICT;
   return TRUE;
 }
+
+int scirenDrown(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  TBeing *ch;
+  //  int rc, dam;
+
+  ch = genericWeaponProcCheck(vict, cmd, o, 8);
+  if (!ch)
+    return FALSE;
+
+  dam = ::number(4,10);
+  act("$p <1><B>emits a stream of salty water directed at $n's mouth<1>.",
+      0, vict, o, 0, TO_ROOM);
+  act("$p <1><B>emits a stream of salty water directed at your Throat<1>!",
+      0, vict, o, 0, TO_CHAR);
+
+  ch->dropPool(3, LIQ_SALTWATER);
+
+  affectedData aff;
+  aff.type = SPELL_SUFFOCATE;
+  aff.level = 15;
+  aff.duration = 2;  // want this to be a short, short duration -jh        
+
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    return DELETE_VICT;
+  return TRUE;
+}                    
 
 int stoneAltar(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *obj, TObj *)
 {
@@ -2780,6 +2808,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "nightBlade", nightBlade},  
   {TRUE, "Lightning Rod", weaponLightningRod},
   {FALSE, "Jambiya", weaponJambiyaSpecial}, // 50
+  {TRUE, "Sciren's Suffocation", scirenDrown},
 
   {FALSE, "BOGUS", bogusObjProc},  // 52
 };

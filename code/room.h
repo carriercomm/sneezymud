@@ -196,9 +196,9 @@ class TRoom : public TThing {
   public:
     TThing *tBornInsideMe;  // List of mobs born inside me.
 
-    void operator << (      TThing *); // Add a mob to the born list.
-    bool operator |= (const TThing *); // See if a mob is on the born list.
-    void operator >> (const TThing *); // Remove mob from the born list.
+    void operator << (      TThing &); // Add a mob to the born list.
+    bool operator |= (const TThing &); // See if a mob is on the born list.
+    void operator >> (const TThing &); // Remove mob from the born list.
 
 //    WeatherStuff weather;   // not ready yet - bat
     roomDirData *dir_option[MAX_DIR]; // Exits

@@ -754,7 +754,7 @@ int TBeing::doTell(const char *arg, bool visible)
   if (vict->desc && isPc() && vict->canSee(this, INFRA_YES))
     strcpy(vict->desc->last_teller, getName());
 
-  if (desc && inGroup(vict))
+  if (desc && inGroup(*vict))
     desc->talkCount = time(0);
 
   if (vict->desc && (vict->isPlayerAction(PLR_AFK) || (IS_SET(vict->desc->autobits, AUTO_AFK) && (vict->getTimer() >= 5)))) 

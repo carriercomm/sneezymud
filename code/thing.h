@@ -176,7 +176,7 @@ class TThing {
     const string persfname(const TThing *t) const;
     TThing * dismount(positionTypeT);
     void mount(TThing *);
-    bool sameRoom(const TThing *ch) const;
+    bool sameRoom(const TThing &ch) const;
     bool inImperia() const;
     bool inGrimhaven() const;
     bool inLethargica() const;

@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_air.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -513,7 +502,7 @@ int dustStorm(TBeing * caster, int level, byte bKnown, int adv_learn)
       if (!tmp_victim)
         continue;
 
-      if (!caster->inGroup(tmp_victim) && caster != tmp_victim) {
+      if (!caster->inGroup(*tmp_victim) && caster != tmp_victim) {
         act("$N chokes on the dust!", FALSE, caster, NULL, tmp_victim, TO_NOTVICT);
         act("You choke on the dust!", FALSE, tmp_victim, NULL, NULL, TO_CHAR);
         caster->reconcileHurt(tmp_victim, discArray[SPELL_DUST_STORM]->alignMod);
@@ -536,7 +525,7 @@ int dustStorm(TBeing * caster, int level, byte bKnown, int adv_learn)
         if (!tmp_victim)
           continue;
 
-        if (caster->inGroup(tmp_victim) && caster != tmp_victim) {
+        if (caster->inGroup(*tmp_victim) && caster != tmp_victim) {
           act("$N chokes on the dust!", FALSE, caster, NULL, tmp_victim, TO_NOTVICT);
           act("You choke on the dust!", FALSE, tmp_victim, NULL, NULL, TO_CHAR);
           caster->reconcileHurt(tmp_victim, discArray[SPELL_DUST_STORM]->alignMod);
@@ -614,7 +603,7 @@ int tornado(TBeing * caster, int level, byte bKnown, int adv_learn)
 	continue;
 
       if (1) {
-        if (!caster->inGroup(tb) && !tb->isImmortal()) {
+        if (!caster->inGroup(*tb) && !tb->isImmortal()) {
           caster->reconcileHurt(tb, discArray[SPELL_TORNADO]->alignMod);
           act("$n is blasted by the force of the wind!", FALSE, t, NULL, 0, TO_ROOM);
           act("You are blasted by the force of the wind!", FALSE, tb, NULL, NULL, TO_CHAR);
@@ -681,7 +670,7 @@ int tornado(TBeing * caster, int level, byte bKnown, int adv_learn)
 	continue;
 
         if (1) {
-          if (caster->inGroup(tb)) {
+          if (caster->inGroup(*tb)) {
             caster->reconcileHurt(tb, discArray[SPELL_TORNADO]->alignMod);
             act("$n chokes on the dust!", FALSE, tb, NULL, 0, TO_ROOM);
             act("You choke on the dust!", FALSE, tb, NULL, NULL, TO_CHAR);
@@ -1009,7 +998,7 @@ int antigravity(TBeing *caster, int, affectedData *aff, byte bKnown)
       vict = dynamic_cast<TBeing *>(t);
       if (!vict)
         continue;
-      if ((caster == vict) || (caster->inGroup(vict))) {
+      if ((caster == vict) || (caster->inGroup(*vict))) {
         if (vict->isAffected(AFF_FLYING) || vict->isAffected(AFF_LEVITATING)) {
           caster->sendTo("$n is already affected by an anti gravity spell!\n\r");
           caster->nothingHappens(SILENT_YES);

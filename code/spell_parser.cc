@@ -2269,7 +2269,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
         TBeing * victim = dynamic_cast<TBeing *>(t);
         if (!victim)
           continue;
-        if (!inGroup(victim) && !victim->isImmortal()) {
+        if (!inGroup(*victim) && !victim->isImmortal()) {
           reconcileDamage(victim, 0, which);
           if (!found) {
             if (discArray[which]->minMana) {

@@ -24,7 +24,7 @@ int faerieFog(TBeing * caster, int, byte bKnown)
         continue;
       if ((caster != tmp_victim) && !tmp_victim->isImmortal()) {
 
-        if (!caster->inGroup(tmp_victim)) {
+        if (!caster->inGroup(*tmp_victim)) {
           if (tmp_victim->isAffected(AFF_INVISIBLE)) {
             if (tmp_victim->isLucky(caster->spellLuckModifier(SPELL_FAERIE_FOG))) {
               REMOVE_BIT(tmp_victim->specials.affectedBy, AFF_INVISIBLE);
@@ -69,7 +69,7 @@ int faerieFog(TBeing * caster)
     victim = dynamic_cast<TBeing *>(t);
     if (!victim)
       continue;
-    if (!caster->inGroup(victim) && !victim->isImmortal()) {
+    if (!caster->inGroup(*victim) && !victim->isImmortal()) {
     }
   }
   return TRUE;
@@ -338,7 +338,7 @@ int arcticBlast(TBeing * caster, int level, byte bKnown, int adv_learn)
         continue;
       if ((caster != tmp_victim) && !tmp_victim->isImmortal()) {
 
-        if (!caster->inGroup(tmp_victim)) {
+        if (!caster->inGroup(*tmp_victim)) {
           caster->reconcileHurt(tmp_victim, discArray[SPELL_ARCTIC_BLAST]->alignMod);
 
           act("$N can't escape the freezing cold -- $E's chilled to the bone!", FALSE, caster, NULL, tmp_victim, TO_NOTVICT);
@@ -488,7 +488,7 @@ int iceStorm(TBeing * caster, int level, byte bKnown, int adv_learn)
         continue;
       if ((caster != tmp_victim) && !tmp_victim->isImmortal()) {
 
-        if (!caster->inGroup(tmp_victim)) {
+        if (!caster->inGroup(*tmp_victim)) {
           caster->reconcileHurt(tmp_victim, discArray[SPELL_ICE_STORM]->alignMod);
           int damage = orig_damage;
 
@@ -613,7 +613,7 @@ int tsunami(TBeing * caster, int level, byte bKnown, int adv_learn)
         continue;
       if ((caster != tmp_victim) && !tmp_victim->isImmortal()) {
 
-        if (!caster->inGroup(tmp_victim)) {
+        if (!caster->inGroup(*tmp_victim)) {
           caster->reconcileHurt(tmp_victim, discArray[SPELL_TSUNAMI]->alignMod);
           int damage = orig_damage;
 
@@ -968,7 +968,7 @@ int breathOfSarahage(TBeing * caster, int level, byte bKnown)
       tmp_victim = dynamic_cast<TBeing *>(t);
       if (!tmp_victim)
         continue;
-      if (caster->inGroup(tmp_victim)) {
+      if (caster->inGroup(*tmp_victim)) {
         if (!tmp_victim->isAffected(AFF_WATERBREATH)) {
           caster->reconcileHelp(tmp_victim,discArray[SPELL_BREATH_OF_SARAHAGE]->alignMod);
           act("$n makes a face like a fish.", TRUE, tmp_victim, NULL, NULL, TO_ROOM, ANSI_BLUE_BOLD);

@@ -511,7 +511,7 @@ int cloudOfConcealment(TBeing *caster, int level, byte bKnown)
       if (!tmp_victim)
         continue;
       if (caster != tmp_victim && !tmp_victim->isImmortal()) {
-        if (caster->inGroup(tmp_victim)) {
+        if (caster->inGroup(*tmp_victim)) {
           if (!tmp_victim->isAffected(AFF_INVISIBLE)) {
             caster->reconcileHelp(tmp_victim,discArray[SPELL_CLOUD_OF_CONCEALMENT]->alignMod);
 #if 0

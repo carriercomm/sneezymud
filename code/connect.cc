@@ -345,7 +345,7 @@ bool Descriptor::checkForMultiplay()
     if (max_multiplay_chars == 1) {
       // some diabolical logic to catch multiplay with separate accounts
       // check to see if they are grouped, but haven't spoken recently
-      if (character->inGroup(ch)) {
+      if (character->inGroup(*ch)) {
         time_t now = time(0);
         const int trigger_minutes = 1;
         if (((now - talkCount) > ((trigger_minutes + character->getTimer()) * SECS_PER_REAL_MIN)) &&

@@ -1312,7 +1312,7 @@ int TBeing::chiMe(TBeing *tLunatic)
     return FALSE;
   }
 
-  if (this->isImmortal() || this->inGroup(tLunatic))
+  if (this->isImmortal() || this->inGroup(*tLunatic))
     return FALSE;
 
   if (bSuccess(tLunatic, bKnown, SKILL_CHI)) {

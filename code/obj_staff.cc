@@ -263,7 +263,7 @@ int TStaff::useMe(TBeing *ch, const char * argument)
             continue;
           if (tmp_char == ch)
             continue;
-          if (!sleepTag && isViolent && tmp_char->inGroup(ch))
+          if (!sleepTag && isViolent && tmp_char->inGroup(*ch))
             continue;
           rc = doObjSpell(ch,tmp_char,this, NULL,argument,the_spell);
           if (IS_SET_DELETE(rc, DELETE_VICT) && ch != tmp_char) {

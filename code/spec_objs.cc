@@ -860,7 +860,7 @@ int TStaff::foodItemUsed(TBeing *ch, const char *)
     vict = dynamic_cast<TBeing *>(t);
     if (!vict)
       continue;
-    if (!vict->inGroup(ch))
+    if (!vict->inGroup(*ch))
       continue;
     if (vict->getCond(FULL) > -1)
       vict->gainCondition(FULL, 25);

@@ -133,7 +133,7 @@ void TBeing::goBerserk(TBeing *cur)
 
     // this used to have a isPet() check too, seems like we should skip
     // all elems, thralls, charms, epts etc, so...
-    if ((tmp->inGroup(this) || tmp->master == this))
+    if ((inGroup(*tmp) || tmp->master == this))
       continue;
 
     if (setCharFighting(tmp, 0) == -1)
@@ -5063,7 +5063,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
   } else { // grouped
     if (numberInGroupInRoom() == 1) {
       // I am the only groupmember in the room
-      if (tank && (tank == this || inGroup(tank))) {
+      if (tank && (tank == this || inGroup(*tank))) {
         // I am tanking so I can get experience.
       } else if (!tank->isPc() && !tank->master) {
         // tank is a true npc not a pc, a pet, or a charmie
@@ -5084,7 +5084,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
       gain_exp(v, -exp_received );
       return;
     } else {  //more than one in my group in room
-      if (tank && (tank == this || inGroup(tank))) {
+      if (tank && (tank == this || inGroup(*tank))) {
         // my group is tanking so my group can get experience.
       } else if (!tank->isPc() && !tank->master){
         // tank is a true npc not a pc, a pet, or a charmie
@@ -5110,13 +5110,13 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
   if (!(real_master = master))
     real_master = this;
 
-  if (inGroup(real_master) && sameRoom(*real_master))
+  if (inGroup(*real_master) && sameRoom(*real_master))
     no_levels = real_master->getExpShare();
   else
     no_levels = 0;
 
   for (f = real_master->followers; f; f = f->next) {
-    if (inGroup(f->follower) && sameRoom(*f->follower))
+    if (inGroup(*f->follower) && sameRoom(*f->follower))
         no_levels += f->follower->getExpShare();
   }
 
@@ -5134,7 +5134,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
 #endif
 
   // Gain exp for master if in room with ch
-  if (sameRoom(*real_master) && inGroup(real_master)) {
+  if (sameRoom(*real_master) && inGroup(*real_master)) {
     exp_received = (tmp_exp * real_master->getExpShare());
     gain_exp(real_master, exp_received * fract/ 100);
 #if EXP_DEBUG
@@ -5143,7 +5143,7 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
   }
   // Gain exp for followers if in room with ch
   for (f = real_master->followers; f; f = f->next) {
-    if (inGroup(f->follower) && sameRoom(*f->follower)) {
+    if (inGroup(*f->follower) && sameRoom(*f->follower)) {
       exp_received = (tmp_exp * f->follower->getExpShare());
       gain_exp(f->follower, exp_received * fract/ 100);
 #if EXP_DEBUG
@@ -5489,7 +5489,7 @@ void TBeing::reformGroup()
       continue;
     }
 
-    if (!tmp->follower->inGroup(this)) {
+    if (!inGroup(*tmp->follower)) {
       tmp->follower->stopFollower(TRUE);
       continue;
     }

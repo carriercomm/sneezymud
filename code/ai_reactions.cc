@@ -870,7 +870,7 @@ int TMonster::aiWimpSwitch(TBeing *vict)
   //  10. tank must also have a wait less than 4, allows for lagged blocking.
   //  11. tank has Neither AUTO_ENGAGE or AUTO_ENGAGE_ALWAYS set.
   if (tank                && tank->desc                      && tank->isPc()        &&
-      vict->isPc()        && tank->desc->session.amGroupTank && vict->inGroup(tank) &&
+      vict->isPc()        && tank->desc->session.amGroupTank && vict->inGroup(*tank) &&
       tank->awake()       && !tank->bothLegsHurt()           && tank->canSee(this)  &&
       tank->canSee(vict)  && tank->getPosition() >= POSITION_STANDING               &&
       tank->getWait() < 4 && !IS_SET(tank->desc->autobits, AUTO_ENGAGE)             &&

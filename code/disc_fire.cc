@@ -867,7 +867,7 @@ int hellfire(TBeing *caster, int level, byte bKnown, int adv_learn)
       if (!vict)
         continue;
 
-      if (!caster->inGroup(vict) && !vict->isImmortal()) {
+      if (!caster->inGroup(*vict) && !vict->isImmortal()) {
         caster->reconcileHurt(vict, discArray[SPELL_HELLFIRE]->alignMod);
         act("$n is incinerated by the hellfire!", FALSE, vict, NULL, NULL, TO_ROOM);
         act("You are incinerated by the hellfire!", FALSE, vict, NULL, NULL, TO_CHAR);
@@ -899,7 +899,7 @@ int hellfire(TBeing *caster, int level, byte bKnown, int adv_learn)
         if (!vict)
           continue;
 
-        if (caster->inGroup(vict) && caster != vict && !vict->isImmortal()) {
+        if (caster->inGroup(*vict) && caster != vict && !vict->isImmortal()) {
           caster->reconcileHurt(vict, discArray[SPELL_HELLFIRE]->alignMod);
           act("$n is incinerated by the hellfire!", FALSE, vict, NULL, NULL, TO_ROOM);
           act("You are incinerated by the hellfire!", FALSE, vict, NULL, NULL, TO_CHAR);
@@ -1012,7 +1012,7 @@ int fireball(TBeing *caster, int level, byte bKnown, int adv_learn)
       temp = tmp_victim->next;
       if (caster->sameRoom(*tmp_victim) && (caster != tmp_victim) &&
           (!tmp_victim->isImmortal())) {
-        if (!caster->inGroup(tmp_victim)) {
+        if (!caster->inGroup(*tmp_victim)) {
           caster->reconcileHurt(tmp_victim, discArray[SPELL_FIREBALL]->alignMod);
           if (tmp_victim->isLucky(caster->spellLuckModifier(SPELL_FIREBALL))) {
             act("$N is able to dodge part of the explosion!", FALSE, caster, NULL, tmp_victim, TO_CHAR);

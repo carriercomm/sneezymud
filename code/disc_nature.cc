@@ -1068,7 +1068,7 @@ int treeWalk(TBeing * caster, const char * arg, int, byte bKnown)
       TBeing *tbt = dynamic_cast<TBeing *>(t);
       if (!tbt)
         continue;
-      if (tbt->inGroup(caster)) {
+      if (tbt->inGroup(*caster)) {
         act("A mystic force thrusts you into the Sydarthae, and out the otherside.",
            FALSE, tbt, 0, 0, TO_CHAR);
         act("A mystic force yanks $n into somewhere unknown.",

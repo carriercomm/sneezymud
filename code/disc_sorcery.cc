@@ -437,7 +437,7 @@ int colorSpray(TBeing *caster, int level, byte bKnown, int adv_learn)
         continue;
 
       if ((caster != tmp_victim) && !tmp_victim->isImmortal()) {
-        if (!caster->inGroup(tmp_victim)) {
+        if (!caster->inGroup(*tmp_victim)) {
           caster->reconcileHurt(tmp_victim, discArray[SPELL_COLOR_SPRAY]->alignMod);
           int dam = orig_dam;
 
@@ -519,7 +519,7 @@ int colorSpray(TBeing *caster)
     victim = dynamic_cast<TBeing *>(t);
     if (!victim || (victim->isPc() && !victim->desc))
       continue;
-    if (!caster->inGroup(victim) && !victim->isImmortal()) {
+    if (!caster->inGroup(*victim) && !victim->isImmortal()) {
     }
     found = TRUE;
   }
@@ -703,7 +703,7 @@ int acidBlast(TBeing *caster, int level, byte bKnown, int adv_learn)
       temp = t->nextThing;
       TBeing *tbt = dynamic_cast<TBeing *>(t);
       if (tbt && (caster != tbt) && !tbt->isImmortal()) {
-        if (!caster->inGroup(tbt)) {
+        if (!caster->inGroup(*tbt)) {
           caster->reconcileHurt(tbt, discArray[SPELL_ACID_BLAST]->alignMod);
           int dam = orig_dam;
 
@@ -739,7 +739,7 @@ int acidBlast(TBeing *caster, int level, byte bKnown, int adv_learn)
             temp = t->nextThing;
             b = dynamic_cast<TBeing *>(t);
             if (b && (caster != b) && (!b->isImmortal())) {
-               if (caster->inGroup(b)) {
+               if (caster->inGroup(*b)) {
                  caster->reconcileHurt(b,discArray[SPELL_ACID_BLAST]->alignMod);
                  int dam = orig_dam;
 

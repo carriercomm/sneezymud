@@ -2250,7 +2250,7 @@ static int frost_giant_stuff(TMonster *ch)
   if ((v2 = ch->fight())) {
     for (f = ch->followers; f; f = n) {
       n = f->next;
-      if ((vict = f->follower) && vict->inGroup(ch) && !vict->fight()) {
+      if ((vict = f->follower) && vict->inGroup(*ch) && !vict->fight()) {
         TMonster *tmons = dynamic_cast<TMonster *>(vict);
         if (!tmons)
           continue;
@@ -2279,7 +2279,7 @@ static int frost_giant_stuff(TMonster *ch)
     if (!vict)
       continue;
     if ((vict == ch) || (vict == ch->riding) ||
-        (vict->inGroup(ch)) || vict->isImmortal())
+        (vict->inGroup(*ch)) || vict->isImmortal())
       continue;
     if (!ch->canSee(vict) || !ch->awake())
       continue;
@@ -5292,7 +5292,7 @@ int Fireballer(TBeing *ch, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     temp = tmp->next;
     if (me->sameRoom(*tmp) && (me != tmp) &&
         !tmp->isImmortal() ) {
-      if (!me->inGroup(tmp)) {
+      if (!me->inGroup(*tmp)) {
         dam = dice(me->GetMaxLevel(), 4);
         me->reconcileHurt(tmp, 0.02);
         act("The Djinn breathes a gust of flame at you!",TRUE,tmp,0,0,TO_CHAR);

@@ -754,7 +754,7 @@ int TBeing::inCamp() const
     ch = dynamic_cast<TBeing *>(t);
     if (!ch)
       continue;
-    if (inGroup(ch)) {
+    if (inGroup(*ch)) {
       for (aff = ch->affected; aff; aff = aff->next) {
         if (aff->type == SKILL_ENCAMP)
           // make sure to return no0n-zero here

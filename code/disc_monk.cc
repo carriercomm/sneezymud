@@ -630,7 +630,7 @@ int chi(TBeing *c, TBeing *v)
       for(t = c->roomp->stuff; t; t=tnext){
 	tnext=t->nextThing;
 	tmp=dynamic_cast<TBeing *>(t);
-	if (tmp && c != tmp && !tmp->isImmortal() && !c->inGroup(tmp)) {
+	if (tmp && c != tmp && !tmp->isImmortal() && !c->inGroup(*tmp)) {
 	  if(c->getMana()>0)
 	    c->reconcileMana(TYPE_UNDEFINED, 0, mana);
 	  else {

@@ -931,7 +931,7 @@ int TBeing::checkBadSpellCondition(TBeing *caster, int which)
       }
       return FALSE;
     case SPELL_ANTIGRAVITY:
-      if ((caster == victim) || (caster->inGroup(victim))) {
+      if ((caster == victim) || (caster->inGroup(*victim))) {
         if (victim->isAffected(AFF_FLYING) || 
             victim->isAffected(AFF_LEVITATING)) {
            victim->sendTo("Nothing seems to happen.\n\r");

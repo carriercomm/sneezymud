@@ -376,7 +376,7 @@ void TBeing::doSplit(const char *argument, bool tell)
     if (!(k = master))
       k = this;
 
-    if (inGroup(k) && sameRoom(*k))
+    if (inGroup(*k) && sameRoom(*k))
       no_members = ((k->desc) ? k->desc->session.group_share : 
             ((k->isPet() || k->isMount() || dynamic_cast<TMonster *>(k)) ? 0 : 1));
     else
@@ -384,7 +384,7 @@ void TBeing::doSplit(const char *argument, bool tell)
 
 
     for (f = k->followers; f; f = f->next)
-      if (inGroup(f->follower) && sameRoom(*f->follower))
+      if (inGroup(*f->follower) && sameRoom(*f->follower))
         no_members += (f->follower->desc ? f->follower->desc->session.group_share : ((f->follower->isPet() || f->follower->isMount() || dynamic_cast<TMonster *>(f->follower)) ? 0 : 1));
 
     if ((no_members <= 1) || !isAffected(AFF_GROUP)) {

@@ -699,7 +699,7 @@ int TTrap::moveTrapCheck(TBeing *ch, dirTypeT dir)
     // if the person who set it is in my group, bypass
     if ((tmp_desc = ex_description->findExtraDesc(TRAP_EX_DESC))) {
       if ((c = get_char(tmp_desc, EXACT_YES)))
-        if (ch->inGroup(c))
+        if (ch->inGroup(*c))
           return FALSE;
     }
 

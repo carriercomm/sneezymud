@@ -70,7 +70,7 @@ static int charge(TBeing *ch, TBeing *vict)
       continue;
 
     if (tbt->fight() == vict) {
-      if (!tbt->inGroup(ch)) {
+      if (!tbt->inGroup(*ch)) {
         act("An innocent $o in the vicinity of $N prevents you from charging!",
             FALSE, ch, tbt, vict, TO_CHAR);
         return FALSE;

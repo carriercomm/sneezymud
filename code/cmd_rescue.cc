@@ -49,7 +49,7 @@ static int rescue(TBeing * caster, TBeing * victim, spellNumT skill)
     return FALSE;
   }
 #if 0
-  if (!caster->inGroup(victim)) {
+  if (!caster->inGroup(*victim)) {
     act("You need to be a part of $S group to rescue $N.", 
              FALSE, caster, 0, victim, TO_CHAR);
     return FALSE;

@@ -687,7 +687,7 @@ int heroesFeast(TBeing * caster, int, byte bKnown, spellNumT spell)
       tch = dynamic_cast<TBeing *>(t);
       if (!tch)
         continue;
-      if (tch->inGroup(caster) && (tch->getPosition() > POSITION_SLEEPING)) 
+      if (tch->inGroup(*caster) && (tch->getPosition() > POSITION_SLEEPING)) 
         tch->sendTo("You partake of a magnificent feast!\n\r");
       
       if (tch->getCond(FULL) >= 0)
@@ -707,7 +707,7 @@ int heroesFeast(TBeing * caster, int, byte bKnown, spellNumT spell)
           tch = dynamic_cast<TBeing *>(t);
           if (!tch)
             continue;
-          if (tch->inGroup(caster) && (tch->getPosition() > POSITION_SLEEPING)) {
+          if (tch->inGroup(*caster) && (tch->getPosition() > POSITION_SLEEPING)) {
             tch->sendTo("You feel weakened! Something went horribly wrong!\n\r");
 
             if (tch->getCond(FULL) >= 0)

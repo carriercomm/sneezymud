@@ -599,7 +599,7 @@ int earthquake(TBeing *caster, int level, byte bKnown, spellNumT spell, int adv_
 	  act("You fly above the danger!", FALSE, caster, NULL, tmp_victim, TO_VICT);
 	else if (tmp_victim->isLevitating())
 	  act("You float above the danger!", FALSE, caster, NULL, tmp_victim, TO_VICT);
-	else if (caster->inGroup(tmp_victim))
+	else if (caster->inGroup(*tmp_victim))
 	  act("The earthquake has no effect on you!", FALSE, caster, NULL, tmp_victim, TO_VICT);
         else {
 	  caster->reconcileHurt(tmp_victim, discArray[spell]->alignMod);

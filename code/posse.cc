@@ -183,7 +183,7 @@ int grimhavenPosse(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TOb
 	    // delete guards
 	    for (f = myself->followers; f; f = n) {
 	      n = f->next;
-	      if((vict=f->follower)&& vict->inGroup(myself) && !vict->fight()){
+	      if((vict=f->follower)&& vict->inGroup(*myself) && !vict->fight()){
 		TMonster *tmons = dynamic_cast<TMonster *>(vict);
 		if (!tmons)
 		  continue;

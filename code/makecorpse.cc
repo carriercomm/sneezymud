@@ -52,6 +52,9 @@ void TBeing::makeCorpse(spellNumT dmg_type)
     corpse = race->makeCorpse();
     gen_corpse = corpse;
     corpse->setCorpseVnum(mobVnum());
+
+    if (mobVnum() < 0)
+      corpse->addCorpseFlag(CORPSE_NO_REGEN);
   }
   
   gen_corpse->setCorpseFlags(0);

@@ -90,6 +90,17 @@
 - Objects with [wizard] in their name lists are now off-limits to people who
   don't have the POWER_WIZARD flag.  This also includes items inside objects
   with this in their name.
+- Did some extensive modifications to the saved-room storage code for the
+  ROOM_STORAGE_ROOM(71).  Up booting up the mud will scroll through the
+  contents of the room and place any non-linkbags into a junk bag, which is
+  also retained in the storage room.  The junk bag uses the prior '[wizard]'
+  to safe keep anything that might be thrown into it.  The linkbags are also
+  checked.  First a player check, if the player isn't in the game the linkbag
+  is purged, it also finds the link-note and compares the creation date with
+  the current date.  If 30 days pass it'll be auto-purged.  The primary idea
+  of this is to take care of excess garbage that gathers here and is never
+  taken care of.  I havn't yet, but I intend to, add mail sends upon reboot
+  to players whom have linkbags to let them know it is there.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

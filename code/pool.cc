@@ -168,6 +168,8 @@ int TBeing::dropPool(int amt, liqTypeT liq)
     // create new pool
     obj = read_object(GENERIC_POOL, VIRTUAL);
     pool = dynamic_cast<TPool *>(obj);
+    if (!pool)
+      return false;
     pool->swapToStrung();
     pool->remObjStat(ITEM_TAKE);
     pool->setDrinkType(liq);

@@ -1012,7 +1012,7 @@ void TPerson::doTrans(const char *argument)
       }
 
       // used to track down: XXX trans'd me outta inn and got me killed!
-      vlogf(LOG_MISC, "%s transferring %s from %d to %d.", getName(), victim->getName(), victim->inRoom(), inRoom());
+      vlogf(LOG_SILENT, "%s transferring %s from %d to %d.", getName(), victim->getName(), victim->inRoom(), inRoom());
 
       act("$n disappears in a cloud of smoke.", FALSE, victim, 0, 0, TO_ROOM);
       --(*victim);

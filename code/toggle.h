@@ -294,6 +294,14 @@ const int TOG_FACTIONS_ELIGIBLE     = 213;
 
 const int TOG_BOUGHT_CALDONIA_SHOT  = 214;
 
+// Warrior lvl 40 quest
+
+const int TOG_ELGIABLE_WARRIOR_L41 = 220; //f
+const int TOG_KILL_CHIEF = 221; // c
+const int TOG_GAVE_HEAD_CHIEF = 222; // d
+const int TOG_KILL_SHAMAN = 223; //b
+
+
 // please recycle these toggles before assigning new ones
 const int TOG_IMMORTAL_STAT =  85;
 const int TOG_IMMORTAL_LOGS =  86;

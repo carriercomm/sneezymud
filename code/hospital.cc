@@ -60,9 +60,10 @@ int limb_heal_price(TBeing *ch, wearSlotT pos)
       return (basenum * 4);
     case WEAR_NOWHERE:
     case MAX_WEAR:
-      forceCrash("Bad pos (%d) in limb_heal_price for %s!", pos, ch->getName());
-      return (basenum * 10);
+      break;
   }
+  forceCrash("Bad pos (%d) in limb_heal_price for %s!", pos, ch->getName());
+  return (basenum * 10);
 }
 
 int limb_expel_price(TBeing *ch, wearSlotT pos)
@@ -137,9 +138,10 @@ int limb_wound_price(TBeing *ch, wearSlotT pos, unsigned short int wound)
       return (price * 4);
     case WEAR_NOWHERE:
     case MAX_WEAR:
-      vlogf(LOG_BUG, "Bad pos (%d) in limb_wound_price!", pos);
-      return (1000000);
+      break;
   }
+  vlogf(LOG_BUG, "Bad pos (%d) in limb_wound_price!", pos);
+  return (1000000);
 }
 
 int spell_regen_price(TBeing *ch, spellNumT spell)
@@ -185,9 +187,10 @@ int limb_regen_price(TBeing *ch, wearSlotT pos)
       return (price * 4);
     case WEAR_NOWHERE:
     case MAX_WEAR:
-      vlogf(LOG_BUG, "Bad pos (%d) in limb_regen_price!", pos);
-      return (1000000);
+      break;
   }
+  vlogf(LOG_BUG, "Bad pos (%d) in limb_regen_price!", pos);
+  return (1000000);
 }
 
 int doctor(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)

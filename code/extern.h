@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: extern.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -304,7 +293,7 @@ dirTypeT find_path(int, int (*predicate) (int, void *), void *, int, bool, int *
 extern bool exit_ok(roomDirData *, TRoom **);
 extern spellNumT searchForSpellNum(const char *arg, exactTypeT exact);
 extern bool thingsInRoomVis(TThing *, TRoom *);
-extern int get(TBeing *, TThing *, TThing *);
+extern int get(TBeing *, TThing *, TThing *, getTypeT);
 extern void portal_flag_change(TPortal *, unsigned int, const char *, setRemT); 
 extern const string numberAsString(int);
 extern void loadShopPrices(void);

@@ -210,8 +210,8 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	slots.o socket.o sound.o spec_mobs.o \
 	spec_mobs_doppleganger.o spec_mobs_earthquake_digger.o \
         spec_mobs_goring.o \
-	spec_objs.o spec_objs_jambiya.o \
-	spec_objs_lightning_rod.o \
+	spec_obs.o spec_objs_jambiya.o \
+	spec_objs_lightning_rod.o spec_objs_potion_of_stature.o \
 	spec_objs_blind.o spec_objs_manadrain.o \
 	spec_rooms.o \
         spec_rooms_sleeptag.o \

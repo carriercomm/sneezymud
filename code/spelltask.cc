@@ -1437,6 +1437,12 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
 #endif
   your_deity_val = which;
 
+  if(spellstore.storing){
+    spellstore.spelltask=spelltask;
+    spelltask=NULL;
+    return TRUE;
+  }
+
   switch(which) {
 // disc_hand_of_god
       case SPELL_CREATE_WATER_DEIKHAN:

@@ -587,11 +587,13 @@ int newbieEquipper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj
 
   switch (request) {
     case 1:
+#if 0
       if (ch->stuff) {
         sprintf(tmp_buf, "%s You have some equipment already. I only equip the totally destitute.", ch->getName());
         me->doTell(tmp_buf);
         return TRUE;
       }
+#endif
       if (ch->affectedBySpell(AFFECT_NEWBIE)) {
         found = 1;
       } else {

@@ -46,7 +46,8 @@ int oft_frequented_room(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
   switch (rp->number) {
     case ROOM_KINDRED_INN:
     case ROOM_GREEN_DRAGON_INN:
-      if ((time_info.hours >= 38) && (time_info.hours <= 44)) {
+      // enter between 7PM and 10PM
+      if ((time_info.hours >= 19) && (time_info.hours <= 22)) {
         q = ::number(1, 2);
         for (i = 1; i <= q; i++) {
           if (::number(0,10))
@@ -65,7 +66,7 @@ int oft_frequented_room(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
     case ROOM_PEW3:
     case ROOM_PEW4:
       if (!((time_info.day + 1) % 7) &&  // on Sunday
-          (time_info.hours == 20)) {  // at 10
+          (time_info.hours == 10)) {  // at 10
         for (i = 1; i <= 8; i++) {
           if (::number(0,9))
             continue;
@@ -79,7 +80,8 @@ int oft_frequented_room(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
       }
       break;
     case ROOM_TOP_OF_TREE:
-      if ((time_info.month == 3) && (time_info.day == 3) && (time_info.hours == 24)) {
+      // april 4th at noon
+      if ((time_info.month == 3) && (time_info.day == 3) && (time_info.hours == 12)) {
         int rom = real_mobile(MOB_SONGBIRD);
         if (mob_index[rom].number > 100)
           break;
@@ -1215,7 +1217,7 @@ int SecretPortalDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 7268:
       if (cmd == CMD_GENERIC_PULSE) {
         // automatic shift change at 6AM and 6PM
-        if (time_info.hours != 12 && time_info.hours != 36)
+        if (time_info.hours != 6 && time_info.hours != 18)
           return FALSE;
 
         if (obj_index[real_object(7214)].number)
@@ -1435,14 +1437,19 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
     return FALSE;
 
   if(rp->number>=13755 && rp->number<=13771){
-    switch((time_info.hours/2)%12){
+    switch((time_info.hours)%12){
       case 0:
 	if(rp->getSectorType()!=SECT_TEMPERATE_RIVER_SURFACE){
 	  // send message here
 	  rp->setSectorType(SECT_TEMPERATE_RIVER_SURFACE);
 	}
 	break;
-      case 1: case 2: case 3: case 4: case 5: case 6:
+      case 1: 
+      case 2: 
+      case 3: 
+      case 4: 
+      case 5: 
+      case 6:
 	if(rp->getSectorType()!=SECT_TEMPERATE_UNDERWATER){
 	  // send message here
 	  rp->setSectorType(SECT_TEMPERATE_UNDERWATER);
@@ -1454,7 +1461,10 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
 	  rp->setSectorType(SECT_TEMPERATE_RIVER_SURFACE);
 	}
 	break;
-      case 8: case 9: case 10: case 11:
+      case 8: 
+      case 9: 
+      case 10: 
+      case 11:
 	if(rp->getSectorType()!=SECT_TEMPERATE_CAVE){
 	  // send message here
 	  rp->setSectorType(SECT_TEMPERATE_CAVE);
@@ -1462,14 +1472,17 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
 	break;
     }
   } else if(rp->number>=13738 && rp->number<=13754){
-    switch((time_info.hours/2)%12){
+    switch((time_info.hours)%12){
       case 1:
 	if(rp->getSectorType()!=SECT_TEMPERATE_RIVER_SURFACE){
 	  //send message here
 	  rp->setSectorType(SECT_TEMPERATE_RIVER_SURFACE);
 	}
 	break;
-      case 2: case 3: case 4: case 5:
+      case 2: 
+      case 3: 
+      case 4: 
+      case 5:
 	if(rp->getSectorType()!=SECT_TEMPERATE_UNDERWATER){
 	  // send message here
 	  rp->setSectorType(SECT_TEMPERATE_UNDERWATER);
@@ -1481,7 +1494,12 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
 	  rp->setSectorType(SECT_TEMPERATE_RIVER_SURFACE);
 	}
 	break;
-      case 7: case 8: case 9: case 10: case 11: case 0:
+      case 7: 
+      case 8: 
+      case 9: 
+      case 10: 
+      case 11: 
+      case 0:
 	if(rp->number<13740 &&
 	   rp->getSectorType()!=SECT_TEMPERATE_ATMOSPHERE){
 	  //send message here
@@ -1495,7 +1513,7 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
     }
     return FALSE;
   } else if(rp->number==13773){
-    switch((time_info.hours/2)%12){
+    switch((time_info.hours)%12){
       case 2:
 	if(rp->getSectorType()!=SECT_TEMPERATE_RIVER_SURFACE){
 	  //send message here
@@ -1511,7 +1529,7 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
     }
     return FALSE;
   } else if(rp->number==13772){
-    switch((time_info.hours/2)%12){
+    switch((time_info.hours)%12){
       case 2:
 	if(rp->getSectorType()!=SECT_TEMPERATE_RIVER_SURFACE){
 	  //send message here
@@ -1533,7 +1551,7 @@ int duergarWater(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
     }
     return FALSE;
   } else if(rp->number==13731){
-    switch((time_info.hours/2)%12){
+    switch((time_info.hours)%12){
       case 3:
 	if(rp->getSectorType()!=SECT_TEMPERATE_RIVER_SURFACE){
 	  //send message here

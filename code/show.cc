@@ -266,7 +266,7 @@ bool TBeing::listThingRoomMe(const TBeing *ch) const
       // horse is concealed
       return true;
     } else {
-      TThing *t2;
+      TThing *t2 = NULL;
       for (t2 = rider; t2; t2 = t2->nextRider) {
         // if one of the riders is vis, skip showing the horse
         if (ch == dynamic_cast<TBeing *>(t2) ||

@@ -64,6 +64,50 @@ int room_length[] =
   50,
 };
 
+void make_room_coords(TRoom *rorig, TRoom *tdest, int dir){
+  tdest->setXCoord(rorig->getXCoord());
+  tdest->setYCoord(rorig->getYCoord());
+  tdest->setZCoord(rorig->getZCoord());
+
+  switch(dir){
+    case 0:
+      tdest->setYCoord(tdest->getYCoord()+1);
+      break;
+    case 1:
+      tdest->setXCoord(tdest->getXCoord()+1);
+      break;
+    case 2:
+      tdest->setYCoord(tdest->getYCoord()-1);
+      break;
+    case 3:
+      tdest->setXCoord(tdest->getXCoord()-1);
+      break;
+    case 4:
+      tdest->setZCoord(tdest->getZCoord()+1);
+      break;
+    case 5:
+      tdest->setZCoord(tdest->getZCoord()-1);
+      break;
+    case 6:
+      tdest->setXCoord(tdest->getXCoord()+1);
+      tdest->setYCoord(tdest->getYCoord()+1);
+      break;
+    case 7:
+      tdest->setYCoord(tdest->getYCoord()+1);
+      tdest->setXCoord(tdest->getXCoord()-1);
+      break;
+    case 8:
+      tdest->setYCoord(tdest->getYCoord()-1);
+      tdest->setXCoord(tdest->getXCoord()+1);
+      break;
+    case 9:
+      tdest->setXCoord(tdest->getXCoord()-1);
+      tdest->setYCoord(tdest->getYCoord()-1);
+      break;    
+  }
+}
+
+
 static void update_room_menu(const TBeing *ch)
 {
   const char *edit_menu_basic =
@@ -452,7 +496,8 @@ void TPerson::doEdit(const char *arg)
           // our current room.  Flags, Sector, and Room Height.
           newrp->setRoomFlags(roomp->getRoomFlags());
           newrp->setSectorType(roomp->getSectorType());
-          newrp->setRoomHeight(roomp->getRoomHeight());
+          newrp->setRoomHeight(roomp->getRoomHeight());	
+	  make_room_coords(roomp, newrp, rdir);  
         } else {
           sendTo("Rooms need to be positive numbers less than %d.\n\r", WORLD_SIZE-1);
           return;
@@ -1619,6 +1664,7 @@ static void finishRoom(TRoom *rp, TBeing *ch, dirTypeT dir)
     newrp->setRoomFlags(rp->getRoomFlags());
     newrp->setSectorType(rp->getSectorType());
     newrp->setRoomHeight(rp->getRoomHeight());
+    make_room_coords(rp, newrp, dir);
     newrp->removeRoomFlagBit(ROOM_BEING_EDITTED);
     ch->sendTo("Done.\n\r");
   }
@@ -2954,6 +3000,13 @@ void TRoom::loadOne(FILE *fl, bool tinyfile)
   char chk[50];
   int tmp;
   extraDescription *new_descr;
+
+  fscanf(fl, "%d ", &tmp);
+  x=tmp;
+  fscanf(fl, "%d ", &tmp);
+  y=tmp;
+  fscanf(fl, "%d\n", &tmp);
+  z=tmp;
 
   name = fread_string(fl);
 

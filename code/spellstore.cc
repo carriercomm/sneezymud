@@ -66,8 +66,8 @@ int TBeing::doTrigger(const char *argument){
   spelltask=spellstore.spelltask;
 
   rc=doSpellCast(this, ch, o, roomp, which, getSpellType(discArray[which]->typ));
-  if(rc)
-    spellstore.spelltask=NULL;
+  spellstore.spelltask=NULL;
+  spellstore.storing=false;
 
   return rc;
 }
@@ -80,11 +80,14 @@ int TBeing::doStore(const char *argument)
     sendTo("You are already casting a spell.\n\r");
     return FALSE;
   }
+  if(spellstore.spelltask){
+    sendTo("You already have a spell stored.\n\r");
+    return FALSE;
+  }
 
   spellstore.storing=TRUE;
   rc=doCast(argument);
-  if(!rc){
-    spellstore.storing=FALSE;
-  }
+  //  if(rc==FALSE)
+  //    spellstore.storing=FALSE;
   return rc;
 }

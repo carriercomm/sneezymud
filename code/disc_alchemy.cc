@@ -2,6 +2,8 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
+// disc_alchemy.cc : The alchemy discipline
+//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -1538,13 +1540,13 @@ int materialize(TBeing *caster, TObj **obj, int, const char * name, byte bKnown)
       *obj = read_object(numberx, REAL);
 
       (*obj)->remObjStat(ITEM_NEWBIE);
+      (*obj)->setEmpty();
 
       if (!caster->heldInPrimHand()) {
         caster->equipChar(*obj, caster->getPrimaryHold(), SILENT_YES);
         grabbed = true;
       } else {
         *caster->roomp += **obj;
-        (*obj)->setEmpty();
       }
     }
 
@@ -1638,12 +1640,12 @@ int spontaneousGeneration(TBeing *caster, TObj **obj, const char * name, int, by
       *obj = read_object(numberx, REAL);
 
       (*obj)->remObjStat(ITEM_NEWBIE);
+      (*obj)->setEmpty();
 
       if (!caster->heldInPrimHand())
         caster->equipChar(*obj, caster->getPrimaryHold(), SILENT_YES);
       else {
         *caster->roomp += **obj;
-        (*obj)->setEmpty();
       }
     }
 

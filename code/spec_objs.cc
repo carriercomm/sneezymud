@@ -2391,15 +2391,11 @@ int scirenDrown(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
       0, vict, o, 0, TO_CHAR);
 
   ch->dropPool(3, LIQ_SALTWATER);
-
-  affectedData aff;
-  aff.type = SPELL_SUFFOCATE;
-  aff.level = 15;
-  aff.duration = 2;  // want this to be a short, short duration -jh        
-
+  rc = ch->reconcileDamage(vict, dam, DAMAGE_SUFFOCATION);
   if (IS_SET_DELETE(rc, DELETE_VICT))
     return DELETE_VICT;
-  return TRUE;
+  return TRUE;   
+
 }                    
 
 int stoneAltar(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *obj, TObj *)

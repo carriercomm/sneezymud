@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_survival.cc,v $
+// Revision 5.1.1.2  1999/10/21 23:51:21  lapsos
+// Added race-simal skin.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -330,6 +333,9 @@ int determineSkinningItem(TBaseCorpse * corpse, int * amount, char * msg, char *
   if (num == -1) {
     // generic switch based on race
     switch(corpse->getCorpseRace()) {
+      case RACE_SIMAL:
+        num = 20642;
+        break;
       case RACE_SQUIRREL:
         num = 2401;
         break;

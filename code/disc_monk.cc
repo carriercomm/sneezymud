@@ -10,6 +10,9 @@
 #include "disc_monk.h"
 #include "disc_cures.h"
 #include "disc_aegis.h"
+#include "statistics.h"
+
+
 
 int task_yoginsa(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj *)
 {
@@ -46,7 +49,8 @@ int task_yoginsa(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TOb
           if (bSuccess(ch, learn, SKILL_YOGINSA)) {
             ch->sendTo("%sMeditating refreshes your inner harmonies!%s\n\r",
                      ch->green(), ch->norm());
-            ch->setHit(min(ch->getHit() + ch->hitGain(), (int) ch->hitLimit()));
+            ch->setHit(min(ch->getHit() + 
+			   (int)((double)(ch->hitGain())*(stats.damage_modifier * 1.15)), (int) ch->hitLimit()));
             ch->setMove(min(ch->getMove() + ch->moveGain()/2, (int) ch->moveLimit()));
             ch->setMana(min(ch->getMana() + ch->manaGain()/2, (int) ch->manaLimit()));
 
@@ -319,10 +323,11 @@ int TBeing::monkDodge(TBeing *v, TThing *weapon, int *dam, int w_type, wearSlotT
   // So technically, we should be blocking 12/90 = 13.3% of damage
   w_type -= TYPE_HIT;
 
+  // monks becoming better tanks than warriors, so lowering this to 10% (3-14-01)
   // base amount, modified for difficulty
   // the higher amt is, the more things get blocked
   //  :: Modifer was SKILL_DODGE.  Jirin was created to replace it.
-  int amt = (int) (133 * 100 / getSkillDiffModifier(SKILL_JIRIN));
+  int amt = (int) (100 * 100 / getSkillDiffModifier(SKILL_JIRIN));
 
   if (::number(0, 999) >= amt)
     return FALSE;

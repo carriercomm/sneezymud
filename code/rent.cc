@@ -2766,7 +2766,7 @@ float old_ac_lev = mob->getACLevel();
       deleteDuringRead(mob);
       break;
     }
-    setExp(tmp);
+    mob->setExp(tmp);
 
     if (fscanf(fp, " %d ", &tmp) != 1) {
       vlogf(LOG_BUG, "Error reading follower data (%s mobs %d) (15)", arg, num);

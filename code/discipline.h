@@ -41,7 +41,7 @@ const byte LEARNEDNESS_STEP=1;
 const int PRACS_TO_MAX      = 60;
 
 const char *describe_level(int n);
-const char *describe_damage(int n, TThing *);
+const char *describe_damage(int n, const TBeing *);
 const char *describe_armor(int n);
 const char *describe_light(int n);
 const char *what_does_it_open(const TKey *o);

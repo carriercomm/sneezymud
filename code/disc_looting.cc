@@ -2,23 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_looting.cc,v $
-// Revision 5.1.1.3  1999/11/05 12:34:38  lapsos
-// Modifications for new trap stuff.
-//
-// Revision 5.1.1.2  1999/10/29 05:38:19  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -303,6 +286,9 @@ int TRealContainer::detectMe(TBeing *thief) const
 
   if (!isContainerFlag( CONT_TRAPPED))
     return FALSE;
+
+  // to track down reports that detect is turning up "none traps"
+  mud_asser(getContainerTrapType() != DOOR_TRAP_NONE, "Bad trap type in detectMe");
 
   // opening a trapped item
   if (bSuccess(thief, bKnown, SKILL_DETECT_TRAP)) {

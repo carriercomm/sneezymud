@@ -108,7 +108,7 @@ Descriptor::Descriptor(TSocket *s) :
 {
   int i;
 
-  *raw = '\0';
+  *m_raw = '\0';
   *delname = '\0';
 
   for (i = 0; i < 10; i++)
@@ -172,7 +172,7 @@ Descriptor::Descriptor(const Descriptor &a) :
   str = NULL;
   pagedfile = mud_str_dup(a.pagedfile);
 
-  strcpy(raw, a.raw);
+  strcpy(m_raw, a.m_raw);
   strcpy(delname, a.delname);
 
   for (i = 0; i < 10; i++)
@@ -241,7 +241,7 @@ Descriptor & Descriptor::operator=(const Descriptor &a)
   delete [] pagedfile;
   pagedfile = mud_str_dup(a.pagedfile);
 
-  strcpy(raw, a.raw);
+  strcpy(m_raw, a.m_raw);
   strcpy(delname, a.delname);
 
   for (int i = 0; i < 10; i++)
@@ -5677,10 +5677,10 @@ int Descriptor::inputProcessing()
 
   sofar = 0;
   flag = 0;
-  bgin = strlen(raw);
+  bgin = strlen(m_raw);
 
   do {
-    if ((thisround = read(socket->m_sock, raw + bgin + sofar,
+    if ((thisround = read(socket->m_sock, m_raw + bgin + sofar,
                           4096 - (bgin + sofar) - 1)) > 0) {
       sofar += thisround;
     } else {
@@ -5696,17 +5696,17 @@ int Descriptor::inputProcessing()
         return (-1);
       }
     }
-  } while (!ISNEWL(*(raw + bgin + sofar - 1)));
+  } while (!ISNEWL(*(m_raw + bgin + sofar - 1)));
 
-  *(raw + bgin + sofar) = 0;
+  *(m_raw + bgin + sofar) = 0;
 
-  for (i = bgin; !ISNEWL(*(raw + i)); i++)
-    if (!*(raw + i))
+  for (i = bgin; !ISNEWL(*(m_raw + i)); i++)
+    if (!*(m_raw + i))
       return (0);
 
-  for (i = 0, k = 0; *(raw + i);) {
-    if (!ISNEWL(*(raw + i)) && !(flag = (k >= (!client ? (MAX_INPUT_LENGTH - 2) : 4096)))) {
-      if (*(raw + i) == '\b') {      // backspace 
+  for (i = 0, k = 0; *(m_raw + i);) {
+    if (!ISNEWL(*(m_raw + i)) && !(flag = (k >= (!client ? (MAX_INPUT_LENGTH - 2) : 4096)))) {
+      if (*(m_raw + i) == '\b') {      // backspace 
         if (k) {                // more than one char ? 
           if (*(tmp + --k) == '$')
             k--;
@@ -5714,10 +5714,10 @@ int Descriptor::inputProcessing()
         } else
           i++;
       } else {
-        if ((*(raw + i) == '\200') ||
-            (isascii(*(raw + i)) && isprint(*(raw + i)))) {
+        if ((*(m_raw + i) == '\200') ||
+            (isascii(*(m_raw + i)) && isprint(*(m_raw + i)))) {
           // trans char, double for '$' (printf)   
-          if ((*(tmp + k) = *(raw + i)) == '$')
+          if ((*(tmp + k) = *(m_raw + i)) == '$')
             *(tmp + ++k) = '$';
           k++;
           i++;
@@ -5771,14 +5771,14 @@ int Descriptor::inputProcessing()
         }
 
         // skip the rest of the line 
-        for (; !ISNEWL(*(raw + i)); i++);
+        for (; !ISNEWL(*(m_raw + i)); i++);
       }
       // find end of entry 
-      for (; ISNEWL(*(raw + i)); i++);
+      for (; ISNEWL(*(m_raw + i)); i++);
 
       // squelch the entry from the buffer 
       for (squelch = 0;; squelch++) {
-        if ((*(raw + squelch) = *(raw + i + squelch)) == '\0')
+        if ((*(m_raw + squelch) = *(m_raw + i + squelch)) == '\0')
           break;
       }
       k = 0;

@@ -1530,6 +1530,119 @@ int vending_machine(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *ob2)
   return FALSE;
 }
 
+int vending_machine2(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *ob2)
+{
+  class vendingmachine_struct {
+  public:
+    bool isOn;
+
+    vendingmachine_struct() :
+      isOn(false)
+    {
+    }
+    ~vendingmachine_struct()
+    {
+    }
+  };
+
+  if (cmd == CMD_GENERIC_DESTROYED) {
+    delete static_cast<vendingmachine_struct *>(o->act_ptr);
+    o->act_ptr = NULL;
+    return FALSE;
+  } else if (cmd == CMD_GENERIC_CREATED) {
+    o->act_ptr = new vendingmachine_struct();
+    return FALSE;
+  }
+  TObj *drinkobj;
+
+  char capbuf[80];
+  vendingmachine_struct *job;
+  int result, token = 9995;
+  char arg1[30], arg2[30], arg3[30], drink[30];
+
+  if (!ch)
+    return FALSE;
+  if (!(job = static_cast<vendingmachine_struct *>(o->act_ptr))) {
+    vlogf(LOG_PROC, "Vending machine lost its memory. DASH!!");
+    return FALSE;
+  }
+
+  strcpy(capbuf, ch->getName());
+  if (cmd == CMD_OBJ_HAVING_SOMETHING_PUT_INTO) {
+    if (obj_index[ob2->getItemIndex()].virt == token) {
+      act("You insert $p into $P.", TRUE, ch, ob2, o, TO_CHAR);
+      act("$n inserts $p into $P.", TRUE, ch, ob2, o, TO_ROOM);
+      if (job->isOn) {
+	act("$P beeps once, then spits $p out into the coin receptical.", TRUE, ch, ob2, o, TO_CHAR);
+	act("$P beeps once, then spits $p out into the coin receptical.", TRUE, ch, ob2, o, TO_ROOM);
+      } else {
+	act("$P beeps loudly, and the <R>correct change<1> button lights up.", TRUE, ch, ob2, o, TO_CHAR);
+	act("$P beeps loudly, and the <R>correct change<1> button lights up.", TRUE, ch, ob2, o, TO_ROOM);
+	job->isOn = TRUE;
+        return DELETE_ITEM;
+      }
+      return TRUE;
+    } else {
+      ch->sendTo("It doesn't seem to fit.\n\r");
+      return TRUE;
+    }
+  } else if ((cmd == CMD_PUSH || cmd == CMD_PRESS)) {
+    arg = one_argument(arg, arg1);
+    arg = one_argument(arg, arg2);
+    arg = one_argument(arg, arg3);
+    if ((is_abbrev(arg1, "button") || is_abbrev(arg1, "machine") || is_abbrev(arg1, "vending")) &&
+	(!is_abbrev(arg2, "button") || !is_abbrev(arg2, "machine") || !is_abbrev(arg2, "vending")) && arg2)
+      drink = arg2;
+    else if ((is_abbrev(arg1, "button") || is_abbrev(arg1, "machine") || is_abbrev(arg1, "vending")) &&
+	     (is_abbrev(arg2, "button") || is_abbrev(arg2, "machine") || is_abbrev(arg2, "vending")) && arg3)
+      drink = arg3;
+    else if (arg1)
+      drink = arg1;
+    else
+      return FALSE;
+    
+    
+    if (is_abbrev(drink, "coke")) {
+      result = 9994;
+    } else if (is_abbrev(drink, "pepsi")) {
+      result = 9993;
+    } else if (is_abbrev(drink, "dew")) {
+      result = 9996;
+    } else if (is_abbrev(drink, "7up") || is_abbrev(drink, "Nup")) {
+      result = 9997;
+    } else if (is_abbrev(drink, "water")) {
+      result = 9990;
+    } else if (is_abbrev(drink, "juice") || is_abbrev(drink, "grapefruit")) {
+      result = 9991;
+    } else if (is_abbrev(drink, "jack") || is_abbrev(drink, "daniels")) {
+      result = 9992;
+    } else {
+      ch->sendTo("The vending machine does not appear to have that button.\n\r");
+      ch->sendTo("Bug Dash if you want him to stock the machine with something.\n\r");
+      return TRUE;
+    }
+    act("$P beeps once as you select your drink.", TRUE, ch, ob2, o, TO_CHAR);
+    act("$P beeps once as $n selects $s drink.", TRUE, ch, ob2, o, TO_ROOM);
+    if (!job->isOn) {
+      act("$P's <R>insert correct change<1> light blinks twice.", TRUE, ch, ob2, o, TO_CHAR);
+      act("$P's <R>insert correct change<1> light blinks twice.", TRUE, ch, ob2, o, TO_ROOM);
+      return TRUE;
+    }
+    else if (!(drinkobj = read_object(result, VIRTUAL))) {
+      vlogf(LOG_PROC, "Damn vending machine couldn't read drink, obj %d.  DASH!!!", result);
+      return TRUE;
+    }
+    else {
+      act("With a loud *clunk* $p appears in the can receptical.", TRUE, ch, drinkobj, NULL, TO_CHAR);
+      act("With a loud *clunk* $p appears in the can receptical.", TRUE, ch, drinkobj, NULL, TO_ROOM);
+      *o += *drinkobj;
+      job->isOn = FALSE;
+      return DELETE_ITEM;    // delete ob2
+    }
+    
+  }
+  return FALSE;
+}
 
 int dagger_of_death(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
@@ -3667,6 +3780,441 @@ int sunCircleAmulet(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *
 }
 
 
+int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
+{
+  int where = 0, doswitch = 0, dontswitch = 0, status = 0;
+  int nextroom = 0, i, dam = 0; //num_in_cart = 0, MAX_IN_CART = 5;
+  TThing *in_cart, *next_in_cart;
+  TBeing *beingic;  
+  char arg1[30], arg2[30], arg3[30];
+  char buf[256];
+  TObj *switchtrack = NULL, *o = myself;
+  class minecart_struct {
+  public:
+    bool handbrakeOn;
+    int speed;
+    int timer;
+
+    minecart_struct() :
+      handbrakeOn(true),
+      speed(0),
+      timer(-1)
+    {
+    }
+    ~minecart_struct()
+    {
+    }
+  };
+
+  if (cmd == CMD_GENERIC_DESTROYED) {
+    delete static_cast<minecart_struct *>(myself->act_ptr);
+    myself->act_ptr = NULL;
+    return FALSE;
+  } else if (cmd == CMD_GENERIC_CREATED) {
+    myself->act_ptr = new minecart_struct();
+    return FALSE;
+  }
+  minecart_struct *job;
+  if (!(job = static_cast<minecart_struct *>(myself->act_ptr))) {
+    vlogf(LOG_PROC, "Minecart lost its memory. DASH!!");
+    return FALSE;
+  }
+  if (cmd == CMD_STAND) {
+    if (ch->riding == myself && job->speed >= 2) {
+      ch->sendTo("You're moving much too fast to get off now!\n\r");
+      return TRUE;
+    } else
+      return FALSE;
+  }
+  if (cmd == CMD_SIT) {
+    arg = one_argument(arg, arg1);
+    arg = one_argument(arg, arg2);
+    arg = one_argument(arg, arg3);
+    if ((is_abbrev(arg1, "minecart") || is_abbrev(arg1, "cart")) && job->speed >=2 ) {
+      ch->sendTo("The mine cart is moving much too fast to get on now!\n\r");
+      return TRUE;
+    } else
+      return FALSE;
+  }
+  if (cmd == CMD_PUSH || cmd == CMD_PULL || cmd == CMD_OPERATE || cmd == CMD_USE) {
+    arg = one_argument(arg, arg1);
+    arg = one_argument(arg, arg2);
+    arg = one_argument(arg, arg3);
+    if (is_abbrev(arg1, "handbrake") || is_abbrev(arg1, "brake")) {
+      if (ch->riding != myself) {
+	act("You must be sitting on $p to operate the handbrake.", TRUE, ch, o, NULL, TO_CHAR);
+	return TRUE;
+      } else {
+	if (job->handbrakeOn) {
+	  job->handbrakeOn = FALSE;
+	  act("You release the handbrake on $p.", TRUE, ch, o, NULL, TO_CHAR);
+	  act("$n releases the handbrake on $p.", TRUE, ch, o, NULL, TO_ROOM);
+	  return TRUE;
+	} else {
+	  job->handbrakeOn = TRUE;
+	  act("You engage the handbrake on $p.", TRUE, ch, o, NULL, TO_CHAR);
+	  act("$n engages the handbrake on $p.", TRUE, ch, o, NULL, TO_ROOM);
+	  return TRUE;
+	}
+      }
+    } else if ((is_abbrev(arg1, "cart") || is_abbrev(arg1, "minecart")) && cmd == CMD_PUSH) {
+      if (ch->riding == myself) {
+	act("How do you intend to push $p while sitting on it?", TRUE, ch, o, NULL, TO_CHAR);
+	return TRUE;
+      } else if (job->handbrakeOn) {
+	act("You push and push, but can't seem to move $p.", TRUE, ch, o, NULL, TO_CHAR);
+	act("Oh hey, look at that.  The handbrake is still engaged, doofus.", TRUE, ch, o, NULL, TO_CHAR);
+	act("$n strains with all $s might, but fails to budge $p.", TRUE, ch, o, NULL, TO_ROOM);
+	act("What a loser, the handbrake is still engaged.", TRUE, ch, o, NULL, TO_ROOM);
+	return TRUE;
+      } else {
+	act("You give $p a mighty shove, and it starts to roll slowly down the tracks.", TRUE, ch, o, NULL, TO_CHAR);
+	act("$n gives $p a mighty shove, and it starts to roll slowly down the tracks.", TRUE, ch, o, NULL, TO_ROOM);
+	job->speed = 1;
+	job->timer = 10;
+	return TRUE;
+      }
+    } else
+      return FALSE;
+  } else if (cmd == CMD_GENERIC_QUICK_PULSE && job->speed > 0) {
+    where = myself->in_room;
+    if (job->timer >= job->speed) {
+      job->timer--;
+      if (job->timer == 10 - ((10 - job->speed)/2 )) {
+	if (where == 18007 || where == 18011 || where == 18020) {
+	  act("$n <W>rattles as it passes over the <k>switchtracks<1>.",FALSE, myself, 0, 0, TO_ROOM);
+	}
+      }
+      if (job->timer != 0) return FALSE;
+    }
+    if (where < 18000 || where > 18059) {
+      vlogf(LOG_PROC, "Minecart got lost. Dash will NOT be pleased.");
+      return FALSE;
+    } else {
+      switch(where) {
+      case 18007:
+	status = 1;
+	doswitch = 18016;
+	dontswitch = 18008;
+	break;
+      case 18011:
+	status = 1;
+	doswitch = 18014;
+	dontswitch = 18012;
+	break;
+      case 18020:
+	status = 1;
+	doswitch = 18033;
+	dontswitch = 18021;
+	break;
+      case 18013:
+      case 18015:
+      case 18032:
+      case 18059:
+	status = 2;
+	// code for EotL
+	break;
+      case 18014:
+	status = 3;
+	// code for breaking through the wall
+	break;
+      default:
+	status = 0;
+	break;
+      }
+      if (status == 1) {
+	if (!(switchtrack =dynamic_cast<TObj *>( searchLinkedList("switchtrack", myself->roomp->stuff, TYPEOBJ)))) {
+	  vlogf(LOG_PROC, "Minecart looking for switchtrack that wasn't there. Dash sucks.");
+	  return FALSE;
+	} else {
+	  if (isname("switchtrackdoswitch", switchtrack->name))
+	    nextroom = doswitch;
+	  else if (isname("switchtrackdontswitch", switchtrack->name))
+	    nextroom = dontswitch;
+	  else {
+	    vlogf(LOG_PROC, "Minecart found an indecisive switchtrack. Dash sucks.");
+	    return FALSE;
+	  }
+	}
+      } else if (status == 2) {
+
+	if (job->speed > 8) {
+	  sprintf(buf, "There is a resounding metallic *CLANG* as $n collides with the end of the track at top speed.");
+	  act(buf,FALSE, myself, 0, 0, TO_ROOM);
+	} else if (job->speed > 5) {
+          sprintf(buf, "There is a metallic *CLANG* as $n hits the end of the track at high speed.");
+          act(buf,FALSE, myself, 0, 0, TO_ROOM);
+	} else if (job->speed > 2) {
+          sprintf(buf, "There is a soft metallic *CLANG* as $n hits the end of the track.");
+          act(buf,FALSE, myself, 0, 0, TO_ROOM);
+	} else if (job->speed > 0) {
+          sprintf(buf, "There is a soft metallic *ping* as $n lightly taps the end of the track.");
+          act(buf,FALSE, myself, 0, 0, TO_ROOM);
+	}
+	if (myself->rider) {
+	  for (in_cart = myself->rider; in_cart; in_cart = next_in_cart) {
+	    next_in_cart = in_cart->nextRider;
+	    if (::number(1,12) < job->speed) {
+	      sprintf(buf, "<r>$n<1><r> loses $s balance and flips forward over the rim of $p<1><r>.  Ouch.<1>");
+	      act(buf,FALSE, in_cart, myself, 0, TO_ROOM);
+	      sprintf(buf, "<r>You lose your balance and flip forward over the rim of $p<1><r>.  Ouch.<1>");
+              act(buf,FALSE, in_cart, myself, 0, TO_CHAR);
+	      dam = job->speed * 2;
+	      
+	      if ((beingic = dynamic_cast<TBeing *>(in_cart))) {
+		beingic->dismount(POSITION_SITTING);
+		beingic->reconcileDamage(beingic, min(dam, beingic->getHit()+2), DAMAGE_COLLISION);
+	      }
+	    }
+	 
+	  }
+	}
+
+	job->speed = 0;
+	job->timer = -1;
+	// do some stop message
+	return FALSE;
+      } else if (status == 3) {
+	roomDirData *exitp;
+	dirTypeT dir;
+	for(i=MIN_DIR;i<MAX_DIR;++i){
+	  if(myself->roomp->dir_option[i] &&
+	     myself->roomp->dir_option[i]->to_room==where+1){
+	    break;
+	  }
+	}
+	dir = mapFileToDir(i);
+	if (!(exitp = myself->roomp->exitDir(dir))) {
+	  vlogf(LOG_PROC, "bad exit for minecart smash-wall code, bug Dash.");
+	  return FALSE;
+	}
+        if ((IS_SET(exitp->condition, EX_DESTROYED)) ||
+            !IS_SET(exitp->condition, EX_CLOSED)) {
+
+        } else {	
+	  sprintf(buf, "$n slams into the wall to the east, and it collapses in a shower of rocks!");
+	  act(buf, FALSE, myself, 0, 0, TO_ROOM);
+	  exitp->destroyDoor(dir, where);
+	  --(*myself);
+	  *real_roomp(nextroom) += *myself;
+	  sprintf(buf, "The wall to the west suddenly explodes inwards in a shower of rocks!");
+          act(buf, FALSE, myself, 0, 0, TO_ROOM);
+          --(*myself);
+          *real_roomp(where) += *myself; 
+
+	}
+	nextroom = where+1;
+
+      } else {
+	nextroom = where+1;
+      }
+      
+      for(i=MIN_DIR;i<MAX_DIR;++i){
+	if(myself->roomp->dir_option[i] &&
+	   myself->roomp->dir_option[i]->to_room==nextroom){
+	  break;
+	}
+      }
+      if (job->speed > 8) {
+        sprintf(buf, "$n goes barreling %s down the tracks of the mining %s at breakneck speed.",
+                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      } else if (job->speed > 5) {
+        sprintf(buf, "$n rolls %s down the tracks of the mining %s at an impressive speed.",
+                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      } else if (job->speed > 2) {
+        sprintf(buf, "$n rolls %s down the tracks of the mining %s at a steady rate.",
+                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      } else if (job->speed > 0) {
+        sprintf(buf, "$n inches its way %s down the tracks of the mining %s.",
+                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      }
+      
+
+      //move cart
+      --(*myself);
+      *real_roomp(nextroom)+=*myself;       
+      
+#if 0
+      //move people in the cart
+      if (myself->rider) {
+        for (in_cart = myself->rider; in_cart; in_cart = next_in_cart) {
+          next_in_cart = in_cart->nextRider;
+
+          --(*in_cart);
+          *real_roomp(nextroom)+=*in_cart;
+          if(dynamic_cast<TBeing *>(in_cart))
+            dynamic_cast<TBeing *>(in_cart)->doLook("",CMD_LOOK);
+        }
+      }
+#endif //moved this later
+
+
+      if (job->speed > 8) {
+        sprintf(buf, "$n comes crashing down the tracks of the %s, barreling down at an incredible speed.",   
+                (nextroom > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      } else if (job->speed > 5) {
+        sprintf(buf, "$n comes rolling down the tracks of the %s at an impressive speed.",
+                (nextroom > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      } else if (job->speed > 2) {
+        sprintf(buf, "$n comes rolling down the tracks of the %s at a steady speed.",
+                (nextroom > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      } else if (job->speed > 0) {
+        sprintf(buf, "$n inches its way down the tracks of the %s at a steady speed.",
+                (nextroom > 18003)?"tunnels":"camp");
+        act(buf,FALSE, myself, 0, 0, TO_ROOM);
+      }
+
+      if (myself->rider) {
+        for (in_cart = myself->rider; in_cart; in_cart = next_in_cart) {
+          next_in_cart = in_cart->nextRider;
+	  sprintf(buf, "...$n hangs on for dear life as $e rides $p %s.",
+		  (i==MAX_DIR)?"down the tracks":dirs[i]);
+          act(buf,FALSE, in_cart, myself, 0, TO_ROOM);
+          sprintf(buf, "...you hang on for dear life as you ride $p %s.",
+                  (i==MAX_DIR)?"down the tracks":dirs[i]);
+	  act(buf,FALSE, in_cart, myself, 0, TO_CHAR);
+          --(*in_cart);
+          *real_roomp(nextroom)+=*in_cart;
+          sprintf(buf, "...$n careens down the tracks, holding onto the $p for dear life.");
+          act(buf,FALSE, in_cart, myself, 0, TO_ROOM);
+          if(dynamic_cast<TBeing *>(in_cart))
+            dynamic_cast<TBeing *>(in_cart)->doLook("",CMD_LOOK);
+        }
+      }
+
+
+
+      if(job->handbrakeOn && job->speed > 0) {
+	act("Sparks fly from $n's wheels as it slows down.",FALSE, myself, 0, 0, TO_ROOM);
+	job->speed = job->speed - 2;
+	if (job->speed <= 0) {
+	  job->speed = 0;
+	  act("The axles on $n creak a few times as it comes to a complete stop.",FALSE, myself, 0, 0, TO_ROOM);
+	}
+      }
+      else if (job->speed < 10) job->speed++;
+      job->timer = 10;
+      // code for next room shit
+    }
+    
+  } 
+  return FALSE;
+}
+
+
+// DASH MARKER
+
+int switchtrack(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
+{
+  if (cmd != CMD_PUSH && cmd != CMD_PULL && cmd != CMD_OPERATE && cmd != CMD_USE && cmd != CMD_TURN) 
+    return FALSE;
+  
+  int where = myself->in_room;
+  char arg1[30], arg2[30], buf[256];
+  arg = one_argument(arg, arg1);
+  arg = one_argument(arg, arg2);
+
+      
+  if (is_abbrev(arg1, "switchtracks") || is_abbrev(arg1, "tracks")) {
+    switch (where) { 
+    case 18007:
+      if(!arg2)
+	strcpy(arg2,isname("switchtrackdoswitch", myself->name)?"southwest":"south");
+      else if(is_abbrev(arg2, "south") || is_abbrev(arg2, "s")) {
+	strcpy(arg2,"southern");
+	if(isname("switchtrackdoswitch", myself->name)) {
+	  ch->sendTo("The switchtrack is already aligned with the %s fork.", arg2);
+	  return TRUE;
+	}
+	strcpy(myself->name, "switchtracks tracks switchtrackdoswitch");
+      }
+      else if(is_abbrev(arg2, "southwest") || is_abbrev(arg2, "se")) {
+	strcpy(arg2,"southwestern");
+	if(isname("switchtrackdontswitch", myself->name)) {
+	  ch->sendTo("The switchtrack is already aligned with the %s fork.", arg2);
+	  return TRUE;
+	}
+	strcpy(myself->name, "switchtracks tracks switchtrackdontswitch");
+      } else {
+	ch->sendTo("This switchtrack can only be moved to the south or southwest.");
+	return TRUE;
+      }
+      
+      break;
+    case 18011:
+      if(!arg2) 
+	strcpy(arg2,isname("switchtrackdoswitch", myself->name)?"south":"east");
+      else if(is_abbrev(arg2, "east") || is_abbrev(arg2, "e")) {
+	strcpy(arg2,"eastern");
+	if(isname("switchtrackdoswitch", myself->name)) {
+	  ch->sendTo("The switchtrack is already aligned with the %s fork.", arg2);
+	  return TRUE;
+	}
+	strcpy(myself->name, "switchtracks tracks switchtrackdoswitch");
+      }
+      else if(is_abbrev(arg2, "south") || is_abbrev(arg2, "s")) {
+	strcpy(arg2,"southern");
+	if(isname("switchtrackdontswitch", myself->name)) {
+	  ch->sendTo("The switchtrack is already aligned with the %s fork.", arg2);
+	  return TRUE;
+	}
+	strcpy(myself->name, "switchtracks tracks switchtrackdontswitch");  
+      } else {
+        ch->sendTo("This switchtrack can only be moved to the south or east.");
+        return TRUE;
+      }
+      
+      break;
+    case 18020:
+      if(!arg2) 
+	strcpy(arg2,isname("switchtrackdoswitch", myself->name)?"north":"east");
+      else if(is_abbrev(arg2, "east") || is_abbrev(arg2, "e")) {
+	strcpy(arg2,"eastern");
+	if(isname("switchtrackdoswitch", myself->name)) {
+	  ch->sendTo("The switchtrack is already aligned with the %s fork.", arg2);
+	  return TRUE;
+	}
+	strcpy(myself->name, "switchtracks tracks switchtrackdoswitch");
+      }
+      else if(is_abbrev(arg2, "north") || is_abbrev(arg2, "n")) {
+	strcpy(arg2,"northern");
+	if(isname("switchtrackdontswitch", myself->name)) {
+	  ch->sendTo("The switchtrack is already aligned with the %s fork.", arg2);
+	  return TRUE;
+	}
+	strcpy(myself->name, "switchtracks tracks switchtrackdontswitch");
+      } else {
+        ch->sendTo("This switchtrack can only be moved to the north or east.");
+        return TRUE;
+      }
+      
+      break;
+    default:
+      ch->sendTo("Uh. This switchtrack shouldn't be here. Tell a god or something?");
+      //      vlogf(LOG_PROC, "%s tried to operate a switchtrack (%d) in room with no switchtrack code (%d)",
+      //	    ch->getName(), myself->objVnum, where);
+    }
+    sprintf(buf,"<k>You force the $o into alignment with the %s tunnel.<1>",arg2);
+    act(buf, TRUE, ch, myself, NULL, TO_CHAR);
+    sprintf(buf,"<k>$n forces the $o into alignment with the %s tunnel.<1>",arg2);
+    act(buf, TRUE, ch, myself, NULL, TO_ROOM);
+    sprintf(buf,"<k>The switchtracks here are aligned with the %s tunnel.<1>", arg2);
+    myself->setDescr(mud_str_dup(buf));
+    return TRUE;
+  }
+  return FALSE;
+}
+
+
+
+
 //MARKER: END OF SPEC PROCS
 
 
@@ -3746,6 +4294,9 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "Key in Knife",  keyInKnife},
   {FALSE, "Teleport Vial", teleportVial},
   {FALSE, "Sun Circle Amulet", sunCircleAmulet}, // 65
+  {FALSE, "Better Vender", vending_machine2},
+  {FALSE, "Mine Cart", minecart},
+  {FALSE, "Switchtrack", switchtrack},
 };
 
 

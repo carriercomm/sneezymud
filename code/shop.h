@@ -74,5 +74,5 @@ class shopData {
 extern bool will_not_buy(TBeing *ch, TMonster *keeper, TObj *temp1, int);
 extern bool shop_producing(const TObj *item, int shop_nr);
 extern void waste_shop_file(int shop_nr);
-
+extern bool shopOwned(int shop_nr);
 #endif

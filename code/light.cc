@@ -427,7 +427,7 @@ int TLight::chiMe(TBeing *tLunatic)
 
       putLightOut();
   } else {
-    if (roomp->isUnderwaterSector() || getCurBurn() <= 0) {
+    if (tLunatic->roomp->isUnderwaterSector() || getCurBurn() <= 0) {
       tLunatic->sendTo("You seem unable to do anything to that.\n\r");
       return FALSE;
     }

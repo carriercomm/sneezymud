@@ -13,16 +13,20 @@ class TAccountStats
   public:
     unsigned int account_number;
     unsigned int player_count;
-    unsigned int active_player;
-    unsigned int active_account;
+    unsigned int active_player7;
+    unsigned int active_account7;
+    unsigned int active_player30;
+    unsigned int active_account30;
     unsigned int player_num;
     unsigned int max_player_since_reboot;
 
     TAccountStats() :
       account_number(0),
       player_count(0),
-      active_player(0),
-      active_account(0),
+      active_player7(0),
+      active_account7(0),
+      active_player30(0),
+      active_account30(0),
       player_num(0),
       max_player_since_reboot(0)
     {}

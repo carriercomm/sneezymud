@@ -1586,6 +1586,40 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
         return TRUE;
       }
       break;
+  case 14296:
+    if (cmd != CMD_SAY && cmd != CMD_SAY2)
+      return FALSE;
+    if (is_abbrev(buf, "knowledge")) {
+      ch->doSay(arg);
+      ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
+			 "",
+			 "",
+			 "Your words have caused the stone to the north to slide open.",
+			 "$n's words have caused the stone to the north to slide open.",
+			 "A stone panel in the south wall slides open with a rumble.",
+			 "Your words cause the stone to the north to slide closed.",
+			 "$n's words cause the stone to the north to slide closed.",
+            "A stone panel in the south wall slides closed with a rumble."
+			 );
+      return TRUE;
+    }
+  case 14299:
+    if (cmd != CMD_SAY && cmd != CMD_SAY2)
+      return FALSE;
+    if (is_abbrev(buf, "knowledge")) {
+      ch->doSay(arg);
+      ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
+			 "",
+			 "",
+			 "Your words have caused the stone to the south to slide open.",
+			 "$n's words have caused the stone to the south to slide open.",
+			 "A stone panel in the north wall slides open with a rumble.",
+			 "Your words cause the stone to the south to slide closed.",
+			 "$n's words cause the stone to the south to slide closed.",
+            "A stone panel in the north wall slides closed with a rumble."
+			 );
+      return TRUE;
+    }
     case 14302:
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;

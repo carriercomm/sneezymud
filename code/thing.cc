@@ -169,8 +169,8 @@ int TThing::getReducedVolume(const TThing *o) const
 
   int num = getTotalVolume();
 
-  if ((o && dynamic_cast<const TContainer *>(o)) ||
-      (parent && dynamic_cast<const TContainer *>(parent))) {
+  if ((o && dynamic_cast<const TBaseContainer *>(o)) ||
+      (parent && dynamic_cast<const TBaseContainer *>(parent))) {
     // do material type reduction
     num /= material_nums[getMaterial()].vol_mult;
 

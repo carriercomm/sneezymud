@@ -740,23 +740,7 @@ void gain_exp(TBeing *ch, double gain)
   }
 }
 
-void TContainer::findSomeDrink(TDrinkCon **last_good, TContainer **last_cont, TContainer *) 
-{
-  TThing *t;
-
-  for (t = stuff; t; t = t->nextThing) 
-    t->findSomeDrink(last_good, last_cont, this);
-}
-
-void TContainer::findSomeFood(TFood **last_good, TContainer **last_cont, TContainer *)
-{
-  TThing *t;
-
-  for (t = stuff; t; t = t->nextThing) 
-    t->findSomeFood(last_good, last_cont, this);
-}
-
-void TFood::findSomeFood(TFood **last_good, TContainer **last_cont, TContainer *cont) 
+void TFood::findSomeFood(TFood **last_good, TBaseContainer **last_cont, TBaseContainer *cont) 
 {
   // get item closest to spoiling.
   if (*last_good && obj_flags.decay_time > (*last_good)->obj_flags.decay_time)
@@ -853,7 +837,7 @@ void TBeing::gainCondition(condTypeT condition, int value)
       return;
     }
     TFood *last_good = NULL;
-    TContainer *last_cont = NULL;
+    TBaseContainer *last_cont = NULL;
     for (i = MIN_WEAR; i < MAX_WEAR; i++) {
       if (!(t = equipment[i]))
         continue;
@@ -888,7 +872,7 @@ void TBeing::gainCondition(condTypeT condition, int value)
       }
     }
     TDrinkCon *last_good = NULL;
-    TContainer *last_cont = NULL;
+    TBaseContainer *last_cont = NULL;
     for (i = MIN_WEAR, last_good = NULL; i < MAX_WEAR; i++) {
       if (!(t = equipment[i]))
         continue;

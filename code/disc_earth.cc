@@ -662,8 +662,8 @@ int stoneSkin(TBeing * caster, TBeing * victim, int level, byte bKnown)
     if (caster != victim)
       aff1.modifier /= 5;
 
-    victim->affectJoin(caster, &aff1, AVG_DUR_NO, AVG_DUR_YES);
-    victim->affectJoin(caster, &aff2, AVG_DUR_NO, AVG_DUR_YES);
+    victim->affectJoin(caster, &aff1, AVG_DUR_NO, AVG_EFF_YES);
+    victim->affectJoin(caster, &aff2, AVG_DUR_NO, AVG_EFF_YES);
 
     act("$n's skin turns to hard granite.", FALSE, victim, NULL, NULL, TO_ROOM);
     act("Your skin turns to hard granite.", FALSE, victim, NULL, NULL, TO_CHAR);

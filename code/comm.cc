@@ -217,8 +217,6 @@ void nukeMobsInZone(int zone)
   }
 }
 
-#if 1 
-// COSMO MARKER
 void TBeing::sendTo(colorTypeT lev, const char *msg,...) const
 {
   if (!desc || !msg)
@@ -263,7 +261,6 @@ void TThing::sendTo(colorTypeT, const char *, ...) const
 {
 }
 
-#endif
 void TBeing::sendTo(const char *msg,...) const
 {
   if (!msg || !desc)
@@ -599,7 +596,6 @@ void colorAct(colorTypeT colorLevel, const char *str, bool hide, const TThing *t
   } else {
 // TO_ROOM
 // Doesnt work well if there are substitutes but if none its ok
-#if 1 
     for (; to; to = to->nextThing) {
       const TBeing *tbto = dynamic_cast<const TBeing *>(to);
       if (!tbto || !tbto->desc || tbto->GetMaxLevel() <= tslevel) 
@@ -613,9 +609,6 @@ void colorAct(colorTypeT colorLevel, const char *str, bool hide, const TThing *t
     
       colorAct(colorLevel, str, hide, t1, obj, tbto, TO_VICT, color, tslevel);
     }
-#else
-    act(str, hide, t1, obj, t3, type, color);
-#endif
   }
 }
 
@@ -949,13 +942,7 @@ void act(const char *str, bool hide, const TThing *t1, const TThing *obj, const 
       // we used to put the \n\r pad on here, but this causes the optional
       // color codes to be left dangling on the next line, causing some
       // problems for the client
-#if 0
-      *(--point) = '\n';
-      *(++point) = '\r';
-      *(++point) = '\0';
-#else
       *(--point) = '\0';
-#endif
 
       if (!((to->GetMaxLevel() > MAX_MORT) && 
           (IS_SET(to->desc->plr_color, PLR_COLOR_CODES)))) {

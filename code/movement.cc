@@ -2080,9 +2080,13 @@ void TBeing::doUnlock(const char *argument)
             TRUE, this, 0, (const TThing *)(exitp->getName().c_str()), TO_CHAR);
         cantHit += loseRound(5);
       }
-
+      char buf[256];
+      sprintf(buf, "$n unlocks the $T with %s.", obj_index[real_object(exitp->key)].short_desc);
+      act(buf, TRUE, this, 0, (const TThing *) (exitp->getName().c_str()), TO_ROOM);
+      sprintf(buf, "You unlock the $T with %s.", obj_index[real_object(exitp->key)].short_desc);
+      act(buf, TRUE, this, 0, (const TThing *) (exitp->getName().c_str()), TO_CHAR);
+     
       REMOVE_BIT(exitp->condition, EX_LOCKED);
-      act("$n unlocks the $T.", TRUE, this, 0, (const TThing *) (exitp->getName().c_str()), TO_ROOM);
 
       sendTo("*Click*\n\r");
       rp = real_roomp(exitp->to_room);

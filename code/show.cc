@@ -516,6 +516,12 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
     //    FALSE, me, 0, ch, TO_VICT);
   }
 
+  if(me->affectedBySpell(AFFECT_PLAYERKILL)){
+   colorAct(COLOR_ROOMS, 
+	    ".....$n is covered in <r>blood<1> from a recent murder!",
+	    FALSE, me, 0, ch, TO_VICT);
+  }
+
   // more common effects that we wish to suppress
   bufspell[0] = '\0';
   bufpray[0]  = '\0';

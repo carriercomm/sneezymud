@@ -1019,37 +1019,6 @@ int TMonster::aiShoveReact(TBeing *doer, bool worked, dirTypeT dir)
 // presumes isDumbAnimal()
 void TMonster::aiGrowl(const TBeing *tar) const
 {
-  switch (race->getBodyType()) {
-    case BODY_BIRD:
-    case BODY_BAT:
-      if (tar) {
-        int tmp = ::number(0,1);
-        switch(tmp) {
-          case 0:
-            act("$n screeches impatiently at $N.", TRUE, this, 0, tar, TO_NOTVICT);
-            act("$n screeches impatiently at you.", TRUE, this, 0, tar, TO_VICT);
-            return;
-          case 1:
-            act("$n screeches angrily at $N.", TRUE, this, 0, tar, TO_NOTVICT);
-            act("$n screeches angrily at you.", TRUE, this, 0, tar, TO_VICT);
-            return;
-        }
-      } else {
-        int tmp = ::number(0,1);
-        switch(tmp) {
-          case 0:
-            act("$n screeches impatiently.", TRUE, this, 0, tar, TO_ROOM);
-            return;
-          case 1:
-            act("$n screeches angrily.", TRUE, this, 0, tar, TO_ROOM);
-            return;
-        }
-      }
-      return;
-    default:
-      break;
-  }  // BY body type
-
   if (getRace() == RACE_FELINE) {
     if (tar) {
       int tmp = ::number(0,1);
@@ -1098,6 +1067,29 @@ void TMonster::aiGrowl(const TBeing *tar) const
           return;
         case 1:
           act("$n barks angrily.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+      }
+    }
+    return;
+  } else if (getRace() == RACE_BAT) {
+    if (tar) {
+      int tmp = ::number(0,1);
+      switch(tmp) {
+        case 0:
+          act("$n screeches impatiently at $N.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+        case 1:
+          act("$n screeches angrily at $N.", TRUE, this, 0, tar, TO_ROOM);
+          return;
+      }
+    } else {
+      int tmp = ::number(0,1);
+      switch(tmp) {
+        case 0:
+          act("$n screeches impatiently.", TRUE, this, 0, 0, TO_ROOM);
+          return;
+        case 1:
+          act("$n screeches angrily.", TRUE, this, 0, 0, TO_ROOM);
           return;
       }
     }

@@ -1388,6 +1388,65 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
               }
             case 91:
             case 92:
+	      if(v->getSex()==SEX_MALE && v->hasPart(WEAR_WAISTE) &&
+		 (!(obj = v->equipment[WEAR_WAISTE]) || !obj->isMetal())){
+		sprintf(buf, "With a deft swing of your %s, you sever $N's gentials.", limbStr.c_str());
+		act(buf,FALSE,this,obj,v,TO_CHAR,ANSI_ORANGE);
+		sprintf(buf, "$n deftly severs your genitals with $s %s!  OWWWWW!", limbStr.c_str());
+		act(buf,FALSE,this,obj,v,TO_VICT,ANSI_ORANGE);
+
+		if(obj){
+		  obj->makeScraps();
+		  delete obj;
+		  obj = NULL;
+		}
+
+		TCorpse *corpse;
+		char buf[256];
+		
+		corpse = new TCorpse();
+		corpse->name = mud_str_dup("genitalia");
+		
+		if (v->getMaterial() > MAT_GEN_MINERAL) {
+		  // made of mineral or metal
+		  sprintf(buf, "the mangled genitalia of %s", v->getName());
+		} else {
+		  sprintf(buf, "the bloody, mangled genitalia of %s", v->getName());
+		}
+		corpse->shortDescr = mud_str_dup(buf);
+		
+		if (v->getMaterial() > MAT_GEN_MINERAL) {
+		  // made of mineral or metal
+		  sprintf(buf, "The mangled, severed genitalia of %s is lying here.", v->getName());
+		} else {
+		  sprintf(buf, "The bloody, mangled, severed genitalia of %s is lying here.", v->getName());
+		}
+		corpse->setDescr(mud_str_dup(buf));
+		
+		corpse->stuff = NULL;
+		corpse->obj_flags.wear_flags = ITEM_TAKE | ITEM_HOLD | ITEM_THROW;
+		corpse->addCorpseFlag(CORPSE_NO_REGEN);
+		corpse->obj_flags.decay_time = 3 * (dynamic_cast<TMonster *>(this) ? MAX_NPC_CORPSE_TIME : MAX_PC_CORPSE_EMPTY_TIME);
+		corpse->setWeight(v->getWeight() / 32.0);
+		corpse->canBeSeen = v->canBeSeen;
+		corpse->setVolume(v->getVolume() * 2/100);
+		corpse->setMaterial(v->getMaterial());
+		
+		act("$p goes flying through the air and bounces once before it rolls to a stop.",TRUE,v,corpse,0,TO_ROOM, ANSI_RED);
+		*v->roomp += *corpse;
+
+		v->setSex(SEX_NEUTER);
+		v->rawBleed(WEAR_WAISTE, PERMANENT_DURATION, SILENT_NO, CHECK_IMMUNITY_YES);
+
+		if (desc)
+		  desc->career.crit_genitalia++;
+		
+		if (v->desc)
+		  v->desc->career.crit_genitalia_suff++;
+		
+                return ONEHIT_MESS_CRIT_S;
+	      }
+	      break;
             case 93:
             case 94:
             case 95:

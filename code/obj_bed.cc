@@ -208,7 +208,7 @@ void TBed::bedRegen(TBeing *ch, int *gain, silentTypeT silent) const
   if (ch->getHit() < ch->hitLimit()) {
     // act() is suppressed if person is !awake(), use a sendTo
     if (!silent)
-      ch->sendTo("Your rest on %s rejuvenates you.\n\r", getName());
+      ch->sendTo(COLOR_OBJS, "Your rest on %s rejuvenates you.\n\r", getName());
   }
 }
 

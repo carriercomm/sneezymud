@@ -3901,6 +3901,9 @@ void TBeing::doSetsev(const char *arg)
   doSave(SILENT_YES);
 }
 
+moneyTypeT & operator++(moneyTypeT &c, int)
+{ return (c = ((c == MAX_MONEY_TYPE) ? GOLD_XFER : moneyTypeT(c + 1))); }
+
 void TBeing::doInfo(const char *arg)
 {
   Descriptor *i;
@@ -4185,6 +4188,134 @@ void TBeing::doInfo(const char *arg)
               gold_statistics[GOLD_DUMP][j]);
         buf += buf2;
       }
+      desc->page_string(buf.c_str(), 0);
+#elif 1
+      unsigned int tTotalGold[MAX_MONEY_TYPE],
+                   tTotalGlobal = getPosGoldGlobal(),
+                   tTotalShops  = getPosGoldShops(),
+                   tTotalBudget = getPosGoldBudget();
+               int tNetGold[MAX_MONEY_TYPE],
+                   tNetGlobal   = getNetGoldGlobal(),
+                   tNetShops    = getNetGoldShops(),
+                   tNetBudget   = getNetGoldBudget();
+               int tTotalDrain  = tTotalGlobal - tNetGlobal;
+
+      if (!arg || !*arg) {
+        char tNames[MAX_MONEY_TYPE][20] =
+        { "X-Fer"         , "Income"  , "Repair"     , "Shop",
+          "Commodities"   , "Hospital", "Gamble"     , "Rent",
+          "Dump"          , "Tithe"   , "Shop-Symbol", "Shop-Weapon",
+          "Shop-Armor"    , "Shop-Pet", "Shop-Food"  , "Shop-Components",
+          "Shop-Responses"
+        };
+
+        sprintf(buf2, "Modifier: Shop  : %2.2f (Factor: %6.2f%%)\n\r",
+                gold_modifier[GOLD_SHOP],
+                100.0 * (tTotalShops - tNetShops) / tTotalShops);
+        buf += buf2;
+        sprintf(buf2, "Modifier: Income: %2.2f (Factor: %6.2f%%)\n\r",
+                gold_modifier[GOLD_INCOME],
+                100.0 * tNetBudget / tTotalBudget);
+        buf += buf2;
+        sprintf(buf2, "Modifier: Repair: %2.2f (Factor: %6.2f%%)\n\r",
+                gold_modifier[GOLD_REPAIR],
+                100.0 * (tTotalBudget - tNetBudget) / tTotalDrain);
+        buf += buf2;
+        sprintf(buf2, "Modifier: Equip : %2.2f (Factor: %6.2f%%)\n\r",
+                stats.equip,
+                100.0 * (getPosGold(GOLD_SHOP_WEAPON) + getPosGold(GOLD_SHOP_ARMOR) / tTotalGlobal));
+        buf += buf2;
+        buf += "\n\r";
+
+        sprintf(buf2, "Economy-Total :   pos = %9u   net gold = %9d   drain = %9d\n\r",
+                tTotalGlobal, tNetGlobal, tTotalDrain);
+        buf += buf2;
+
+        // Shops are a little Different from normal.
+        // Want shops to be a slight drain, so compare drain to source.
+        sprintf(buf2, "Economy-Shop  :   pos = %10u   net gold = %10d   drain = %10d\n\r",
+                tTotalShops, tNetShops, tTotalShops - tNetShops);
+        buf += buf2;
+        sprintf(buf2, "Economy-Budget:   pos = %10u   net gold = %10d   drain = %10d\n\r",
+                tTotalBudget, tNetBudget, tTotalBudget = tNetBudget);
+        buf += buf2;
+        buf += "\n\r";
+
+        for (moneyTypeT tMoney = GOLD_XFER; tMoney < MAX_MONEY_TYPE; tMoney++) {
+          tTotalGold[tMoney] = getPosGold(tMoney);
+          tNetGold[tMoney]   = getNetGold(tMoney);
+
+          sprintf(buf2, "Ecomony-%s:\n\r\tpos = %9u   net gold = %9d (drain: %9d : %6.2f%%)\n\r",
+                  tNames[tMoney], tTotalGold[tMoney], tNetGold[tMoney],
+                  tTotalGold[tMoney] - tNetGold[tMoney],
+                  100.0 * (tTotalGold[tMoney] - tNetGold[tMoney]) / tTotalDrain);
+          buf += buf2;
+        }
+      }
+
+      buf += "\n\rGold Income/Outlay statistics:\n\r\n\r";
+
+      if (arg && *arg && (atoi(arg) < 1 || atoi(arg) > MAX_IMMORT))
+        buf += "...Invalid Level Specified...\n\r\n\r";
+
+      for (j = ((arg && *arg) ? (atoi(arg) - 1) : 0); j < MAX_IMMORT; j++) {
+        if (j < 0)
+          break;
+
+        unsigned long tPosTotal = 0;
+                 long tStaTotal = 0;
+
+        for (moneyTypeT tMoney = GOLD_INCOME; tMoney < MAX_MONEY_TYPE; tMoney++) {
+          tPosTotal += gold_positive[tMoney][j];
+          tStaTotal += gold_statistics[tMoney][j];
+        }
+
+        sprintf(buf2, "%sLevel %2d:%s\n\r", cyan(), j + 1, norm());
+        buf += buf2;
+        sprintf(buf2, "     %sPos  : %9ld%s  (%.2f%% of total)\n\r",
+                cyan(), tPosTotal, norm(), 100.0 * tPosTotal / tTotalGlobal);
+        buf += buf2;
+        sprintf(buf2, "     %sNet  : %9ld%s  (%.2f%% of total)\n\r",
+                cyan(), tStaTotal, norm(), 100.0 * tStaTotal / tNetGlobal);
+        buf += buf2;
+        sprintf(buf2, "     %sDrain: %9ld%s  (%.2f%% of total)\n\r",
+                cyan(), tPosTotal - tStaTotal, norm(),
+                100.0 * (tPosTotal - tStaTotal) / (tTotalGlobal - tNetGlobal));
+        buf += buf2;
+
+        sprintf(buf2, "          Income: %8ld          Comm: %8ld      Gamble: %8ld\n\r",
+                gold_statistics[GOLD_INCOME][j],
+                gold_statistics[GOLD_COMM][j],
+                gold_statistics[GOLD_GAMBLE][j]);
+        buf += buf2;
+        sprintf(buf2, "            Shop: %8ld     Resp-Shop: %8ld      Repair: %8ld\n\r",
+                gold_statistics[GOLD_SHOP][j],
+                gold_statistics[GOLD_SHOP_RESPONSES][j],
+                gold_statistics[GOLD_REPAIR][j]);
+        buf += buf2;
+        sprintf(buf2, "      Armor-Shop: %8ld   Weapon-Shop: %8ld    Pet-Shop: %8ld\n\r",
+                gold_statistics[GOLD_SHOP_ARMOR][j],
+                gold_statistics[GOLD_SHOP_WEAPON][j],
+                gold_statistics[GOLD_SHOP_PET][j]);
+        buf += buf2;
+        sprintf(buf2, "     Symbol-Shop: %8ld     Comp-Shop: %8ld   Good-Shop: %8ld\n\r",
+                gold_statistics[GOLD_SHOP_SYMBOL][j],
+                gold_statistics[GOLD_SHOP_COMPONENTS][j],
+                gold_statistics[GOLD_SHOP_FOOD][j]);
+        buf += buf2;
+        sprintf(buf2, "            Rent: %8ld      Hospital: %8ld       Tithe: %8ld\n\r",
+                gold_statistics[GOLD_RENT][j],
+                gold_statistics[GOLD_HOSPITAL][j],
+                gold_statistics[GOLD_TITHE][j]);
+        buf += buf2;
+        sprintf(buf2, "            Dump: %8ld\n\r\n\r",
+                gold_statistics[GOLD_DUMP][j]);
+        buf += buf2;
+
+        if (arg && *arg)
+          break;
+      }
+
       desc->page_string(buf.c_str(), 0);
 #else
       unsigned int tot_gold = getPosGoldGlobal();

@@ -921,8 +921,10 @@ int TBaseWeapon::wieldMe(TBeing *ch, char *arg2)
     if (isname(name, "[paired]"))
       canSingleWieldPrim = canSingleWieldSecd = false;
 
+#if 0
     vlogf(LOG_LAPSOS, "Dynamic Paired Code Active: %s %d %d",
           arg2, canSingleWieldPrim, canSingleWieldSecd);
+#endif
 
     if (!*arg2) {
       if (!canSingleWieldPrim)

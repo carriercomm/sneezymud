@@ -2043,6 +2043,7 @@ void TBeing::describeAffects(TBeing *ch)
         break;
       case AFFECT_COMBAT:
       case AFFECT_PET:
+      case AFFECT_CHARM:
       case AFFECT_THRALL:
       case AFFECT_ORPHAN_PET:
         // no display

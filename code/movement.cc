@@ -1427,9 +1427,27 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
 int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in, 
      checkFallingT checkFall)
 {
-  TThing *t, *t2;
+  TThing *t, *t2, *t3;
   int rc;
   TMonster *mob;
+  int groupcount=0;// used to make mobs not go superaggro on groups - dash
+
+  
+  for (t3 = roomp->stuff; t3; t3 = t3->nextThing) {
+    TBeing *tbt = dynamic_cast<TBeing *>(t3);
+    if (tbt && inGroup(*tbt))
+      groupcount++;
+  }
+  if (was_in != -1) {
+    for (t3 = real_roomp(was_in)->stuff; t3; t3 = t3->nextThing) {
+      TBeing *tbt = dynamic_cast<TBeing *>(t3);
+      if (tbt && inGroup(*tbt))
+	groupcount++;
+    }
+  }
+
+  // ok, now we have the number of people in my group who are (supposedly) travelling with me
+  // we'll use it later to modify how often we call the roomenter mobaggro code -dash
 
   for (t = rider; t; t = t2) {
     t2 = t->nextRider;
@@ -1487,14 +1505,21 @@ int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in,
     }
     if (rc)
       continue;
-
-    rc = tmons->aggroCheck(false);
-    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      delete tmons;
-      tmons = NULL;
+    
+    if((groupcount == 1 && (::number(1,100)<85)) || 
+       (groupcount != 1 && !::number(0,groupcount-1) && (::number(1,100)<66))) {
+      // people walking alone, 85%
+      // people in groups get 66% / num of people in group (66% chance of aggroing the group)
+      //ok here's what were doing - we basically saying he'll only try and aggro once
+      //per group. roughly, sort of. its a hack, so sue me.
+      rc = tmons->aggroCheck(false);
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
+	delete tmons;
+	tmons = NULL;
+      }
+      if (rc)
+	continue;
     }
-    if (rc)
-      continue;
   }
   // special stuff for quest bits
   if (inRoom() == AVENGER_ROOM && hasQuestBit(TOG_AVENGER_HUNTING)) {

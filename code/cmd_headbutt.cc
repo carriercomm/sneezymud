@@ -241,7 +241,7 @@ static int headbuttHit(TBeing *c, TBeing *victim)
     if (IS_SET_DELETE(rc, DELETE_VICT))
       return DELETE_THIS;
   } else {
-    if (item->isSpiked())
+    if (item->isSpiked() || item->isObjStat(ITEM_SPIKED))
       spikeddam=(int) (dam*0.15);
     if (c->dentItem(victim, item, 1, WEAR_HEAD) == DELETE_ITEM) {
       delete item;
@@ -249,10 +249,13 @@ static int headbuttHit(TBeing *c, TBeing *victim)
     }
   }
 
-  if(spikeddam)
+  if(spikeddam) {
+    act("The spikes on your $o sink into $N.", FALSE, c, item, victim, TO_CHAR);
+    act("The spikes on $n's $o sink into $N.", FALSE, c, item, victim, TO_NOTVICT);
+    act("The spikes on $n's $o sink into you.", FALSE, c, item, victim, TO_VICT);
     if ((rc = c->reconcileDamage(victim, spikeddam,TYPE_STAB)) == -1)
       return DELETE_VICT;
-
+  }
   if ((rc = c->reconcileDamage(victim, dam,dam_type)) == -1)
     return DELETE_VICT;
 

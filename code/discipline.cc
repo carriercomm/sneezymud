@@ -3,6 +3,10 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: discipline.cc,v $
+// Revision 5.1.1.3  1999/10/29 05:49:13  cosmo
+// Making addSkillLag check results of skill. If victim dies,
+// the most the code will add is one combat round of lag rather than all.
+//
 // Revision 5.1.1.2  1999/10/29 05:17:28  cosmo
 // Reducing lag on mob death.
 //
@@ -4570,6 +4574,9 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
 
 void TBeing::addSkillLag(spellNumT skill, int rc)
 {
+  // rc is just a playerfavorable way to end lag when fight is over
+  // We do this already in places. This makes it general.
+  // If there is any issue just use 0 for rc and it will put in regular lag
   lag_t lag_num = discArray[skill]->lag;
   float f_lag = lagAdjust(lag_num);
   if (IS_SET_DELETE(rc, DELETE_VICT))

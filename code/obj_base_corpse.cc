@@ -2,11 +2,10 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-//////////////////////////////////////////////////////////////////////////
-
-
 // base_corpse.cc
 //
+//////////////////////////////////////////////////////////////////////////
+
 
 #include "stdsneezy.h"
 
@@ -165,7 +164,7 @@ int TBaseCorpse::dissectMe(TBeing *caster)
     dissectInfo *tDissect;
 
     if (isCorpseFlag(CORPSE_NO_REGEN)) {
-      act("$p: I am afraid that can not be dissected.",
+      act("$p: I am afraid that cannot be dissected.",
           FALSE, caster, this, 0, TO_CHAR);
       return FALSE;
     }

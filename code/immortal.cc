@@ -3412,6 +3412,11 @@ int TBeing::doExits(const char *argument, cmdTypeT cmd)
 
   sendTo("Obvious exits:\n\r");
   if (roomp) {
+    if (!isImmortal() && isAffected(AFF_BLIND) &&
+        !isAffected(AFF_TRUE_SIGHT)) {
+      sendTo("Blindness makes it impossible to tell.\n\r");
+      return FALSE;
+    }
     if (!isImmortal() && roomp->pitchBlackDark() &&
         !roomp->isRoomFlag(ROOM_ALWAYS_LIT) &&
         (visionBonus <= 0) &&

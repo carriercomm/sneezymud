@@ -213,11 +213,6 @@ int TSocket::gameLoop()
   time_t ticktime = time(0);
 
   while (!Shutdown) {
-#if 0
-    if  (!(pulse % PULSE_TICKS)) {
-      vlogf(LOG_SILENT, "tick log");
-    }
-#endif
     if (timeTill  && (timeTill <= time(0))) {
       if (descriptor_list) {
         sprintf(buf, "%s time has arrived!\n\r", shutdown_or_reboot().c_str());
@@ -325,18 +320,18 @@ int TSocket::gameLoop()
       drowning = (pulse % PULSE_DROWNING);
       special_procs = (pulse % PULSE_SPEC_PROCS);
       update_stuff = (pulse % PULSE_NOISES);
-      tick_updates = (pulse % PULSE_TICKS);
+      tick_updates = (pulse % PULSE_MUDHOUR);
       mobstuff = (pulse % PULSE_MOBACT);
-      points = (pulse % PULSE_UPDATES);
+      points = (pulse % PULSE_UPDATE);
     } else {
       teleport = (pulse % (PULSE_TELEPORT/2));
       combat = (pulse % (PULSE_COMBAT/2));
       drowning = (pulse % (PULSE_DROWNING/2));
       special_procs = (pulse % (PULSE_SPEC_PROCS/2));
       update_stuff = (pulse % (PULSE_NOISES/2));
-      tick_updates = (pulse % (PULSE_TICKS/2));
+      tick_updates = (pulse % (PULSE_MUDHOUR/2));
       mobstuff = (pulse % (PULSE_MOBACT/2));
-      points = (pulse % (PULSE_UPDATES/2));
+      points = (pulse % (PULSE_UPDATES2));
     }
 
     if (!points) {

@@ -1154,6 +1154,9 @@ int dispelMagic(TBeing *caster, TBeing * victim, int, byte bKnown)
 
 int dispelMagic(TBeing *caster, TBeing * victim, TMagicItem *obj)
 {
+  mud_assert(caster != NULL, "dispelMagic(): no caster");
+  mud_assert(victim != NULL, "dispelMagic(): no victim");
+
   int level = obj->getMagicLevel();
 
   int ret = dispelMagic(caster,victim, level,obj->getMagicLearnedness());
@@ -1183,6 +1186,9 @@ int dispelMagic(TBeing *caster, TBeing * victim)
 
 int castDispelMagic(TBeing *caster, TBeing * victim)
 {
+  mud_assert(caster != NULL, "castDispelMagic(): no caster");
+  mud_assert(victim != NULL, "castDispelMagic(): no victim");
+
   int level = caster->getSkillLevel(SPELL_DISPEL_MAGIC);
   if (caster->isNotPowerful(victim, level, SPELL_DISPEL_MAGIC, SILENT_NO)) {
     return 0;
@@ -1214,6 +1220,9 @@ int castDispelMagic(TBeing *caster, TBeing * victim)
 // returns DELETE_VICT (vict)
 int generic_dispel_magic(TBeing *caster, TBeing *victim, int, immortalTypeT immortal, safeTypeT safe)
 {
+  mud_assert(caster != NULL, "generic_dispel_magic(): no caster");
+  mud_assert(victim != NULL, "generic_dispel_magic(): no victim");
+
   TMonster *tvm = dynamic_cast<TMonster *>(victim);
   spellNumT spell;
   int rc;

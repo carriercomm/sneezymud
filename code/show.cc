@@ -1699,6 +1699,23 @@ void TPerson::doShow(const char *argument)
     }
     argument = one_argument(argument, buf);
     if (buf && *buf) {
+      int raceIndex = -1;
+
+      if (is_number(buf)) {
+        raceIndex = atoi(buf);
+
+        if (raceIndex > 0 && raceIndex < MAX_RACIAL_TYPES && Races[raceIndex]) {
+          Races[raceIndex]->showTo(this);
+          return;
+        }
+      } else {
+        for (raceIndex = RACE_NORACE; raceIndex < MAX_RACIAL_TYPES; raceIndex++)
+          if (Races[raceIndex] && is_abbrev(buf, Races[raceIndex]->getSingularName())) {
+            Races[raceIndex]->showTo(this);
+            return;
+          }
+      }
+      /*
       int raceIndex = atoi(buf);
       if (raceIndex < MAX_RACIAL_TYPES) {
         if ((raceIndex) && (Races[raceIndex])) {
@@ -1717,6 +1734,7 @@ void TPerson::doShow(const char *argument)
           }
         }
       }
+      */
     }
     listRaces(this);
     return;

@@ -32,6 +32,7 @@ class TContainer : public TObj {
     virtual void powerstoneMostMana(int *);
     virtual bool fitsSellType(tObjectManipT, TBeing *, TMonster *, string, itemTypeT, int &, int);
     virtual string showModifier(showModeT, const TBeing *) const;
+    virtual void purchaseMe(TBeing *, TMonster *, int, int);
 
   protected:
     TContainer();

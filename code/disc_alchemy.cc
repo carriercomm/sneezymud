@@ -324,6 +324,14 @@ int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
            immunity_names[i]);
     }
     caster->describeMaterial(victim);
+
+    char buf[256], buf2[256];
+    sprintbit(victim->specials.affectedBy, affected_bits, buf2);
+    strcat(buf, "Affected by: ");
+    strcat(buf, buf2);
+    strcat(buf, "\n\r");
+    caster->sendTo(buf);
+
     return SPELL_SUCCESS;
   } else {
     caster->nothingHappens();

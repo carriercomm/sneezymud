@@ -587,8 +587,8 @@ int disguise(TBeing *caster, char * buffer)
     }
 
     delete [] mob->player.longDescr;
-    if (caster->player.getLongDesc()) {
-      mob->player.longDescr = mud_str_dup(caster->player.getLongDesc());
+    if (caster->getLongDesc()) {
+      mob->player.longDescr = mud_str_dup(caster->getLongDesc());
     } else {
       // always true for caster = PC
       sprintf(buf, "%s is here.", caster->name);

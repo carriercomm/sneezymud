@@ -14,6 +14,8 @@
 #include "create.h"
 #include "room.h"
 
+extern bool in_range(int, int, int);
+
 const char *room_fields[] =
 {
   "description",  //  1
@@ -133,7 +135,7 @@ void TPerson::doEdit(const char *arg)
   if (!in_range(roomp->number, desc->blockastart, desc->blockaend) &&
       !in_range(roomp->number, desc->blockbstart, desc->blockbend) &&
       roomp->number != desc->office && !hasWizPower(POWER_REDIT_ENABLED)) {
-    sendTo("This room is not yours...Sorry);
+    sendTo("This room is not yours...Sorry\n\r");
     return;
   }
 
@@ -1324,7 +1326,7 @@ void TPerson::doRedit(const char *argument)
   if (!in_range(roomp->number, desc->blockastart, desc->blockaend) &&
       !in_range(roomp->number, desc->blockbstart, desc->blockbend) &&
       roomp->number != desc->office && !hasWizPower(POWER_REDIT_ENABLED)) {
-    sendTo("This room is not yours...Sorry);
+    sendTo("This room is not yours...Sorry\n\r");
     return;
   }
 
@@ -2859,7 +2861,7 @@ void TRoom::loadOne(FILE *fl, bool tinyfile)
         new_descr = new extraDescription();
         new_descr->keyword = fread_string(fl);
         if (!new_descr->keyword || !*new_descr->keyword)
-          vlogf(LOG_EDIT "No keyword in room %d\n", number);
+          vlogf(LOG_EDIT, "No keyword in room %d\n", number);
 
         new_descr->description = fread_string(fl);
         if (!new_descr->description || !*new_descr->description)

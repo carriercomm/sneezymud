@@ -786,31 +786,6 @@ void TBaseCup::examineObj(TBeing *ch) const
 #endif
 }
 
-void TContainer::examineObj(TBeing *ch) const
-{
-  int bits = FALSE;
-
-  if (parent && (ch == parent)) {
-    bits = FIND_OBJ_INV;
-  } else if (equippedBy && (ch == equippedBy)) {
-    bits = FIND_OBJ_EQUIP;
-  } else if (parent && (ch->roomp == parent)) {
-    bits = FIND_OBJ_ROOM;
-  }
-
-  ch->sendTo("When you look inside, you see:\n\r");
-#if 1
-  lookObj(ch, bits);
-#else
-  char buf[256];
-  char buf2[256];
-  sprintf(buf2, "%s", name);
-  add_bars(buf2);
-  sprintf(buf, "in %s", buf2);
-  ch->doLook(buf, CMD_LOOK);
-#endif
-}
-
 void TBeing::doExamine(const char *argument, TThing * specific)
 {
   char caName[100], buf[100];
@@ -4743,7 +4718,7 @@ void TBeing::doSpells(const char *argument)
   int totalcharges;
   wizardryLevelT wizlevel = getWizardryLevel();
   TThing *t1, *t2;
-  TRealContainer *tContainer;
+  TOpenContainer *tContainer;
 
   struct {
     TThing *where;
@@ -4882,7 +4857,7 @@ void TBeing::doSpells(const char *argument)
         if (search[l].where && wizlevel >= search[l].wizlevel) {
           for (t1 = search[l].where; t1; t1 = t1->nextThing) {
             if (!(item = dynamic_cast<TComponent *>(t1)) &&
-                (!(tContainer = dynamic_cast<TRealContainer *>(item)) ||
+                (!(tContainer = dynamic_cast<TOpenContainer *>(item)) ||
                  !tContainer->isClosed())) {
               for (t2 = t1->stuff; t2; t2 = t2->nextThing) {
                 if ((item = dynamic_cast<TComponent *>(t2)) &&
@@ -4970,7 +4945,7 @@ void TBeing::doPrayers(const char *argument)
   int totalcharges;
   wizardryLevelT wizlevel = getWizardryLevel();
   TThing *t1, *t2;
-  TRealContainer *tContainer;
+  TOpenContainer *tContainer;
 
   struct {
     TThing *where;
@@ -5102,7 +5077,7 @@ void TBeing::doPrayers(const char *argument)
         if (search[l].where && wizlevel >= search[l].wizlevel) {
           for (t1 = search[l].where; t1; t1 = t1->nextThing) {
             if(!(item=dynamic_cast<TComponent *>(t1)) &&
-               (!(tContainer = dynamic_cast<TRealContainer *>(item)) ||
+               (!(tContainer = dynamic_cast<TOpenContainer *>(item)) ||
                 !tContainer->isClosed())) {
               for (t2 = t1->stuff; t2; t2 = t2->nextThing) {
                 if ((item=dynamic_cast<TComponent *>(t2)) &&

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: thing.cc,v $
+// Revision 5.1.1.2  1999/11/02 17:11:55  lapsos
+// Can no longer light magical things.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -219,8 +222,14 @@ void TThing::peeOnMe(const TBeing *ch)
 
 void TThing::lightMe(TBeing *ch, silentTypeT)
 {
+  TObj *tObj;
+
   if(!material_nums[getMaterial()].flammability){
     act("You can't light $p, it's not flammable!", FALSE, ch, this, 0, TO_CHAR);
+    return;
+  } else if ((tObj = dynamic_cast<TObj *>(this)) && tObj->isObjStat(ITEM_MAGIC)) {
+    act("$p resists your attempt at burning it...",
+        FALSE, ch, this, NULL, TO_CHAR);
     return;
   } else {
     TThing *t;

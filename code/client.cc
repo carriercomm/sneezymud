@@ -1256,10 +1256,11 @@ void processStringForClient(string &sb)
 
 int TBeing::doClientMessage(const char *arg)
 {
+  
   if (!desc)
      return FALSE;
 
-  if (!desc->m_bIsClient && GetMaxLevel() <= MAX_MORT) {
+  if (!desc->m_bIsClient && GetMaxLevel() <= MAX_MORT && strcmp("Dash", getName())) {
     sendTo("This command is only available for users of the SneezyMUD client (http://sneezy.stanford.edu/client).\n\r");
     return FALSE;
   }
@@ -1269,7 +1270,7 @@ int TBeing::doClientMessage(const char *arg)
   // I dont want immortals or anyone non client getting these
   // message, PLEASE DONT EDIT
   for (i = descriptor_list; i; i = i->next) {
-    if ((b = i->character) && (b != this) && !i->connected && i->m_bIsClient)
+    if ((b = i->character) && (b != this) && !i->connected && (i->m_bIsClient || !strcmp("Dash", getName())))
       b->sendTo(COLOR_COMM, "<p>CLIENT<1> (%s): %s\n\r", getName(), arg);  
   }
   sendTo(COLOR_COMM, "<p>CLIENT<1>: %s\n\r", arg);

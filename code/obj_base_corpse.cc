@@ -448,7 +448,17 @@ int TBaseCorpse::chiMe(TBeing *tLunatic)
 
   while ((tThing = stuff)) {
     --(*tThing);
-    *roomp += *tThing;
+
+    if (roomp)
+      *roomp += *tThing;
+    else if (parent)
+      *parent += *tThing;
+    else {
+      vlogf(LOG_BUG, "Neither roomp nor parent in chiMe corpse.  Destorying %s",
+            tThing->getName());
+      delete tThing;
+      tThing = NULL;
+    }
   }
 
   return DELETE_VICT;

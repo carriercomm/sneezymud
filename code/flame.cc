@@ -701,8 +701,8 @@ int TBeing::pourWaterOnMe(TBeing *ch, TObj *sObj)
 	  !obj->isObjStat(ITEM_BURNING) || !::number(0,2))
 	continue;
       obj->remBurning(ch);
-      act("Your $p is extinguished.", FALSE, ch, obj, 0, TO_CHAR);
-      act("$n's $p is extinguished.", FALSE, ch, obj, 0, TO_ROOM);
+      act("Your $p is extinguished.", FALSE, this, obj, 0, TO_CHAR);
+      act("$n's $p is extinguished.", FALSE, this, obj, 0, TO_ROOM);
     }
   }
 

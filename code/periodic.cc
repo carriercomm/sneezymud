@@ -549,7 +549,7 @@ int TBeing::updateTickStuff()
   } else if (desc && desc->original) {
     if (desc->original->getTimer() < 127)
       desc->original->addToTimer(1);
-  } else if (!desc && !master) {
+  } else if (!desc && !master && (gamePort != PROD_GAMEPORT || in_room != ROOM_NOCTURNAL_STORAGE)) {
 #if 1
     bool isAnElemental = isElemental();
     bool hasExp = getExp();

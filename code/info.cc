@@ -6443,60 +6443,89 @@ void TBeing::describeComponentSpell(const TComponent *obj, int learn) const
   return;
 }
 
-void TBeing::describeMaterial(const TThing *t)
+string TBeing::describeMaterial(const TThing *t)
 {
+  string str;
+  char buf[256];
+
   int mat = t->getMaterial();
   char mat_name[40];
 
   strcpy(mat_name, good_uncap(material_nums[mat].mat_name).c_str());
 
   if (dynamic_cast<const TBeing *>(t))
-    sendTo(COLOR_MOBS, "%s has a skin type of %s.\n\r", good_cap(t->getName()).c_str(), mat_name);
+    sprintf(buf, "%s has a skin type of %s.\n\r", good_cap(t->getName()).c_str(), mat_name);
   else
-    sendTo(COLOR_OBJECTS, "%s is made of %s.\n\r", good_cap(t->getName()).c_str(), mat_name);
+    sprintf(buf, "%s is made of %s.\n\r", good_cap(t->getName()).c_str(), mat_name);
+  str += buf;
 
-  describeMaterial(mat);
+  str += describeMaterial(mat);
+
+  return str;
 }
 
-void TBeing::describeMaterial(int mat)
+string TBeing::describeMaterial(int mat)
 {
-  //  int mat = t->getMaterial();
+  string str;
+  char buf[256];
+
   char mat_name[40];
 
   strcpy(mat_name, good_uncap(material_nums[mat].mat_name).c_str());
 
-  sendTo("%s is %d%% susceptible to slash attacks.\n\r",
+  sprintf(buf, "%s is %d%% susceptible to slash attacks.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].cut_susc);
-  sendTo("%s is %d%% susceptible to pierce attacks.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s is %d%% susceptible to pierce attacks.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].pierced_susc);
-  sendTo("%s is %d%% susceptible to blunt attacks.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s is %d%% susceptible to blunt attacks.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].smash_susc);
-  sendTo("%s is %d%% susceptible to flame attacks.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s is %d%% susceptible to flame attacks.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].burned_susc);
-  sendTo("%s is %d%% susceptible to acid attacks.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s is %d%% susceptible to acid attacks.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].acid_susc);
-  sendTo("%s is %d%% susceptible to water erosion, and suffers %d damage per erosion.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s is %d%% susceptible to water erosion, and suffers %d damage per erosion.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].water_susc%10 * 10,
      material_nums[mat].water_susc/10);
-  sendTo("%s is %d%% susceptible to fall shock, and suffers %d damage per shock.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s is %d%% susceptible to fall shock, and suffers %d damage per shock.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].fall_susc%10 *10,
      material_nums[mat].fall_susc/10);
-  sendTo("%s has a hardness of %d units.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s has a hardness of %d units.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].hardness);
-  sendTo("%s has a compaction ratio of %d:1.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s has a compaction ratio of %d:1.\n\r",
      good_cap(mat_name).c_str(),
      material_nums[mat].vol_mult);
-  sendTo("%s is %sconsidered a conductive material.\n\r",
+  str += buf;
+
+  sprintf(buf, "%s is %sconsidered a conductive material.\n\r",
      good_cap(mat_name).c_str(),
      (material_nums[mat].conductivity ? "" : "not "));
+  str += buf;
+
+  return str;
 }
 
 void TBeing::sendRoomName(TRoom *rp) const

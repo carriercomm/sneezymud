@@ -3,12 +3,27 @@
 #include "combat.h"
 #include "disc_animal.h"
 
-int beastSoother(TBeing * caster, TBeing * victim, int, byte bKnown)
+int beastSoother(TBeing *caster, TBeing *victim, TMagicItem *tObj)
+{
+  int tLevel = tObj->getMagicLevel(),
+    tKnown = tObj->getMagicLearnedness(),
+    tReturn = 0;
+
+  tReturn = beastSoother(caster, victim, 1, tKnown);
+
+  if (IS_SET(tReturn, CASTER_DEAD))
+    ADD_DELETE(tReturn, DELETE_THIS);
+
+  return tReturn;
+}
+
+int beastSoother(TBeing * caster, TBeing * victim, int tWand, byte bKnown)
 {
   int rc;
 
-  if (!caster->useComponent(caster->findComponent(SKILL_BEAST_SOOTHER), victim, CHECK_ONLY_NO))
-    return FALSE;
+  if (!tWand)
+    if (!caster->useComponent(caster->findComponent(SKILL_BEAST_SOOTHER), victim, CHECK_ONLY_NO))
+      return FALSE;
 
   if (!victim->awake()) {
     act("$N looks sound asleep.  Oops!", TRUE, caster, NULL, victim, TO_CHAR);
@@ -102,7 +117,7 @@ int TBeing::doSoothBeast(const char *argument)
 
   level = getSkillLevel(SKILL_BEAST_SOOTHER);
 
-  ret=beastSoother(this,victim,level,getSkillValue(SKILL_BEAST_SOOTHER));
+  ret=beastSoother(this,victim,0,getSkillValue(SKILL_BEAST_SOOTHER));
   if (IS_SET(ret, VICTIM_DEAD))
     ADD_DELETE(rc, DELETE_VICT);
   if (IS_SET(ret, CASTER_DEAD))
@@ -118,7 +133,7 @@ int beastSoother(TBeing * caster, TBeing * victim)
 
   level = caster->getSkillLevel(SKILL_BEAST_SOOTHER);
 
-  ret=beastSoother(caster,victim,level,caster->getSkillValue(SKILL_BEAST_SOOTHER));
+  ret=beastSoother(caster,victim,0,caster->getSkillValue(SKILL_BEAST_SOOTHER));
   if (IS_SET(ret, VICTIM_DEAD))
     ADD_DELETE(rc, DELETE_VICT);
   if (IS_SET(ret, CASTER_DEAD))

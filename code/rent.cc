@@ -2533,7 +2533,7 @@ void countAccounts(const char *arg)
     
     // check for valid char
     sprintf(buf2, "player/%c/%s", dp->d_name[0], dp->d_name);
-#if 1
+
     struct stat theStat;
     int ret = stat(buf2, &theStat);
     if (ret != 0) {
@@ -2560,24 +2560,6 @@ void countAccounts(const char *arg)
         accStat.active_account++;
       }
     }
-#else
-    FILE *fp;
-    if (((fp = fopen(buf2, "r")) == NULL) && errno == ENOENT){
-      vlogf(LOG_MISC, "Deleting reference to %s in %s's account", buf2, arg);
-      sprintf(buf2, "%s/%s", buf, dp->d_name);
-      vlogf(LOG_MISC, "Deleting %s", buf2);
-      if (unlink(buf2) != 0)
-        vlogf(LOG_FILE, "error in unlink (12) (%s) %d", buf2, errno);
-
-      continue;
-    } else if (fp == NULL) {
-      vlogf(LOG_FILE, "fopen() failed for %s.  errno = %d", buf2, errno);
-      perror("fopen");
-      continue;
-    }
-    fclose(fp);
-    count++;
-#endif
   }
   closedir(dfd);
 

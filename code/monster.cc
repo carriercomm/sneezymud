@@ -2,23 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: monster.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/01 14:36:47  batopr
-// reenabled gold modifier
-//
-// Revision 1.2  1999/09/22 19:00:22  cosmo
-// Temporarily Removed the gold modifier GOLD_INCOME, till we can evalute
-// why it dropped to .1 and if thats a good thing.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+//   monster.cc : functions of the TMonster class
 //
 //////////////////////////////////////////////////////////////////////////
 

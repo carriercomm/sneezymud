@@ -2,29 +2,9 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: mobact.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+//      "mobact.cc" - make mobiles be mobiles
 //
 //////////////////////////////////////////////////////////////////////////
-
-
-/*************************************************************************
-
-      SneezyMUD - All rights reserved, SneezyMUD Coding Team
-      "mobact.cc" - make mobiles be mobiles
-
-  Portions based on/copied from old Diku and SillyMUD code.  See
-  lib/txt/credits for details of original diku team and SillyMUD authors.
-
-*************************************************************************/
 
 #include "stdsneezy.h"
 #include "range.h"

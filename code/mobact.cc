@@ -234,28 +234,47 @@ static bool legalMobMovement(TMonster * mob, dirTypeT door)
   return true;
 }
 
-// this forces the mob to pick an exit and leave through it.  It uses a 
-// random starting point and cycles around until it finds an exit.
+// this forces the mob to pick an exit and leave through it.
 int TMonster::wanderAround()
 {
-  dirTypeT i;
+  dirTypeT iterDir;
   int rc;
 
-  // pick a random starting dir
-  dirTypeT tmp=dirTypeT(::number(MIN_DIR, MAX_DIR-1));
+  // First, determine the total number of exits
+  unsigned int numExits = 0;
+  for(iterDir=MIN_DIR; iterDir < MAX_DIR; iterDir++)
+    if (exitDir(iterDir))
+      numExits++;
+  
+  if (!numExits)
+    return false;
+
+  // choose one of the exits at random
+  unsigned int iterEx = ::number(0, numExits-1); 
+  for (iterDir=MIN_DIR; iterDir < MAX_DIR; iterDir++) {
+    if (exitDir(iterDir)) {
+      if (!iterEx)
+        break;
+      iterEx--;
+    }
+  }
+
+  // iterDir now holds a random starting point for our exit
+
   bool been_here = false;
 
-  // but cycle over all exist back to beginning
-  // we will use "tmp" as the random starting point
+  // cycle over all exits back to beginning
+  // we will use "iterDir" as the random starting point
   // we will use "i" as an iterator
   // been_here is used to keep from infinitely looping
 
   // note also that i is abusing the loop feature we set up in the
   // enum ++ operator for it.
-  for(i=tmp; ; i++) {
+  dirTypeT i;
+  for(i=iterDir; ; i++) {
     if (i==MAX_DIR)
       continue;
-    if (i == tmp) {
+    if (i == iterDir) {
       if (been_here)
         return FALSE;
       been_here = true;

@@ -2,41 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: other.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.9  1999/09/30 01:04:49  lapsos
-// Added code for the auto-tips advanced menus.
-//
-// Revision 1.8  1999/09/29 07:46:14  lapsos
-// Added code for the Mobile Strings stuff.
-//
-// Revision 1.7  1999/09/27 01:03:53  lapsos
-// *** empty log message ***
-//
-// Revision 1.5  1999/09/27 00:07:47  lapsos
-// Added atomize to doObjSpell function.
-//
-// Revision 1.4  1999/09/24 02:03:56  batopr
-// Fixed array bounds problem on discArray
-//
-// Revision 1.3  1999/09/23 22:05:35  cosmo
-// Simple change of victim to target to avoid null pointer
-//
-// Revision 1.2  1999/09/14 23:22:20  cosmo
-// Fixed crash bug related to grouping npc's no victim->desc
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
+// other.cc - Miscellaneous routines
 //
 ///////////////////////////////////////////////////////////////////////////
 
@@ -3103,7 +3069,7 @@ void TBeing::doAuto(const char *buf)
         continue;
       if (*auto_name[i]) {
         sendTo("%-35s : %s\n\r",
-               (((1 << i) == AUTO_TIPS && isImmortal()) ? "Advanced Menus" : auto_name[i]),
+               (((unsigned int) (1 << i) == AUTO_TIPS && isImmortal()) ? "Advanced Menus" : auto_name[i]),
                ((IS_SET(desc->autobits, (unsigned) (1<<i))) ? "on" : "off"));
       }
     }

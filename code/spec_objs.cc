@@ -2939,23 +2939,6 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
   return TRUE;
 }
 
-int portableHole(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *ob2)
-{
-  int original_loc=ch->in_room;
-  int holeroom=61;
-
-  if(cmd != CMD_OBJ_HAVING_SOMETHING_PUT_INTO) 
-    return FALSE;
-
-  --(*ch);
-  thing_to_room(ch, holeroom);
-  o->dropMe(ch, SHOW_ME, DONT_SHOW_ROOM);
-  --(*ch);
-  thing_to_room(ch, original_loc);
-
-  return TRUE;
-}
-
 int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -2972,25 +2955,27 @@ int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   dam = (::number( 1, (ch->GetMaxLevel()) / 10 + 2));
   which = ::number(1,2);
 
-  act("<k>Three long, thin blades spring from your <1>$o<k>.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-  act("<k>Three long, thin blades spring from $n's <1>$o<k>.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-  act("<k>Three long, thin blades spring from $n's <1>$o<k>.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+  act("<k>Three long, thin blades spring from your <1>$o<k>.<1>",
+      TRUE,ch,o,vict,TO_CHAR,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k>.<1>",
+      TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k>.<1>",
+      TRUE,ch,o,vict,TO_VICT,NULL);
 
 
   if (which == 1) {
-  act("<k>You <g>slice<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-  act("<k>$n <1>slices<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-  act("<k>$n <r>slices<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-  rc = ch->reconcileDamage(vict, dam, TYPE_SLASH);
+    act("<k>You <g>slice<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+    act("<k>$n <1>slices<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+    act("<k>$n <r>slices<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   }
   else {
-  act("<k>You <g>stab<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-  act("<k>$n <1>stabs<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-  act("<k>$n <r>stabs<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-  rc = ch->reconcileDamage(vict, dam, TYPE_PIERCE);
+    act("<k>You <g>stab<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+    act("<k>$n <1>stabs<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+    act("<k>$n <r>stabs<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   }
 
-  if (rc == -1)
+  rc = ch->reconcileDamage(vict, dam, TYPE_PIERCE);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
     return DELETE_VICT;
   return TRUE;
 }
@@ -3060,8 +3045,8 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {TRUE, "Energy Beam Weapon", energyBeam},
   {TRUE, "Viper Weapon (poison)", poisonViperBlade},
   {FALSE, "trolley", trolley},
-  {FALSE, "portable hole", portableHole}, // 55
-  {TRUE, "Razor Glove", razorGlove},
+  {FALSE, "Unused", NULL}, // 55
+  {FALSE, "Razor Glove", razorGlove},
 };
 
 

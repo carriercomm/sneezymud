@@ -537,4 +537,10 @@ enum logTypeT
   LOG_PEEL    = 28  // Peel only logs
 };
 
+enum checkFallingT
+{
+  CHECK_FALL_NO = 0,
+  CHECK_FALL_YES
+};
+
 #endif  // __ENUM_H inclusion sandwich

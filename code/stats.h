@@ -32,6 +32,8 @@ enum statTypeT {
 const statTypeT MIN_STAT=	statTypeT(0);
 const statTypeT MAX_STATS_USED=	statTypeT(STAT_SPE+1);
 extern statTypeT & operator++(statTypeT &c, int);
+
+extern int territory_adjustment(territoryT, statTypeT);
 	
 const int MAX_STAT_COMBAT=	5;
 const int MAX_STAT_LEARN=	3;

@@ -283,8 +283,13 @@ const unsigned int ITEM_ONLY_NEUTER     = (1<<27);    // 134217728
 const unsigned int ITEM_ATTACHED        = (1<<28);    // 268435456 
 const unsigned int ITEM_BURNING         = (1<<29);    // 536870912
 const unsigned int ITEM_CHARRED         = (1<<30);    // 1073741824
+const long int ITEM_NOLOCATE            = (1<<31);    // 2147483647 
+// The above should be 2147483647 but for some reason that I couldn't
+// seem to locate being new to this code returns a negitive int. That
+// is why I made it a long int and not unsigned in case there is question.
+// -jh 8-29-2000
 
-const int MAX_OBJ_STAT        = 31;        // move and change
+const int MAX_OBJ_STAT        = 32;        // move and change
 
 extern long objCount;
 

@@ -441,7 +441,7 @@ void TBeing::doAttribute(const char *arg)
 
   one_argument(arg, cmdbuf);
   if (!*cmdbuf) {
-    sendTo("Syntax: attribute <personal | condition | statistics>\n\r");
+    sendTo("Syntax: attribute <personal | condition | statistics | reset>\n\r");
     return;
   }
   // I put immortal check before the regular since there is a PC called "per"
@@ -729,8 +729,15 @@ void TBeing::doAttribute(const char *arg)
 	
       }
     }
+  } else if (is_abbrev(cmdbuf, "reset")) {
+    if (!strcmp("reset", cmdbuf))
+      desc->session.setToZero();
+    else {
+      sendTo("This is a critical thing.  It resets all of your current session statis.\n\r");
+      sendTo("You must enter the entire  reset  to do this.\n\r");
+    }
   } else {
-    sendTo("Syntax: attribute <statistics | personal | condition>\n\r");
+    sendTo("Syntax: attribute <statistics | personal | condition | reset>\n\r");
     return;
   }
 }

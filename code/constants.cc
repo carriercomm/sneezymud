@@ -647,6 +647,7 @@ const char * const extra_bits[] =
   "Item Attached",
   "Burning",
   "Charred",
+  "No Locate",
   "\n"
 };
 

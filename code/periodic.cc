@@ -155,6 +155,11 @@ int TBeing::riverFlow(int)
       IS_SET(exitDir(rd)->condition, EX_CLOSED))
     return FALSE;
 
+  if ((rc = canSwim(rd)) > 0) {
+    sendTo("You swim valiantly against the current.\n\r");
+    return FALSE;
+  }
+
   if (!(to_room = real_roomp(exitDir(rd)->to_room)))
     return FALSE;
 

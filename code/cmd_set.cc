@@ -421,8 +421,8 @@ void TPerson::doSet(const char *argument)
       mob->getDiscipline(dnt)->setLearnedness(parm2);
       mob->initiateSkillsLearning(dnt, initial, parm2); 
     }
-    sendTo(COLOR_MOBS, "You set %s's %s discipline to %d.\n\r",
-           mob->getName(), disc_names[dnt], parm2);
+    sendTo(COLOR_MOBS, "You set %s's %s discipline to %d.  (was %d%%)\n\r",
+           mob->getName(), disc_names[dnt], parm2, initial);
     mob->affectTotal();
     mob->doSave(SILENT_YES);
     return;

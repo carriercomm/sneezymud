@@ -1693,6 +1693,7 @@ class TBeing : public TThing {
     void doRefuel(const char *);
     void doStop(const string);
     void doContinue(const char *);
+    void doFish(const char *);
     void doHistory();
     int  doCreate(const char *);
     int  ChargePulse(TBeing *ch);

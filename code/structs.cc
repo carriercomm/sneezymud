@@ -918,6 +918,7 @@ TThing& TThing::operator -- ()
 TPerson::TPerson(Descriptor *thedesc) :
   TBeing(),
   base_age(0),
+  tLogFile(NULL),
   title(NULL), 
   last_rent(0),
   timer(0)
@@ -945,6 +946,7 @@ TPerson::TPerson(Descriptor *thedesc) :
 TPerson::TPerson(const TPerson &a) :
   TBeing(a),
   base_age(a.base_age),
+  tLogFile(a.tLogFile),
   last_rent(a.last_rent), 
   timer(a.timer)
 {
@@ -998,6 +1000,12 @@ TPerson::~TPerson()
 
   delete [] title;
   title = NULL;
+
+  if (tLogFile) {
+    logf("Logging out...");
+    fclose(tLogFile);
+    tLogFile = NULL;
+  }
 }
 
 TThing::~TThing() 

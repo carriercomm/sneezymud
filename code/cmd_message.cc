@@ -426,7 +426,7 @@ string TMessages::operator()(messageTypeT tValue,
   {
     {"her", "him", "it"},
     {"she", "he" , "it"},
-    {"her", "him", "it"}
+    {"her", "his", "its"}
   };
 
   tMessage = (*this)[tValue];

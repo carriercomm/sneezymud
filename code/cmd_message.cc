@@ -289,8 +289,8 @@ string TMessages::getDefaultMessage(messageTypeT tValue, TBeing *tChar)
     case MSG_BAMFIN: // goto <room>
       return "<n> appears with an exposion of rose-petals";
       break;
-    case MSG_BAMOUT: // goto <room> when leaving a room
-      return "<n> disappears in a cloud of mushrooms."
+    case MSG_BAMFOUT: // goto <room> when leaving a room
+      return "<n> disappears in a cloud of mushrooms.";
       break;
     case MSG_LONGDESCR: // Long Description
       return "<n> is here, as they always are...";
@@ -405,7 +405,7 @@ TMessages & TMessages::operator()(messageTypeT tValue, string tStString)
       tMessages.msgBamfin = new char[tStString.length() + 1];
       strcpy(tMessages.msgBamfin, tStString.c_str());
       break;
-    case MSG_BAFMOUT: // bamfout
+    case MSG_BAMFOUT: // bamfout
       delete [] tMessages.msgBamfout;
       tMessages.msgBamfout = NULL;
       tMessages.msgBamfout = new char[tStString.length() + 1];

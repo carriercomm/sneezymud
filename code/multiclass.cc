@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: multiclass.cc,v $
+// Revision 5.1.1.5  2001/04/01 05:33:52  jesus
+// *** empty log message ***
+//
 // Revision 5.1.1.4  2001/04/01 04:42:55  jesus
 // took sid and omen from hardcoded 58
 //
@@ -385,7 +388,7 @@ void TPerson::startLevels()
     calcMaxLevel();
 
     // Minor Office Holders
-#ifdef 222
+#ifdef NO58
     // Currently there are nonex
   } else if (!strcmp(name, "Omen") ||
              !strcmp(name, "Sidartha")) {

@@ -2,6 +2,8 @@
 
 #include <unistd.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "stdsneezy.h"
 #include "rent.h"
@@ -2507,13 +2509,15 @@ void countAccounts(const char *arg)
   int count = 0;
   char buf[128];
   char buf2[256];
-  FILE *fp;
 
   sprintf(buf, "account/%c/%s", LOWER(arg[0]), lower(arg).c_str());
   if (!(dfd = opendir(buf))) {
     vlogf(LOG_BUG, "bad call to countAccount (%s)", buf);
     return;
   }
+
+  bool accountActive = false;
+
   while ((dp = readdir(dfd)) != NULL) {
     if (!strcmp(dp->d_name, "account") || !strcmp(dp->d_name, "comment") || 
         !strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
@@ -2521,6 +2525,35 @@ void countAccounts(const char *arg)
     
     // check for valid char
     sprintf(buf2, "player/%c/%s", dp->d_name[0], dp->d_name);
+#if 1
+    struct stat theStat;
+    int ret = stat(buf2, &theStat);
+    if (ret != 0) {
+      // some error occurred
+      if (errno == ENOENT) {
+        vlogf(LOG_MISC, "Deleting reference to %s in %s's account", buf2, arg);
+        sprintf(buf2, "%s/%s", buf, dp->d_name);
+        vlogf(LOG_MISC, "Deleting %s", buf2);
+        if (unlink(buf2) != 0)
+          vlogf(LOG_FILE, "error in unlink (12) (%s) %d", buf2, errno);
+      } else {
+        vlogf(LOG_FILE, "ERROR: stat() failed for %s.  errno = %d", buf2, errno);
+        perror("stat");
+      }
+      continue;
+    }
+    // theStat now holds info about the pfile
+    // since it is valid, increment the counter
+    count++;
+
+    if (!accountActive) {
+      if (time(0) - theStat.st_mtime <= (7 * SECS_PER_REAL_DAY)) {
+        accountActive = true;
+        accStat.active_account++;
+      }
+    }
+#else
+    FILE *fp;
     if (((fp = fopen(buf2, "r")) == NULL) && errno == ENOENT){
       vlogf(LOG_MISC, "Deleting reference to %s in %s's account", buf2, arg);
       sprintf(buf2, "%s/%s", buf, dp->d_name);
@@ -2536,6 +2569,7 @@ void countAccounts(const char *arg)
     }
     fclose(fp);
     count++;
+#endif
   }
   closedir(dfd);
 

@@ -1110,8 +1110,8 @@ static void change_mob_armor(TBeing *ch, TMonster *mob, const char *arg, editorE
     }
     new_armor = atof(arg);
 
-    if (new_armor < 0 || new_armor > 70.0) {
-      ch->sendTo("Please enter a number from 0.0 to 70.0.\n\r");
+    if (new_armor < 0 || new_armor > 127.0) {
+      ch->sendTo("Please enter a number from 0.0 to 127.0.\n\r");
       return;
     } else {
       mob->setACLevel(new_armor);
@@ -1128,7 +1128,7 @@ static void change_mob_armor(TBeing *ch, TMonster *mob, const char *arg, editorE
   ch->sendTo(VT_HOMECLR);
   ch->sendTo("Current mob AC Level: %.1f", mob->getACLevel());
   ch->sendTo(VT_CURSPOS, 5, 1);
-  ch->sendTo("AC Level should be from 0.0 to 70.0");
+  ch->sendTo("AC Level should be from 0.0 to 127.0");
   ch->sendTo(VT_CURSPOS, 6, 1);
   ch->sendTo("AC Level will give the mob the appropriate armor for that level.");
   ch->sendTo(VT_CURSPOS, 8, 1);
@@ -1147,8 +1147,8 @@ static void change_mob_hit_bonus(TBeing *ch, TMonster *mob, const char *arg, edi
     }
     new_bonus = atof(arg);
 
-    if (new_bonus < 0 || new_bonus > 70.0) {
-      ch->sendTo("Please enter a number from 0.0 to 70.0.\n\r");
+    if (new_bonus < 0 || new_bonus > 127.0) {
+      ch->sendTo("Please enter a number from 0.0 to 127.0.\n\r");
       return;
     } else {
       mob->setHPLevel(new_bonus);
@@ -1180,8 +1180,8 @@ static void change_mob_damage(TBeing *ch, TMonster *mob, const char *arg, editor
       return;
     }
     if (sscanf(arg, "%f+%d", &new_level, &new_precision) == 2) {
-      if ((new_level < 0) || (new_level > 70.0)) {
-        ch->sendTo("Damage Level must be between 0.0 and 70.0.\n\r");
+      if ((new_level < 0) || (new_level > 127.0)) {
+        ch->sendTo("Damage Level must be between 0.0 and 127.0.\n\r");
         return;
       }
       if ((new_precision < 0) || (new_precision > 100)) {
@@ -1209,7 +1209,7 @@ static void change_mob_damage(TBeing *ch, TMonster *mob, const char *arg, editor
   ch->sendTo(VT_CURSPOS, 4, 1);
   ch->sendTo("Please enter Damage Level and Precision in the form X+Y.");
   ch->sendTo(VT_CURSPOS, 5, 1);
-  ch->sendTo("X = the Damage Level (0.0 to 70.0).");
+  ch->sendTo("X = the Damage Level (0.0 to 127.0).");
   ch->sendTo(VT_CURSPOS, 6, 1);
       ch->sendTo("    Damage Level sets damage appropriate for that level of mob.");
   ch->sendTo(VT_CURSPOS, 7, 1);

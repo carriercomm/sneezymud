@@ -147,6 +147,9 @@ static int steal(TBeing * thief, TBeing * victim)
       
       thief->sendTo("Bingo! You got %d talen%s.\n\r", gold, 
             (gold > 1) ? "s" : "");
+
+      if (victim->hasClass(CLASS_THIEF) && victim->isPerceptive())
+        victim->sendTo("You suddenly feel lighter in your moneypouch...\n\r");
     } else 
       thief->sendTo("You couldn't seem to find any talens...\n\r");
   } else {
@@ -304,6 +307,9 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
         if (!thief->hasWizPower(POWER_WIZARD))
           vlogf(LOG_MISC, "%s stole %s from %s.",thief->getName(),
                 obj->getName(), victim->getName());
+
+      if (victim->hasClass(CLASS_THIEF) && victim->isPerceptive())
+        victim->sendTo("You suddenly feel like something is missing...\n\r");
       } else
         thief->sendTo("You can't carry that much weight.\n\r");
     } else

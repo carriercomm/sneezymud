@@ -3951,7 +3951,14 @@ byte TBeing::getMaxSkillValue(spellNumT skill) const
 
 CDiscipline * TBeing::getDiscipline(discNumT n) const
 {
-  return discs->disc[n];
+  if (discs)
+    return discs->disc[n];
+  else {
+    mud_assert(0,
+    "TBeing had no CMasterDiscipline. '%s'", getName() ? getName() : "NoName");
+
+    return NULL;
+  }
 }
 
 void CS(const TBeing *caster, spellNumT spell)

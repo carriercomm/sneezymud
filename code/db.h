@@ -2,24 +2,12 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: db.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+// db.h , Database module.
+// Usage: Loading/Saving chars booting world.
 //
 //////////////////////////////////////////////////////////////////////////
 
 
-/* ************************************************************************
-*  file: db.h , Database module.                          Part of DIKUMUD *
-*  Usage: Loading/Saving chars booting world.                             *
-************************************************************************* */
 
 
 #ifndef __DB_H
@@ -34,6 +22,8 @@
 // also: SNEEZY_ADMIN
 extern const char * const MUD_NAME;
 extern const char * const MUD_NAME_VERS;
+
+const char * const SIGN_MESS = "/mud/sign/currentMess";
 
 const char * const DFLT_DIR  ="lib";           /* default data directory     */
 

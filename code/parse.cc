@@ -109,34 +109,47 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
   bool isPoly = FALSE;
   char newarg[1024];
   string tStNewArg("");
+  size_t tVar = 0;
 
   for (; isspace(*argument); argument++);
 
   tStNewArg = argument;
 
-  if (tStNewArg.find("self") != string::npos)
-    tStNewArg.replace(tStNewArg.find("self"), 4, getName());
+  // The pray code is extremely messed up so this is really
+  // better put here until pray can get fixed.
+  //
+  // This way is much like the old way but it verifies that the
+  // "self"/"me"/"tank" word has a leading space and is the Last
+  // word in the line.  This way ->me<-rcees doesn't trigger.
+  if (cmd == CMD_PRAY) {
+    if ((tVar = tStNewArg.find(" self")) != string::npos &&
+        !(tStNewArg.size() - tVar - 5))
+      tStNewArg.replace(tStNewArg.find("self"), 4, getName());
 
-  else if (tStNewArg.find("me") != string::npos)
-    tStNewArg.replace(tStNewArg.find("me"), 2, getName());
+    else if ((tVar = tStNewArg.find(" me")) != string::npos &&
+             !(tStNewArg.size() - tVar - 3))
+      tStNewArg.replace(tStNewArg.find("me"), 2, getName());
 
-  else if (tStNewArg.find("tank") != string::npos && fight() &&
-           isAffected(AFF_GROUP) && fight()->fight()) {
-    tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(fight()->fight()).c_str());
-  } else if (tStNewArg.find("tank") != string::npos &&
-           cmd == CMD_PRAY && isAffected(AFF_GROUP)) {
-    if ((master && master->followers) || followers) {
-      followData * tF = (master ? master->followers : followers);
+    else if ((tVar = tStNewArg.find(" tank")) != string::npos && fight() &&
+             !(tStNewArg.size() - tVar - 5) &&
+             isAffected(AFF_GROUP) && fight()->fight()) {
+      tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(fight()->fight()).c_str());
+    } else if ((tVar = tStNewArg.find(" tank")) != string::npos &&
+               !(tStNewArg.size() - tVar - 5) &&
+               cmd == CMD_PRAY && isAffected(AFF_GROUP)) {
+      if ((master && master->followers) || followers) {
+        followData * tF = (master ? master->followers : followers);
 
-      for (; tF; tF = tF->next)
-        if ((ch = tF->follower->specials.fighting) &&
-            ch->specials.fighting == tF->follower) {
-          tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(tF->follower).c_str());
-          break;
-        }
+        for (; tF; tF = tF->next)
+          if ((ch = tF->follower->specials.fighting) &&
+              ch->specials.fighting == tF->follower) {
+            tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(tF->follower).c_str());
+            break;
+          }
 
-      if (!tF)
-        tStNewArg.replace(tStNewArg.find("tank"), 4, getName());
+        if (!tF)
+          tStNewArg.replace(tStNewArg.find("tank"), 4, getName());
+      }
     }
   }
 

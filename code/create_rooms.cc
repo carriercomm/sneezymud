@@ -2632,14 +2632,17 @@ static void DeleteExit(TRoom *rp, TBeing *ch, const char *arg, editorEnterTypeT 
 
   for (tExit = MIN_DIR; tExit < MAX_DIR; tExit++)
     if ((tData = rp->exitDir(tExit)) && tData->to_room != ROOM_NOWHERE) {
+      ch->sendTo("  %2d) %-9s     ", (tExit + 1), dirs[tExit]);
+
       if ((tExit % 2))
-        ch->sendTo("                  ");
-
-      ch->sendTo("  %2d) %-9s     ", tExit, dirs[tExit]);
-
-      if (!(tExit % 2))
         ch->sendTo("\n\r");
-    }
+    } else if (!(tExit % 2))
+      ch->sendTo("                    ");
+    else
+      ch->sendTo("\n\r");
+
+  if (!(tExit % 2))
+    ch->sendTo("\n\r");
 #else
   ch->sendTo(exit_menu);
 #endif

@@ -3966,14 +3966,6 @@ void TBeing::doSetsev(const char *arg)
 
       sendTo("Your Personal Log Messages are now %s\n\r",
              ((d->severity & (1 << LOG_COSMO)) ? "On" : "Off"));
-    } else if (is_abbrev(arg, "jesus") && !strcmp(getName(), "Jesus")) {
-      if ((d->severity & (1 << LOG_JESUS)))
-	d->severity &= ~(1 << LOG_JESUS);
-            else
-	      d->severity |= (1 << LOG_JESUS);
-
-      sendTo("Your Personal Log Messages are now %s\n\r",
-	     ((d->severity & (1 << LOG_COSMO)) ? "On" : "Off"));
     } else if (is_abbrev(arg, "lapsos") && !strcmp(getName(), "Lapsos")) {
       if ((d->severity & (1 << LOG_LAPSOS)))
         d->severity &= ~(1 << LOG_LAPSOS);

@@ -365,6 +365,15 @@ int TBeing::monkDodge(TBeing *v, TThing *weapon, int *dam, int w_type, wearSlotT
   return FALSE;
 }
 
+static void chiLag(TBeing *ch, int tRc)
+{
+  if (tRc == FALSE ||
+      IS_SET_DELETE(tRc, RET_STOP_PARSING))
+    return;
+
+  ch->addSkillLag(SKILL_CHI, tRc);
+}
+
 int TBeing::doChi(const char *tString, TThing *tSucker)
 {
   // Require 25 in SKILL_CHI for 'chi self'
@@ -423,8 +432,7 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
     }
   }
 
-  if (tRc)
-    addSkillLag(SKILL_CHI, tRc);
+  chiLag(this, tRc);
 
   if (IS_SET_DELETE(tRc, RET_STOP_PARSING))
     REM_DELETE(tRc, RET_STOP_PARSING);
@@ -477,8 +485,8 @@ int TBeing::doChi(const char *argument, TThing *target)
     }
 
     rc = chiMe(this);
-    if (rc)
-      addSkillLag(SKILL_CHI, rc);
+
+    chiLag(this, tRc);
 
     // DELETE_THIS will fall through
   } else {
@@ -500,8 +508,7 @@ int TBeing::doChi(const char *argument, TThing *target)
       }
 
       rc = chiMe(this);
-      if (rc)
-        addSkillLag(SKILL_CHI, rc);
+      chiLag(this, tRc);
       return TRUE;
     }
 
@@ -514,8 +521,7 @@ int TBeing::doChi(const char *argument, TThing *target)
 	}
 
 	rc = victim->chiMe(this);
-        if (rc)
-          addSkillLag(SKILL_CHI, rc);
+        chiLag(this, tRc);
 	
 	if (IS_SET_DELETE(rc, DELETE_VICT)) {
 	  delete victim;
@@ -528,8 +534,7 @@ int TBeing::doChi(const char *argument, TThing *target)
       case FIND_OBJ_ROOM:
       case FIND_OBJ_EQUIP:
 	rc = obj->chiMe(this);
-        if (rc)
-          addSkillLag(SKILL_CHI, rc);
+        chiLag(this, tRc);
 	break;
 #if 0
     // generic_find looks inv first, so if not goingto do anything with it, ignore it

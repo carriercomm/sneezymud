@@ -134,13 +134,22 @@ int limb_wound_price(TBeing *ch, int pos, unsigned short int wound)
   }
 }
 
+int spell_regen_price(TBeing *ch, spellNumT spell)
+{
+  int price = 1;
+
+  if (spell == SPELL_BLINDNESS) {
+    price = ch->GetMaxLevel() * max(ch->GetMaxLevel(), 20) * 1;
+  }
+
+  return price;
+}
+
 int limb_regen_price(TBeing *ch, int pos)
 {
   int price;
 
-  price = ch->GetMaxLevel() * ch->GetMaxLevel();
-
-  price *= 3;
+  price = ch->GetMaxLevel() * max(20,ch->GetMaxLevel()) * 3;
 
   switch (pos) {
     case WEAR_FINGER_R:
@@ -258,8 +267,15 @@ int doctor(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)
             }
             me->doTell(buf);
           }
+        } else if (aff->type == SPELL_BLINDNESS) {
+          if (!aff->shouldGenerateText())
+            continue;
+          sprintf(buf, "%s %d) Affect: %s. (%d talens).\n\r",
+                    ch->getName(), ++count,
+                    discArray[aff->type]->name,
+                    spell_regen_price(ch, SPELL_BLINDNESS));
         }
-      }
+      }  // affects loop
     }
     if (!count) {
       sprintf(buf, "%s, I see nothing at all wrong with you!", ch->getName());
@@ -486,6 +502,34 @@ int doctor(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)
                 ch->doSave(SILENT_YES);
                 return TRUE;
               }
+            }
+          }
+        } else if (aff->type == SPELL_BLINDNESS) {
+          if (++count == bought) {
+            cost = spell_regen_price(ch, SPELL_BLINDNESS));
+
+            if ((ch->getMoney() + ch->getBank()) < cost) {
+              sprintf(buf, "%s You don't have enough money to cure %s!",
+                       fname(ch->name).c_str(),
+                       discArray[aff->type]->name);
+              me->doTell(buf);
+              return TRUE;
+            } else {
+              int cashCost = min(ch->getMoney(), cost);
+              ch->addToMoney(-cashCost, GOLD_HOSPITAL);
+
+              if (cashCost != cost) {
+                cashCost = (ch->getBank() - (cost - cashCost));
+                ch->setBank(cashCost);
+              }
+
+              act("$n waves $s hands, utters many magic phrases and touches $N!", TRUE, me, NULL, ch, TO_NOTVICT);
+              act("$n waves $s hands, utters many magic phrases and touches you!", TRUE, me, NULL, ch, TO_VICT);
+
+              ch->affectFrom(aff->type);
+
+              ch->doSave(SILENT_YES);
+              return TRUE;
             }
           }
         }

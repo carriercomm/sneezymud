@@ -23,7 +23,12 @@ struct weather_data
    sunT sunlight;        /* And how much sun. */
 };
 
+// this represents the arbitrary starting point for mud-time functions
+// It is Fri Aug 10 18:05:15 1990  (Gamma 0.0 release?)
+// If people care, May 1, 1992 is around 704700000 (SneezyMUD opening)
 const unsigned long BEGINNING_OF_TIME      =650336715;
+
+// Beginning_OF_TIME will be Jan 1, year 0 + YEAR_ADJUST
 const int YEAR_ADJUST            =550;
 
 enum changeWeatherT {

@@ -328,10 +328,6 @@ TMonster::~TMonster()
     vlogf(LOG_BUG, "Mobile being destroyed with empty birth room! [%s]", getName());
   else
     *tRoom >> *this;
-
-// Just a placemarker end of desctructor
-  int test;
-  test = 0;
 }
 
 byte TMonster::getTimer() const

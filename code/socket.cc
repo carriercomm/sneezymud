@@ -81,7 +81,7 @@ void TSocket::addNewDescriptorsDuringBoot(string tStString)
     opt_time.tv_sec = 0;
     gettimeofday(&last_time, NULL);
 
-    maxdesc = sock;
+    maxdesc = m_sock;
     avail_descs = 150;
 
 #ifndef SOLARIS
@@ -100,11 +100,11 @@ void TSocket::addNewDescriptorsDuringBoot(string tStString)
   FD_ZERO(&input_set);
   FD_ZERO(&output_set);
   FD_ZERO(&exc_set);
-  FD_SET(sock, &input_set);
+  FD_SET(m_sock, &input_set);
   for (point = descriptor_list; point; point = point->next) {
-    FD_SET(point->socket->sock, &input_set);
-    FD_SET(point->socket->sock, &exc_set);
-  FD_SET(point->socket->sock, &output_set);
+    FD_SET(point->socket->m_sock, &input_set);
+    FD_SET(point->socket->m_sock, &exc_set);
+    FD_SET(point->socket->m_sock, &output_set);
   }
   // check out the time 
   gettimeofday(&now, NULL);
@@ -138,7 +138,7 @@ void TSocket::addNewDescriptorsDuringBoot(string tStString)
 #endif
 
   // establish any new connections 
-  if (FD_ISSET(sock, &input_set)) {
+  if (FD_ISSET(m_sock, &input_set)) {
     int tFd;
 
     if ((tFd = newDescriptor()) < 0)
@@ -149,16 +149,16 @@ void TSocket::addNewDescriptorsDuringBoot(string tStString)
   // close any connections with an exceptional condition pending 
   for (point = descriptor_list; point; point = next_to_process) {
     next_to_process = point->next;
-    if (FD_ISSET(point->socket->sock, &exc_set)) {
-      FD_CLR(point->socket->sock, &input_set);
-      FD_CLR(point->socket->sock, &output_set);
+    if (FD_ISSET(point->socket->m_sock, &exc_set)) {
+      FD_CLR(point->socket->m_sock, &input_set);
+      FD_CLR(point->socket->m_sock, &output_set);
       delete point;
     }
   }
   // read any incoming input, and queue it up 
   for (point = descriptor_list; point; point = next_to_process) {
     next_to_process = point->next;
-    if (FD_ISSET(point->socket->sock, &input_set)) {
+    if (FD_ISSET(point->socket->m_sock, &input_set)) {
       if (point->inputProcessing() < 0) {
         delete point;
         point = NULL;
@@ -195,7 +195,7 @@ int TSocket::gameLoop()
   gettimeofday(&last_time, NULL);
 
 #if 0
-  maxdesc = sock;
+  maxdesc = m_sock;
 #endif
   avail_descs = 150;		
 
@@ -244,11 +244,11 @@ int TSocket::gameLoop()
     FD_ZERO(&input_set);
     FD_ZERO(&output_set);
     FD_ZERO(&exc_set);
-    FD_SET(sock, &input_set);
+    FD_SET(m_sock, &input_set);
     for (point = descriptor_list; point; point = point->next) {
-      FD_SET(point->socket->sock, &input_set);
-      FD_SET(point->socket->sock, &exc_set);
-      FD_SET(point->socket->sock, &output_set);
+      FD_SET(point->socket->m_sock, &input_set);
+      FD_SET(point->socket->m_sock, &exc_set);
+      FD_SET(point->socket->m_sock, &output_set);
     }
     // check out the time 
     gettimeofday(&now, NULL);
@@ -282,7 +282,7 @@ int TSocket::gameLoop()
 #endif
 
     // establish any new connections 
-    if (FD_ISSET(sock, &input_set)) {
+    if (FD_ISSET(m_sock, &input_set)) {
       int rc = newDescriptor();
       if (rc < 0)
 	perror("New connection");
@@ -296,16 +296,16 @@ int TSocket::gameLoop()
     // close any connections with an exceptional condition pending 
     for (point = descriptor_list; point; point = next_to_process) {
       next_to_process = point->next;
-      if (FD_ISSET(point->socket->sock, &exc_set)) {
-	FD_CLR(point->socket->sock, &input_set);
-	FD_CLR(point->socket->sock, &output_set);
+      if (FD_ISSET(point->socket->m_sock, &exc_set)) {
+	FD_CLR(point->socket->m_sock, &input_set);
+	FD_CLR(point->socket->m_sock, &output_set);
 	delete point;
       }
     }
     // read any incoming input, and queue it up 
     for (point = descriptor_list; point; point = next_to_process) {
       next_to_process = point->next;
-      if (FD_ISSET(point->socket->sock, &input_set)) {
+      if (FD_ISSET(point->socket->m_sock, &input_set)) {
 	if (point->inputProcessing() < 0) {
 	  delete point;
           point = NULL;
@@ -713,12 +713,12 @@ TSocket *TSocket::newConnection()
   TSocket *s;
 
   i = sizeof(isa);
-  if (getsockname(sock, (struct sockaddr *) &isa, &i)) {
+  if (getsockname(m_sock, (struct sockaddr *) &isa, &i)) {
     perror("getsockname");
     return NULL;
   }
   s = new TSocket(0);
-  if ((s->sock = accept(sock, (struct sockaddr *) (&isa), &i)) < 0) {
+  if ((s->m_sock = accept(m_sock, (struct sockaddr *) (&isa), &i)) < 0) {
     perror("Accept");
     return NULL;
   }
@@ -769,16 +769,16 @@ int TSocket::newDescriptor()
     vlogf(LOG_MISC, "Descriptor being dumped due to high load - Bug Batopr");
     s->writeToSocket("Sorry.. The game is full...\n\r");
     s->writeToSocket("Please try again later...\n\r");
-    close(s->sock);
+    close(s->m_sock);
     delete s;
     return 0;
-  } else if (s->sock > maxdesc)
-    maxdesc = s->sock;
+  } else if (s->m_sock > maxdesc)
+    maxdesc = s->m_sock;
 
   newd = new Descriptor(s);
 
   size = sizeof(saiSock);
-  if (getpeername(s->sock, (struct sockaddr *) &saiSock, &size) < 0) {
+  if (getpeername(s->m_sock, (struct sockaddr *) &saiSock, &size) < 0) {
     perror("getpeername");
     *newd->host = '\0';
   } else {
@@ -853,10 +853,10 @@ int TSocket::writeToSocket(const char *txt)
   total = strlen(txt);
   sofar = 0;
 
-  //txt >> sock;
+  //txt >> m_sock;
  
   do {
-    thisround = write(sock, txt + sofar, total - sofar);
+    thisround = write(m_sock, txt + sofar, total - sofar);
     if (thisround < 0) {
       if (errno == EWOULDBLOCK)
 	break;
@@ -878,13 +878,13 @@ void TSocket::closeAllSockets()
   while (descriptor_list)
     delete descriptor_list;
 
-  close(sock);
+  close(m_sock);
 }
 
 
 void TSocket::nonBlock()
 {
-  if (fcntl(sock, F_SETFL, FNDELAY) == -1) {
+  if (fcntl(m_sock, F_SETFL, FNDELAY) == -1) {
     perror("Noblock");
     exit(1);
   }
@@ -915,37 +915,37 @@ void TSocket::initSocket()
     exit(1);
   }
   sa.sin_family = hp->h_addrtype;
-  sa.sin_port = htons(port);
-  if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+  sa.sin_port = htons(m_port);
+  if ((m_sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     perror("Init-socket");
     exit(1);
   }
-  if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *) &opt, sizeof(opt)) < 0) {
+  if (setsockopt(m_sock, SOL_SOCKET, SO_REUSEADDR, (char *) &opt, sizeof(opt)) < 0) {
     perror("setsockopt REUSEADDR");
     exit(1);
   }
   ld.l_linger = 1000;
   ld.l_onoff = 0;
 #ifdef OSF
-  if (setsockopt(sock, SOL_SOCKET, SO_LINGER, &ld, sizeof(ld)) < 0) {
+  if (setsockopt(m_sock, SOL_SOCKET, SO_LINGER, &ld, sizeof(ld)) < 0) {
 #else
-  if (setsockopt(sock, SOL_SOCKET, SO_LINGER, (char *) &ld, sizeof(ld)) < 0) {
+  if (setsockopt(m_sock, SOL_SOCKET, SO_LINGER, (char *) &ld, sizeof(ld)) < 0) {
 #endif
     perror("setsockopt LINGER");
     exit(1);
   }
-  if (bind(sock, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
+  if (bind(m_sock, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
     perror("bind");
     vlogf(LOG_BUG, "initSocket: bind: errno=%d", errno);
-    close(sock);
+    close(m_sock);
     exit(0);
   }
-  listen(sock, 3);
+  listen(m_sock, 3);
 }
 
 TSocket::TSocket(int p) :
-  sock(0),
-  port(p)
+  m_sock(0),
+  m_port(p)
 {
 }
 

@@ -68,7 +68,7 @@ void TBaseClothing::lowCheck()
   REMOVE_BIT(ui, ITEM_THROW);
 
   if (ui != ITEM_HOLD) {
-    int num = CountBits(ui) - 1;
+    int num = CountBits(ui, true) - 1;
     if (num < 0) {
       vlogf(LOG_LOW, "Base Clothing (%s:%d) with insufficient wearability.",
             getName(), objVnum());
@@ -596,12 +596,15 @@ void TBaseClothing::describeObjectSpecifics(const TBeing *ch) const
     string buf = "$p looks like it is meant to be held in your hands.";
     act(buf.c_str(), FALSE, ch, this, 0, TO_CHAR);
   } else {
-    int num = CountBits(ui) - 1;
+    int num = CountBits(ui, true) - 1;
     if (num >= 0) {
       string buf = "$p looks like it is meant to be worn on your ";
       buf += good_uncap(wear_bits[num]);
       buf += ".";
       act(buf.c_str(), FALSE, ch, this, 0, TO_CHAR);
+    } else {
+      vlogf(LOG_LOW, "Base Clothing (%s:%d) with insufficient wearability.",
+            getName(), objVnum());
     }
   }
 }

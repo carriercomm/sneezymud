@@ -9,6 +9,7 @@
 
 #include "stdsneezy.h"
 #include "statistics.h"
+#include "shop.h"
 
 charList::charList() :
   name(NULL),
@@ -367,8 +368,39 @@ int TMonster::calculateGoldFromConstant()
   // adjust for global gold modifier...
   the_gold *= gold_modifier[GOLD_INCOME];
 
-  if (spec == SPEC_SHOPKEEPER)
-    the_gold = 1000000;
+  if (spec == SPEC_SHOPKEEPER){
+    unsigned int shop_nr;
+    int rc;
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != this->number); shop_nr++);
+    
+    if (shop_nr >= shop_index.size()) {
+      vlogf(LOG_BUG, "Warning... shop # for mobile %d (real nr) not found.", this->number);
+      return FALSE;
+    }
+    
+    if((rc=dbquery(&res, "sneezy", "calculateGoldFromQuery", "select * from shopownedaccess where shop_nr=%i", shop_nr+1))==-1){
+      vlogf(LOG_BUG, "Database error in shop_keeper");
+      return FALSE;
+    }
+    if((row=mysql_fetch_row(res))){
+      mysql_free_result(res);
+      if((rc=dbquery(&res, "sneezy", "CalculateGoldFromQuery", "select gold from shopowned where shop_nr=%i", shop_nr+1))){
+	if(rc==-1){
+	  vlogf(LOG_BUG, "Database error in shop_keeper");
+	  return FALSE;
+	}
+      }
+      row=mysql_fetch_row(res);
+      
+      the_gold = atoi(row[0]);
+      
+      mysql_free_result(res);
+    } else
+      the_gold = 1000000;
+  }
 
   setMoney((int) the_gold);
   return FALSE;

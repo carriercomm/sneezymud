@@ -1904,7 +1904,9 @@ int crystal_ball(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
       ch->doSay(arg);
       return TRUE;
   }
-  ch->doSay(arg);
+  if (cmd == CMD_SAY || cmd == CMD_SAY2)
+    ch->doSay(arg);
+
   if (!victim->roomp) {
     obj_act("says 'Woah, big problem, talk to Brutius!'", 
         ch, me, NULL, ANSI_GREEN);

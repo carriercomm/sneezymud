@@ -2610,6 +2610,8 @@ static void DeleteExit(TRoom *rp, TBeing *ch, const char *arg, editorEnterTypeT 
   }
   update = atoi(arg);
   update--;
+  if (update < MIN_DIR || update >= MAX_DIR)
+    return; 
 
   if (type != ENTER_CHECK) {
     if (rp->dir_option[update]) {

@@ -3715,9 +3715,9 @@ void TBeing::doInventory(const char *argument)
     list_in_heap(stuff, this, 0, 100);
 
     if (GetMaxLevel() > 10) {
-      sendTo("\n\r%d%% volume, %d%% weight.\n\r",
-             (getCarriedVolume() / carryVolumeLimit()) * 100,
-             (int) (getCarriedWeight() / carryWeightLimit()) * 100);
+      sendTo("\n\r%3.f%% volume, %3.f%% weight.\n\r",
+             ((float) getCarriedVolume() / (float) carryVolumeLimit()) * 100.0,
+             ((float) getCarriedWeight() / (float) carryWeightLimit()) * 100.0);
     }
   } else {
     victim = get_char_vis_world(this, arg, NULL, EXACT_YES);

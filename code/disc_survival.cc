@@ -576,7 +576,7 @@ void TBeing::doSkin(const char *arg)
 
   for (; isspace(*arg); arg++);
 
-  if (!hasClass(CLASS_RANGER)) {
+  if (!doesKnowSkill(SKILL_SKIN)) {
     sendTo("You are not wise in the ways of the woods.\n\r");
     return;
   }

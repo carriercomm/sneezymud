@@ -507,6 +507,227 @@ int castBarkskin(TBeing * caster, TBeing * victim)
     ADD_DELETE(rc, DELETE_THIS);
   return rc;
 }
+// below is shaman type stuff
+
+static struct PolyType ShapeShiftList[] =
+{
+  {"gopher"   , 30,   1, 25401, DISC_NATURE, RACE_NORACE},
+  {"deer"     , 31,   1, 14105, DISC_NATURE, RACE_NORACE},
+  {"wolf"     , 35,  10,  3400, DISC_NATURE, RACE_NORACE},
+  {"snake"    , 37,  20,  3412, DISC_NATURE, RACE_NORACE},
+  {"moose"    , 39,  30, 10200, DISC_NATURE, RACE_NORACE},
+  {"dolphin"  , 40,  45, 12432, DISC_NATURE, RACE_NORACE},
+  {"bear"     , 42,  75,  3403, DISC_NATURE, RACE_NORACE},
+  {"crow"     , 44,  70, 14350, DISC_NATURE, RACE_NORACE},
+  {"shark"    , 40,  60, 12413, DISC_NATURE, RACE_NORACE},
+  {"hawk"     , 48, 100, 14440, DISC_NATURE, RACE_NORACE},
+  {"saberfish", 49,  80,  5503, DISC_NATURE, RACE_NORACE},
+  {"spider"   , 49,  80,  7717, DISC_NATURE, RACE_NORACE},
+  {"\n"        , -1,  -1,    -1, DISC_NATURE, RACE_NORACE}
+};
+
+int shapeShift(TBeing *caster, int level, byte bKnown)
+{
+  int i, ret = 0;
+  bool nameFound = FALSE;
+  bool found = FALSE;
+  TBeing *mob;
+  const char * buffer;
+  affectedData aff;
+  affectedData aff2;
+
+  buffer = caster->spelltask->orig_arg;
+ 
+  discNumT das = getDisciplineNumber(SPELL_SHAPESHIFT, FALSE);
+  if (das == DISC_NONE) {
+    vlogf(LOG_BUG, "Bad disc for SPELL_SHAPESHIFT");
+    return SPELL_FAIL;
+  }
+  for (i = 0; *ShapeShiftList[i].name != '\n'; i++) {
+    if (is_abbrev(buffer, ShapeShiftList[i].name)) {
+      nameFound = TRUE;
+    } else {
+      continue;
+    }
+    if ((caster->getDiscipline(das)->getLearnedness() >= ShapeShiftList[i].learning) && (level > 25))
+      break;
+  }
+
+  if (*ShapeShiftList[i].name == '\n') {
+    if (nameFound) {
+      caster->sendTo("You are not powerful enough yet to change into such a creature.\n\r");
+    } else {
+      caster->sendTo("Couldn't find any of those.\n\r");
+    }
+    return SPELL_FAIL;
+  }
+  if (!(mob = read_mobile(ShapeShiftList[i].number, VIRTUAL))) {
+    caster->sendTo("You couldn't summon an image of that creature.\n\r");
+    return SPELL_FAIL;
+  }
+  thing_to_room(mob,ROOM_VOID);   // just so if extracted it isn't in NOWHERE 
+
+  // Check to make sure that there is no snooping going on. 
+  if (!caster->desc || caster->desc->snoop.snooping) {
+    caster->nothingHappens();
+    vlogf(LOG_BUG,"PC tried to shapeshift while being snooped");
+    delete mob;
+    mob = NULL;
+    return SPELL_FAIL;
+  }
+  if (caster->desc->original) {
+    // implies they are switched, while already switched (as x switch)
+    caster->sendTo("You already seem to be switched.\n\r");
+    delete mob;
+    mob = NULL;
+    return SPELL_FAIL;
+  }
+  if (caster->desc->snoop.snoop_by)
+    caster->desc->snoop.snoop_by->doSnoop(caster->desc->snoop.snoop_by->name);
+
+  // first add the attempt -- used to regulate attempts
+  aff.type = AFFECT_SKILL_ATTEMPT;
+  aff.location = APPLY_NONE;
+  aff.duration = (1 + (level/15)) * UPDATES_PER_MUDHOUR;
+  aff.bitvector = 0;
+  aff.modifier = SPELL_SHAPESHIFT;
+  caster->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES);
+
+  if (bSuccess(caster, bKnown, SPELL_SHAPESHIFT)) {
+    switch (critSuccess(caster, SPELL_SHAPESHIFT)) {
+      case CRIT_S_KILL:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_DOUBLE:
+        CS(SPELL_SHAPESHIFT);
+        ret = SPELL_CRIT_SUCCESS;
+      case CRIT_S_NONE:
+        break;
+   }
+
+    --(*mob);
+    *caster->roomp += *mob;
+    SwitchStuff(caster, mob);
+
+    act("$n's flesh melts and flows into the shape of $N.", TRUE, caster, NULL, mob, TO_NOTVICT);
+    for (i=MIN_WEAR;i < MAX_WEAR;i++) {
+      if (caster->equipment[i]) {
+        found = TRUE;
+        break;
+      }
+    }
+    if (found) {
+      act("Your equipment falls from your body as your flesh turns liquid.",
+               TRUE, caster, NULL, mob, TO_CHAR);
+      act("Slowly you take on the shape of $N.", 
+               TRUE, caster, NULL, mob, TO_CHAR);
+    } else {
+      act("Your flesh turns liquid.", TRUE, caster, NULL, mob, TO_CHAR);
+      act("Slowly your flesh melts and you take on the shape of $N.", TRUE, caster, NULL, mob, TO_CHAR);
+    }
+  
+    --(*caster);
+    thing_to_room(caster, ROOM_POLY_STORAGE);
+
+    // stop following whoever you are following.. 
+    if (caster->master)
+      caster->stopFollower(TRUE);
+
+    // switch caster into mobile 
+    caster->desc->character = mob;
+    caster->desc->original = dynamic_cast<TPerson *>(caster);
+
+#if 0
+    aff2.type = AFFECT_SKILL_ATTEMPT;
+    aff2.location = APPLY_NONE;
+    aff2.duration = duration + ((2 + (level/5)) * UPDATES_PER_MUDHOUR);
+    aff2.bitvector = 0;
+    aff2.modifier = SPELL_SHAPESHIFT;
+    mob->affectJoin(caster, &aff2, AVG_DUR_NO, AVG_EFF_YES);
+#endif
+
+    mob->desc = caster->desc;
+    caster->desc = NULL;
+    caster->polyed = POLY_TYPE_POLYMORPH;
+
+    SET_BIT(mob->specials.act, ACT_POLYSELF);
+    SET_BIT(mob->specials.act, ACT_NICE_THIEF);
+    SET_BIT(mob->specials.act, ACT_SENTINEL);
+    REMOVE_BIT(mob->specials.act, ACT_AGGRESSIVE);
+    REMOVE_BIT(mob->specials.act, ACT_SCAVENGER);
+    REMOVE_BIT(mob->specials.act, ACT_DIURNAL);
+    REMOVE_BIT(mob->specials.act, ACT_NOCTURNAL);
+
+    mob->setMana(min((mob->getMana() - 15), 85));
+    return SPELL_SUCCESS;
+  } else {
+    return SPELL_FAIL;
+  }
+}
+
+int shapeShift(TBeing *caster, const char * buffer)
+{
+  taskDiffT diff;
+  int level;
+  int i;
+
+  if (!caster->isImmortal() && caster->checkForSkillAttempt(SPELL_SHAPESHIFT))
+{
+    act("You are not prepared to try to shapeshift yourself again so soon.",
+         FALSE, caster, NULL, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  level = caster->getSkillLevel(SPELL_SHAPESHIFT);
+  for (i = 0; *ShapeShiftList[i].name != '\n'; i++) {
+    if (level < ShapeShiftList[i].level)
+      continue;
+    if (is_abbrev(buffer, ShapeShiftList[i].name))
+      break;
+  }
+
+  if (*ShapeShiftList[i].name == '\n') {
+    caster->sendTo("Couldn't find any of those.\n\r");
+    return SPELL_FAIL;
+  }
+
+  // Check to make sure that there is no snooping going on.
+  if (!caster->desc || caster->desc->snoop.snooping) {
+    caster->nothingHappens();
+    vlogf(LOG_BUG,"PC tried to shapeshift while being snooped");
+    return SPELL_FAIL;
+  }
+
+  if (caster->desc->original) {
+    // implies they are switched, while already switched (as x switch)
+    caster->sendTo("You already seem to be switched.\n\r");
+    return SPELL_FAIL;
+  }
+  if (caster->desc->snoop.snoop_by)
+    caster->desc->snoop.snoop_by->doSnoop(caster->desc->snoop.snoop_by->name);
+
+  if (!bPassMageChecks(caster, SPELL_SHAPESHIFT, caster))
+    return FALSE;
+
+  lag_t rounds = discArray[SPELL_SHAPESHIFT]->lag;
+  diff = discArray[SPELL_SHAPESHIFT]->task;
+
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SHAPESHIFT, diff, 1,
+buffer, rounds, caster->in_room, 0, 0,TRUE, 0);
+    return TRUE;
+}
+
+int castShapeShift(TBeing *caster)
+{
+  int ret,level;
+
+  level = caster->getSkillLevel(SPELL_SHAPESHIFT);
+  int bKnown = caster->getSkillValue(SPELL_SHAPESHIFT);
+
+  if ((ret=shapeShift(caster,level,bKnown)) == SPELL_SUCCESS) {
+  } else 
+    caster->nothingHappens();
+  return TRUE;
+}
 
 int sticksToSnakes(TBeing * caster, TBeing * victim, int level, byte bKnown)
 {

@@ -2482,6 +2482,9 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_SECOND_WIND:
       secondWind(caster,victim,obj);
       break;
+    case SPELL_SHIELD_OF_MISTS:
+      shieldOfMists(caster,victim,obj);
+      break;
     case SPELL_CONTROL_UNDEAD:
       controlUndead(caster,victim,obj);
       break;
@@ -2951,6 +2954,12 @@ void TBeing::doContinue(const char *argument)
       sendTo("You can not continue a spell when you are low on mana.\n\r");
       return;
     }
+  } else if ((spellType == SPELL_DANCER)) {
+    if (!reconcileMana(spelltask->spell, TRUE)) { 
+      // will need to change to lifeforce
+      sendTo("You can not continue a invokation without enough lifeforce.\n\r");
+      return;
+    }
   }
  
   if (*arg) {
@@ -2972,6 +2981,10 @@ usePiety(spelltask->spell)))) {
     } else if ((spellType == SPELL_CASTER) && (getMana() < (value *
 useMana(spelltask->spell)))) {
       sendTo("You do not have the mana to continue your spell that many times.\n\r");
+      return;
+    } else if ((spellType == SPELL_DANCER) && (getMana() < (value *
+useMana(spelltask->spell)))) {
+      sendTo("You do not have the lifeforce to invoke that many times.\n\r");
       return;
     }
     if (IS_SET(discArray[(spelltask->spell)]->comp_types, SPELL_TASKED_EVERY)) {

@@ -3673,6 +3673,18 @@ int TMonster::defendOther(TBeing &targ)
   if (spelltask)
     return FALSE;
 
+  if (hasClass(CLASS_SHAMAN)) {
+    if (!found) {
+      spell = SPELL_SHIELD_OF_MISTS;
+      if (!targ.affectedBySpell(spell) && 
+           doesKnowSkill(spell) && (getSkillValue(spell) > 33)) {
+        act("$n sings the words, 'Eluagga Xypomine!'",
+                 TRUE, this, 0, 0, TO_ROOM);
+        found = TRUE;
+      }
+    }
+  }
+
   if (hasClass(CLASS_MAGIC_USER)) {
     if (!found) {
       spell = SPELL_SORCERERS_GLOBE;
@@ -3833,6 +3845,17 @@ int TMonster::defendSelf(int)
 
   // the purpose of this function is to have mob improve their defenses
  
+  if (hasClass(CLASS_SHAMAN)) {
+    if (!found) {
+      spell = SPELL_SHIELD_OF_MISTS;
+      if (!affectedBySpell(spell) && 
+           doesKnowSkill(spell) && (getSkillValue(spell) > 33)) {
+        act("$n sings the words, 'Eluagga Xypomine!'",
+                 TRUE, this, 0, 0, TO_ROOM);
+        found = TRUE;
+      }
+    }
+  }
   if (hasClass(CLASS_MAGIC_USER)) {
     if (!found) {
       spell = SPELL_SORCERERS_GLOBE;
@@ -3882,16 +3905,18 @@ int TMonster::defendSelf(int)
     }
 
 #if 0
-    if ((susp()-defsusp()) > 5){
+    if ((susp()-defsusp()) > 9){
       if (!found){
 	int mentals[]={SPELL_CONJURE_AIR, SPELL_CONJURE_FIRE, 
-		       SPELL_CONJURE_EARTH, SPELL_CONJURE_WATER};
-	int count=4, i, foundmental=0;
+		       SPELL_CONJURE_EARTH, SPELL_CONJURE_WATER, 
+		       SPELL_ENTHRALL_SPECTRE, SPELL_ENTHRALL_GHAST,
+		       SPELL_ENTHRALL_GHOUL, SPELL_ENTHRALL_DEMON};
+	int count=8, i, foundmental=0;
 	followData *k, *k2;
 	TBeing *ch=NULL;
 
 	// pick a conjure spell
-	for(i=::number(0,3),count+=i;i<count;++i)
+	for(i=::number(0,7),count+=i;i<count;++i)
 	  if (doesKnowSkill(mentals[i%4]) && 
 	      (getSkillValue(mentals[i%4]) > 33))
 	    spell=mentals[i%4];
@@ -3924,6 +3949,22 @@ int TMonster::defendSelf(int)
 	      break;
 	    case SPELL_CONJURE_WATER:
 	      act("$n utters the words, 'Watery Waiter!'",
+		  TRUE, this, 0, 0, TO_ROOM);	      
+	      break;
+	    case SPELL_ENTHRALL_SPECTRE:
+	      act("$n sings the rada, 'Xebec Kamala!'",
+		  TRUE, this, 0, 0, TO_ROOM);	      
+	      break;
+	    case SPELL_ENTHRALL_GHAST:
+	      act("$n sings the rada, 'Xebec Romula!'",
+		  TRUE, this, 0, 0, TO_ROOM);	      
+	      break;
+	    case SPELL_ENTHRALL_GHOUL:
+	      act("$n sings the rada, 'Xebec Pumula!'",
+		  TRUE, this, 0, 0, TO_ROOM);	      
+	      break;
+	    case SPELL_ENTHRALL_DEMON:
+	      act("$n sings the rada, 'Xebec Tamala!'",
 		  TRUE, this, 0, 0, TO_ROOM);	      
 	      break;
 	  }

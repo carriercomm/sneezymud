@@ -496,6 +496,10 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_TELEPATHY:
       case SPELL_FEAR:
       case SPELL_SLUMBER:
+      case SPELL_ENTHRALL_SPECTRE:
+      case SPELL_ENTHRALL_GHAST:
+      case SPELL_ENTHRALL_GHOUL:
+      case SPELL_ENTHRALL_DEMON:
       case SPELL_CONJURE_EARTH:
       case SPELL_CONJURE_AIR:
       case SPELL_CONJURE_FIRE:
@@ -732,6 +736,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SKILL_DULL:
       case SKILL_ATTUNE:
       case SKILL_STAVECHARGE:
+      case SPELL_SHIELD_OF_MISTS:
       case MAX_SKILL:
       case TYPE_MAX_HIT:
       case AFFECT_TRANSFORMED_HANDS:

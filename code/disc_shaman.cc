@@ -990,7 +990,7 @@ int ret,level;
   return TRUE;
 }
 
-int summonSpectre(TBeing * caster, int level, byte bKnown)
+int enthrallSpectre(TBeing * caster, int level, byte bKnown)
 {
   affectedData aff;
   TMonster * victim;
@@ -1000,9 +1000,9 @@ int summonSpectre(TBeing * caster, int level, byte bKnown)
     return SPELL_FAIL;
   }
 
-  victim->elementalFix(caster, SPELL_SUMMON_SPECTRE, 0);
+  victim->elementalFix(caster, SPELL_ENTHRALL_SPECTRE, 0);
 
-  if (bSuccess(caster, bKnown, SPELL_SUMMON_SPECTRE)) {
+  if (bSuccess(caster, bKnown, SPELL_ENTHRALL_SPECTRE)) {
      act("You call upon the powers of your ancestors!",
             TRUE, caster, NULL, NULL, TO_CHAR);
      act("$n summons the powers of $s ancestors!",
@@ -1012,7 +1012,7 @@ int summonSpectre(TBeing * caster, int level, byte bKnown)
     if (victim->master)
       victim->stopFollower(TRUE);
 
-    aff.type = SPELL_SUMMON_SPECTRE;
+    aff.type = SPELL_ENTHRALL_SPECTRE;
     aff.level = level;
     aff.duration  = caster->followTime();
     aff.modifier = 0;
@@ -1029,11 +1029,11 @@ int summonSpectre(TBeing * caster, int level, byte bKnown)
 
     *caster->roomp += *victim;
 
-    switch (critSuccess(caster, SPELL_SUMMON_SPECTRE)) {
+    switch (critSuccess(caster, SPELL_ENTHRALL_SPECTRE)) {
       case CRIT_S_DOUBLE:
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
-        CS(SPELL_SUMMON_SPECTRE);
+        CS(SPELL_ENTHRALL_SPECTRE);
         act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
         caster->sendTo("The gods have blessed your wishes greatly!\n\r");
         victim->setMaxHit((int) (victim->hitLimit() * 1.5));
@@ -1049,7 +1049,7 @@ int summonSpectre(TBeing * caster, int level, byte bKnown)
              TRUE, caster, NULL, victim, TO_ROOM);
       act("Your loa is displeased! $N hates you!",
              FALSE, caster, NULL, victim, TO_CHAR);
-      victim->affectFrom(SPELL_SUMMON_SPECTRE);
+      victim->affectFrom(SPELL_ENTHRALL_SPECTRE);
       victim->affectFrom(AFFECT_THRALL);
     } else
       caster->addFollower(victim);
@@ -1066,7 +1066,7 @@ int summonSpectre(TBeing * caster, int level, byte bKnown)
   }
 }
 
-int summonSpectre(TBeing * caster)
+int enthrallSpectre(TBeing * caster)
 {
   if (caster->roomp && caster->roomp->isUnderwaterSector()) {
     caster->sendTo("You cannot dance the ritual under these wet conditions!\n\r");
@@ -1078,17 +1078,17 @@ int summonSpectre(TBeing * caster)
     return FALSE;
   }
 
-  if (!bPassMageChecks(caster, SPELL_SUMMON_SPECTRE, NULL))
+  if (!bPassMageChecks(caster, SPELL_ENTHRALL_SPECTRE, NULL))
     return FALSE;
 
-  lag_t rounds = discArray[SPELL_SUMMON_SPECTRE]->lag;
-  taskDiffT diff = discArray[SPELL_SUMMON_SPECTRE]->task;
+  lag_t rounds = discArray[SPELL_ENTHRALL_SPECTRE]->lag;
+  taskDiffT diff = discArray[SPELL_ENTHRALL_SPECTRE]->task;
 
-  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_SPECTRE, diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_ENTHRALL_SPECTRE, diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
   return TRUE;
 }
 
-int castSummonSpectre(TBeing * caster)
+int castEnthrallSpectre(TBeing * caster)
 {
    int ret,level;
 
@@ -1096,17 +1096,17 @@ int castSummonSpectre(TBeing * caster)
    if (!caster)
      return TRUE;
 
-   level = caster->getSkillLevel(SPELL_SUMMON_SPECTRE);
+   level = caster->getSkillLevel(SPELL_ENTHRALL_SPECTRE);
 
    if
-((ret=summonSpectre(caster,level,caster->getSkillValue(SPELL_SUMMON_SPECTRE))) == SPELL_SUCCESS) {
+((ret=enthrallSpectre(caster,level,caster->getSkillValue(SPELL_ENTHRALL_SPECTRE))) == SPELL_SUCCESS) {
    } else {
      act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL, TO_CHAR);
   }
   return TRUE;
 }
 
-int summonDemon(TBeing * caster, int level, byte bKnown)
+int enthrallDemon(TBeing * caster, int level, byte bKnown)
 {
   affectedData aff;
   TMonster * victim;
@@ -1116,9 +1116,9 @@ int summonDemon(TBeing * caster, int level, byte bKnown)
     return SPELL_FAIL;
   }
 
-  victim->elementalFix(caster, SPELL_SUMMON_DEMON, 0);
+  victim->elementalFix(caster, SPELL_ENTHRALL_DEMON, 0);
 
-  if (bSuccess(caster, bKnown, SPELL_SUMMON_DEMON)) {
+  if (bSuccess(caster, bKnown, SPELL_ENTHRALL_DEMON)) {
      act("You call upon the powers of your ancestors!",
             TRUE, caster, NULL, NULL, TO_CHAR);
      act("$n summons the powers of $s ancestors!",
@@ -1128,7 +1128,7 @@ int summonDemon(TBeing * caster, int level, byte bKnown)
     if (victim->master)
       victim->stopFollower(TRUE);
 
-    aff.type = SPELL_SUMMON_DEMON;
+    aff.type = SPELL_ENTHRALL_DEMON;
     aff.level = level;
     aff.duration  = caster->followTime();
     aff.modifier = 0;
@@ -1145,11 +1145,11 @@ int summonDemon(TBeing * caster, int level, byte bKnown)
 
     *caster->roomp += *victim;
 
-    switch (critSuccess(caster, SPELL_SUMMON_DEMON)) {
+    switch (critSuccess(caster, SPELL_ENTHRALL_DEMON)) {
       case CRIT_S_DOUBLE:
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
-        CS(SPELL_SUMMON_DEMON);
+        CS(SPELL_ENTHRALL_DEMON);
         act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
         caster->sendTo("The gods have blessed your wishes greatly!\n\r");
         victim->setMaxHit((int) (victim->hitLimit() * 1.5));
@@ -1165,7 +1165,7 @@ int summonDemon(TBeing * caster, int level, byte bKnown)
              TRUE, caster, NULL, victim, TO_ROOM);
       act("Your loa is displeased! $N hates you!",
              FALSE, caster, NULL, victim, TO_CHAR);
-      victim->affectFrom(SPELL_SUMMON_DEMON);
+      victim->affectFrom(SPELL_ENTHRALL_DEMON);
       victim->affectFrom(AFFECT_THRALL);
     } else
       caster->addFollower(victim);
@@ -1184,7 +1184,7 @@ victim, TO_CHAR);
   }
 }
 
-int summonDemon(TBeing * caster)
+int enthrallDemon(TBeing * caster)
 {
   if (caster->roomp && caster->roomp->isUnderwaterSector()) {
     caster->sendTo("You cannot dance the ritual under these wet
@@ -1197,18 +1197,18 @@ conditions!\n\r");
     return FALSE;
   }
 
-  if (!bPassMageChecks(caster, SPELL_SUMMON_DEMON, NULL))
+  if (!bPassMageChecks(caster, SPELL_ENTHRALL_DEMON, NULL))
     return FALSE;
 
-  lag_t rounds = discArray[SPELL_SUMMON_DEMON]->lag;
-  taskDiffT diff = discArray[SPELL_SUMMON_DEMON]->task;
+  lag_t rounds = discArray[SPELL_ENTHRALL_DEMON]->lag;
+  taskDiffT diff = discArray[SPELL_ENTHRALL_DEMON]->task;
 
-  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_DEMON, diff, 1,
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_ENTHRALL_DEMON, diff, 1,
 "", rounds, caster->in_room, 0, 0,TRUE, 0);
   return TRUE;
 }
 
-int castSummonDemon(TBeing * caster)
+int castEnthrallDemon(TBeing * caster)
 {
    int ret,level;
 
@@ -1216,10 +1216,10 @@ int castSummonDemon(TBeing * caster)
    if (!caster)
      return TRUE;
 
-   level = caster->getSkillLevel(SPELL_SUMMON_DEMON);
+   level = caster->getSkillLevel(SPELL_ENTHRALL_DEMON);
 
    if
-((ret=summonDemon(caster,level,caster->getSkillValue(SPELL_SUMMON_DEMON)))
+((ret=enthrallDemon(caster,level,caster->getSkillValue(SPELL_ENTHRALL_DEMON)))
 == SPELL_SUCCESS) {
    } else {
      act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL,
@@ -1228,7 +1228,7 @@ TO_CHAR);
   return TRUE;
 }
 
-int summonGhast(TBeing * caster, int level, byte bKnown)
+int enthrallGhast(TBeing * caster, int level, byte bKnown)
 {
   affectedData aff;
   TMonster * victim;
@@ -1238,9 +1238,9 @@ int summonGhast(TBeing * caster, int level, byte bKnown)
     return SPELL_FAIL;
   }
 
-  victim->elementalFix(caster, SPELL_SUMMON_GHAST, 0);
+  victim->elementalFix(caster, SPELL_ENTHRALL_GHAST, 0);
 
-  if (bSuccess(caster, bKnown, SPELL_SUMMON_GHAST)) {
+  if (bSuccess(caster, bKnown, SPELL_ENTHRALL_GHAST)) {
      act("You call upon the powers of your ancestors!",
             TRUE, caster, NULL, NULL, TO_CHAR);
      act("$n summons the powers of $s ancestors!",
@@ -1250,7 +1250,7 @@ int summonGhast(TBeing * caster, int level, byte bKnown)
     if (victim->master)
       victim->stopFollower(TRUE);
 
-    aff.type = SPELL_SUMMON_GHAST;
+    aff.type = SPELL_ENTHRALL_GHAST;
     aff.level = level;
     aff.duration  = caster->followTime();
     aff.modifier = 0;
@@ -1267,11 +1267,11 @@ int summonGhast(TBeing * caster, int level, byte bKnown)
 
     *caster->roomp += *victim;
 
-    switch (critSuccess(caster, SPELL_SUMMON_GHAST)) {
+    switch (critSuccess(caster, SPELL_ENTHRALL_GHAST)) {
       case CRIT_S_DOUBLE:
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
-        CS(SPELL_SUMMON_GHAST);
+        CS(SPELL_ENTHRALL_GHAST);
         act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
         caster->sendTo("The gods have blessed your wishes greatly!\n\r");
         victim->setMaxHit((int) (victim->hitLimit() * 1.5));
@@ -1287,7 +1287,7 @@ int summonGhast(TBeing * caster, int level, byte bKnown)
              TRUE, caster, NULL, victim, TO_ROOM);
       act("Your loa is displeased! $N hates you!",
              FALSE, caster, NULL, victim, TO_CHAR);
-      victim->affectFrom(SPELL_SUMMON_GHAST);
+      victim->affectFrom(SPELL_ENTHRALL_GHAST);
       victim->affectFrom(AFFECT_THRALL);
     } else
       caster->addFollower(victim);
@@ -1306,7 +1306,7 @@ victim, TO_CHAR);
   }
 }
 
-int summonGhast(TBeing * caster)
+int enthrallGhast(TBeing * caster)
 {
   if (caster->roomp && caster->roomp->isUnderwaterSector()) {
     caster->sendTo("You cannot dance the ritual under these wet
@@ -1319,18 +1319,18 @@ conditions!\n\r");
     return FALSE;
   }
 
-  if (!bPassMageChecks(caster, SPELL_SUMMON_GHAST, NULL))
+  if (!bPassMageChecks(caster, SPELL_ENTHRALL_GHAST, NULL))
     return FALSE;
 
-  lag_t rounds = discArray[SPELL_SUMMON_GHAST]->lag;
-  taskDiffT diff = discArray[SPELL_SUMMON_GHAST]->task;
+  lag_t rounds = discArray[SPELL_ENTHRALL_GHAST]->lag;
+  taskDiffT diff = discArray[SPELL_ENTHRALL_GHAST]->task;
 
-  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_GHAST, diff, 1,
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_ENTHRALL_GHAST, diff, 1,
 "", rounds, caster->in_room, 0, 0,TRUE, 0);
   return TRUE;
 }
 
-int castSummonGhast(TBeing * caster)
+int castEnthrallGhast(TBeing * caster)
 {
    int ret,level;
 
@@ -1338,10 +1338,10 @@ int castSummonGhast(TBeing * caster)
    if (!caster)
      return TRUE;
 
-   level = caster->getSkillLevel(SPELL_SUMMON_GHAST);
+   level = caster->getSkillLevel(SPELL_ENTHRALL_GHAST);
 
    if
-((ret=summonGhast(caster,level,caster->getSkillValue(SPELL_SUMMON_GHAST)))
+((ret=enthrallGhast(caster,level,caster->getSkillValue(SPELL_ENTHRALL_GHAST)))
 == SPELL_SUCCESS) {
    } else {
      act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL,
@@ -1350,7 +1350,7 @@ TO_CHAR);
   return TRUE;
 }
 
-int summonGhoul(TBeing * caster, int level, byte bKnown)
+int enthrallGhoul(TBeing * caster, int level, byte bKnown)
 {
   affectedData aff;
   TMonster * victim;
@@ -1360,9 +1360,9 @@ int summonGhoul(TBeing * caster, int level, byte bKnown)
     return SPELL_FAIL;
   }
 
-  victim->elementalFix(caster, SPELL_SUMMON_GHOUL, 0);
+  victim->elementalFix(caster, SPELL_ENTHRALL_GHOUL, 0);
 
-  if (bSuccess(caster, bKnown, SPELL_SUMMON_GHOUL)) {
+  if (bSuccess(caster, bKnown, SPELL_ENTHRALL_GHOUL)) {
      act("You call upon the powers of your ancestors!",
             TRUE, caster, NULL, NULL, TO_CHAR);
      act("$n summons the powers of $s ancestors!",
@@ -1372,7 +1372,7 @@ int summonGhoul(TBeing * caster, int level, byte bKnown)
     if (victim->master)
       victim->stopFollower(TRUE);
 
-    aff.type = SPELL_SUMMON_GHOUL;
+    aff.type = SPELL_ENTHRALL_GHOUL;
     aff.level = level;
     aff.duration  = caster->followTime();
     aff.modifier = 0;
@@ -1389,11 +1389,11 @@ int summonGhoul(TBeing * caster, int level, byte bKnown)
 
     *caster->roomp += *victim;
 
-    switch (critSuccess(caster, SPELL_SUMMON_GHOUL)) {
+    switch (critSuccess(caster, SPELL_ENTHRALL_GHOUL)) {
       case CRIT_S_DOUBLE:
       case CRIT_S_TRIPLE:
       case CRIT_S_KILL:
-        CS(SPELL_SUMMON_GHOUL);
+        CS(SPELL_ENTHRALL_GHOUL);
         act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
         caster->sendTo("The gods have blessed your wishes greatly!\n\r");
         victim->setMaxHit((int) (victim->hitLimit() * 1.5));
@@ -1409,7 +1409,7 @@ int summonGhoul(TBeing * caster, int level, byte bKnown)
              TRUE, caster, NULL, victim, TO_ROOM);
       act("Your loa is displeased! $N hates you!",
              FALSE, caster, NULL, victim, TO_CHAR);
-      victim->affectFrom(SPELL_SUMMON_GHOUL);
+      victim->affectFrom(SPELL_ENTHRALL_GHOUL);
       victim->affectFrom(AFFECT_THRALL);
     } else
       caster->addFollower(victim);
@@ -1428,11 +1428,10 @@ victim, TO_CHAR);
   }
 }
 
-int summonGhoul(TBeing * caster)
+int enthrallGhoul(TBeing * caster)
 {
   if (caster->roomp && caster->roomp->isUnderwaterSector()) {
-    caster->sendTo("You cannot dance the ritual under these wet
-conditions!\n\r");
+    caster->sendTo("You cannot dance the ritual under these wet conditions!\n\r");
     return FALSE;
   }
 
@@ -1441,18 +1440,18 @@ conditions!\n\r");
     return FALSE;
   }
 
-  if (!bPassMageChecks(caster, SPELL_SUMMON_GHOUL, NULL))
+  if (!bPassMageChecks(caster, SPELL_ENTHRALL_GHOUL, NULL))
     return FALSE;
 
-  lag_t rounds = discArray[SPELL_SUMMON_GHOUL]->lag;
-  taskDiffT diff = discArray[SPELL_SUMMON_GHOUL]->task;
+  lag_t rounds = discArray[SPELL_ENTHRALL_GHOUL]->lag;
+  taskDiffT diff = discArray[SPELL_ENTHRALL_GHOUL]->task;
 
-  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_GHOUL, diff, 1,
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_ENTHRALL_GHOUL, diff, 1,
 "", rounds, caster->in_room, 0, 0,TRUE, 0);
   return TRUE;
 }
 
-int castSummonGhoul(TBeing * caster)
+int castEnthrallGhoul(TBeing * caster)
 {
    int ret,level;
 
@@ -1460,10 +1459,10 @@ int castSummonGhoul(TBeing * caster)
    if (!caster)
      return TRUE;
 
-   level = caster->getSkillLevel(SPELL_SUMMON_GHOUL);
+   level = caster->getSkillLevel(SPELL_ENTHRALL_GHOUL);
 
    if
-((ret=summonGhoul(caster,level,caster->getSkillValue(SPELL_SUMMON_GHOUL)))
+((ret=enthrallGhoul(caster,level,caster->getSkillValue(SPELL_ENTHRALL_GHOUL)))
 == SPELL_SUCCESS) {
    } else {
      act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL,

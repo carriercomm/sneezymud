@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: discipline.cc,v $
+// Revision 5.1.1.6  1999/10/29 19:52:52  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.5  1999/10/29 11:31:34  cosmo
 // *** empty log message ***
 //
@@ -4586,7 +4589,7 @@ void TBeing::addSkillLag(spellNumT skill, int rc)
   lag_t lag_num = discArray[skill]->lag;
   float f_lag  = lagAdjust(lag_num),
         f_base = 1.0;
-#if 0
+#if 1 
   if (IS_SET_DELETE(rc, DELETE_VICT))
     f_lag = min(f_base, f_lag);
 #else

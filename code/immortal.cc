@@ -3113,6 +3113,7 @@ void TBeing::doRestore(const char *argument)
   restoreTypeT partial = RESTORE_FULL;
   statTypeT statx;
   int rc;
+  bool found = FALSE;
 
   if (powerCheck(POWER_RESTORE))
     return;
@@ -3141,10 +3142,103 @@ void TBeing::doRestore(const char *argument)
   else if (is_abbrev(arg2, "full"))
     partial = RESTORE_FULL;
   else if (is_abbrev(arg2, "pracs")) {
+    int pracs,pracs2;
+    pracs =  pracs2  = 0;
+    char name2[60],name[60];
+    char buf[60];
+    
+    FILE *fp, *fp2;
+    
+    if (!(fp = fopen("reimburse.list","r"))) {
+      vlogf(LOG_FILE, "Couldn't open reimbursement list for restore pracs.");
+      return;
+    }
+    if (!(fp2 = fopen("reimburse.new","w+"))) {
+      vlogf(LOG_FILE, "Couldn't open reimbursement list for restore pracs.");
+      return;
+    }
+    if (fgets(buf,60,fp) == NULL && !strcmp("START\n",buf)) {
+      vlogf(LOG_FILE,"ERROR: bad format of reimbursement list");
+      fclose(fp);
+      return;
+    }
+    fprintf(fp2,buf);
+    
+    while(strcmp(buf, "END")) {
+      if (fgets(buf,60,fp) == NULL) {
+	vlogf(LOG_FILE,"ERROR: bad format of reimbursement list");
+	fclose(fp);
+	return;
+      }
+      if (!strcmp(buf, "END")) //end of list
+	break;
+      if (sscanf(buf,"%d %s\n", &pracs, name) != 2) {
+        vlogf(LOG_FILE,"ERROR: bad format of reimbursement list");
+        fclose(fp);
+	return;
+      }
+      if (!strcmp(name, victim->getName())) {
+	found = TRUE;
+	name2 = name;
+	pracs2 = pracs;
+      } else {
+	fprintf(fp2,buf);
+      }
+    }
+    name = name2;
+    pracs = pracs2;
+    fprintf(fp2,buf);
+    fclose(fp);
+    fclose(fp2);
+    char buf2[256];
+    strcpy(buf2,"cp reimburse.new reimburse.list");
+    vsystem(buf2);
+    if (!found) {// not in list
+      sendTo("They are not currently supposed to be reimbursed.\n\r");
+      return;
+    }
+    //ok we found them in the list, num holds how many practices they need
+    pracs = min(pracs,(int)victim->getLevel(victim->bestClass())); // cap at 1/lev
+    switch (victim->bestClass()) {
+      case MAGE_LEVEL_IND:
+        victim->practices.mage += pracs;
+        break;
+      case CLERIC_LEVEL_IND:
+        victim->practices.cleric += pracs;
+        break;
+      case WARRIOR_LEVEL_IND:
+        victim->practices.warrior += pracs;
+        break;
+      case THIEF_LEVEL_IND:
+        victim->practices.thief += pracs;
+        break;
+      case DEIKHAN_LEVEL_IND:
+        victim->practices.deikhan += pracs;
+        break;
+      case MONK_LEVEL_IND:
+        victim->practices.monk += pracs;
+        break;
+      case RANGER_LEVEL_IND:
+        victim->practices.ranger += pracs;
+        break;
+      case SHAMAN_LEVEL_IND:
+        victim->practices.shaman += pracs;
+        break;
+
+      default:
+
+        return;
+    }
+
+    victim->sendTo("Congratulations, you've been reimbursed %d practices!\n\r",pracs);
+    sendTo("Reimbursing %s %d practices.\n\r",victim->getName(),pracs);
+
+    
+#if 0
     // this use to check for god level, so probabl yneeds a power
     sendTo("Not fully converted yet.  Bug Cosmo\n\r");
     return;
-#if 0
+
     int pracs = 0;
       sendTo("Bug that restore practices formula isn't fixed-tell Cosmo.\n\r");
       vlogf(LOG_MISC,"Tell Cosmo that the restore Practices formula isn't fixed");

@@ -5722,8 +5722,8 @@ void TBeing::doAccount(const char *arg)
       // Given that ACCOUNT_IMMORTAL prevents imms from violating our own
       // rules, it's a bit too tempting for folks to turn off the automatic
       // checks.  I'm cynical and don't trust anyone but myself, so sue me.
-      if (strcmp(getName(), "Batopr")) {
-        sendTo("Only Batopr should be doing this.\n\r");
+      if ((strcmp(getName(), "Batopr")) || (strcmp(getName(), "Peel")) || (strcmp(getName(), "Jesus")) || (strcmp(getName(), "Damescena"))) {
+        sendTo("Only a level 59+ god should be doing this.\n\r");
         return;
       }
   

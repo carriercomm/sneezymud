@@ -506,7 +506,20 @@ void TBeing::statBeing(TBeing *k)
       }
     } else
       sendTo(buf + strlen(buf),"Response(s): None.\n\r");
+  } else {
+    Descriptor *d = k->desc;
+
+    if (d && k->isPc() && k->GetMaxLevel() > MAX_MORT) {
+      sprintf(buf + strlen(buf), "IMM: Office: %d\n\r", d->office);
+
+      if (d->blockastart)
+        sprintf(buf + strlen(buf), "IMM: Block1: %d - %d\n\r", d->blockastart, d->blockaend);
+
+      if (d->blockbstart)
+        sprintf(buf + strlen(buf), "IMM: Block2: %d - %d\n\r", d->blockbstart, d->blockbend);
+    }
   }
+
   *buf2 = '\0';
   for (classIndT ijc = MIN_CLASS_IND; ijc < MAX_CLASSES; ijc++)
     if (k->hasClass(1<<ijc))
@@ -574,7 +587,7 @@ void TBeing::statBeing(TBeing *k)
   sprintf(buf2, "[%d]", k->getHit());
   sprintf(buf3, "[%d]", k->getMove());
   if (k->hasClass(CLASS_CLERIC) || k->hasClass(CLASS_DEIKHAN))
-    sprintf(buf + strlen(buf), "%sPiety :%s [%4.1f]%sHit    :%s %-10s  %sMove    :%s %-10s\n\r",
+    sprintf(buf + strlen(buf), "%sPiety :%s [%4.1f]  %sHit    :%s %-10s  %sMove    :%s %-10s\n\r",
       cyan(), norm(), k->getPiety(),
       cyan(), norm(), buf2, cyan(), norm(), buf3);
   else

@@ -1041,7 +1041,14 @@ mob->getName());
   } else if (is_abbrev(field, "blocka")) {
     parm = parm2 = 0;
 
-    if (sscanf(parmstr, "%d %d", &parm, &parm2) < 1) {
+    if (sscanf(parmstr, "%d", &parm) < 1) {
+      sendTo("Syntax: @set blocka <char name> <start-room:0 to remove> <end-room>\n\r");
+      return;
+    }
+
+    argument = one_argument(argument, parmstr);
+
+    if (sscanf(parmstr, "%d", &parm2) < 1) {
       sendTo("Syntax: @set blocka <char name> <start-room:0 to remove> <end-room>\n\r");
       return;
     }
@@ -1058,7 +1065,14 @@ mob->getName());
   } else if (is_abbrev(field, "blockb")) {
     parm = parm2 = 0;
 
-    if (sscanf(parmstr, "%d %d", &parm, &parm2) < 1) {
+    if (sscanf(parmstr, "%d", &parm) < 1) {
+      sendTo("Syntax: @set blockb <char name> <start-room:0 to remove> <end-room>\n\r");
+      return;
+    }
+
+    argument = one_argument(argument, parmstr);
+
+    if (sscanf(parmstr, "%d", &parm2) < 1) {
       sendTo("Syntax: @set blockb <char name> <start-room:0 to remove> <end-room>\n\r");
       return;
     }

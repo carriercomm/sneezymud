@@ -189,7 +189,7 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
   if (ch->task->timeLeft < 0)  {
     // Made it to end, set trap 
     cont->addContainerFlag(CONT_TRAPPED);
-    cont->setContainerTrapType(ch->task->status);
+    cont->setContainerTrapType(doorTrapT(ch->task->status));
 
     // this is number of 8-sided die to use for damage
     int trapdamage = ch->getContainerTrapDam(doorTrapT(ch->task->status));

@@ -101,6 +101,12 @@ void TSpellBag::getObjFromMeText(TBeing *tBeing, TThing *tThing, getTypeT tType,
   --(*tThing);
   *tBeing += *tThing;
 
+#if 1
+  act("You take $p from $P.",
+      FALSE, tBeing, tThing, this, TO_CHAR);
+  act("$n takes $p from $P.",
+      TRUE, tBeing, tThing, this, TO_ROOM);
+#else
   if (tType == GETNULL || tType == GETALL || tType == GETOBJ || tType == GETOBJOBJ) {
     act("You take $p from $P.",
         FALSE, tBeing, tThing, this, TO_CHAR);
@@ -112,4 +118,5 @@ void TSpellBag::getObjFromMeText(TBeing *tBeing, TThing *tThing, getTypeT tType,
     act("$n begins to take things from $p.",
         FALSE, tBeing, this, NULL, TO_CHAR);
   }
+#endif
 }

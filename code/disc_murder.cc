@@ -10,10 +10,68 @@ static void playBackstab(const TRoom *rp)
   rp->playsound(snd, SOUND_TYPE_COMBAT);
 }
 
+const int BS_MSG_DEATH_MAX = 7; // (tMessagesDeath / 2) - 1
+const int BS_MSG_NONDT_MAX = 7; // (tMessagesNonDeath / 2) - 1
+
 // returns DELETE_VICT
 int TBeing::backstabHit(TBeing *victim, TThing *obj)
 {
   int i, d;
+
+#if 0
+  const char *tMessagesDeath[] =
+  {
+    "Your $o plunges deep into $N's upper back, killing $M.",
+    "$n plunges $s $o deep into $N's upper back, killing $M.",
+
+    "Your $o sinks deep into $N's lower back, killing $M.",
+    "$n sinks $s $o deep into $N's lower back, killing $M.",
+
+    "Blood splatters you, as you thrust $p into $N's back, killing $M.",
+    "Blood splatters as $n thrusts $p into $N's back, killing $M.",
+
+    "Blood spurts from $N's mouth as you plunge $p in $S back, killing $M.",
+    "Blood spurts from $N's mouth as $n plunges $p in $S back, killing $M.",
+
+    "$N enters convulsions as you slip $p into $S spine, killing $M.",
+    "$N enters convulsions as $n slips $p into $S spine, killing $M.",
+
+    "$N coughs up some blood, and then falls dead, as you place $p in $S back.",
+    "$n sticks $p in $N's back; $N coughs up some blood, and then falls dead.",
+
+    "$N gets a blank look on $S face, then collapses, as you place $o in $S back.",
+    "$N gets a black look on $S face, then collapses, as $n places $o in $S back.",
+
+    "$N collapses and begins to twitch as you place $o in $S back, killing $M.",
+    "$N collapses and begins to twitch as $n places $o in $S back, killing $M."
+  };
+  const char *tMessagesNonDeath[] =
+  {
+    "Your $o plunges deep into $N's upper back.",
+    "$n plunges $s $o deep into $N's upper back.",
+
+    "Your $o sinks deep into $N's lower back.",
+    "$n sinks $s $o deep into $N's lower back.",
+
+    "Blood splatters you, as you thrust $p into $N's back.",
+    "Blood splatters as $n thrusts $p into $N's back.",
+
+    "Blood spurts from $N's mouth as you plunge $p in $S back.",
+    "Blood spurts from $N's mouth as $n plunges $p in $S back.",
+
+    "$N enters convulsions as you slip $p into $S spine.",
+    "$N enters convulsions as $n slips $p into $S spine.",
+
+    "$N coughs up some blood, as you place $p in $S back.",
+    "$n places $p in the back of $N, resulting in some strange noises and blood.",
+
+    "$N gets a blank look on $S face, then dances around madly, as you place $o in $S back.",
+    "$N gets a blank look on $S face, then dances around madly, as $n places $o in $S back.",
+
+    "$N twitches wildly for a moment as you place $o in $S back.",
+    "$N twitches wildly for a moment as $n places $o in $S back."
+  };
+#endif
 
   d = getSkillDam(victim, SKILL_BACKSTAB, getSkillLevel(SKILL_BACKSTAB), getAdvLearning(SKILL_BACKSTAB));
 
@@ -30,6 +88,17 @@ int TBeing::backstabHit(TBeing *victim, TThing *obj)
           act("$N coughs, shivers, and then falls dead as you place $p in $S back.", FALSE, this, obj, victim, TO_CHAR);
           act("$n sticks $p in $N's back; $N coughs and shivers before collapsing.", FALSE, this, obj, victim, TO_NOTVICT);
         } else {
+#if 0
+          int tMessageChoice = (::number(0, BS_MSG_DEATH_MAX) * 2);
+
+          if (!tMessagesDeath[tMessageChoice])
+            tMessageChoice = 0;
+
+          act(tMessagesDeath[tMessageChoice],
+              FALSE, this, obj, victim, TO_CHAR);
+          act(tMessagesDeath[tMessageChoice + 1],
+              FALSE, this, obj, victim, TO_NOTVICT);
+#else
           switch (::number(0,5)) {
             case 0:
               act("Your $o plunges deep into $N's upper back, killing $M.",
@@ -65,6 +134,7 @@ int TBeing::backstabHit(TBeing *victim, TThing *obj)
               act("$N coughs up some blood, and then falls dead, as you place $p in $S back.", FALSE, this, obj, victim, TO_CHAR);
               act("$n sticks $p in $N's back; $N coughs up some blood, and then falls dead.", FALSE, this, obj, victim, TO_NOTVICT);
           }
+#endif
         }
         act("Suddenly, $n stabs you in the back!  RIP...", FALSE, this, obj, victim, TO_VICT);
       } else {
@@ -74,6 +144,17 @@ int TBeing::backstabHit(TBeing *victim, TThing *obj)
           act("$N coughs and shivers as you place $p in $S back.", FALSE, this, obj, victim, TO_CHAR);
           act("$n places $p in the back of $N; $N coughs and shivers...", FALSE, this, obj, victim, TO_NOTVICT);
         } else {
+#if 0
+          int tMessageChoice = (::number(0, BS_MSG_NONDT_MAX) * 2);
+
+          if (!tMessagesNonDeath[tMessageChoice])
+            tMessageChoice = 0;
+
+          act(tMessagesNonDeath[tMessageChoice],
+              FALSE, this, obj, victim, TO_CHAR);
+          act(tMessagesNonDeath[tMessageChoice + 1],
+              FALSE, this, obj, victim, TO_NOTVICT);
+#else
           switch (::number(0,5)) {
             case 0:
               act("Your $o plunges deep into $N's upper back.",
@@ -110,6 +191,7 @@ int TBeing::backstabHit(TBeing *victim, TThing *obj)
               act("$n places $p in the back of $N, resulting in some strange noises and blood.", FALSE, this, obj, victim, TO_NOTVICT);
               break;
           }
+#endif
         }
         act("Suddenly, $n stabs you in the back!", FALSE, this, obj, victim, TO_VICT);
       }

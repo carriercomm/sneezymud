@@ -1086,20 +1086,27 @@ void TBeing::classSpecificStuff()
 #endif
 }
 
-// computes the time it takes to get back 1 point of hp/mana/move
-// it uses average of the 3 numbers but oh well.
+// computes the time it takes to get back 1 point of hp,mana and move
+// it uses worst of the three
 int TBeing::regenTime()
 {
-  int iTime = hitGain();
-  iTime += manaGain();
-  iTime += moveGain();
-  while (iTime % 3)
-    iTime++;
-  iTime /= 3;
+  int iTime = 100;
+
+  if (getHit() < hitLimit())
+    iTime = min(iTime, hitGain());
+
+  if (getMove() < moveLimit())
+    iTime = min(iTime, moveGain());
+
+  if (getMana() < manaLimit())
+    iTime = min(iTime, manaGain());
 
   iTime = max(iTime, 1);
-  iTime = PULSE_UPDATES / iTime;  // PULSE_ is time between calls to
-                                // updateHalfTickStuff()
+
+  // iTime now holds the lesser of my mana/move/hp gain (per update)
+  // regen time for 1 point should simply be the inverse multiplied
+  // by how long a points-update is
+  iTime = PULSE_UPDATE / iTime;
   return iTime;
 }
 

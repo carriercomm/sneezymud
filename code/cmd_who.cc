@@ -86,16 +86,9 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
   else if (p->hasWizPower(POWER_BUILDER))
     strcpy(colorBuf, ch->cyan());
 
-#if 1
   // Do it this way so you get the default-titles also.
-
   if (p && p->GetMaxLevel() > MAX_MORT) {
     string str = p->msgVariables(MSG_IMM_TITLE);
-#else
-  if (p->msgVariables == MSG_IMM_TITLE &&
-      !p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL).empty()) {
-    string str = p->msgVariables(MSG_IMM_TITLE, (TThing *)NULL);
-#endif
     unsigned int len = str.size();
     unsigned int padding = 14-len;
     unsigned int frontpadding = padding/2;
@@ -105,123 +98,14 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
     sprintf(tempbuf, "%sLevel:[%-14s%s][%s] %s",
             colorBuf, str.c_str(),
             colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  }
-#if 0
-// these are old hard-coded names
-// folks should use "mess title" instead
-  else if (!strcmp(p->getName(), "Brutius"))
-    sprintf(tempbuf, "%sLevel:[ Grand Poobah ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Marsh"))
-    sprintf(tempbuf, "%sLevel:[Grand Poobette][%s] %s",
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Batopr"))
-    sprintf(tempbuf, "%sLevel:[  Mr. Fix-It  ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Cosmo"))
-    sprintf(tempbuf, "%sLevel:[The Obfuscation Elminator][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Dolgan"))
-    sprintf(tempbuf, "%sLevel:[Chief Surveyor][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Spawn"))
-    sprintf(tempbuf, "%sLevel:[Shmack Talker ][%s] %s",
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Messiah"))
-    sprintf(tempbuf, "%sLevel:[  The  Maker  ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Speef"))
-    sprintf(tempbuf, "%sLevel:[ The Idea Man ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-#if 0
-  else if (!strcmp(p->getName(), "Gringar"))
-    sprintf(tempbuf, "%sLevel:[Faction Lackey][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-#endif
-  else if (!strcmp(p->getName(), "Peel"))
-    sprintf(tempbuf, "%sLevel:[The Freshmaker][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Mithros"))
-    sprintf(tempbuf, "%sLevel:[Head Architect][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Lapsos"))
-    sprintf(tempbuf, "%sLevel:[Jack of Trades][%s] %s",
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Omen"))
-    sprintf(tempbuf, "%sLevel:[   Bad Omen   ][%s] %s",
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Sidartha"))
-    sprintf(tempbuf, "%sLevel:[Lord of Worlds][%s] %s",
-            colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (!strcmp(p->getName(), "Damescena"))
-    sprintf(tempbuf, "%sLevel:[ All Business ][%s] %s",
-            colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  //  else if (!strcmp(p->getName(), "Phenohol"))
-  // sprintf(tempbuf, "%sLevel:[ He's Special ][%s] %s", 
-  //        colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-
- 
-// generic cases
-  else if (p->GetMaxLevel() == GOD_LEVEL10)
-    sprintf(tempbuf, "%sLevel:[ Implementor  ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (p->GetMaxLevel() == GOD_LEVEL9)
-    sprintf(tempbuf, "%sLevel:[ Grand Wizard ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (p->GetMaxLevel() == GOD_LEVEL8)
-    sprintf(tempbuf, "%sLevel:[ Senior Lord  ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (p->GetMaxLevel() == GOD_LEVEL7)
-    sprintf(tempbuf, "%sLevel:[ Junior Lord  ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (p->GetMaxLevel() == GOD_LEVEL6)
-    sprintf(tempbuf, "%sLevel:[    Eternal   ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (p->GetMaxLevel() == GOD_LEVEL5) {
-    if (p->getSex() == SEX_FEMALE)
-      sprintf(tempbuf, "%sLevel:[   Goddess    ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-    else
-      sprintf(tempbuf, "%sLevel:[     God      ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  } else if (p->GetMaxLevel() == GOD_LEVEL4) {
-    if (p->getSex() == SEX_FEMALE)
-      sprintf(tempbuf, "%sLevel:[ Demi-Goddess ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-    else
-      sprintf(tempbuf, "%sLevel:[   Demi-God   ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  } else if (p->GetMaxLevel() == GOD_LEVEL3)
-    sprintf(tempbuf, "%sLevel:[     Saint    ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  else if (p->GetMaxLevel() == GOD_LEVEL2) {
-    if (p->getSex() == SEX_FEMALE)
-      sprintf(tempbuf, "%sLevel:[    Heroine   ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-    else
-      sprintf(tempbuf, "%sLevel:[     Hero     ][%s] %s", 
-           colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-  } else if (p->GetMaxLevel() == GOD_LEVEL1)
-    sprintf(tempbuf, "%sLevel:[Area Designer ][%s] %s",
-            colorBuf, getWizDescriptLev(p).c_str(), ch->norm());
-#endif
-
-#if 1
-  else {
+  } else {
     string tmpstring;
 
     if(p->isPlayerAction(PLR_ANONYMOUS) && !ch->isImmortal()){
       tmpstring = "Anonymous";
     } else {
-#if 1
       sprintf(tempbuf, "%-5s Lev %2d", p->getProfAbbrevName(), p->GetMaxLevel());
       tmpstring += tempbuf;
-#else
-      tmpstring = p->getProfAbbrevName();
-      tmpstring += " Lev ";
-      sprintf(tempbuf, "%d", p->GetMaxLevel());
-      tmpstring += tempbuf;
-#endif
     }
 
     while (tmpstring.length() < 13)
@@ -231,31 +115,12 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
 
     sprintf(tempbuf, "Level:[%s] ", tmpstring.c_str());
   }
-#else
-  else if (ch->isImmortal()) {
-    string tmpstring = p->getProfAbbrevName();
-    tmpstring += " Lev ";
-    sprintf(tempbuf, "%d", p->GetMaxLevel());
-    tmpstring += tempbuf;
-    while (tmpstring.length() < 13)
-      tmpstring = " " + tmpstring + " ";
-    if (tmpstring.length() < 14)
-      tmpstring += " ";
-
-    sprintf(tempbuf, "Level:[%s] ", tmpstring.c_str());
-  }
-  else if (p->desc && p->desc->original)
-    sprintf(tempbuf, "Level:[      %-2d      ] ", p->desc->original->GetMaxLevel());
-  else      // a non immortal 
-    sprintf(tempbuf, "Level:[      %-2d      ] ", p->GetMaxLevel());
-#endif
 
   return tempbuf;
 }
 
 void TBeing::doWho(const char *argument)
 {
-#if 1
   // New Who Code to handle: who -ol j 20 40
 
   if (gamePort == BETA_GAMEPORT) {
@@ -303,9 +168,7 @@ void TBeing::doWho(const char *argument)
               tSb += "[-] [q]quests [g]god [b]builder [o]mort [f]faction\n\r";
               tSb += "[-] [z]seeks-group [p]groups [y]currently-not-grouped\n\r";
               tSb += "[-] [e]elf [t]hobbit [n]gnome [u]human [r]ogre [w]dwarven\n\r\n\r";
-#if 1
               tSb += "[-] [1]Mage[2]Cleric[3]War[4]Thief[5]Deikhan[6]Monk[7]Ranger[8]Shaman\n\r";
-#endif
             }
 
             if (desc)
@@ -440,7 +303,6 @@ void TBeing::doWho(const char *argument)
 
     return;
   }
-#endif
 
   TBeing *k, *p;
   char buf[1024] = "\0\0\0";
@@ -542,9 +404,7 @@ void TBeing::doWho(const char *argument)
           sb += "[-] [q]quests [g]god [b]builder [o]mort [f]faction\n\r";
           sb += "[-] [z]seeks-group [p]groups [y]currently-not-grouped\n\r";
           sb += "[-] [e]elf [t]hobbit [n]gnome [u]human [r]ogre [w]dwarven\n\r\n\r";
-#if 1
           sb += "[-] [1]Mage[2]Cleric[3]War[4]Thief[5]Deikhan[6]Monk[7]Ranger[8]Shaman\n\r";
-#endif
         }
         if (desc)
           desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);

@@ -321,7 +321,8 @@ int TMonster::mobileWander(dirTypeT door)
   }
 
   // keep mobs where they are supposed to be
-  if (IS_SET(specials.act, ACT_STAY_ZONE) && 
+  // but let them out if they're pissed - dash
+  if (IS_SET(specials.act, ACT_STAY_ZONE) && !IS_SET(specials.act, ACT_HUNTING) &&
       rp->getZone() != rp2->getZone())
     return 0;
 
@@ -3339,7 +3340,8 @@ int TMonster::aggroCheck(bool mobpulse)
 {
   TThing *t, *t2;
   TPerson *tmp_ch;
-  int rc;
+  int rc, numtargets, whichtarget;
+  numtargets = 0;
 
   if(factionAggroCheck())
     return TRUE;
@@ -3365,17 +3367,42 @@ int TMonster::aggroCheck(bool mobpulse)
         if (tmp_ch->isImmortal() && tmp_ch->isPlayerAction(PLR_NOHASSLE)) {
           continue;
         }
-        stats.aggro_attempts++;
+	numtargets++; // we found a valid target
+      }
+    }
 
+    whichtarget = 0;
+    if (numtargets) whichtarget = ::number(1,numtargets);
+    // randomly choose one of the targets we found
+    numtargets = 0;
+    if(!mobpulse) whichtarget = -1;  // no randomization since we're attacking on roomenter
+    for (t = roomp->stuff; t; t = t2) {
+      t2 = t->nextThing;
+      // cast to Person, rather than isPc(), so poly'd chars are safe
+      tmp_ch = dynamic_cast<TPerson *>(t);
+      if (!tmp_ch)
+        continue;
+
+      if (canSee(tmp_ch) && (getPosition() >= POSITION_STANDING)) {
+        if (tmp_ch->isImmortal() && tmp_ch->isPlayerAction(PLR_NOHASSLE)) {
+          continue;
+        }
+	numtargets++;
+	if(numtargets != whichtarget && whichtarget != -1) continue;
+	stats.aggro_attempts++;
+	// WTF is all this - dash
 #ifndef SNEEZY2000
         // randomize who gets hit some
-        if ((mobpulse || ::number(0,9) < 7))
-          continue;
+	//        if ((mobpulse || ::number(0,9) < 7))
+	//          continue;
 #else
 	// make roomenter aggro not happen sometimes
-	if(!mobpulse && (::number(0,3) <= 1))
-	  continue;
+	//	if(!mobpulse && (::number(0,3) <= 1))
+	//	  continue;
 #endif
+
+	if (mobpulse && !::number(0,4)) continue;
+	//
 
         if (checkPeaceful("You can't seem to exercise your violent tendencies.\n\r")) {
           if (!::number(0, 4)) {
@@ -3392,7 +3419,7 @@ int TMonster::aggroCheck(bool mobpulse)
 	     (plotStat(STAT_CURRENT, STAT_INT, 0, 200, 100) + anger()))){
 #endif
 
-          if (!isDumbAnimal() && ::number(0, 3)) {
+          if (!isDumbAnimal() && ::number(0, 9)) {
             // This should basically prevent mobs from attacking when they
             // are grossly out-armed and they know it.  But it also gives
             // mobs a varience so a level 40 mob will be willing to attack

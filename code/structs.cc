@@ -1198,7 +1198,7 @@ void TThing::mount(TThing *ch)
     else if (ttab->parent && dynamic_cast<TBeing *>(ttab->parent)) {
       // damn gods screwing around!
       // light on a table held by a person.  Do nothing for this case
-      vlogf(LOG_INFO, "Possible lighting error due to table being mounted in bad state.  (Room=%d, heldBy=%s)", 
+      vlogf(LOG_BUG, "Possible lighting error due to table being mounted in bad state.  (Room=%d, heldBy=%s)", 
               ttab->parent->inRoom(), ttab->parent->getName());
     } else 
       forceCrash("Potential lighting screw up involving tables.");

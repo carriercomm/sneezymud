@@ -329,6 +329,7 @@ int refresh(TBeing *c, TBeing * victim, int level, byte learn, spellNumT spell)
         break;
     }
     dam = min(dam, victim->moveLimit() - victim->getMove());
+    LogDam(c, spell, dam);
     victim->addToMove(dam);
 
     victim->updatePos();
@@ -447,6 +448,8 @@ int secondWind(TBeing *c, TBeing *victim, int level, byte learn)
         CS(SPELL_SECOND_WIND);
         dam *= 2;
         dam = min(dam, victim->moveLimit() - victim->getMove());
+
+        LogDam(c, SPELL_SECOND_WIND, dam);
         victim->addToMove(dam);
 
         victim->updatePos();
@@ -458,6 +461,7 @@ int secondWind(TBeing *c, TBeing *victim, int level, byte learn)
     }
 
     dam = min(dam, victim->moveLimit() - victim->getMove());
+    LogDam(c, SPELL_SECOND_WIND, dam);
     victim->addToMove(dam);
 
     victim->updatePos();

@@ -154,7 +154,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	cmd_deathstroke.o cmd_disarm.o cmd_dissect.o \
 	cmd_doorbash.o cmd_egotrip.o \
 	cmd_feigndeath.o cmd_grapple.o cmd_headbutt.o \
-	cmd_jump.o \
+	cmd_help.o cmd_jump.o \
 	cmd_kick.o cmd_kneestrike.o cmd_look.o cmd_low.o \
 	cmd_mend_limb.o cmd_message.o \
 	cmd_news.o \
@@ -182,7 +182,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	expandable_container.o faction.o flame.o food.o fuel.o gaining.o \
 	gemstone.o general_weapon.o 
 
-OBJ2 = gin.o handler.o hearts.o help.o hospital.o immortal.o immunity.o \
+OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	indexdata.o info.o inventory.o jewelry.o key.o keyring.o light.o \
 	limbs.o limits.o loadset.o luck.o magic_item.o magic_off.o \
 	magic_skills.o magicutils.o mail.o makecorpse.o materials.o \
@@ -307,6 +307,7 @@ $(OBJDIR)cmd_kneestrike.o: combat.h
 $(OBJDIR)cmd_feigndeath.o: combat.h
 $(OBJDIR)cmd_grapple.o: combat.h
 $(OBJDIR)cmd_headbutt.o: combat.h
+$(OBJDIR)cmd_help.o: components.h help.h statistics.h
 $(OBJDIR)cmd_look.o: games.h
 $(OBJDIR)cmd_low.o: statistics.h combat.h
 $(OBJDIR)cmd_news.o: statistics.h
@@ -384,7 +385,6 @@ $(OBJDIR)gaining.o: statistics.h
 $(OBJDIR)gin.o: $(CASINO_HEADS)
 $(OBJDIR)handler.o: combat.h range.h connect.h shop.h
 $(OBJDIR)hearts.o: $(CASINO_HEADS)
-$(OBJDIR)help.o: components.h help.h statistics.h
 $(OBJDIR)hospital.o: combat.h
 $(OBJDIR)immortal.o: statistics.h mail.h $(CASINO_HEADS) combat.h
 $(OBJDIR)immortal.o: socket.h systemtask.h disc_nature.h shop.h

@@ -133,6 +133,7 @@ void TBeing::doOEdit(const char *)
   sendTo("Mobs may not edit.\n\r");
 }
 
+#if !USE_SQL
 void ObjLoad(TBeing *ch, int vnum)
 {
   TObj *o;
@@ -259,6 +260,140 @@ void ObjLoad(TBeing *ch, int vnum)
 
   *ch += *o;
 }
+#else
+void ObjLoad(TBeing *ch, int vnum)
+{
+  TObj *o;
+  TBaseClothing *tbc;
+  char buf[256];
+  int i;
+  extraDescription *new_descr;
+  MYSQL *immodb;
+  MYSQL_ROW row;
+  MYSQL_RES *res;
+
+  vlogf(LOG_MISC, "ObjLoad: Initializing immortal database.");
+  db=mysql_init(NULL);
+
+  vlogf(LOG_MISC, "ObjLoad: Connecting to immortal database.");
+  if(!mysql_real_connect(db, NULL, "sneezy", NULL, 
+			 "immortal", 0, NULL, 0)){
+    vlogf(LOG_BUG, "Could not connect (1) to database 'immortal'.");
+    exit(0);
+  }
+
+  sprintf(buf, "select type, name, short_desc, long_desc, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from object where vnum=%i and owner='%s'", vnum, ch->name);
+  if(mysql_query(db, buf)){
+    vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
+    exit(0);
+  }
+  res=mysql_store_result(db);
+  if(!(row=mysql_fetch_row(res))){
+    //    vlogf(LOG_BUG, "No such object in read_object: %i", nr);
+    return;
+  }
+
+  ch->sendTo("Loading saved object number %d\n\r", vnum);
+
+  o = makeNewObj(mapFileToItemType(atoi(row[0])));
+  o->snum   = vnum;
+  o->number = -1;
+
+  o->name = mud_str_dup(row[1]);
+  o->shortDescr = mud_str_dup(row[2]);
+  o->setDescr(mud_str_dup(row[3]));
+
+  o->setObjStat(atoi(row[4]));
+  o->obj_flags.wear_flags = atoi(row[5]);
+
+  o->assignFourValues(atoi(row[6]), atoi(row[7]), atoi(row[8]), atoi(row[9]));
+
+  o->setWeight(atof(row[10]));
+  o->obj_flags.cost = atoi(row[11]);
+  o->canBeSeen = atoi(row[12]);
+  o->spec = atoi(row[13]);
+  o->obj_flags.max_struct_points = atoi(row[14]);
+  o->obj_flags.struct_points = atoi(row[15]);
+  o->obj_flags.decay_time = atoi(row[16]);
+  o->setVolume(atoi(row[17]));
+  o->setMaterial(atoi(row[18]));
+  o->max_exist = atoi(row[19]);
+
+  o->ex_description = NULL;
+
+  mysql_free_result(res);
+
+
+  sprintf(buf, "select name, description from extra where vnum=%i and owner='%s'", vnum, ch->name);
+  if(mysql_query(db, buf)){
+    vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
+    exit(0);
+  }
+  res=mysql_store_result(db);
+  while(row=mysql_fetch_row(res)){
+    new_descr = new extraDescription();
+    new_descr->keyword = mud_str_dup(row[0]);
+    new_descr->description = mud_str_dup(row[1]);
+    new_descr->next = o->ex_description;
+    o->ex_description = new_descr;
+  }
+  mysql_free_result(res);
+
+  o->setLight(0);
+  i=0;
+
+  sprintf(buf, "select type, mod1, mod2 from affect where vnum=%i and owner='%s'", vnum, ch->name);
+  if(mysql_query(db, buf)){
+    vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
+    exit(0);
+  }
+  res=mysql_store_result(db);
+  while(row=mysql_fetch_row(res)){
+    o->affected[i].location = mapFileToApply(atoi(row[0]));
+
+    if (applyTypeShouldBeSpellnum(o->affected[i].location))
+      o->affected[i].modifier = mapFileToSpellnum(atoi(row[1]));
+    else
+      o->affected[i].modifier = atoi(row[1]);
+ 
+    o->affected[i].modifier2 = atoi(row[2]);
+
+    if (o->affected[i].location == APPLY_LIGHT)
+      o->addToLight(o->affected[i].modifier);
+    o->affected[i].type = TYPE_UNDEFINED;
+    o->affected[i].level = 0;
+    o->affected[i].bitvector = 0;
+
+    o->affected[i].checkForBadness(o);
+    i++;
+  }
+  mysql_free_result(res);
+  for (i++; (i < MAX_OBJ_AFFECT); i++) {
+    o->affected[i].location = APPLY_NONE;
+    o->affected[i].modifier = 0;
+    o->affected[i].modifier2 = 0;
+    o->affected[i].type = TYPE_UNDEFINED;
+    o->affected[i].level = 0;
+    o->affected[i].bitvector = 0;
+  }
+
+  o->addObjStat(ITEM_STRUNG);
+  if (!ch->hasWizPower(POWER_OEDIT_NOPROTOS))
+    o->addObjStat(ITEM_PROTOTYPE);
+
+  if(o->obj_flags.cost == -1){
+    if((tbc=dynamic_cast<TBaseClothing *>(o))){
+      o->obj_flags.cost = tbc->suggestedPrice();
+    }
+  }
+  act("You just loaded $p.", TRUE, ch, o, 0, TO_CHAR);
+  act(ch->msgVariables(MSG_OEDIT, o).c_str(), TRUE, ch, 0, 0, TO_ROOM);
+
+  *ch += *o;
+
+  mysql_close(immodb);
+}
+#endif
 
 static void ObjSave(TBeing *ch, TObj *o, int vnum)
 {
@@ -2754,7 +2889,7 @@ void generic_dirlist(const char *buf, const TBeing *ch)
     longstr += "Nothing found.\n\r";
 
   closedir(dfd);
-  ch->desc->page_string(longstr.c_str(), 0, true);
+  ch->desc->page_string(longstr.c_str(), SHOWNOW_NO, ALLOW_REP_YES);
 }
 
 int TObj::addApply(TBeing *ch, applyTypeT apply)

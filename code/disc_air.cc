@@ -1077,12 +1077,16 @@ int conjureElemAir(TBeing * caster, int level, byte bKnown)
     if (victim->master)
       victim->stopFollower(TRUE);
 
-    aff.type = SPELL_ENSORCER;
+    aff.type = SPELL_CONJURE_AIR;
     aff.level = level;
     aff.duration  = caster->followTime();
     aff.modifier = 0;
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_CHARM;
+    victim->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>(mud_str_dup(caster->getName()));
     victim->affectTo(&aff);
 
     // Add hp for higher levels - Russ 
@@ -1111,10 +1115,8 @@ int conjureElemAir(TBeing * caster, int level, byte bKnown)
              TRUE, caster, NULL, victim, TO_ROOM);
       act("You've created a monster; $N hates you!",
              FALSE, caster, NULL, victim, TO_CHAR);
-      victim->affectFrom(SPELL_ENSORCER);
-      //victim->developHatred(caster);
-      //caster->setCharFighting(victim);
-      //caster->setVictFighting(victim);
+      victim->affectFrom(SPELL_CONJURE_AIR);
+      victim->affectFrom(AFFECT_THRALL);
     } else
       caster->addFollower(victim);
 

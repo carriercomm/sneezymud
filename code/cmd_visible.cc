@@ -31,6 +31,9 @@ void TPerson::doVisible(const char *, bool tSilent)
   affectedData *tAffect;
   double        tDuration;
 
+  if (isAffected(AFF_SHADOW_WALK)) {
+    sendTo("You are shadow walking and can not solidify.\n\r");
+  }
   if (!isAffected(AFF_INVISIBLE)) {
     if (!tSilent)
       sendTo("You are not invisible to begin with.\n\r");

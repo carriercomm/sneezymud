@@ -1246,7 +1246,7 @@ dirTypeT find_path(int room, int (*pred) (int, void *), void *data, int depth, b
             (hp = real_roomp(exitp->to_room)) &&
             (thru_doors ? go_ok_smarter(exitp) : go_ok(exitp))) {
           // check in_zone criteria
-          if (in_zone && (hp->getZone() != rp->getZone())) {
+          if (in_zone && (hp->getZoneNum() != rp->getZoneNum())) {
             continue;
           }
 
@@ -1311,7 +1311,7 @@ dirTypeT find_path(int room, int (*pred) (int, void *), void *data, int depth, b
           }
 
           // check in_zone criteria
-          if (in_zone && (hp->getZone() != rp->getZone())) {
+          if (in_zone && (hp->getZoneNum() != rp->getZoneNum())) {
             continue;
           }
 

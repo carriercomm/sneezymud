@@ -171,7 +171,8 @@ int TBaseCup::drinkMe(TBeing *ch)
     if (::number(0,9) < ((abs(getLiqDrunk()) * amount) % 10))
       ch->gainCondition(DRUNK, (getLiqDrunk() > 0 ? 1 : -1));
 
-    bSuccess(ch, ch->getSkillValue(SKILL_ALCOHOLISM), SKILL_ALCOHOLISM);
+    if(getLiqDrunk()>0)
+      bSuccess(ch, ch->getSkillValue(SKILL_ALCOHOLISM), SKILL_ALCOHOLISM);
   }
 
   if (ch->getCond(FULL) >= 0) {
@@ -443,7 +444,10 @@ void TBaseCup::pourMeIntoDrink2(TBeing *ch, TBaseCup *from_obj)
   from_obj->weightChangeObject(-temp * SIP_WEIGHT);
   weightChangeObject(temp * SIP_WEIGHT);
 
-  addDrinkConFlags(from_obj->getDrinkConFlags());
+  //  addDrinkConFlags(from_obj->getDrinkConFlags());
+  if(from_obj->getDrinkConFlags() == DRINK_POISON){
+    addDrinkConFlags(DRINK_POISON);
+  }
 }
 
 int TBeing::doPour(const char *argument)
@@ -926,6 +930,8 @@ void TFood::purchaseMe(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY)) {
     keeper->addToMoney(cost, GOLD_SHOP_FOOD);
   }
+
+  shoplog(shop_nr, ch, keeper, getName(), cost, "buying");
 }
 
 void TFood::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
@@ -933,6 +939,8 @@ void TFood::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
   ch->addToMoney(cost, GOLD_SHOP_FOOD);
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY))
     keeper->addToMoney(-cost, GOLD_SHOP_FOOD);
+
+  shoplog(shop_nr, ch, keeper, getName(), cost, "selling");
 }
 
 int TFood::chiMe(TBeing *tLunatic)

@@ -563,14 +563,6 @@ int task_whittleObject(TBeing *ch, string tStWood)
 // whittle <object> <wood>
 void TBeing::doWhittle(const char *tArg)
 {
-  /*
-  if (strcmp(getName(), "Lapsos") != 0 &&
-      strcmp(getName(), "Mithros") != 0) {
-    sendTo("How did you get here??  You shouldn't BE Here.  This code is unstable.\n\r");
-    return;
-  }
-  */
-
   if (!doesKnowSkill(SKILL_WHITTLE)) {
     sendTo("I bet you wish you knew how to whittle.\n\r");
     return;

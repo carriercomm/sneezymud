@@ -60,17 +60,6 @@ void TBeing::setSpellEligibleToggle(TMonster *trainer, spellNumT spell, silentTy
       setQuestBit(TOG_ELIGIBLE_DUAL_WIELD);
       break;
       
-    case SPELL_SHAPESHIFT:
-      if (!silent && trainer) {
-        sprintf(buf,"%s However, before I train you in shapeshift, I must ask you to perform a small task to prove your worth.",
-                    fname(name).c_str());
-        trainer->doTell(buf);
-        sprintf(buf,"%s In order to prove you are ready for such knowledge, bring me some special clay.", fname(name).c_str());
-        trainer->doTell(buf);
-      }
-      setQuestBit(TOG_ELIGIBLE_SHAPE_SHIFT);
-      break;
-      
     case SPELL_FIREBALL:
       if (!silent && trainer) {
         sprintf(buf,"%s Alas, I do not have the knowledge to train you in fireball.",
@@ -535,7 +524,23 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
 	setQuestBit(TOG_MONK_BLACK_ELIGIBLE);
       }
       break;
-
+    case SHAMAN_LEVEL_IND:
+      if (getLevel(Class)>=15 &&
+            !hasQuestBit(TOG_ELIGABLE_JUJU) &&
+            !hasQuestBit(TOG_GET_THONG) &&
+            !hasQuestBit(TOG_MARE_HIDE) &&
+            !hasQuestBit(TOG_GET_SINEW) &&
+            !hasQuestBit(TOG_GET_BEADS) &&
+            !hasQuestBit(TOG_DONE_JUJU)) {
+	if(!silent){
+	  gm->doAction(name, CMD_BEAM);
+	  gm->doSay("Congratulations! You have earned the right to make a juju bag.");
+	  gm->doSay("It will aid in your communications with the loa as well as store components.");
+	  gm->doSay("Say 'juju bag' if you want more information on this quest.");
+	}
+	setQuestBit(TOG_ELIGABLE_JUJU);
+      }
+      break;
     case MAGE_LEVEL_IND:
       if (getLevel(Class)>=10 &&
             !hasQuestBit(TOG_MAGE_BELT_ELIGIBLE) &&
@@ -647,7 +652,7 @@ void TPerson::advanceSelectDisciplines(TBeing *gm, classIndT Class, int numx, si
   int i, count, initial, final;
 
   for (i = 0; i < numx; i++) {
-    if ((Class == MAGE_LEVEL_IND) || (Class == SHAMAN_LEVEL_IND)) {
+    if ((Class == MAGE_LEVEL_IND)) {
       CDiscipline *cd = getDiscipline(DISC_WIZARDRY);
       if (cd) {
         initial = cd->getNatLearnedness();
@@ -665,6 +670,27 @@ void TPerson::advanceSelectDisciplines(TBeing *gm, classIndT Class, int numx, si
             sendTo("You feel your natural wizardry increase.\n\r");
 
           doLevelSkillsLearn(gm, DISC_WIZARDRY, initial, final);
+        }
+      }
+    }
+    if ((Class == SHAMAN_LEVEL_IND)) {
+      CDiscipline *cd = getDiscipline(DISC_RITUALISM);
+      if (cd) {
+        initial = cd->getNatLearnedness();
+        if (initial < 100) {
+          learnAdd = 2;
+          if (plotStat(STAT_NATURAL, STAT_WIS, 30, 180, 105, 1.0) > (::number(0,200))) 
+            learnAdd += 1;
+          
+          for (count = 1; count <= learnAdd; count++) {
+            if (cd->getNatLearnedness() < MAX_DISC_LEARNEDNESS)
+             raiseDiscOnce(DISC_RITUALISM);
+          }
+          final = cd->getNatLearnedness();
+          if (!silent) 
+            sendTo("Your channel to the ancestors grows within you.\n\r");
+
+          doLevelSkillsLearn(gm, DISC_RITUALISM, initial, final);
         }
       }
     }
@@ -723,7 +749,7 @@ void TPerson::advanceSelectDisciplines(TBeing *gm, classIndT Class, int numx, si
 void TPerson::raiseLevel(classIndT Class, TMonster *gm)
 {
   char buf[160];
-  int amount;
+  int amount, maxhit;
 //  int count, learnAdd = 0;
 //  int initial, final;
 
@@ -784,7 +810,11 @@ void TPerson::raiseLevel(classIndT Class, TMonster *gm)
 
     //The fix statement below set the client who window with correct level
     fixClientPlayerLists(TRUE);
+
+    maxhit=points.maxHit;
     advanceLevel(Class, gm);
+    sendTo("You gain %i hitpoints!\n\r", points.maxHit-maxhit);
+
     fixClientPlayerLists(FALSE);
     setTitle(false);
     setSelectToggles((TBeing *) gm, Class, SILENT_NO);
@@ -946,7 +976,7 @@ TRAININFO TrainerInfo[] =
   {SPEC_TRAINER_ADVENTURING, "adventuring", "Adventurers' Lore", DISC_ADVENTURING, CLASS_MAGIC_USER | CLASS_CLERIC | CLASS_THIEF | CLASS_WARRIOR | CLASS_MONK | CLASS_RANGER | CLASS_DEIKHAN | CLASS_SHAMAN},
   {SPEC_TRAINER_COMBAT, "combat", "Combat Skills", DISC_COMBAT, CLASS_MAGIC_USER | CLASS_CLERIC | CLASS_THIEF | CLASS_WARRIOR | CLASS_MONK | CLASS_RANGER | CLASS_DEIKHAN | CLASS_SHAMAN},
   {SPEC_TRAINER_WARRIOR, "warrior", "the Ways of the Warrior", DISC_WARRIOR, CLASS_WARRIOR},
-  {SPEC_TRAINER_WIZARDRY, "wizardry", "Wizardry", DISC_WIZARDRY, CLASS_MAGIC_USER | CLASS_SHAMAN},
+  {SPEC_TRAINER_WIZARDRY, "wizardry", "Wizardry", DISC_WIZARDRY, CLASS_MAGIC_USER},
   {SPEC_TRAINER_FAITH, "faith", "Faith", DISC_FAITH, CLASS_CLERIC | CLASS_DEIKHAN},
   {SPEC_TRAINER_SLASH, "slash", "Slash Specialization", DISC_SLASH, CLASS_WARRIOR | CLASS_RANGER | CLASS_THIEF | CLASS_DEIKHAN},
   {SPEC_TRAINER_BLUNT, "blunt", "Blunt Specialization", DISC_BLUNT, CLASS_WARRIOR | CLASS_CLERIC | CLASS_DEIKHAN},
@@ -959,7 +989,7 @@ TRAININFO TrainerInfo[] =
   {SPEC_TRAINER_SHAMAN_ARMADILLO, "armadillo", "about the Abilities of the Armadillo", DISC_SHAMAN_ARMADILLO, CLASS_SHAMAN},
   {SPEC_TRAINER_ANIMAL, "animal", "Animal Magic", DISC_ANIMAL, CLASS_RANGER},
   {SPEC_TRAINER_AEGIS, "aegis", "the Aegis of the Deities", DISC_AEGIS, CLASS_CLERIC},
-  {SPEC_TRAINER_SHAMAN, "shaman", "The Ways of the Shaman", DISC_AEGIS, CLASS_SHAMAN},
+  {SPEC_TRAINER_SHAMAN, "shaman", "The Ways of the Shaman", DISC_SHAMAN, CLASS_SHAMAN},
   {SPEC_TRAINER_MAGE, "mage", "the arts of Magic", DISC_MAGE, CLASS_MAGE},
   {SPEC_TRAINER_MONK, "monk", "the ways of the Monk", DISC_MONK, CLASS_MONK},
   {SPEC_TRAINER_CLERIC, "cleric", "the Ways of the Cleric", DISC_CLERIC, CLASS_CLERIC},
@@ -988,14 +1018,14 @@ TRAININFO TrainerInfo[] =
   {SPEC_TRAINER_SHAMAN_SKUNK, "skunk", "about the Abilities of the Skunk", DISC_SHAMAN_SKUNK, CLASS_SHAMAN},
   {SPEC_TRAINER_SHAMAN_SPIDER, "spider", "about the Abilities of the Spider", DISC_SHAMAN_SPIDER, CLASS_SHAMAN},
   {SPEC_TRAINER_SHAMAN_CONTROL, "control", "about Being Controling", DISC_SHAMAN_CONTROL, CLASS_SHAMAN},
-  {SPEC_TRAINER_TOTEM, "totemism", "about Totemism", DISC_TOTEM, CLASS_SHAMAN},
+  {SPEC_TRAINER_RITUALISM, "ritualism", "about Rituals", DISC_RITUALISM, CLASS_SHAMAN},
 
   {SPEC_TRAINER_RANGER_FIGHT, "fighting", "Fighting Skills for Rangers", DISC_RANGER_FIGHT, CLASS_RANGER},
   {SPEC_TRAINER_STEALTH, "stealth", "about Stealthiness", DISC_STEALTH, CLASS_THIEF},
 
   {SPEC_TRAINER_TRAPS, "traps", "about Locks and Traps", DISC_TRAPS, CLASS_THIEF},
 
-  {SPEC_TRAINER_LORE, "lore", "about Magic Lores", DISC_LORE, CLASS_MAGIC_USER | CLASS_SHAMAN},
+  {SPEC_TRAINER_LORE, "lore", "about Magic Lores", DISC_LORE, CLASS_MAGIC_USER},
 
  {SPEC_TRAINER_THEOLOGY, "theology", "about Theology", DISC_THEOLOGY, CLASS_CLERIC | CLASS_DEIKHAN},
 
@@ -1113,6 +1143,8 @@ int CDGenericTrainer(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TO
       accclass = RANGER_LEVEL_IND;
     else if ((is_abbrev(classbuf, "monk")) && ch->hasClass(CLASS_MONK))
       accclass = MONK_LEVEL_IND;
+    else if ((is_abbrev(classbuf, "shaman")) && ch->hasClass(CLASS_SHAMAN))
+      accclass = SHAMAN_LEVEL_IND;
     else {
       act("$n growls, \"Get real, $N. I'm not an idiot!\"", 
                    FALSE, me, 0, ch, TO_ROOM);
@@ -1190,35 +1222,29 @@ int TBeing::checkDoneBasic(TBeing *ch, classIndT accclass, int guild, int amount
       bas = ch->getDiscipline(DISC_MAGE)->getNatLearnedness();
       break;
     case SHAMAN_LEVEL_IND:
-      combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness() + ch->getDiscipline(DISC_LORE)->getNatLearnedness();
+      combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness();
       bas = ch->getDiscipline(DISC_SHAMAN)->getNatLearnedness();
       break;
-
     case RANGER_LEVEL_IND:
       combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness();
       bas = ch->getDiscipline(DISC_RANGER)->getNatLearnedness();
       break;
-
    case CLERIC_LEVEL_IND:
       combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness() + ch->getDiscipline(DISC_THEOLOGY)->getNatLearnedness();
       bas = ch->getDiscipline(DISC_CLERIC)->getNatLearnedness();
       break;
-
     case DEIKHAN_LEVEL_IND:
       combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness() + ch->getDiscipline(DISC_THEOLOGY)->getNatLearnedness();
       bas = ch->getDiscipline(DISC_DEIKHAN)->getNatLearnedness();
       break;
-
     case WARRIOR_LEVEL_IND:
       combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness();
       bas = ch->getDiscipline(DISC_WARRIOR)->getNatLearnedness();
       break;
-
     case MONK_LEVEL_IND:
       combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness();
       bas = ch->getDiscipline(DISC_MONK)->getNatLearnedness();
       break;
-
     case THIEF_LEVEL_IND:
       combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness();
       bas = ch->getDiscipline(DISC_THIEF)->getNatLearnedness();
@@ -1291,8 +1317,7 @@ int TBeing::checkTrainDeny(const TBeing *ch, TMonster *me, discNumT discipline, 
     me->doTell(buf);
     return TRUE;
   }
-  if ((ch->getDiscipline(discipline))->getNatLearnedness() + pracs
- > MAX_DISC_LEARNEDNESS) {
+  if ((ch->getDiscipline(discipline))->getNatLearnedness() + pracs > MAX_DISC_LEARNEDNESS) {
     ch->sendTo("You cannot practice that many times!\n\r");
     return TRUE;
   }
@@ -1307,7 +1332,7 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
   int combat = 0;
   bool combatLearn = FALSE;
   int WEAPON_GAIN_LEARNEDNESS = 92;
- pracs = 1;
+  pracs = 1;
 
  if (discipline == DISC_BAREHAND) {
    if (ch->getRawNatSkillValue(SKILL_BAREHAND_PROF) < WEAPON_GAIN_LEARNEDNESS) {
@@ -1359,11 +1384,11 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
       strcpy(tmp_buf, "Combat or Magic Lores");
       break;
    case SHAMAN_LEVEL_IND:
-     combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness() + ch->getDiscipline(DISC_LORE)->getNatLearnedness();
+     combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness();
      if ((combat >= 100) || (combat >= (((35*ch->getLevel(SHAMAN_LEVEL_IND)) /10) - 4))) {
        combatLearn = TRUE;
      }
-     strcpy(tmp_buf, "Combat or Magic Lores");
+     strcpy(tmp_buf, "Combat");
      break;
    case RANGER_LEVEL_IND:
      combat = ch->getDiscipline(DISC_COMBAT)->getNatLearnedness();
@@ -1420,6 +1445,7 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
                   discipline == DISC_THEOLOGY ||
                   discipline == DISC_FAITH ||
                   discipline == DISC_WIZARDRY ||
+                  discipline == DISC_RITUALISM ||
   // No restrictions on DISC_COMBAT and EQUIVALENTs
                   discipline == DISC_SLASH || 
                   discipline == DISC_BLUNT || 
@@ -1453,7 +1479,6 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
           }
         } else {
           found = 2;
-          break;
         }
         break;
       case RANGER_LEVEL_IND:
@@ -1481,7 +1506,6 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
         }
         break;
       case CLERIC_LEVEL_IND:
-
         if ((discipline == DISC_CLERIC)) {
           if (combatLearn) {
             return FALSE;
@@ -1712,6 +1736,10 @@ int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset,
     wizardryLevelT wiz = ch->getWizardryLevel();
     if (wiz >= WIZ_LEV_COMP_BELT)
         ch->sendTo("It is ok to have components contained on your belt.\n\r");
+    else if (wiz == WIZ_LEV_COMP_NECK)
+        ch->sendTo("It is ok to have components contained in a neck pouch.\n\r");
+    else if (wiz == WIZ_LEV_COMP_WRIST)
+        ch->sendTo("It is ok to have components contained in a wristpouch.\n\r");
     else if (wiz == WIZ_LEV_NO_MANTRA)
         ch->sendTo("You no longer need to speak the incantation.\n\r");
     else if (wiz == WIZ_LEV_NO_GESTURES)
@@ -1723,6 +1751,27 @@ int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset,
     else if (wiz == WIZ_LEV_COMP_EITHER_OTHER_FREE)
       ch->sendTo("Components may be in either hand, and the other hand must be free.\n\r");
     else if (wiz <= WIZ_LEV_COMP_PRIM_OTHER_FREE)
+      ch->sendTo("Components must be in your primary hand, and the other hand must be free.\n\r");
+  }
+  if (TrainerInfo[offset].disc == DISC_RITUALISM) {
+    ritualismLevelT wiz = ch->getRitualismLevel();
+    if (wiz >= RIT_LEV_COMP_BELT)
+        ch->sendTo("It is ok to have components contained on your belt.\n\r");
+    else if (wiz == RIT_LEV_COMP_NECK)
+        ch->sendTo("It is ok to have components contained in a neck pouch.\n\r");
+    else if (wiz == RIT_LEV_COMP_WRIST)
+        ch->sendTo("It is ok to have components contained in a wristpouch.\n\r");
+    else if (wiz == RIT_LEV_NO_MANTRA)
+        ch->sendTo("You no longer need to speak the incantation.\n\r");
+    else if (wiz == RIT_LEV_NO_GESTURES)
+        ch->sendTo("You no longer need to make hand gestures while casting!\n\r");
+    else if (wiz == RIT_LEV_COMP_INV)
+        ch->sendTo("Components in your inventory will now be used.\n\r");
+    else if (wiz == RIT_LEV_COMP_EITHER)
+      ch->sendTo("Components may be in either hand.\n\r");
+    else if (wiz == RIT_LEV_COMP_EITHER_OTHER_FREE)
+      ch->sendTo("Components may be in either hand, and the other hand must be free.\n\r");
+    else if (wiz <= RIT_LEV_COMP_PRIM_OTHER_FREE)
       ch->sendTo("Components must be in your primary hand, and the other hand must be free.\n\r");
   }
   if (TrainerInfo[offset].disc == DISC_FAITH) {
@@ -1884,7 +1933,7 @@ static int GenericGuildMaster(TBeing *ch, TMonster *me, cmdTypeT cmd, classIndT 
     switch (cit) {
       case MAGE_LEVEL_IND:
       case SHAMAN_LEVEL_IND:
-        act("$n growls, \"Go away, $N.  You know nothing of our art!\"", FALSE, me, 0, ch, TO_ROOM);
+        act("$n growls, \"Go away, $N.  You know nothing of spirits!\"", FALSE, me, 0, ch, TO_ROOM);
         break;
       case CLERIC_LEVEL_IND:
         act("$n growls, \"Go away, $N.  You're no cleric!\"", FALSE, me, 0, ch, TO_ROOM);
@@ -1995,10 +2044,42 @@ wizardryLevelT TBeing::getWizardryLevel() const
     return WIZ_LEV_NO_GESTURES;
   else if (skill < 75)
     return WIZ_LEV_NO_MANTRA;
+  else if (skill < 98)
+    return WIZ_LEV_COMP_NECK;
+  else if (skill < 99)
+    return WIZ_LEV_COMP_NECK;
   else if (skill < MAX_SKILL_LEARNEDNESS)
     return WIZ_LEV_COMP_BELT;
   else
     return WIZ_LEV_MAXED;
+}
+
+ritualismLevelT TBeing::getRitualismLevel() const
+{
+  int skill;
+
+  if (!doesKnowSkill(SKILL_RITUALISM))
+    return RIT_LEV_NONE;
+  else if ((skill = getSkillValue(SKILL_RITUALISM)) < 15)
+    return RIT_LEV_COMP_PRIM_OTHER_FREE;
+  else if (skill < 30)
+    return RIT_LEV_COMP_EITHER_OTHER_FREE;
+  else if (skill < 40)
+    return RIT_LEV_COMP_EITHER;
+  else if (skill < 50)
+    return RIT_LEV_COMP_INV;
+  else if (skill < 60)
+    return RIT_LEV_NO_GESTURES;
+  else if (skill < 75)
+    return RIT_LEV_NO_MANTRA;
+  else if (skill < 98)
+    return RIT_LEV_COMP_NECK;
+  else if (skill < 99)
+    return RIT_LEV_COMP_NECK;
+  else if (skill < MAX_SKILL_LEARNEDNESS)
+    return RIT_LEV_COMP_BELT;
+  else
+    return RIT_LEV_MAXED;
 }
 
 devotionLevelT TBeing::getDevotionLevel() const
@@ -2066,8 +2147,8 @@ void TBeing::pracPath(TMonster *gm, classIndT Class, ubyte pracs)
       strcpy(tmp2_buf, "Magic Lores");
       break;
     case SHAMAN_LEVEL_IND:
-      combat = getDiscipline(DISC_COMBAT)->getNatLearnedness() + getDiscipline(DISC_LORE)->getNatLearnedness();
-      basic = getDiscipline(DISC_SHAMAN)->getNatLearnedness();
+      combat = getDiscipline(DISC_COMBAT)->getNatLearnedness();
+      basic = getDiscipline(DISC_WARRIOR)->getNatLearnedness();
       if (basic >= MAX_DISC_LEARNEDNESS) {
         basicLearn=TRUE;
       }
@@ -2075,7 +2156,7 @@ void TBeing::pracPath(TMonster *gm, classIndT Class, ubyte pracs)
         combatLearn = TRUE;
         combatMax = 1;
       }
-      if (combat == 2* MAX_DISC_LEARNEDNESS) {
+      if (combat == MAX_DISC_LEARNEDNESS) {
          combatMax = 2;
          combatLearn = TRUE;
       }
@@ -2083,8 +2164,7 @@ void TBeing::pracPath(TMonster *gm, classIndT Class, ubyte pracs)
       if (combat >= (((35*getLevel(Class)) /10) - 4)) {
         combatLearn = TRUE;
       }
-      strcpy(tmp_buf, "Combat or Magic Lores");
-      strcpy(tmp2_buf, "Magic Lores");
+      strcpy(tmp_buf, "Combat");
       break;
     case RANGER_LEVEL_IND:
       combat = getDiscipline(DISC_COMBAT)->getNatLearnedness();
@@ -2281,3 +2361,8 @@ double getExpClassLevel(classIndT Class, int level)
 
   return (int) exp_amt;
 }
+
+
+
+
+

@@ -270,6 +270,7 @@ static int reward_or_punish(TBeing *deity, TBeing *ch)
         act("You feel totally weakened.", FALSE, deity, NULL, ch, TO_VICT);
         ch->setHit(1);
         ch->setMana(1);
+	ch->setLifeforce(1);
         ch->setMove(1);
         deity->doSay("Let this be a lesson to you.");
         break;

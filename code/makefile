@@ -140,6 +140,7 @@ endif
 # postgresql database lib
 #LDFLAGS +=-lpq++
 # mysql database lib
+LDFLAGS +=-L/home/oldspasm/usr/lib
 LDFLAGS +=-lmysqlclient
 
 ###############################################################################
@@ -179,6 +180,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	disc_mounted.o disc_murder.o disc_physical.o disc_nature.o \
 	disc_pierce.o disc_ranged.o disc_ranger.o disc_shaman.o disc_shaman_armadillo.o \
 	disc_shaman_frog.o disc_shaman_spider.o disc_shaman_control.o \
+	disc_shaman_skunk.o \
 	disc_slash.o disc_smythe.o disc_sorcery.o disc_spirit.o \
 	disc_survival.o disc_theology.o disc_thief.o disc_warrior.o \
 	disc_water.o disc_wrath.o discipline.o disease.o doors.o drawpoker.o \
@@ -214,7 +216,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	shop.o show.o signals.o skill_dam.o skills.o \
 	slots.o socket.o sound.o spec_mobs.o \
 	spec_mobs_doppleganger.o spec_mobs_earthquake_digger.o \
-        spec_mobs_goring.o \
+        spec_mobs_coroner.o spec_mobs_goring.o spec_mobs_realestate.o \
 	spec_objs.o spec_objs_jambiya.o \
 	spec_objs_lightning_rod.o \
 	spec_objs_blind.o spec_objs_manadrain.o \
@@ -226,6 +228,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	spelltask.o \
 	statistics.o stats.o structs.o systemtask.o \
 	talk.o task.o task_attune.o task_lightfire.o task_fishing.o task_sacrifice.o task_scribe.o \
+	task_extinguish_my_ass.o \
 	task_skin.o task_trap.o task_brew.o task_meditate.o task_search.o \
 	task_sleep.o task_charge.o task_penance.o task_seekwater.o \
 	task_smythe.o task_dull.o task_picklock.o task_sharpen.o \
@@ -298,7 +301,7 @@ DISC_HEADS   = disc_adventuring.h disc_aegis.h disc_afflictions.h \
                disc_smythe.h disc_sorcery.h \
                disc_spirit.h disc_stealth.h disc_survival.h   \
                disc_mindbody.h disc_theology.h disc_thief.h  \
-               disc_thief_fight.h disc_totem.h disc_traps.h  \
+               disc_thief_fight.h disc_traps.h  \
                disc_warrior.h disc_water.h disc_wrath.h
 
 $(OBJDIR)%.o : %.cc $(GEN_HEADS)
@@ -368,7 +371,6 @@ $(OBJDIR)disc_afflictions.o: disc_afflictions.h combat.h
 $(OBJDIR)disc_air.o: disc_air.h spelltask.h combat.h
 $(OBJDIR)disc_alchemy.o: disc_alchemy.h components.h combat.h spelltask.h
 $(OBJDIR)disc_animal.o: disc_animal.h combat.h
-$(OBJDIR)disc_azruzi.o: disc_azruzi.h combat.h
 $(OBJDIR)disc_blunt.o: disc_blunt.h
 $(OBJDIR)disc_brawling.o: disc_brawling.h
 $(OBJDIR)disc_meditation.o: disc_meditation.h disc_combat.h
@@ -389,6 +391,7 @@ $(OBJDIR)disc_mounted.o: disc_mounted.h
 $(OBJDIR)disc_murder.o: disc_murder.h combat.h spelltask.h
 $(OBJDIR)disc_nature.o: disc_nature.h combat.h spelltask.h
 $(OBJDIR)disc_shaman_armadillo.o: disc_shaman_armadillo.h combat.h spelltask.h
+$(OBJDIR)disc_shaman_skunk.o: disc_shaman_skunk.h combat.h spelltask.h
 $(OBJDIR)disc_shaman_frog.o: disc_shaman_frog.h combat.h spelltask.h
 $(OBJDIR)disc_shaman_spider.o: disc_shaman_spider.h combat.h spelltask.h
 $(OBJDIR)disc_shaman_control.o: disc_shaman_control.h combat.h spelltask.h

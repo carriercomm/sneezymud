@@ -641,7 +641,7 @@ const char * const extra_bits[] =
   "Float",
   "No purge",
   "Newbie",
-  "*Do Not Use*", // now unused
+  "No-Junk (Player)", // now unused
   "*Do Not Use*", // now unused
   "*Do Not Use*", // now unused
   "Item Attached",
@@ -1688,8 +1688,8 @@ const struct disc_names_data discNames[MAX_DISCS] =
   {DISC_SHAMAN_SKUNK, CLASS_SHAMAN, "skunk abilities"},       // 50
   {DISC_SHAMAN_SPIDER, CLASS_SHAMAN, "spider abilities"},
   {DISC_SHAMAN_CONTROL, CLASS_SHAMAN, "control"},            
-  {DISC_TOTEM, CLASS_SHAMAN, "totemism"},
-  {DISC_WIZARDRY, CLASS_MAGE | CLASS_SHAMAN, "wizardry"},
+  {DISC_RITUALISM, CLASS_SHAMAN, "ritualism"},
+  {DISC_WIZARDRY, CLASS_MAGE, "wizardry"},
   {DISC_FAITH, CLASS_CLERIC | CLASS_DEIKHAN, "faith"},  // 55
   {DISC_SLASH, CLASS_WARRIOR | CLASS_RANGER | CLASS_THIEF | CLASS_DEIKHAN , "slash"},
   {DISC_BLUNT, CLASS_WARRIOR | CLASS_CLERIC | CLASS_DEIKHAN | CLASS_SHAMAN, "blunt"},                              
@@ -1698,7 +1698,7 @@ const struct disc_names_data discNames[MAX_DISCS] =
   {DISC_COMBAT, 0, "combat"},                           // 60
   {DISC_ADVENTURING, 0, "adventuring"},                  
   {DISC_THEOLOGY, CLASS_CLERIC | CLASS_DEIKHAN, "theology"},   
-  {DISC_LORE, CLASS_MAGE | CLASS_SHAMAN, "lore"},
+  {DISC_LORE, CLASS_MAGE, "lore"},
   {DISC_NATURE, CLASS_RANGER, "nature"} // 64 is last
 
 };
@@ -1757,7 +1757,7 @@ const char * const disc_names[MAX_DISCS] =
   "Skunk Abilities",           // 50
   "Spider Abilities",
   "Control Abilities",
-  "Totemism",
+  "Ritualism",
   "Wizardry",
   "Faith",                        // 55
   "Slash Weapons",
@@ -1856,6 +1856,49 @@ const char * const trap_effects[MAX_TRAP_EFF] =
   "Thrown_armed_2",
   "Thrown_armed_3",
 };
+
+
+const char * heraldcodes[] =
+{
+  "<1>", // "none",
+  "<b>", // "blue",
+  "<r>", // "red",
+  "<g>", // "green",
+  "<W>", // "white",
+  "<p>", // "purple",
+  "<c>", // "cyan",
+  "<o>", // "orange",
+  "<Y>", // "yellow",
+  "<k>", // "gray",
+  "<R>", // "boldred",
+  "<G>", // "boldgreen",
+  "<B>", // "boldblue",
+  "<P>", // "boldpurple",
+  "<C>", // "boldcyan",
+  "<1>"  // "\n"
+};
+
+
+const char * heraldcolors[] =
+{
+  "none",
+  "blue",
+  "red",
+  "green",
+  "white",
+  "purple",
+  "cyan",
+  "orange",
+  "yellow",
+  "gray",
+  "boldred",
+  "boldgreen",
+  "boldblue",
+  "boldpurple",
+  "boldcyan",
+  "\n"
+};
+
 
 // some factors from stdsneezy.h
 const int PROD_GAMEPORT = 7900;

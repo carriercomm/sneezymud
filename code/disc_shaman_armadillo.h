@@ -1,4 +1,3 @@
-
 #ifndef __DISC_SHAMAN_ARMADILLO_H
 #define __DISC_SHAMAN_ARMADILLO_H
 
@@ -7,24 +6,32 @@
 class CDShamanArmadillo : public CDiscipline
 {
 public:
-    CSkill skThornflesh;
     CSkill skAqualung;
+    CSkill skThornflesh;
+    CSkill skCelerite;
+    CSkill skShadowWalk;
 
     CDShamanArmadillo() 
       : CDiscipline(),
+      skAqualung(),
       skThornflesh(),
-      skAqualung() {
+      skCelerite(),
+      skShadowWalk() {
     }
     CDShamanArmadillo(const CDShamanArmadillo &a) 
       : CDiscipline(a),
+      skAqualung(a.skAqualung),
       skThornflesh(a.skThornflesh),
-      skAqualung(a.skAqualung) {
+      skCelerite(a.skCelerite),
+      skShadowWalk(a.skShadowWalk) {
     }
     CDShamanArmadillo & operator=(const CDShamanArmadillo &a)  {
       if (this == &a) return *this;
       CDiscipline::operator=(a);
-      skThornflesh = a.skThornflesh;
       skAqualung = a.skAqualung;
+      skThornflesh = a.skThornflesh;
+      skCelerite = a.skCelerite;
+      skShadowWalk = a.skShadowWalk;
       return *this;
     }
     virtual ~CDShamanArmadillo() {}
@@ -32,13 +39,25 @@ public:
 private:
 };
 
-    int thornflesh(TBeing *);
-    int castThornflesh(TBeing *);
-    int thornflesh(TBeing *, int, byte);
+int thornflesh(TBeing *caster);
+int castThornflesh(TBeing *caster);
+int thornflesh(TBeing *caster, int level, byte bKnown);
 
-    int aqualung(TBeing *, TBeing *);
-    int castAqualung(TBeing *, TBeing *);
-    void aqualung(TBeing *, TBeing *, TMagicItem *);
-    int aqualung(TBeing *, TBeing *, int, byte);
+int aqualung(TBeing * caster, TBeing * victim, int level, byte bKnown);
+void aqualung(TBeing * caster, TBeing * victim, TMagicItem * obj);
+int aqualung(TBeing * caster, TBeing * victim);
+int castAqualung(TBeing * caster, TBeing * victim);
+
+int shadowWalk(TBeing *, TBeing *);
+int castShadowWalk(TBeing *, TBeing *);
+void shadowWalk(TBeing *, TBeing *, TMagicItem *);
+int shadowWalk(TBeing *, TBeing *, int, byte);
+
+    int celerite(TBeing *, TBeing *);
+    int castCelerite(TBeing *, TBeing *);
+    void celerite(TBeing *, TBeing *, TMagicItem *);
+    int celerite(TBeing *, TBeing *, int, byte);
 
 #endif
+
+

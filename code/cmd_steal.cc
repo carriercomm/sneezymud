@@ -140,21 +140,21 @@ static int steal(TBeing * thief, TBeing * victim)
       bSuccess(thief, bKnown+ modifier, SKILL_STEAL))) {
     /* Steal some money */
     gold = (int) ((victim->getMoney() * ::number(1, 10)) / 100);
-    gold = min(4000, gold);
+    gold = min(5000, gold);
     LogDam(thief, SKILL_STEAL,gold);
     if (gold > 0) {
       thief->addToMoney(gold, GOLD_INCOME);
       victim->addToMoney(-gold, GOLD_INCOME);
       
-      thief->sendTo("Bingo! You got %d talen%s.\n\r", gold, 
-            (gold > 1) ? "s" : "");
+      thief->sendTo("You have just stolen %d talen%s from %s.\n\r", gold, 
+            (gold > 1) ? "s" : "", victim->getName());
 
       if (victim->hasClass(CLASS_THIEF) && victim->isPerceptive())
         victim->sendTo("You suddenly feel lighter in your moneypouch...\n\r");
     } else 
       thief->sendTo("You couldn't seem to find any talens...\n\r");
   } else {
-    act("Oops..", FALSE, thief, 0, 0, TO_CHAR);
+    act("Oh ohhh...Busted!", FALSE, thief, 0, 0, TO_CHAR);
 
   
     if (thief->affectedBySpell(skill) || 
@@ -235,13 +235,15 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
 
 #if 0
   // i moved this code down past where eq_pos is defined.... hehe -dash
-  if (!thief->isImmortal()) {
-    if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L && 
-	 eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) || 
-	(victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && eq_pos != WEAR_FOOT_R &&
-	 eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && eq_pos != WEAR_HEAD)) {
-      thief->sendTo("It is not possible to steal that without being noticed.\n\r");
-      return FALSE;
+  if (victim->awake()) {
+    if (!thief->isImmortal()) {
+      if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L && 
+   	   eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) || 
+	  (victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && eq_pos != WEAR_FOOT_R &&
+	   eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && eq_pos != WEAR_HEAD)) {
+	thief->sendTo("It is not possible to steal that without being noticed.\n\r");
+	return FALSE;
+      }
     }
   }
   // The above was added to make steal a bit more realistic at Peel's request --jh
@@ -251,7 +253,7 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
 /* high modifier ---> easier to steal */
   modifier = (level - vict_lev)/3;
 
-  modifier -= 25;   /* tough to steal equipped stuff */
+  modifier -= 35;   /* tough to steal equipped stuff */
 
   modifier += thief->plotStat(STAT_CURRENT, STAT_DEX, -70, 15, 0);
 
@@ -259,7 +261,7 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
     modifier += 100;
 
   if ((vict_lev > level) && victim->isLucky(thief->spellLuckModifier(SKILL_STEAL)))
-    modifier -= 55;
+    modifier -= 65;
 
   modifier += victim->getCond(DRUNK)/4;
 
@@ -300,13 +302,16 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
 
 
 #ifdef SNEEZY2000
-  if (!thief->isImmortal() && eq_pos != WEAR_NOWHERE) {
-    if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L &&
-         eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) ||
-        (victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && eq_pos != WEAR_FOOT_R &&
-         eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && eq_pos != WEAR_HEAD)) {
-      thief->sendTo("It is not possible to steal that without being noticed.\n\r");
-      return FALSE;
+  if (victim->awake()) {
+    if (!thief->isImmortal() && eq_pos != WEAR_NOWHERE) {
+      if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L &&
+           eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) ||
+          (victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && 
+           eq_pos != WEAR_FOOT_R && eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && 
+           eq_pos != WEAR_HEAD)) {
+	thief->sendTo("It is not possible to steal that without being noticed.\n\r");
+	return FALSE;
+      }
     }
   }
   // The above was added to make steal a bit more realistic at Peel's request --jh

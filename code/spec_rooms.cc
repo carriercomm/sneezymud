@@ -1623,6 +1623,140 @@ int monkQuestProcFall(TBeing *ch, cmdTypeT cmd, const char *, TRoom *rp)
   return TRUE;
 }
 
+int BankVault(TBeing *, cmdTypeT cmd, const char *, TRoom *roomp)
+{
+  TRoom *rp;
+  TThing *tt;
+  TBeing *tb;
+  static int pulse;
+
+  if(cmd != CMD_GENERIC_PULSE)
+    return FALSE;
+
+  ++pulse;
+  if(pulse%15)
+    return FALSE;
+
+  // close and lock vault doors
+  //  vlogf(LOG_PEEL, "Bank: closing/locking vault doors");
+  
+  rp=real_roomp(31780);
+  SET_BIT(rp->dir_option[DIR_WEST]->condition, EX_CLOSED);
+  SET_BIT(rp->dir_option[DIR_WEST]->condition, EX_LOCKED);
+  
+  rp=real_roomp(31779);
+  SET_BIT(rp->dir_option[DIR_EAST]->condition, EX_CLOSED);
+  SET_BIT(rp->dir_option[DIR_EAST]->condition, EX_LOCKED);
+
+  rp=real_roomp(31786);
+  SET_BIT(rp->dir_option[DIR_WEST]->condition, EX_CLOSED);
+  SET_BIT(rp->dir_option[DIR_WEST]->condition, EX_LOCKED);
+
+  rp=real_roomp(31785);
+  SET_BIT(rp->dir_option[DIR_EAST]->condition, EX_CLOSED);
+  SET_BIT(rp->dir_option[DIR_EAST]->condition, EX_LOCKED);
+  
+  // check for player in this room and poison if so
+  
+  for(tt=roomp->stuff;tt;tt=tt->nextThing){
+    if((tb=dynamic_cast<TBeing *>(tt)) && tb->isPc()){
+      tb->sendTo(COLOR_BASIC, "<G>Acidic gas shoots out of small holes in the ceiling.<1>\n\r");
+      tb->sendTo(COLOR_BASIC, "<r>It burns your skin and you choke uncontrollably!<1>\n\r");
+
+      vlogf(LOG_PEEL, "Bank: %s caught in vault", tb->getName());
+
+      if (tb->reconcileDamage(tb, ::number(20,50), DAMAGE_TRAP_POISON) == -1)
+	return DELETE_VICT;
+
+      if (tb->reconcileDamage(tb, ::number(20,50), DAMAGE_TRAP_ACID) == -1)
+	return DELETE_VICT;
+    }
+  }
+
+
+  return TRUE;
+}
+
+
+int BankMainEntrance(TBeing *, cmdTypeT cmd, const char *, TRoom *roomp)
+{
+  TRoom *rp;
+  static int pulse;
+
+  if(cmd != CMD_GENERIC_PULSE)
+    return FALSE;
+
+  ++pulse;
+  if(pulse%60)
+    return FALSE;
+
+  //  vlogf(LOG_PEEL, "Bank: closing/locking main entrance");
+
+  rp=real_roomp(31764);
+  SET_BIT(rp->dir_option[DIR_NORTH]->condition, EX_CLOSED);
+  SET_BIT(rp->dir_option[DIR_NORTH]->condition, EX_LOCKED);
+  SET_BIT(rp->dir_option[DIR_SOUTH]->condition, EX_CLOSED);
+
+  rp=real_roomp(31767);
+  SET_BIT(rp->dir_option[DIR_SOUTH]->condition, EX_CLOSED);
+
+  rp=real_roomp(31758);
+  SET_BIT(rp->dir_option[DIR_NORTH]->condition, EX_CLOSED);
+
+  return TRUE;
+}
+
+int BankTeleporter(TBeing *, cmdTypeT cmd, const char *, TRoom *rp)
+{
+  TBeing *mob, *boss;
+  int i=0, found=0;
+  static unsigned int pulse;
+  Descriptor *d;
+  int saferooms[7]={31750, 31751, 31756, 31757, 31758, 31759, 31764};  
+  
+  if(cmd != CMD_GENERIC_PULSE)
+    return FALSE;
+
+  ++pulse;
+  if(pulse%75)
+    return FALSE;
+
+  for (d = descriptor_list; d ; d = d->next){
+    if (!d->connected && d->character && d->character->roomp &&
+	d->character->roomp->getZoneNum() == rp->getZoneNum() &&
+	d->character->in_room != saferooms[0] &&
+	d->character->in_room != saferooms[1] &&
+	d->character->in_room != saferooms[2] &&
+	d->character->in_room != saferooms[3] &&
+	d->character->in_room != saferooms[4] &&
+	d->character->in_room != saferooms[5] &&
+	d->character->in_room != saferooms[6]){
+      found=1;
+      break;
+    }
+  }
+
+  
+  if(found){
+    vlogf(LOG_PEEL, "Bank: here comes the wrecking crew");
+
+    boss = read_mobile(31759, VIRTUAL);
+    *rp += *boss;
+    SET_BIT(boss->specials.affectedBy, AFF_GROUP);
+
+    for(i=0;i<4;++i){
+      mob = read_mobile(31753+::number(0,3), VIRTUAL);
+      *rp += *mob;
+      boss->addFollower(mob);
+      SET_BIT(mob->specials.affectedBy, AFF_GROUP);
+    }
+  }
+
+
+  return TRUE;
+}
+
+
 extern int healing_room(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp);
 extern int emergency_room(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp);
 extern int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp);
@@ -1632,7 +1766,6 @@ void assign_rooms(void)
 {
   struct room_special_proc_entry specials[] =
   {
-    {410, bank},
     {416, healing_room},
     {418, emergency_room},
 #if 0
@@ -2007,6 +2140,17 @@ void assign_rooms(void)
     {27306, SecretDoors},
     {27828, SecretDoors},
     {27890, SecretDoors},
+    {31751, bank},
+    {31756, bank},
+    {31759, bank},
+    {31764, BankMainEntrance},
+    {31784, BankTeleporter},
+    {31774, BankVault},
+    {31775, BankVault},
+    {31780, BankVault},
+    {31781, BankVault},
+    {31786, BankVault},
+    {31787, BankVault},
     {-1, NULL},
   };
 

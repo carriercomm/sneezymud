@@ -655,7 +655,7 @@ int earthquake(TBeing *caster, int level, byte bKnown, spellNumT spell, int adv_
         }
       } else if ((caster != tmp_victim) &&
         	 (tmp_victim->in_room != ROOM_NOWHERE) &&
-		 (caster->roomp->getZone() == tmp_victim->roomp->getZone())) {
+		 (caster->roomp->getZoneNum() == tmp_victim->roomp->getZoneNum())) {
 	tmp_victim->sendTo("The earth shakes for a moment...\n\r");
 	if ((tmp_victim->getPosition() > POSITION_SITTING) &&
 	    !tmp_victim->isImmortal() &&
@@ -859,10 +859,10 @@ int spontaneousCombust(TBeing *caster, TBeing *victim, int level, byte bKnown, i
     if (caster != victim) {
       act("$N suddenly errupts in a tower of flames!", 
           FALSE, caster, NULL, victim, TO_CHAR);
-      act("You suddenly errupt in a tower of flames!", 
+      act("You suddenly errupt in a tower of flames! <R>FIRE!!!<1>", 
           FALSE, caster, NULL, victim, TO_VICT);
     } else {
-      act("You suddenly errupt in a tower of flames!", 
+      act("You suddenly errupt in a tower of flames! <R>FIRE!!!<1>", 
           FALSE, caster, NULL, victim, TO_VICT);
     }
 
@@ -885,7 +885,7 @@ int spontaneousCombust(TBeing *caster, TBeing *victim, int level, byte bKnown, i
               FALSE, caster, NULL, NULL, TO_CHAR);
         act("$n suddenly erupts in a tower of flames!", 
               FALSE, caster, NULL, NULL, TO_ROOM);
-        act("You are suddenly consumed in a tower of flames!", 
+        act("You are suddenly consumed in a tower of flames! <R>FIRE!!!<1>", 
               FALSE, caster, NULL, NULL, TO_CHAR);
 
         if (caster->reconcileDamage(caster, dam,SPELL_SPONTANEOUS_COMBUST) == -1)
@@ -960,7 +960,7 @@ int flamestrike(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_
   if (bSuccess(caster, bKnown, caster->getPerc(), SPELL_FLAMESTRIKE)) {
     act("The blazing column descends toward $n.",
           FALSE, victim, 0, 0, TO_ROOM);
-    act("The blazing column descends toward you!",
+    act("The blazing column descends toward you! <R>FIRE!!!<1>",
           FALSE, victim, 0, 0, TO_CHAR);
 
     switch (critSuccess(caster, SPELL_FLAMESTRIKE)) {
@@ -987,7 +987,7 @@ int flamestrike(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_
       SV(SPELL_FLAMESTRIKE);
       act("$n ducks and manages to avoid some of the fire!",
           FALSE, victim, 0, 0, TO_ROOM);
-      act("You manage to avoid some of the fire!",
+      act("You manage to avoid some of the fire! <R>FIRE!!!<1>",
           FALSE, victim, 0, 0, TO_CHAR);
       ret |= SPELL_SAVE;
     }
@@ -1000,7 +1000,7 @@ int flamestrike(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_
       case CRIT_F_HITSELF:
         act("Oops!  The blazing column twists and makes a bee-line for $n!",
               FALSE, caster, NULL, 0, TO_ROOM);
-        act("Oops!  The blazing column twists and makes a bee-line for you!",
+        act("Oops!  The blazing column twists and makes a bee-line for you! <R>FIRE!!!<1>",
               FALSE, caster, NULL, 0, TO_CHAR);
         act("Hey!  That spell was meant for you!",
               FALSE, victim, NULL, 0, TO_CHAR);
@@ -1103,4 +1103,6 @@ int flamestrike(TBeing *caster, TBeing *victim, TMagicItem *obj)
 
     return rc;
 }
+
+
 

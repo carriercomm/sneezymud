@@ -115,6 +115,7 @@ int sticksToSnakes(TBeing * caster, TBeing * victim, int level, byte bKnown)
     aff.bitvector = 0;
     snake->affectTo(&aff);
 
+    vlogf(LOG_JESUS, "Sticks to Snakes made a snake of level %d for %s [lev:%d].", snake->GetMaxLevel(), caster->getName(), caster->GetMaxLevel());
     if (snake->reconcileDamage(victim, 0, SPELL_STICKS_TO_SNAKES) == -1)
        return SPELL_SUCCESS + VICTIM_DEAD;
 
@@ -158,40 +159,35 @@ int sticksToSnakes(TBeing * caster, TBeing * victim, int level, byte bKnown)
   }
 }
 
-
-int sticksToSnakes(TBeing * caster, TBeing * victim, TMagicItem * obj)
+void sticksToSnakes(TBeing *caster, TBeing *victim, TMagicItem * obj)
 {
-  int ret = 0;
-  int rc=0;
-
-  ret=sticksToSnakes(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
-  if (IS_SET(ret, SPELL_SUCCESS)) {
-  } else if (IS_SET(ret,SPELL_CRIT_FAIL)) {
-  } else {
-    }
-  if (IS_SET(ret, VICTIM_DEAD))
-    ADD_DELETE(rc, DELETE_VICT);
-  if (IS_SET(ret, CASTER_DEAD))
-    ADD_DELETE(rc, DELETE_THIS);
-    return rc;
+  sticksToSnakes(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
 }
 
-int sticksToSnakes(TBeing * caster, TBeing * victim)
+int sticksToSnakes(TBeing *caster, TBeing *victim)
 {
-  int level,ret;
-  int rc = 0;
+  taskDiffT diff;
 
-  if (!bPassMageChecks(caster, SPELL_STICKS_TO_SNAKES, victim)) 
-    return FALSE;
+    if (!bPassShamanChecks(caster, SPELL_STICKS_TO_SNAKES, victim))
+       return FALSE;
+
+     lag_t rounds = discArray[SPELL_STICKS_TO_SNAKES]->lag;
+     diff = discArray[SPELL_STICKS_TO_SNAKES]->task;
+
+     start_cast(caster, victim, NULL, caster->roomp, SPELL_STICKS_TO_SNAKES, diff, 1, "", 
+rounds, caster->in_room, 0, 0,TRUE, 0);
+      return TRUE;
+}
+
+int castSticksToSnakes(TBeing *caster, TBeing *victim)
+{
+  int ret,level;
 
   level = caster->getSkillLevel(SPELL_STICKS_TO_SNAKES);
   int bKnown = caster->getSkillValue(SPELL_STICKS_TO_SNAKES);
 
-  ret=sticksToSnakes(caster, victim, level, bKnown);
-  if (IS_SET(ret, CASTER_DEAD))
-    ADD_DELETE(rc, DELETE_THIS);
-  return rc;
-
+  ret=sticksToSnakes(caster,victim,level,bKnown);
+    return TRUE;
 }
 
 // END STICKS TO SNAKES
@@ -301,40 +297,443 @@ int controlUndead(TBeing *caster,TBeing *victim,int level,byte bKnown)
   }
 }
 
-void controlUndead(TBeing * caster, TBeing * victim, TMagicItem *obj)
+void controlUndead(TBeing *caster, TBeing *victim, TMagicItem * obj)
 {
-  int ret;
-
-  if (caster != victim) {
-    act("$p attempts to bend $N to your will.",
-          FALSE, caster, obj, victim, TO_CHAR);
-    act("$p attempts to bend you to $n's will.",
-          FALSE, caster, obj, victim, TO_VICT);
-    act("$p attempts to bend $N to $n's will.",
-          FALSE, caster, obj, victim, TO_NOTVICT);
-  } else {
-    act("$p tries to get you to control yourself.",
-          FALSE, caster, obj, 0, TO_CHAR);
-    act("$p tries to get $n to control $mself.",
-          FALSE, caster, obj, 0, TO_ROOM);
-  }
- 
-  ret=controlUndead(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
- 
-  return;
+  controlUndead(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
 }
 
-void controlUndead(TBeing * caster, TBeing * victim)
+int castControlUndead(TBeing *caster, TBeing *victim)
 {
   int ret,level;
-
-  if (!bPassClericChecks(caster,SPELL_CONTROL_UNDEAD))
-    return;
 
   level = caster->getSkillLevel(SPELL_CONTROL_UNDEAD);
   int bKnown = caster->getSkillValue(SPELL_CONTROL_UNDEAD);
 
   ret=controlUndead(caster,victim,level,bKnown);
+    return TRUE;
+}
+
+int controlUndead(TBeing *caster, TBeing *victim)
+{
+  taskDiffT diff;
+
+    if (!bPassShamanChecks(caster, SPELL_CONTROL_UNDEAD, victim))
+       return FALSE;
+
+     lag_t rounds = discArray[SPELL_CONTROL_UNDEAD]->lag;
+     diff = discArray[SPELL_CONTROL_UNDEAD]->task;
+
+     start_cast(caster, victim, NULL, caster->roomp, SPELL_CONTROL_UNDEAD, diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
+      return TRUE;
 }
 
 // END CONTROL UNDEAD
+// START CLARITY
+
+int clarity(TBeing *caster, TBeing *victim, int level, byte bKnown)
+{
+  affectedData aff;
+
+  caster->reconcileHelp(victim, discArray[SPELL_CLARITY]->alignMod);
+
+  if (bSuccess(caster, bKnown, SPELL_CLARITY)) {
+    aff.type = SPELL_CLARITY;
+    aff.duration = 6+level / 3 * UPDATES_PER_MUDHOUR;
+    aff.modifier = 0;
+    aff.location = APPLY_NONE;
+    aff.bitvector = AFF_TRUE_SIGHT;
+
+    switch (critSuccess(caster, SPELL_CLARITY)) {
+      case CRIT_S_DOUBLE:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_KILL:
+        CS(SPELL_CLARITY);
+        aff.duration *= 2;
+        break;
+      case CRIT_S_NONE:
+        break;
+    }
+
+    if (!victim->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES)) {
+      caster->nothingHappens();
+      return SPELL_FALSE;
+    }
+
+
+    victim->sendTo("Your eyes flash.\n\r");
+    act("$n's eyes glow <G>green<1>.", FALSE, victim, 0, 0, TO_ROOM);
+
+    return SPELL_SUCCESS;
+  } else {
+    caster->nothingHappens();
+    return SPELL_FAIL;
+  }
+}
+
+void clarity(TBeing *caster, TBeing *victim, TMagicItem * obj)
+{
+  clarity(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
+}
+
+int clarity(TBeing *caster, TBeing *victim)
+{
+  taskDiffT diff;
+
+    if (!bPassShamanChecks(caster, SPELL_CLARITY, victim))
+       return FALSE;
+
+     lag_t rounds = discArray[SPELL_CLARITY]->lag;
+     diff = discArray[SPELL_CLARITY]->task;
+
+     start_cast(caster, victim, NULL, caster->roomp, SPELL_CLARITY, diff, 1, "", 
+rounds, caster->in_room, 0, 0,TRUE, 0);
+      return TRUE;
+}
+
+int castClarity(TBeing *caster, TBeing *victim)
+{
+  int ret,level;
+
+  level = caster->getSkillLevel(SPELL_CLARITY);
+  int bKnown = caster->getSkillValue(SPELL_CLARITY);
+
+  ret=clarity(caster,victim,level,bKnown);
+    return TRUE;
+}
+// END CLARITY
+
+int hypnosis(TBeing *caster, TBeing *victim, int level, byte bKnown)
+{
+  affectedData aff;
+  int again;
+  char buf[256];
+
+  if (victim == caster) {
+    sprintf(buf, "Doing this to yourself? Why?");
+    act(buf, FALSE, caster, NULL, NULL, TO_CHAR);
+    caster->nothingHappens(SILENT_YES);
+    return SPELL_FAIL;
+  }
+  if (victim->isLinkdead()) {
+    act("Cant do that to someone who is linkdead.", FALSE, caster, 0, 0, TO_CHAR);
+    caster->nothingHappens(SILENT_YES);
+    return SPELL_FAIL;
+  }
+
+  if (caster->isAffected(AFF_CHARM)) {
+    sprintf(buf, "You can't hypnotize $N while under the same affects.");
+    caster->nothingHappens(SILENT_YES);
+    act(buf, FALSE, caster, NULL, victim, TO_CHAR);
+    return SPELL_FAIL;
+  }
+
+  if (victim->isAffected(AFF_CHARM)) {
+    again = (victim->master == caster);
+    sprintf(buf, "You can't hypnotize $N%s while $E's busy following %s!", (again ? " 
+again" : ""), (again ? "you already" : "somebody else"));
+    caster->nothingHappens(SILENT_YES);
+    act(buf, FALSE, caster, NULL, victim, TO_CHAR);
+    return SPELL_FAIL;
+  }
+
+  if (caster->tooManyFollowers(victim, FOL_CHARM)) {
+    act("$N refuses to enter a group the size of yours!", TRUE, caster, NULL, victim, 
+TO_CHAR, ANSI_RED_BOLD);
+    act("$N refuses to enter $ group the size of $n's!", TRUE, caster, NULL, victim, 
+TO_ROOM, ANSI_RED_BOLD);
+    return SPELL_FAIL;
+  }
+
+  if (victim->circleFollow(caster)) {
+    caster->sendTo("Umm, you probably don't want to follow each other around in circles.\n\r");
+    caster->nothingHappens(SILENT_YES);
+    return SPELL_FAIL;
+  }
+#if 0
+  if (!victim->isPc()) {
+    caster->sendTo("You can't hypnotize that.\n\r");
+    caster->nothingHappens(SILENT_YES);
+    return SPELL_FAIL;
+  }
+#endif
+  if (victim->isImmune(IMMUNE_CHARM, level) || victim->GetMaxLevel() > caster->GetMaxLevel() ||
+      (!victim->isPc() && dynamic_cast<TMonster *>(victim)->Hates(caster, NULL)) ||
+      caster->isNotPowerful(victim, level, SPELL_HYPNOSIS, SILENT_YES) ||
+      (victim->isLucky(caster->spellLuckModifier(SPELL_HYPNOSIS)))) {
+
+      victim->failCharm(caster);
+      act("You have failed in this important ritual!", FALSE, caster, NULL, victim, 
+TO_CHAR, ANSI_RED_BOLD);
+      caster->nothingHappens(SILENT_YES);
+      act("$n just tried to hypnotize you!", FALSE, caster, NULL, victim, TO_VICT, 
+ANSI_RED_BOLD);
+      return SPELL_FAIL;
+  }
+
+  caster->reconcileHurt(victim,discArray[SPELL_HYPNOSIS]->alignMod);
+
+  if (bSuccess(caster, bKnown, SPELL_HYPNOSIS)) {
+    if (victim->master)
+      victim->stopFollower(TRUE);
+    caster->addFollower(victim);
+
+    aff.type = SPELL_HYPNOSIS;
+    aff.level = level;
+    aff.modifier = 0;
+    aff.location = APPLY_NONE;
+    aff.bitvector = AFF_CHARM;
+    aff.duration  =  2 * level * UPDATES_PER_MUDHOUR;
+
+    // we've made raw immunity check, but allow it to reduce effects too
+    aff.duration *= (100 - victim->getImmunity(IMMUNE_CHARM));
+    aff.duration /= 100;
+
+    switch (critSuccess(caster, SPELL_HYPNOSIS)) {
+      case CRIT_S_DOUBLE:
+        CS(SPELL_HYPNOSIS);
+        aff.duration *= 2;
+        break;
+      case CRIT_S_KILL:
+      case CRIT_S_TRIPLE:
+        CS(SPELL_HYPNOSIS);
+        aff.duration *= 3;
+        break;
+      case CRIT_S_NONE:
+        if (victim->isLucky(caster->spellLuckModifier(SPELL_HYPNOSIS))) {
+          SV(SPELL_HYPNOSIS);
+          aff.duration /= 2;
+        } 
+        break;
+    } 
+
+    if (!victim->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES)) {
+      caster->nothingHappens();
+      return SPELL_FALSE;
+    }
+
+    aff.type = AFFECT_CHARM;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
+    if (!victim->isPc())
+      dynamic_cast<TMonster *>(victim)->genericCharmFix();
+
+    // don't hurt the one you love
+    if (victim->fight() == caster && caster->fight())
+      caster->stopFighting();
+
+    // and don't let the charm hurt anyone that we didn't order them to hurt
+    if (victim->fight())
+      victim->stopFighting();
+
+    return SPELL_SUCCESS;
+  } else {
+    act("You have invoked this important ritual incorrectly!", FALSE, caster, NULL, 
+victim, TO_CHAR, ANSI_RED_BOLD);
+    act("$n just tried to hypnotize you!", FALSE, caster, NULL, victim, TO_VICT, 
+ANSI_RED_BOLD);
+    caster->nothingHappens(SILENT_YES);
+    victim->failCharm(caster);
+    return SPELL_FAIL;
+  }
+}
+
+void hypnosis(TBeing *caster, TBeing *victim, TMagicItem * obj)
+{
+  int ret;
+  
+  if (caster != victim) {
+    act("$p attempts to hypnotize $N to your will.",
+          FALSE, caster, obj, victim, TO_CHAR, ANSI_RED_BOLD);
+    act("$p attempts to hypnotize you to $n's will.",
+          FALSE, caster, obj, victim, TO_VICT, ANSI_RED_BOLD);
+    act("$p attempts to hypnotize $N.",
+          FALSE, caster, obj, victim, TO_NOTVICT, ANSI_RED_BOLD);
+  } else {
+    act("$p tries to get you to control yourself.",
+          FALSE, caster, obj, 0, TO_CHAR, ANSI_RED_BOLD);
+    act("$p tries to get $n to control $mself.",
+          FALSE, caster, obj, 0, TO_ROOM, ANSI_RED_BOLD);
+  }
+  ret=hypnosis(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness());
+
+  return;
+}
+
+int hypnosis(TBeing *caster, TBeing *victim)
+{
+  char buf[256];
+  taskDiffT diff;
+  int level;
+
+  level = caster->getSkillLevel(SPELL_HYPNOSIS);
+
+  if (victim == caster) {
+    sprintf(buf, "You don't want to hypnotize yourself...that would be dumb.");
+    act(buf, FALSE, caster, NULL, NULL, TO_CHAR);
+    caster->nothingHappens(SILENT_YES);
+    return SPELL_FAIL;
+  }
+
+  if (victim->isAffected(AFF_CHARM)) {
+    sprintf(buf, "You can't hypnotize $N while YOU are hypnotized!");
+    caster->nothingHappens(SILENT_YES);
+    act(buf, FALSE, caster, NULL, victim, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (caster->isAffected(AFF_CHARM)) {
+    sprintf(buf, "You can't hypnotize $N while under the same affects.");
+    caster->nothingHappens(SILENT_YES);
+    act(buf, FALSE, caster, NULL, victim, TO_CHAR);
+    return SPELL_FAIL;
+  }
+
+  if (caster->tooManyFollowers(victim, FOL_CHARM)) {
+    act("$N refuses to enter a group the size of yours!", TRUE, caster, NULL, victim, TO_CHAR, ANSI_WHITE_BOLD);
+    act("$N refuses to enter $ group the size of $n's!", TRUE, caster, NULL, victim, TO_ROOM, ANSI_WHITE_BOLD);
+    return SPELL_FAIL;
+  }
+
+  if (victim->circleFollow(caster)) {
+    caster->sendTo("Umm, you probably don't want to follow each other around in circles.\n\r");
+    caster->nothingHappens(SILENT_YES);
+    return SPELL_FAIL;
+  }
+
+  if (!bPassShamanChecks(caster, SPELL_HYPNOSIS, NULL))
+    return FALSE;
+
+  lag_t rounds = discArray[SPELL_HYPNOSIS]->lag;
+  diff = discArray[SPELL_HYPNOSIS]->task;
+
+  start_cast(caster, victim, NULL, caster->roomp, SPELL_HYPNOSIS, diff, 1, "", rounds, 
+caster->in_room, 0, 0,TRUE, 0);
+    return TRUE;
+}
+
+int castHypnosis(TBeing *caster, TBeing *victim)
+{
+int ret,level;
+
+  level = caster->getSkillLevel(SPELL_HYPNOSIS);
+  int bKnown = caster->getSkillValue(SPELL_HYPNOSIS);
+
+  if ((ret=hypnosis(caster,victim,level,bKnown)) == SPELL_SUCCESS) {
+    act("You feel an overwhelming urge to follow $n!", FALSE, caster, NULL, victim, 
+TO_VICT, ANSI_RED_BOLD);
+    act("You decide to do whatever $e says!", FALSE, caster, NULL, victim, TO_VICT, 
+ANSI_RED_BOLD);
+
+  } else {
+  }
+  return TRUE;
+}
+
+int raze(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_learn)
+{
+  if (victim->isImmortal()) {
+    act("You can't do that to an immortal being.", FALSE, caster, NULL, victim, TO_CHAR);
+    caster->nothingHappens(SILENT_YES);
+    return SPELL_FAIL;
+  }
+
+  level = min((level+5), 85);
+
+  int dam = caster->getSkillDam(victim, SPELL_RAZE, level, adv_learn);
+
+  caster->reconcileHurt(victim, discArray[SPELL_RAZE]->alignMod);
+
+  if (bSuccess(caster,bKnown,SPELL_RAZE)) {
+    act("$n calls the spirits to erase $N's existance!", FALSE, caster, NULL, victim, TO_NOTVICT);
+    act("You call upon the loa to erase any memory of $N!", FALSE, caster, NULL, victim, TO_CHAR);
+    act("$n calls upon the spirits to erase your existance!", FALSE, caster, NULL, victim, TO_VICT);
+    switch(critSuccess(caster, SPELL_RAZE)) {
+      case CRIT_S_DOUBLE:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_KILL:
+        CS(SPELL_RAZE);
+        dam <<= 1;
+        break;
+      case CRIT_S_NONE:
+        if (victim->isLucky(caster->spellLuckModifier(SPELL_RAZE))) {
+          SV(SPELL_RAZE);
+          dam /= 2;
+        }
+    }
+    vlogf(LOG_JESUS, "Raze damage: %d caster: %s victim: %s", dam, caster->getName(), victim->getName());
+    if (caster->reconcileDamage(victim, dam, SPELL_RAZE) == -1)
+      return SPELL_SUCCESS + VICTIM_DEAD;
+    return SPELL_SUCCESS;
+  } else {
+    switch (critFail(caster, SPELL_RAZE)) {
+      case CRIT_F_HITSELF:
+      case CRIT_F_HITOTHER:
+        act("$n nearly erases!", FALSE, caster, NULL, NULL, TO_ROOM);
+        caster->sendTo("ACK!  The loa are extremely angry with you!\n\r");
+        act("$n fails in $s ritual!", FALSE, caster, NULL, victim, TO_VICT);
+        if (caster->isLucky(caster->spellLuckModifier(SPELL_RAZE))) {
+          SV(SPELL_RAZE);
+          dam /= 2;
+        }
+        if (caster->reconcileDamage(caster, dam/3, SPELL_RAZE) == -1)
+          return SPELL_CRIT_FAIL + CASTER_DEAD;
+        act("Oops! You nearly disintegrated yourself on that one!", 
+            FALSE, caster, NULL, victim, TO_CHAR);
+        return SPELL_CRIT_FAIL;
+      case CRIT_F_NONE:
+        break;
+    }
+    caster->nothingHappens();
+    return SPELL_FAIL;
+  }
+}
+
+int raze(TBeing *caster, TBeing *victim)
+{
+  if (!bPassShamanChecks(caster, SPELL_RAZE, victim))
+    return FALSE;
+
+  lag_t rounds = discArray[SPELL_RAZE]->lag;
+  taskDiffT diff = discArray[SPELL_RAZE]->task;
+
+  start_cast(caster, victim, NULL, caster->roomp, SPELL_RAZE, diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
+
+  return TRUE;
+}
+
+int castRaze(TBeing *caster, TBeing *victim)
+{
+  int rc = 0;
+
+  int level = caster->getSkillLevel(SPELL_RAZE);
+  int bKnown = caster->getSkillValue(SPELL_RAZE);
+
+  int ret=raze(caster,victim,level,bKnown, caster->getAdvLearning(SPELL_RAZE));
+  if (IS_SET(ret, SPELL_SUCCESS)) {
+  } else {
+  }
+  if (IS_SET(ret, VICTIM_DEAD))
+    ADD_DELETE(rc, DELETE_VICT);
+  if (IS_SET(ret, CASTER_DEAD))
+    ADD_DELETE(rc, DELETE_THIS);
+  return rc;
+}
+
+int raze(TBeing *tMaster, TBeing *tSucker, TMagicItem *tMagItem)
+{
+  int tRc = FALSE,
+      tReturn;
+
+  tReturn = raze(tMaster, tSucker, tMagItem->getMagicLevel(), tMagItem->getMagicLearnedness(), 0);
+
+  if (IS_SET(tReturn, VICTIM_DEAD))
+    ADD_DELETE(tRc, DELETE_VICT);
+
+  if (IS_SET(tReturn, CASTER_DEAD))
+    ADD_DELETE(tRc, DELETE_THIS);
+
+  return tRc;
+}
+ 
+
+

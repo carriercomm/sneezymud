@@ -551,7 +551,7 @@ void TPerson::doShow(const char *argument)
       only_argument(argument, zonenum);
       sscanf(zonenum, "%i", &zone);
     } else
-      zone = roomp->getZone();
+      zone = roomp->getZoneNum();
     if ((zone < 0 || zone >= (signed int) zone_table.size()) && !*zonenum) {
       sb += "That is not a valid zone_number\n\r";
       if (desc)
@@ -728,7 +728,7 @@ void TPerson::doShow(const char *argument)
     int zone = -1;
 
     if (!*zonenum)
-      zone = roomp->getZone();
+      zone = roomp->getZoneNum();
     else
       sscanf(zonenum, "%i", &zone);
 
@@ -823,7 +823,7 @@ void TPerson::doShow(const char *argument)
     } else {
       int zone;
       if (1 != sscanf(zonenum, "%i", &zone))
-        zone = roomp->getZone();
+        zone = roomp->getZoneNum();
       if (zone < 0 || zone >= (signed int) zone_table.size())
         sb += "Zone number too high or too low.\n\r";
       else {
@@ -915,7 +915,7 @@ void TPerson::doShow(const char *argument)
             return;
           }
 
-          top = bottom = roomp->getZone();
+          top = bottom = roomp->getZoneNum();
         }
       }
     }
@@ -1076,6 +1076,9 @@ void TPerson::doShow(const char *argument)
           delete tComponent;
           tComponent = NULL;
         }
+  } else if (is_abbrev(buf, "newfactions")) {
+    for (; isspace(*argument); argument++);
+    show_faction(mud_str_dup(argument));
   } else {
     sb += "Usage:\n\r";
     sb += "  show zones (<zonename> | \"disabled\")\n\r";
@@ -1090,6 +1093,7 @@ void TPerson::doShow(const char *argument)
     sb += "  show materials (<material number>)\n\r";
     sb += "  show created <materialize/spontaneous> <itemtype>\n\r";
     sb += "  show components <spellname>\n\r";
+    sb += "  show factions [<faction name> | <faction ID>]\n\r";
   }
 
   if (desc)

@@ -56,10 +56,6 @@ TBeing::TBeing() :
   // change the default value here
   number = -1;
 
-  wearSlotT i;
-  for (i = MIN_WEAR; i < MAX_WEAR; i++)
-    equipment[i] = NULL;
-
   mobCount++;
   setRace(RACE_NORACE);
 }
@@ -433,7 +429,7 @@ TRoom::TRoom(int r) :
   riverSpeed(0),
   hasWindow(FALSE), 
   teleLook(0),
-  zone(0),
+  zone(NULL),
   teleTime(0),
   teleTarg(0),
   moblim(0),
@@ -734,18 +730,18 @@ TThing& TRoom::operator += (TThing& t)
     saveItems("");
 
   if (t.isPc()) {
-    zoneData &zd = zone_table[getZone()];
+    zoneData &zd = zone_table[getZoneNum()];
     if ((zd.zone_value == 0) &&
          zd.enabled) {
       zd.zone_value = ZONE_MAX_TIME;
       // init to non-zero before resetting so mobs load
-      reset_zone(getZone(), FALSE);
+      zone_table[getZoneNum()].resetZone(FALSE);
     }
     if (zd.zone_value >= 0)
       zd.zone_value = ZONE_MAX_TIME;
-  } else if (getZone() >= 0 && getZone() < ((signed int) zone_table.size())) {
+  } else if (getZoneNum() >= 0 && getZoneNum() < ((signed int) zone_table.size())) {
 #if 1
-    if (zone_table[getZone()].enabled) {
+    if (zone_table[getZoneNum()].enabled) {
       TThing *tThing   = NULL,
              *tObj     = NULL,
              *tObjNext = NULL;
@@ -1242,6 +1238,7 @@ TBeing::TBeing(const TBeing &a) :
   player(a.player),
   specials(a.specials),
   practices(a.practices),
+  equipment(a.equipment),
   master(a.master),
   orig(a.orig),
   next_fighting(a.next_fighting),
@@ -1262,7 +1259,6 @@ TBeing::TBeing(const TBeing &a) :
     body = NULL;
 
   for (i = MIN_WEAR; i < MAX_WEAR; i++) {
-    equipment[i] = a.equipment[i];
     body_parts[i] = a.body_parts[i];
   }
 
@@ -1331,9 +1327,9 @@ TBeing & TBeing::operator=(const TBeing &a)
   m_craps = a.m_craps;
   invisLevel = a.invisLevel;
   my_protection = a.my_protection;
+  equipment = a.equipment;
 
   for (i = MIN_WEAR; i < MAX_WEAR; i++) {
-    equipment[i] = a.equipment[i];
     body_parts[i] = a.body_parts[i];
   }
 

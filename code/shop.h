@@ -15,6 +15,7 @@ const unsigned int SHOPACCESS_PROFITS = (1<<2);
 const unsigned int SHOPACCESS_GIVE    = (1<<3);
 const unsigned int SHOPACCESS_SELL    = (1<<4);
 const unsigned int SHOPACCESS_ACCESS  = (1<<5);
+const unsigned int SHOPACCESS_LOGS  = (1<<6);
 
 const char * const SHOP_FILE =     "tinyworld.shp";
 const char * const SHOPFILE_PATH = "mobdata/shops";
@@ -42,6 +43,8 @@ extern vector<shop_pricing>ShopPriceIndex;
 #endif
 
 extern vector<shopData>shop_index;
+
+extern void shoplog(int, TBeing *, TMonster *, const char *, int, const char *);
 
 class shopData {
   public:

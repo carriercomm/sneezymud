@@ -10,6 +10,7 @@
 #include "games.h"
 #include "statistics.h"
 #include "disc_looting.h"
+#include "shop.h"
 
 // watches rent in, rent out, dropped, etc
 #define VERBOSE_LOGS   1
@@ -848,14 +849,27 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
       vlogf(LOG_MISC,"%s gave %d talens to %s.", getName(), amount, vict->getName());
 
     if (!vict->isPc()) {
+      // log if it's an owned shopkeeper
+      if(vict->spec &&
+	 !strcmp(mob_specials[GET_MOB_SPE_INDEX(vict->spec)].name, 
+		 "shop keeper")){
+	unsigned int shop_nr;
+	for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != (vict)->number); shop_nr++);
+	
+	if(shopOwned(shop_nr)){
+	  shoplog(shop_nr, this, dynamic_cast<TMonster *>(vict), "talens", amount, "giving");
+	}
+      }
+      
+      // check reponses
       sprintf(buf, "%d", amount);
       rc = dynamic_cast<TMonster *>(vict)->checkResponses(this, NULL, buf, CMD_GIVE);
-
       TMonster *tMob;
 
       if (rc) {
         // giving money is a trigger, delete the money
         vict->addToMoney(-amount, GOLD_XFER);
+
 
         // fix the statistics
         // add it back to xfer, take it out out reqshop

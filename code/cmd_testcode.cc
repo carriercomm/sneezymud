@@ -191,7 +191,7 @@ void TBeing::doTestCode(const char *arg)
   TThing *obj = NULL;
   char tmpbuf[256];
 
-  sendTo("You are in zone %d.\n\r", roomp->getZone());
+  sendTo("You are in zone %d.\n\r", roomp->getZoneNum());
   return;
 
   one_argument(arg, tmpbuf);

@@ -1607,7 +1607,7 @@ int replicant(TBeing *ch, cmdTypeT cmd, const char *, TMonster *, TObj *)
   return FALSE;
 }
 
-static bool okForJanitor(TMonster *myself, TObj *obj)
+bool okForJanitor(TMonster *myself, TObj *obj)
 {
   // only things that can be taken, and that are not pools
   if (!obj->canWear(ITEM_TAKE) && !dynamic_cast<TPool *>(obj))
@@ -1619,6 +1619,9 @@ static bool okForJanitor(TMonster *myself, TObj *obj)
   TBaseCorpse *corpse = dynamic_cast<TBaseCorpse *>(obj);
   if (corpse && corpse->isCorpseFlag(CORPSE_PC_SKINNING))
     return false;
+  // nor sacrificing
+  if (corpse && corpse->isCorpseFlag(CORPSE_SACRIFICE))
+    return false;
 
   // Dont let them loot pcorpses with stuff in it
   TPCorpse *tmpcorpse = dynamic_cast<TPCorpse *>(obj);
@@ -1629,7 +1632,7 @@ static bool okForJanitor(TMonster *myself, TObj *obj)
   // pc corpses can't be res'd, so can't be looted
   // also give pcs a moment to loot
   if (corpse && (corpse->getCorpseFlags() == 0) &&
-      (corpse->obj_flags.decay_time <= MAX_NPC_CORPSE_TIME - 3)) {
+      (corpse->obj_flags.decay_time <= MAX_NPC_CORPSE_TIME - 1)) {
     if (corpse->stuff) {
       TThing *t3, *t4;
       for (t3 = corpse->stuff; t3; t3 = t4) {
@@ -3334,6 +3337,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
 	  }
         case 121:
         case 122:
+          sprintf(buf, "I need a cleric and two bags of marshmallows as %s....STAT!", ch->roomp->name);
+          break;
         case 123:
         case 124:
         case 125:
@@ -3532,7 +3537,7 @@ void CallForGuard(TBeing *ch, TBeing *vict, int lev)
       continue;
     // get only critters in my zone
     // treat grimhaven as all one zone
-    if (tmons->roomp->getZone() != vict->roomp->getZone() &&
+    if (tmons->roomp->getZoneNum() != vict->roomp->getZoneNum() &&
         !(tmons->inGrimhaven() && vict->inGrimhaven()))
       continue;
     if (tmons->fight() || !::number(0,4))
@@ -5471,7 +5476,7 @@ int Fireballer(TBeing *ch, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     } else if (tmp->isImmortal() && me->sameRoom(*tmp)) {
       act("The Djinn chokes on a hairball.",TRUE,tmp,0,0,TO_CHAR);
       act("$n causes the Djinn to choke on a hairball before it can breathe at $m.",TRUE,tmp,0,0,TO_ROOM);
-    } else if ((me != tmp) && (tmp->in_room != ROOM_NOWHERE) && (rp->getZone() == tmp->roomp->getZone())) {
+    } else if ((me != tmp) && (tmp->in_room != ROOM_NOWHERE) && (rp->getZoneNum() == tmp->roomp->getZoneNum())) {
       tmp->sendTo("You hear a loud explosion and feel a gust of hot air.\n\r");
     }
   }
@@ -6146,6 +6151,81 @@ int corpseMuncher(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj
   return FALSE;
 }
 
+int fishTracker(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
+{
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+  int rc;
+  char buf[256];
+  TThing *t;
+
+  if(!ch || !ch->awake() || ch->fight())
+    return FALSE;
+
+  
+  switch(cmd){
+    case CMD_MOB_GIVEN_ITEM:
+      if(!o || !isname("caughtfish", o->name)){
+	return FALSE;
+      }
+
+      if((rc=dbquery(&res, "sneezy", "fishkeeper(1)", "insert ignore into fishkeeper values ('%s', 0)", ch->name))){
+	if(rc==-1){
+	  vlogf(LOG_BUG, "Database error in fishkeeper");
+	}
+      }
+      mysql_free_result(res);
+
+      sprintf(buf, "update fishkeeper set weight=weight+%f where name='%s'", o->getWeight(), ch->name);
+      if((rc=dbquery(&res, "sneezy", "fishkeeper(2)", buf))){
+	if(rc==-1)
+	  vlogf(LOG_BUG, "Database error in fishkeeper");
+      }
+      
+      mysql_free_result(res);
+
+      sprintf(buf, "Ok, I tallied your fish, weighing in at %f.  Nice one!", 
+	      o->getWeight());
+      myself->doSay(buf);
+
+      for(t=myself->stuff;t;t=t->nextThing){
+	if(isname("caughtfish", t->name)){
+	  delete t;
+	  break;
+	}
+      }
+
+      break;
+    case CMD_WHISPER:
+      arg = one_argument(arg, buf);
+      
+      if(!isname(buf, myself->name))
+	return FALSE;
+
+      arg = one_argument(arg, buf);
+
+
+      if(!strcmp(buf, "topten")){
+	rc=dbquery(&res, "sneezy", "fishKeeper", "select name, weight from fishkeeper order by weight desc limit 10");
+      } else {
+	rc=dbquery(&res, "sneezy", "fishKeeper", "select name, weight from fishkeeper where name='%s'", buf);
+      }
+      
+      while((row=mysql_fetch_row(res))){
+	sprintf(buf, "%s has caught fish weighing in at a total of %f.",
+		row[0], atof(row[1]));
+	myself->doSay(buf);
+      }      
+
+      break;
+    default:
+      return FALSE;
+  }
+
+  return TRUE;
+}
+
+
 int grimhavenHooker(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 {
   int found=0;
@@ -6182,7 +6262,7 @@ int grimhavenHooker(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TO
     }
     return FALSE;
   } else  if ((cmd != CMD_GENERIC_PULSE) ||
-	      !myself->awake() || myself->fight())
+	      !myself->awake() || myself->fight() || ::number(0,25))
     return FALSE;
 
   if (!myself->act_ptr) {
@@ -6451,7 +6531,61 @@ int grimhavenHooker(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TO
 }
 
 
+// this proc is kind of ugly, but it works
+int bankGuard(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
+{
+  Descriptor *i;
+  int zone_nr=real_roomp(31750)->getZoneNum(), v=0;
+  TBeing *victims[10], *vict;
+  int saferooms[7]={31750, 31751, 31756, 31757, 31758, 31759, 31764};  
+
+  // only on pulse and only if we're not already hunting someone
+  if(cmd != CMD_GENERIC_PULSE || IS_SET(myself->specials.act, ACT_HUNTING))
+    return FALSE;
+
+  for (i = descriptor_list; i && v<=9; i = i->next){
+    if (!i->connected && i->character && i->character->roomp &&
+	i->character->roomp->getZoneNum() == zone_nr &&
+	i->character->in_room != saferooms[0] &&
+	i->character->in_room != saferooms[1] &&
+	i->character->in_room != saferooms[2] &&
+	i->character->in_room != saferooms[3] &&
+	i->character->in_room != saferooms[4] &&
+	i->character->in_room != saferooms[5] &&
+	i->character->in_room != saferooms[6]){
+      victims[v]=i->character;
+      ++v;
+    }
+  }
+
+  if(!v)
+    return FALSE;
+
+  vict=victims[::number(0,v-1)];
+  vlogf(LOG_PEEL, "bank guard hunting %s", vict->getName());
+  myself->setHunting(vict);
+  myself->addHated(vict);
+  
+  // set my followers to hate them too
+  for (followData *f = myself->followers; f; f = f->next) {
+    if(myself->inGroup(*f->follower)){
+      f->follower->addHated(vict);
+    }
+  }
+
+  return TRUE;
+}
+
+
+
+
+
+
+extern int factionRegistrar(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int realEstateAgent(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int grimhavenPosse(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int coroner(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+
 
 // Fields: display_under_medit, name_of_special, name_of_function_to_call
 TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
@@ -6597,9 +6731,9 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"Trainer: skunk", CDGenericTrainer},
   {FALSE,"Trainer: spider", CDGenericTrainer},
   {FALSE,"Trainer: control", CDGenericTrainer},       // 140 
-  {FALSE,"Trainer: totemism", CDGenericTrainer},
+  {FALSE,"Trainer: ritualism", CDGenericTrainer},
   {FALSE,"Trainer: ranger fight", CDGenericTrainer},
-  {FALSE, "shaman guildmaster", ShamanGuildMaster},
+  {FALSE,"shaman guildmaster", ShamanGuildMaster},
   {FALSE,"Trainer: combat", CDGenericTrainer},
   {FALSE,"Trainer: stealth", CDGenericTrainer},     // 145 
   {FALSE,"Trainer: traps", CDGenericTrainer},       
@@ -6609,7 +6743,12 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"attuner", attuner},                      // 150 
   {TRUE,"paralyze gaze", paralyzeGaze},
   {TRUE,"Doppleganger/Mimic", doppleganger},
-  {TRUE,"Tusker/Goring", tuskGoring}
-
+  {TRUE,"Tusker/Goring", tuskGoring},
+  {FALSE,"Fish Tracker", fishTracker},
+  {FALSE, "Bank Guard", bankGuard},               // 155
+  {FALSE, "Real Estate Agent", realEstateAgent},
+  {FALSE, "Coroner", coroner},
+  {FALSE, "Faction Registrar", factionRegistrar},
 // replace non-zero, bogus_mob_procs above before adding
 };
+

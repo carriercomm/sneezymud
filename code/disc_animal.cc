@@ -363,7 +363,7 @@ i=0;
       if (!v->isPc() && v->awake() && isname(targ_name, v->name) &&
 	  !v->fight() && (caster->isImmortal() || v->isDumbAnimal()) &&
 	  !IS_SET(v->specials.act, ACT_HUNTING) && (v->in_room != -1) &&
-	  (caster->isImmortal() || (caster->roomp->getZone() == v->roomp->getZone()))) {
+	  (caster->isImmortal() || (caster->roomp->getZoneNum() == v->roomp->getZoneNum()))) {
         if (!v->isLucky(caster->spellLuckModifier(SKILL_BEAST_SUMMON))) {
           TMonster *tmons = dynamic_cast<TMonster *>(v);
 	  SET_BIT(tmons->specials.act, ACT_HUNTING);

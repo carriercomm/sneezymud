@@ -302,6 +302,15 @@ const int TOG_KILL_CHIEF = 221;
 const int TOG_GAVE_HEAD_CHIEF = 222; // d
 const int TOG_FINISHED_WARRIOR_L41 = 223; //b
 
+// Shaman level 15 juju bag quest
+
+const int TOG_ELIGABLE_JUJU = 224;
+const int TOG_GET_THONG = 225;
+const int TOG_MARE_HIDE = 226;
+const int TOG_GET_SINEW = 227;
+const int TOG_GET_BEADS = 228;
+const int TOG_DONE_JUJU = 229;
+
 
 // please recycle these toggles before assigning new ones
 const int TOG_IMMORTAL_STAT =  85;
@@ -318,10 +327,15 @@ const int TOG_IMMORTAL_BLANK_9 = 95;
 const int TOG_IMMORTAL_BLANK_10 = 96;
 // end recycle
 
-const int MAX_TOG_INDEX       = 224;  // move and change
+const int TOG_HAS_PAID_FACT_FEE = 230;
+const int TOG_HAS_CREATED_FACTION = 231;
+
+const int MAX_TOG_INDEX       = 232;  // move and change
 
 extern TOGINFO TogIndex[MAX_TOG_INDEX + 1];
 
 #endif
+
+
 
 

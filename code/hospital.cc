@@ -633,6 +633,7 @@ int emergency_room(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *)
   if (cmd == CMD_LIST) {
     ch->sendTo("1 - Healing of the Physical Self (HP Restore)\n\r");
     ch->sendTo("2 - Healing of the Mind (Mana Restore)\n\r");
+    ch->sendTo("3 - Healing of the Spirit (Lifeforce Restore)\n\r");
     ch->sendTo("Any of these for %d talens.\n\r", cost);
     return TRUE;
   } else if (cmd == CMD_BUY) {        /* Buy */
@@ -646,7 +647,7 @@ int emergency_room(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *)
       ch->sendTo("The doctors can't work on you if you are fighting.\n\r");
       return TRUE;
     }
-    if ((opt >= 1) && (opt <= 2)) {
+    if ((opt >= 1) && (opt <= 3)) {
       ch->addToMoney(-cost, GOLD_HOSPITAL);
       switch (opt) {
         case 1:
@@ -670,6 +671,14 @@ int emergency_room(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *)
           // this was added due to fighting in/near the hospitals
           ch->addToWait(combatRound(6));
           break;
+        case 3:
+          ch->setLifeforce(500);
+          ch->sendTo("Your spirit has been lifted and your troubles have been crucified.\n\r");
+          ch->updatePos();
+
+          // this was added due to fighting in/near the hospitals
+          ch->addToWait(combatRound(6));
+          break;
         default:
           ch->sendTo("That's not available at THIS hospital!\n\r");
           return TRUE;
@@ -679,3 +688,4 @@ int emergency_room(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *)
   }
   return FALSE;
 }
+

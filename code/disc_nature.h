@@ -13,6 +13,7 @@ public:
     CSkill skTreeWalk;
 
 
+
     CDNature() 
       : CDiscipline(),
       skRootControl(),

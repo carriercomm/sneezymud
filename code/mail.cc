@@ -3,7 +3,7 @@
 
 static const char * const MAIL_FILE = "mobdata/mail";
 // may not exceed NAME_SIZE (15) chars
-static const char * const SNEEZY_ADMIN = "Grimhaven Admin";
+static const char * const SNEEZY_ADMIN = "SneezyMUD Administration";
 static const char * const DEAD_LETTER_GOD = "Jesus";
 
 mail_index_type *mail_index = 0;        /* list of recs in the mail file  */

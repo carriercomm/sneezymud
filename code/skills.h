@@ -49,6 +49,7 @@ extern bool checkRoom(const TBeing *);
 extern critSuccT critSuccess(TBeing *, spellNumT);
 extern critFailT critFail(TBeing *, spellNumT);
 extern int checkMana(TBeing *, int);
+extern int checkLifeforce(TBeing *, int);
 #if FACTIONS_IN_USE
 extern bool checkPerc(const TBeing *, double);
 #endif

@@ -255,6 +255,7 @@ int castHandsOfFlame(TBeing *caster, TBeing *victim)
             FALSE, caster, NULL, victim, TO_VICT, ANSI_ORANGE);
       }
     }
+    vlogf(LOG_JESUS, "Hands of Flame damage: %d", damage);
     if (caster->reconcileDamage(victim, damage, SPELL_HANDS_OF_FLAME) == -1)
       ADD_DELETE(ret, VICTIM_DEAD);
   }
@@ -597,7 +598,7 @@ int flamingSword(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv
       act("You manage to avoid direct impact from the magic flaming sword.",
           FALSE, caster, NULL, victim, TO_VICT);
     }
-
+    vlogf(LOG_JESUS, "Flaming Sword damage: %d", dam);
     if (caster->reconcileDamage(victim,dam, SPELL_FLAMING_SWORD) == -1)
       ret |= VICTIM_DEAD;
     return ret;
@@ -729,6 +730,7 @@ int inferno(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_lear
       CS(SPELL_INFERNO);
       dam *= 2;
     }
+    vlogf(LOG_JESUS, "Inferno damage: %d", dam);
     if (caster->reconcileDamage(victim, dam, SPELL_INFERNO) == -1)
       return SPELL_SUCCESS + VICTIM_DEAD;
 
@@ -888,6 +890,7 @@ int hellfire(TBeing *caster, int level, byte bKnown, int adv_learn)
         }
       }
     }
+    vlogf(LOG_JESUS, "Hellfire damage: %d", dam);
     act("$n loves the smell of brimstone in the morning!", FALSE, caster, NULL, NULL, TO_ROOM);
     act("You love the smell of brimstone in the morning!", FALSE, caster, NULL, NULL, TO_CHAR);
     return SPELL_SUCCESS;
@@ -1042,7 +1045,7 @@ int fireball(TBeing *caster, int level, byte bKnown, int adv_learn)
         } else
           act("You are able to avoid the flames!", FALSE, caster, NULL, tmp_victim, TO_VICT);
       } else if ((caster != tmp_victim) && (tmp_victim->in_room != ROOM_NOWHERE) &&
-                 (rp->getZone() == tmp_victim->roomp->getZone())) {
+                 (rp->getZoneNum() == tmp_victim->roomp->getZoneNum())) {
         if (tmp_victim->awake())
           tmp_victim->sendTo("You hear a loud explosion and feel a gust of hot air.\n\r");
       }

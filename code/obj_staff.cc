@@ -75,7 +75,7 @@ int TStaff::changeItemVal4Check(TBeing *ch, int the_update)
 {
   if (the_update != -1 &&
       (!discArray[the_update] ||
-       (!discArray[the_update]->minMana && !discArray[the_update]->minPiety))) {
+       (!discArray[the_update]->minMana && !discArray[the_update]->minLifeforce && !discArray[the_update]->minPiety))) {
     ch->sendTo("Invalid value or value is not a spell.\n\r");
     return TRUE;
   }
@@ -148,6 +148,7 @@ void TStaff::lowCheck()
        ((!discArray[curspell] ||
         ((discArray[curspell]->typ != SPELL_RANGER) &&
         !discArray[curspell]->minMana &&
+        !discArray[curspell]->minLifeforce &&
       !discArray[curspell]->minPiety)) ||
       (getDisciplineNumber(curspell, FALSE) == DISC_NONE)))) {
     vlogf(LOG_LOW, "staff (%s:%d) has messed up spell(%d)",
@@ -156,7 +157,7 @@ void TStaff::lowCheck()
       vlogf(LOG_LOW, "bogus range");
     else if (!discArray[curspell])
       vlogf(LOG_LOW, "bogus spell, %d", curspell);
-    else if ((!discArray[curspell]->minMana &&
+    else if ((!discArray[curspell]->minMana && !discArray[curspell]->minLifeforce && 
       !discArray[curspell]->minPiety))
       vlogf(LOG_LOW, "non-spell");
   }
@@ -214,6 +215,9 @@ int TStaff::suggestedPrice() const
 
     // since it's from an obj, arbitrarily double it
     value *= 2;
+    value *= 15;
+    if (curspell == SPELL_FLY)
+      value *= 4;
   }
   return value;
 }

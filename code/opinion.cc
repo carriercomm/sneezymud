@@ -145,8 +145,13 @@ bool TMonster::Hates(const TBeing *v, const char *n) const
 
   if (!v) 
     namebuf = n;
-  else
-    namebuf = v->getName();
+  else {
+    if(dynamic_cast<const TMonster *>(v)){
+      namebuf = v->name;
+    } else {
+      namebuf = v->getName();
+    }
+  }
 
   if (!namebuf)
     return FALSE;

@@ -176,7 +176,7 @@ int run_the_game()
   return FALSE;
 }
 
-void nukeMobsInZone(int zone)
+void zoneData::nukeMobs()
 {
   TThing *t, *t2;
   TBeing *mob, *mob2;
@@ -189,7 +189,7 @@ void nukeMobsInZone(int zone)
     mob2 = mob->next;
     if (mob->isPc())
       continue;
-    if (mob->specials.zone != zone)
+    if (mob->specials.zone != zone_nr)
       continue;
 
     // preserve charms, mounts, etc
@@ -999,7 +999,7 @@ void Descriptor::updateScreenVt100(unsigned int update)
   } else if (ch->hasClass(CLASS_SHAMAN)) {
     if (update & CHANGED_LIFEFORCE) {
       sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen() - 2, 40);
-      sprintf(buf + strlen(buf), "%d", ch->getLifeforce());
+      sprintf(buf + strlen(buf), "%-4d", ch->getLifeforce());
     }
   } else {
     if (update & CHANGED_MANA) {
@@ -1105,7 +1105,7 @@ void Descriptor::updateScreenAnsi(unsigned int update)
   if (ch->hasClass(CLASS_DEIKHAN) || ch->hasClass(CLASS_CLERIC)) 
     current_mana = (int) (10 * ch->getPiety() / 100.0);
   else if (ch->hasClass(CLASS_SHAMAN)) 
-    current_mana = (int) (10 * ch->getLifeforce());
+    current_mana = (int) (10 * ((double) ch->getLifeforce()));
   else
     current_mana = (int) (10 * ((double) ch->getMana() / (double) ch->manaLimit()));
   current_moves = (int) (10 * ((double) ch->getMove() / (double) ch->moveLimit()));

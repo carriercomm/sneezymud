@@ -565,6 +565,7 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
           act("$n has reconnected.", TRUE, ch, 0, 0, TO_ROOM);
           ch->loadCareerStats();
           ch->loadDrugStats();
+	  ch->loadFactionStats();
           if (ch->getHit() < 0) 
             dynamic_cast<TPerson *>(ch)->autoDeath();
 
@@ -1147,6 +1148,7 @@ new account.|%d", CLIENT_ERROR, account->name, ERR_BAD_NAME);
       act("$n has reconnected.", TRUE, tmp_ch, 0, 0, TO_ROOM);
       tmp_ch->loadCareerStats();
       tmp_ch->loadDrugStats();
+      tmp_ch->loadFactionStats();
       if (tmp_ch->getHit() < 0) 
         dynamic_cast<TPerson *>(tmp_ch)->autoDeath();
       

@@ -3,6 +3,99 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: components.h,v $
+// Revision 5.30  2001/07/05 21:25:53  peel
+// Trying to fix cvs
+// what a headache
+//
+// Revision 5.29  2001/06/28 02:18:02  jesus
+// flatulence spell
+//
+// Revision 5.28  2001/06/27 22:08:18  jesus
+// boiling blood spell
+//
+// Revision 5.27  2001/06/25 09:38:02  jesus
+// control undead update for shaman
+//
+// Revision 5.26  2001/06/22 14:48:43  jesus
+// its about damn time someone wrote this
+//
+// Revision 5.25  2001/06/19 20:48:29  jesus
+// added spell fotr shaman and adjusted some learn rates on shaman
+//
+// Revision 5.24  2001/06/19 06:29:03  jesus
+// skills on shaman
+//
+// Revision 5.23  2001/06/17 23:21:34  jesus
+// sticks to snakes update
+//
+// Revision 5.22  2001/06/17 01:39:38  jesus
+// death wave spell
+// comp load changes for shaman
+//
+// Revision 5.21  2001/06/16 10:10:42  jesus
+// basic shaman spell work
+//
+// Revision 5.20  2001/06/15 05:46:28  jesus
+// coronary spell
+//
+// Revision 5.19  2001/06/14 16:46:57  jesus
+// legba's guidance spell
+//
+// Revision 5.18  2001/06/14 10:55:44  jesus
+// djallas protection spell
+//
+// Revision 5.17  2001/06/13 18:37:05  jesus
+// 2 new spells for shaman
+// sense presence which is a copy of sense life with a different component
+// and detect shadow which lets shaman see invisible and shadow walkers
+// also a fix for mortals being able to use who -h
+//
+// Revision 5.16  2001/06/13 03:50:03  jesus
+// raze spell and mob ai fix for shaman
+//
+// Revision 5.15  2001/06/13 00:18:35  jesus
+// lifeforce cost restructures and shaman intimidate spell
+//
+// Revision 5.14  2001/06/12 10:37:45  jesus
+// added rombler spell for shaman
+//
+// Revision 5.13  2001/06/11 05:51:42  jesus
+// cheval spell
+//
+// Revision 5.12  2001/06/09 21:10:33  jesus
+// hypnosis spell
+//
+// Revision 5.11  2001/06/08 00:06:27  jesus
+// dancing bones update for shaman
+//
+// Revision 5.10  2001/06/07 23:14:01  jesus
+// resurrection spell update
+//
+// Revision 5.9  2001/06/07 09:37:07  jesus
+// updated voodoo spell
+//
+// Revision 5.8  2001/06/05 04:27:26  jesus
+// added life leech spell for shaman
+// fixed a glitch in sacrifice
+//
+// Revision 5.7  2001/05/06 14:39:15  jesus
+// rewrote vampiric touch spell fo shaman
+//
+// Revision 5.6  2001/05/05 16:50:11  jesus
+// added lich touch spell for shaman
+//
+// Revision 5.5  2001/04/30 04:42:29  jesus
+// added death mist shaman spell
+//
+// Revision 5.4  2001/04/28 19:10:39  jesus
+// added a shaman spell
+//
+// Revision 5.3  2001/04/28 06:04:38  jesus
+// Added clarify spell for shaman
+//
+// Revision 5.2  2001/04/26 22:23:57  peel
+// *** empty log message ***
+//
 // Revision 5.1.1.3  2001/02/01 21:58:29  jesus
 // shaman stuff
 //
@@ -110,8 +203,15 @@ const int COMP_BREATH_SARAHAGE  =272;
 const int COMP_INFRAVISION      =273;
 const int COMP_ENHANCE_WEAPON   =274;
 const int COMP_FLIGHT           =275;
+const int COMP_STICKS_TO_SNAKES =284;
 const int COMP_PROT_EARTH       =293;
 const int COMP_TRANSFORM_LIMB   =298;
+#if 0
+const int COMP_EARTHMAW         =343;
+const int COMP_CREEPING_DOOM    =344;
+const int COMP_FERAL_WRATH      =345;
+const int COMP_SKY_SPIRIT       =346;
+#endif
 const int COMP_DISPEL_MAGIC_BREW=1405;
 const int COMP_TRAIL_SEEK_BREW  =1408;
 const int COMP_INFRAVISION_BREW =1411;
@@ -122,6 +222,10 @@ const int COMP_INVISIBILITY_BREW=1416;
 const int COMP_TRUE_SIGHT_BREW  =1418;
 const int COMP_GILLS_OF_FLESH_BREW   =1420;
 const int COMP_PLASMA_MIRROR      =1421;
+const int COMP_CREATE_WOOD_GOLEM  =1700;
+const int COMP_CREATE_ROCK_GOLEM  =1701;
+const int COMP_CREATE_IRON_GOLEM  =1702;
+const int COMP_CREATE_DIAMOND_GOLEM  =1703;
 const int COMP_SHIELD_OF_MISTS    =23020;
 const int COMP_ENTHRALL_SPECTRE   =31301;
 const int COMP_ENTHRALL_GHAST     =31302;
@@ -130,6 +234,33 @@ const int COMP_ENTHRALL_DEMON     =31304;
 const int COMP_THORNFLESH         =31305;
 const int COMP_AQUALUNG           =31306;
 const int COMP_AQUATIC_BLAST      =31307;
+const int COMP_CLARITY            =31309;
+const int COMP_SHADOW_WALK        =31310;
+const int COMP_DEATH_MIST         =31311;
+const int COMP_LICH_TOUCH         =31312;
+const int COMP_VAMPIRIC_TOUCH     =31313;
+const int COMP_LIFE_LEECH         =31320;
+const int COMP_VOODOO             =31321;
+const int COMP_RESURRECTION       =31322;
+const int COMP_DANCING_BONES      =31323;
+const int COMP_HYPNOSIS           =31324;
+const int COMP_CHEVAL             =31325;
+const int COMP_ROMBLER            =31326;
+const int COMP_INTIMIDATE         =31327;
+const int COMP_RAZE               =31328;
+const int COMP_DETECT_SHADOW      =31329;
+const int COMP_SENSE_LIFE_SHAMAN  =31330;
+const int COMP_DJALLA             =31331;
+const int COMP_LEGBA              =31332;
+const int COMP_CARDIAC_STRESS     =31333;
+const int COMP_SQUISH             =31334;
+const int COMP_SOUL_TWIST         =31335;
+const int COMP_DEATHWAVE          =31336;
+const int COMP_CELERITE           =31337;
+const int COMP_STUPIDITY          =31338;
+const int COMP_CONTROL_UNDEAD     =31339;
+const int COMP_BLOOD_BOIL         =31340;
+const int COMP_FLATULENCE         =31341;
 
 class compPlace
 {
@@ -252,5 +383,66 @@ extern vector<compInfo>CompInfo;
 
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

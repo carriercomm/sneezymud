@@ -53,7 +53,7 @@ static bool isBadForAffectFlags(int update)
     case AFF_STUNNED:
     case AFF_SHOCKED:
     case AFF_UNDEF3:    
-    case AFF_UNDEF4:
+      //    case AFF_UNDEF4:
     case AFF_ENGAGER:
     case AFF_SCRYING:
     case AFF_WEB:
@@ -222,7 +222,6 @@ static void TBeingLoad(TBeing *ch, int vnum)
 
   wearSlotT ij;
   for (ij = MIN_WEAR; ij < MAX_WEAR; ij++) {        // Initializing 
-    mob->equipment[ij] = NULL;
     mob->setLimbFlags(ij, 0);
     mob->setCurLimbHealth(ij, mob->getMaxLimbHealth(ij));
     mob->setStuckIn(ij, NULL);
@@ -2115,7 +2114,7 @@ int TMonster::readMobFromFile(FILE *fp, bool should_alloc)
 
     setMana(10);
     setMaxMana(10);
-
+    setLifeforce(9000);
     setMaxMove(50 + 10*GetMaxLevel());
     setMove(moveLimit());
 
@@ -2724,7 +2723,7 @@ void TPerson::doMedit(const char *argument)
       break;
     case 29: // medit replace <long/desc> <"text"> <"text">
       /*
-      if (strcmp("Lapsos", getName())) {
+      if (strcmp("Jesus", getName())) {
         sendTo("Please don't use this option yet, it is still being tested.\n\r");
         return;
       }

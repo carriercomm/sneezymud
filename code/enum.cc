@@ -311,7 +311,7 @@ int mapDiscToFile(discNumT dn)
       return 51;
     case DISC_SHAMAN_CONTROL:
       return 52;
-    case DISC_TOTEM:
+    case DISC_RITUALISM:
       return 53;
     case DISC_WIZARDRY:
       return 54;
@@ -448,7 +448,7 @@ discNumT mapFileToDisc(int num)
     case 52:
       return DISC_SHAMAN_CONTROL;
     case 53:
-      return DISC_TOTEM;
+      return DISC_RITUALISM;
     case 54:
       return DISC_WIZARDRY;
     case 55:

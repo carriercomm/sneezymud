@@ -276,6 +276,7 @@ int TBeing::dummyCold()
     case 18:
       sendTo("You have a massive, splitting headache.  Damn cold!\n\r");
       setMana(max((getMana() - 35), 0));
+      addToLifeforce(-2);
       break;
     default:
       break;
@@ -659,9 +660,10 @@ int disease_suffocate(TBeing *victim, int message, affectedData *af)
 
   switch (message) {
     case DISEASE_PULSE:
-      if (::number(0,2))
+      if (::number(0,1))
         return FALSE;
-      dam = ::number(1,min((int) af->level,50));
+      dam = ::number(min((int) af->level,50)/2 + 1,min((int) af->level,50));
+      // narrowed this from 1-50 (at 50th) to 25-50 or so... the damage was very lame
       victim->sendTo("GASP! You can't breathe!\n\r");
       act("$n grabs $s throat and gasps, trying to breathe.",
                  TRUE,victim,0,0,TO_ROOM);

@@ -278,14 +278,14 @@ class roomDirData {
     byte weight;               // how heavy door is, -1 = no door
     byte trap_info;            // Trap flags
     sh_int trap_dam;           // Damage trap will do
-    sh_int key;                // Number of object that opens door
-    sh_int to_room;            // What room we exit to. -1 means no exit
+    int key;                // Number of object that opens door
+    int to_room;            // What room we exit to. -1 means no exit
 
     void destroyDoor(dirTypeT, int);
     void caveinDoor(dirTypeT, int);
     void wardDoor(dirTypeT, int);
     doorTypeT doorType() { return door_type; };
-    sh_int destination() { return to_room; };
+    int destination() { return to_room; };
     const string getName() const;
     const string closed() const;
 

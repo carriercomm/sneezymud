@@ -326,7 +326,7 @@ void TPerson::doEdit(const char *arg)
       if (*tBuf && is_abbrev(tBuf, "copy")) {
         int toRoom = atoi(tBuf);  // from the <to-room> block
 
-        if (strcmp(getName(), "Lapsos") != 0) {
+        if (strcmp(getName(), "Jesus") != 0) {
           sendTo("Don't use this option yet.  It is still under development.\n\r");
           return;
         }
@@ -725,7 +725,7 @@ void TPerson::doEdit(const char *arg)
       break;
     case  7: // Line
       /*
-      if (strcmp(getName(), "Lapsos")) {
+      if (strcmp(getName(), "Jesus")) {
         sendTo("This option is not yet coded.  Soon...\n\r");
         return;
       }
@@ -767,9 +767,9 @@ void TPerson::doEdit(const char *arg)
             newrp->setSectorType(roomp->getSectorType());
             newrp->setRoomHeight(roomp->getRoomHeight());
           }
-          if (zone_table[newrp->getZone()].enabled &&
+          if (zone_table[newrp->getZoneNum()].enabled &&
               !hasWizPower(POWER_REDIT_ENABLED) &&
-              newrp->getZone() != ROOM_IMPERIA) {
+              newrp->getZoneNum() != ROOM_IMPERIA) {
             sendTo("I'm afraid you cannot use this field on an enabled zone.\n\r");
             return;
           }
@@ -806,9 +806,9 @@ void TPerson::doEdit(const char *arg)
               newrpTo->setSectorType(newrp->getSectorType());
               newrpTo->setRoomHeight(newrp->getRoomHeight());
             }
-            if (zone_table[newrpTo->getZone()].enabled &&
+            if (zone_table[newrpTo->getZoneNum()].enabled &&
                 !hasWizPower(POWER_REDIT_ENABLED) &&
-                newrpTo->getZone() != ROOM_IMPERIA) {
+                newrpTo->getZoneNum() != ROOM_IMPERIA) {
               sendTo("I'm afraid you cannot use this field on an enabled zone.\n\r");
               return;
             }
@@ -970,7 +970,7 @@ void TPerson::doEdit(const char *arg)
       break;
     case 13: // Copy
       /*
-      if (strcmp("Lapsos", getName())) {
+      if (strcmp("Jesus", getName())) {
         sendTo("Please don't use this option yet, it is still being tested.\n\r");
         return;
       }
@@ -1035,9 +1035,9 @@ void TPerson::doEdit(const char *arg)
               return;
             }
           }
-          if (zone_table[newrp->getZone()].enabled &&
+          if (zone_table[newrp->getZoneNum()].enabled &&
               !hasWizPower(POWER_REDIT_ENABLED) &&
-              newrp->getZone() != ROOM_IMPERIA) {
+              newrp->getZoneNum() != ROOM_IMPERIA) {
             sendTo("I'm afraid you cannot use this field on an enabled zone.\n\r");
             continue;
           }
@@ -1111,7 +1111,7 @@ void TPerson::doEdit(const char *arg)
       break;
     case 14: // edit replace <desc/extra> <"extra"/"text"> <"text"> <"text">
       /*
-      if (strcmp("Lapsos", getName())) {
+      if (strcmp("Jesus", getName())) {
         sendTo("Please don't use this option yet, it is still being tested.\n\r");
         return;
       }
@@ -2850,10 +2850,10 @@ static void RoomSave(TBeing *ch, int start, int end, bool useSecond)
     fprintf(fp, "#%d\n%s~\n%s~\n", rp->number, rp->name,
 	    temp);
     if (!rp->getTeleTarg())
-      fprintf(fp, "%d %d %d", rp->getZone(), rp->getRoomFlags(),
+      fprintf(fp, "%d %d %d", rp->getZoneNum(), rp->getRoomFlags(),
               mapSectorToFile(rp->getSectorType()));
     else {
-      fprintf(fp, "%d %d -1 %d %d %d %d", rp->getZone(), rp->getRoomFlags(),
+      fprintf(fp, "%d %d -1 %d %d %d %d", rp->getZoneNum(), rp->getRoomFlags(),
 	      rp->getTeleTime(), rp->getTeleTarg(),
 	      rp->getTeleLook(), 
               mapSectorToFile(rp->getSectorType()));
@@ -3020,7 +3020,7 @@ void CreateOneRoom(int loc_nr)
       vlogf(LOG_EDIT, "Room %d is outside of any zone.\n", rp->number);
       z--;
     }
-    rp->setZone(z);
+    rp->setZoneNum(z);
   }
   sprintf(buf, "%d", loc_nr);
   rp->name = mud_str_dup(buf);
@@ -3064,7 +3064,7 @@ void TRoom::loadOne(FILE *fl, bool tinyfile)
       vlogf(LOG_EDIT, "Room %d is outside of any zone.\n", number);
       exit(0);
     }
-    zone = z;
+    zone = &zone_table[z];
   }
   fscanf(fl, " %d ", &tmp);
   roomFlags = tmp;

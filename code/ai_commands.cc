@@ -413,7 +413,7 @@ int TMonster::aiShake (TBeing *doer, TBeing *, aiTarg cond)
   }
   switch (cond) {
     case TARGET_NONE:
-      break;  // shakes thier head 
+      break;  // shakes their head 
     case TARGET_SELF:
       act("$n looks at you questiongly.",TRUE, this,0,doer,TO_VICT);
       if (doer->getSex() == SEX_MALE)

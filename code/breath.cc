@@ -60,7 +60,7 @@ static int spell_fire_breath(byte level, TBeing *ch, TBeing *victim, int lag)
 
   act("$n blows an immense breath of fire towards $N!", FALSE, ch, NULL, victim, TO_NOTVICT);
   act("You blow an immense breath of fire towards $N!", FALSE, ch, NULL, victim, TO_CHAR);
-  act("$n blows an immense breath of fire towards you!", FALSE, ch, NULL, victim, TO_VICT);
+  act("$n blows an immense breath of fire towards you! <R>FIRE!!!<z>\a", FALSE, ch, NULL, victim, TO_VICT);
   if (victim->shieldAbsorbDamage(dam)) {
     return 1;
   } else if (victim->isLucky(levelLuckModifier(ch->GetMaxLevel()))) {

@@ -838,6 +838,60 @@ int farlook(TBeing *caster, TBeing * victim, int level, byte bKnown)
         false, caster, 0, 0, TO_CHAR);
     return SPELL_FAIL;
   }
+  if (target == ROOM_VOID) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_IMPERIA) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_HELL) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_STORAGE) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_POLY_STORAGE) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_CORPSE_STORAGE) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_Q_STORAGE) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_DONATION) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
+  if (target == ROOM_DUMP) {
+    caster->nothingHappens(SILENT_YES);
+    act("You can't seem to look there right now.",
+        false, caster, 0, 0, TO_CHAR);
+    return SPELL_FAIL;
+  }
 
   if (bSuccess(caster, bKnown, SPELL_FARLOOK)) {
     act("You conjure up a large cloud which shimmers slightly before revealing...",

@@ -33,6 +33,7 @@ void TBeing::initDescStuff(charFile *st)
     d->screen_size = st->screen;
     d->last.hit = getHit();
     d->last.mana = getMana();
+    d->last.lifeforce = getLifeforce();
     d->last.piety = getPiety();
     d->last.move = getMove();
     d->last.exp = getExp();
@@ -57,12 +58,8 @@ void TPerson::resetChar()
 {
   char recipient[100], *tmp, *tmstr;
   affectedData *af;
-  int i;
 
   roomp = NULL;
-
-  for (i = MIN_WEAR; i < MAX_WEAR; i++)	/* Initializing */
-    equipment[i] = NULL;
 
   if (isPlayerAction(PLR_MAILING))
     remPlayerAction(PLR_MAILING);
@@ -257,6 +254,7 @@ void TPerson::resetChar()
   if (isImmortal()) {
     setHit(hitLimit());
     setMana(manaLimit());
+    setLifeforce(9000);
     setMove(moveLimit());
     setPiety(pietyLimit());
   }
@@ -672,9 +670,11 @@ void TPerson::loadFromSt(charFile *st)
   for (ij = MIN_FACTION; ij < MAX_FACTIONS; ij++)
     setPercX(st->f_percx[ij], ij);
 #endif
+#if 0
   faction.whichfaction = st->whichfaction;
   faction.align_ge = st->align_ge;
   faction.align_lc = st->align_lc;;
+#endif
 
   mud_assert(st->f_type >= MIN_FACTION && st->f_type < MAX_FACTIONS, "bad faction");
   setFaction(factionTypeT(st->f_type));
@@ -790,13 +790,13 @@ void TBeing::saveChar(sh_int load_room)
 	return;
       }
     
-      if((rc=dbquery(&res, "sneezy", "saveItems", "select * from shopownedaccess where shop_nr=%i", shop_nr+1))==-1){
+      if((rc=dbquery(&res, "sneezy", "saveItems", "select * from shopownedaccess where shop_nr=%i", shop_nr))==-1){
 	vlogf(LOG_BUG, "Database error in shop_keeper");
 	return;
       }
       if((row=mysql_fetch_row(res))){
 	mysql_free_result(res);
-	if((rc=dbquery(&res, "sneezy", "saveItems", "update shopowned set gold=%i where shop_nr=%i", getMoney(), shop_nr+1))){
+	if((rc=dbquery(&res, "sneezy", "saveItems", "update shopowned set gold=%i where shop_nr=%i", getMoney(), shop_nr))){
 	  if(rc==-1){
 	    vlogf(LOG_BUG, "Database error in shop_keeper");
 	    return;
@@ -870,7 +870,7 @@ void TBeing::saveChar(sh_int load_room)
 
   // save career stats, saves info on desc, no need to use tmp
   saveCareerStats();
-
+  saveFactionStats();
   saveDrugStats();
 
 
@@ -930,6 +930,11 @@ void do_the_player_stuff(const char *name)
   // skip drug data
   if (strlen(name) > 6 && !strcmp(&name[strlen(name) - 6], ".drugs"))
     return;
+
+  // skip faction data
+  if (strlen(name) > 6 && !strcmp(&name[strlen(name) - 8], ".faction"))
+    return;
+
 
   // skip wizpowers data if there was an error up above.
   if (strlen(name) > 9 && !strcmp(&name[strlen(name) - 9], ".wizpower")) {
@@ -1461,7 +1466,7 @@ void TBeing::doReset(const char *arg)
       CDiscipline *cd = getDiscipline(dnt);
       if (!cd)
         continue;
-     if (dnt == DISC_ADVENTURING || dnt == DISC_WIZARDRY || dnt == DISC_FAITH) 
+     if (dnt == DISC_ADVENTURING || dnt == DISC_RITUALISM || dnt == DISC_WIZARDRY || dnt == DISC_FAITH) 
         continue;
       cd->setNatLearnedness(0);
       cd->setLearnedness(0);
@@ -1471,7 +1476,7 @@ void TBeing::doReset(const char *arg)
       if (!discArray[snt] || !*discArray[snt]->name)
         continue;
       temp = discArray[snt]->disc;
-      if (temp == DISC_ADVENTURING || temp == DISC_WIZARDRY || temp == DISC_FAITH)
+      if (temp == DISC_ADVENTURING || temp == DISC_RITUALISM || temp == DISC_WIZARDRY || temp == DISC_FAITH)
         continue;
       setSkillValue(snt, SKILL_MIN);
     }
@@ -1545,7 +1550,7 @@ void TBeing::doReset(const char *arg)
     }
     one_argument(arg, buf);
     if (!buf || !*buf) {
-      zone = (roomp ? roomp->getZone() : 0);
+      zone = (roomp ? roomp->getZoneNum() : 0);
       /*
       sendTo("Syntax: reset zone <zone#>\n\r");
       return;
@@ -1554,13 +1559,13 @@ void TBeing::doReset(const char *arg)
     unsigned int i;
     if (is_abbrev(buf, "all")) {
       for (i= 0; i < zone_table.size(); i++) {
-        reset_zone(i, FALSE);
+        zone_table[i].resetZone(FALSE);
       }
       sendTo("Zone 0-%d reset.\n\r", i-1);
       return;
     }
     zone = atoi(buf);
-    reset_zone(zone, FALSE);
+    zone_table[zone].resetZone(FALSE);
     sendTo("Zone %d reset.\n\r", zone);
     return;
   } else if (is_abbrev(buf, "levels") && isImmortal()) {

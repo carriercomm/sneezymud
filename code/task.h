@@ -3,6 +3,13 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: task.h,v $
+// Revision 5.3  2001/07/05 21:25:54  peel
+// Trying to fix cvs
+// what a headache
+//
+// Revision 5.2  2001/04/26 22:23:57  peel
+// *** empty log message ***
+//
 // Revision 5.1.1.4  2001/04/17 03:32:55  peel
 // added TASK_FISHING
 //
@@ -74,6 +81,7 @@ extern int task_stavecharging (TBeing *, cmdTypeT, const char *, int, TRoom *, T
 extern int task_trance_of_blades(TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
 extern int task_sacrifice      (TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
 extern int task_fishing     (TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
+extern int task_extinguish_my_ass (TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
 
 typedef struct _tasks_entry {
   const char * const name;
@@ -114,6 +122,7 @@ enum taskTypeT {
      TASK_TRANCE_OF_BLADES,
      TASK_SACRIFICE,
      TASK_FISHING,
+     TASK_EXTINGUISH_MY_ASS,
      NUM_TASKS  // keep this as max
 };
 

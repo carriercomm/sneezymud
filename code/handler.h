@@ -21,7 +21,7 @@ TThing *get_thing_on_list_getable(TBeing *ch, const char *name, TThing *list);
 TThing *get_thing_on_list(const char *name, TThing *list);
 TThing *get_thing_on_list_num(int num, TThing *list);
 TThing *get_thing_on_list_vis(TBeing *ch, const char *name, TThing *list);
-TThing *get_thing_in_equip(TBeing *, const char *, TThing *equipment[], wearSlotT *j, bool, int*count);
+TThing *get_thing_in_equip(TBeing *, const char *, equipmentData equipment, wearSlotT *j, bool, int*count);
 TThing *get_thing_stuck_in_vis(TBeing *, const char *, wearSlotT *j, int *count, TBeing *);
 TThing *get_thing_char_using(TBeing *, const char *, int, bool, bool);
 TObj *get_obj(const char *name, exactTypeT);

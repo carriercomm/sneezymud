@@ -699,6 +699,54 @@ int mapSpellnumToFile(spellNumT stt)
       return 507;
     case SKILL_SET_TRAP_GREN:
       return 508;
+    case SKILL_RITUALISM:
+      return 523;
+    case SPELL_FLATULENCE:
+      return 524;
+    case SPELL_BLOOD_BOIL:
+      return 525;
+    case SPELL_STUPIDITY:
+      return 526;
+    case SPELL_CELERITE:
+      return 527;
+    case SPELL_DEATHWAVE:
+      return 528;
+    case SPELL_DISTORT:
+      return 529;
+    case SPELL_SOUL_TWIST:
+      return 530;
+    case SPELL_SQUISH:
+      return 531;
+    case SPELL_CARDIAC_STRESS:
+      return 532;
+    case SPELL_LEGBA:
+      return 533;
+    case SPELL_DJALLA:
+      return 534;
+    case SPELL_SENSE_LIFE_SHAMAN:
+      return 535;
+    case SPELL_DETECT_SHADOW:
+      return 536;
+    case SPELL_RAZE:
+      return 537;
+    case SPELL_INTIMIDATE:
+      return 538;
+    case SPELL_ROMBLER:
+      return 539;
+    case SPELL_CHRISM:
+      return 540;
+    case SPELL_CHEVAL:
+      return 541;
+    case SPELL_HYPNOSIS:
+      return 542;
+    case SPELL_LICH_TOUCH:
+      return 543;
+    case SPELL_DEATH_MIST:
+      return 544;
+    case SPELL_SHADOW_WALK:
+      return 545;
+    case SPELL_CLARITY:
+      return 546;
     case SKILL_SACRIFICE:
       return 547;
     case SPELL_AQUALUNG:
@@ -717,9 +765,9 @@ int mapSpellnumToFile(spellNumT stt)
       return 554;
     case SPELL_SHIELD_OF_MISTS:
       return 555;
-    case SPELL_CACAODEMON:
+    case SPELL_CREATE_IRON_GOLEM:
       return 556;
-    case SPELL_CREATE_GOLEM:
+    case SPELL_CREATE_DIAMOND_GOLEM:
       return 557;
     case SPELL_DANCING_BONES:
       return 558;
@@ -737,6 +785,10 @@ int mapSpellnumToFile(spellNumT stt)
       return 564;
     case SKILL_TURN:
       return 565;
+    case SPELL_CREATE_WOOD_GOLEM:
+      return 566;
+    case SPELL_CREATE_ROCK_GOLEM:
+      return 567;
     case SKILL_SIGN:
       return 576;
     case SKILL_SWIM:
@@ -825,6 +877,16 @@ int mapSpellnumToFile(spellNumT stt)
       return 668;
     case SKILL_FISHING:
       return 669;
+#if 1
+    case SPELL_EARTHMAW:
+      return 670;
+    case SPELL_CREEPING_DOOM:
+      return 671;
+    case SPELL_FERAL_WRATH:
+      return 672;
+    case SPELL_SKY_SPIRIT:
+      return 673;
+#endif
     case AFFECT_DISEASE:
       return 2500;
     case AFFECT_COMBAT:
@@ -871,6 +933,12 @@ int mapSpellnumToFile(spellNumT stt)
       return 2521;
     case AFFECT_GROWTH_POTION:
       return 2522;
+    case AFFECT_WARY:
+      return 2523;
+    case AFFECT_DEFECTED:
+      return 2524;
+    case AFFECT_OFFER:
+      return 2525;
     case SPELL_FIRE_BREATH:
     case SPELL_CHLORINE_BREATH:
     case SPELL_FROST_BREATH:
@@ -1564,6 +1632,54 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_SET_TRAP_MINE;
     case 508:
       return SKILL_SET_TRAP_GREN;
+    case 523:
+      return SKILL_RITUALISM;
+    case 524:
+      return SPELL_FLATULENCE;
+    case 525:
+      return SPELL_BLOOD_BOIL;
+    case 526:
+      return SPELL_STUPIDITY;
+    case 527:
+      return SPELL_CELERITE;
+    case 528:
+      return SPELL_DEATHWAVE;
+    case 529:
+      return SPELL_DISTORT;
+    case 530:
+      return SPELL_SOUL_TWIST;
+    case 531:
+      return SPELL_SQUISH;
+    case 532:
+      return SPELL_CARDIAC_STRESS;
+    case 533:
+      return SPELL_LEGBA;
+    case 534:
+      return SPELL_DJALLA;
+    case 535:
+      return SPELL_SENSE_LIFE_SHAMAN;
+    case 536:
+      return SPELL_DETECT_SHADOW;
+    case 537:
+      return SPELL_RAZE;
+    case 538:
+      return SPELL_INTIMIDATE;
+    case 539:
+      return SPELL_ROMBLER;
+    case 540:
+      return SPELL_CHRISM;
+    case 541:
+      return SPELL_CHEVAL;
+    case 542:
+      return SPELL_HYPNOSIS;
+    case 543:
+      return SPELL_LICH_TOUCH;
+    case 544:
+      return SPELL_DEATH_MIST;
+    case 545:
+      return SPELL_SHADOW_WALK;
+    case 546:
+      return SPELL_CLARITY;
     case 547:
       return SKILL_SACRIFICE;
     case 548:
@@ -1583,10 +1699,10 @@ spellNumT mapFileToSpellnum(int stt)
     case 555:
       return SPELL_SHIELD_OF_MISTS;
     case 556:
-      return SPELL_CACAODEMON;
+      return SPELL_CREATE_IRON_GOLEM;
     case 557:
-      return SPELL_CREATE_GOLEM;
-    case 558:
+      return SPELL_CREATE_DIAMOND_GOLEM;
+    case 558: 
       return SPELL_DANCING_BONES;
     case 559:
       return SPELL_CONTROL_UNDEAD;
@@ -1602,6 +1718,10 @@ spellNumT mapFileToSpellnum(int stt)
       return SPELL_LIFE_LEECH;
     case 565:
       return SKILL_TURN;
+    case 566:
+      return SPELL_CREATE_WOOD_GOLEM;
+    case 567:
+      return SPELL_CREATE_ROCK_GOLEM;
     case 576:
       return SKILL_SIGN;
     case 577:
@@ -1688,6 +1808,18 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_POWERMOVE;
     case 668:
       return SKILL_ALCOHOLISM;
+    case 669:
+      return SKILL_FISHING;
+#if 1
+    case 670:
+      return SPELL_EARTHMAW;
+    case 671:
+      return SPELL_CREEPING_DOOM;
+    case 672:
+      return SPELL_FERAL_WRATH;
+    case 673:
+      return SPELL_SKY_SPIRIT;
+#endif
     case 2500:
       return AFFECT_DISEASE;
     case 2501:
@@ -1734,10 +1866,13 @@ spellNumT mapFileToSpellnum(int stt)
       return AFFECT_PLAYERLOOT;
     case 2522:
       return AFFECT_GROWTH_POTION;
+    case 2523:
+      return AFFECT_WARY;
     default:
       break;
   }
-  forceCrash("Bad value (%d) in mapFileToSpellnum", stt);
+  //  forceCrash("Bad value (%d) in mapFileToSpellnum", stt);
+  vlogf(LOG_BUG, "Bad value (%d) in mapFileToSpellnum", stt);
   return MAX_SKILL;
 }
 

@@ -86,7 +86,7 @@ const int CLIENT_GROUPADD     = 172;
 const int CLIENT_GROUPDELETE  = 173;
 const int CLIENT_GROUP        = 174;
 const int CLIENT_GROUPDELETEALL = 175;
-
+const int CLIENT_ROMBLER      = 176;
 
 
 const int ERR_BAD_NAME       = 1;
@@ -108,3 +108,23 @@ extern bool is_client_string(char *str);
 extern bool Clients;
 
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

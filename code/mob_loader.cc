@@ -387,6 +387,7 @@ void TMonster::mageComponentLoader(void)
         case COMP_FEAR:
         case COMP_CLOUD_OF_CONCEAL:
         case COMP_DETECT_INVIS:
+        case COMP_DETECT_SHADOW:
         case COMP_DISPEL_INVIS:
         case COMP_TELEPATHY:
         case COMP_POLYMORPH:
@@ -446,22 +447,16 @@ void TMonster::mageComponentLoader(void)
     if (!(obj = read_object(comp,VIRTUAL)))
       continue;
 
-    // make brew comps not load as much
     TComponent *tcom =dynamic_cast<TComponent *>(obj);
-    if (tcom && tcom->isComponentType(COMP_POTION) &&
-       ::number(0,2)) {
-      num = -1;
-      delete tcom;
-      continue;
-    }
-    // skip comps that are "disabled"
+    spell = CompIndex[num].spell_num;
+
     if (tcom && tcom->isComponentType(COMP_SPELL) && spell == TYPE_UNDEFINED) {
       num = -1;
       delete tcom;
       continue;
     }
-    // skip scribe/brew comps
-    if (tcom->isComponentType(COMP_POTION | COMP_SCRIBE)) {
+    // skip scribe comps
+    if (tcom->isComponentType(COMP_SCRIBE | COMP_POTION)) {
       num = -1;
       delete tcom;
       continue;
@@ -560,8 +555,8 @@ void TMonster::rangerComponentLoader(void)
       delete tcom;
       continue;
     }
-    // skip scribe/brew comps
-    if (tcom->isComponentType(COMP_POTION | COMP_SCRIBE)) {
+    // skip scribe comps
+    if (tcom->isComponentType(COMP_SCRIBE | COMP_POTION)) {
       num = -1;
       delete tcom;
       continue;
@@ -600,12 +595,12 @@ void TMonster::shamanComponentLoader(void)
 
   if (GetMaxLevel() >= 50  && wealth > 1000) {
     wealth -= 800;
-    bag_num = 323;
+    bag_num = 31319;
   } else if (GetMaxLevel() >= 17 && wealth > 500) {
     wealth -= 200;
-    bag_num = 322;
+    bag_num = 31318;
   } else 
-    bag_num = 321;
+    bag_num = 31317;
 
   if (!(bag = read_object(bag_num, VIRTUAL)))
     return;
@@ -630,11 +625,41 @@ void TMonster::shamanComponentLoader(void)
       	continue;
       }
 
-      // disallow certain components
       switch (comp) {
-#if 0
-        case xxx:
-          num = -1;
+        case COMP_THORNFLESH:
+        case COMP_AQUALUNG:
+        case COMP_RESURRECTION:
+        case COMP_HYPNOSIS:
+          // we'll make utility comps more rare so that relatively speaking
+          // the comps for offensive spells are more prevalent
+          if (::number(0,2))
+            num = -1;
+          break;
+	case COMP_BLOOD_BOIL:
+        case COMP_DETECT_SHADOW:
+        case COMP_SHADOW_WALK:
+        case COMP_CLARITY:
+	case COMP_CONTROL_UNDEAD:
+          // these are also "utility" comps, but players have asked for a
+          // slightly higher load rate on them
+          if (::number(0,9) < 5)
+            num = -1;
+          break;
+	case COMP_CELERITE:
+        case COMP_RAZE:
+        case COMP_CARDIAC_STRESS:
+        case COMP_AQUATIC_BLAST:
+        case COMP_DEATHWAVE:
+          // keep fairly rare
+          if (::number(0,19))
+            num = -1;
+          break;
+#ifdef NOBREW
+	case COMP_INVISIBILITY_BREW:
+	case COMP_TRUE_SIGHT_BREW:
+          // keep VERY rare
+          if (::number(0,29))
+            num = -1;
           break;
 #endif
         default:
@@ -952,4 +977,16 @@ void TMonster::genericMobLoader(TOpenContainer **bag)
 
   return;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 

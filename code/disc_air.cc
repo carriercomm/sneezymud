@@ -81,6 +81,7 @@ int gust(TBeing * caster, TBeing * victim, int level, byte bKnown, int adv_learn
       act("<W>You call up a gust of wind that buffets $N fiercely!<z>", 
           FALSE, caster, NULL, victim, TO_CHAR);
     }
+    vlogf(LOG_JESUS, "Gust damage: %d", dam);
     if (caster->reconcileDamage(victim, dam, SPELL_GUST) == -1)
       return SPELL_SUCCESS + VICTIM_DEAD;
     return SPELL_SUCCESS;
@@ -981,7 +982,8 @@ int antigravity(TBeing *caster, int, affectedData *aff, byte bKnown)
 {
   TThing *t;
   TBeing *vict = NULL;
-
+  char buf[80];
+  
   if (bSuccess(caster, bKnown, SPELL_ANTIGRAVITY)) {
 
     switch (critSuccess(caster, SPELL_ANTIGRAVITY)) {
@@ -1000,7 +1002,8 @@ int antigravity(TBeing *caster, int, affectedData *aff, byte bKnown)
         continue;
       if ((caster == vict) || (caster->inGroup(*vict))) {
         if (vict->isAffected(AFF_FLYING) || vict->isAffected(AFF_LEVITATING)) {
-          caster->sendTo("$n is already affected by an anti gravity spell!\n\r");
+          sprintf(buf, "%s is already affected by a flight spell of some sort!\n\r",vict->getName());
+	  caster->sendTo(buf);
           caster->nothingHappens(SILENT_YES);
           continue;
         }
@@ -1020,8 +1023,6 @@ int antigravity(TBeing *caster, int, affectedData *aff, byte bKnown)
 
 int antigravity(TBeing * caster)
 {
-  caster->sendTo("The antigravity spell has been disabled due to a crash bug.\n\r");
-  return FALSE;
 
   if (!bPassMageChecks(caster, SPELL_ANTIGRAVITY, NULL))
     return FALSE;

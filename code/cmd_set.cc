@@ -174,6 +174,32 @@ void TPerson::doSet(const char *argument)
     sendTo(COLOR_MOBS, "You set %s's exp to %.2f.\n\r", mob->getName(), mob->getExp());
     mob->doSave(SILENT_NO);
     return;
+  } else if (is_abbrev(field, "newfaction")) {
+    sprintf(buf, "%s%s", parmstr, argument);
+    TFaction *f = NULL;
+    f = get_faction(buf);
+    if(!f) {
+      sendTo("No such factions\n\r");
+      return;
+    }
+    mob->faction.whichfaction = f->ID;
+    mob->faction.rank = f->ranks;
+    sendTo(COLOR_BASIC,"%s faction set to %s (%d), rank set to %s. (lowest possible)\n\r", mob->getName(),
+	   mob->newfaction()->getName(), mob->newfaction()->ID, mob->rank());
+    mob->doSave(SILENT_NO);
+    mob->saveFactionStats();
+    return;
+  } else if (is_abbrev(field, "rank")) {
+    sscanf(parmstr, "%d", &parm);
+    if (!mob->newfaction() || parm < 0 || parm >= mob->newfaction()->ranks) {
+      sendTo("Target must have a valid faction, and rank must be a valid rank in that faction.\n\r");
+      return;
+    }
+    mob->faction.rank = parm;
+    sendTo(COLOR_MOBS, "You set %s's rank to %s.\n\r", mob->getName(), mob->rank());
+    mob->doSave(SILENT_NO);
+    mob->saveFactionStats();
+    return;
   } else if (is_abbrev(field, "title")) {
     TPerson *tper = dynamic_cast<TPerson *>(mob);
     if (!tper) {

@@ -21,7 +21,7 @@
 
 struct path_struct {
     dirTypeT direction;
-    sh_int cur_room;
+    int cur_room;
 };
 
 const path_struct hobbit_path_pos[2][50] = {

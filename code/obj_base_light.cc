@@ -88,6 +88,11 @@ bool TBaseLight::monkRestrictedItem(const TBeing *) const
   return FALSE;
 }
 
+bool TBaseLight::shamanRestrictedItem(const TBeing *) const
+{
+  return FALSE;
+}
+
 bool TBaseLight::rangerRestrictedItem(const TBeing *) const
 {
   return FALSE;

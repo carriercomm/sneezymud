@@ -40,7 +40,7 @@ void TBeing::doZonefile(const string & tStArg)
   if (is_abbrev(tStString, "save")) {
     doSaveZoneFile(this, tStBuffer);
     return;
-  } else if (is_abbrev(tStString, "load") && !strcmp(getName(), "Lapsos")) {
+  } else if (is_abbrev(tStString, "load") && !strcmp(getName(), "Jesus")) {
     doLoadZoneFile(this, tStBuffer);
     return;
   }
@@ -62,7 +62,7 @@ void doSaveZoneFile(TBeing *ch, const string & tArg)
   if (!ch->isImmortal() || !ch->desc || !ch->isPc())
     return;
 
-  if ((zValue = ch->roomp->getZone()) > zone_table.size()) {
+  if ((zValue = ch->roomp->getZoneNum()) > zone_table.size()) {
     vlogf(LOG_BUG, "Immortal in invalid zone [%s]", ch->getName());
     ch->sendTo("You are in an invalid zone, how did you get there?!?\n\r");
     return;
@@ -306,7 +306,7 @@ void doLoadZoneFile(TBeing * tBeing, const string & tArg)
   if (!tBeing->isImmortal() || !tBeing->desc || !tBeing->isPc())
     return;
 
-  if ((zValue = ch->roomp->getZone()) > zone_table.size()) {
+  if ((zValue = ch->roomp->getZoneNum()) > zone_table.size()) {
     vlogf(LOG_BUG, "Immortal in invalid zone [%s]", tBeing->getName());
     tBeing->sendTo("You are in an invalid zone, how did you get there?!?\n\r");
     return;

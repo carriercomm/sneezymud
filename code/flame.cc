@@ -562,13 +562,6 @@ void TFFlame::addFlameToMe(TBeing *ch, const char *argument, TThing *fObj, bool 
 // Non-Class Specific functions
 void TBeing::igniteObject(const char *argument, TThing *fObj)
 {
-  /*
-  if (strcmp(name, "Lapsos") != 0 &&
-      strcmp(name, "Mithros") != 0) {
-    sendTo("This code is still being tested, please don't use it.\n\r");
-    return;
-  }
-  */
 
   TThing *tStuff;
   TFFlame *newFlame = NULL;

@@ -3,6 +3,20 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: task_sit.cc,v $
+// Revision 5.5  2001/07/05 21:25:54  peel
+// Trying to fix cvs
+// what a headache
+//
+// Revision 5.4  2001/06/20 04:27:24  jesus
+// couple updates for lifeforce and farlook fix for stuff they shouldnt see
+// will need review
+//
+// Revision 5.3  2001/06/09 07:35:45  jesus
+// minor updates for shaman
+//
+// Revision 5.2  2001/06/03 07:58:14  jesus
+// temporary fix to an annoying -hp bug with shaman
+//
 // Revision 5.1.1.2  2001/04/01 07:02:49  jesus
 // shaman regen
 //
@@ -43,8 +57,16 @@ int task_sit(TBeing *ch, cmdTypeT cmd, const char *arg, int pulse, TRoom *, TObj
       if (!ch->task->status) {
         if (!ch->roomp->isRoomFlag(ROOM_NO_HEAL)) {
           ch->addToMana(1);
-          ch->addToLifeforce(-2);
-          ch->addToHit(1);
+	  if (ch->hasClass(CLASS_SHAMAN) && !ch->affectedBySpell(SPELL_SHAPESHIFT)) {
+	    if (1 > ch->getLifeforce()) {
+	      ch->updateHalfTickStuff();
+	    } else {
+	      ch->addToLifeforce(-1);
+	      ch->sendTo("Your lack of activity drains your precious lifeforce.\n\r");
+	    }
+	  } else {
+	    ch->addToHit(1);
+	  }
           if (ch->getMove() < ch->moveLimit())
             ch->addToMove(1);
           if (ch->ansi()) {
@@ -60,6 +82,7 @@ int task_sit(TBeing *ch, cmdTypeT cmd, const char *arg, int pulse, TRoom *, TObj
           }
         }
       }
+      ch->updatePos();
       ch->task->status = 0;
       break;
   case CMD_ABORT:

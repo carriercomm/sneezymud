@@ -403,10 +403,8 @@ void TBeing::doHelp(const char *arg)
           purple(), norm(), discArray[skill]->holyStrength);
       str += buf2;
 #endif
-    } else if (skill == SPELL_CACAODEMON ||
-               skill == SPELL_MATERIALIZE ||
-               skill == SPELL_SPONTANEOUS_GENERATION ||
-               skill == SPELL_CREATE_GOLEM) {
+    } else if (skill == SPELL_MATERIALIZE ||
+               skill == SPELL_SPONTANEOUS_GENERATION) {
       sprintf(buf2, "\n\r%sSpell Component  :%s SPECIAL (see below)\n\r", purple(), norm());
       str += buf2;
     } else if (IS_SET(discArray[skill]->comp_types, COMP_MATERIAL)) {
@@ -471,6 +469,24 @@ void TBeing::doHelp(const char *arg)
       } else {
         sprintf(buf2, "%sMana (min/cur)   :%s %d/spell-not-known\n\r",
                        purple(),  norm(), discArray[skill]->minMana);
+      }
+    }
+    if (discArray[skill]->minLifeforce) {
+      if (doesKnowSkill(skill) && (IS_SET(discArray[skill]->comp_types, SPELL_TASKED))) {
+        sprintf(buf2, "%sMinimum Lifeforce:%s %d, per round amount : %d\n\r",
+            purple(), norm(),
+            ((discArray[skill]->minLifeforce / (discArray[skill]->lag +2)) * (discArray[skill]->lag +2)),
+            (discArray[skill]->minLifeforce / (discArray[skill]->lag +2)));
+        sprintf(buf2 + strlen(buf2), "%sCurrent Lifeforce:%s %d, per round amount : %d\n\r",
+            purple(), norm(),
+            useLifeforce(skill) * (discArray[skill]->lag +2),
+            useLifeforce(skill));
+      } else if (doesKnowSkill(skill)) {
+        sprintf(buf2, "%sMinimum Lifeforce:%s %d, current : %d\n\r",
+              purple(),  norm(), discArray[skill]->minLifeforce, useLifeforce(skill));
+      } else {
+        sprintf(buf2, "%sLifeforce:min/cur:%s %d/spell-not-known\n\r",
+                       purple(),  norm(), discArray[skill]->minLifeforce);
       }
     }
     if (discArray[skill]->minPiety) {
@@ -801,3 +817,16 @@ void cleanUpHelp()
   for (i = 0; i < spellIndex.size(); i++)
     delete [] spellIndex[i];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

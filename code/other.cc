@@ -40,6 +40,7 @@ extern "C" {
 #include "disc_nature.h"
 #include "disc_shaman_armadillo.h"
 #include "disc_shaman_frog.h"
+#include "disc_shaman_skunk.h"
 #include "disc_shaman_spider.h"
 #include "disc_shaman_control.h"
 
@@ -140,6 +141,63 @@ static void junkBeing(TBeing *ch, TThing *o, race_t ract)
   }
 }
 
+int TBeing::doNoJunk(const char *argument, TObj *obj)
+{
+  char arg[100], newarg[100];
+  TObj *o;
+  int num, p, count;
+
+
+  only_argument(argument, arg);
+  if (!*arg && !obj) {
+    sendTo("Set the nojunk flag on what?\n\r");
+    return FALSE;
+  }
+  if (!obj) {
+    if (getall(arg, newarg)) {
+      num = -1;
+      strcpy(arg, newarg);
+    } else if ((p = getabunch(arg, newarg))) {
+      num = p;
+      strcpy(arg, newarg);
+    } else
+      num = 1;
+  } else
+    num = 1;
+
+  count = 0;
+  while (num != 0) {
+    o = obj;
+    TThing *t_o = NULL;
+    if (!o) {
+      t_o = searchLinkedListVis(this, arg, stuff);
+      o = dynamic_cast<TObj *>(t_o);
+    }
+    if (o) {
+      if(o->isObjStat(ITEM_NOJUNK_PLAYER)) {
+	o->remObjStat(ITEM_NOJUNK_PLAYER);
+	act("You remove the no-junk flag from $p.", TRUE, this, o, NULL, TO_CHAR);
+      } else {
+	o->addObjStat(ITEM_NOJUNK_PLAYER);
+	act("You set the no-junk flag on $p.", TRUE, this, o, NULL, TO_CHAR);
+      }
+      count++;
+      if (num > 0)
+	num--;
+
+    } else 
+      break;
+  }
+  if (count)
+    return TRUE;
+
+  sendTo("No-Junk what?\n\r");
+  return FALSE;
+}
+
+
+
+
 int TBeing::doJunk(const char *argument, TObj *obj)
 {
   char arg[100], newarg[100];
@@ -173,6 +231,10 @@ int TBeing::doJunk(const char *argument, TObj *obj)
       o = dynamic_cast<TObj *>(t_o);
     }
     if (o) {
+      if (o->isObjStat(ITEM_NOJUNK_PLAYER)) {
+	sendTo("You can't junk that, someone has set a no-junk flag on it!  HELP NOJUNK\n\r");
+        return FALSE;
+      }
       if (o->isObjStat(ITEM_NODROP)) {
         sendTo("You can't let go of it, it must be CURSED!\n\r");
         return FALSE;
@@ -408,7 +470,7 @@ void TBeing::doSplit(const char *argument, bool tell)
       // took out splitting with pets 4/25/01 -- cos
         // still need loop no matter what, the no_members tracks total
       if ((k == this)) {
-        if (f->desc)
+        if (f->follower->desc)
 	  num_pc_foll++;
       }
     }
@@ -504,6 +566,11 @@ void TBeing::doReport(const char *argument)
            red(), getPercHit(), getPiety(),
            DescMoves((((double) getMove()) / ((double) moveLimit()))),
            norm());
+  else if (hasClass(CLASS_SHAMAN))
+    sprintf(info, "$n reports '%s%.1f%% H, %-4d LF. I am %s%s'",
+           red(), getPercHit(), getLifeforce(),
+           DescMoves((((double) getMove()) / ((double) moveLimit()))),
+           norm());
   else
     sprintf(info, "$n reports '%s%.1f%% H, %.1f%% M. I am %s%s'", 
            red(), getPercHit(), getPercMana(), 
@@ -533,6 +600,11 @@ void TBeing::doReport(const char *argument)
     if (hasClass(CLASS_CLERIC) || hasClass(CLASS_DEIKHAN))
       sprintf(info, "<G>$n directly reports to you  '%s%.1f%% H, %.2f%% P. I am %s%s'<1>",
            red(), getPercHit(), getPiety(),
+           DescMoves((((double) getMove()) / ((double) moveLimit()))),
+           norm());
+    else if (hasClass(CLASS_SHAMAN))
+      sprintf(info, "<G>$n directly reports to you  '%s%.1f%% H, %-4d LF. I am %s%s'<1>",
+           red(), getPercHit(), getLifeforce(),
            DescMoves((((double) getMove()) / ((double) moveLimit()))),
            norm());
     else
@@ -885,9 +957,11 @@ void TBeing::doPractice(const char *argument)
     if (!*argument) 
       sendTo("You need to specify what skill: practice skill <\"skill\">.\n\r");
     else {
-      if (strlen(argument) > 2 && is_abbrev(argument, "wizardry")) 
+      if (strlen(argument) > 3 && is_abbrev(argument, "wizardry")) 
         doPracSkill(argument, SKILL_WIZARDRY);
-      else if (strlen(argument) > 2 && is_abbrev(argument, "devotion")) 
+      else if (strlen(argument) > 3 && is_abbrev(argument, "ritualism")) 
+        doPracSkill(argument, SKILL_RITUALISM);
+      else if (strlen(argument) > 3 && is_abbrev(argument, "devotion")) 
         doPracSkill(argument, SKILL_DEVOTION);
       else 
         doPracSkill(argument, TYPE_UNDEFINED);
@@ -1059,9 +1133,11 @@ void TBeing::doPractice(const char *argument)
     if (!*argument) 
       sendTo("You need to specify what skill: practice skill <\"skill\">.\n\r");
     else {
-      if (strlen(argument) > 2 && is_abbrev(argument, "wizardry")) 
+      if (strlen(argument) > 3 && is_abbrev(argument, "wizardry")) 
         doPracSkill(argument, SKILL_WIZARDRY);
-      else if (strlen(argument) > 2 && is_abbrev(argument, "devotion")) 
+      else if (strlen(argument) > 3 && is_abbrev(argument, "ritualism")) 
+        doPracSkill(argument, SKILL_RITUALISM);
+      else if (strlen(argument) > 3 && is_abbrev(argument, "devotion")) 
         doPracSkill(argument, SKILL_DEVOTION);
       else 
         doPracSkill(argument, TYPE_UNDEFINED);
@@ -1167,7 +1243,7 @@ void TBeing::sendSkillsList(discNumT which)
       strcpy(how_long, "(Learned: Not in this Lifetime)");
     else if ((getSkillValue(i) <= 0) &&
           (!tmp_var || (discArray[i]->start - tmp_var) > 0) &&
-          (i != SKILL_WIZARDRY && i != SKILL_DEVOTION)) {
+          (i != SKILL_WIZARDRY && i != SKILL_RITUALISM && i != SKILL_DEVOTION)) {
       sprintf(how_long, "(Learned: %s)", 
           skill_diff(discArray[i]->start - tmp_var));
     } else if (discArray[i]->toggle && !hasQuestBit(discArray[i]->toggle)) {
@@ -1180,7 +1256,7 @@ void TBeing::sendSkillsList(discNumT which)
       } else {
 	strcpy(how_long, "(Learned: When Teacher is Found)");
       }
-    } else if (i == SKILL_WIZARDRY) {
+    } else if ((i == SKILL_WIZARDRY)) {
       wizardryLevelT wiz_lev = getWizardryLevel();
       if (wiz_lev < WIZ_LEV_COMP_PRIM_OTHER_FREE) {
         if (isRightHanded())
@@ -1203,7 +1279,40 @@ void TBeing::sendSkillsList(discNumT which)
       } else if (wiz_lev == WIZ_LEV_NO_MANTRA) {
         strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures");
       } else if (wiz_lev >= WIZ_LEV_COMP_BELT) {
-        strcpy(how_long, "\tcomponent=any hand, inventory or waist; no speak; no gestures");
+        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+      } else if (wiz_lev >= WIZ_LEV_COMP_NECK) {
+        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+      } else if (wiz_lev >= WIZ_LEV_COMP_WRIST) {
+        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+      }
+    } else if ((i == SKILL_RITUALISM)) {
+      ritualismLevelT wiz_lev = getRitualismLevel();
+      if (wiz_lev < RIT_LEV_COMP_PRIM_OTHER_FREE) {
+        if (isRightHanded())
+          sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free", skill_diff(discArray[i]->start - tmp_var));
+        else
+          sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free", skill_diff(discArray[i]->start - tmp_var));
+      } else if (wiz_lev == RIT_LEV_COMP_PRIM_OTHER_FREE) {
+        if (isRightHanded())
+          strcpy(how_long, "\tcomponent=right hand, left hand=free");
+        else
+          strcpy(how_long, "\tcomponent=left hand, right hand=free");
+      } else if (wiz_lev == RIT_LEV_COMP_EITHER_OTHER_FREE) {
+        strcpy(how_long,   "\tcomponent=either hand, other free");
+      } else if (wiz_lev == RIT_LEV_COMP_EITHER) {
+        strcpy(how_long, "\tcomponent=any hand");
+      } else if (wiz_lev == RIT_LEV_COMP_INV) {
+        strcpy(how_long, "\tcomponent=any hand or inventory");
+      } else if (wiz_lev == RIT_LEV_NO_GESTURES) {
+        strcpy(how_long, "\tcomponent=any hand or inventory; no gestures");
+      } else if (wiz_lev == RIT_LEV_NO_MANTRA) {
+        strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures");
+      } else if (wiz_lev >= RIT_LEV_COMP_BELT) {
+        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+      } else if (wiz_lev >= RIT_LEV_COMP_NECK) {
+        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
+      } else if (wiz_lev >= RIT_LEV_COMP_WRIST) {
+        strcpy(how_long, "\tcomponent=any hand, inventory, waist, wrist, or neck; no speak; no gestures");
       }
     } else if (i == SKILL_DEVOTION) {
       devotionLevelT wiz_lev = getDevotionLevel();
@@ -1271,7 +1380,7 @@ void TBeing::sendSkillsList(discNumT which)
 
     if (!isImmortal()) {
       if (doesKnowSkill(i)) {
-        if ((i == SKILL_WIZARDRY) || (i == SKILL_DEVOTION)) {
+        if ((i == SKILL_WIZARDRY) || (i == SKILL_RITUALISM) || (i == SKILL_DEVOTION)) {
             sprintf(buf, "%s%-25.25s%s   Current: %-15s\n\r%-15s.\n\r",
                    cyan(), discArray[i]->name, norm(),
                    how_good(getSkillValue(i)), how_long);
@@ -1333,14 +1442,21 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
   if (!*argument && skNum == TYPE_UNDEFINED) 
     return;
 
-  if (skNum == SKILL_WIZARDRY) {
+  if ((skNum == SKILL_WIZARDRY)) {
     if (hasClass(CLASS_MAGE) ||
-	hasClass(CLASS_RANGER) ||
-	hasClass(CLASS_SHAMAN)) {
+	hasClass(CLASS_RANGER)) {
       found=2;
       wiz = 1;
     } else {
       sendTo("You do not know about Wizardry.\n\r");
+      found = 1;
+    }
+  } else if ((skNum == SKILL_RITUALISM)) {
+    if (hasClass(CLASS_SHAMAN)) {
+      found=2;
+      wiz = 1;
+    } else {
+      sendTo("You do not know about Ritualism.\n\r");
       found = 1;
     }
   } else if (skNum == SKILL_DEVOTION){
@@ -1404,35 +1520,73 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
   tmp_var = max((int) MAX_DISC_LEARNEDNESS, tmp_var);
 
   if (wiz == 1) {
-    wizardryLevelT wiz_lev = getWizardryLevel();
-    if (wiz_lev < WIZ_LEV_COMP_PRIM_OTHER_FREE) {
-      if (isRightHanded()) {
-        sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
-      } else {
-        sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+    if (hasClass(CLASS_SHAMAN)) {
+      ritualismLevelT wiz_lev = getRitualismLevel();
+      if (wiz_lev < RIT_LEV_COMP_PRIM_OTHER_FREE) {
+	if (isRightHanded()) {
+	  sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	} else {
+	  sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	}
+	sendTo(COLOR_BASIC, how_long);
+	return;
+      } else if (wiz_lev == RIT_LEV_COMP_PRIM_OTHER_FREE) {
+	if (isRightHanded())
+	  strcpy(how_long, "\tcomponent=right hand, left hand=free.\n\r");
+	else
+	  strcpy(how_long, "\tcomponent=left hand, right hand=free.\n\r");
+      } else if (wiz_lev == RIT_LEV_COMP_EITHER_OTHER_FREE) {
+	strcpy(how_long,   "\tcomponent=either hand, other free.\n\r");
+      } else if (wiz_lev == RIT_LEV_COMP_EITHER) {
+	strcpy(how_long, "\tcomponent=any hand.\n\r");
+      } else if (wiz_lev == RIT_LEV_COMP_INV) {
+	strcpy(how_long, "\tcomponent=any hand or inventory.\n\r");
+      } else if (wiz_lev == RIT_LEV_NO_GESTURES) {
+	strcpy(how_long, "\tcomponent=any hand or inventory; no gestures.\n\r");
+      } else if (wiz_lev == RIT_LEV_NO_MANTRA) {
+	strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures.\n\r");
+      } else if (wiz_lev >= RIT_LEV_COMP_BELT) {
+	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+      } else if (wiz_lev >= RIT_LEV_COMP_NECK) {
+	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+      } else if (wiz_lev >= RIT_LEV_COMP_WRIST) {
+	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
       }
       sendTo(COLOR_BASIC, how_long);
-      return;
-    } else if (wiz_lev == WIZ_LEV_COMP_PRIM_OTHER_FREE) {
-      if (isRightHanded())
-        strcpy(how_long, "\tcomponent=right hand, left hand=free.\n\r");
-      else
-        strcpy(how_long, "\tcomponent=left hand, right hand=free.\n\r");
-    } else if (wiz_lev == WIZ_LEV_COMP_EITHER_OTHER_FREE) {
-      strcpy(how_long,   "\tcomponent=either hand, other free.\n\r");
-    } else if (wiz_lev == WIZ_LEV_COMP_EITHER) {
-      strcpy(how_long, "\tcomponent=any hand.\n\r");
-    } else if (wiz_lev == WIZ_LEV_COMP_INV) {
-      strcpy(how_long, "\tcomponent=any hand or inventory.\n\r");
-    } else if (wiz_lev == WIZ_LEV_NO_GESTURES) {
-      strcpy(how_long, "\tcomponent=any hand or inventory; no gestures.\n\r");
-    } else if (wiz_lev == WIZ_LEV_NO_MANTRA) {
-      strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures.\n\r");
-    } else if (wiz_lev >= WIZ_LEV_COMP_BELT) {
-      strcpy(how_long, "\tcomponent=any hand, waist or waist; no speak; no gestures.\n\r");
+    } else {
+      wizardryLevelT wiz_lev = getWizardryLevel();
+      if (wiz_lev < WIZ_LEV_COMP_PRIM_OTHER_FREE) {
+	if (isRightHanded()) {
+	  sprintf(how_long, "(Learned: %s)\tcomponent=right hand, left hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	} else {
+	  sprintf(how_long, "(Learned: %s)\tcomponent=left hand, right hand=free.\n\r", skill_diff(discArray[skNum]->start - tmp_var));
+	}
+	sendTo(COLOR_BASIC, how_long);
+	return;
+      } else if (wiz_lev == WIZ_LEV_COMP_PRIM_OTHER_FREE) {
+	if (isRightHanded())
+	  strcpy(how_long, "\tcomponent=right hand, left hand=free.\n\r");
+	else
+	  strcpy(how_long, "\tcomponent=left hand, right hand=free.\n\r");
+      } else if (wiz_lev == WIZ_LEV_COMP_EITHER_OTHER_FREE) {
+	strcpy(how_long,   "\tcomponent=either hand, other free.\n\r");
+      } else if (wiz_lev == WIZ_LEV_COMP_EITHER) {
+	strcpy(how_long, "\tcomponent=any hand.\n\r");
+      } else if (wiz_lev == WIZ_LEV_COMP_INV) {
+	strcpy(how_long, "\tcomponent=any hand or inventory.\n\r");
+      } else if (wiz_lev == WIZ_LEV_NO_GESTURES) {
+	strcpy(how_long, "\tcomponent=any hand or inventory; no gestures.\n\r");
+      } else if (wiz_lev == WIZ_LEV_NO_MANTRA) {
+	strcpy(how_long, "\tcomponent=any hand or inventory; no speak; no gestures.\n\r");
+      } else if (wiz_lev >= WIZ_LEV_COMP_BELT) {
+	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+      } else if (wiz_lev >= WIZ_LEV_COMP_NECK) {
+	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+      } else if (wiz_lev >= WIZ_LEV_COMP_WRIST) {
+	strcpy(how_long, "\tcomponent=any hand, waist, wrist, neck, or inventory; no speak; no gestures.\n\r");
+      }
+      sendTo(COLOR_BASIC, how_long);
     }
-    sendTo(COLOR_BASIC, how_long);
-
   } else if (wiz == 2) {
     devotionLevelT wiz_lev = getDevotionLevel();
     if (wiz_lev < DEV_LEV_SYMB_PRIM_OTHER_FREE) {
@@ -1649,6 +1803,17 @@ void TBeing::doGroup(const char *argument)
               tmp_share, ((tmp_share == 1) ? "" : "s"),
               k->getExpSharePerc(),
               norm());
+          } else if (k->hasClass(CLASS_SHAMAN)) {
+            sendTo("%s%-15.15s%s [%s%.1f%%hp %-4d lf. %s look%s %s.%s]\n\r\t%s%2d share%s talens, %.1f%% shares XP%s\n\r", cyan(), cap(namebuf), norm(), red(),
+              (((double) (k->getHit())) / ((double) k->hitLimit()) * 100),
+              k->getLifeforce(), 
+              cap(namebuf),
+              (k != this ? "s" : ""),
+              DescMoves((((double) k->getMove()) / ((double) k->moveLimit()))),
+              norm(), purple(),
+              tmp_share, ((tmp_share == 1) ? "" : "s"),
+              k->getExpSharePerc(),
+              norm());
           } else {
             sendTo("%s%-15.15s%s [%s%.1f%%hp %.1f%%m. %s look%s %s.%s]\n\r\t%s%2d share%s talens, %.1f%% shares XP%s\n\r", cyan(), cap(namebuf), norm(), red(),
               (((double) (k->getHit())) / ((double) k->hitLimit()) * 100),
@@ -1682,6 +1847,18 @@ void TBeing::doGroup(const char *argument)
                 tmp_share, ((tmp_share == 1) ? "" : "s"), 
                 f->follower->getExpSharePerc(),
                 norm());
+            else if (f->follower->hasClass(CLASS_SHAMAN))
+              sendTo("%s%-15.15s%s [%s%.1f%%hp %-4d lf. %s look%s %s.%s]\n\r\t%s%2d share%s talens, %.1f%% shares XP%s\n\r", cyan(), cap(namebuf), norm(), red(),
+                (((double) (f->follower->getHit())) / ((double) f->follower->hitLimit()) * 100),
+                f->follower->getLifeforce(),
+                cap(namebuf),
+                (f->follower != this ? "s" : ""),
+                DescMoves((((double) f->follower->getMove()) / ((double) f->follower->moveLimit()))),
+                norm(), purple(),
+                tmp_share, ((tmp_share == 1) ? "" : "s"), 
+                f->follower->getExpSharePerc(),
+                norm());
+
             else {
               sendTo("%s%-15.15s%s [%s%.1f%%hp %.1f%%m. %s look%s %s.%s]\n\r\t%s%2d share%s talens, %.1f%% shares XP%s\n\r", cyan(), cap(namebuf), norm(), red(), 
                 (((double) (f->follower->getHit())) / ((double) f->follower->hitLimit()) * 100),
@@ -1818,9 +1995,13 @@ void TBeing::doGroup(const char *argument)
         sendTo("You group yourself.\n\r");
         act("$n groups $mself.",TRUE,this,0,0,TO_ROOM);
         SET_BIT(victim->specials.affectedBy, AFF_GROUP);
-        if (desc && desc->m_bIsClient) 
-          desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getMana(), attack_modes[getCombatMode()]);
-        
+	if (hasClass(CLASS_SHAMAN)) {
+          if (desc && desc->m_bIsClient) 
+	    desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getLifeforce(), attack_modes[getCombatMode()]);
+	} else { 
+          if (desc && desc->m_bIsClient) 
+	    desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getMana(), attack_modes[getCombatMode()]);
+	}       
         if (victim->desc)
           victim->desc->session.group_share = 1;
 
@@ -1831,9 +2012,13 @@ void TBeing::doGroup(const char *argument)
         act("$n adds $N to $s group.",TRUE,this,0,victim,TO_NOTVICT);
         victim->sendTo(COLOR_MOBS, "You are now a member of %s's group.\n\r",getName());
         SET_BIT(victim->specials.affectedBy, AFF_GROUP);
-        if (desc && desc->m_bIsClient) 
-          desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
-        
+	if (hasClass(CLASS_SHAMAN)) {
+	  if (desc && desc->m_bIsClient)
+	    desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getLifeforce(), attack_modes[victim->getCombatMode()]);
+	} else {
+	  if (desc && desc->m_bIsClient)
+	    desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
+	}        
         for (f = followers; f; f = f->next) {
           TBeing *b = f->follower;
           if (victim->desc && victim->desc->m_bIsClient)  {
@@ -1841,14 +2026,24 @@ void TBeing::doGroup(const char *argument)
                        b->getName(), b->getHit(), b->getMana(), attack_modes[b->getCombatMode()]);
           } 
           if (b->desc && b->desc->m_bIsClient) {
-            b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
-                             victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]); 
+	    if (hasClass(CLASS_SHAMAN)) {
+	      b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
+			       victim->getName(), victim->getHit(), victim->getLifeforce(), attack_modes[victim->getCombatMode()]);
+	    } else {
+	      b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
+			       victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
+	    }
           }
         }
         found = TRUE;
         if (victim->desc) {
-          victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getMana(), attack_modes[getCombatMode()]);
-          victim->desc->session.group_share = 1;
+	  if (hasClass(CLASS_SHAMAN)) {
+	    victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getLifeforce(), attack_modes[getCombatMode()]);
+	    victim->desc->session.group_share = 1;
+	  } else {
+	    victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getMana(), attack_modes[getCombatMode()]);
+	    victim->desc->session.group_share = 1;
+	  }
         }
         continue;
       }
@@ -1961,25 +2156,44 @@ void TBeing::doGroup(const char *argument)
         act("$n is now a member of $N's group.", FALSE, victim, 0, this, TO_ROOM);
         act("You are now a member of $N's group.", FALSE, victim, 0, this, TO_CHAR);
         SET_BIT(victim->specials.affectedBy, AFF_GROUP);
-        if (desc && desc->m_bIsClient) 
-          desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
-        
+	if (hasClass(CLASS_SHAMAN)) {
+	  if (desc && desc->m_bIsClient)
+	    desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getLifeforce(), attack_modes[victim->getCombatMode()]);
+	} else {
+	  if (desc && desc->m_bIsClient)
+	    desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
+	}        
         if (victim != this) {
           for (f = followers; f; f = f->next) {
             TBeing *b = f->follower;
             if (victim->desc && victim->desc->m_bIsClient)  {
-              victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
-                         b->getName(), b->getHit(), b->getMana(), attack_modes[b->getCombatMode()]);
+	      if (hasClass(CLASS_SHAMAN)) {
+		victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
+				      b->getName(), b->getHit(), b->getLifeforce(), attack_modes[b->getCombatMode()]);
+	      } else {
+		victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
+				      b->getName(), b->getHit(), b->getMana(), attack_modes[b->getCombatMode()]);
+	      }
             }
             if (b->desc && b->desc->m_bIsClient) {
-              b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
-                               victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
+	      if (hasClass(CLASS_SHAMAN)) {
+		b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
+				 victim->getName(), victim->getHit(), victim->getLifeforce(), attack_modes[victim->getCombatMode()]);
+	      } else {
+		b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
+				 victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
+	      }
             }
           }
         }
         if (victim->desc) {
-          victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getMana(), attack_modes[getCombatMode()]);
-          victim->desc->session.group_share = 1;
+	  if (hasClass(CLASS_SHAMAN)) {
+	    victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getLifeforce(), attack_modes[getCombatMode()]);
+	    victim->desc->session.group_share = 1;
+	  } else {
+	    victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getMana(), attack_modes[getCombatMode()]);
+	    victim->desc->session.group_share = 1;
+	  }
         }
       }
     } else
@@ -2194,6 +2408,12 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_PROTECTION_FROM_AIR:
       protectionFromAir(caster,victim,obj);
       break;
+    case SPELL_DJALLA:
+      djallasProtection(caster,victim,obj);
+      break;
+    case SPELL_LEGBA:
+      legbasGuidance(caster,victim,obj);
+      break;
     case SPELL_PROTECTION_FROM_EARTH:
       protectionFromEarth(caster,victim,obj);
       break;
@@ -2239,6 +2459,9 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_AQUATIC_BLAST:
       rc = aquaticBlast(caster,victim,obj);
       break;
+    case SPELL_CARDIAC_STRESS:
+      rc = cardiacStress(caster,victim,obj);
+      break;
     case SPELL_ARCTIC_BLAST:
       rc = arcticBlast(caster,obj);
       break;
@@ -2263,11 +2486,26 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_MYSTIC_DARTS:
       rc = mysticDarts(caster,victim,obj);
       break;
+    case SPELL_STICKS_TO_SNAKES:
+      sticksToSnakes(caster,victim,obj);
+      break;
+    case SPELL_STUPIDITY:
+      stupidity(caster,victim,obj);
+      break;
+    case SPELL_DISTORT:
+      rc = distort(caster,victim,obj);
+      break;
+    case SPELL_DEATHWAVE:
+      rc = deathWave(caster,victim,obj);
+      break;
     case SPELL_FLARE:
       rc = flare(caster,obj);
       break;
     case SPELL_STUNNING_ARROW:
       rc = stunningArrow(caster,victim,obj);
+      break;
+    case SPELL_SOUL_TWIST:
+      rc = soulTwist(caster,victim,obj);
       break;
     case SPELL_COLOR_SPRAY:
       rc = colorSpray(caster,obj);
@@ -2283,6 +2521,9 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
       break;
     case SPELL_SENSE_LIFE:
       senseLife(caster,victim,obj);
+      break;
+    case SPELL_SENSE_LIFE_SHAMAN:
+      senseLifeShaman(caster,victim,obj);
       break;
     case SPELL_STEALTH:
       stealth(caster,victim,obj);
@@ -2307,6 +2548,9 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_DETECT_INVISIBLE:
       detectInvisibility(caster,victim,obj);
       break;
+    case SPELL_DETECT_SHADOW:
+      detectShadow(caster,victim,obj);
+      break;
     case SPELL_TRUE_SIGHT:
       trueSight(caster,victim,obj);
       break;
@@ -2315,6 +2559,12 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
       break;
     case SPELL_ACCELERATE:
       accelerate(caster,victim,obj);
+      break;
+    case SPELL_CHEVAL: // shaman
+      cheval(caster,victim,obj);
+      break;
+    case SPELL_CELERITE: // shaman
+      celerite(caster,victim,obj);
       break;
     case SPELL_HASTE:
       haste(caster,victim,obj);
@@ -2510,20 +2760,38 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_CONTROL_UNDEAD:
       controlUndead(caster,victim,obj);
       break;
+    case SPELL_SHADOW_WALK:
+      shadowWalk(caster,victim,obj);
+      break;
     case SPELL_RESURRECTION:
-      rc = resurrection(caster,target,obj);
+      resurrection(caster,obj);
       break;
     case SPELL_DANCING_BONES:
-      rc = dancingBones(caster,target,obj);
+      dancingBones(caster,obj);
       break;
     case SPELL_VOODOO:
-      rc = voodoo(caster,target,obj);
+      voodoo(caster,obj);
       break;
     case SKILL_BARKSKIN:
       barkskin(caster,victim,obj);
       break;
-    case SPELL_STICKS_TO_SNAKES:
-      sticksToSnakes(caster,victim,obj);
+    case SPELL_RAZE:
+      rc = raze(caster,victim,obj);
+      break;
+    case SPELL_LICH_TOUCH:
+      rc = lichTouch(caster,victim,obj);
+      break;
+    case SPELL_VAMPIRIC_TOUCH:
+      rc = vampiricTouch(caster,victim,obj);
+      break;
+    case SPELL_HYPNOSIS:
+      hypnosis(caster,victim,obj);
+      break;
+    case SPELL_BLOOD_BOIL:
+      rc = bloodBoil(caster, victim, obj);
+      break;
+    case SPELL_CLARITY:
+      clarity(caster,victim,obj);
       break;
     case SPELL_LIVING_VINES:
       livingVines(caster,victim,obj);
@@ -2603,7 +2871,7 @@ int TScroll::reciteMe(TBeing *ch, const char * argument)
   TBeing *victim = NULL;
   int i, bits, rc;
 
-  if (!ch->hasClass(CLASS_MAGIC_USER) && !ch->hasClass(CLASS_CLERIC)) {
+  if (!ch->hasClass(CLASS_MAGIC_USER) && !ch->hasClass(CLASS_CLERIC) && !ch->hasClass(CLASS_SHAMAN)) {
     if (!bSuccess(ch, ch->getSkillValue(SKILL_READ_MAGIC), SKILL_READ_MAGIC)) {
       ch->sendTo("You can't understand this...\n\r");
       return FALSE;
@@ -2990,7 +3258,7 @@ void TBeing::doContinue(const char *argument)
       return;
     }
   } else if ((spellType == SPELL_DANCER)) {
-    if (!reconcileMana(spelltask->spell, TRUE)) { 
+    if (!reconcileLifeforce(spelltask->spell, TRUE)) { 
       // will need to change to lifeforce
       sendTo("You can not continue a invokation without enough lifeforce.\n\r");
       return;
@@ -3009,16 +3277,13 @@ void TBeing::doContinue(const char *argument)
       sendTo("You can not change your prayer in this manner.\n\r");
       return;
     }
-    if ((spellType == SPELL_PRAYER) && (getPiety() < (value *
-usePiety(spelltask->spell)))) {
+    if ((spellType == SPELL_PRAYER) && (getPiety() < (value * usePiety(spelltask->spell)))) {
       sendTo("You do not have the piety to continue your prayer that many times.\n\r");
       return;
-    } else if ((spellType == SPELL_CASTER) && (getMana() < (value *
-useMana(spelltask->spell)))) {
+    } else if ((spellType == SPELL_CASTER) && (getMana() < (value * useMana(spelltask->spell)))) {
       sendTo("You do not have the mana to continue your spell that many times.\n\r");
       return;
-    } else if ((spellType == SPELL_DANCER) && (getMana() < (value *
-useMana(spelltask->spell)))) {
+    } else if ((spellType == SPELL_DANCER) && (getLifeforce() < (value * useLifeforce(spelltask->spell)))) {
       sendTo("You do not have the lifeforce to invoke that many times.\n\r");
       return;
     }
@@ -3844,3 +4109,20 @@ void TBeing::doAfk()
   }
 }
 
+bool TBeing::isWary() const
+{
+  return affectedBySpell(AFFECT_WARY);  
+}
+
+void TBeing::makeWary()
+{
+  if (isPc())
+    return;
+  
+  affectedData aff;
+
+  aff.type = AFFECT_WARY;
+  aff.duration = 2 * UPDATES_PER_MUDHOUR;
+  affectTo(&aff);
+
+}

@@ -99,6 +99,11 @@ bool TDrugContainer::monkRestrictedItem(const TBeing *) const
   return FALSE;
 }
 
+bool TDrugContainer::shamanRestrictedItem(const TBeing *) const
+{
+  return FALSE;
+}
+
 bool TDrugContainer::rangerRestrictedItem(const TBeing *) const
 {
   return FALSE;

@@ -18,7 +18,7 @@ static int charge(TBeing *ch, TBeing *vict)
   }
   if(ch->doesKnowSkill(mount->mountSkillType()) &&
      ch->advancedRidingBonus(mount)<50
-     && mount->getRace() != RACE_HORSE){
+     && mount->getRace() != RACE_HORSE) {
     ch->sendTo("You lack the skill to charge with this mount.\n\r");
     return FALSE;
   }
@@ -142,7 +142,7 @@ vict->getName());
 #if 1  // added charge crit per popular request
   // this is not the right way to do this.  - bat
   // New Damage Formula for Charge
-  //if (gamePort != PROD_GAMEPORT) {
+  //if (gamePort != PROD_GAMEPORT) 
     //float newDam        = (100 + ((float) mount->GetMaxLevel() -
   // (float) ch->GetMaxLevel())) / 100;
     //float crossValue    = (float) dam * newDam;
@@ -150,7 +150,7 @@ vict->getName());
     //bool  didCrit       = false;
 
     //    dam = (int) crossValue;
-
+  
     TThing *prim = ch->heldInPrimHand();
     if (prim && !(::number(0, 25))) {
       act("A split second before the charge you brace your $o to strike.",

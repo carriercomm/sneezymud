@@ -54,6 +54,116 @@ void assign_component_placement()
      HOUR_SUNSET, -1, -1, -1, -1, -1, -1,
      "<p>$p slowly fades out of existence!<1>", ""));
 
+  // cheval
+  component_placement.push_back(compPlace(6101, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_PLACE, 20, 65,
+     HOUR_DAY_BEGIN, HOUR_DAY_END, -1, -1, -1, -1, (1<<WEATHER_RAINY),
+     "<k>$p stupidly dives into the ground and lands on it's back.<1>" ,""));
+  component_placement.push_back(compPlace(6101, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     HOUR_DAY_END, -1, -1, -1, -1, -1, -1,
+     "<k>$p skitters away into the night.<1>", ""));
+  component_placement.push_back(compPlace(6101, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     -1, -1, -1, -1, -1, -1, ~(1<<WEATHER_RAINY),
+     "<k>$p flips over and flies away.<1>", ""));
+  component_placement.push_back(compPlace(6104, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_PLACE, 20, 65,
+     HOUR_DAY_BEGIN, HOUR_DAY_END, -1, -1, -1, -1, (1<<WEATHER_RAINY),
+     "<k>$p stupidly dives into the ground and lands on it's back.<1>" ,""));
+  component_placement.push_back(compPlace(6104, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     HOUR_DAY_END, -1, -1, -1, -1, -1, -1,
+     "<k>$p skitters away into the night.<1>", ""));
+  component_placement.push_back(compPlace(6104, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     -1, -1, -1, -1, -1, -1, ~(1<<WEATHER_RAINY),
+     "<k>$p flips over and flies away.<1>", ""));
+  component_placement.push_back(compPlace(6108, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_PLACE, 20, 65,
+     HOUR_DAY_BEGIN, HOUR_DAY_END, -1, -1, -1, -1, (1<<WEATHER_RAINY),
+     "<k>$p stupidly dives into the ground and lands on it's back.<1>" ,""));
+  component_placement.push_back(compPlace(6108, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     HOUR_DAY_END, -1, -1, -1, -1, -1, -1,
+     "<k>$p skitters away into the night.<1>", ""));
+  component_placement.push_back(compPlace(6108, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     -1, -1, -1, -1, -1, -1, ~(1<<WEATHER_RAINY),
+     "<k>$p flips over and flies away.<1>", ""));
+  component_placement.push_back(compPlace(6200, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_PLACE, 20, 65,
+     HOUR_DAY_BEGIN, HOUR_DAY_END, -1, -1, -1, -1, (1<<WEATHER_RAINY),
+     "<k>$p stupidly dives into the ground and lands on it's back.<1>" ,""));
+  component_placement.push_back(compPlace(6200, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     HOUR_DAY_END, -1, -1, -1, -1, -1, -1,
+     "<k>$p skitters away into the night.<1>", ""));
+  component_placement.push_back(compPlace(6200, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     -1, -1, -1, -1, -1, -1, ~(1<<WEATHER_RAINY),
+     "<k>$p flips over and flies away.<1>", ""));
+
+  component_placement.push_back(compPlace(6205, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_PLACE, 20, 65,
+     HOUR_DAY_BEGIN, HOUR_DAY_END, -1, -1, -1, -1, (1<<WEATHER_RAINY),
+     "<k>$p stupidly dives into the ground and lands on it's back.<1>" ,""));
+  component_placement.push_back(compPlace(6205, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     HOUR_DAY_END, -1, -1, -1, -1, -1, -1,
+     "<k>$p skitters away into the night.<1>", ""));
+  component_placement.push_back(compPlace(6205, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     -1, -1, -1, -1, -1, -1, ~(1<<WEATHER_RAINY),
+     "<k>$p flips over and flies away.<1>", ""));
+
+  component_placement.push_back(compPlace(6211, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_PLACE, 20, 65,
+     HOUR_DAY_BEGIN, HOUR_DAY_END, -1, -1, -1, -1, (1<<WEATHER_RAINY),
+     "<k>$p stupidly dives into the ground and lands on it's back.<1>" ,""));
+  component_placement.push_back(compPlace(6211, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     HOUR_DAY_END, -1, -1, -1, -1, -1, -1,
+     "<k>$p skitters away into the night.<1>", ""));
+  component_placement.push_back(compPlace(6211, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     -1, -1, -1, -1, -1, -1, ~(1<<WEATHER_RAINY),
+     "<k>$p flips over and flies away.<1>", ""));
+  component_placement.push_back(compPlace(6220, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_PLACE, 20, 65,
+     HOUR_DAY_BEGIN, HOUR_DAY_END, -1, -1, -1, -1, (1<<WEATHER_RAINY),
+     "<k>$p stupidly dives into the ground and lands on it's back.<1>" ,""));
+  component_placement.push_back(compPlace(6220, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     HOUR_DAY_END, -1, -1, -1, -1, -1, -1,
+     "<k>$p skitters away into the night.<1>", ""));
+  component_placement.push_back(compPlace(6220, -1, MOB_NONE, 
+     COMP_CHEVAL,
+     CACT_REMOVE, -1, 100,
+     -1, -1, -1, -1, -1, -1, ~(1<<WEATHER_RAINY),
+     "<k>$p flips over and flies away.<1>", ""));
+
+
 // color spray
   component_placement.push_back(compPlace(11328, -1, MOB_NONE, 
      COMP_COLOR_SPRAY,
@@ -948,6 +1058,30 @@ void buildComponentArray()
     "",
     "You stretch $p between your forefingers.",
     "$n stretches $p between $s forefingers."));
+  CompInfo.push_back(compInfo(SPELL_VOODOO,
+    "",                       
+    "",
+    "",
+    "You taste $p and spit it out.",
+    "$n tastes $p and then $e spits it out.",
+    "You taste $p and spit it out.",
+    "$n tastes $p and then $e spits it out."));
+  CompInfo.push_back(compInfo(SPELL_DANCING_BONES,
+    "",                       
+    "",
+    "",
+    "You blow $p into the air.",
+    "$n blows $p into the air.",
+    "You blow $p into the air.",
+    "$n blows $p into the air."));
+  CompInfo.push_back(compInfo(SPELL_RESURRECTION,
+    "",                       
+    "",
+    "",
+    "You toss $p into the air and it vanishes.",
+    "$n tosses $p into the air and it vanishes.",
+    "You toss $p into the air and it vanishes.",
+    "$n tosses $p into the air and it vanishes."));
   CompInfo.push_back(compInfo(SPELL_GALVANIZE,
     "",                       
     "",
@@ -980,6 +1114,14 @@ void buildComponentArray()
     "$n presses $p to the $g.",
     "",
     ""));
+  CompInfo.push_back(compInfo(SPELL_FLATULENCE,
+    "",                       
+    "",
+    "",
+    "You quickly eat $p.",
+    "$n quickly eats $p.",
+    "",
+    ""));
   CompInfo.push_back(compInfo(SPELL_SAND_BLAST,
     "",                       
     "",
@@ -994,6 +1136,14 @@ void buildComponentArray()
     "",
     "You press $p between your hands.",
     "$n presses $p between $s hands.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_DEATH_MIST,
+    "",
+    "",
+    "",
+    "You eat $p and begin to choke on them.",
+    "$n eats $p and begins to choke on them.",
     "",
     ""));
   CompInfo.push_back(compInfo(SPELL_STONE_SKIN,
@@ -1034,6 +1184,14 @@ void buildComponentArray()
     "$n holds $p between two fingers while looking at you.",
     "You hold $p between two fingers and close your eyes.",
     "$n holds $p between two fingers and closes $s eyes.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_STUPIDITY,
+    "You repeat $p and look at $N.",
+    "$n repeats $p and looks at $N.",
+    "$n repeats $p while looking at you.",
+    "You repeat $p and close your eyes.",
+    "$n repeats $p and closes $s eyes.",
     "",
     ""));
   CompInfo.push_back(compInfo(SPELL_FLAMING_SWORD,
@@ -1095,7 +1253,7 @@ void buildComponentArray()
   CompInfo.push_back(compInfo(SPELL_STUNNING_ARROW,
     "You wrap $p around your wrist and reach for $N.",
     "$n wraps $p around a wrist and reaches for $N.",
-    "$n wraps $P around a wrist and reaches for you.",                       
+    "$n wraps $p around a wrist and reaches for you.",                       
     "You wrap $p around your wrist and grab yourself.",
     "$n wraps $p around a wrist and grabs $mself.",
     "",
@@ -1116,7 +1274,71 @@ void buildComponentArray()
     "$n waves $p at $mself.",
     "",
     ""));
+  CompInfo.push_back(compInfo(SPELL_LICH_TOUCH,
+    "You fling $p at $N.",
+    "$n flings $p at $N.",
+    "$n flings $p at you.",                       
+    "You fling $p at yourself.",
+    "$n flings $p at $mself.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_SQUISH,
+    "You squeeze $p tightly.",
+    "$n squeezes $p tightly.",
+    "$n squeezes $p tightly.",                       
+    "You squeeze $p tightly.",
+    "$n squeezes $p tightly.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CARDIAC_STRESS,
+    "You chew up $p and then kiss $N deeply on the mouth.",
+    "$n chews up $p and then kisses $N deeply on the mouth.",
+    "$n chews up $p and then kisses you deeply on the mouth.",                       
+    "You chew up $p and accidentally swallow the poisonous juice.",
+    "$n chews up $p and accidentally swallows it.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_SOUL_TWIST,
+    "You wrap $p around your wrist and reach for $N.",
+    "$n wraps $p around a wrist and reaches for $N.",
+    "$n wraps $P around a wrist and reaches for you.",                       
+    "You wrap $p around your wrist and grab yourself.",
+    "$n wraps $p around a wrist and grabs $mself.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_VAMPIRIC_TOUCH,
+    "You consume $p and spit it on $N.",
+    "$n consumes $p and spits it on $N.",
+    "$n consumes $p and spits it on you.",                       
+    "You consume $p and accidentally swallow it.",
+    "$n consumes $p and swallows it down.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_BLOOD_BOIL,
+    "You spit $p at $N.",
+    "$n spits $p at $N.",
+    "$n spits $p at you.",                       
+    "You swallow $p and start to drool.",
+    "$n swallows $p and drools on $mself.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_LIFE_LEECH,
+    "You throw $p onto $N's chest.",
+    "$n throws $p onto $N's chest.",
+    "$n throws $p onto your chest!",                       
+    "You fumble $p and it latches on to you.",
+    "$n fumbles $p and it latches tightly to $s chest.",
+    "",
+    ""));
   CompInfo.push_back(compInfo(SPELL_ATOMIZE,
+    "You blow $p at $N.",
+    "$n blow $p at $N.",
+    "$n blows $p at you.",                       
+    "You blow $p at yourself.",
+    "$n blow $p at $mself.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_DEATHWAVE,
     "You blow $p at $N.",
     "$n blow $p at $N.",
     "$n blows $p at you.",                       
@@ -1146,6 +1368,14 @@ void buildComponentArray()
     "",
     "You toss $p into the pile of armor.",
     "$n tosses $p into the pile of armor.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CONTROL_UNDEAD,
+    "",                       
+    "",                       
+    "",
+    "You toss $p on the ground.",
+    "$n tosses $p on the ground.",
     "",
     ""));
   CompInfo.push_back(compInfo(SPELL_SHIELD_OF_MISTS,
@@ -1198,6 +1428,14 @@ void buildComponentArray()
     "$n touches $p to $s head.",
     "",
     ""));
+  CompInfo.push_back(compInfo(SPELL_SENSE_LIFE_SHAMAN,
+    "You touch $p to $N's head.",
+    "$n touches $p to $N's head.",
+    "$n touches $p to your head.",                       
+    "You touch $p to your head.",
+    "$n touches $p to $s head.",
+    "",
+    ""));
   CompInfo.push_back(compInfo(SPELL_FARLOOK,
     "",                       
     "",
@@ -1238,12 +1476,20 @@ void buildComponentArray()
     "$n ties $p in a knot.",
     "",
     ""));
+  CompInfo.push_back(compInfo(SPELL_INTIMIDATE,
+    "You flick $p at $N.",
+    "$n flicks $p at $N.",
+    "$n flicks $p at you.",                       
+    "You rub $p on your face? YUCK!",
+    "$n rubs $p on $s face! What a dweeb!",
+    "",
+    ""));
   CompInfo.push_back(compInfo(SPELL_FEAR,
-    "You crush $p into powder and blow it at $N.",
-    "$n crushes $p into a powder and blows it at $N.",
-    "$n crushes $p into a powder and blows it at you.",                       
-    "You crush $p into powder and inhale it.",
-    "$n crushes $p into a powder and inhale it.",
+    "You throw $p at $N.",
+    "$n throws $p at $N.",
+    "$n throws $p at you.",                       
+    "You throw $p on the ground.",
+    "$n throws $p on the ground.",
     "",
     ""));
   CompInfo.push_back(compInfo(SPELL_INVISIBILITY,
@@ -1270,6 +1516,14 @@ void buildComponentArray()
     "$n tosses $p on $mself.",
     "",
     ""));
+  CompInfo.push_back(compInfo(SPELL_DETECT_SHADOW,
+    "You sprinkle $p on $N.",
+    "$n sprinkles $p on $N.",
+    "$n sprinkles $p on you.",                       
+    "You sprinkle $p on yourself.",
+    "$n sprinkles $p on $mself.",
+    "",
+    ""));
   CompInfo.push_back(compInfo(SPELL_DISPEL_INVISIBLE,
     "You scatter $p near $N.",
     "$n scatters $p near $N.",
@@ -1284,6 +1538,22 @@ void buildComponentArray()
     "",
     "You touch $p to your forehead.",
     "$n touches $p to $s forehead.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_ROMBLER,
+    "",                       
+    "",
+    "",
+    "You stretch out $p.",
+    "$n stretches out $p.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_RAZE,
+    "You toss $p at $N.",
+    "$n tosses $p at $N.",
+    "$n tosses $p at you.",                       
+    "You toss $p to the ground.",
+    "$n tosses $p to the ground.",
     "",
     ""));
   CompInfo.push_back(compInfo(SPELL_TRUE_SIGHT,
@@ -1462,6 +1732,80 @@ void buildComponentArray()
     "$n squeezes $p.",
     "",
     ""));
+  CompInfo.push_back(compInfo(SPELL_HYPNOSIS,
+    "You shake $p in $N's face.",
+    "$n shakes $p.",
+    "$n shakes $p.",                       
+    "You shake $p in your own face.",
+    "$n shakes $p.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CHEVAL,
+    "",                       
+    "",
+    "",
+    "You swallow $p.",
+    "$n swallows $p.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CELERITE,
+    "",                       
+    "",
+    "",
+    "You eat $p.",
+    "$n eats $p.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CLARITY,
+    "",
+    "",
+    "",                       
+    "You put a few drops of $p in your eyes.",
+    "$n put a few drops of $p in $s eyes.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_SHADOW_WALK,
+    "",
+    "",
+    "",                       
+    "You drop $p to the ground and crush it under your feet.",
+    "$n drops $p to the ground and crushes it under $s feet.",
+    "",
+    ""));
+#if 1
+  CompInfo.push_back(compInfo(SPELL_EARTHMAW,
+			      "You grind $p into the ground.",
+			      "$n grinds $p into the ground.",
+			      "$n grinds $p into the ground.",
+			      "",
+			      "",
+			      "",
+			      ""));
+  CompInfo.push_back(compInfo(SPELL_CREEPING_DOOM,
+                              "You uncork $p blow it in $N's direction.",
+                              "$n uncorks $p and blows it in $N's direction.",
+                              "$n uncorks $p and blows in in your direction.",
+                              "You uncork $p and sprinkle some on yourself.",
+                              "$n uncorks $p and sprinkles some on $mself.",
+                              "",
+                              ""));
+  CompInfo.push_back(compInfo(SPELL_FERAL_WRATH,
+                              "",
+                              "",
+                              "",
+                              "You thrust $p into your palm.",
+                              "$n thrusts $p $s palm.",
+                              "",
+                              ""));
+  CompInfo.push_back(compInfo(SPELL_SKY_SPIRIT,
+                              "You toss $p at $N.",
+                              "$n tosses $p at $N.",
+                              "$n tosses $p at you.",
+                              "You toss $p into the air.",
+                              "$n tosses $p into the air..",
+                              "",
+                              ""));
+#endif
   CompInfo.push_back(compInfo(SKILL_BEAST_SOOTHER,
     "You coat $N with $p.",
     "$n coats $N with $p.",
@@ -1508,6 +1852,22 @@ void buildComponentArray()
     "$n points $p in your direction.",                       
     "You point $p at yourself.",
     "$n points $p at $mself.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_DJALLA,
+    "You smear $p on $N's forehead.",
+    "$n smears $p on $N's forehead.",
+    "$n smears $p on your forehead.",                       
+    "You smear $p on your forehead.",
+    "$n smears $p on $s forehead.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_LEGBA,
+    "You smear $p on $N's forehead.",
+    "$n smears $p on $N's forehead.",
+    "$n smears $p on your forehead.",                       
+    "You smear $p on your forehead.",
+    "$n smears $p on $s forehead.",
     "",
     ""));
   CompInfo.push_back(compInfo(SPELL_PROTECTION_FROM_FIRE,
@@ -1644,6 +2004,38 @@ void buildComponentArray()
     "",
     "You sprinkle $p on the ground.",
     "$n sprinkles $p on the ground.",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CREATE_WOOD_GOLEM,
+    "",                       
+    "",
+    "",
+    "You throw $p into the air and it disappears!",
+    "$n throws $p into the air and it disappears!",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CREATE_ROCK_GOLEM,
+    "",                       
+    "",
+    "",
+    "You throw $p into the air and it disappears!",
+    "$n throws $p into the air and it disappears!",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CREATE_IRON_GOLEM,
+    "",                       
+    "",
+    "",
+    "You throw $p into the air and it disappears!",
+    "$n throws $p into the air and it disappears!",
+    "",
+    ""));
+  CompInfo.push_back(compInfo(SPELL_CREATE_DIAMOND_GOLEM,
+    "",                       
+    "",
+    "",
+    "You throw $p into the air and it disappears!",
+    "$n throws $p into the air and it disappears!",
     "",
     ""));
 
@@ -1995,12 +2387,25 @@ int TComponent::rentCost() const
 
 void TComponent::decayMe()
 {
-  if (obj_flags.decay_time > 0) {
-    // decay comps that aren't in spellbags
-    if (isComponentType(COMP_DECAY) &&
-	(!parent ||
-	 !dynamic_cast<TSpellBag *>(parent) || (!::number(0,5))))
-      obj_flags.decay_time--;
+  if (obj_flags.decay_time <= 0)
+    return;
+
+  // not a decaying component
+  if (!isComponentType(COMP_DECAY))
+    return;
+
+  // don't decay if a shopkeeper has the comp
+  if (dynamic_cast<TMonster *>(parent) &&
+      parent->spec == SPEC_SHOPKEEPER)
+    return;
+
+  // decay if it doesn't have a parent (lying on the ground)
+  // or if the parent is not spellbag
+  // or random chance
+  if(!parent ||
+     !dynamic_cast<TSpellBag *>(parent) || 
+     (!::number(0,5))){
+    obj_flags.decay_time--;
   }
 }
 
@@ -2084,6 +2489,7 @@ int TComponent::objectSell(TBeing *ch, TMonster *keeper)
   if (gamePort != PROD_GAMEPORT)
     return FALSE;
 
+#if 0
   char buf[256];
 
   if ((getComponentCharges() != getComponentMaxCharges())) {
@@ -2091,6 +2497,7 @@ int TComponent::objectSell(TBeing *ch, TMonster *keeper)
     keeper->doTell(buf);
     return TRUE;
   }
+#endif
   return FALSE;
 }
 
@@ -2363,7 +2770,8 @@ int TComponent::suggestedPrice() const
     // pass it L1 and let SpellCost fix it for us
     // for level, we'll assign a value of 100% arbitrarily
     value = getSpellCost(curspell, 1, 100);
-    value *= getComponentMaxCharges();
+    value *= getComponentCharges();
+    //    value *= getComponentMaxCharges();
   }
 
   value = (int) (value * priceMultiplier());
@@ -2389,7 +2797,7 @@ bool isDissectComponent(int vnum)
     case COMP_FUMBLE:        // periodic loads
     case COMP_STONE_SKIN:        // periodic loads
     case COMP_STEALTH:        // periodic loads
-    case COMP_CLOUD_OF_CONCEAL:        // periodic loads
+      //case COMP_CLOUD_OF_CONCEAL:        // periodic loads
     case COMP_CONJURE_AIR:        // periodic loads
     case COMP_FLIGHT:        // periodic loads
     case COMP_HELLFIRE:        // periodic loads
@@ -2472,6 +2880,8 @@ void TComponent::purchaseMe(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY)) {
     keeper->addToMoney(cost, GOLD_SHOP_COMPONENTS);
   }
+
+  shoplog(shop_nr, ch, keeper, getName(), cost, "buying");
 }
 
 void TComponent::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
@@ -2479,6 +2889,8 @@ void TComponent::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr
   ch->addToMoney(cost, GOLD_SHOP_COMPONENTS);
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY))
     keeper->addToMoney(-cost, GOLD_SHOP_COMPONENTS);
+
+  shoplog(shop_nr, ch, keeper, getName(), cost, "selling");
 }
 
 TThing & TComponent::operator -- ()

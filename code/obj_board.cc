@@ -193,17 +193,23 @@ void board_reset_board(boardStruct *b)
   return;
 }
 
-boardStruct *FindBoardInRoom(int room)
+boardStruct *FindBoardInRoom(int room, const char *arg)
 {
+  char boardname[MAX_INPUT_LENGTH];
+  char newarg[256];  
   TThing *o;
   boardStruct *nb;
   TRoom *rp;
+
+  strcpy(newarg,arg);
+  one_argument(newarg, boardname);
 
   if (!(rp = real_roomp(room)))
     return NULL;
 
   for (o = rp->stuff; o; o = o->nextThing) {
     TObj *to = dynamic_cast<TObj *>(o);
+    //    if (to && to->spec == SPEC_BOARD && isname(boardname, to->name)) {
     if (to && to->spec == SPEC_BOARD) {
       for (nb = board_list; nb; nb = nb->next) {
         if (nb->Rnum == o->number)
@@ -244,7 +250,7 @@ int TBoard::boardHandler(TBeing *ch, cmdTypeT cmd, const char *arg)
   if (!ch || (cmd >= MAX_CMD_LIST))
     return FALSE;
 
-  if (!(nb = FindBoardInRoom(ch->in_room)))
+  if (!(nb = FindBoardInRoom(ch->in_room, arg)))
     return FALSE;
 
   if (!ch->desc)
@@ -345,6 +351,7 @@ int board_show_board(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
   arg = one_argument(arg, boardname);
 
   if (!*boardname || !isname(boardname, "board bulletin"))
+  //  if (!*boardname || !isname(boardname, me->name)) 
     return FALSE;
 
   bool reverse = false;

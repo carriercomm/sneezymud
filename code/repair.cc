@@ -232,8 +232,10 @@ static int check_time_and_gold(TBeing *repair, TBeing *buyer, int ticket, TNote 
       // acknowledge the depreciation after all work is done
       // this way the price doesn't change during the process
       // and also makes the first repair "depreciation free"
-      if (::number(0,9) < 5)
-        fixed_obj->addToDepreciation(1);
+
+      fixed_obj->addToDepreciation(1);
+      if (fixed_obj->isObjStat(ITEM_CHARRED))
+	fixed_obj->addToDepreciation(2); // we want charred objects to deteriorate much faster
 
       return TRUE;
     } else {

@@ -487,15 +487,18 @@ void TBeing::doAttribute(const char *arg)
     strcat(buf, buf2);
     strcat(buf, "\n\r");
     sendTo(buf);
-
+    if (TestCode5) {
+      sendTo(COLOR_BASIC, "You are a member of %s<1>, and have a rank of %s<1>.\n\r",
+	     newfaction()->getName(), rank());
+    } else {
 #if FACTIONS_IN_USE
-    sendTo("You are allied to %s, and have a %.4f%% rating.\n\r",
-          FactionInfo[getFaction()].faction_name, getPerc());
+      sendTo("You are allied to %s, and have a %.4f%% rating.\n\r",
+	     FactionInfo[getFaction()].faction_name, getPerc());
 #else
-    sendTo("You are allied to %s.\n\r",
-          FactionInfo[getFaction()].faction_name);
+      sendTo("You are allied to %s.\n\r",
+	     FactionInfo[getFaction()].faction_name);
 #endif
-
+    }
 #if SPEEF_MAKE_BODY
     vlogf(LOG_MISC, "Attribute argument: %s",cmdbuf);
     if(body)
@@ -688,6 +691,8 @@ void TBeing::doAttribute(const char *arg)
         sendTo("You are praying.\n\r");
       if (discArray[which]->minMana)
         sendTo("You are casting a spell.\n\r");
+      if (discArray[which]->minLifeforce)
+        sendTo("You are invoking a ritual.\n\r");
     }
     sendTo("You are in %s%s%s attack mode.\n\r",
           cyan(), attack_modes[getCombatMode()], norm());

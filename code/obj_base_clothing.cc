@@ -421,6 +421,10 @@ int TBaseClothing::suggestedPrice() const
   if (!isObjStat(ITEM_ANTI_MONK) && !monkRestrictedItem(NULL))
     lev_mod = max(lev_mod, 10.0);
 
+  // shaman = hitrate of 90%
+  if (!isObjStat(ITEM_ANTI_SHAMAN) && !shamanRestrictedItem(NULL))
+    lev_mod = max(lev_mod, 10.0);
+
   // ranger = hitrate of 69%
   if (!isObjStat(ITEM_ANTI_RANGER) && !rangerRestrictedItem(NULL))
     lev_mod = max(lev_mod, 3.0);
@@ -658,6 +662,8 @@ void TBaseClothing::purchaseMe(TBeing *ch, TMonster *keeper, int cost, int shop_
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY)) {
     keeper->addToMoney(cost, GOLD_SHOP_ARMOR);
   }
+
+  shoplog(shop_nr, ch, keeper, getName(), cost, "buying");
 }
 
 void TBaseClothing::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
@@ -665,5 +671,7 @@ void TBaseClothing::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop
   ch->addToMoney(cost, GOLD_SHOP_ARMOR);
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY))
     keeper->addToMoney(-cost, GOLD_SHOP_ARMOR);
+
+  shoplog(shop_nr, ch, keeper, getName(), cost, "selling");
 }
 

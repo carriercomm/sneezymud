@@ -365,7 +365,7 @@ TBeing *TBeing::findDiffZoneSameRace()
 
   for (t = character_list; t; t = t->next, num--) {
     if (isSameRace(t) && !t->isPc() && !num) {
-      if (roomp->getZone() != t->roomp->getZone())
+      if (roomp->getZoneNum() != t->roomp->getZoneNum())
         return t;
     }
   }

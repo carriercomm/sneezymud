@@ -6,18 +6,21 @@ class CDShamanFrog : public CDiscipline
 {
 public:
     CSkill skStormySkies;
+    CSkill skDeathWave;
     CSkill skAquaticBlast;
     CSkill skShapeShift;
 
     CDShamanFrog() 
       : CDiscipline(),
       skStormySkies(),
+      skDeathWave(),
       skAquaticBlast(),
       skShapeShift() {
     }
     CDShamanFrog(const CDShamanFrog &a) 
       : CDiscipline(a),
       skStormySkies(a.skStormySkies),
+      skDeathWave(a.skDeathWave),
       skAquaticBlast(a.skAquaticBlast),
       skShapeShift(a.skShapeShift) {
     }
@@ -25,6 +28,7 @@ public:
       if (this == &a) return *this;
       CDiscipline::operator=(a);
       skStormySkies = a.skStormySkies;
+      skDeathWave = a.skDeathWave;
       skAquaticBlast = a.skAquaticBlast;
       skShapeShift = a.skShapeShift;
       return *this;
@@ -33,10 +37,10 @@ public:
     virtual CDShamanFrog * cloneMe() { return new CDShamanFrog(*this); }
 private:
 };
-
-    int stormySkies(TBeing *, TBeing *, int, byte);
-    int stormySkies(TBeing *, TBeing *, TMagicItem *);
     int stormySkies(TBeing *, TBeing *);
+    int castStormySkies(TBeing *, TBeing *);
+    int stormySkies(TBeing *, TBeing *, TMagicItem *);
+    int stormySkies(TBeing *, TBeing *, int, byte);
 
     int aquaticBlast(TBeing *, TBeing *);
     int castAquaticBlast(TBeing *, TBeing *);
@@ -47,6 +51,10 @@ private:
     int shapeShift(TBeing *caster, const char * buffer);
     int castShapeShift(TBeing *caster);
 
+    int deathWave(TBeing *, TBeing *);
+    int castDeathWave(TBeing *, TBeing *);
+    int deathWave(TBeing *, TBeing *, TMagicItem *);
+    int deathWave(TBeing *, TBeing *, int, byte, int);
 
 #endif
 

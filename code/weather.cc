@@ -126,7 +126,7 @@ void fixSunlight()
   }
   if (hmt == sunTime(SUN_TIME_DAWN)) {
     weather_info.sunlight = SUN_DAWN;
-    sendToOutdoor(COLOR_BASIC, "<Y>Dawn begins to break.<1>\n\r",
+    sendToOutdoor(COLOR_BASIC, "<Y>The skies brighten as dawn begins.<1>\n\r",
           "<Y>Dawn begins to break.<1>\n\r");
   }
   if (hmt == sunTime(SUN_TIME_RISE)) {
@@ -178,7 +178,6 @@ void anotherHour()
 
       // check for new month
       if (time_info.day >= 28) {
-        sendToOutdoor(COLOR_NONE, "It is midnight.\n\r","It is midnight.\n\r");
         time_info.month++;
         time_info.day = 0;
 

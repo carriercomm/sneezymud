@@ -1014,7 +1014,6 @@ class TTool : public TObj {
     virtual void describeObjectSpecifics(const TBeing *) const;
     virtual void findSmytheTools(TTool **, TTool**);
     virtual void smythePulse(TBeing *, TObj *);
-    virtual void sacrificePulse(TBeing *, TBaseCorpse *);
     virtual void pickPulse(TBeing *);
     virtual int  skinPulse(TBeing *, TBaseCorpse *);
     virtual void sharpenPulse(TBeing *, TThing *);
@@ -1646,6 +1645,7 @@ class TBaseLight : public TObj {
 
     virtual void lightMe(TBeing *, silentTypeT) = 0;
     virtual bool monkRestrictedItem(const TBeing *) const;
+    virtual bool shamanRestrictedItem(const TBeing *) const;
     virtual bool rangerRestrictedItem(const TBeing *) const;
     virtual void putLightOut();
     virtual string compareMeAgainst(TBeing *, TObj *);
@@ -1762,6 +1762,7 @@ class TDrugContainer : public TObj {
     virtual void lightMe(TBeing *, silentTypeT);
     virtual void extinguishMe(TBeing *);
     virtual bool monkRestrictedItem(const TBeing *) const;
+    virtual bool shamanRestrictedItem(const TBeing *) const;
     virtual bool rangerRestrictedItem(const TBeing *) const;
     virtual void refuelMeLight(TBeing *, TThing *);
     virtual void peeOnMe(const TBeing *);

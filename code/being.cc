@@ -450,6 +450,31 @@ spellStoreData::~spellStoreData()
 }
 
 
+equipmentData::equipmentData(){
+  wearSlotT i;
+  for (i = MIN_WEAR; i < MAX_WEAR; i++)
+    equipment[i] = NULL;
+}
+
+equipmentData::equipmentData(const equipmentData &a){
+  wearSlotT i;
+  for (i = MIN_WEAR; i < MAX_WEAR; i++)
+    equipment[i] = a.equipment[i];
+}
+
+equipmentData & equipmentData::operator= (const equipmentData &a){
+  wearSlotT i;
+  for (i = MIN_WEAR; i < MAX_WEAR; i++)
+    equipment[i] = a.equipment[i];
+  
+  return *this;
+}
+
+equipmentData::~equipmentData(){
+}
+
+
+
 charFile::charFile() :
   sex(SEX_MALE),
   race(0),
@@ -1203,6 +1228,12 @@ void TBeing::setArmor(sh_int armor)
 
 bool TBeing::isAffected(unsigned long bv) const
 {
+  if (!this) 
+    {
+      vlogf(LOG_BUG, "BAD - isAffected got called with this = null, investigate!");
+      return 0;
+    }
+ 
   return (specials.affectedBy & bv);
 }
 

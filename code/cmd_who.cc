@@ -114,6 +114,18 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
       tmpstring += " ";
 
     sprintf(tempbuf, "Level:[%s] ", tmpstring.c_str());
+    TFaction *f = NULL;
+    if((f = p->newfaction()) && TestCode5) {
+      if (f->ID && (IS_SET(f->flags, FACT_ACTIVE) || ch->newfaction() == p->newfaction() || ch->isImmortal()) &&
+	  (!IS_SET(f->flags, FACT_HIDDEN) || ch->newfaction() == p->newfaction() || ch->isImmortal()) &&
+	  (!p->isImmortal() || ch->isImmortal())) {
+	sprintf(tempbuf, "%s %s[<1>%s%s]<1>", tempbuf,
+		heraldcodes[p->newfaction()->colors[0]],
+		p->newfaction()->getName(),
+		heraldcodes[p->newfaction()->colors[0]]);
+      }
+    }
+       
   }
 
   return tempbuf;
@@ -161,7 +173,7 @@ void TBeing::doWho(const char *argument)
             }
 
             if (isImmortal()) {
-              tSb += "[-] [i]idle [l]levels [q]quests [h]hit/mana/move\n\r";
+              tSb += "[-] [i]idle [l]levels [q]quests [h]hit/mana/move/lf\n\r";
               tSb += "[-] [z]seeks-group [p]groups [y]currently-not-grouped\n\r";
               tSb += "[-] [d]linkdead [g]God [b]Builders [o]Mort [s]stats [f]action\n\r";
               tSb += "[-] [1]Mage[2]Cleric[3]War[4]Thief[5]Deikhan[6]Monk[7]Ranger[8]Shaman\n\r";
@@ -281,6 +293,9 @@ void TBeing::doWho(const char *argument)
             if (tBeing->hasClass(CLASS_CLERIC) || tBeing->hasClass(CLASS_DEIKHAN))
               sprintf(tString, "\n\r\tHit:[%-3d] Pty:[%-5.2f] Move:[%-3d] Talens:[%-8d] Bank:[%-8d]",
                       tBeing->getHit(), tBeing->getPiety(), tBeing->getMove(), tBeing->getMoney(), tBeing->getBank());
+            else if (tBeing->hasClass(CLASS_SHAMAN))
+              sprintf(tString, "\n\r\tHit:[%-3d] Pty:[%-4d] Move:[%-3d] Talens:[%-8d] Bank:[%-8d]",
+                      tBeing->getHit(), tBeing->getLifeforce(), tBeing->getMove(), tBeing->getMoney(), tBeing->getBank());
             else
               sprintf(tString, "\n\r\tHit:[%-3d] Mna:[%-3d] Move:[%-3d] Talens:[%-8d] Bank:[%-8d]",
                       tBeing->getHit(), tBeing->getMana(), tBeing->getMove(), tBeing->getMoney(), tBeing->getBank());
@@ -414,7 +429,7 @@ void TBeing::doWho(const char *argument)
     if (*arg == '-') {
       if (strchr(arg, '?')) {
         if (isImmortal()) {
-          sb += "[-] [i]idle [l]levels [q]quests [h]hit/mana/move\n\r";
+          sb += "[-] [i]idle [l]levels [q]quests [h]hit/mana/move/lf\n\r";
           sb += "[-] [z]seeks-group [p]groups [y]currently-not-grouped\n\r";
           sb += "[-] [d]linkdead [g]God [b]Builders [o]Mort [s]stats [f]action\n\r";
           sb += "[-] [1]Mage[2]Cleric[3]War[4]Thief[5]Deikhan[6]Monk[7]Ranger[8]Shaman\n\r";
@@ -538,6 +553,9 @@ void TBeing::doWho(const char *argument)
                       if (p->hasClass(CLASS_CLERIC)||p->hasClass(CLASS_DEIKHAN))
                         sprintf(buf + strlen(buf), "Hit:[%-3d] Pty:[%-.2f] Move:[%-3d], Talens:[%-8d], Bank:[%-8d]",
                               p->getHit(), p->getPiety(), p->getMove(), p->getMoney(), p->getBank());
+                      else if (p->hasClass(CLASS_SHAMAN))
+                        sprintf(buf + strlen(buf), "Hit:[%-3d] LF:[%-4d] Move:[%-3d], Talens:[%-8d], Bank:[%-8d]",
+                              p->getHit(), p->getLifeforce(), p->getMove(), p->getMoney(), p->getBank());
                       else
                           sprintf(buf + strlen(buf), "Hit:[%-3d] Mana:[%-3d] Move:[%-3d], Talens:[%-8d], Bank:[%-8d]",
                               p->getHit(), p->getMana(), p->getMove(), p->getMoney(), p->getBank());
@@ -548,17 +566,40 @@ void TBeing::doWho(const char *argument)
                   if (!align) {
                     // show factions of everyone to immorts
                     // mortal version will show non-imms that are in same fact
-                    if ((getFaction()==p->getFaction() &&
-                         p->GetMaxLevel() <= MAX_MORT) || isImmortal())
+                    if(TestCode5) {
+		      TFaction *f = NULL;
+		      if((f = p->newfaction()) && TestCode5) {
+			if (f->ID && (IS_SET(f->flags, FACT_ACTIVE) || newfaction()== p->newfaction()||isImmortal()) &&
+			    (!IS_SET(f->flags, FACT_HIDDEN) || newfaction() == p->newfaction() || isImmortal()) &&
+			    (!p->isImmortal() || isImmortal())) {
+			  sprintf(buf + strlen(buf), "%s[<1>%s%s]<1>",
+				  heraldcodes[p->newfaction()->colors[0]],
+				  p->newfaction()->getName(),
+				  heraldcodes[p->newfaction()->colors[0]]);
+			  if(!IS_SET(f->flags, FACT_HIDE_RANKS) || newfaction() == p->newfaction()
+			     || isImmortal()) 
+			  sprintf(buf + strlen(buf), " %s[<1>%s%s]<1>",
+				  heraldcodes[p->newfaction()->colors[1]],
+				  p->rank(),
+                                  heraldcodes[p->newfaction()->colors[1]]);
+			}
+		      }
+		      
+
+		    } else {
+		      if ((getFaction()==p->getFaction() &&
+			   p->GetMaxLevel() <= MAX_MORT) || isImmortal()) {
 #if FACTIONS_IN_USE
-                      sprintf(buf + strlen(buf), "[%s] %5.2f%%", 
-                        FactionInfo[p->getFaction()].faction_name,
-                        p->getPerc());
+			sprintf(buf + strlen(buf), "[%s] %5.2f%%", 
+				FactionInfo[p->getFaction()].faction_name,
+				p->getPerc());
 #else
-                      sprintf(buf + strlen(buf), "[%s]", 
-                        FactionInfo[p->getFaction()].faction_name);
+			sprintf(buf + strlen(buf), "[%s]", 
+				FactionInfo[p->getFaction()].faction_name);
 #endif
-                  }
+		      }
+		    }
+		  }
                   align = TRUE;
                   break;
                 case 's':
@@ -677,7 +718,7 @@ void TBeing::doWhozone()
   for (d = descriptor_list; d; d = d->next) {
     if (!d->connected && canSee(d->character) &&
         (rp = real_roomp((person = (d->original ? d->original : d->character))->in_room)) &&
-        (rp->getZone() == roomp->getZone())) {
+        (rp->getZoneNum() == roomp->getZoneNum())) {
       sprintf(buf, "%-25s - %s ", person->getName(), rp->name);
       if (GetMaxLevel() > MAX_MORT)
         sprintf(buf + strlen(buf), "[%d]", person->in_room);

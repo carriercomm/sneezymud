@@ -433,7 +433,7 @@ void list_thing_on_heap(const TThing *list, TBeing *ch, bool show_all)
 static string displayShowApprox(const TBeing *looked, const TBeing *looker, spellNumT tSkill, float tDiff)
 {
   // This function is still experimental.  Don't use it in the main world yet.
-  if (strcmp(looker->getName(), "Lapsos") != 0 || !looker->isImmortal())
+  if (strcmp(looker->getName(), "Jesus") != 0 || !looker->isImmortal())
     return ("");
 
   if (!looker->doesKnowSkill(tSkill))
@@ -498,7 +498,10 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
   }
   if (me->isLevitating())
     act(".....$n is hovering above the $g!", FALSE, me, 0, ch, TO_VICT);
-
+#if 1
+  if (me->affectedBySpell(SPELL_FERAL_WRATH))
+    act(".....$n has a feral madness about $m.", FALSE, me, 0, ch, TO_VICT);
+#endif
   if (me->isAffected(AFF_BLIND) && !me->affectedBySpell(SPELL_TRUE_SIGHT) &&
       me->getPosition() > POSITION_SITTING && me->getPosition() <= POSITION_STANDING)
     act(".....$n blindly stumbles around!", FALSE, me, 0, ch, TO_VICT);
@@ -530,6 +533,13 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
     sprintf(bufspell, ".....$n is surrounded by a pink aura!\n\r");
     tStSpell += bufspell;
     tStSpell += displayShowApprox(me, ch, SPELL_FAERIE_FIRE, 1.0);
+    ++totspell;
+  }
+
+  if (me->affectedBySpell(SPELL_STUPIDITY)) {
+    sprintf(bufspell, ".....$n is surrounded by a fog of stupidity!\n\r");
+    tStSpell += bufspell;
+    tStSpell += displayShowApprox(me, ch, SPELL_STUPIDITY, 1.0);
     ++totspell;
   }
 
@@ -595,6 +605,12 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
     tStSpell += displayShowApprox(me, ch, SPELL_THORNFLESH, 2.0);
     ++totspell;
   }
+  if (me->affectedBySpell(SPELL_SHIELD_OF_MISTS)) {
+    sprintf(bufspell, ".....$n is enveloped by a thick green mist.\n\r");
+    tStSpell += bufspell;
+    tStSpell += displayShowApprox(me, ch, SPELL_THORNFLESH, 2.0);
+    ++totspell;
+  }
 
   strcpy(bufspell, tStSpell.c_str());
   strcpy(bufpray, tStPray.c_str());
@@ -614,8 +630,7 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
 	strcat(bufspell, "several");
       else
 	strcat(bufspell, "a great many");
-
-      strcat(bufspell, " magical effects.");
+      strcat(bufspell, " effects.");
       act(bufspell, FALSE, me, 0, ch, TO_VICT);
     }
   }
@@ -677,6 +692,8 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
       
       if (isAffected(AFF_INVISIBLE) || getInvisLevel() > MAX_MORT)
         strcat(buffer, " (invisible)");
+      if (isAffected(AFF_SHADOW_WALK))
+        strcat(buffer, " (shadow)");
       if (isPet(PETTYPE_THRALL))
         strcat(buffer, " (thrall)");
       if (isPet(PETTYPE_CHARM))
@@ -699,6 +716,8 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
           strcat(buffer, " is here, casting a spell.");
         else if (((discArray[(spelltask->spell)])->typ) == SPELL_CLERIC) 
           strcat(buffer, " is here, reciting a prayer.");
+        else if (((discArray[(spelltask->spell)])->typ) == SPELL_SHAMAN) 
+          strcat(buffer, " is here, invoking a ritual.");
       } else if (fight()) {
         strcat(buffer, " is here, fighting ");
         if (fight() == ch)
@@ -733,6 +752,8 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
               strcat(buffer, ch->pers(riding));
               if (tbr->isAffected(AFF_INVISIBLE))
                 strcat(buffer, " (invisible)");
+              if (tbr->isAffected(AFF_SHADOW_WALK))
+                strcat(buffer, " (shadow)");
               strcat(buffer, ".");
             } else if (tbr && tbr->horseMaster()) {
               if (ch == tbr->horseMaster())
@@ -743,6 +764,8 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
               strcat(buffer, ch->persfname(riding).c_str());
               if (tbr->isAffected(AFF_INVISIBLE))
                 strcat(buffer, " (invisible)");
+              if (tbr->isAffected(AFF_SHADOW_WALK))
+                strcat(buffer, " (shadow)");
               strcat(buffer, ".");
             } else
               strcat(buffer, " is standing here.");
@@ -1132,6 +1155,8 @@ void TBeing::show_me_mult_to_char(TBeing *ch, showModeT, unsigned int num) const
     cap(buffer);
     if (isAffected(AFF_INVISIBLE))
       strcat(buffer, " (invisible)");
+    if (isAffected(AFF_SHADOW_WALK))
+      strcat(buffer, " (shadow)");
     if (isPet(PETTYPE_THRALL))
       strcat(buffer, " (thrall)");
     if (isPet(PETTYPE_CHARM))

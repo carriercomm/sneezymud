@@ -29,7 +29,7 @@ void TBeing::statZone(const char *zoneNumber)
       return;
     }
 
-    zNum = roomp->getZone();
+    zNum = roomp->getZoneNum();
   } else
     zNum = atoi(zoneNumber);
 
@@ -154,7 +154,7 @@ void TBeing::statRoom(TRoom *rmp)
 
 
   sprintf(buf2,"Room name: %s, Of zone : %d. V-Number : %d, R-number : %d\n\r",
-        rmp->name, rmp->getZone(), rmp->number, in_room);
+        rmp->name, rmp->getZoneNum(), rmp->number, in_room);
   str = buf2;
 
   sprintf(buf2, "Room Coords: %d, %d, %d\n\r",
@@ -327,6 +327,15 @@ void TBeing::statObj(const TObj *j)
 
   str += ItemInfo[j->itemType()]->name;
   str += "\n\r";
+
+  for (unsigned int zone = 0; zone < zone_table.size(); zone++) {
+    if(obj_index[j->getItemIndex()].virt <= zone_table[zone].top){
+      sprintf(buf, "Zone: %s\n\r", zone_table[zone].name);
+      break;
+    }    
+  }
+  str += buf;
+
   sprintf(buf, "Short description: %s\n\rLong description:\n\r%s\n\r",
         ((j->shortDescr) ? j->shortDescr : "None"),
         ((j->getDescr()) ? j->getDescr() : "None"));
@@ -478,6 +487,7 @@ void TBeing::statBeing(TBeing *k)
   char buf2[256];
   char buf3[256];
   TBeing *x1;
+  TFaction *f = NULL;
   const TMonster *km = dynamic_cast<const TMonster *>(k);
   char *birth, *logon;
   char birth_buf[40], logon_buf[40];
@@ -609,7 +619,7 @@ void TBeing::statBeing(TBeing *k)
       cyan(), norm(), k->getPiety(),
       cyan(), norm(), buf2, cyan(), norm(), buf3);
   else if (k->hasClass(CLASS_SHAMAN))
-    sprintf(buf + strlen(buf), "%sLifef.:%s [%4d]%sHit    :%s %-10s  %sMove    :%s %-10s\n\r",
+    sprintf(buf + strlen(buf), "%sLifef.:%s [%4d]%s Hit    :%s %-10s  %sMove    :%s %-10s\n\r",
       cyan(), norm(), k->getLifeforce(),
       cyan(), norm(), buf2, cyan(), norm(), buf3);
   else
@@ -660,17 +670,23 @@ void TBeing::statBeing(TBeing *k)
     sprintf(buf + strlen(buf), "Prim attacks: %.2f, Off attacks: %.2f\n\r",
           fx, fy);
   }
-
-  sprintf(buf + strlen(buf), "%sFaction :%s %s,   %sFaction Percent :%s %.4f\n\r",
-    cyan(), norm(), FactionInfo[k->getFaction()].faction_name,
-    cyan(), norm(), k->getPerc());
+  if (TestCode5 && k->newfaction()) {
+    sprintf(buf + strlen(buf), "%sFaction :%s %s%s,   %sRank :%s %s%s\n\r",
+	    cyan(), norm(), k->newfaction()->getName(), norm(),
+	    cyan(), norm(), k->rank(), norm());
+  } else {
+    
+    sprintf(buf + strlen(buf), "%sFaction :%s %s,   %sFaction Percent :%s %.4f\n\r",
+	    cyan(), norm(), FactionInfo[k->getFaction()].faction_name,
+	    cyan(), norm(), k->getPerc());
 #if FACTIONS_IN_USE
-  sprintf(buf + strlen(buf), "%sPerc_0 :%s %.4f   %sPerc_1 :%s %.4f   %sPerc_2 :%s %.4f   %sPerc_3 :%s %.4f\n\r",
-    cyan(), norm(), k->getPercX(FACT_NONE),
-    cyan(), norm(), k->getPercX(FACT_BROTHERHOOD),
-    cyan(), norm(), k->getPercX(FACT_CULT),
-    cyan(), norm(), k->getPercX(FACT_SNAKE));
+    sprintf(buf + strlen(buf), "%sPerc_0 :%s %.4f   %sPerc_1 :%s %.4f   %sPerc_2 :%s %.4f   %sPerc_3 :%s %.4f\n\r",
+	    cyan(), norm(), k->getPercX(FACT_NONE),
+	    cyan(), norm(), k->getPercX(FACT_BROTHERHOOD),
+	    cyan(), norm(), k->getPercX(FACT_CULT),
+	    cyan(), norm(), k->getPercX(FACT_SNAKE));
 #endif
+  }
 //  sprintf(buf + strlen(buf), "%sFaction :%s %s\n\r",
 //    cyan(), norm(), FactionInfo[k->getFaction()].faction_name);
 
@@ -982,6 +998,7 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_GUSHER:
       case SPELL_AQUALUNG:
       case SPELL_AQUATIC_BLAST:
+      case SPELL_CARDIAC_STRESS:
       case SPELL_ICY_GRIP:
       case SPELL_ARCTIC_BLAST:
       case SPELL_ICE_STORM:
@@ -1019,9 +1036,17 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_SAND_BLAST:
       case SPELL_PEBBLE_SPRAY:
       case SPELL_LAVA_STREAM:
+      case SPELL_DEATH_MIST:
+      case SPELL_FLATULENCE:
       case SPELL_SLING_SHOT:
       case SPELL_GRANITE_FISTS:
+      case SPELL_STICKS_TO_SNAKES:
+      case SPELL_DISTORT: // shaman
+      case SPELL_DEATHWAVE: // shaman
+      case SPELL_SOUL_TWIST: // shaman
+      case SPELL_SQUISH: // shaman
       case SPELL_ENERGY_DRAIN:
+      case SPELL_LICH_TOUCH: // shaman
       case SPELL_SYNOSTODWEOMER:
       case SPELL_HARM_DEIKHAN:
       case SPELL_HARM:
@@ -1063,9 +1088,13 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_GARMULS_TAIL:
       case SPELL_SORCERERS_GLOBE:
       case SPELL_FAERIE_FIRE:
+      case SPELL_STUPIDITY:
       case SPELL_ILLUMINATE:
       case SPELL_DETECT_MAGIC:
       case SPELL_MATERIALIZE:
+      case SPELL_BLOOD_BOIL:
+      case SPELL_DJALLA:
+      case SPELL_LEGBA:
       case SPELL_PROTECTION_FROM_EARTH:
       case SPELL_PROTECTION_FROM_AIR:
       case SPELL_PROTECTION_FROM_FIRE:
@@ -1077,13 +1106,18 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_FAERIE_FOG:
       case SPELL_TELEPORT:
       case SPELL_SENSE_LIFE:
+      case SPELL_SENSE_LIFE_SHAMAN: // shaman
       case SPELL_CALM:
       case SPELL_ACCELERATE:
+      case SPELL_CHEVAL: // shaman
+      case SPELL_CELERITE:
       case SPELL_LEVITATE:
       case SPELL_FEATHERY_DESCENT:
       case SPELL_STEALTH:
       case SPELL_GILLS_OF_FLESH:
       case SPELL_TELEPATHY:
+      case SPELL_ROMBLER: // shaman
+      case SPELL_INTIMIDATE: //shaman
       case SPELL_FEAR:
       case SPELL_SLUMBER:
       case SPELL_CONJURE_EARTH:
@@ -1094,6 +1128,7 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_ENHANCE_WEAPON:
       case SPELL_GALVANIZE:
       case SPELL_DETECT_INVISIBLE:
+      case SPELL_DETECT_SHADOW: // shaman
       case SPELL_DISPEL_INVISIBLE:
       case SPELL_FARLOOK:
       case SPELL_FALCON_WINGS:
@@ -1186,15 +1221,20 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_BARKSKIN:
       case SKILL_SWITCH_RANGER:
       case SKILL_RETREAT_RANGER:
-      case SPELL_STICKS_TO_SNAKES:
       case SPELL_ENTHRALL_SPECTRE:
       case SPELL_ENTHRALL_GHAST:
       case SPELL_ENTHRALL_GHOUL:
       case SPELL_ENTHRALL_DEMON:
+      case SPELL_CREATE_WOOD_GOLEM:
+      case SPELL_CREATE_ROCK_GOLEM:
+      case SPELL_CREATE_IRON_GOLEM:
+      case SPELL_CREATE_DIAMOND_GOLEM:
       case SPELL_STORMY_SKIES:
       case SPELL_TREE_WALK:
       case SKILL_BEAST_CHARM:
       case SPELL_SHAPESHIFT:
+      case SPELL_CHRISM:
+      case SPELL_CLARITY:
       case SKILL_CONCEALMENT:
       case SKILL_APPLY_HERBS:
       case SKILL_DIVINATION:
@@ -1278,8 +1318,6 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_DUAL_WIELD_THIEF:
       case SKILL_DISARM_THIEF:
       case SKILL_COUNTER_STEAL:
-      case SPELL_CACAODEMON:
-      case SPELL_CREATE_GOLEM:
       case SPELL_DANCING_BONES:
       case SPELL_CONTROL_UNDEAD:
       case SPELL_RESURRECTION:
@@ -1309,6 +1347,7 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_OFFENSE:
       case SKILL_WHITTLE:
       case SKILL_WIZARDRY:
+      case SKILL_RITUALISM:
       case SKILL_MEDITATE:
       case SKILL_DEVOTION:
       case SKILL_PENANCE:
@@ -1329,6 +1368,15 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_STAVECHARGE:
       case SKILL_SACRIFICE:
       case SPELL_SHIELD_OF_MISTS:
+      case SPELL_SHADOW_WALK:
+      case SPELL_RAZE:
+      case SPELL_HYPNOSIS:
+#if 1
+      case SPELL_EARTHMAW:
+      case SPELL_CREEPING_DOOM:
+      case SPELL_FERAL_WRATH:
+      case SPELL_SKY_SPIRIT:
+#endif
         if (!discArray[aff->type]) {
           vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", aff->type, k->getName());
           k->affectRemove(aff);
@@ -1481,6 +1529,29 @@ void TBeing::statBeing(TBeing *k)
         strcat(buf2, "\n\r");
         strcat(buf, buf2);
         break;
+	
+      case AFFECT_WARY:
+	sprintf(buf + strlen(buf), "State: Wary\n\r");
+	sprintf(buf + strlen(buf), "     Decreases chance of multiple cudgels\n\r");
+	break;
+
+      case AFFECT_DEFECTED:
+	sprintf(buf + strlen(buf), "Player recently defected from a faction.\n\r");
+	sprintf(buf + strlen(buf), "     Expires in %6d updates.\n\r", aff->duration);
+	break;
+	
+      case AFFECT_OFFER:
+ 
+	f = get_faction_by_ID(aff->modifier);
+	if (!f) {
+	  vlogf(LOG_FACT, "char had faction offer from non-existant faction in cmd_stat");
+	  break;
+	}
+	sprintf(buf + strlen(buf), "Received offer to join %s (%d).\n\r",f->getName(), f->ID);
+	sprintf(buf + strlen(buf), "     Expires in %6d updates.\n\r", aff->duration);
+	break;
+	
+		
 
       case LAST_ODDBALL_AFFECT:
       case LAST_TRANSFORMED_LIMB:

@@ -797,7 +797,7 @@ int TBeing::damageLimb(TBeing *v, wearSlotT part_hit, TThing *weapon, int *dam)
  // 2) Strength in limb(How healthy it is)  (body_parts[].health)     
  // 3) Constitution                         (getConShock())         
  // 4) Skin type                            (getMaterial())           
- // The healthier the limb, the less chance of this happening, and    
+ // The healtheir the limb, the less chance of this happening, and    
  // the more damage, the more chance of it happening. - Russ          
 
   if (setCharFighting(v, 0) == -1)
@@ -2434,6 +2434,16 @@ int TBeing::specialAttack(TBeing *target, spellNumT skill)
   int offense = attackRound(target);
   int defense = target->defendRound(this);
   int mod = offense - defense;
+
+  if(skill == SKILL_BACKSTAB || skill == SKILL_CUDGEL) {
+    // other surprise attacks should be added here
+    if(target->isWary())
+      mod /= 4;
+    else {
+      target->makeWary();
+      vlogf(LOG_DASH,"%s being made wary by sneak attack from %s.", target->getName(), getName());
+    }
+  }
   return hits(target, mod);
 }
 
@@ -3566,7 +3576,9 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
       critKillCheck(this, vict, mess_sent);
       return retCode | DELETE_VICT;
     }
-
+    if (hasClass(CLASS_SHAMAN) && (0 >= dam)) {
+      addToLifeforce(1);
+    }
     rc = damageWeapon(vict, part_hit, &weapon);
     if (IS_SET_ONLY(rc, DELETE_ITEM))
       retCode |= DELETE_ITEM;
@@ -3581,9 +3593,6 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
       }
     }
   }
-  if (hasClass(CLASS_SHAMAN) && (dam == 0)) {
-    addToLifeforce(1);
-  }    
   combatFatigue(weapon);
   updatePos();
   vict->updatePos();
@@ -5261,6 +5270,8 @@ void TBeing::genericKillFix(void)
   if (isPc()) {
     if (hasClass(CLASS_SHAMAN)) {
       setHit(25);
+      setLifeforce(50);
+      updatePos();
     } else {
       setHit(1);
     }

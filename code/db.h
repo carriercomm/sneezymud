@@ -94,6 +94,7 @@ class zoneData
 {
   public:
     char *name;             // name of this zone                  
+    int zone_nr;            // number of this zone
     int lifespan;           // how long between resets (minutes)  
     int age;                // current age of this zone (minutes) 
     int top;                // upper limit for rooms in this zone 
@@ -104,6 +105,13 @@ class zoneData
     double mob_levels;
     double min_mob_level;
     double max_mob_level;
+
+    bool isEmpty(void);
+    void resetZone(bool);
+    void closeDoors(void);
+    void logError(char, const char *, int, int);
+    void nukeMobs(void);
+
 
     vector<resetCom>cmd;          // command table for reset
   

@@ -443,13 +443,11 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
 
   if(doesKnowSkill(SKILL_CRIT_HIT) && isPc()){
     dicenum = dice(1, (int)(100000-(getSkillValue(SKILL_CRIT_HIT)*900)));
+  } else if(doesKnowSkill(SKILL_POWERMOVE) && isPc()){
+    dicenum = dice(1, (int)(100000-(getSkillValue(SKILL_POWERMOVE)*900)));
   } else 
     dicenum = dice(1, 100000);    // This was 10k under 3.x - Bat
 
-  if(doesKnowSkill(SKILL_POWERMOVE) && isPc()){
-    dicenum = dice(1, (int)(100000-(getSkillValue(SKILL_POWERMOVE)*900)));
-  } else 
-    dicenum = dice(1, 100000);
 
   dexstat = plotStat(STAT_CURRENT, STAT_DEX, 10, 100, 63) - 2*getCond(DRUNK);
   dexstat = (int)((double)(dexstat * plotStat(STAT_CURRENT, STAT_KAR, 80, 125, 100)) / 100.0);

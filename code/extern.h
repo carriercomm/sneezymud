@@ -48,6 +48,8 @@ extern bool TestCode1;
 extern bool TestCode2;
 extern bool TestCode3;
 extern bool TestCode4;
+extern bool TestCode5;
+extern bool TestCode6;  
 extern bool Silence;
 extern bool WizBuild;
 extern bool Gravity;
@@ -68,6 +70,9 @@ extern bool getall(const char *, char *);
 extern int getabunch(const char *, char *);
 extern bool is_number(char *);
 extern void bisect_arg(const char *, int *, char *, const char * const array[]);
+
+  extern const char * heraldcolors[];
+  extern const char * heraldcodes[];
 extern const char * const card_names[14];
 extern const char * const scandirs[];
 extern const char * const home_terrains[];

@@ -3,6 +3,13 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: peelpk.cc,v $
+// Revision 5.3  2001/07/05 21:25:54  peel
+// Trying to fix cvs
+// what a headache
+//
+// Revision 5.2  2001/06/15 21:11:32  peel
+// more zonedata changes, all finished
+//
 // Revision 5.1.1.4  2001/01/25 03:35:15  sneezy
 // added damage cut to peelpk
 // (dash)
@@ -69,7 +76,7 @@ bool TBeing::inPkZone() const
   int i;
   
   for(i=0;i<peelPk.zones;++i){
-    if(roomp->getZone()==peelPk.zone[i])
+    if(roomp->getZoneNum()==peelPk.zone[i])
       return TRUE;
   }
   return FALSE;
@@ -208,7 +215,7 @@ void TBeing::doPeelPk(const char *argument)
 	  !b->checkSoundproof() && 
 	  !b->isPlayerAction(PLR_MAILING | PLR_BUGGING)){
 	for(i=0;i<peelPk.zones;++i){
-	  if(b->roomp->getZone()==peelPk.zone[i]){
+	  if(b->roomp->getZoneNum()==peelPk.zone[i]){
 	    valid=1;
 	    break;
 	  }
@@ -320,7 +327,7 @@ int TBeing::peelPkRespawn(TBeing *killer, spellNumT dmg_type)
   }
   
   for(i=0;i<peelPk.zones;++i){
-    if(roomp->getZone()==peelPk.zone[i]){
+    if(roomp->getZoneNum()==peelPk.zone[i]){
       valid=1;
       break;
     }
@@ -399,7 +406,7 @@ int TBeing::peelPkRespawn(TBeing *killer, spellNumT dmg_type)
 	  !b->checkSoundproof() && 
 	  !b->isPlayerAction(PLR_MAILING | PLR_BUGGING)){
 	for(i=0;i<peelPk.zones;++i){
-	  if(b->roomp->getZone()==peelPk.zone[i]){
+	  if(b->roomp->getZoneNum()==peelPk.zone[i]){
 	    valid=1;
 	    break;
 	  }

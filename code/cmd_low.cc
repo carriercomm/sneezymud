@@ -406,7 +406,7 @@ if (!isTestmob()) {
   // warrior test mob, and change its class, It will now beat an L17, but
   // lose to the L18 warrior test mobs.
   double class_adjust = 0.0;
-  if (hasClass(CLASS_MAGIC_USER)) {
+  if (hasClass(CLASS_MAGIC_USER | CLASS_SHAMAN)) {
     // data taken by Batopr 2/2/99
     double mage_array[] = { 0.00,  // L0
       -0.02, 0.01, -0.07, -0.07, -0.12,  // L5
@@ -620,7 +620,7 @@ bool GuildProcs(int spec)
     case SPEC_TRAINER_SHAMAN_SKUNK:
     case SPEC_TRAINER_SHAMAN_SPIDER:
     case SPEC_TRAINER_SHAMAN_CONTROL:
-    case SPEC_TRAINER_TOTEM:
+    case SPEC_TRAINER_RITUALISM:
     case SPEC_TRAINER_RANGER_FIGHT:
     case SPEC_TRAINER_STEALTH:
     case SPEC_TRAINER_TRAPS: 
@@ -729,9 +729,10 @@ void TMonster::checkMobStats(tinyfileTypeT forReal)
     vlogf(LOG_LOW, "mob (%s:%d) with AFF_SHOCKED set. make %d", getName(), mobVnum(), specials.affectedBy & ~AFF_SHOCKED);
   if (isAffected(AFF_UNDEF3)) 
     vlogf(LOG_LOW, "mob (%s:%d) with AFF_UNDEF3 (%d) set.", getName(), mobVnum(), AFF_UNDEF3);
+#ifdef JEEZ
   if (isAffected(AFF_UNDEF4)) 
     vlogf(LOG_LOW, "mob (%s:%d) with AFF_UNDEF4 (%d) set.", getName(), mobVnum(), AFF_UNDEF4);
-
+#endif
   sumstat = getStat(STAT_CHOSEN, STAT_STR) +
             getStat(STAT_CHOSEN, STAT_BRA) +
             getStat(STAT_CHOSEN, STAT_AGI) +
@@ -761,9 +762,6 @@ void TMonster::checkMobStats(tinyfileTypeT forReal)
 
   if (!isSingleClass())
     vlogf(LOG_LOW,"multiclass mob: %s",getName());
-
-  if (hasClass(CLASS_SHAMAN))
-    vlogf(LOG_JESUS, "shaman mob: %s:%d", getName(), mobVnum());
 
   /*
   // Leave this disabled.  With the new tBorn code it is now outdated.

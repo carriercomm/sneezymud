@@ -208,6 +208,7 @@ TaskEntry tasks[NUM_TASKS] =
   {"in a defensive trance", "Not while you're in a defensive trance!\n\r", task_trance_of_blades},
   {"sacrificing", "Not while you are performing the sacrificial ritual of life!\n\r", task_sacrifice},
   {"fishing", "You are too busy fishing.\n\r", task_fishing},
+  {"extinguishing", "You are too busy putting a fire out.\n\r", task_extinguish_my_ass},
 };
 
 bool TBeing::nobrainerTaskCommand(cmdTypeT cmd)
@@ -240,6 +241,7 @@ bool TBeing::utilityTaskCommand(cmdTypeT cmd)
     case CMD_LOOK:
     case CMD_LIMBS:  // not realistic, but let's just be nice
     case CMD_SPELLS:
+    case CMD_RITUALS:
     case CMD_GLANCE:
     case CMD_TIME:
     case CMD_SCORE:
@@ -282,3 +284,8 @@ bool TBeing::utilityTaskCommand(cmdTypeT cmd)
       return FALSE;
   }
 }
+
+
+
+
+

@@ -992,6 +992,14 @@ int TBeing::moveGroup(dirTypeT dir)
       for (k = followers; k; k = n) {
         n = k->next;
         TBeing *tft = k->follower;
+
+        // sanity check, necessary cuz things going whacky occasionally
+        // bat - 11/19/99
+        if (tft->master != this) {
+          forceCrash("Bad critter looping through moveGroup()!");
+          continue;
+        }
+
         // my mount moved with me in rawMove
         // my mount is one of my followers, but note that while mount
         // has moved with me, other riders have not.

@@ -787,9 +787,6 @@ int TBeing::doTell(const char *arg, bool visible)
 
   strcpy(capbuf, vict->pers(this));  // Use Someone for tells (invis gods, etc)
 
-  convertStringColor("<c>", garbed);
-
-  Descriptor *d = vict->desc;
   char garbedBuf[256];
   char nameBuf[256];
   if (vict->hasColor()) {
@@ -806,17 +803,21 @@ int TBeing::doTell(const char *arg, bool visible)
     sprintf(nameBuf, "%s", cap(capbuf));
   }
 
+  sendTo(COLOR_COMM, "<G>You tell %s<z>, \"%s\"\n\r", vict->getName(), colorString(this, desc, garbed.c_str(), NULL, COLOR_BASIC, FALSE).c_str());
+
+  // we only color the string to the victim, so leave this AFTER
+  // the stuff we send to the teller.
+  convertStringColor("<c>", garbed);
   vict->sendTo(COLOR_COMM, "%s tells you, \"<c>%s<z>\"\n\r",
             nameBuf, garbed.c_str());
 
+  Descriptor *d = vict->desc;
   if (d->client) {
     sprintf(garbedBuf, "<c>%s<z>", garbed.c_str());
     d->clientf("%d|%s|%s", CLIENT_TELL,
         colorString(vict, vict->desc, nameBuf, NULL, COLOR_NONE, FALSE).c_str(),
         colorString(vict, vict->desc, garbedBuf, NULL, COLOR_NONE, FALSE).c_str());
   }
-
-  sendTo(COLOR_COMM, "<G>You tell %s<z>, \"%s\"\n\r", vict->getName(), colorString(this, desc, garbed.c_str(), NULL, COLOR_BASIC, FALSE).c_str());
 
   // set up last teller for reply's use
   // If it becomes a "someone tells you", ignore

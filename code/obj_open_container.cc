@@ -200,9 +200,9 @@ void TRealContainer::lowCheck()
   }
 
   if (isContainerFlag(CONT_TRAPPED)) {
-    if (getContainerTrapType() == 0) {
-      vlogf(LOW_ERROR, "Container (%s) trapped with no trap type.",
-           getName());
+    if (getContainerTrapType() == DOOR_TRAP_NONE) {
+      vlogf(LOW_ERROR, "Container (%s:%d) trapped with no trap type.",
+           getName(), objVnum());
     }
   }
   TContainer::lowCheck();

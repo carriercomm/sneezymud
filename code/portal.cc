@@ -301,9 +301,10 @@ void TPortal::changeObjValue4(TBeing *ch)
 // returns DELETE_THIS, DELETE_VICT(ch)
 int TPortal::enterMe(TBeing *ch)
 {
-  TRoom *rp;
-  int    rc,
-         isRandom = -1;
+  TRoom    *rp;
+  int       rc,
+            isRandom = -1;
+  TPerson *tPerson = dynamic_cast<TPerson *>(ch);
 
   if (isPortalFlag(EX_CLOSED)) {
     ch->sendTo("You can't enter that!  It's closed!\n\r");
@@ -326,6 +327,22 @@ int TPortal::enterMe(TBeing *ch)
 
   if (isRandom == -1)
     ch->sendTo("You feel strangly pulled in many directions.\n\r");
+
+  if (tPerson && checkOwnersList(tPerson, true)) {
+    // This is done by clerics who create portals then logon lower
+    // level characters of theirs and use them.  So we are going
+    // to do something VERY crual to them for this.
+
+    ch->sendTo("Something goes wrong as you enter the portal and you feel torn through the astral plane!\n\r");
+    vlogf(LOG_CHEAT, "Player using Portal created by other player in same account! (%s)",
+          ch->getName());
+    rc = ch->genericTeleport(SILENT_NO, true);
+
+    if (IS_SET_DELETE(rc, DELETE_THIS))
+      return DELETE_VICT;
+
+    return FALSE;
+  }
 
   ch->goThroughPortalMsg(this);
   if (isPortalFlag(EX_TRAPPED)) {

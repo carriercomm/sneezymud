@@ -185,36 +185,33 @@ time_info_data *TBeing::age() const
   return (&player_age);
 }
 
-bool TBeing::inGroup(const TBeing *tbt) const
+bool TBeing::inGroup(const TBeing &tbt) const
 {
-  if (!tbt)
-    return FALSE;
-
-  if ((this == tbt) || 
-      (tbt == dynamic_cast<const TBeing *>(riding)) || 
-      (tbt == dynamic_cast<const TBeing *>(rider)))
+  if ((this == &tbt) || 
+      (&tbt == dynamic_cast<const TBeing *>(riding)) || 
+      (&tbt == dynamic_cast<const TBeing *>(rider)))
     return TRUE;
 
   if (!isAffected(AFF_GROUP))
     return FALSE;
 
-  TBeing *tbt2 = dynamic_cast<TBeing *>(tbt->rider);
+  TBeing *tbt2 = dynamic_cast<TBeing *>(tbt.rider);
   if (tbt2 && inGroup(tbt2))
     return TRUE;
 
-  if (!tbt->isAffected(AFF_GROUP))
+  if (!tbt.isAffected(AFF_GROUP))
     return FALSE;
 
-  if (!master && !tbt->master)
+  if (!master && !tbt.master)
     return FALSE;
 
-  if (this == tbt->master)
+  if (this == tbt.master)
     return TRUE;
 
-  if (master == tbt)
+  if (master == &tbt)
     return TRUE;
 
-  if (master == tbt->master) {
+  if (master == tbt.master) {
     return TRUE;
   }
 

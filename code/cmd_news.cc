@@ -36,7 +36,7 @@ class newsFileSorter {
 
 bool newsFileSorter::operator() (const newsFileList &x, const newsFileList &y) const
 {
-  return  (x.modTime < y.modTime);
+  return  (x.modTime > y.modTime);
 }
 
 void TBeing::doNews(const char *argument)

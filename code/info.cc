@@ -1850,6 +1850,10 @@ down");
       vlogf(LOG_BUG,"Error in getWeather for %s.",getName());
       return;
     }
+    if (isImmortal()) {
+      sendTo("The current barometer is: %d.  Barometric change is: %d\n\r",
+            weather_info.pressure, weather_info.change); 
+    }
     sendTo(COLOR_BASIC, "%s and %s.\n\r", buf,
         (weather_info.change >= 0 ? "you feel a relatively warm wind from the south" :
          "your foot tells you bad weather is due"));

@@ -2817,6 +2817,8 @@ extern void cleanUpMail();
 int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *query,...)
 {
   char buf[MAX_STRING_LENGTH+MAX_STRING_LENGTH];
+  char buf2[MAX_STRING_LENGTH+MAX_STRING_LENGTH];
+  int onstring=0, ptr2=0, ptr=0;
   va_list ap;
   static MYSQL *sneezydb, *immodb;
   MYSQL *db=NULL;
@@ -2827,6 +2829,28 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
   vsprintf(buf, query, ap);
   va_end(ap);
   
+  // try and process the query string a little bit, to find single quotes
+  // anytime we find a single quote between =' and ', that isn't ''
+  // change it so that it is ''  (ie escape it)
+  while(buf[ptr]){
+    if(buf[ptr]=='\''){
+      if(onstring){
+	if(buf[ptr+1]==',' || buf[ptr+1]=='\0')
+	  onstring=0;
+	else
+	  buf2[ptr2++]='\'';
+      } else {
+	if(buf[ptr-1]=='=')
+	  onstring=1;
+	else
+	  vlogf(LOG_BUG, "dbquery: Found stray ' in query parsing");
+      }
+    }
+
+    buf2[ptr2++]=buf[ptr++];
+  }
+  buf2[ptr2]='\0';
+
   if(!strcmp(dbname, "sneezy")){
     if(!sneezydb){
       vlogf(LOG_MISC, "%s: Initializing database '%s'.", msg,
@@ -2862,9 +2886,9 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
     return -1;
   }
 
-  if(mysql_query(db, buf)){
+  if(mysql_query(db, buf2)){
     vlogf(LOG_BUG, "%s: Database query failed: %s", msg, mysql_error(db));
-    vlogf(LOG_BUG, "%s: %s", msg, buf);
+    vlogf(LOG_BUG, "%s: %s", msg, buf2);
     return 1;
   }
   if(res){

@@ -517,14 +517,14 @@ int TBeing::updateTickStuff()
       setTimer(4);
     rc = checkIdling();
     if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      vlogf(LOG_FILE, "updateTickStuff: %s (desc) caught idling", getName());
+      vlogf(LOG_SILENT, "updateTickStuff: %s (desc) caught idling", getName());
       return DELETE_THIS;
     }
     
     if (getCond(DRUNK) > 15) {
       rc = passOut();
       if (IS_SET_DELETE(rc, DELETE_THIS)) {
-        vlogf(LOG_FILE, "updateTickStuff: %s passed out", getName());
+        vlogf(LOG_SILENT, "updateTickStuff: %s passed out", getName());
         return DELETE_THIS;
       }
     }
@@ -544,12 +544,12 @@ int TBeing::updateTickStuff()
     if (getTimer() > 15 && GetMaxLevel() <= MAX_MORT) {
       // mortals get 15 mins
       nukeLdead(this);
-      vlogf(LOG_FILE, "updateTickStuff: %s (ldead) idled", getName());
+      vlogf(LOG_SILENT, "updateTickStuff: %s (ldead) idled", getName());
       return DELETE_THIS;
     } else if (getTimer() > 60) {
       // imms get an hour
       nukeLdead(this);
-      vlogf(LOG_FILE, "updateTickStuff: %s (ldead-imm) idled", getName());
+      vlogf(LOG_SILENT, "updateTickStuff: %s (ldead-imm) idled", getName());
       return DELETE_THIS;
     }
   } else if (desc && desc->original) {
@@ -581,7 +581,7 @@ int TBeing::updateTickStuff()
           if (isAnElemental) {
             rc = checkDecharm(FORCE_YES);
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
-              vlogf(LOG_FILE, "updateTickStuff: %s decharmed", getName());
+              vlogf(LOG_SILENT, "updateTickStuff: %s decharmed", getName());
               return DELETE_THIS;
             }
             return 0;
@@ -590,11 +590,11 @@ int TBeing::updateTickStuff()
                 TRUE, this, NULL, NULL, TO_ROOM);
             j = die(DAMAGE_NORMAL);
             if (IS_SET_DELETE(j, DELETE_THIS)) {
-              vlogf(LOG_FILE, "updateTickStuff: %s died naturally", getName());
+              vlogf(LOG_SILENT, "updateTickStuff: %s died naturally", getName());
               return DELETE_THIS;
             }
           }
-          vlogf(LOG_FILE, "updateTickStuff: %s died (2) naturally", getName());
+          vlogf(LOG_SILENT, "updateTickStuff: %s died (2) naturally", getName());
           return DELETE_THIS;
         }
       }
@@ -1597,7 +1597,7 @@ void sendAutoTips()
   // first, get a tip...
   FILE *fp = fopen("tipsfile", "r");
   if (!fp) {
-    vlogf(LOG_FILE, "Failed opening tipsfile.");
+    vlogf(LOG_SILENT, "Failed opening tipsfile.");
     return;
   }
   // skip any comments

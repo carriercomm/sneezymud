@@ -1,26 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// Revision 5.1.1.2  1999/10/16 05:06:08  batopr
-// *** empty log message ***
-// 
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.6  1999/09/27 09:20:02  lapsos
-// Various changes to the wickedDagger proc.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -2298,6 +2275,38 @@ int dragonSlayer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 
 }
 
+int daySword(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  // it used to do magic-missile every round
+  // this is a reasonable facsimile
+
+  TBeing *ch;
+  int rc, dam;
+
+  ch = genericWeaponProcCheck(vict, cmd, o, 3);
+  if (!ch)
+    return FALSE;
+
+  act("A pulse of light as bright as the sun travels up the blade of $p.",
+      FALSE, ch, o, NULL, TO_CHAR, ANSI_YELLOW);
+  act("A pulse of light as bright as the sun travels up the blade of $p.",
+      FALSE, ch, o, NULL, TO_ROOM, ANSI_YELLOW);
+
+  act("<r>WOOMPF!!<z>", FALSE, ch, NULL, NULL, TO_CHAR);
+  act("<r>WOOMPF!!<z>", FALSE, ch, NULL, NULL, TO_ROOM);
+
+  act("$p discharges its energy into $n.", false, vict, o, NULL, TO_ROOM);
+  act("$p discharges its energy into you!", false, vict, o, NULL, TO_CHAR);
+
+  int dam = ::number(5,8);
+  rc = ch->reconcileDamage(vict, dam, DAMAGE_NORMAL);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    return DELETE_VICT;
+
+  return TRUE;
+
+}
+
 int bloodDrain(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -2721,7 +2730,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "blinder weapon", weaponBlinder},
   {FALSE, "mana drain weapon", weaponManaDrainer}, // 45
   {FALSE, "potion of characteristics", statPotion},  
-  {FALSE, "BOGUS", bogusObjProc},  
+  {FALSE, "daySword", daySword},  
   {FALSE, "BOGUS", bogusObjProc},  
   {FALSE, "BOGUS", bogusObjProc},  
   {FALSE, "BOGUS", bogusObjProc},  // 50

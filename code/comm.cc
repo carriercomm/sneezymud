@@ -1044,12 +1044,9 @@ void Descriptor::updateScreenVt100(unsigned int update)
     }
   }
   if (IS_SET(update, CHANGED_MUD)) {
-    int tmp_num = (time_info.hours / 2);
     sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 35);
-    sprintf(buf + strlen(buf), "%2d:%s %s",
-          (!(tmp_num % 12) ? 12 : (tmp_num % 12)),
-          (!(time_info.hours % 2) ? "00" : "30"),
-          ((time_info.hours >= 24) ? "PM" : "AM"));
+    sprintf(buf + strlen(buf), "%s",
+         hmtAsString(hourminTime()).c_str());
   }
   if (IS_SET(update, CHANGED_TIME)) {
     time_t t1;
@@ -1066,11 +1063,9 @@ void Descriptor::updateScreenVt100(unsigned int update)
 
       sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 62);
       sprintf(buf + strlen(buf), "%2d:%02d %2s",
-        ((tptr->tm_hour == 0) ? 12 : 
-          ((tptr->tm_hour > 12) ? tptr->tm_hour - 12 :
-          tptr->tm_hour)),
+        (!(tptr->tm_hour%12) ? 12 : tptr->tm_hour%12, 
         tptr->tm_min,
-        (tptr->tm_hour/12) ? "PM" : "AM");
+        (tptr->tm_hour >= 12) ? "PM" : "AM");
     }
   }
   writeToQ(buf);
@@ -1192,12 +1187,9 @@ void Descriptor::updateScreenAnsi(unsigned int update)
     }
   }
   if (IS_SET(update, CHANGED_MUD)) {
-    int tmp_num = (time_info.hours / 2);
     sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 30);
-    sprintf(buf + strlen(buf), "%s%2d:%s %s", ch->bold(),
-          (!(tmp_num % 12) ? 12 : (tmp_num % 12)),
-          (!(time_info.hours % 2) ? "00" : "30"),
-          ((time_info.hours >= 24) ? "PM" : "AM"));
+    sprintf(buf + strlen(buf), "%s",
+         hmtAsString(hourminTime()).c_str());
   }
   time_t t1;
   struct tm *tptr;
@@ -1212,14 +1204,11 @@ void Descriptor::updateScreenAnsi(unsigned int update)
     else if (tptr->tm_hour > 23) 
       tptr->tm_hour -= 24;
     
-
     sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 57);
-    sprintf(buf + strlen(buf), "%s%2d:%02d %2s", ch->bold(),
-      ((tptr->tm_hour == 0) ? 12 : 
-        ((tptr->tm_hour > 12) ? tptr->tm_hour - 12 :
-        tptr->tm_hour)),
-      tptr->tm_min,
-      (tptr->tm_hour/12) ? "PM" : "AM");
+    sprintf(buf + strlen(buf), "%2d:%02d %2s",
+        (!(tptr->tm_hour%12) ? 12 : tptr->tm_hour%12, 
+        tptr->tm_min,
+        (tptr->tm_hour >= 12) ? "PM" : "AM");
   }
   writeToQ(buf);
   writeToQ(VT_NORMALT);

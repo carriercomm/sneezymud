@@ -855,6 +855,7 @@ void TObj::checkObjStats()
   }
   if (isObjStat(ITEM_SHADOWY)) {
     canBeSeen += (1 + getVolume()/1500);
+#if 0
     for (i=0; i<MAX_OBJ_AFFECT;i++) {
       if (affected[i].location == APPLY_NONE) {
         affected[i].location = APPLY_LIGHT;
@@ -867,6 +868,7 @@ void TObj::checkObjStats()
         vlogf(LOG_LOW,"obj %s has too many affects to set shadow on it.",
                getName());
     }
+#endif
   }
   if (canWear(ITEM_TAKE))
     if (isObjStat(ITEM_NOPURGE) && (objVnum() != CRAPS_DICE)) {

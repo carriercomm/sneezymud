@@ -44,5 +44,6 @@ enum changeWeatherT {
 extern void AlterWeather(changeWeatherT *);
 extern void calcNewSunRise();
 extern void calcNewSunSet();
+extern int hourminTime();
 
 #endif

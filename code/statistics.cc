@@ -37,7 +37,7 @@ bool nuke_inactive_mobs;
 void SetupStaticGoldModifiers()
 {
   gold_modifier[GOLD_XFER           ].setMM(0.01, 100.0);
-  gold_modifier[GOLD_INCOME         ].setMM(0.30, 100.0);
+  gold_modifier[GOLD_INCOME         ].setMM(0.25, 100.0);
   gold_modifier[GOLD_REPAIR         ].setMM(0.01, 100.0);
   gold_modifier[GOLD_SHOP           ].setMM(0.01, 100.0);
   gold_modifier[GOLD_COMM           ].setMM(0.01, 100.0);

@@ -1813,7 +1813,7 @@ class TBeing : public TThing {
     void doEquipment(const char *);
     void doOutfit(const char *);
     void doCredits();
-    void doNews();
+    void doNews(const char *);
     void doWizlist();
     void doWhere(const char *);
     void doLevels(const char *);

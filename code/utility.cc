@@ -159,8 +159,17 @@ void mudTimePassed(time_t t2, time_t t1, struct time_info_data *now)
 
   secs = (long) (t2 - t1);
 
-  now->hours = (secs / SECS_PER_MUD_HOUR) % 48;	
+#if 0
+  int hmt = (secs / SECS_PER_MUD_HOUR) % 96;
+  now->hours = hmt/4;
+  now->minutes = hmt%4 * 15;
+
+  secs -= SECS_PER_MUD_HOUR/4 * now->minutes/15;
   secs -= SECS_PER_MUD_HOUR * now->hours;
+#else
+  now->hours = (secs / SECS_PER_MUD_HOUR) % 96;	
+  secs -= SECS_PER_MUD_HOUR * now->hours;
+#endif
 
   now->day = (secs / SECS_PER_MUD_DAY) % 28;	
   secs -= SECS_PER_MUD_DAY * now->day;

@@ -1367,6 +1367,7 @@ class TMoney : public TObj {
     virtual bool canCarryMe(const TBeing *, silentTypeT) const;
     virtual bool isPluralItem() const;
     virtual void onObjLoad();
+    virtual string getNameForShow(bool, bool, const TBeing *) const;
 
     int getMoney() const;
     void setMoney(int n);

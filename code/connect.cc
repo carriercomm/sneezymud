@@ -762,6 +762,133 @@ void TPerson::autoDeath()
   return;
 }
 
+bool MakeTimeT(int tMon, int tDay, int tYear, time_t tLast)
+{
+  time_t     tCurrent = time(0);
+  struct tm  tTemp,
+           * tTime = localtime(&tCurrent);
+  int        tTempDay = 0;
+
+  tTemp.tm_sec   = 0;
+  tTemp.tm_min   = 0;
+  tTemp.tm_hour  = 0;
+  tTemp.tm_isdst = tTime->tm_isdst;
+  tTemp.tm_mon   = (tMon - 1);
+  tTemp.tm_mday  = tDay;
+  tTemp.tm_year  = (in_range(tYear, 0, 50) ? (tYear + 100) : tYear);
+
+  switch (tTemp.tm_mon) {
+    case 10:
+      tTempDay += 31;
+    case 9:
+      tTempDay += 30;
+    case 8:
+      tTempDay += 31;
+    case 7:
+      tTempDay += 30;
+    case 6:
+      tTempDay += 31;
+    case 5:
+      tTempDay += 31;
+    case 4:
+      tTempDay += 30;
+    case 3:
+      tTempDay += 31;
+    case 2:
+      tTempDay += 30;
+    case 1:
+      tTempDay += 31;
+    case 0:
+      tTempDay += (!(((1900 + tTemp.tm_year) - 1996) % 4) ? 29 : 28);
+  }
+
+  // Jan 1st, 1900 == Monday(1)
+  double tDays = tTemp.tm_year;
+
+  tDays         -=   1.0;
+  tDays         *= 365.75;
+  tTemp.tm_yday  = (tTempDay + (tTemp.tm_mday - 1));
+  tDays         += tTemp.tm_yday;
+  tTemp.tm_wday  = (((int) tDays - 1) % 7);
+  tCurrent       = mktime(&tTemp);
+
+  return (difftime(tCurrent, tLast) > 0.0);
+}
+
+void ShowNewNews(TBeing * tBeing)
+{
+  time_t  tLast = tBeing->player.time.last_logon,
+          tTime = time(0);
+  struct  stat tData;
+  FILE   *tFile;
+  char    tString[256];
+  int     tMon,
+          tDay,
+          tYear,
+          tCount = 0;
+  bool    tPosted = false;
+
+  // Report for the NEWS file
+  if (!stat(NEWS_FILE, &tData))
+    if (tTime - tData.st_mtime <= (3 * SECS_PER_REAL_DAY))
+      if ((tFile = fopen(NEWS_FILE, "r"))) {
+        while (!feof(tFile)) {
+          fgets(tString, 256, tFile);
+
+          if (sscanf(tString, "%d-%d-%d : ", &tMon, &tDay, &tYear) != 3)
+            continue;
+
+          if (!MakeTimeT(tMon, tDay, tYear, tLast))
+            break;
+
+          if (!tPosted) {
+            tPosted = true;
+            tBeing->sendTo("NEWS File Changes:\n\r");
+          }
+
+          tBeing->sendTo("%s", tString);
+
+          if (++tCount == 10) {
+            tBeing->sendTo("...And there is more, SEE NEWS to see more.\n\r");
+            break;
+          }
+        }
+
+        fclose(tFile);
+      }
+
+  tPosted = false;
+  tCount  = 0;
+
+  if (tBeing->isImmortal() && !stat(WIZNEWS_FILE, &tData))
+    if (tTime - tData.st_mtime <= (3 * SECS_PER_REAL_DAY))
+      if ((tFile = fopen(WIZNEWS_FILE, "r"))) {
+        while (!feof(tFile)) {
+          fgets(tString, 256, tFile);
+
+          if (sscanf(tString, "%d-%d-%d : ", &tMon, &tDay, &tYear) != 3)
+            continue;
+
+          if (!MakeTimeT(tMon, tDay, tYear, tLast))
+            break;
+
+          if (!tPosted) {
+            tPosted = true;
+            tBeing->sendTo("WIZNEWS File Changes:\n\r");
+          }
+
+          tBeing->sendTo("%s", tString);
+
+          if (++tCount == 10) {
+            tBeing->sendTo("...And there is more, SEE WIZNEWS to see more.\n\r");
+            break;
+          }
+        }
+
+        fclose(tFile);
+      }
+}
+
 // if descriptor is to be deleted, DELETE_THIS
 int Descriptor::nanny(const char *arg)
 {
@@ -2285,7 +2412,10 @@ int Descriptor::nanny(const char *arg)
 
       character->fixClientPlayerLists(FALSE);
    
+      ShowNewNews(character);
+
       character->doLook("", CMD_LOOK);
+
       prompt_mode = 1;
       character->doSave(SILENT_YES);
       break;

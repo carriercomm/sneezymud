@@ -414,6 +414,16 @@ enum concatT {
   CONCAT_YES = true
 };
 
+enum allowReplaceT {
+  ALLOWREP_NO = false,
+  ALLOWREP_YES = true
+};
+
+enum showNowT {
+  SHOWNOW_NO = false,
+  SHOWNOW_YES = true
+};
+
 enum showMeT {
   DONT_SHOW_ME = false,
   SHOW_ME = true

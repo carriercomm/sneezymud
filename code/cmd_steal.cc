@@ -303,7 +303,8 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
           *thief += *(victim->unequip(eq_pos));
         }
 
-        if (victim->isPc() && !thief->isImmortal()) {
+	/*
+        if (thief->isPc() && victim->isPc() && !thief->isImmortal()) {
           affectedData tAff;
 
           tAff.type     = AFFECT_PLAYERLOOT;
@@ -311,6 +312,7 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
           thief->affectJoin(thief, &tAff, AVG_DUR_NO, AVG_EFF_NO);
           vlogf(LOG_CHEAT, "Adding PLoot Flag To: %s (4)", thief->getName());
         }
+	*/
 
         thief->doSave(SILENT_YES);
         victim->doSave(SILENT_YES);

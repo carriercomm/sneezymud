@@ -2,16 +2,10 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
+//      "food.cc" - Procedures for eating/drinking. And general liquid 
+//      containers like vials
+//
 //////////////////////////////////////////////////////////////////////////
-
-
-/*************************************************************************
-
-      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
-      "food.cc" - Procedures for eating/drinking. And general liquid 
-      containers like vials
-
-*************************************************************************/
 
 #include <cmath>
 
@@ -946,7 +940,7 @@ int TFood::chiMe(TBeing *tLunatic)
 
   act("You focus your chi, causing $p to become a little fresher!",
       FALSE, tLunatic, this, NULL, TO_CHAR);
-  act("$n stares at $p, cuasing it to become a little fresher!",
+  act("$n stares at $p, causing it to become a little fresher!",
       TRUE, tLunatic, this, NULL, TO_ROOM);
 
   obj_flags.decay_time += ::number(1, 3);

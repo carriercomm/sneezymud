@@ -729,7 +729,7 @@ int TFFlame::chiMe(TBeing *tLunatic)
 
   act("You focus your chi, causing $p to bursts momentarily!",
       FALSE, tLunatic, this, NULL, TO_CHAR);
-  act("$n stares at $p, cuasing it to burst momentarily",
+  act("$n stares at $p, causing it to burst momentarily",
       TRUE, tLunatic, this, NULL, TO_ROOM);
 
   obj_flags.decay_time += 10;

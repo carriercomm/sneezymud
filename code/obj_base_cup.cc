@@ -343,7 +343,7 @@ int TBaseCup::chiMe(TBeing *tLunatic)
 
   act("You focus your chi, causing $p to become lighter!",
       FALSE, tLunatic, this, NULL, TO_CHAR);
-  act("$n stares at $p, cuasing it to become lighter",
+  act("$n stares at $p, causing it to become lighter",
       TRUE, tLunatic, this, NULL, TO_ROOM);
 
   evaporate(tLunatic, SILENT_YES);

@@ -2811,8 +2811,11 @@ extern void cleanUpMail();
 #endif
 }
 
-// -1=db error, 0=no error, 1=query error
-int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *query,...){
+// -1=db error (malformed query, db down, etc)
+//  0=no error
+//  1=query successful, but it was a "select" and no results were returned
+int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *query,...)
+{
   char buf[MAX_STRING_LENGTH+MAX_STRING_LENGTH];
   va_list ap;
   static MYSQL *sneezydb, *immodb;

@@ -1636,6 +1636,8 @@ spellNumT mapFileToSpellnum(int stt)
       return AFFECT_DRUG;
     case 2516:
       return AFFECT_ORPHAN_PET;
+    case 2517:
+      return AFFECT_PLAYERKILL;
     default:
       break;
   }

@@ -670,19 +670,48 @@ void TBeing::statBeing(TBeing *k)
 //  sprintf(buf + strlen(buf), "%sFaction :%s %s\n\r",
 //    cyan(), norm(), FactionInfo[k->getFaction()].faction_name);
 
-  sprintf(buf + strlen(buf),"Stats  :");
+  sprintf(buf + strlen(buf),"Stats    :");
   sprintf(buf + strlen(buf),k->chosenStats.printStatHeader().c_str());
-  sprintf(buf + strlen(buf),"Chosen:");
-  sprintf(buf + strlen(buf),k->chosenStats.printRawStats(this).c_str());
-  sprintf(buf + strlen(buf),"Natural:");
-  statTypeT ik;
-  for(ik=MIN_STAT; ik<MAX_STATS_USED; ik++) {
-    sprintf(buf + strlen(buf), " %3d ", k->getStat(STAT_NATURAL, ik));
-  }
-  strcat(buf, "\n\r");
 
-  sprintf(buf + strlen(buf),"Current:");
-  sprintf(buf + strlen(buf),k->curStats.printRawStats(this).c_str());
+    statTypeT ik;
+
+    sprintf(buf + strlen(buf),"Race     :");
+    for(ik = MIN_STAT; ik<MAX_STATS_USED; ik++) {
+      sprintf(buf + strlen(buf), " %3d ", k->getStat(STAT_RACE, ik));
+    }
+    strcat(buf, "\n\r");
+
+    sprintf(buf + strlen(buf),"Chosen   :");
+    for(ik = MIN_STAT; ik<MAX_STATS_USED; ik++) {
+      sprintf(buf + strlen(buf), " %3d ", k->getStat(STAT_CHOSEN, ik));
+    }
+    strcat(buf, "\n\r");
+
+    sprintf(buf + strlen(buf),"Age      :");
+    for(ik = MIN_STAT; ik<MAX_STATS_USED; ik++) {
+      sprintf(buf + strlen(buf), " %3d ", k->getStat(STAT_AGE, ik));
+    }
+    strcat(buf, "\n\r");
+
+    sprintf(buf + strlen(buf),"Territory:");
+    for(ik = MIN_STAT; ik<MAX_STATS_USED; ik++) {
+      sprintf(buf + strlen(buf), " %3d ", k->getStat(STAT_TERRITORY, ik));
+    }
+    strcat(buf, "\n\r");
+
+    sprintf(buf + strlen(buf),"Natural  :");
+
+    for(ik=MIN_STAT; ik<MAX_STATS_USED; ik++) {
+      sprintf(buf + strlen(buf), " %3d ", k->getStat(STAT_NATURAL, ik));
+    }
+    strcat(buf, "\n\r");
+    
+    sprintf(buf + strlen(buf),"Current  :");
+    for(ik = MIN_STAT; ik<MAX_STATS_USED; ik++) {
+      sprintf(buf + strlen(buf), " %3d ", k->getStat(STAT_CURRENT, ik));
+    }
+    strcat(buf, "\n\r");
+
 
   // only show captive info when needed
   if (k->getCaptiveOf() || k->getCaptive()) {
@@ -1583,6 +1612,7 @@ void TBeing::doStat(const char *)
 {
   return;
 }
+
 
 void TPerson::doStat(const char *argument)
 {

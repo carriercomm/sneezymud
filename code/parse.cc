@@ -1053,6 +1053,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_BODYSLAM:
           rc = doBodyslam(newarg, dynamic_cast<TBeing *>(vict));
           break;
+        case CMD_SPIN:
+          rc = doSpin(newarg, dynamic_cast<TBeing *>(vict));
+          break;
         case CMD_STOMP:
           rc = doStomp(newarg, dynamic_cast<TBeing *>(vict));
           break;
@@ -2329,6 +2332,7 @@ void buildCommandArray(void)
   commandArray[CMD_REFUEL] = new commandInfo("refuel", POSITION_RESTING, 0);
   commandArray[CMD_SHOW] = new commandInfo("show", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_BODYSLAM] =new commandInfo("bodyslam", POSITION_FIGHTING, 0);
+  commandArray[CMD_SPIN] =new commandInfo("spin", POSITION_FIGHTING, 0);
   commandArray[CMD_INVISIBLE] = new commandInfo("invisible", POSITION_DEAD, 0);
   commandArray[CMD_GAIN] = new commandInfo("gain", POSITION_CRAWLING, 0);
   commandArray[CMD_TIMESHIFT] = new commandInfo("timeshift", POSITION_DEAD, GOD_LEVEL1);

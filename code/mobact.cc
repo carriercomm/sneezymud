@@ -967,7 +967,7 @@ int TMonster::fighterMove(TBeing &vict)
       vict.getPosition() > POSITION_SITTING) {
     // caster
     // knock uhm over or we are toast!
-    // bash, grapple or bodyslam
+    // bash, grapple, spin or bodyslam
 
     // use the best option
     if (getSkillValue(SKILL_BODYSLAM) > 33 &&
@@ -975,6 +975,10 @@ int TMonster::fighterMove(TBeing &vict)
         mobBSlamCheck(*this, vict) &&
         canBodyslam(&vict, SILENT_YES)) {
       return doBodyslam("", &vict);
+    } else if (getSkillValue(SKILL_SPIN) > 33 &&
+        getPosition() > POSITION_SITTING &&
+        canSpin(&vict, SILENT_YES)) {
+      return doSpin("", &vict);
 #if 0
     } else if (getSkillValue(SKILL_GRAPPLE) > 33 &&
         getPosition() > POSITION_SITTING &&
@@ -1001,6 +1005,10 @@ int TMonster::fighterMove(TBeing &vict)
              mobBSlamCheck(*this, vict) &&
              (getPosition() >= POSITION_CRAWLING)) {
     return doBodyslam("", &vict);
+  } else if (getSkillValue(SKILL_SPIN) > 33 &&
+             canSpin(&vict, SILENT_YES) &&
+             (getPosition() >= POSITION_CRAWLING)) {
+    return doSpin("", &vict);
   } else if (getSkillValue(SKILL_KNEESTRIKE) > 33 &&
       canKneestrike(&vict, SILENT_YES) &&
       (getPosition() >= POSITION_CRAWLING)) {

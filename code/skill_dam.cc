@@ -260,6 +260,7 @@ int TBeing::getSkillDam(const TBeing *victim, spellNumT skill, int level, int ad
     case SKILL_KNEESTRIKE:
     case SKILL_STOMP:
     case SKILL_BODYSLAM:
+    case SKILL_SPIN:
     // other: bash lag is handled based on this is bash
       dam = genericDam(victim, skill, DISC_WARRIOR, level, adv_learn, 0.20, REDUCE_NO, !isPc(), TRIM_NO);
       break;

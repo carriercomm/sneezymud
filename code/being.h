@@ -1158,6 +1158,7 @@ class TBeing : public TThing {
     bool canStomp(TBeing *, silentTypeT);
     bool canHeadbutt(TBeing *, silentTypeT);
     bool canBodyslam(TBeing *, silentTypeT);
+    bool canSpin(TBeing *, silentTypeT);
     bool canKick(TBeing *, silentTypeT);
     bool canKneestrike(TBeing *, silentTypeT);
     bool canGrapple(TBeing *, silentTypeT);
@@ -1329,6 +1330,7 @@ class TBeing : public TThing {
     int doDeathstroke(const char *, TBeing *);
     void doBandage(const char *);
     int doBodyslam(const char *, TBeing *);
+    int doSpin(const char *, TBeing *);
     int doStomp(const char *, TBeing *);
     int doHeadbutt(const char *, TBeing *);
     int doKneestrike(const char *, TBeing *);

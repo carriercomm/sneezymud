@@ -2012,6 +2012,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SKILL_BERSERK:
     case SKILL_SWITCH_OPP:
     case SKILL_BODYSLAM:
+    case SKILL_SPIN:
     case SKILL_KNEESTRIKE:
     case SKILL_SHOVE:
     case SKILL_RETREAT:

@@ -509,6 +509,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
       return &((CDBrawling *) cd)->skStomp;
     case SKILL_BODYSLAM:
       return &((CDBrawling *) cd)->skBodyslam;
+    case SKILL_SPIN:
+      return &((CDBrawling *) cd)->skSpin;
 
 
 // disc_physical

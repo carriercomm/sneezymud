@@ -211,7 +211,7 @@ int TSocket::gameLoop()
   // players may have connected before this point via 
   // addNewDescriptorsDuringBoot, so send all those descriptors the login
   for (point = descriptor_list; point; point = point->next)
-    if (!point->client)
+    if (!point->m_bIsClient)
       point->sendLogin("1");
 
   time_t ticktime = time(0);
@@ -289,7 +289,7 @@ int TSocket::gameLoop()
       else if (rc) {
         // we created a new descriptor
         // so send the login to the first desc in list
-        if (!descriptor_list->client)
+        if (!descriptor_list->m_bIsClient)
           descriptor_list->sendLogin("1");
       }
     }

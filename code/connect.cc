@@ -90,7 +90,7 @@ Descriptor::Descriptor(TSocket *s) :
   screen_size(24),
   point_roll(0),
   talkCount(time(0)),
-  client(FALSE),
+  m_bIsClient(FALSE),
   bad_login(0),
   severity(0),
   office(0),
@@ -144,7 +144,7 @@ Descriptor::Descriptor(const Descriptor &a) :
   screen_size(a.screen_size),
   point_roll(a.point_roll),
   talkCount(a.talkCount),
-  client(a.client),
+  m_bIsClient(a.m_bIsClient),
   bad_login(a.bad_login),
   severity(a.severity),
   office(a.office),
@@ -215,7 +215,7 @@ Descriptor & Descriptor::operator=(const Descriptor &a)
   screen_size = a.screen_size;
   point_roll = a.point_roll;
   talkCount = a.talkCount;
-  client = a.client;
+  m_bIsClient = a.m_bIsClient;
   bad_login = a.bad_login;
   severity = a.severity;
   office = a.office;
@@ -445,13 +445,13 @@ int Descriptor::outputProcessing()
   int counter = 0;
   char buf[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
 
-  if (!prompt_mode && !connected && !client)
+  if (!prompt_mode && !connected && !m_bIsClient)
     if (socket->writeToSocket("\n\r") < 0)
       return -1;
 
   if (output.getEnd() && !output.getBegin()) {
     if (character && character->name)
-      vlogf(LOG_BUG, "%s's output has end and no begin (client: %d).", character->getName(), client ? 1 : 0);
+      vlogf(LOG_BUG, "%s's output has end and no begin (client: %d).", character->getName(), m_bIsClient ? 1 : 0);
     else
       vlogf(LOG_BUG, "output has end and no begin.");
 // kludge, seems like it may lead to memory leaks but better than
@@ -2837,7 +2837,7 @@ void Descriptor::go_back_menu(connectStateT con_state)
 
 void Descriptor::EchoOn()
 {
-  if (client)
+  if (m_bIsClient)
     return;
 
   char echo_on[6] = {IAC, WONT, TELOPT_ECHO, '\n', '\r', '\0'};
@@ -2847,7 +2847,7 @@ void Descriptor::EchoOn()
 
 void Descriptor::EchoOff()
 {
-  if (client)
+  if (m_bIsClient)
     return;
 
   char echo_off[4] = {IAC, WILL, TELOPT_ECHO, '\0'};
@@ -4111,7 +4111,7 @@ void Descriptor::string_add(char *s)
             if (connected == CON_WRITING)
               connected = CON_PLYNG;
 
-            if (client)
+            if (m_bIsClient)
               clientf("%d|%d", CLIENT_ENABLEWINDOW, FALSE);
 
             return;
@@ -4146,7 +4146,7 @@ void Descriptor::string_add(char *s)
           mud_assert(*str != NULL, "string_add(): Bad string memory");
           strcpy(*str, t);
           strcat(*str, s);
-          if (!client)
+          if (!m_bIsClient)
             delete [] t;
         }
       } else {
@@ -4269,11 +4269,11 @@ void Descriptor::string_add(char *s)
     // set the string to NULL to insure we don't fall into string_add again
     str = NULL;
 
-    if (client)
+    if (m_bIsClient)
       clientf("%d|%d", CLIENT_ENABLEWINDOW, FALSE);
   } else {
     strcat(*str, "\n\r");
-    //if (client)
+    //if (m_bIsClient)
       //prompt_mode = -1;
   }
 }
@@ -4359,7 +4359,7 @@ void setPrompts(fd_set out)
             d->green(),  d->norm());
           (&d->output)->putInQ(promptbuf);
         } else {
-          if ((d->client || (ch->isPlayerAction(PLR_VT100 | PLR_ANSI) &&
+          if ((d->m_bIsClient || (ch->isPlayerAction(PLR_VT100 | PLR_ANSI) &&
                              IS_SET(d->prompt_d.type, PROMPT_VTANSI_BAR)))) {
             if (ch->getHit() != d->last.hit) {
               d->last.hit = ch->getHit();
@@ -4416,13 +4416,13 @@ void setPrompts(fd_set out)
                 d->updateScreenVt100(update);
               else if (ch->ansi())
                 d->updateScreenAnsi(update);
-              else if (d->client) {
+              else if (d->m_bIsClient) {
                 d->outputProcessing();
                 d->send_client_prompt(TRUE, update); // Send client prompt
               }
             }
             /*
-            if (d->prompt_mode != DONT_SEND && d->client) {
+            if (d->prompt_mode != DONT_SEND && d->m_bIsClient) {
               strcpy(promptbuf, "> ");
               (&d->output)->putInQ(promptbuf);
             }
@@ -4670,7 +4670,7 @@ void processAllInput()
       else if (d->pagedfile) 
         d->page_file(comm);
       else if (!d->account) {            // NO ACCOUNT
-        if (d->client) {
+        if (d->m_bIsClient) {
           rc = d->client_nanny(comm);
           if (IS_SET_DELETE(rc, DELETE_THIS)) {
             delete d;
@@ -4769,7 +4769,7 @@ int Descriptor::sendLogin(const char *arg)
   char buf[160], buf2[4096] = "\0\0\0";
   accountFile afp;
 
-  if (client)
+  if (m_bIsClient)
     return FALSE;
 
   if (!*arg)
@@ -4904,7 +4904,7 @@ bool Descriptor::checkForCharacter(char *arg)
   sprintf(buf, "player/%c/%s", LOWER(arg[0]), lower(arg).c_str());
  
   if (!stat(buf, &timestat)) {
-    if (!client)
+    if (!m_bIsClient)
       writeToQ("Character already exists, enter another name.\n\r--> ");
     return TRUE;
   }
@@ -5466,7 +5466,7 @@ int Descriptor::doAccountMenu(const char *arg)
   int count = 1;
   int tss = screen_size;
 
-  if (client) {
+  if (m_bIsClient) {
     clientf("%d", CLIENT_MENU);
     return DELETE_THIS;
   }
@@ -5705,7 +5705,7 @@ int Descriptor::inputProcessing()
       return (0);
 
   for (i = 0, k = 0; *(m_raw + i);) {
-    if (!ISNEWL(*(m_raw + i)) && !(flag = (k >= (!client ? (MAX_INPUT_LENGTH - 2) : 4096)))) {
+    if (!ISNEWL(*(m_raw + i)) && !(flag = (k >= (!m_bIsClient ? (MAX_INPUT_LENGTH - 2) : 4096)))) {
       if (*(m_raw + i) == '\b') {      // backspace 
         if (k) {                // more than one char ? 
           if (*(tmp + --k) == '$')
@@ -5831,7 +5831,7 @@ void Descriptor::sendMotd(int wiz)
                                ctime(&(timestat.st_mtime)));
   }
 
-  if (!client) {
+  if (!m_bIsClient) {
     writeToQ(motd);
     if (wiz)
       writeToQ(wizmotd);

@@ -710,7 +710,7 @@ void TBeing::doSeekwater()
   aff.duration = PERMANENT_DURATION;
   affectTo(&aff);
 
-  if (desc && desc->client)
+  if (desc && desc->m_bIsClient)
     desc->clientf("%d|%d", CLIENT_TRACKING, 1 << code);
 
   if (code <= 9) {

@@ -375,11 +375,11 @@ void TBeing::rawOpenDoor(dirTypeT dir)
     }
     TThing *t;
     for (t = roomp->stuff; t; t = t->nextThing) {
-      if (t->desc && t->desc->client)
+      if (t->desc && t->desc->m_bIsClient)
         t->desc->send_client_exits();
     }
     for (t = rp2->stuff; t; t = t->nextThing) {
-      if (t->desc && t->desc->client)
+      if (t->desc && t->desc->m_bIsClient)
         t->desc->send_client_exits();
     }
   }
@@ -616,11 +616,11 @@ void TBeing::rawCloseDoor(dirTypeT dir)
     }
     TThing *t;
     for (t = roomp->stuff; t; t = t->nextThing) {
-      if (t->desc && t->desc->client)
+      if (t->desc && t->desc->m_bIsClient)
         t->desc->send_client_exits();
     }
     for (t = rp2->stuff; t; t = t->nextThing) {
-      if (t->desc && t->desc->client)
+      if (t->desc && t->desc->m_bIsClient)
         t->desc->send_client_exits();
     }
   }

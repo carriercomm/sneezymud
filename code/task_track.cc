@@ -207,7 +207,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
             (targetRm != -1 && targetRm == ch->inRoom())) {
           ch->sendTo("%s###You have found %s!%s\n\r", ch->orange(),
                      (isSW ? "some water" : "your target"), ch->norm());
-          if (ch->desc && ch->desc->client)
+          if (ch->desc && ch->desc->m_bIsClient)
             ch->desc->clientf("%d", CLIENT_TRACKOFF);
           ch->stopTask();
           ch->remPlayerAction(PLR_HUNTING);
@@ -234,7 +234,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
 		       (isSW ? "some water" : "your target"),
                    dirs_to_blank[code], ch->norm());
             // Client check
-            if (ch->desc && ch->desc->client)
+            if (ch->desc && ch->desc->m_bIsClient)
               ch->desc->clientf("%d|%d", CLIENT_TRACKING, 1 << code);
             if (ch->desc && (ch->desc->autobits & AUTO_HUNT)) {
               strcpy(buf, dirs[code]);
@@ -263,7 +263,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
               return TRUE;
             }
             // Client check.
-            if (ch->desc && ch->desc->client)
+            if (ch->desc && ch->desc->m_bIsClient)
               ch->desc->clientf("%d|%d", CLIENT_TRACKING, 1 << code);
             if (ch->desc && (ch->desc->autobits & AUTO_HUNT)) {
               strcpy(buf, t->name);

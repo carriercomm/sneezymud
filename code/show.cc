@@ -28,7 +28,7 @@ void TNote::showMe(TBeing *ch) const
   if (action_description) {
     sb += HEADER_TXT_NOTE;
     sb += action_description;
-    if (ch->desc && !ch->desc->client) {
+    if (ch->desc && !ch->desc->m_bIsClient) {
       if (ch->desc)
         ch->desc->page_string(sb.c_str());
     } else {

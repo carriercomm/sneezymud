@@ -332,7 +332,7 @@ void TPerson::doToggle(const char *arg)
       Descriptor *d, *dn;
       for (d = descriptor_list; d; d = dn) {
         dn = d->next;
-        if (d->client) {
+        if (d->m_bIsClient) {
           d->writeToQ("Link severed by admin.\n\r");
           sendTo(COLOR_MOBS, "Disconnecting client use by %s.\n\r", d->character ? d->character->getName() : "Unknown");
           delete d;
@@ -2875,7 +2875,7 @@ void TPerson::doStart()
     addPlayerAction(PLR_COLOR);
     SET_BIT(desc->prompt_d.type, PROMPT_COLOR);
   }
-  if (!desc->client)
+  if (!desc->m_bIsClient)
     sendTo(COLOR_BASIC, "<R>Initializing your Character<1> ...\n\r");
 
   if (!discs)
@@ -2891,7 +2891,7 @@ void TPerson::doStart()
   if (desc->account->term == TERM_VT100) 
     doTerminal("vt100");
   
-  if (desc && !desc->client && !ansi() && !vt100()) 
+  if (desc && !desc->m_bIsClient && !ansi() && !vt100()) 
     doPrompt("all");
 
   desc->autobits = 0;
@@ -2902,13 +2902,13 @@ void TPerson::doStart()
   if ((GetMaxLevel() > MAX_MORT) && !isPlayerAction(PLR_IMMORTAL)) {
     addPlayerAction(PLR_IMMORTAL);
     SET_BIT(desc->autobits, AUTO_SUCCESS);
-    if (!desc->client)
+    if (!desc->m_bIsClient)
       sendTo("Setting various autobits with recommended immortal configuration.\n\r");
     setMoney(100000);
     sprintf(buf, "%s full", getName());
     doRestore(buf);
   } else {
-    if (!desc->client) {
+    if (!desc->m_bIsClient) {
       sendTo("Setting various autobits with recommended newbie configuration.\n\r");
       if (IS_SET(desc->plr_color, PLR_COLOR_BASIC)) 
         sendTo("Setting color to all available color options.\n\r");
@@ -2955,7 +2955,7 @@ void TPerson::doStart()
 
   doNewbieEqLoad(RACE_NORACE, 0, true);
 
-  if (!desc->client) {
+  if (!desc->m_bIsClient) {
     sendTo("You have been given appropriate newbie equipment.\n\r");
     sendTo("--> See %sHELP WEAR%s for more details.\n\r", cyan(), norm());
     sendTo("Be sure to read your %snewbie guide%s...\n\r", green(), norm());
@@ -3003,7 +3003,7 @@ void TPerson::doStart()
 
   doSave(SILENT_NO);
 
-  if (desc->client) {
+  if (desc->m_bIsClient) {
     addPlayerAction(PLR_COMPACT);
     SET_BIT(desc->plr_color, PLR_COLOR_BASIC);
     addPlayerAction(PLR_COLOR);
@@ -5362,7 +5362,7 @@ void TBeing::doSysViewoutput()
   char  file[32];
   sprintf(file, "tmp/%s.output", getName());
 
-  if (!desc->client) 
+  if (!desc->m_bIsClient) 
     desc->start_page_file( file, "There is nothing to read.\n\r");
   else {
     string sb = "";
@@ -5789,7 +5789,7 @@ void TBeing::doClients()
   char   tString[1024];
 
   for (Descriptor *tDesc = descriptor_list; tDesc; tDesc = tDesc->next)
-    if (tDesc->client) {
+    if (tDesc->m_bIsClient) {
       sprintf(tString, "%-16s %-34s\n\r",
               ((tDesc->character && tDesc->character->name) ?
                tDesc->character->name : "UNDEFINED"),
@@ -6090,7 +6090,7 @@ void TBeing::doComment(const char *argument)
   *(*desc->str) = '\0';
 
   desc->max_str = MAX_MAIL_SIZE;
-  if (desc->client)
+  if (desc->m_bIsClient)
     desc->clientf("%d", CLIENT_STARTEDIT, MAX_MAIL_SIZE);
 
   return;

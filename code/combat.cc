@@ -1329,7 +1329,7 @@ void TBeing::stopFighting()
     return;
   }
   // Clear out client fight and tank condition fields
-  if (desc && desc->client) 
+  if (desc && desc->m_bIsClient) 
     desc->clientf("%d|%s|%s|%s|%s", CLIENT_FIGHT, "", "", "", "");
 
   // see explanation at declaration for details on this
@@ -5247,7 +5247,7 @@ bool TBeing::willKill(TBeing *v, int dam, spellNumT dmg_type, bool reduced)
 void TBeing::setCombatMode(attack_mode_t n)
 {
   combatMode = n;
-  if (desc && desc->client) {
+  if (desc && desc->m_bIsClient) {
     if (n == ATTACK_OFFENSE)
       desc->clientf("%d", CLIENT_OFFENSIVE);
     else if (n == ATTACK_DEFENSE)

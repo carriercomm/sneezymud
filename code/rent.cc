@@ -954,7 +954,7 @@ void TBeing::addObjCost(TBeing *re, TObj *obj, objCost *cost, string &str)
     temp = max(0, obj->rentCost());
     cost->total_cost += temp;
     if (re) {
-      if (desc && desc->client) {
+      if (desc && desc->m_bIsClient) {
         sprintf(buf, "%-30s : %d talens/day\n\r", 
             obj->getName(), temp);
         str += buf;
@@ -987,7 +987,7 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
   if (!cost)
     return FALSE;
 
-  bool client = (desc && desc->client);
+  bool client = (desc && desc->m_bIsClient);
 
   cost->total_cost = 0;
   cost->ok = TRUE;
@@ -1026,7 +1026,7 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
       silent = SILENT_YES;
 
     if (recep) {
-      if (desc && desc->client) {
+      if (desc && desc->m_bIsClient) {
         sprintf(buf, "%-30s : %d talens/day ********** Storage fee \n\r", ch->getName(), actual_cost);
         str += buf;
       } else if (!silent)
@@ -2728,7 +2728,7 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
     }
 
     if (ch->recepOffer(recep, &cost)) {
-      if (ch->desc && !ch->desc->client) {
+      if (ch->desc && !ch->desc->m_bIsClient) {
         act("$n stores your stuff in the safe, and shows you to your room.", FALSE, recep, 0, ch, TO_VICT);
         act("$n shows $N to $S room.", FALSE, recep, 0, ch, TO_NOTVICT);
     

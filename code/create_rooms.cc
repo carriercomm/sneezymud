@@ -227,7 +227,7 @@ void TPerson::doEdit(const char *arg)
       desc->max_str = MAX_STRING_LENGTH;
 #if 0
 // as is, this will cause it to send the descr as a "bug"
-      if (desc->client) {
+      if (desc->m_bIsClient) {
         desc->clientf("%d", CLIENT_STARTEDIT, 4000);
       }
 #endif

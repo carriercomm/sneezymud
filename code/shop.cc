@@ -1343,7 +1343,7 @@ void shopping_list(const char *argument, TBeing *ch, TMonster *keeper, int shop_
 
 #if 0
   if (gamePort != PROD_GAMEPORT) {
-    if (ch->desc && ch->desc->client)
+    if (ch->desc && ch->desc->m_bIsClient)
       desc->clientShoppingList(arg, keeper, shop_nr);
   }
 #endif
@@ -1525,7 +1525,7 @@ void shopping_list(const char *argument, TBeing *ch, TMonster *keeper, int shop_
     return;
   }
   if (ch->desc) {
-    if (!ch->desc->client)
+    if (!ch->desc->m_bIsClient)
       ch->desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
     else 
       ch->desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);

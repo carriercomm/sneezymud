@@ -646,7 +646,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
       if (i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING))
         continue;
  
-      if (i->client)
+      if (i->m_bIsClient)
         i->clientf("%d|%d|%s", CLIENT_LOG, tError, buf);
       else
         i->character->sendTo(COLOR_LOGS, "// %s\n\r", buf);

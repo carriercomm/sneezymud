@@ -310,7 +310,7 @@ int board_display_msg(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
   }
 
   if (ch->desc) {
-    if (ch->desc->client) {
+    if (ch->desc->m_bIsClient) {
       sprintf(buffer, "Message %d : %s\n\r\n\r%s\n\rEnd of message %d.\n\r",
                       msg, b->head[msg - 1], b->msgs[msg - 1], msg);
      

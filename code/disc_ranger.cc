@@ -174,7 +174,7 @@ void TBeing::doTrack(const char *argument)
   aff.duration = PERMANENT_DURATION;
   affectTo(&aff);
 
-  if (desc && desc->client)
+  if (desc && desc->m_bIsClient)
     desc->clientf("%d|%d", CLIENT_TRACKING, 1 << code);
 
   if (code <= 9) {
@@ -241,7 +241,7 @@ int TBeing::track(TBeing *vict)
     sendTo("%s###You have found %s!%s\n\r", orange(), isSW ? "some water" :
            "your quarry", norm());
     addToWait(combatRound(1));
-    if (desc && desc->client)
+    if (desc && desc->m_bIsClient)
       desc->clientf("%d", CLIENT_TRACKOFF);
     stopTask();
     addToWait(combatRound(1));

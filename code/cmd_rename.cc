@@ -210,7 +210,7 @@ void TBeing::doDescription()
     return;
   }
 #if 0 
-  if (desc->client) {
+  if (desc->m_bIsClient) {
     // it winds up sending their desc as a bug report...
 
     sendTo("Sorry, descriptions can not be editted through the client.\n\r");
@@ -227,7 +227,7 @@ void TBeing::doDescription()
   desc->str = &descr;
   desc->max_str = 500;
 #if 0
-  if (desc->client)
+  if (desc->m_bIsClient)
     desc->clientf("%d|%d", CLIENT_STARTEDIT, 500);
 #endif
 }

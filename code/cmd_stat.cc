@@ -1253,7 +1253,7 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_PIERCE_SPEC:
       case SKILL_BAREHAND_SPEC:
       case SKILL_RANGED_SPEC:
-      case SKILL_BOW:
+      case SKILL_RANGED_PROF:
       case SKILL_FAST_LOAD:
       case SKILL_SHARPEN:
       case SKILL_DULL:
@@ -1532,7 +1532,7 @@ void TBeing::statBeing(TBeing *k)
   }
 #endif
   if (k->desc)
-    sprintf(buf + strlen(buf), "Client : %s\n\r", k->desc->client ? "Yes" : "No");
+    sprintf(buf + strlen(buf), "Client : %s\n\r", k->desc->m_bIsClient ? "Yes" : "No");
   
   if (km) {
     if (km->sounds)

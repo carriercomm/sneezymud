@@ -501,7 +501,7 @@ void TBeing::postmasterSendMail(const char *arg, TMonster *me)
          fname(name).c_str());
     me->doTell(buf);
   }
-  if (!desc->client) {
+  if (!desc->m_bIsClient) {
     sprintf(buf, "%s Write your message, use ~ when done, or ` to cancel.", fname(name).c_str());
     me->doTell(buf);
     addPlayerAction(PLR_MAILING);
@@ -513,7 +513,7 @@ void TBeing::postmasterSendMail(const char *arg, TMonster *me)
     *(*desc->str) = '\0';
     desc->max_str = MAX_MAIL_SIZE;
   }
-  if (desc->client)
+  if (desc->m_bIsClient)
     desc->clientf("%d|%s", CLIENT_MAIL, recipient);
 }
 

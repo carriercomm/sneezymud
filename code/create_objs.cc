@@ -932,7 +932,7 @@ void TPerson::doOEdit(const char *argument)
         }
       }
       sendTo("Enter extra description.  Terminate with a '~' on a NEW line.\n\r");
-      if (desc->client)
+      if (desc->m_bIsClient)
         desc->clientf("%d", CLIENT_STARTEDIT, 4000);
       if (*desc->str)
         delete [] (*desc->str);

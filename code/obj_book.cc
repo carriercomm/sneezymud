@@ -76,7 +76,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
     if (file_to_string(the_filebuf, buf2)) {
       strcat(buf, buf2.c_str());
       sprintf(buf + strlen(buf), "\n\rEnd of section %d.\n\r", section);
-      if (!ch->desc->client)
+      if (!ch->desc->m_bIsClient)
         ch->desc->page_string(buf);
       else {
         string sb = buf;
@@ -109,7 +109,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
     if (file_to_string(the_filebuf, buf2)) {
       strcat(buf, buf2.c_str());
       strcat(buf, "\n\r");
-      if (!ch->desc->client)
+      if (!ch->desc->m_bIsClient)
         ch->desc->page_string(buf);
       else {
         string sb = buf;

@@ -1509,10 +1509,10 @@ void TPerson::doIdea(const char *arg)
     return;
   }
   idea_used_num++;
-  if (!desc->client)
+  if (!desc->m_bIsClient)
     sendTo("Write the subject of your idea then hit return.\n\r");
 
-  if (!desc->client) {
+  if (!desc->m_bIsClient) {
     addPlayerAction(PLR_BUGGING);
     desc->connected = CON_WRITING;
     strcpy(desc->name, "Idea");
@@ -1546,10 +1546,10 @@ void TPerson::doTypo(const char *arg)
   }
 
   typo_used_num++;
-  if (!desc->client)
+  if (!desc->m_bIsClient)
     sendTo("Write the subject of your typo then hit return.\n\r");
 
-  if (!desc->client) {
+  if (!desc->m_bIsClient) {
     addPlayerAction(PLR_BUGGING);
     desc->connected = CON_WRITING;
     strcpy(desc->name, "Typo");
@@ -1583,10 +1583,10 @@ void TPerson::doBug(const char *arg)
   }
 
   bug_used_num++;
-  if (!desc->client) 
+  if (!desc->m_bIsClient) 
     sendTo("Write the subject of your bug then hit return.\n\r");
   
-  if (!desc->client) {
+  if (!desc->m_bIsClient) {
     addPlayerAction(PLR_BUGGING);
     desc->connected = CON_WRITING;
     strcpy(desc->name, "Bug");
@@ -1805,7 +1805,7 @@ void TBeing::doGroup(const char *argument)
         sendTo("You group yourself.\n\r");
         act("$n groups $mself.",TRUE,this,0,0,TO_ROOM);
         SET_BIT(victim->specials.affectedBy, AFF_GROUP);
-        if (desc && desc->client) 
+        if (desc && desc->m_bIsClient) 
           desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, getName(), getHit(), getMana(), attack_modes[getCombatMode()]);
         
         if (victim->desc)
@@ -1818,16 +1818,16 @@ void TBeing::doGroup(const char *argument)
         act("$n adds $N to $s group.",TRUE,this,0,victim,TO_NOTVICT);
         victim->sendTo(COLOR_MOBS, "You are now a member of %s's group.\n\r",getName());
         SET_BIT(victim->specials.affectedBy, AFF_GROUP);
-        if (desc && desc->client) 
+        if (desc && desc->m_bIsClient) 
           desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
         
         for (f = followers; f; f = f->next) {
           TBeing *b = f->follower;
-          if (victim->desc && victim->desc->client)  {
+          if (victim->desc && victim->desc->m_bIsClient)  {
             victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, 
                        b->getName(), b->getHit(), b->getMana(), attack_modes[b->getCombatMode()]);
           } 
-          if (b->desc && b->desc->client) {
+          if (b->desc && b->desc->m_bIsClient) {
             b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
                              victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]); 
           }
@@ -1891,7 +1891,7 @@ void TBeing::doGroup(const char *argument)
             
             if (desc) {
               desc->session.group_share = 1;
-              if (desc->client)
+              if (desc->m_bIsClient)
                 desc->clientf("%d", CLIENT_GROUPDELETEALL);
             }
             for (f = followers; f; f = f->next) {
@@ -1899,7 +1899,7 @@ void TBeing::doGroup(const char *argument)
                 REMOVE_BIT(f->follower->specials.affectedBy, AFF_GROUP);
                 if (f->follower->desc) {
                   f->follower->desc->session.group_share = 1;
-                  if (f->follower->desc->client)
+                  if (f->follower->desc->m_bIsClient)
                     f->follower->desc->clientf("%d", CLIENT_GROUPDELETEALL);
                 }
               }
@@ -1909,7 +1909,7 @@ void TBeing::doGroup(const char *argument)
             REMOVE_BIT(specials.affectedBy, AFF_GROUP);
             if (desc) {
               desc->session.group_share = 1;
-              if (desc->client)
+              if (desc->m_bIsClient)
                 desc->clientf("%d", CLIENT_GROUPDELETEALL);
             }
           }
@@ -1924,16 +1924,16 @@ void TBeing::doGroup(const char *argument)
           REMOVE_BIT(victim->specials.affectedBy, AFF_GROUP);
           if (victim->desc) {
             victim->desc->session.group_share = 1;
-            if (victim->desc->client)
+            if (victim->desc->m_bIsClient)
               victim->desc->clientf("%d", CLIENT_GROUPDELETEALL);
           }
           for (f = followers; f; f = f->next) {
             if (IS_SET(f->follower->specials.affectedBy, AFF_GROUP)) {
-              if (f->follower->desc && f->follower->desc->client)
+              if (f->follower->desc && f->follower->desc->m_bIsClient)
                 f->follower->desc->clientf("%d|%s", CLIENT_GROUPDELETE, victim->getName());
             }
           }
-          if (desc && desc->client) 
+          if (desc && desc->m_bIsClient) 
             desc->clientf("%d|%s", CLIENT_GROUPDELETE, victim->getName());
         }
       } else {
@@ -1948,17 +1948,17 @@ void TBeing::doGroup(const char *argument)
         act("$n is now a member of $N's group.", FALSE, victim, 0, this, TO_ROOM);
         act("You are now a member of $N's group.", FALSE, victim, 0, this, TO_CHAR);
         SET_BIT(victim->specials.affectedBy, AFF_GROUP);
-        if (desc && desc->client) 
+        if (desc && desc->m_bIsClient) 
           desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD, victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
         
         if (victim != this) {
           for (f = followers; f; f = f->next) {
             TBeing *b = f->follower;
-            if (victim->desc && victim->desc->client)  {
+            if (victim->desc && victim->desc->m_bIsClient)  {
               victim->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
                          b->getName(), b->getHit(), b->getMana(), attack_modes[b->getCombatMode()]);
             }
-            if (b->desc && b->desc->client) {
+            if (b->desc && b->desc->m_bIsClient) {
               b->desc->clientf("%d|%s|%d|%d|%s", CLIENT_GROUPADD,
                                victim->getName(), victim->getHit(), victim->getMana(), attack_modes[victim->getCombatMode()]);
             }
@@ -3011,7 +3011,7 @@ void TBeing::doHistory()
   if (!(d = desc))
     return;
 
-  if (d->client) {
+  if (d->m_bIsClient) {
     sendTo("The client keeps its own history, please use that!\n\r");
     return;
   }
@@ -3681,7 +3681,7 @@ void Descriptor::send_bug(const char *type, const char *msg)
        IS_SET(account->flags, ACCOUNT_IMMORTAL) ? "(immortal)" : character->getName(),
        character->inRoom(), 
        (gamePort == PROD_GAMEPORT ? "" : (gamePort == 7901 ? "(gamma) " : "(beta) ")), 
-       (!client ? "" : "(client) "), 
+       (!m_bIsClient ? "" : "(client) "), 
        tmstr);
   strcpy(buf, buf3);
   strcat(buf, buf2);

@@ -153,7 +153,7 @@ void TBeing::listExits(const TRoom *rp) const
 
   *buf = '\0';
 
-  if (desc && desc->client) 
+  if (desc && desc->m_bIsClient) 
     return;
   
   // Red if closed (imm only), Blue if an open exit has a type, purple if normal
@@ -3113,7 +3113,7 @@ void TBeing::doAlias(const char *argument)
   if (!desc)
     return;
 
-  if (desc->client) {
+  if (desc->m_bIsClient) {
     sendTo("Use the client aliases. See client help file for #alias command and
 options menu\n\r");
     return;
@@ -4734,7 +4734,7 @@ void TBeing::sendRoomName(TRoom *rp) const
   if (IS_SET(desc->plr_color, PLR_COLOR_ROOM_NAME)) {
     if (hasColorStrings(this, rp->getName(), 2)) {
       sendTo(COLOR_ROOM_NAME,"%s%s%s%s%s%s\n\r", 
-                d->client ? clientBuf : "",
+                d->m_bIsClient ? clientBuf : "",
                 dynColorRoom(rp, 1, TRUE).c_str(),
                 norm(), red(), 
                 ((rFlags & ROOM_NO_HEAL) ? "     [NOHEAL]" :
@@ -4743,7 +4743,7 @@ void TBeing::sendRoomName(TRoom *rp) const
                 " "))), norm());
     } else {
       sendTo(COLOR_ROOM_NAME,"%s%s%s%s%s%s%s\n\r", 
-                d->client ? clientBuf : "",  
+                d->m_bIsClient ? clientBuf : "",  
                 addColorRoom(rp, 1).c_str(),
                 rp->getName(), norm(), red(),  
                 ((rFlags & ROOM_NO_HEAL) ? "     [NOHEAL]" :
@@ -4754,7 +4754,7 @@ void TBeing::sendRoomName(TRoom *rp) const
   } else {
     if (hasColorStrings(this, rp->getName(), 2)) {
       sendTo(COLOR_BASIC,"%s%s%s%s%s%s\n\r", 
-              d->client ? clientBuf : "", purple(), 
+              d->m_bIsClient ? clientBuf : "", purple(), 
               colorString(this, desc, rp->getName(), NULL, COLOR_NONE, FALSE).c_str(),
               red(),
               ((rFlags & ROOM_NO_HEAL) ? "     [NOHEAL]" :
@@ -4762,7 +4762,7 @@ void TBeing::sendRoomName(TRoom *rp) const
               ((rFlags & ROOM_HOSPITAL) ? "     [ARENA]" :
              " "))), norm());
     } else {
-      sendTo(COLOR_BASIC,"%s%s%s%s%s%s\n\r", d->client ? clientBuf : "", 
+      sendTo(COLOR_BASIC,"%s%s%s%s%s%s\n\r", d->m_bIsClient ? clientBuf : "", 
              purple(),rp->getName(), red(),
              ((rFlags & ROOM_NO_HEAL) ? "     [NOHEAL]" :
              ((rFlags & ROOM_HOSPITAL) ? "     [HOSPITAL]" :

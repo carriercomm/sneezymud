@@ -34,7 +34,7 @@ void Descriptor::clientf(const char *msg,...)
   // with other text and missed by the client interpreter Russ - 061299
   outputProcessing();
 
-  if (client) {
+  if (m_bIsClient) {
     if (msg) {
       va_start(ap, msg);
       vsprintf(messageBuffer, msg, ap);
@@ -58,7 +58,7 @@ void TRoom::clientf(const char *msg, ...)
     sprintf(tmp, "\200%s\n", messageBuffer);
   }
   for (t = stuff; t; t = t->nextThing) {
-    if (t->isPc() && t->desc && t->desc->client)
+    if (t->isPc() && t->desc && t->desc->m_bIsClient)
       t->sendTo(tmp);
   } 
 }
@@ -219,7 +219,7 @@ int Descriptor::read_client(char *str2)
   switch (type) {
     case CLIENT_INIT:
       if (!Clients) {
-        client = TRUE;
+        m_bIsClient = TRUE;
         clientf("%d|Clients not allowed at this time. Try later!|%d", 
                 CLIENT_ERROR, ERR_NOT_ALLOWED);
         outputProcessing();
@@ -227,7 +227,7 @@ int Descriptor::read_client(char *str2)
       }
       if (WizLock) {
         // this may need better handling to let wizs in, but, oh well
-        client = TRUE;
+        m_bIsClient = TRUE;
         clientf("%d|The mud is presently Wizlocked.|%d", 
                 CLIENT_ERROR, ERR_NOT_ALLOWED);
         if (!lockmess.empty())
@@ -237,7 +237,7 @@ int Descriptor::read_client(char *str2)
       }
       strcpy(buf, nextToken('|', 255, str2).c_str());
       vers = atoi(buf);
-      client = TRUE;
+      m_bIsClient = TRUE;
       if (vers <= BAD_VERSION) {
         clientf("%d|Your client is an old version. The latest version is %d. Please upgrade! You can upgrade from http://sneezy.stanford.edu/client/client.html.|%d", CLIENT_ERROR, CURRENT_VERSION, ERR_BAD_VERSION);
         outputProcessing();
@@ -1204,7 +1204,7 @@ void TBeing::fixClientPlayerLists(bool lost)
   char buf[256] = "\0";
 
   for (d = descriptor_list; d; d = d->next) {
-    if (!d->client || !d->character)
+    if (!d->m_bIsClient || !d->character)
       continue;
 
     if (isLinkdead() && d->character->isImmortal()) 
@@ -1230,7 +1230,7 @@ void TBeing::fixClientPlayerLists(bool lost)
       }
     }
   }
-  if (desc && desc->client) {
+  if (desc && desc->m_bIsClient) {
     desc->account->term = TERM_NONE;
     remPlayerAction(PLR_VT100);
     remPlayerAction(PLR_ANSI);
@@ -1260,7 +1260,7 @@ int TBeing::doClientMessage(const char *arg)
   if (!desc)
      return FALSE;
 
-  if (!desc->client && GetMaxLevel() <= MAX_MORT) {
+  if (!desc->m_bIsClient && GetMaxLevel() <= MAX_MORT) {
     sendTo("This command is only available for users of the SneezyMUD client (http://sneezy.stanford.edu/client).\n\r");
     return FALSE;
   }
@@ -1270,7 +1270,7 @@ int TBeing::doClientMessage(const char *arg)
   // I dont want immortals or anyone non client getting these
   // message, PLEASE DONT EDIT
   for (i = descriptor_list; i; i = i->next) {
-    if ((b = i->character) && (b != this) && !i->connected && i->client)
+    if ((b = i->character) && (b != this) && !i->connected && i->m_bIsClient)
       b->sendTo(COLOR_COMM, "<p>CLIENT<1> (%s): %s\n\r", getName(), arg);  
   }
   sendTo(COLOR_COMM, "<p>CLIENT<1>: %s\n\r", arg);

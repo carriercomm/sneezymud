@@ -3074,6 +3074,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           strcpy(buf, "Yaaarggggghhhh!");
           break;
         case 10:
+          strcpy(buf, "Help me Damn it! I think %s may actually get the better of me!", ch->pers(ch->fight()));
+	  break;    
         case 11:
         case 12:
         case 13:
@@ -3153,6 +3155,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           sprintf(buf, "Clearly, %s wants to die!", ch->pers(ch->fight()));
           break;
         case 61:
+          sprintf(buf, "Hey I'm kicking %s's ass right now...anyone want to join me?!", ch->pers(ch->fight()));
+	  break;
         case 62:
         case 63:
           strcpy(buf, "Stand back!  This one's all mine.");
@@ -3175,6 +3179,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           sprintf(buf, "Help!  Criminals at %s!", ch->roomp->name);
           break;
         case 73:
+          sprintf(buf, "Hey!! Come and check this out! %s is wearing pink chainmail! HAHAHAHAHA!!!", ch->roomp->name);
+	  break;
         case 74:
         case 75:
         case 76:
@@ -3187,6 +3193,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           strcpy(buf, "I'm about to ROCK YOUR WORLD!");
           break;
         case 81:
+          sprintf(buf, "%s's face is about to be stamped into 200 gorrilla cookies!", ch->roomp->name);
+	  break;
         case 82:
         case 83:
         case 84:
@@ -3273,6 +3281,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           sprintf(buf, "Bandits and marauders at %s!  Help me destroy them!", ch->roomp->name);
           break;
         case 131:
+          sprintf(buf, "I'm gonna stomp %s's butt right out of %s!", ch->roomp->name, MUD_NAME);
+	  break;
         case 132:
         case 133:
         case 134:

@@ -53,7 +53,8 @@ void TObj::show_me_to_char(TBeing *ch, showModeT mode) const
 
   if (mode == SHOW_MODE_DESC_PLUS && getDescr()) {
     if (roomp && roomp->isWaterSector() && 
-        !isObjStat(ITEM_HOVER)) {
+        !isObjStat(ITEM_HOVER) &&
+        !isObjStat(ITEM_FLOAT)) {
       sprintf(buffer, "%s is floating here.", getName());
       cap(buffer);
     } else {

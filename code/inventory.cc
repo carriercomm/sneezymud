@@ -698,7 +698,7 @@ int TBeing::doGet(const char *argument)
           TBaseCorpse *tbc = dynamic_cast<TBaseCorpse *>(t);
           // we do no name check here, since "pile dust" won't hit "corpse"
           if (tbc) {
-            rc = tbc->getAllFrom(this, argument);
+            rc = tbc->getAllFrom(this, tbc->name);
             if (IS_SET_DELETE(rc, DELETE_VICT))
               return DELETE_THIS;
           }

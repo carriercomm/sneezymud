@@ -121,7 +121,7 @@ static int steal(TBeing * thief, TBeing * victim)
   if (!victim->awake())
     modifier += 50;
 
-  if ((vict_lev > level) &&
+  if ((vict_lev > level) ||
       victim->isLucky(thief->spellLuckModifier(SKILL_STEAL)))
     modifier -= 45;
 

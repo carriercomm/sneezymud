@@ -546,7 +546,52 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
   lt = time(0);
   this_time = localtime(&lt);
 
-  /*
+  switch (tError) {
+    case LOG_LOW:
+      strcpy(buf, "L.O.W. Error: ");
+      break;
+    case LOG_CHEAT:
+      strcpy(buf, "Cheating: ");
+      break;
+    case LOG_BATOPR:
+      strcpy(buf, "Batopr: ");
+      break;
+    case LOG_BRUTIUS:
+      strcpy(buf, "Brutius: ");
+      break;
+    case LOG_COSMO:
+      strcpy(buf, "Cosmo: ");
+      break;
+    case LOG_LAPSOS:
+      strcpy(buf, "Lapsos: ");
+      break;
+    case LOG_PEEL:
+      strcpy(buf, "Peel: ");
+      break;
+    default:
+      break;
+  }
+
+  strcat(buf, message);
+
+  fprintf(stderr, "%2.2d%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
+          this_time->tm_year, this_time->tm_mon + 1, this_time->tm_mday,
+          this_time->tm_hour, this_time->tm_min, this_time->tm_sec, buf);
+
+  if (tError >= 0)
+    for (i = descriptor_list; i; i = i->next)
+      if (!i->connected && i->character &&
+          ((i->character->hasWizPower(POWER_WIZNET_ALWAYS)) ||
+           ((i->character->GetMaxLevel() >= GOD_LEVEL1) &&
+            i->character->hasQuestBit(TOG_IMMORTAL_LOGS))) &&
+          (i->severity & (1 << tError)) &&
+          !(i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING)))
+        if (i->client)
+          i->clientf("%d|%d|%s", CLIENT_LOG, tError, buf);
+        else
+          i->character->sendTo(COLOR_LOGS, "%s\n\r", buf);
+
+#if 0
   if (severity == LOW_ERROR) {
     sprintf(buf, "// L.O.W. Error:   %s \n\r", message); 
     severity = 5;
@@ -561,7 +606,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
          this_time->tm_year, this_time->tm_mon + 1, this_time->tm_mday,
          this_time->tm_hour, this_time->tm_min, this_time->tm_sec, message);
   }
-  */
+
   for (i = descriptor_list; i; i = i->next) {
     if (!i->connected && i->character &&
         ((i->character->hasWizPower(POWER_WIZNET_ALWAYS)) ||
@@ -576,6 +621,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
         i->character->sendTo(COLOR_LOGS, "%s\n\r", buf);
     }
   }
+#endif
 }
 
 void dirwalk(const char *dir, void (*fcn) (const char *))

@@ -562,6 +562,13 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
     ++totpray;
   }
 
+  if (me->affectedBySpell(SPELL_CURSE)) {
+    sprintf(bufpray, ".....$n is surrounded by a dark, forboding red aura!\n\r");
+    tStPray += bufpray;
+    tStPray += displayShowApprox(me, ch, SPELL_CURSE, 1.0);
+    ++totpray;
+  }
+
   if (me->affectedBySpell(SKILL_BARKSKIN)) {
     sprintf(bufspell, ".....$n seems coated in a thin veneer.\n\r");
     tStSpell += bufspell;

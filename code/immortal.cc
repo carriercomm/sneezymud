@@ -5360,58 +5360,13 @@ void TBeing::doSysChecklog(const char *arg)
   sprintf(tString, "\\%s\\\" %s", tSearch, tLog);
   systask->AddTask(this, SYSTEM_CHECKLOG, tString);
 
+  // There is a tendency for people to see what bad things folks have said
+  // about them using checklog.  Obviously, not good, so we log the event
+  // and watch for imms blindly checking logs on other imms, etc.
+ 
   // If we don't trust these people why even have the command?
   if (!hasWizPower(POWER_WIZARD))
     vlogf(LOG_MISC, "%s checklogging: '%s'", getName(), tString);
-
-  /*
-  char *squote, *equote;
-
-  if (!hasWizPower(POWER_CHECKLOG)) {
-    sendTo("You don't have that power.\n\r");
-    return;
-  }
-
-  if (!isImmortal()) 
-    return;
-
-  for (; isspace(*arg); arg++);    
-
-  if (!*arg) {
-    sendTo("Syntax:  checklog \"string\" datestring\n\r");
-    return;
-  }
-
-  char argument[256];
-  strcpy(argument, arg);
-  cleanCharBuf(argument);
-  //  Make sure the grep string is wrapped in double quotes.
-  squote = strchr(argument, '"');
-  equote = strrchr(argument, '"');
-  if (!equote || !squote) {
-    sendTo("Syntax:  checklog \"string\" datestring\n\r");
-    return;
-  }
-  //  Make sure a log file was given.
-  if (!*(equote+1)) {
-    sendTo("You need to specify a particular log file.\n\r");
-    return;
-  }
-  // verify that they are looking at the logs
-  // e.g. avoid checklog "." /mud/code/foo.cc
-  char *tmpch = equote+1;
-  for (;*tmpch && isspace(*tmpch);tmpch++);
-  if (*(tmpch) == '.' ||
-      *(tmpch) == '/') {
-    // dodge relative paths and hard paths
-    sendTo("That's not allowed.\n\r");
-    return;
-  }
-  systask->AddTask(this, SYSTEM_CHECKLOG, argument);
-
-  // this is here to avoid gods checking logs on other gods
-  vlogf(LOG_MISC, "%s checklogging: '%s'", getName(), argument);
-  */
 }
 
 void TBeing::doSysViewoutput() 
@@ -5705,9 +5660,11 @@ void TBeing::doAccount(const char *arg)
       if (IS_SET(afp.flags, ACCOUNT_BANISHED)) {
         REMOVE_BIT(afp.flags, ACCOUNT_BANISHED);
         sendTo("You have unbanished the %s account.\n\r", afp.name);
+        vlogf(LOG_PLAYER, "%s unbanished account '%s'", getName(), afp.name);
       } else {
         SET_BIT(afp.flags, ACCOUNT_BANISHED);
         sendTo("You have set the %s account banished.\n\r", afp.name);
+        vlogf(LOG_PLAYER, "%s banished account '%s'", getName(), afp.name);
       }
       
       rewind(fp);
@@ -5718,9 +5675,11 @@ void TBeing::doAccount(const char *arg)
       if (IS_SET(afp.flags, ACCOUNT_EMAIL)) {
         REMOVE_BIT(afp.flags, ACCOUNT_EMAIL);
         sendTo("You have un-email-banished the %s account.\n\r", afp.name);
+        vlogf(LOG_PLAYER, "%s un-email-banished account '%s'", getName(), afp.name);
       } else {
         SET_BIT(afp.flags, ACCOUNT_EMAIL);
         sendTo("You have set the %s account email-banished.\n\r", afp.name);
+        vlogf(LOG_PLAYER, "%s email-banished account '%s'", getName(), afp.name);
       }
       
       rewind(fp);

@@ -703,6 +703,31 @@ int TSocket::gameLoop()
       lag_info.low = min(lag_info.lagtime[which], lag_info.low);
     }
 
+    if(!(pulse % 600)){
+      static FILE *p;
+      Descriptor *d;
+  
+      if(p) pclose(p);
+
+      if(gamePort == PROD_GAMEPORT){
+	p=popen("/mud/prod/lib/bin/ping sneezy", "w");
+      } else if(gamePort == BUILDER_GAMEPORT){
+	p=popen("/mud/prod/lib/bin/ping sneezybuilder", "w");
+      } else {
+	p=popen("/mud/prod/lib/bin/ping sneezybeta", "w");
+      }
+
+
+      for (d = descriptor_list; d; d = d->next) {
+        if (d->host){
+	  fprintf(p, "%s\n", d->host);
+	}
+      }
+      fprintf(p, "EOM\n");
+      fflush(p);
+    }
+
+
     if (pulse >= 2400) {
       unsigned int secs = time(0) - ticktime;
       ticktime = time(0);

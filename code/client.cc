@@ -2,23 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: client.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "client.cc" - All functions and routines related toclient/server 
 //
 //      The client/server protocol coded by Russ Russell, Februrary 1994,
@@ -1197,7 +1180,7 @@ lower(account->name).c_str());
   fwrite(&afp, sizeof(accountFile), 1, fp);
   fclose(fp);
 
-  account_number++;
+  accStat.account_number++;
 
   return TRUE;
 }

@@ -2,36 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: connect.cc,v $
-// Revision 5.1.1.5  1999/10/30 01:19:09  mithros
-// Changed Urvile's connect stuff over to Staffa
-//
-// Revision 5.1.1.4  1999/10/23 18:25:17  mithros
-// Changed spelling of Armaggedon's name for connect placement.
-//
-// Revision 5.1.1.3  1999/10/23 03:02:37  mithros
-// Removed some other old builder's room loads.
-//
-// Revision 5.1.1.2  1999/10/23 01:47:50  mithros
-// Removed Lothar's room assignment, Added Demo's and Kechara's (Quelara)
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/15 21:55:26  batopr
-// typo fix
-//
-// Revision 1.2  1999/10/15 21:53:22  batopr
-// Added code to protect against use of potentially freed memory following
-// call to parseCommand.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -4929,7 +4899,7 @@ int Descriptor::doAccountStuff(char *arg)
         return FALSE;
       }
       saveAccount();
-      account_number++;
+      accStat.account_number++;
       account->status = TRUE;
       rc = doAccountMenu("");
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -5518,7 +5488,7 @@ void Descriptor::deleteAccount()
   }
   sprintf(buf, "account/%c/%s", LOWER(account->name[0]), lower(account->name).c_str());
   rmdir(buf);
-  account_number--;
+  accStat.account_number--;
   closedir(dfd);
 }
 

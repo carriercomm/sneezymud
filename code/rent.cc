@@ -2517,7 +2517,7 @@ void countAccounts(const char *arg)
   }
   // each time this is called, we have another account
   // no need to really do anything, besides just count number of calls
-  account_number++;
+  accStat.account_number++;
 }
 
 static void deleteDuringRead(TMonster *mob)

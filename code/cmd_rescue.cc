@@ -35,7 +35,7 @@ static int rescue(TBeing * caster, TBeing * victim, spellNumT skill)
          victim->getName(), victim->riding->getName());
     return FALSE;
   }
-  if (!victim->isPc() && !victim->isPet()) {
+  if (!victim->isPc() && !victim->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
     caster->sendTo("You can only rescue PCs or pets.\n\r");
     return FALSE;
   }

@@ -4347,7 +4347,7 @@ int fleeCheck(TBeing *ch)
 }
 
 // returns DELETE_THIS
-int TBeing::tellStatus(int dam, int same, int flying)
+int TBeing::tellStatus(int dam, bool same, bool flying)
 {
   int new_dam, max_hit;
   int rc;
@@ -4395,7 +4395,9 @@ int TBeing::tellStatus(int dam, int same, int flying)
     max_hit = hitLimit();
     if (dam > (max_hit / 5))
       sendTo("That really did %sHURT%s!\n\r", red(), norm());
-    if ((isCharm() || isPet()) && !same) {
+
+    // self-preservation check for charms and pets
+    if (!same && isPet(PETTYPE_CHARM | PETTYPE_PET)) {
       if ((getHit() <= (hitLimit() * 4 / 10)) || (master && !sameRoom(*master))) {
         if (fight() && !isCombatMode(ATTACK_BERSERK)) {
           if (!fleeCheck(this)) {

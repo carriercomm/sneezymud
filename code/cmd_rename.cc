@@ -85,7 +85,7 @@ void TBeing::doNameChange(const char *argument)
       return;
     }
     if (!isImmortal()) {
-      if (!mons->isPet() || mons->master != this) {
+      if (!mons->isPet(PETTYPE_PET | PETTYPE_THRALL) || mons->master != this) {
         act("$N is not your pet.", FALSE, this, 0, mons, TO_CHAR);
         return;
       }

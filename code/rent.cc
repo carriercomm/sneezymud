@@ -3318,13 +3318,6 @@ bool TBeing::isSaveMob(const TBeing *) const
   if (mob->number < 0)
     return FALSE;
 
-#if 0
-  // this is OK now, max_exist covers it
-  // don't save horses unless they are pets (bought pet, personal warhorse)
-  if (mob->rider && !mob->isPet())
-    return FALSE;
-#endif
-
   // DUH.... making a bounty rent out is kinda dumb
   if (mob->spec == SPEC_BOUNTY_HUNTER)
     return FALSE;

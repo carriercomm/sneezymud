@@ -49,6 +49,12 @@ int TMonster::aggro(void)
     if ((4*anger() + 5*malice()) >=450 )
       return TRUE;
   }
+
+#ifdef SNEEZY2000
+  if(IS_SET(specials.act, ACT_AGGRESSIVE))
+    return TRUE;
+#endif
+
   return FALSE;
 }
 

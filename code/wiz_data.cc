@@ -76,6 +76,21 @@ void TBeing::wizFileRead()
 
   if (should_be_logged(this))
     vlogf(LOG_IIO, "Loaded %s's wizard file.", getName());
+
+  TPerson * tPerson = dynamic_cast<TPerson *>(this);
+
+  if (tPerson && !tPerson->tLogFile) {
+    char tString[256];
+
+    sprintf(tString, "immortals/%s/logfile", name);
+
+    if (!(tPerson->tLogFile = fopen(tString, "a")))
+      vlogf(LOG_FILE, "Unable to open Log File for %s", name);
+    else {
+      vlogf(LOG_LAPSOS, "Hooked Log File: %s", tString);
+      tPerson->logf("Logging in...");
+    }
+  }
 }
 
 void TMonster::wizFileSave()

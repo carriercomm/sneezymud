@@ -4792,6 +4792,7 @@ int Descriptor::doAccountStuff(char *arg)
   struct stat timestat;
   int rc;
   int tss = screen_size;
+  TBeing *ch;
 
   // apparently, crypt() has a mem leak in the lib function
   // By making this static, we limit the number of leaks to one
@@ -5122,6 +5123,21 @@ int Descriptor::doAccountStuff(char *arg)
         connected = CON_DELETE;
         break;
       }
+      // it's possible that char is in game (link-dead), check for this
+      for (ch = character_list; ch; ch = ch->next) {
+        if (!strcmp(ch->name, delname)) {
+          writeToQ("Character is still connected.  Disconnect before deleting.\n\r");
+          writeToQ("Which do you want to do?\n\r");
+          writeToQ("1) Delete your account\n\r");
+          writeToQ("2) Delete a character in your account\n\r");
+          writeToQ("3) Return to main account menu.\n\r-> ");
+          connected = CON_DELETE;
+          break;
+        }
+      }
+      if (ch)
+        break;
+
       writeToQ("Character deleted.\n\r");
       vlogf(LOG_PIO, "Character %s self-deleted. (%s account)", delname, account->name);
       DeleteHatreds(NULL, delname);

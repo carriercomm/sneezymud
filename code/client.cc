@@ -1262,8 +1262,13 @@ void processStringForClient(string &sb)
 int TBeing::doClientMessage(const char *arg)
 {
   
+
   if (!desc)
      return FALSE;
+
+  sendTo("Clientmessage has been disabled, doing shout instead.\n\r");
+  doShout(arg);
+  return TRUE;
 
   if (!desc->m_bIsClient && GetMaxLevel() <= MAX_MORT && strcmp("Dash", getName())) {
     sendTo("This command is only available for users of the SneezyMUD client (http://sneezy.stanford.edu/client).\n\r");

@@ -18,11 +18,7 @@ extern "C" {
 #include "statistics.h"
 #include "combat.h"
 
-unsigned int account_number = 0;
-unsigned int active_player = 0;
-int player_count = 0;
-unsigned int player_num = 0;
-unsigned int max_player_since_reboot = 0;
+TAccountStats accStat;
 wizListInfo *wiz;
 
 void TBeing::initDescStuff(charFile *st)

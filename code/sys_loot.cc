@@ -88,6 +88,7 @@ bool sysLootBoot()
           isLegalLoot(obj_index[tOIndex].name)) ||
           isSpecialLegalLoot(tOIndex)) &&
         obj_index[tOIndex].max_exist == 9999) {
+      vlogf(LOG_BUG, "Loot Object Debug, reading object: %d", tOIndex);
       tObj = read_object(tOIndex, REAL);
 
       switch (obj_index[tOIndex].itemtype) { // Set tLevel

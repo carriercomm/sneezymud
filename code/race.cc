@@ -272,6 +272,7 @@ void Race::initRace(const char *whichRace)
   FILE * raceFile;
 
   sprintf(aFilename, "races/%s", whichRace);
+  vlogf(LOG_FILE, "initRace races/%s", whichRace);
 
   raceFile = fopen(aFilename, "r");
   if (!raceFile) {
@@ -600,6 +601,8 @@ void Race::initRace(const char *whichRace)
   }
 
   fclose(raceFile);
+  vlogf(LOG_FILE, "Racefile fclose.");
+
 }
 
 // showTo() is called by immortal.cc's doShow command.  It takes a single

@@ -415,6 +415,16 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
   if ((mod == -1) && v->isImmune(getTypeImmunity(wtype), 0))
     return FALSE;
 
+  if (mod == -1 && v->isAffected(AFFECT_DUMMY)) {
+    affectedData aff;
+    for(aff = (*v->affected); aff.next != NULL; aff = (*aff.next)) {
+      if (aff.type == AFFECT_DUMMY && aff.modifier == SKILL_CRIT_HIT &&  aff.level == 60) {
+	mod = aff.modifier2;
+	v->affectFrom(AFFECT_DUMMY);
+      }
+    }
+  }
+
   // get wtype back so it fits in array  
   new_wtype = wtype - TYPE_HIT;
 
@@ -439,7 +449,7 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
     dicenum = dice(1, 100000);
 
   dexstat = plotStat(STAT_CURRENT, STAT_DEX, 10, 100, 63) - 2*getCond(DRUNK);
-
+  dexstat = (int)((double)(dexstat * plotStat(STAT_CURRENT, STAT_KAR, 80, 125, 100)) / 100.0);
   if (isImmortal())
     dicenum /= 10;
 

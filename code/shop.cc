@@ -15,7 +15,6 @@ vector<shop_pricing>ShopPriceIndex(0);
 
 #define IMMORTEQTEST 1
 #define FLUX_SHOP_DEBUG     0
-#define SHOPFACTIONS 1
 
 // A note on gold_modifier[GOLD_SHOP] :
 // This is a global variable used to keep economy in check
@@ -1816,7 +1815,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
   }
 #endif
 
-  if(cmd == CMD_WHISPER){
+  if(cmd == CMD_WHISPER && ch->isImmortal()){
     char buf[256];
     TThing *tt;
     int count=0, value=0, price=0, discount=100, rc, isleader=0;

@@ -1578,6 +1578,61 @@ void buildComponentArray()
     "$n twirls $p about $mself.",
     "",
     ""));
+
+
+  COMPINDEX ci;
+  unsigned int j;
+  int vnum, usage;
+  spellNumT spell;
+  char buf[256];
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+
+  if(!db){
+    vlogf(LOG_MISC, "Connecting to database.");
+    db=mysql_init(NULL);
+    if(!mysql_real_connect(db, NULL, NULL, NULL, 
+	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+      vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
+      exit(0);
+    }
+  }
+
+  sprintf(buf, "select vnum, val2, val3 from object where type=30");
+  if(mysql_query(db, buf)){
+    vlogf(LOG_BUG, "Database query failed: %s", mysql_error(db));
+    exit(0);
+  }
+  res=mysql_use_result(db);
+  while((row=mysql_fetch_row(res))){
+    vnum=atoi(row[0]);
+    spell=(spellNumT) atoi(row[1]);
+    usage=atoi(row[2]);
+
+    if(spell>MAX_SKILL){ 
+      vlogf(LOG_BUG, "spell %i (comp %i) greater than MAX_SKILL", spell, vnum);
+      continue;
+    }
+
+    if(spell != TYPE_UNDEFINED &&
+       (((usage & COMP_SPELL) != 0))){
+      for(j=0;j<CompInfo.size();j++){
+	if(CompInfo[j].spell_num == spell){
+	  if(CompInfo[j].comp_num == -1 ||
+	     vnum < CompInfo[j].comp_num){
+	    CompInfo[j].comp_num = vnum;
+	    break;
+	  }
+	}
+      }
+    }
+
+    ci.comp_vnum = vnum;
+    ci.spell_num = spell;
+    ci.usage = usage;
+    CompIndex.push_back(ci);
+  }
+  mysql_free_result(res);
 };
 
 TComponent::TComponent() :

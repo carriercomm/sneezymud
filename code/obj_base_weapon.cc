@@ -433,7 +433,7 @@ void TBaseWeapon::changeObjValue3(TBeing *ch)
 
 int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
 {
-  int sharp, hardness;
+  int hardness;
   char buf[256];
   TThing *tt;
 
@@ -449,21 +449,22 @@ int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
     else
       hardness = 0;
   } else {
-    if (v->getMaxLimbHealth(part_hit))
+    int maxlim = v->getMaxLimbHealth(part_hit);
+    if (maxlim)
       hardness = material_nums[v->getMaterial()].hardness *
-          v->getCurLimbHealth(part_hit) / v->getMaxLimbHealth(part_hit);
+          v->getCurLimbHealth(part_hit) / maxlim;
     else
       hardness = 0;
   }
   // Check to see if it gets dulled.
-  sharp = getCurSharp();
+  int sharp = getCurSharp();
 
   // this hardness check will be made for ALL types of weapon damage
   // both blunting and structural
   if ((::number(WEAPON_DAM_MIN_HARDNESS, WEAPON_DAM_MAX_HARDNESS) <= hardness) ||
       (::number(WEAPON_DAM_MIN_HARDNESS, WEAPON_DAM_MAX_HARDNESS) <= hardness)) {
-    if (getCurSharp() &&
-          (!::number(0, WEAPON_DAM_MAX_SHARP) <= sharp)) {
+    if (sharp &&
+          (::number(0, WEAPON_DAM_MAX_SHARP) <= sharp)) {
       if (isBluntWeapon()) {
         // The blunter the weapon, the easier to chip a bit - bat
         sprintf(buf, "Your %s%s%s is %schipped%s by %s$n's %s.",

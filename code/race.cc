@@ -81,7 +81,7 @@ void listRaces(TBeing *caller)
     sprintf(buf + strlen(buf), "%3d %-15s%s", race, RaceNames[race], (race%3 ? "\t" : "\n\r"));
 
   }
-  caller->desc->page_string(buf, 0);
+  caller->desc->page_string(buf);
 }
 
 // Constructors.  A race can be initialized either with no argument or with
@@ -705,7 +705,7 @@ void Race::showTo(TBeing *caller)
 
   str += baseStats.showStats(caller);
 
-  caller->desc->page_string(str.c_str(), 0);
+  caller->desc->page_string(str.c_str());
   return;
 }
 

@@ -1,3 +1,9 @@
+05-01-00 - Peel
+- Created mud_str_copy().  We use strcpy a lot and today I tracked down a 
+  crash bug that resulted from overflowing in strcpy.  mud_str_copy has
+  checks to log and deal with overflows, harmlessly (hopefully).  Please use
+  it instead of strcpy where possible.
+
 03-12-00 / 03-16-00 / 03-19-00 / 03-21-00 / 03-22-00 - Lapsos
 03-23-00 / 03-25-00 / 03-26-00 / 03-29-00 / 03-30-00 - Lapsos
 04-01-00 / 04-04-00 / 04-08-00 / 04-09-00 / 04-10-00 - Lapsos

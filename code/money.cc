@@ -63,6 +63,7 @@ TMoney *create_money(int amount)
 
   obj = read_object(GENERIC_TALEN, VIRTUAL);
   money = dynamic_cast<TMoney *>(obj);
+  mud_assert(money != NULL, "create_money created something that was not TMoney");
 
   extraDescription *new_descr;
   char buf[80];

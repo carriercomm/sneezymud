@@ -5660,11 +5660,11 @@ void TBeing::doAccount(const char *arg)
       if (IS_SET(afp.flags, ACCOUNT_BANISHED)) {
         REMOVE_BIT(afp.flags, ACCOUNT_BANISHED);
         sendTo("You have unbanished the %s account.\n\r", afp.name);
-        vlogf(LOG_PLAYER, "%s unbanished account '%s'", getName(), afp.name);
+        vlogf(LOG_MISC, "%s unbanished account '%s'", getName(), afp.name);
       } else {
         SET_BIT(afp.flags, ACCOUNT_BANISHED);
         sendTo("You have set the %s account banished.\n\r", afp.name);
-        vlogf(LOG_PLAYER, "%s banished account '%s'", getName(), afp.name);
+        vlogf(LOG_MISC, "%s banished account '%s'", getName(), afp.name);
       }
       
       rewind(fp);
@@ -5675,11 +5675,11 @@ void TBeing::doAccount(const char *arg)
       if (IS_SET(afp.flags, ACCOUNT_EMAIL)) {
         REMOVE_BIT(afp.flags, ACCOUNT_EMAIL);
         sendTo("You have un-email-banished the %s account.\n\r", afp.name);
-        vlogf(LOG_PLAYER, "%s un-email-banished account '%s'", getName(), afp.name);
+        vlogf(LOG_MISC, "%s un-email-banished account '%s'", getName(), afp.name);
       } else {
         SET_BIT(afp.flags, ACCOUNT_EMAIL);
         sendTo("You have set the %s account email-banished.\n\r", afp.name);
-        vlogf(LOG_PLAYER, "%s email-banished account '%s'", getName(), afp.name);
+        vlogf(LOG_MISC, "%s email-banished account '%s'", getName(), afp.name);
       }
       
       rewind(fp);

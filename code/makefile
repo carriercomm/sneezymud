@@ -144,10 +144,12 @@ LDFLAGS +=-lmysqlclient
 
 OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	alignment_deity.o ansi.o appliedsub.o armor.o armor_wand.o arrow.o \
-	attribute.o audio.o bag.o bandaid.o base_clothing.o base_corpse.o \
+	audio.o bag.o bandaid.o base_clothing.o base_corpse.o \
 	base_cup.o base_light.o base_weapon.o bed.o being.o blackjack.o \
 	board.o boat.o body.o book.o bounty_hunter.o bow.o breath.o cards.o \
-	chest.o client.o cmd_bash.o cmd_bodyslam.o cmd_charge.o cmd_chop.o \
+	chest.o client.o \
+	cmd_attribute.o \
+	cmd_bash.o cmd_bodyslam.o cmd_charge.o cmd_chop.o \
 	cmd_compare.o cmd_consider.o \
 	cmd_deathstroke.o cmd_disarm.o cmd_dissect.o \
 	cmd_doorbash.o cmd_egotrip.o \

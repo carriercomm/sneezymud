@@ -3216,7 +3216,7 @@ void do_other_obj_stuff(void)
   TObj *to;
   TPortal *obj;
 
-  if (time_info.hours == 23) {
+  if (hourminTime() == 48) {
     // create day gates
     if (!(to = read_object(ITEM_DAYGATE, VIRTUAL))) {
       vlogf(LOG_LOW, "Error loading day gate");
@@ -3238,7 +3238,7 @@ void do_other_obj_stuff(void)
     obj->setPortalType(10);
     thing_to_room(obj,5700);
     act("$n appears suddenly!", TRUE, obj, 0, 0, TO_ROOM);
-  } else if (time_info.hours == 0) {
+  } else if (hourminTime() == 0) {
     // create moon gates
     if (!(to = read_object(ITEM_MOONGATE, VIRTUAL))) {
       vlogf(LOG_LOW, "Error loading moon gate");

@@ -3092,6 +3092,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           strcpy(buf, "Kawa Bunga!!");
           break;
         case 20:
+          sprintf(buf, "All these HORTS like %s will die to me and my COHORTS!!", ch->pers(ch->fight()));
+	  break;
         case 21:
         case 22:
         case 23:

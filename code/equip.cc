@@ -1910,6 +1910,7 @@ bool TObj::monkRestrictedItem(const TBeing *ch) const
   if (canWear(ITEM_WEAR_FINGER))
     return FALSE;
 
+#if 0
   // this includes all minerals (100-150) and metals (150-200)
   ubyte mat = getMaterial();
   if (mat >= 100 &&
@@ -1923,6 +1924,8 @@ bool TObj::monkRestrictedItem(const TBeing *ch) const
     default:
       break;
   }
+#endif
+
   if (dynamic_cast<const TArmor *>(this))
     return TRUE;
 

@@ -402,3 +402,45 @@ void TLight::lightMe(TBeing *ch, silentTypeT silent)
   }
 }
 
+int TLight::chiMe(TBeing *tLunatic)
+{
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this!\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI)) {
+    act("You fail to affect $p in any way.",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  if (isLit()) {
+      act("You concentrate hard on $p, then clap twice.  It goes out.",
+          TRUE, tLunatic, this, NULL, TO_CHAR);
+      act("$n knits $s brow in concentration then claps twice causing $p to go out.",
+          TRUE, tLunatic, this, NULL, TO_ROOM);
+
+      putLightOut();
+  } else {
+    if (roomp->isUnderwaterSector() || getCurBurn() <= 0) {
+      tLunatic->sendTo("You seem unable to do anything to that.\n\r");
+      return FALSE;
+    }
+
+    act("You furrow your brow in concentration then clap twice.",
+        TRUE, tLunatic, this, NULL, TO_CHAR);
+    act("$n furrows $s brow in concentration then claps twice.",
+        TRUE, tLunatic, this, NULL, TO_ROOM);
+    act("$p springs into light.",
+        FALSE, tLunatic, this, NULL, TO_ROOM);
+
+    lightMe(tLunatic, SILENT_YES);
+  }
+
+  return FALSE;
+}

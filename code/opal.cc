@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: opal.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -229,4 +218,31 @@ void TOpal::lowCheck()
   }
 
   TObj::lowCheck();
+}
+
+int TOpal::chiMe(TBeing *tLunatic)
+{
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this!\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI) || psGetMana() >= psGetMaxMana()) {
+    act("You fail to affect $p in any way.",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  act("You focus upon $p causing it to glow violently!",
+      FALSE, tLunatic, this, NULL, TO_CHAR);
+  act("$n concentrates upon $p, causing it to glow violently!",
+      TRUE, tLunatic, this, NULL, TO_ROOM);
+
+  psSetMana(min(psGetMaxMana(), (psGetMana() + ::number(1, 4))));
+
+  return FALSE;
 }

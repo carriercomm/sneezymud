@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: room.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -363,3 +352,48 @@ bool TRoom::putInDb(int vnum)
   return TRUE;
 }
 
+int TRoom::chiMe(TBeing *tLunatic)
+{
+  TBeing *tSucker;
+  int     tRc = 0;
+  TThing *tThing,
+         *tNextThing;
+
+  if (tLunatic->getSkillLevel(SKILL_CHI) < 100 ||
+      tLunatic->getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 25) {
+    tLunatic->sendTo("I'm afraid you don't have the training to do this.\n\r");
+    return FALSE;
+  }
+
+  if (tLunatic->checkPeaceful("You feel too peaceful to contemplate violence here.\n\r"))
+    return FALSE;
+
+  act("You focus your <c>mind<z> and unleash a <r>blast of chi<z> upon your foes!",
+      FALSE, tLunatic, NULL, NULL, TO_CHAR);
+  act("$n suddenly <r>radiates with power<z> and brings harm to $n enemies!",
+      TRUE, tLunatic, NULL, NULL, TO_ROOM);
+
+  for (tThing = stuff; tThing; tThing = tNextThing) {
+    tNextThing = tThing->nextThing;
+
+    if (!(tSucker = dynamic_cast<TBeing *>(tThing)))
+      continue;
+
+    tRc = tSucker->chiMe(tLunatic);
+
+    if (IS_SET_DELETE(tRc, RET_STOP_PARSING)) {
+      tLunatic->sendTo("You are forced to stop.\n\r");
+      return tRc;
+    }
+
+    if (IS_SET_DELETE(tRc, DELETE_THIS))
+      return (DELETE_THIS | RET_STOP_PARSING);
+
+    if (IS_SET_DELETE(tRc, DELETE_VICT)) {
+      delete tThing;
+      tThing = NULL;
+    }
+  }
+
+  return FALSE;
+}

@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: food.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -938,3 +927,29 @@ void TFood::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
     keeper->addToMoney(-cost, GOLD_SHOP_FOOD);
 }
 
+int TFood::chiMe(TBeing *tLunatic)
+{
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this.\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI) || isFoodFlag(FOOD_SPOILED)) {
+    act("You fail to affect $p in any way.",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  act("You focus your chi, causing $p to become a little fresher!",
+      FALSE, tLunatic, this, NULL, TO_CHAR);
+  act("$n stares at $p, cuasing it to become a little fresher!",
+      TRUE, tLunatic, this, NULL, TO_ROOM);
+
+  obj_flags.decay_time += ::number(1, 3);
+
+  return FALSE;
+}

@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj_symbol.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -318,3 +307,39 @@ string TSymbol::getNameForShow(bool useColor, bool useName, const TBeing *ch) co
   return buf2;
 }
 
+int TSymbol::chiMe(TBeing *tLunatic)
+{
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this!\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI) ||
+      (getSymbolCurStrength() >= getSymbolMaxStrength())) {
+    act("You focus upon $p, but faulter and gently harm it!",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    act("$n focuses on $p, but it cracks gently in response!",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+
+    addToSymbolCurStrength(-::number(1, 4));
+
+    if (getSymbolCurStrength() <= 0) {
+      act("$p reacts violently and shatters!",
+          FALSE, tLunatic, this, NULL, TO_ROOM);
+      return DELETE_VICT;
+    }
+  } else {
+    act("You focus upon $p causing it to mend ever so slightly!",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    act("$n concentrates upon $p, causing it to mend ever so slightly!",
+        TRUE, tLunatic, this, NULL, TO_ROOM);
+
+    setSymbolCurStrength(min(getSymbolMaxStrength(), (getSymbolCurStrength() + ::number(1, 4))));
+  }
+
+  return FALSE;
+}

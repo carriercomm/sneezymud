@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: flame.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -719,4 +708,31 @@ void TFFlame::putLightOut()
   // You are correct.  This really messes up the flame and will
   // cause it to go -light.
   //  TBaseLight::putLightOut();
+}
+
+int TFFlame::chiMe(TBeing *tLunatic)
+{
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this.\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI)) {
+    act("You fail to affect $p in any way.",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  act("You focus your chi, causing $p to bursts momentarily!",
+      FALSE, tLunatic, this, NULL, TO_CHAR);
+  act("$n stares at $p, cuasing it to burst momentarily",
+      TRUE, tLunatic, this, NULL, TO_ROOM);
+
+  obj_flags.decay_time += 10;
+
+  return FALSE;
 }

@@ -2,24 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: thing.cc,v $
-// Revision 5.1.1.2  1999/11/02 17:11:55  lapsos
-// Can no longer light magical things.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/16 22:14:37  peel
-// Disable immortal check for lighting things with flint and steel
-// ./
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -246,3 +228,17 @@ void TThing::lightMe(TBeing *ch, silentTypeT)
   }
 }
 
+int TThing::chiMe(TBeing *tLunatic)
+{
+  int tMana = ::number(10, 30);
+
+  if (tLunatic->getMana() <= tMana) {
+    tLunatic->sendTo("You don't have the mana to do that!\n\r");
+    return RET_STOP_PARSING;
+  }
+
+  tLunatic->sendTo("$p resists your attempts to chi it!\n\r");
+  tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  return FALSE;
+}

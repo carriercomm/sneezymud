@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: organic.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -291,7 +280,7 @@ int TOrganic::sellHidenSkin(TBeing *ch, TMonster *keeper, int shop_nr, TThing *o
     *ch += *ch->unequip(eq_pos);
 
   if (obj) {
-    rc = get(ch, this, obj);
+    rc = get(ch, this, obj, GETNULL);
     if (IS_SET_DELETE(rc, DELETE_ITEM))
       return DELETE_THIS;
 
@@ -703,4 +692,35 @@ void TOrganic::setAEffect(int x4)
 int TOrganic::getAEffect() const
 {
   return TAEffect;
+}
+
+int TOrganic::chiMe(TBeing *tLunatic)
+{
+  return TThing::chiMe(tLunatic);
+
+  // Enhanced disabled for now.
+#if 0
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this!\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI) || !getOType() == ORGANIC_WOOD) {
+    act("You fail to affect $p in any way.",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  act("You focus upon $p, causing it to burst into flames!",
+      FALSE, tLunatic, this, NULL, TO_CHAR);
+  act("$n concentrates upon $p, causing it to burst into flames!",
+      TRUE, tLunatic, this, NULL, TO_ROOM);
+  lightMe(tLunatic, SILENT_YES);
+
+  return DELETE_VICT;
+#endif
 }

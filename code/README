@@ -1,3 +1,8 @@
+08-29-00 - Jesus
+- Created ITEM_NOLOCATE. The flag will make it impossible for Eyes of
+  Fertuman to locate an object with the flag. Please see comments in
+  obj.h as well as added comments on file checkin.
+
 05-01-00 - Peel
 - Created mud_str_copy().  We use strcpy a lot and today I tracked down a 
   crash bug that resulted from overflowing in strcpy.  mud_str_copy has

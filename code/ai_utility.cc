@@ -99,7 +99,8 @@ int TMonster::aiUglyMug(TBeing *tmp_ch)
 
 void TMonster::aiTarget(TBeing *vict)
 {
-  if (!canSee(vict) || !awake() || UtilMobProc(this))
+  if (!canSee(vict) || !awake() || UtilMobProc(this) ||
+      !sameRoom(*vict))
     return;
 
   if (vict->isPc())
@@ -111,12 +112,7 @@ void TMonster::aiTarget(TBeing *vict)
       setTarg(NULL);
   }
   TBeing * targy = targ();
-  if (!sameRoom(*targy)) {
-    setTarg(NULL);
-    return;
-  }
-
-  if (targy)
+  if (!targy)
     return;
 
   if (!targy->isPc()) {

@@ -1593,6 +1593,9 @@ void TBeing::describeAffects(TBeing *ch)
     } else if (aff->type == AFFECT_FREE_DEATHS) {
       sendTo("Free deaths remaining: %d\n\r",
                aff->modifier);
+    } else if (aff->type == AFFECT_HORSEOWNED) {
+      sendTo("Horseowned:\t Time Left : %s\n\r",
+	     describeDuration(this, aff->duration).c_str());
     } else if (aff->type == AFFECT_PLAYERKILL) {
       sendTo("Player Killer:\t Time Left : %s\n\r",
 	     describeDuration(this, aff->duration).c_str());

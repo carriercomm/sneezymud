@@ -680,7 +680,7 @@ class TBeing : public TThing {
 
     bool invalidTarget(const TBeing *target) const;
     bool canFight(TBeing *);
-    bool canAttack(bool);
+    bool canAttack(primaryTypeT);
     int attackRound(const TBeing *target) const;
     int defendRound(const TBeing *attacker) const;
     int specialAttack(TBeing *target, spellNumT);
@@ -1376,7 +1376,7 @@ class TBeing : public TThing {
     int critSuccessChance(TBeing *, TThing *, wearSlotT *, spellNumT, int *, int);
     int numValidSlots();
     int checkShield(TBeing *, TThing *, wearSlotT, spellNumT, int);
-    int getWeaponDam(const TBeing *, const TThing *, bool) const;
+    int getWeaponDam(const TBeing *, const TThing *, primaryTypeT) const;
     virtual float getStrDamModifier() const;
     virtual float getDexDamModifier() const;
     int getDexReaction() const;
@@ -1387,7 +1387,7 @@ class TBeing : public TThing {
     int weaponCheck(TBeing *v, TThing *o, spellNumT type, int dam);
     virtual void reconcileHelp(TBeing *, double) { return; }
     virtual void reconcileHurt(TBeing *, double) { return; }
-    int oneHit(TBeing *, bool, TThing *, int, double);
+    int oneHit(TBeing *, primaryTypeT, TThing *, int, double);
     bool isHitableAggr(TBeing *);
     void normalHitMessage(TBeing *, TThing *, spellNumT, int, wearSlotT);
     int monkDodge(TBeing *, TThing *, int *, int, wearSlotT);
@@ -1444,7 +1444,7 @@ class TBeing : public TThing {
     bool canUseEquipment(const TObj *, silentTypeT) const;
     bool canUseLimb(wearSlotT) const;
     bool canUseHand(bool) const;
-    bool canUseArm(bool) const;
+    bool canUseArm(primaryTypeT) const;
     bool canUseLeg(int) const;
     int checkPassWard(dirTypeT) const;
     bool canSwim(dirTypeT);

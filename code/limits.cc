@@ -692,7 +692,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
 {
   classIndT i;
   double newgain = 0;
-
+  bool been_here = false;
 #if 0
   if (!ch->isPc() && ch->isAffected(AFF_CHARM)) {
 #else
@@ -730,15 +730,18 @@ void gain_exp(TBeing *ch, double gain, int dam)
               }
 	    }
 	    // if(gain > ((peak - curr) / gainmod)) {
-	    if (gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) && dam > 0) { 
+	    if (!been_here && gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000)+2 && dam > 0) { 
+	      been_here = TRUE; // don't show multiple logs for multiclasses
 	      // the 100 turns dam into a %
-	      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
-	      vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
-	      vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]", 
-		    ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
-	      vlogf(LOG_DASH, "Experience cap reached by %s!", ch->getName());
-	      vlogf(LOG_DASH, "[ Level: %d / Dam: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]",
-		    ch->getLevel(i), dam, (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+	      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*ch->howManyClasses()*10000) + 2;
+	      // vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
+	      //vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]", 
+	      //    ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+	      vlogf(LOG_DASH, "%s reached cap: Lev: %d, Dam: %d, Exp: %d, Cap: %d, MKPL: %d, #Class: %d",
+		    ch->getName(), ch->getLevel(i), dam/100, (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+              vlogf(LOG_JESUS, "%s reached cap: Lev: %d, Dam: %d, Exp: %d, Cap: %d, MKPL: %d, #Class: %d",
+                    ch->getName(), ch->getLevel(i), dam/100, (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+
 	    }  
 	  }
 	}

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_message.h,v $
+// Revision 5.1.1.3  2001/02/08 08:02:19  cosmo
+// changed return type of operator ()
+//
 // Revision 5.1.1.2  1999/12/09 18:40:40  lapsos
 // Massive revision of setsev/wizfiles
 //
@@ -85,7 +88,8 @@ class TMessages
     // ?(Has message type), also checks for appropriate power setting.
     bool operator== (messageTypeT);
     // Set message type to message
-    TMessages & operator() (messageTypeT, string);
+    void operator() (messageTypeT, string);
+   // TMessages & operator() (messageTypeT, string);
     // Sets the fields in message  [Call this to actually Get the messages]
     string operator() (messageTypeT, TThing * = NULL, const char * = NULL, bool = true);
     // Used by  : Get message from type

@@ -115,6 +115,7 @@ const char *describeTime(void)
 void fixSunlight()
 {
   int hmt = hourminTime();
+  char buf[256];
 
   if (hmt == moonTime(MOON_TIME_SET)) {
    sendToOutdoor(COLOR_BASIC, "<b>The moon sets.<1>\n\r","<b>The moon sets.<1>\n\r");
@@ -876,6 +877,8 @@ void weatherChange()
   else
     diff = +2;
 
+#if 0
+// a worthy idea, but seems to make for crappy weather
   // summer months are warm, winter months cold : drive pressure accordingly
   if ((time_info.month == 6) || (time_info.month == 7))
     weather_info.change -= 2;
@@ -889,11 +892,12 @@ void weatherChange()
     weather_info.change += 2;
   else
     weather_info.change += 3;
+#endif
 
   // sun up warms land
-  if ((time_info.hours >= 18) && (time_info.hours < 30))
+  if (sunIsUp())
     weather_info.change -= 1;
-  else if ((time_info.hours < 6) || (time_info.hours >= 42))
+  else if (is_nighttime())
     weather_info.change += 1;
 
   // precipitation lessens air pressure
@@ -902,10 +906,23 @@ void weatherChange()
   else if (weather_info.sky == SKY_LIGHTNING)
     weather_info.change += dice(2,3);
 
+  // slightly randomize things
   weather_info.change += (dice(1, 3) * diff + dice(2, 8) - dice(2, 6));
 
+  // limit to range -12..+12
   weather_info.change = max(-12, min(weather_info.change, 12));
-  weather_info.pressure += weather_info.change;
+
+  // this function gets called every tick (15 mud minutes)
+  // lets keep this from changing WAY too radically
+  weather_info.pressure += weather_info.change/10;
+
+  if (weather_info.change > 0) {
+    if (::number(0,9) < weather_info.change%10)
+      weather_info.pressure++;
+  } else {
+    if (::number(0,9) < (-weather_info.change)%10)
+      weather_info.pressure--;
+  }
 
   weather_info.pressure = min(weather_info.pressure, 1040);
   weather_info.pressure = max(weather_info.pressure, 960);
@@ -969,7 +986,7 @@ string hmtAsString(int hmt)
 
   char buf[64];
   sprintf(buf, "%d:%2.2d %s",
-     (!(hour % 12) ? 12 : hmt%12),
+     (!(hour % 12) ? 12 : hour%12),
      minute,
      (hour >= 12) ? "PM" : "AM");
   return buf;

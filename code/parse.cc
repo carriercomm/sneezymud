@@ -1323,6 +1323,12 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
 	case CMD_STOP:
 	  doStop();
 	  break;
+	case CMD_TRIGGER:
+	  doTrigger(newarg);
+	  break;
+	case CMD_STORE:
+	  doStore(newarg);
+	  break;
         case MAX_CMD_LIST:
         case CMD_RESP_TOGGLE:
         case CMD_RESP_UNTOGGLE:
@@ -2446,6 +2452,8 @@ void buildCommandArray(void)
   commandArray[CMD_SEDIT] = new commandInfo("sedit", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_RETRAIN] = new commandInfo("retrain", POSITION_STANDING, 0);
   commandArray[CMD_VISIBLE] = new commandInfo("visible", POSITION_STANDING, 0);
+  commandArray[CMD_TRIGGER] = new commandInfo("trigger", POSITION_STANDING, 0);
+  commandArray[CMD_STORE] = new commandInfo("store", POSITION_STANDING, 0);
 }
 
 bool _parse_name(const char *arg, char *name)

@@ -534,6 +534,8 @@ enum cmdTypeT {
      CMD_SEDIT,
      CMD_RETRAIN,
      CMD_VISIBLE,
+     CMD_TRIGGER,
+     CMD_STORE,
     MAX_CMD_LIST,  // Keep this as last command in regular list
 
        // a variety of "fake" commands used for a variety of purpsoses follow

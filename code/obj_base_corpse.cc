@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj_base_corpse.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -432,3 +421,34 @@ getName());
   return DELETE_THIS;
 }
 
+int TBaseCorpse::chiMe(TBeing *tLunatic)
+{
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this.\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (dynamic_cast<TPCorpse *>(this) ||
+      !bSuccess(tLunatic, bKnown, SKILL_CHI) ||
+      getCorpseLevel() > tLunatic->GetMaxLevel()) {
+    act("You attempt to nuke $p, but it resists you.",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  act("You focus your chi and set $p ablaze!",
+      FALSE, tLunatic, this, NULL, TO_CHAR);
+  act("$n stares at $p which suddenly bursts into flames!",
+      TRUE, tLunatic, this, NULL, TO_ROOM);
+
+  while (stuff) {
+    --(*stuff);
+    *roomp += *stuff;
+  }
+
+  return DELETE_VICT;
+}

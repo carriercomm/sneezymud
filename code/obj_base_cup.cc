@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj_base_cup.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -282,15 +271,17 @@ void TBaseCup::nukeFood()
   genericEmpty();
 }
 
-void TBaseCup::evaporate(TBeing *ch)
+void TBaseCup::evaporate(TBeing *ch, silentTypeT tSilent)
 {
   if (!isDrinkConFlag(DRINK_PERM)) {
     if (getDrinkUnits() > 0) {   // has liquid
       int amount = 1 + (getDrinkUnits()/2);
       weightChangeObject(-amount * SIP_WEIGHT);
       addToDrinkUnits(-amount);
-      ch->sendTo(COLOR_OBJECTS, "The desert heat causes some of your %s to evaporate.\n\r",
-          DrinkInfo[getDrinkType()]->name);
+
+      if (!tSilent)
+        ch->sendTo(COLOR_OBJECTS, "The desert heat causes some of your %s to evaporate.\n\r",
+            DrinkInfo[getDrinkType()]->name);
     }
   }
 }
@@ -330,4 +321,33 @@ void TBaseCup::pourMeIntoDrink1(TBeing *ch, TObj *to_obj)
 int TBaseCup::getReducedVolume(const TThing *) const
 {
   return getTotalVolume();
+}
+
+int TBaseCup::chiMe(TBeing *tLunatic)
+{
+  int tMana  = ::number(10, 30),
+      bKnown = tLunatic->getSkillLevel(SKILL_CHI);
+
+  if (tLunatic->getMana() < tMana) {
+    tLunatic->sendTo("You lack the chi to do this.\n\r");
+    return RET_STOP_PARSING;
+  } else
+    tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+  if (!bSuccess(tLunatic, bKnown, SKILL_CHI) ||
+      getDrinkUnits() <= 0 || !isDrinkConFlag(DRINK_PERM)) {
+    act("You fail to affect $p in any way.",
+        FALSE, tLunatic, this, NULL, TO_CHAR);
+    return FALSE;
+  }
+
+  act("You focus your chi, causing $p to become lighter!",
+      FALSE, tLunatic, this, NULL, TO_CHAR);
+  act("$n stares at $p, cuasing it to become lighter",
+      TRUE, tLunatic, this, NULL, TO_ROOM);
+
+  evaporate(tLunatic, SILENT_YES);
+
+  return FALSE;
+
 }

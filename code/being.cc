@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: being.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -1228,3 +1217,67 @@ void TBeing::peeOnMe(const TBeing *ch)
   act("You relieve yourself on $N's foot.", TRUE, ch, 0, this, TO_CHAR);
 }
 
+int TBeing::chiMe(TBeing *tLunatic)
+{
+  int bKnown  = tLunatic->getSkillLevel(SKILL_CHI),
+      tDamage,
+      tMana;
+
+  if (tLunatic->getSkillLevel(SKILL_CHI) < 50 ||
+      tLunatic->getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 10) {
+    tLunatic->sendTo("I'm afraid you don't have the training to do this.\n\r");
+    return RET_STOP_PARSING;
+  }
+
+  if (tLunatic->checkPeaceful("You feel too peaceful to contemplate violence here.\n\r"))
+    return RET_STOP_PARSING;
+
+  if (this == tLunatic ||
+      this->isImmortal() ||
+      this->inGroup(tLunatic))
+    return FALSE;
+
+  if (bSuccess(tLunatic, bKnown, SKILL_CHI)) {
+    tDamage = getSkillDam(this, SKILL_CHI,
+                          tLunatic->getSkillLevel(SKILL_CHI),
+                          tLunatic->getAdvLearning(SKILL_CHI));
+    tMana = ::number((tDamage / 2), tDamage);
+
+    if (tLunatic->getMana() < tMana) {
+      tLunatic->sendTo("You lack of the chi to do this.\n\r");
+      return RET_STOP_PARSING;
+    } else
+      tLunatic->reconcileMana(TYPE_UNDEFINED, 0, tMana);
+
+    act("You unleash your chi upon $N!",
+        FALSE, tLunatic, NULL, this, TO_CHAR);
+
+    if (affectedBySpell(SKILL_CHI)) {
+      act("A bright <W>aura<1> flares up around $N, deflecting your attack and then striking back!\n\rYour vision goes <r>red<1> as the pain overwhelms you!", TRUE, tLunatic, NULL, this, TO_CHAR);
+      act("A bright <W>aura<1> flares up around $N, deflecting $n's chi attack and then striking back!", TRUE, tLunatic, NULL, this, TO_NOTVICT);
+      act("A bright <W>aura<1> flares up around you, deflecting $n's chi attack and then striking back!", TRUE, tLunatic, NULL, this, TO_VICT);
+
+      if (this->reconcileDamage(tLunatic, ::number((tDamage / 2), tDamage), SKILL_CHI) == -1)
+        return (DELETE_THIS | RET_STOP_PARSING);
+    } else {
+      act("...$N screws up $s face in agony.",
+          TRUE, tLunatic, NULL, this, TO_CHAR);
+      act("$n exerts $s <r>chi force<1> on you, causing extreme pain.",
+          TRUE, tLunatic, NULL, this, TO_VICT);
+      act("$N screws up $s face in agony.",
+          TRUE, tLunatic, NULL, this, TO_NOTVICT);
+
+      if (tLunatic->reconcileDamage(this, tDamage, SKILL_CHI) == -1)
+        return DELETE_VICT;
+    }
+  } else {
+    act("You fail to harm $N with your <r>blast of chi<z>!",
+        FALSE, tLunatic, NULL, this, TO_CHAR);
+    act("You escape $n's attempt to chi you!",
+        TRUE, tLunatic, NULL, this, TO_VICT);
+    act("$N avoids $n's attempt to chi them!",
+        TRUE, tLunatic, NULL, this, TO_NOTVICT);
+  }
+
+  return FALSE;
+}

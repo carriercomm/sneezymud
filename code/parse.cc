@@ -281,7 +281,8 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
     } else {
       ch = ((desc && desc->original) ? desc->original : this);
 #if 1
-      if (should_be_logged(ch)) {
+      if (should_be_logged(ch) && ch->isPc() &&
+          ch->GetMaxLevel() > MAX_MORT) {
 #else
       if ((ch->GetMaxLevel() > MAX_MORT && ch->isPc()) &&
         (strcmp(ch->name, "Batopr") &&

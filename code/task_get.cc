@@ -154,7 +154,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
               continue;
             else {
               ch->task->calcNextUpdate(pulse, 1);
-              rc = get(ch, t, NULL, GETNULL);
+              rc = get(ch, t, NULL, GETNULL, true);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -175,7 +175,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
         } else if (!ch->task->flags) {
           // This is something like get all.sword
           while ((t = get_thing_in_list_getable(ch, ch->task->orig_arg, rp->stuff))) {
-            rc = get(ch, t, NULL, GETNULL);
+            rc = get(ch, t, NULL, GETNULL, true);
 	    if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -199,7 +199,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
           // get 6*item   ?
           while ((t = get_thing_in_list_getable(ch, ch->task->orig_arg, rp->stuff))) {
             if (--(ch->task->flags) > 0) {
-              rc = get(ch, t, NULL, GETNULL);
+              rc = get(ch, t, NULL, GETNULL, true);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -250,7 +250,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
           }
           while ((t = get_thing_in_list_getable(ch, buf1, sub->stuff))) {
             if (--(ch->task->flags) > 0) {
-              rc = get(ch, t, sub, GETOBJOBJ);
+              rc = get(ch, t, sub, GETOBJOBJ, true);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -283,7 +283,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
           }
           while ((t = get_thing_on_list_getable(ch, buf1, sub->rider))) {
             if (--(ch->task->flags) > 0) {
-              rc = get(ch, t, sub, GETOBJOBJ);
+              rc = get(ch, t, sub, GETOBJOBJ, true);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -322,7 +322,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
         } else {
           if (ch->task->status) {
             while ((t = get_thing_in_list_getable(ch, buf1, sub->stuff))) {
-              rc = get(ch, t, sub, GETOBJOBJ);
+              rc = get(ch, t, sub, GETOBJOBJ, true);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -348,7 +348,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
             }
 
             while ((t = get_thing_on_list_getable(ch, buf1, sub->rider))) {
-              rc = get(ch, t, sub, GETOBJOBJ);
+              rc = get(ch, t, sub, GETOBJOBJ, true);
               if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                 delete t;
                 t = NULL;
@@ -402,7 +402,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
                 if (!ch->task) // how does this happen????
                   return FALSE;
                 ch->task->calcNextUpdate(pulse, 1);
-                rc = get(ch, t, sub, GETOBJOBJ);
+                rc = get(ch, t, sub, GETOBJOBJ, true);
                 if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                   delete t;
                   t = NULL;
@@ -443,7 +443,7 @@ int task_get(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj 
                 continue;
               else {
                 ch->task->calcNextUpdate(pulse, 1);
-                rc = get(ch, t, sub, GETOBJOBJ);
+                rc = get(ch, t, sub, GETOBJOBJ, true);
                 if (IS_SET_DELETE(rc, DELETE_ITEM)) {
                   delete t;
                   t = NULL;

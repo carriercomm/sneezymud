@@ -256,7 +256,7 @@ int TCommodity::sellCommod(TBeing *ch, TMonster *keeper, int shop_nr, TThing *ba
     *ch += *ch->unequip(eq_pos);
 
   if (bag && bag != ch) {
-    rc = get(ch, this, bag, GETOBJOBJ);
+    rc = get(ch, this, bag, GETOBJOBJ, true);
     if (IS_SET_DELETE(rc, DELETE_ITEM)) {
       return DELETE_THIS;
     }

@@ -2,30 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: inventory.cc,v $
-// Revision 5.1.1.3  1999/11/03 20:26:59  lapsos
-// Modified get() to gag component from spellbag getting.
-//
-// Revision 5.1.1.2  1999/10/17 05:31:54  batopr
-// genericGiveDrop now has a check to verify drop worked (otherwise, item
-// is moved the hard way)
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/07 06:37:27  peel
-// Closed containers that aren't set to be coseable can now be opened.
-//
-// Revision 1.2  1999/09/12 19:55:04  peel
-// Removed the volume penalty for having held items.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 

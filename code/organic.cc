@@ -280,7 +280,7 @@ int TOrganic::sellHidenSkin(TBeing *ch, TMonster *keeper, int shop_nr, TThing *o
     *ch += *ch->unequip(eq_pos);
 
   if (obj) {
-    rc = get(ch, this, obj, GETNULL);
+    rc = get(ch, this, obj, GETNULL, true);
     if (IS_SET_DELETE(rc, DELETE_ITEM))
       return DELETE_THIS;
 

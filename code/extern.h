@@ -293,7 +293,7 @@ dirTypeT find_path(int, int (*predicate) (int, void *), void *, int, bool, int *
 extern bool exit_ok(roomDirData *, TRoom **);
 extern spellNumT searchForSpellNum(const char *arg, exactTypeT exact);
 extern bool thingsInRoomVis(TThing *, TRoom *);
-extern int get(TBeing *, TThing *, TThing *, getTypeT);
+extern int get(TBeing *, TThing *, TThing *, getTypeT, bool);
 extern void portal_flag_change(TPortal *, unsigned int, const char *, setRemT); 
 extern const string numberAsString(int);
 extern void loadShopPrices(void);

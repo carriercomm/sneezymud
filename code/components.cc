@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: components.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -1755,7 +1744,7 @@ int TComponent::componentSell(TBeing *ch, TMonster *keeper, int shop_nr, TThing 
     *ch += *ch->unequip(eq_pos);
 
   if (sub) {
-    rc = get(ch, this, sub);
+    rc = get(ch, this, sub, GETOBJOBJ, true);
     if (IS_SET_DELETE(rc, DELETE_ITEM))
       return DELETE_THIS;
 
@@ -1784,7 +1773,7 @@ TThing *sub)
     *ch += *ch->unequip(eq_pos);
 
   if (sub) {
-    rc = get(ch, this, sub);
+    rc = get(ch, this, sub, GETOBJOBJ, true);
     if (IS_SET_DELETE(rc, DELETE_ITEM))
       return DELETE_THIS;
 

@@ -682,7 +682,7 @@ int TSocket::gameLoop()
       ticktime = time(0);
 
       if (TestCode1) {
-        vlogf(LOG_MISC, "2400 pulses took %ld seconds.  ONE_SEC=%.3f pulses", secs, (float) secs/2400);
+        vlogf(LOG_MISC, "2400 pulses took %ld seconds.  ONE_SEC=%.3f pulses", secs, 2400.0/(float) secs);
       }
       pulse = 0;
     }

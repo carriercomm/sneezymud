@@ -1589,7 +1589,7 @@ void TBeing::listExits(const TRoom *rp) const
   // Red if closed (imm only), Blue if an open exit has a type, purple if normal
 
   if (isPlayerAction(PLR_BRIEF)) {
-    sendTo("[Exits: ");
+    sendTo("[Exits:");
     for (door = MIN_DIR; door < MAX_DIR; door++) {
       exitdata = rp->exitDir(door);
       if (exitdata && (exitdata->to_room != ROOM_NOWHERE)) {
@@ -1611,24 +1611,24 @@ void TBeing::listExits(const TRoom *rp) const
 
           if (exitp) {
             if (exitdata->door_type != DOOR_NONE && !IS_SET(exitdata->condition, EX_CLOSED))
-              sprintf(buf + strlen(buf), "%s%s%s",
-                      (exitp->getSectorType() == SECT_FIRE ? redBold() :
-                       (exitp->isAirSector() ? cyanBold() :
-                        (exitp->isWaterSector() ? blueBold() : purpleBold()))),
-                      exDirs[door], norm());
+              sendTo(" %s%s%s",
+                     (exitp->getSectorType() == SECT_FIRE ? redBold() :
+                      (exitp->isAirSector() ? cyanBold() :
+                       (exitp->isWaterSector() ? blueBold() : purpleBold()))),
+                     exDirs[door], norm());
             else
-              sprintf(buf + strlen(buf), "%s%s%s",
-                      (exitp->getSectorType() == SECT_FIRE ? red() :
-                       (exitp->isAirSector() ? cyan() :
-                        (exitp->isWaterSector() ? blue() : purple()))),
-                      exDirs[door], norm());
+              sendTo(" %s%s%s",
+                     (exitp->getSectorType() == SECT_FIRE ? red() :
+                      (exitp->isAirSector() ? cyan() :
+                       (exitp->isWaterSector() ? blue() : purple()))),
+                     exDirs[door], norm());
           } else
             vlogf(LOG_LOW, "Problem with door in room %d", inRoom());
 #endif
         }
       }
     }
-    sendTo("]\n\r");
+    sendTo(" ]\n\r");
     return;
   }
 

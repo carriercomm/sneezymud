@@ -47,13 +47,13 @@ const int PULSE_TICK        =1;
 
 #if 1
 const int ONE_SECOND        =3;
-const int PULSE_MOBACT      =ONE_SEC * 3;
-const int PULSE_TELEPORT    =ONE_SEC * 3;
-const int PULSE_COMBAT      =ONE_SEC * 3;
-const int PULSE_DROWNING    =ONE_SEC * 9;
-const int PULSE_SPEC_PROCS  =ONE_SEC * 9;
-const int PULSE_NOISES      =ONE_SEC * 12;
-const int PULSE_UPDATES     =ONE_SEC * 36;
+const int PULSE_MOBACT      =ONE_SECOND * 3;
+const int PULSE_TELEPORT    =ONE_SECOND * 3;
+const int PULSE_COMBAT      =ONE_SECOND * 3;
+const int PULSE_DROWNING    =ONE_SECOND * 9;
+const int PULSE_SPEC_PROCS  =ONE_SECOND * 9;
+const int PULSE_NOISES      =ONE_SECOND * 12;
+const int PULSE_UPDATES     =ONE_SECOND * 36;
 const int PULSE_TICKS       =PULSE_UPDATE * 2;
 
 // there are 2 ticks per "hour"

@@ -42,7 +42,7 @@ void OpenBoardFile(boardStruct *b);
 void InitABoard(TObj *obj);
 void DeleteABoard(TObj *obj);
 void InitBoards();
-extern int get_note_from_board(TBeing *, const char *, boardStruct *);
+extern int get_note_from_board(TBeing *, const char *, boardStruct *, TBoard *);
 extern boardStruct *board_list;
 
 #endif

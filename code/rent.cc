@@ -2683,10 +2683,6 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
     }
   }
 
-  vlogf(LOG_LAPSOS, "%d/%d %d/%d",
-        autoHates, autoLikes,
-        hatesMe[0], hatesMe[1]);
-
   if ((hatesMe[0] ? hatesMe[1] : autoHates)) {
     char tString[256];
 

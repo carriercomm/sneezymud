@@ -23,6 +23,8 @@
 extern const char * const MUD_NAME;
 extern const char * const MUD_NAME_VERS;
 
+const int MAX_OBJ_AFFECT = 5;
+
 const char * const SIGN_MESS = "/mud/sign/currentMess";
 
 const char * const DFLT_DIR  ="lib";           /* default data directory     */
@@ -137,6 +139,7 @@ class objIndexData : public indexData
 {
   public:
     extraDescription *ex_description;  // extra descriptions
+    objAffData affected[MAX_OBJ_AFFECT];
     byte max_struct;
     sh_int armor;
     unsigned int where_worn;

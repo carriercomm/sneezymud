@@ -298,6 +298,20 @@ int castStunningArrow(TBeing *caster, TBeing *victim)
   return rc;
 }
 
+int blastOfFury(TBeing *caster, TBeing *victim, TMagicItem *tObj)
+{
+  int tLevel = tObj->getMagicLevel(),
+      tKnown = tObj->getMagicLearnedness(),
+      tReturn = 0;
+
+  tReturn = blastOfFury(caster, victim, tLevel, tKnown, 0);
+
+  if (IS_SET(tReturn, CASTER_DEAD))
+    ADD_DELETE(tReturn, DELETE_THIS);
+
+  return tReturn;
+}
+
 int blastOfFury(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_learn)
 {
   if (victim->isImmortal()) {

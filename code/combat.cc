@@ -3133,7 +3133,7 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
   wearSlotT part_hit;
   int mess_sent = 0;
   int damaged_limb = FALSE;
-  int tmp;
+  int mess_sent;
   int rc = 0, retCode = 0;
   bool found = FALSE;
 
@@ -3239,13 +3239,11 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
   } else if (result == GUARANTEED_FAILURE) {
     found = TRUE;
 
-    tmp = critFailureChance(vict, weapon, w_type);
-    if (IS_SET_DELETE(tmp, DELETE_THIS))
+    mess_sent = critFailureChance(vict, weapon, w_type);
+    if (IS_SET_DELETE(mess_sent, DELETE_THIS))
       return retCode | DELETE_THIS;
-    else if (tmp == SENT_MESS && retCode)
-      return retCode;
-    else if (tmp == SENT_MESS)
-      return TRUE;
+    else if (IS_SET_DELETE(mess_sent, ONEHIT_MESS_CRIT_S))
+      return retCode ? retCode : TRUE;
 
     rc = missVictim(vict, weapon, w_type);
     if (IS_SET_DELETE(rc, DELETE_ITEM | DELETE_VICT | DELETE_THIS)) {

@@ -488,10 +488,10 @@ void TPerson::storeToSt(charFile *st)
   st->plr_colorSub = desc->plr_colorSub;
   st->plr_colorOff = desc->plr_colorOff;
 
-  st->points.armor = 100;
-  st->points.spellHitroll = 0;
-  st->points.hitroll = 0;
-  st->points.damroll = 0;
+  st->armor = 100;
+  st->spellHitroll = 0;
+  st->hitroll = 0;
+  st->damroll = 0;
 
   if (title)
     strcpy(st->title, title);
@@ -1066,7 +1066,7 @@ void do_the_player_stuff(const char *name)
       vlogf(LOG_BUG, "%s had a corrupt st.tankColor. Moving player file.", name);
       handleCorrupted(name, st.aname);
       return;
-    } else if ((max_level <= MAX_MORT) && ((st.points.money < 0) || (st.points.money > 25000000))) {
+    } else if ((max_level <= MAX_MORT) && ((st.money < 0) || (st.money > 25000000))) {
       vlogf(LOG_BUG, "%s had a bad talens number(< 0 or > 25million). Moving player file.", name);
       handleCorrupted(name, st.aname);
       return;

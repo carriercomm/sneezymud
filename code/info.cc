@@ -1342,9 +1342,38 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
         str += buf;
         break;
       case AFFECT_COMBAT:
+        // no display
+        break;
       case AFFECT_PET:
+        if (show) {
+          sprintf(buf, "Pet of: '%s'.  Approx. duration : %s\n\r",
+                 (char *) aff->be,
+                 describeDuration(this, aff->duration).c_str());
+        } else {
+          sprintf(buf, "Somebody's Pet.\n\r");
+        }
+        str += buf;
+        break;
       case AFFECT_CHARM:
+        if (show) {
+          sprintf(buf, "Charm of: '%s'.  Approx. duration : %s\n\r",
+                 (char *) aff->be,
+                 describeDuration(this, aff->duration).c_str());
+        } else {
+          sprintf(buf, "Somebody's Charm.\n\r");
+        }
+        str += buf;
+        break;
       case AFFECT_THRALL:
+        if (show) {
+          sprintf(buf, "Thrall of: '%s'.  Approx. duration : %s\n\r",
+                 (char *) aff->be,
+                 describeDuration(this, aff->duration).c_str());
+        } else {
+          sprintf(buf, "Somebody's Thrall.\n\r");
+        }
+        str += buf;
+        break;
       case AFFECT_ORPHAN_PET:
         // no display
         break;

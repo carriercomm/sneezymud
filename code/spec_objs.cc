@@ -2829,7 +2829,7 @@ int newbieHelperWProc(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TOb
 }
 
 int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){  
-  int *job=NULL, where=0;
+  int *job=NULL, where=0, i;
   int path[]={-1, 100, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185,
 	    200, 215, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659,
 	    660, 667, 668, 669, 670, 671, 672, 673, 674, 700, 702,
@@ -2839,6 +2839,7 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
 	    1301, 1302, 1303, -1};
   TRoom *trolleyroom=real_roomp(15344);
   static int timer;
+  char buf[256], shortdescr[256];
 
   if (cmd == CMD_GENERIC_DESTROYED) {
     delete static_cast<int *>(myself->act_ptr);
@@ -2856,6 +2857,9 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
     --timer;
     return FALSE;
   }
+
+  strcpy(shortdescr, myself->shortDescr);
+  cap(shortdescr);
 
   if (!myself->act_ptr) {
     if (!(myself->act_ptr = new int)) {
@@ -2878,10 +2882,12 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
   if((path[where+*job])==-1){
     switch(*job){
       case -1:
-	sendrpf(trolleyroom, "The trolley has arrived in Grimhaven.\n\r");
+	sendrpf(COLOR_OBJECTS, trolleyroom, "%s has arrived in Grimhaven.\n\r",
+		shortdescr);
 	break;
       case 1:
-	sendrpf(trolleyroom, "The trolley has arrived in Brightmoon.\n\r");
+	sendrpf(COLOR_OBJECTS, trolleyroom, "%s has arrived in Brightmoon.\n\r",
+		shortdescr);
 	break;
     }
 
@@ -2890,17 +2896,34 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
     return TRUE;
   }
 
-
+  
+  for(i=MIN_DIR;i<MAX_DIR;++i){
+    if(myself->roomp->dir_option[i] &&
+       myself->roomp->dir_option[i]->to_room==path[where+*job]){
+      break;
+    }
+  }
+  
   switch(*job){
     case -1: 
-      act("$n continues towards Grimhaven.\n\r",
-	  FALSE, myself, 0, 0, TO_ROOM); 
-      sendrpf(trolleyroom, "The trolley rumbles onwards to Grimhaven.\n\r");
+      sprintf(buf, "$n continues %s towards Grimhaven.",
+	      (i==MAX_DIR)?"on":dirs[i]);
+      act(buf,FALSE, myself, 0, 0, TO_ROOM); 
+      sendrpf(COLOR_OBJECTS, trolleyroom, "%s rumbles %s towards Grimhaven.\n\r",
+	      shortdescr, (i==MAX_DIR)?"on":dirs[i]);
+      sendrpf(COLOR_OBJECTS, real_roomp(path[where+*job]), 
+	      "%s enters the room, heading towards Grimhaven.\n\r",
+	      shortdescr);
       break;
     case 1: 
-      act("$n continues towards Brightmoon.\n\r",
-	  FALSE, myself, 0, 0, TO_ROOM); 
-      sendrpf(trolleyroom, "The trolley rumbles onwards to Brightmoon.\n\r");
+      sprintf(buf, "$n continues %s towards Brightmoon.",
+	      (i==MAX_DIR)?"on":dirs[i]);
+      act(buf,FALSE, myself, 0, 0, TO_ROOM); 
+      sendrpf(COLOR_OBJECTS, trolleyroom, "%s rumbles %s towards Brightmoon.\n\r",
+	      shortdescr, (i==MAX_DIR)?"on":dirs[i]);
+      sendrpf(COLOR_OBJECTS, real_roomp(path[where+*job]), 
+	      "%s enters the room, heading towards Brightmoon.\n\r",
+	      shortdescr);
       break;
   }
   

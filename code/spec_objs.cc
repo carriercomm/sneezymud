@@ -4153,6 +4153,9 @@ int switchtrack(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
       
       break;
     case 18011:
+      if (!myself->name)
+        break;
+
       if(!arg2) 
 	strcpy(arg2,isname("switchtrackdoswitch", myself->name)?"south":"east");
       else if(is_abbrev(arg2, "east") || is_abbrev(arg2, "e")) {
@@ -4165,7 +4168,7 @@ int switchtrack(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
       }
       else if(is_abbrev(arg2, "south") || is_abbrev(arg2, "s")) {
 	strcpy(arg2,"southern");
-	if(isname("switchtrackdontswitch", myself->name)) {
+	if (isname("switchtrackdontswitch", myself->name)) {
 	  ch->sendTo("The switchtrack is already aligned with the %s fork.", arg2);
 	  return TRUE;
 	}

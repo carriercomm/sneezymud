@@ -251,6 +251,15 @@ void TBeing::doHelp(const char *arg)
     sprintf(buf2,"%s%-30.30s (Last Updated: %s)%s\n\r\n\r", green(),
             namebuf,timebuf, norm());
     str = buf2;
+
+    if (!strcmp(namebuf, "NEXTVERSION")) {
+      str += "THIS HELP FILE REFLECTS WHAT THE "news" COMMAND WILL SHOW NEXT TIME THERE\n\r";
+      str += "IS A CHANGE IN CODE (PROBABLY IN THE NEXT FEW DAYS).  IT IS HERE TO GIVE\n\r";
+      str += "YOU SOME IDEA OF WHAT THINGS HAVE BEEN FIXED ALREADY, OR WHAT FEATURES ARE\n\r";
+      str += "FORTHCOMING...\n\r";
+      str += "---------------------------------------------------------------------\n\r\n\r";
+    }
+
     file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
     desc->page_string(str.c_str());

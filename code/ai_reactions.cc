@@ -2,23 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: ai_reactions.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:29:21  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "ai_reactions.cc" - containing "packets" of reactions for use
 //         by other ai-code.  These packets are meant to add some randomness
 //         to how the mob will react to various stimuli.  ie, it won't always
@@ -1048,10 +1031,12 @@ void TMonster::aiGrowl(const TBeing *tar) const
         int tmp = ::number(0,1);
         switch(tmp) {
           case 0:
-            act("$n screeches impatiently at $N.", TRUE, this, 0, tar, TO_ROOM);
+            act("$n screeches impatiently at $N.", TRUE, this, 0, tar, TO_NOTVICT);
+            act("$n screeches impatiently at you.", TRUE, this, 0, tar, TO_VICT);
             return;
           case 1:
-            act("$n screeches angrily at $N.", TRUE, this, 0, tar, TO_ROOM);
+            act("$n screeches angrily at $N.", TRUE, this, 0, tar, TO_NOTVICT);
+            act("$n screeches angrily at you.", TRUE, this, 0, tar, TO_VICT);
             return;
         }
       } else {

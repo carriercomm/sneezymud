@@ -149,7 +149,7 @@ void TBeing::doConsider(const char *argument)
   else
     sendTo("There are better ways to suicide.\n\r");
 
-
+#if 0
   // this code is duplicated somewhat in doTrophy
   MYSQL_ROW row;
   MYSQL_RES *res;
@@ -167,9 +167,9 @@ void TBeing::doConsider(const char *argument)
 	     ((count < 7) ? "<o>much<1>" :
 	     ((count < 9) ? "a fair amount" :
 	      ((count < 11) ? "<w>some<1>" : "<k>little<1>")))),
-	    mob_index[real_mobile(atoi(row[0]))].short_desc);
+	    namebuf);
   }
-
+#endif
 
 
 

@@ -339,10 +339,14 @@ int TSocket::gameLoop()
       points = (pulse % (PULSE_UPDATES/2));
     }
 
+#if 0
+  // I don't think the seconds variable of time_info is meaningful
+  // bat - 1/12/2000
     if (!tick_updates)
       time_info.seconds = 0;
     else if (!(pulse % 12))
       time_info.seconds++;
+#endif
 
     if (!points) {
       doGlobalRoomStuff();

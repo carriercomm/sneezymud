@@ -9,6 +9,10 @@
 #include "stdsneezy.h"
 #include "games.h"
 
+void TThing::getMeFrom(TBeing *ch, TThing *t)
+{
+}
+
 void TPCorpse::getMeFrom(TBeing *ch, TThing *t)
 {
   if (!checkOnLists()) {

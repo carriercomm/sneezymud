@@ -761,10 +761,9 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
 
       strcpy(aname, nextToken('|', 255, str2).c_str());
       strcpy(apassword, nextToken('|', 255, str2).c_str());
-      strcpy(email, nextToken('|', 255, str2).c_str());k
+      strcpy(email, nextToken('|', 255, str2).c_str());
       strcpy(timezone, nextToken('|', 255, str2).c_str());
-      strcpy(listserver, nextToken('|', 255, str2).c_str());k
-
+      strcpy(listserver, nextToken('|', 255, str2).c_str());
 
       account = new TAccount;
       // Does account exist or is it a bogus name? This function will return TRUE is so

@@ -167,7 +167,7 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Monk Green Quest: started", MOB_MONK_GM_LEVEL40},
   {"Monk Green Quest: falling", MOB_NONE},
   {"Monk Green Quest: fallen", MOB_NONE},
-  {"", MOB_NONE}, // 155
+  {"Rat King Quest: Gave Essence to Rat King", MOB_RAT_KING}, // 155
   {"Monk Green Quest: owned", MOB_MONK_GM_LEVEL40},
   {"Mage Belt Quest: eligible", MOB_NONE},
   {"Mage Belt Quest: started", MOB_MAGE_GM_LEVEL15},

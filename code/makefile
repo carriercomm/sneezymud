@@ -189,6 +189,8 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	meeting.o mob_loader.o mobact.o money.o monster.o movement.o \
 	multiclass.o newbie.o note.o obj.o \
 	obj_armor.o obj_armor_wand.o obj_arrow.o obj_audio.o \
+	obj_scroll.o obj_seethru.o obj_smoke.o obj_spellbag.o \
+	obj_staff.o obj_statue.o obj_symbol.o \
 	obj_table.o obj_tool.o obj_trash.o obj_treasure.o obj_tree.o \
 	obj_wand.o obj_window.o obj_worn.o \
 	offense.o oldlimbs.o oldrace.o \
@@ -196,8 +198,8 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	pen.o periodic.o pets.o physics.o player_corpse.o player_data.o \
 	poker.o pool.o portal.o posse.o potion.o quiver.o race.o range.o \
 	real_container.o rent.o repair.o response.o riding.o room.o \
-	scroll.o see_thru.o shop.o show.o signals.o skill_dam.o skills.o \
-	slots.o smoke.o socket.o sound.o spec_mobs.o \
+	shop.o show.o signals.o skill_dam.o skills.o \
+	slots.o socket.o sound.o spec_mobs.o \
 	spec_mobs_doppleganger.o spec_mobs_earthquake_digger.o \
         spec_mobs_goring.o \
 	spec_objs.o \
@@ -206,10 +208,10 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	spec_rooms.o \
         spec_rooms_sleeptag.o \
 	spell_info.o \
-	spell_num.o spell_parser.o spellbag.o \
+	spell_num.o spell_parser.o \
 	spellstore.o \
-	spelltask.o staff.o \
-	statistics.o stats.o statue.o structs.o symbol.o systemtask.o \
+	spelltask.o o \
+	statistics.o stats.o structs.o systemtask.o \
 	talk.o task.o task_attune.o task_lightfire.o task_scribe.o \
 	task_skin.o task_trap.o task_brew.o task_meditate.o task_search.o \
 	task_sleep.o task_charge.o task_penance.o task_seekwater.o \
@@ -409,6 +411,7 @@ $(OBJDIR)money.o: statistics.h
 $(OBJDIR)monster.o: statistics.h
 $(OBJDIR)movement.o: combat.h $(CASINO_HEADS) disc_looting.h
 $(OBJDIR)obj.o: shop.h
+$(OBJDIR)obj_symbol.o: shop.h
 $(OBJDIR)offense.o: $(CASINO_HEADS) combat.h
 $(OBJDIR)organic.o: shop.h
 $(OBJDIR)other.o: $(DISC_HEADS) mail.h range.h $(CASINO_HEADS) skillsort.h
@@ -463,7 +466,6 @@ $(OBJDIR)spell_parser.o: $(DISC_HEADS)
 $(OBJDIR)spelltask.o: $(DISC_HEADS) combat.h spelltask.h
 $(OBJDIR)statistics.o: statistics.h systemtask.h
 $(OBJDIR)structs.o: combat.h board.h statistics.h $(CASINO_HEADS)
-$(OBJDIR)symbol.o: shop.h
 $(OBJDIR)systemtask.o: systemtask.h
 $(OBJDIR)task.o: disc_alchemy.h
 $(OBJDIR)task.o: disc_looting.h disc_air.h

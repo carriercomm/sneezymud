@@ -2,33 +2,10 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: player_data.cc,v $
-// Revision 5.1.1.2  1999/11/03 06:39:00  lapsos
-// Maded 'reset zone' default to current zone.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/07 17:37:08  batopr
-// rentAffectTo: passes the renew value along to affectTo()
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+//      "player_data.cc" - Function related to saving and loading of
+//                        player files.
 //
 //////////////////////////////////////////////////////////////////////////
-
-
-/*************************************************************************
-
-      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
-      "player_data.cc" - Function related to saving and loading of
-                        player files.
-
-*************************************************************************/
 
 extern "C" {
 #include <unistd.h>
@@ -41,7 +18,8 @@ extern "C" {
 #include "statistics.h"
 #include "combat.h"
 
-int account_number = 0;
+unsigned int account_number = 0;
+unsigned int active_account = 0;
 int player_count = 0;
 unsigned int player_num = 0;
 unsigned int max_player_since_reboot = 0;

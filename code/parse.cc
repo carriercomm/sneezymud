@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: parse.cc,v $
+// Revision 5.1.1.6  1999/10/29 05:16:02  cosmo
+// Taking out junk
+//
 // Revision 5.1.1.5  1999/10/29 04:54:08  cosmo
 // *** empty log message ***
 //
@@ -1432,9 +1435,6 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
       return rc;
     }
     if (IS_SET_DELETE(rc, DELETE_VICT)) {
-      if (desc && getWait()) {
-        setWait(combatRound(1));
-      }
       return rc;
     }
     return FALSE;

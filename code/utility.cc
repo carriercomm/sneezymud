@@ -1027,10 +1027,17 @@ void TBeing::fixLevels(int lev)
 
 bool should_be_logged(const TBeing *ch)
 {
+#if 1
+  if (ch->hasWizPower(POWER_WIZARD))
+    return false;
+
+  return true;
+#else
   if (!strcmp(ch->getName(), "Batopr"))
     return FALSE;
   else
     return TRUE;
+#endif
 }
 
 // I hate typing > x && < y  -  Russ 

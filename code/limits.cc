@@ -734,9 +734,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
 	      been_here = TRUE; // don't show multiple logs for multiclasses
 	      // the 100 turns dam into a %
 	      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*ch->howManyClasses()*10000) + 2;
-	      // vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
-	      //vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]", 
-	      //    ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+
 	      vlogf(LOG_DASH, "%s reached cap: Lev: %d, Dam: %d, Exp: %d, Cap: %d, MKPL: %d, #Class: %d",
 		    ch->getName(), ch->getLevel(i), dam/100, (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
               vlogf(LOG_JESUS, "%s reached cap: Lev: %d, Dam: %d, Exp: %d, Cap: %d, MKPL: %d, #Class: %d",

@@ -854,20 +854,21 @@ int TMonster::senseWimps()
   }
 }
 
-static bool mobBSlamCheck(TMonster *mob, TBeing *vict)
+static bool mobBSlamCheck(TMonster &mob, TBeing &vict)
 {
   // slam tends to have some builtin failures, so make the mobs smart here...
   // weight
-  return ((compareWeights(vict->getTotalWeight(TRUE), mob->carryWeightLimit()) != -1) &&
+  return ((compareWeights(vict.getTotalWeight(TRUE), mob.carryWeightLimit()) != -1) &&
   // dex
-          (mob->getDexReaction() > vict->getDexReaction()));
+          (mob.getDexReaction() > vict.getDexReaction()));
 }
 
 int TMonster::fighterMove(TBeing *vict)
 {
   followData *f;
   TBeing *k, *t=NULL;
-  bool offensive=FALSE, badspell=FALSE;
+  bool offensive=FALSE;
+  bool badspell=FALSE;
   spellTaskData *ts=NULL;
 
   if (!awake())
@@ -911,7 +912,7 @@ int TMonster::fighterMove(TBeing *vict)
     // use the best option
     if (getSkillValue(SKILL_BODYSLAM) > 33 &&
         getPosition() > POSITION_SITTING &&
-        mobBSlamCheck(this, vict) &&
+        mobBSlamCheck(*this, *vict) &&
         canBodyslam(vict, SILENT_YES)) {
       return doBodyslam("", vict);
 #if 0
@@ -937,7 +938,7 @@ int TMonster::fighterMove(TBeing *vict)
     return doStomp("", vict);
   } else if (getSkillValue(SKILL_BODYSLAM) > 33 &&
              canBodyslam(vict, SILENT_YES) &&
-             mobBSlamCheck(this, vict) &&
+             mobBSlamCheck(*this, *vict) &&
              (getPosition() >= POSITION_CRAWLING)) {
     return doBodyslam("", vict);
   } else if (getSkillValue(SKILL_KNEESTRIKE) > 33 &&

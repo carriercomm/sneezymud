@@ -419,6 +419,7 @@ $(OBJDIR)obj_base_weapon.o: combat.h statistics.h shop.h
 $(OBJDIR)obj_bed.o: $(CASINO_HEADS)
 $(OBJDIR)obj_board.o: board.h
 $(OBJDIR)obj_bow.o: range.h
+$(OBJDIR)obj_open_container.o: disc_looting.h
 $(OBJDIR)obj_symbol.o: shop.h
 $(OBJDIR)offense.o: $(CASINO_HEADS) combat.h
 $(OBJDIR)organic.o: shop.h

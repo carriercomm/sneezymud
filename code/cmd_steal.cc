@@ -221,11 +221,15 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
     return FALSE;
   }
 
+#ifdef SNEEZY2000
+
   if (eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L && eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) {
     thief->sendTo("It is not possible to steal $o without being noticed.\n\r");
     return FALSE;
   }
   // The above was added to make steal a bit more realistic at Peel's request --jh
+
+#endif
 
 /* high modifier ---> easier to steal */
   modifier = (level - vict_lev)/3;

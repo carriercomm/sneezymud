@@ -125,6 +125,8 @@ void update_trophy(const char *name, int vnum, double add){
     if(rc==-1)
       vlogf(LOG_BUG, "Database error in update_trophy");
   }
+
+  mysql_free_result(res);
 }
 
 

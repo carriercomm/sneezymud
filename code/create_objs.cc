@@ -418,12 +418,13 @@ static void ObjSave(TBeing *ch, TObj *o, int vnum)
   o->getFourValues(&tmp1, &tmp2, &tmp3, &tmp4);
 
   if(dbquery(NULL, "immortal", "ObjSave(1)", "replace object set vnum=%i, name='%s', short_desc='%s', long_desc='%s', type=%i, action_flag=%i, wear_flag=%i, val0=%i, val1=%i, val2=%i, val3=%i, weight=%f, price=%i, can_be_seen=%i, spec_proc=%i, max_exist=%i, cur_struct=%i, max_struct=%i, decay=%i, volume=%i, material=%i, owner='%s', action_desc='%s'", 
-	  vnum, o->name, o->shortDescr, o->getDescr(), o->itemType(), 
+	  vnum, o->name, o->shortDescr, o->getDescr(),o->itemType(), 
 	  o->getObjStat(), o->obj_flags.wear_flags, tmp1, tmp2, tmp3, tmp4, 
 	  o->getWeight(), o->obj_flags.cost, o->canBeSeen, o->spec, 
 	  o->max_exist, o->obj_flags.struct_points, 
 	  o->obj_flags.max_struct_points, o->obj_flags.decay_time, 
-		 o->getVolume(), o->getMaterial(), ch->name, o->action_description)){
+		 o->getVolume(), o->getMaterial(), ch->name, 
+	  o->action_description?o->action_description:"")){
     ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   }

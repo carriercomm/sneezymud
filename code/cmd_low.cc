@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_low.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/26 23:41:28  lapsos
-// added TSmoke to the TPool check to ignore strung status.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 //
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "LOW.cc" - routines related to checking stats.
@@ -901,9 +880,22 @@ void TObj::checkObjStats()
 
 void objAffData::checkForBadness(TObj *obj)
 {
-  bool removeIt = false;
+  bool removeIt  = false,
+       isIllegal = false;
 
-  if (!apply_types[location].assignable)
+  if (!apply_types[location].assignable) {
+    isIllegal = true;
+
+    if ((location == APPLY_HITROLL ||
+         location == APPLY_DAMROLL ||
+         location == APPLY_HITNDAM) &&
+        (obj->itemType() == ITEM_BOW ||
+         obj->itemType() == ITEM_ARROW ||
+         obj_index[obj->getItemIndex()].max_exist <= 3))
+      isIllegal = false;
+  }
+
+  if (isIllegal)
     vlogf(LOW_ERROR,"%s has an unassignable affect",obj->getName());
 
   // changes to this list should also be added to dispelMagic()

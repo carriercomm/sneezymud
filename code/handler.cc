@@ -1789,8 +1789,9 @@ TBeing *get_pc_world(const TBeing *ch, const char *name, exactTypeT exact, infra
       if ((!exact && isname(name, i->name)) || (exact && is_exact_name(name, i->name))) {
         if (visible) {
           if (ch->canSee(i, infra))
-            return (i);
-        }
+            return i;
+        } else
+          return i; 
       }
     }
   }

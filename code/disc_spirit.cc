@@ -765,11 +765,14 @@ int polymorph(TBeing *caster, int level, byte bKnown)
   }
   if (caster->desc->snoop.snoop_by)
     caster->desc->snoop.snoop_by->doSnoop(caster->desc->snoop.snoop_by->name);
+
+  // first add the attempt -- used to regulate attempts
   aff.type = AFFECT_SKILL_ATTEMPT;
   aff.location = APPLY_NONE;
-  aff.duration = (2 + (level/5)) * UPDATES_PER_TICK;
+  aff.duration = (1 + (level/15)) * UPDATES_PER_TICK;
   aff.bitvector = 0;
   aff.modifier = SPELL_POLYMORPH;
+  caster->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES);
 
   if (bSuccess(caster, bKnown, SPELL_POLYMORPH)) {
     switch (critSuccess(caster, SPELL_POLYMORPH)) {
@@ -786,10 +789,6 @@ int polymorph(TBeing *caster, int level, byte bKnown)
     *caster->roomp += *mob;
     SwitchStuff(caster, mob);
 
-#if 0
-    if (caster->isPlayerAction(PLR_ANSI | PLR_VT100))
-      caster->doTerminal("none");
-#endif
     act("$n's flesh melts and flows into the shape of $N.", TRUE, caster, NULL, mob, TO_NOTVICT);
     for (i=MIN_WEAR;i < MAX_WEAR;i++) {
       if (caster->equipment[i]) {
@@ -818,16 +817,14 @@ int polymorph(TBeing *caster, int level, byte bKnown)
     caster->desc->character = mob;
     caster->desc->original = dynamic_cast<TPerson *>(caster);
 
- // first add the attempt -- used to regulate attempts
-    aff.duration = duration + ((2 + (level/5)) * UPDATES_PER_TICK);
-    caster->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES);
-
+#if 0
     aff2.type = AFFECT_SKILL_ATTEMPT;
     aff2.location = APPLY_NONE;
     aff2.duration = duration + ((2 + (level/5)) * UPDATES_PER_TICK);
     aff2.bitvector = 0;
     aff2.modifier = SPELL_POLYMORPH;
     mob->affectJoin(caster, &aff2, AVG_DUR_NO, AVG_EFF_YES);
+#endif
 
     mob->desc = caster->desc;
     caster->desc = NULL;
@@ -844,7 +841,6 @@ int polymorph(TBeing *caster, int level, byte bKnown)
     mob->setMana(min((mob->getMana() - 15), 85));
     return SPELL_SUCCESS;
   } else {
-    caster->affectJoin(caster, &aff, AVG_DUR_NO, AVG_EFF_YES);
     return SPELL_FAIL;
   }
 }

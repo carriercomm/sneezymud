@@ -39,9 +39,9 @@ const string TThing::persfname(const TThing *t) const
   return (canSee(t) ? fname(t->name) : "someone");
 }
 
-bool TThing::sameRoom(const TThing *ch) const
+bool TThing::sameRoom(const TThing &ch) const
 {
-  return (inRoom() == ch->inRoom());
+  return (inRoom() == ch.inRoom());
 }
 
 bool TThing::inImperia() const

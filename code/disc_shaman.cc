@@ -809,11 +809,9 @@ int castEnthrallGhast(TBeing * caster)
 
 void TThing::sacrificeMe(TBeing *ch, const char *arg)
 {
-  TObj *obj;
   TBaseCorpse *corpse;
+  TObj *obj;
   TBeing *dummy;
-
-
 
   // Check to see if argument passed exists in room
   if (!generic_find(arg, FIND_OBJ_ROOM, ch, &dummy, &obj)) {
@@ -828,13 +826,12 @@ void TThing::sacrificeMe(TBeing *ch, const char *arg)
   }
   if (corpse->isCorpseFlag(CORPSE_NO_REGEN)) {
     // a body part or something
-    act("$p: You aren't able to sacrifice that.",
-          FALSE, ch, corpse, 0, TO_CHAR);    return;
+    act("You aren't able to sacrifice that $p.",
+          FALSE, ch, corpse, 0, TO_CHAR);    
+    return;
   }
   ch->sendTo("You start sacrificing a corpse.\n\r");
   act("$n begins to chant over a corpse.", FALSE, ch, NULL, 0, TO_ROOM);
-
-  start_task(ch, corpse, NULL, TASK_SACRIFICE, "", 999, ch->in_room, 0, 0, 0);
 }
 
 void TTool::sacrificeMe(TBeing *ch, const char *arg)
@@ -844,7 +841,7 @@ void TTool::sacrificeMe(TBeing *ch, const char *arg)
   TBeing *dummy;
 
   if (getToolType() != TOOL_TOTEM) {
-    ch->sendTo("You must be holding a totem to perform this ritual.\n\r");
+    ch->sendTo("You must be holding a totem in your primary hand to perform this ritual.\n\r");
     return;
   }
   // Check to see if argument passed exists in room
@@ -859,20 +856,16 @@ void TTool::sacrificeMe(TBeing *ch, const char *arg)
     return;
   }
   if (corpse->isCorpseFlag(CORPSE_NO_REGEN)) {
-    act("$p: You aren't able to sacrifice that.",
+    act("You aren't able to sacrifice $p.",
           FALSE, ch, corpse, 0, TO_CHAR);    return;
   }
   ch->sendTo("You start the sacrificial ritual.\n\r");
   act("$n begins to chant over a corpse.", FALSE, ch, NULL, 0, TO_ROOM);
-  start_task(ch, corpse, NULL, TASK_SACRIFICE, "", 999, ch->in_room, 0, 0, 0);
+  start_task(ch, 0, 0, TASK_SACRIFICE, "", 2, ch->inRoom(), 0, 0, 5);
 }
 
 void TBeing::doSacrifice(const char *arg)
 {
-#ifdef SNEEZY2000
-  sendTo("Currently this is disabled.\n\r");
-  return;
-#else
   TThing *tobj;
 
   for (; isspace(*arg); arg++);
@@ -889,7 +882,6 @@ void TBeing::doSacrifice(const char *arg)
     return;
   }
   tobj->sacrificeMe(this, arg);
-#endif
 }
 
 

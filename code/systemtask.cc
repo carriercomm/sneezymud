@@ -108,7 +108,9 @@ void SystemTask::AddTask(TBeing *own, char tsk, const char *opt)
   }
   sprintf(strchr(lbuf, '\000'), " >%s 2>&1", TMPFILE);
   tmp->cmd = mud_str_dup(lbuf);
-  top->owner->sendTo("Your task has been added to the queue.\n\r");
+
+  if (top && top->owner)
+    top->owner->sendTo("Your task has been added to the queue.\n\r");
 }
 
 //

@@ -12,8 +12,6 @@
 #ifndef __CHARACTERISTICS_H
 #define __CHARACTERISTICS_H
 
-extern int age_mod_for_stat(int age_num, statTypeT whichStat);
-
 enum statTypeT {
      STAT_STR,
      STAT_BRA,

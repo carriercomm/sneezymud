@@ -62,7 +62,6 @@ int TBeing::dentItem(TBeing *victim, TObj *item, int amt, int slot)
 {
   char buf[256];
   int hardness;
-  TBeing *ch;
 
   // Don't damage equipment in arena fights.
   if (victim->roomp && victim->roomp->isRoomFlag(ROOM_ARENA))
@@ -77,22 +76,18 @@ int TBeing::dentItem(TBeing *victim, TObj *item, int amt, int slot)
     if (item->isMineral()) {
       if (item->thingHolding() == this) {
         act("You chip your $o.", TRUE, this, item, 0, TO_CHAR);
-	this->describeCondition(ch);
         sprintf(buf, "$n's $o %s chipped.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, 0, TO_ROOM);
       } else {
         act("You chip $S $o.", TRUE, this, item, victim, TO_CHAR);
-
         sprintf(buf, "Your $o %s chipped.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_VICT, ANSI_RED);
-	ch->describeCondition(this);
         sprintf(buf, "$N's $o %s chipped.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }
     } else {
       if (item->thingHolding() == this) {
         act("You dent your $o.", TRUE, this, item, 0, TO_CHAR);
-	ch->describeCondition(this);
         sprintf(buf, "$n's $o %s dented.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, 0, TO_ROOM);
       } else {
@@ -100,7 +95,6 @@ int TBeing::dentItem(TBeing *victim, TObj *item, int amt, int slot)
 
         sprintf(buf, "Your $o %s dented.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_VICT, ANSI_RED);
-	ch->describeCondition(this);
         sprintf(buf, "$N's $o %s dented.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }
@@ -121,7 +115,6 @@ int TBeing::tearItem(TBeing *victim, TObj *item, int amt, int slot)
 {
   char buf[256];
   int sharp = 0;
-  TBeing *ch;
 
   // Don't damage equipment in arena fights.
   if (victim->roomp && victim->roomp->isRoomFlag(ROOM_ARENA))
@@ -136,7 +129,6 @@ int TBeing::tearItem(TBeing *victim, TObj *item, int amt, int slot)
     if (item->isMineral()) {
       if (item->thingHolding() == this) {
         act("You scratch your $o.", TRUE, this, item, 0, TO_CHAR);
-	ch->describeCondition(this);
         sprintf(buf, "$n's $o %s scratched.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, 0, TO_ROOM);
       } else {
@@ -144,14 +136,12 @@ int TBeing::tearItem(TBeing *victim, TObj *item, int amt, int slot)
    
         sprintf(buf, "Your $o %s scratched.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_VICT, ANSI_RED);
-	ch->describeCondition(this);
         sprintf(buf, "$N's $o %s scratched.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }
     } else {
       if (item->thingHolding() == this) {
         act("You tear your $o.", TRUE, this, item, 0, TO_CHAR);
-	ch->describeCondition(this);
         sprintf(buf, "$n's $o %s torn.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, 0, TO_ROOM);
       } else {
@@ -159,7 +149,6 @@ int TBeing::tearItem(TBeing *victim, TObj *item, int amt, int slot)
  
         sprintf(buf, "Your $o %s torn.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_VICT, ANSI_RED);
-	ch->describeCondition(this);
         sprintf(buf, "$N's $o %s torn.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }
@@ -180,7 +169,6 @@ int TBeing::pierceItem(TBeing *victim, TObj *item, int amt, int slot)
 {
   char buf[256];
   int sharp;
-  TBeing *ch;
 
   // Don't damage equipment in arena fights.
   if (victim->roomp && victim->roomp->isRoomFlag(ROOM_ARENA))
@@ -195,7 +183,6 @@ int TBeing::pierceItem(TBeing *victim, TObj *item, int amt, int slot)
     if (item->isMineral()) {
       if (item->thingHolding() == this) {
         act("You crack your $o.", TRUE, this, item, 0, TO_CHAR);
-	ch->describeCondition(this);
         sprintf(buf, "$n's $o %s cracked.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, 0, TO_ROOM);
       } else {
@@ -203,14 +190,12 @@ int TBeing::pierceItem(TBeing *victim, TObj *item, int amt, int slot)
  
         sprintf(buf, "Your $o %s cracked.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_VICT, ANSI_RED);
-	ch->describeCondition(this);
         sprintf(buf, "$N's $o %s cracked.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }
     } else {
       if (item->thingHolding() == this) {
         act("You puncture your $o.", TRUE, this, item, 0, TO_CHAR);
-	ch->describeCondition(this);
         sprintf(buf, "$n's $o %s punctured.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, 0, TO_ROOM);
       } else {
@@ -218,7 +203,6 @@ int TBeing::pierceItem(TBeing *victim, TObj *item, int amt, int slot)
  
         sprintf(buf, "Your $o %s punctured.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_VICT, ANSI_RED);
-	ch->describeCondition(this);
         sprintf(buf, "$N's $o %s punctured.", item->isPaired() ? "are" : "is");
         act(buf, TRUE, this, item, victim, TO_NOTVICT);
       }

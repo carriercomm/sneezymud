@@ -5,24 +5,6 @@
 //
 // "materials.cc" - Various functions related to materials.
 //
-// $Log: materials.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.4  1999/10/03 14:56:30  lapsos
-// Added materials elvenmail/elvensteel
-//
-// Revision 1.3  1999/09/30 17:28:52  batopr
-// removed gold_modifier[GOLD_REPAIR] from damcheck formula
-//
-// Revision 1.2  1999/09/13 13:52:13  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-//
 //////////////////////////////////////////////////////////////////////////
 
 #include "stdsneezy.h"

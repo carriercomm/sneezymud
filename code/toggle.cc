@@ -58,40 +58,40 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Silverclaw Quest: find silver dragon", MOB_DRAGON_SILVER},
   {"Silverclaw Quest: find Raliki", MOB_RALIKI},
   {"Silverclaw Quest: kill Raliki", MOB_RALIKI}, // 45 
-  {"Holy Devastator Quest:  find Ben", MOB_CREED}, 
+  {"Holy Devastator Quest:  find Miser Ben", MOB_CREED},
   {"Holy Devastator Quest:  took bribe", MOB_MISER_BEN},
   {"Holy Devastator Quest:  find opal", MOB_CREED},
   {"Holy Devastator Quest:  do riddle", MOB_CREED},
-  {"Holy Devastator Quest:  kill Ben", MOB_MISER_BEN},  // 50
-  {"Holy Devastator Quest:  find med", MOB_SPARTAGUS}, 
-  {"Holy Devastator Quest:  find crucifix", MOB_MEDICINE_MAN},
+  {"Holy Devastator Quest:  killed Miser Ben", MOB_MISER_BEN},  // 50
+  {"Holy Devastator Quest:  find medicine man", MOB_SPARTAGUS},
+  {"Holy Devastator Quest:  searching for crucifix", MOB_MEDICINE_MAN},
   {"Holy Devastator Quest:  found crucifix", MOB_PRIEST_HOLY},
   {"Holy Devastator Quest:  gave crucifix", MOB_MEDICINE_MAN},
-  {"Holy Devastator Quest:  kill pc", MOB_SPARTAGUS}, // 55
-  {"Holy Devastator Quest:  got wine", MOB_WORKER_WINERY}, 
-  {"Holy Devastator Quest:  do riddle2", MOB_TAILLE},
-  {"Holy Devastator Quest:  find sword", MOB_OVERLORD},
-  {"Holy Devastator Quest:  find ring", MOB_TAILLE},
-  {"Holy Devastator Quest:  forfeit vin", MOB_GRIZWALD}, // 60
-  {"Holy Devastator Quest:  nodeal", MOB_GANGMEMBER_GIBBETT},
-  {"Holy Devastator Quest:  took deal", MOB_GANGMEMBER_GIBBETT},
-  {"Holy Devastator Quest:  got info", MOB_ABNOR},
-  {"Holy Devastator Quest:  get flower", MOB_POACHER},
-  {"Holy Devastator Quest:  do riddle2", MOB_ASSASSIN}, // 65
-  {"Holy Devastator Quest:  find Lorto", MOB_YOLA}, 
-  {"Holy Devastator Quest:  a lie", MOB_LORTO},
-  {"Holy Devastator Quest:  find Sult", MOB_ABNOR},
-  {"Holy Devastator Quest:  find Bara", MOB_JAQUIN},
-  {"Holy Devastator Quest:  gave dress", MOB_BARARAKNA}, // 70
-  {"Holy Devastator Quest:  find Sloth", MOB_SULTRESS}, 
-  {"Holy Devastator Quest:  can get Devastator", MOB_NESMUM}, 
+  {"Holy Devastator Quest:  killed Spartagus", MOB_SPARTAGUS}, // 55
+  {"Holy Devastator Quest:  got wine", MOB_WORKER_WINERY},
+  {"Holy Devastator Quest:  answered Taille's riddle", MOB_TAILLE},
+  {"Holy Devastator Quest:  seaching for great sword <r>*Natural Load*<1>", MOB_OVERLORD},
+  {"Holy Devastator Quest:  find polished wooden ring <r>*Natural Load*<1>", MOB_TAILLE},
+  {"Holy Devastator Quest:  forfeit vindicator", MOB_GRIZWALD}, // 60
+  {"Holy Devastator Quest:  did not take gang member's deal", MOB_GANGMEMBER_GIBBETT},
+  {"Holy Devastator Quest:  took gang member's deal", MOB_GANGMEMBER_GIBBETT},
+  {"Holy Devastator Quest:  got deikhan shield info", MOB_ABNOR},
+  {"Holy Devastator Quest:  get flower <r>*Natural Load*<1>", MOB_POACHER},
+  {"Holy Devastator Quest:  answered assassin's riddle", MOB_ASSASSIN}, // 65
+  {"Holy Devastator Quest:  find Lorto", MOB_YOLA},
+  {"Holy Devastator Quest:  deceived Lorto", MOB_LORTO},
+  {"Holy Devastator Quest:  find Sultress", MOB_ABNOR},
+  {"Holy Devastator Quest:  find Bararakna", MOB_JAQUIN},
+  {"Holy Devastator Quest:  received dress of rites", MOB_BARARAKNA}, // 70
+  {"Holy Devastator Quest:  find Sloth", MOB_SULTRESS},
+  {"Holy Devastator Quest:  can get Devastator", MOB_NESMUM},
   {"Holy Devastator Quest:  cheat Miser Ben", MOB_MISER_BEN},
   {"Holy Devastator Quest:  cheat Spartagus", MOB_SPARTAGUS},
   {"Holy Devastator Quest:  cheat Marcus", MOB_MARCUS},    //75
   {"Holy Devastator Quest:  cheat Taille", MOB_TAILLE},
   {"Holy Devastator Quest:  cheat Abnor", MOB_ABNOR},
   {"Holy Devastator Quest:  cheat Sultress", MOB_SULTRESS},
-  {"Holy Devastator Quest:  cheat Nesmum", MOB_NESMUM}, 
+  {"Holy Devastator Quest:  cheat Nesmum", MOB_NESMUM},
   {"Has Skill:  Read Magic", MOB_NONE},  //80
   {"Monk Red Quest: Is Eligible", MOB_MONK_GM_LEVEL50},
   {"Monk Red Quest: Started Quest", MOB_MONK_GM_LEVEL50},

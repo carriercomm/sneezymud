@@ -190,6 +190,34 @@ static int spell_cloud_breath(byte level, TBeing *ch, TBeing *vict)
 }
 */
 
+// returns DELETE_VICT
+static int spell_dust_breath(byte level, TBeing *ch, TBeing *victim, int lag)
+{
+  int dam = dragonBreathDam(level, lag);
+
+  act("$N is pelted by a cloud of dust from $n's breath.",
+      TRUE, ch, NULL, victim, TO_NOTVICT);
+  act("You unleash a cloud of dust at $N.",
+      TRUE, ch, NULL, victim, TO_CHAR);
+  act("You almost feel like a pincushion as $N's breath showers you in dust.",
+      TRUE, ch, NULL, victim, TO_VICT);
+
+  if (victim->shieldAbsorbDamage(dam)) {
+    return 1;
+  } else if (victim->isLucky(levelLuckModifier(ch->GetMaxLevel()))) {
+    act("You dodge out of the way, thankfully, avoiding most of the dust.",
+        TRUE, ch, NULL, victim, TO_VICT);
+    dam >>= 1;
+  }
+
+  ch->reconcileHurt(victim, 0.1);
+
+  if (ch->reconcileDamage(victim, dam, SPELL_DUST_BREATH) == -1)
+    return DELETE_VICT;
+
+  return 1;
+}
+
 typedef struct {
   int vnum;
   spellNumT dam_type;
@@ -215,7 +243,7 @@ static BREATHSTRUCT dragons[] =
   {14360, SPELL_FROST_BREATH, 5},
   {14361, SPELL_FIRE_BREATH, 3},
   {20400, SPELL_FROST_BREATH, 2},
-  {20875, SPELL_FROST_BREATH, 5},
+  {20875, SPELL_DUST_BREATH, 5},
   {22517, SPELL_FROST_BREATH, 5},
   {23633, SPELL_LIGHTNING_BREATH, 5},
   {27905, SPELL_LIGHTNING_BREATH, 2},
@@ -287,6 +315,9 @@ int DragonBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
         case SPELL_CHLORINE_BREATH:
           rc = spell_chlorine_breath(myself->GetMaxLevel(),myself,tmp, dragons[i].lag);
           break;
+        case SPELL_DUST_BREATH:
+          rc = spell_dust_breath(myself->GetMaxLevel(), myself, tmp, dragons[i].lag);
+          break;
         default:
           vlogf(LOG_BUG, "Bad breath for %s, buy it some Binaca",myself->getName());
           break;
@@ -311,6 +342,8 @@ int DragonBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
       break;
     case SPELL_CHLORINE_BREATH:
       myself->chlorineRoom();
+      break;
+    case SPELL_DUST_BREATH:
       break;
     default:
       break;
@@ -357,6 +390,8 @@ void TBeing::doBreath(const char *argument)
     breath = SPELL_LIGHTNING_BREATH; 
   } else if (is_abbrev(buf, "chlorine")) {
     breath = SPELL_CHLORINE_BREATH;
+  } else if (is_abbrev(buf, "dust")) {
+    breath = SPELL_DUST_BREATH;
   } else {
     sendTo("Syntax: breathe <acid | fire | frost | lightning | chlorine> <victim>\n\r");
     return;
@@ -416,6 +451,15 @@ void TBeing::doBreath(const char *argument)
           vict = NULL;
         }
         chlorineRoom();
+        break;
+      case SPELL_DUST_BREATH:
+        rc = spell_dust_breath(GetMaxLevel(), this, vict, 1);
+
+        if (IS_SET_ONLY(rc, DELETE_VICT)) {
+          delete vict;
+          vict = NULL;
+        }
+
         break;
       default:
         act("Clean, pure air comes forth.",TRUE,this,0,0,TO_ROOM);

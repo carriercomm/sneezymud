@@ -232,7 +232,7 @@ void TSymbol::objMenu(const TBeing *ch) const
   ch->sendTo("%sSuggested price:%s %d%s",
              ch->purple(), ch->norm(), suggestedPrice(),
              (suggestedPrice() != obj_flags.cost ? " *" : ""));
-  ch->sendTo(VT_CURSPOS, 3, 1);
+  ch->sendTo(VT_CURSPOS, 4, 1);
   ch->sendTo("%sSymbol Level:%s %.1f",
        ch->purple(), ch->norm(),
        getSymbolLevel());

@@ -241,6 +241,9 @@ int TMonster::aiInsultDoer(TBeing *vict)
       case 6:
         strcpy(buf2,"wimpy");
         break;
+      case 7:
+	strcpy(buf2,"faggy");
+	break;    
       default:
         strcpy(buf2, "gutless");
         break;
@@ -274,7 +277,7 @@ int TMonster::aiInsultDoer(TBeing *vict)
     else
       strcpy(buf2,"ugly");
   }
-  switch (::number(1,20)) {
+  switch (::number(1,22)) {
     case 1:
       strcpy(buf3,"bastich");
       break;
@@ -323,11 +326,17 @@ int TMonster::aiInsultDoer(TBeing *vict)
     case 16:
       strcpy(buf3,"scum of the earth");
       break;
+    case 17:
+      strcpy(buf3,"jackass");
+      break;   
+    case 18:
+      strcpy(buf3,"hunk of DiqMeat");
+      break;         
     default:
       strcpy(buf3,"freak of nature");
       break;
   }
-  switch (::number(1,18)) {
+  switch (::number(1,21)) {
     case 1:
       sprintf(buf, "You %s %s",buf2, buf3);
       break;
@@ -391,6 +400,9 @@ int TMonster::aiInsultDoer(TBeing *vict)
       act("$n sticks $s tongue out at you gives you a razzberry!",
           FALSE, this, 0, vict, TO_VICT);
       break;
+    case 20:
+      strcpy(buf, "The best part of you rolled down the back of a horses leg!");
+      break;  
     default:
       return FALSE;
   }
@@ -457,6 +469,9 @@ int TMonster::aiBadManners(TBeing *ch)
       break;
     case 6:
       act("$n grimaces.",TRUE,this,0,0,TO_ROOM);
+      break;
+    case 7:
+      doSay("Stop that crap will ya?!?");
       break;
     default:
       return FALSE;

@@ -5,7 +5,7 @@
   bad lapsos bad, that it was a mistake.  Changed it so it's only
   triggered if they don't have setsev-imm and try to set log-low.
   Mimic'ed the changes in utility/vlogf also.
-- Fixed up setsev to align based on avail commands.  Will fix this:
+- Fixed up wizhelp to align based on avail commands.  Will fix this:
   scribe    cutlink   repair    checklog  loglist   deathcheckredit
   Perm, no matter what commands may be added in the future.
 

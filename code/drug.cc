@@ -424,6 +424,10 @@ int TBeing::doSmoke(const char *argument)
   char arg[256], buf[256];
   affectedData aff;
 
+  sendTo("Smoking is bad for your health.\n\r");
+  return FALSE;
+  
+
   only_argument(argument, arg);
 
   if(!*arg || !(t=get_thing_char_using(this, arg, 0, FALSE, FALSE))){

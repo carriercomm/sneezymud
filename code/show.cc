@@ -728,7 +728,7 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
               strcat(buffer, ".");
             } else if (tbr && tbr->horseMaster()) {
               if (ch == tbr->horseMaster())
-                sprintf(buffer+strlen(buffer)," is here, also riding your horse. ");
+                sprintf(buffer+strlen(buffer)," is here, also riding your ");
               else
                 sprintf(buffer+strlen(buffer)," is here, also riding on %s's ",
                     ch->pers(tbr->horseMaster()));

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: discipline.cc,v $
+// Revision 5.1.1.4  1999/10/29 11:21:15  lapsos
+// Fixed typo.
+//
 // Revision 5.1.1.3  1999/10/29 05:49:13  cosmo
 // Making addSkillLag check results of skill. If victim dies,
 // the most the code will add is one combat round of lag rather than all.
@@ -4578,9 +4581,10 @@ void TBeing::addSkillLag(spellNumT skill, int rc)
   // We do this already in places. This makes it general.
   // If there is any issue just use 0 for rc and it will put in regular lag
   lag_t lag_num = discArray[skill]->lag;
-  float f_lag = lagAdjust(lag_num);
+  float f_lag  = lagAdjust(lag_num),
+        f_base = 1.0;
   if (IS_SET_DELETE(rc, DELETE_VICT))
-    f_lag = min(1, f_lag);
+    f_lag = min(f_base, f_lag);
   f_lag *= combatRound(1);
   int i_lag = static_cast<int>(f_lag);
 

@@ -101,6 +101,8 @@
   of this is to take care of excess garbage that gathers here and is never
   taken care of.  I havn't yet, but I intend to, add mail sends upon reboot
   to players whom have linkbags to let them know it is there.
+- Fixed the bug that popped up with my fix to prevent attacking with full
+  hands.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

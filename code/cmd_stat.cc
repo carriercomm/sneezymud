@@ -433,6 +433,7 @@ void TBeing::statBeing(TBeing *k)
   char buf2[256];
   char buf3[256];
   TBeing *x1;
+  TMonster *tMonster = dynamic_cast<TMonster *>(k);
   char *birth, *logon;
   char birth_buf[40], logon_buf[40];
   resp *respy;
@@ -455,8 +456,16 @@ void TBeing::statBeing(TBeing *k)
       sprintf(buf + strlen(buf),"<c>FEMALE<z> ");
       break;
   }
-  sprintf(buf + strlen(buf)," %s - Name : %s [R-Number%d], In room [%d]\n\r",
-         (dynamic_cast<const TPerson *>(k) ? "PC" : "NPC"), k->name, k->number, k->in_room);
+
+  if (tMonster)
+    sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d] Room[%d] ORoom[%d]\n\r",
+            (dynamic_cast<const TPerson *>(k) ? "PC" : "NPC"),
+            k->name, k->number, k->in_room, tMonster->oldRoom);
+  else
+    sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d] Room[%d]\n\r",
+            (dynamic_cast<const TPerson *>(k) ? "PC" : "NPC"),
+            k->name, k->number, k->in_room);
+
   sprintf(buf + strlen(buf),"-----------------------------------------------------------------------------\n\r");
   const TMonster *km = dynamic_cast<const TMonster *>(k);
   if (km) {
@@ -587,7 +596,7 @@ void TBeing::statBeing(TBeing *k)
   sprintf(buf2, "[%d]", k->getHit());
   sprintf(buf3, "[%d]", k->getMove());
   if (k->hasClass(CLASS_CLERIC) || k->hasClass(CLASS_DEIKHAN))
-    sprintf(buf + strlen(buf), "%sPiety :%s [%4.1f]  %sHit    :%s %-10s  %sMove    :%s %-10s\n\r",
+    sprintf(buf + strlen(buf), "%sPiety :%s [%5.1f]%sHit    :%s %-10s  %sMove    :%s %-10s\n\r",
       cyan(), norm(), k->getPiety(),
       cyan(), norm(), buf2, cyan(), norm(), buf3);
   else

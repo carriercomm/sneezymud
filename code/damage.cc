@@ -720,7 +720,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 #if 0
     // disabled in favor of per-hit tracking
 
-  MYSQL_RES *res;
+  MYSQL_RES *res = NULL;
 
     
     // track trophy count
@@ -729,8 +729,11 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 	GetMaxLevel()>5){
       
       if(k && ngroup>1){
-	if((rc=dbquery(&res, "sneezy", "damageEpilog(1)", "insert ignore into trophy values ('%s', %i, 0)", 
-            k->desc ? (k->desc->original?k->desc->original->name:k->name) : "NoDesc", v->mobVnum()))){
+        char querybuf[256];
+        sprintf(querybuf, "insert ignore into trophy values ('%s', %i, 0)",
+            k->desc ? (k->desc->original?k->desc->original->name:k->name) : "NoDesc", v->mobVnum());
+
+	if ((rc=dbquery(&res, "sneezy", "damageEpilog(1)", querybuf))) {
 	  if(rc==-1)
 	    vlogf(LOG_BUG, "Database error in damageEpilog");
 	}

@@ -162,11 +162,18 @@ void bootDb(void)
     perror("boot");
     exit(0);
   }
+  // mob_f and obj_f must be open prior to here.
+  bootPulse("Generating index tables for mobile file.");
+  generate_mob_index();
+
   bootPulse("Opening object file.");
   if (!(obj_f = fopen(OBJ_FILE, "r"))) {
     perror("boot");
     exit(0);
   }
+  bootPulse("Generating index tables for object file.");
+  generate_obj_index();
+
   bootPulse("Building help tables.");
   buildHelpIndex();
 
@@ -178,13 +185,6 @@ void bootDb(void)
   assign_drink_types();
   bootPulse("Loading drug-type information.");
   assign_drug_info();
-
-  // mob_f and obj_f must be open prior to here.
-  bootPulse("Generating index tables for mobile file.");
-  generate_mob_index();
-
-  bootPulse("Generating index tables for object file.");
-  generate_obj_index();
 
   unsigned int i;
 #if !USE_SQL
@@ -2445,11 +2445,14 @@ char *fread_string(FILE *fp)
   if (marker)
     *marker = 0;   // Nuke the ~ 
     vlogf(LOG_MISC, "Tilde nuked!");
-  if( *buf == 0)
-    return NULL;
-    vlogf(LOG_MISC, "*buf == 0");
+    // if ((int) (ptr - buf) == 0) {
+      // vlogf(LOG_MISC, "(int) (ptr - buf) == 0");
+      // return NULL;
+      //    }
+    //  if( *buf == 0)
+    //    return NULL;
   return mud_str_dup( buf);
-    vlogf(LOG_MISC, "ptr passed check!");
+    vlogf(LOG_MISC, "mud_str_dup called");
 }
 
 // read contents of a text file, and place in buf 

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: doors.cc,v $
+// Revision 5.1.1.2  1999/10/25 19:24:27  mithros
+// Added unique doors for 774, 9050, & 9064.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -959,6 +962,23 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
         }
       }
       break;
+  case 774:
+      if (cmd != CMD_TWIST)
+        return FALSE;
+      if (is_abbrev(buf, "lid")) {
+        ch->openUniqueDoor(DIR_UP, DOOR_UNIQUE_DEF,
+          "",
+          "",
+        "As you twist the lid, a panel of the ceiling slowly opens.",
+        "$n twists the barrel lid causing a panel of the ceiling to slowly open.",
+          "A panel in the floor slowly slides open.",
+        "As you twist the lid, the trapdoor overhead slowly slides closed.",
+        "$n twists the barrel lid causing the trapdoor overhead to slowly close.",
+          "The trapdoor below you slowly slides closed."
+        );
+        return TRUE;
+      }
+      break;
     case 6156:
       if ((cmd != CMD_RAISE) && (cmd != CMD_LOWER) && (cmd != CMD_LIFT))
         return FALSE;
@@ -1089,6 +1109,57 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
         "You pull the lever and a wall opens down, concealing a passage.",
         "$n pulls the lever and a wall opens down, concealing a passage.",
             "The wall slides down, concealing a passage."
+        );
+        return TRUE;
+      }
+      break;
+  case 9050:
+      if (cmd != CMD_TWIST)
+        return FALSE;
+      if (is_abbrev(buf, "lid")) {
+        ch->openUniqueDoor(DIR_DOWN, DOOR_UNIQUE_DEF,
+          "",
+          "",
+        "As you twist the lid, a panel in the floor slides open beneath your feet.",
+        "$n twists the barrel lid causing a panel of floor to slowly slide open.",
+          "A panel in the ceiling overhead slowly slides open.",
+        "As you twist the lid, the trapdoor in the floor slowly slides closed.",
+        "$n twists the barrel lid causing the trapdoor in the floor to slowly close.",
+          "The trapdoor overhead slowly slides closed."
+        );
+        return TRUE;
+      }
+      break;
+  case 9050:
+      if (cmd != CMD_TURN)
+        return FALSE;
+      if (is_abbrev(buf, "bracket")) {
+        ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_DEF,
+              "",
+              "",
+            "You reach out and turn the bracket.  A passage to the west is revealed!",
+            "$n fiddles with something.  A passage to the west is revealed!",
+            "A passage to the east is revealed.",
+            "You reach out and turn the bracket.  The passage to the west is concealed!",
+            "$n fiddles with something.  The passage to the west is concealed!",
+            "The passage to the east is concealed."
+        );
+        return TRUE;
+      }
+      break;
+  case 9064:
+      if (cmd != CMD_TURN)
+        return FALSE;
+      if (is_abbrev(buf, "bracket")) {
+        ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_DEF,
+              "",
+              "",
+            "You reach out and turn the bracket.  A passage to the east is revealed!",
+            "$n fiddles with something.  A passage to the east is revealed!",
+            "A passage to the west is revealed.",
+            "You reach out and turn the bracket.  The passage to the east is concealed!",
+            "$n fiddles with something.  The passage to the east is concealed!",
+            "The passage to the west is concealed."
         );
         return TRUE;
       }

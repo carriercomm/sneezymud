@@ -639,7 +639,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
         }
 
         // create grave marker
-        if (!v->inGrimhaven()) {
+        if (!v->inGrimhaven() && !inPkZone()) {
           TObj * grave = read_object(OBJ_GENERIC_GRAVE, VIRTUAL);
           if (grave) {
             string graveDesc = "Here lies ";
@@ -671,7 +671,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
     }
     // Mark an actual kill for the person giving the final blow
     if (desc) {
-      if (roomp->isRoomFlag(ROOM_ARENA)) 
+      if (roomp->isRoomFlag(ROOM_ARENA) || inPkZone()) 
         desc->career.arena_victs++;
       else {
         desc->session.kills++;
@@ -680,7 +680,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
     }
     // track the death for the victim
     if (v->desc) {
-      if (roomp->isRoomFlag(ROOM_ARENA)) {
+      if (roomp->isRoomFlag(ROOM_ARENA) || inPkZone()) {
         v->desc->career.arena_loss++;
       } else {
         v->desc->career.deaths++;

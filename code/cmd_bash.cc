@@ -277,7 +277,7 @@ int TBeing::bashSuccess(TBeing *victim, spellNumT skill)
 {
   int rc = 0;
   int distNum = 0;
-  int level = 0;
+  //  int level = 0;
 
 
   TThing *obj = NULL;
@@ -312,7 +312,7 @@ int TBeing::bashSuccess(TBeing *victim, spellNumT skill)
 
   }
 
-  level = getSkillLevel(skill);
+  //  level = getSkillLevel(skill);
   distNum = 1;
   if (isLucky(levelLuckModifier(victim->GetMaxLevel())))
     distNum++;

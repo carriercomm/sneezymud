@@ -401,7 +401,7 @@ void TPerson::doPowers(const char *argument) const
          is_abbrev(tStPower.c_str(), getWizPowerName(tWizPower).c_str()))) {
       sprintf(tString, "%3d.) [%c] %-25.25s",
               (tWizPower + 1),
-              (wizPowerList[tWizPower] ? 'X' : ' '),
+              (wizPowerList[tWizPower] ? '*' : ' '),
               getWizPowerName(tWizPower).c_str());
       tStString += tString;
 

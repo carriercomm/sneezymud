@@ -1389,14 +1389,14 @@ class TBeing : public TThing {
     int applyDamage(TBeing *, int, spellNumT);
     int preProcDam(spellNumT, int) const;
     TBeing *findAnAttacker() const;
-    int damageEpilog(TBeing *, int);
+    int damageEpilog(TBeing *, spellNumT);
     void catchLostLink(TBeing *);
     void throwChar(TBeing *v, dirTypeT dir, bool throwerMove, silentTypeT silent, bool forceStand);
     bool checkPeaceful(const string &) const;
     bool checkPeacefulVictim(const string &, const TThing *) const;
     int extraDam(const TBeing *, const TBaseWeapon *) const;
     void makeCorpse(int);
-    int die(int);
+    int die(spellNumT);
     int slotChance(wearSlotT num) const;
     void makeBodyPart(wearSlotT);
     void makeDiseasedPart(wearSlotT);
@@ -1423,7 +1423,7 @@ class TBeing : public TThing {
     bool canUseLeg(int) const;
     int checkPassWard(dirTypeT) const;
     bool canSwim(dirTypeT);
-    int rawKill(int);
+    int rawKill(spellNumT);
     bool validMove(dirTypeT);
     const char *movementType(bool) const;
     ubyte getMaxLimbHealth(wearSlotT) const;

@@ -378,7 +378,7 @@ class Descriptor
     char **str;                   // for the modify-str system
     int max_str;
     int prompt_mode;              // control of prompt-printing 
-    char raw[4096];               // buffer for raw input    
+    char m_raw[4096];               // buffer for raw input    
     textQ output;                 // q of strings to send    
     textQ input;                  // q of unprocessed input  
     sessionData session;          // data for this session

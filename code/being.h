@@ -1048,6 +1048,8 @@ class TBeing : public TThing {
     int reconcilePiety(spellNumT, bool);
     int reconcileMana(spellNumT, bool, int = 0);
     int useMana(spellNumT);
+    int reconcileLifeforce(spellNumT, bool, int = 0);
+    int useLifeforce(spellNumT);
     double usePiety(spellNumT);
     int reconcileDamage(TBeing *, int, spellNumT);
     int doRent(const char *);
@@ -1560,6 +1562,9 @@ class TBeing : public TThing {
     void addToMana(int mana);
     double getPercMana(void);
     void setMaxMana(int mana);
+    int getLifeforce() const;
+    void setLifeforce(int lifeforce);
+    void addToLifeforce(int lifeforce);
 
     TBeing *fight() const;
 
@@ -1614,6 +1619,7 @@ class TBeing : public TThing {
     bool isSameRace(const TBeing *ch) const;
     bool isGuildmaster() const;
     bool noMana(int mana) const;
+    bool noLifeforce(int lifeforce) const;
 #if FACTIONS_IN_USE
     bool percLess(double perc) const;
 #endif

@@ -742,6 +742,19 @@ int TBeing::updateHalfTickStuff()
   unsigned int i, hours_first, hours_last, severity;
   
 
+  if (hasClass(CLASS_SHAMAN)) {
+    if (0 >= getLifeforce()) {
+      setLifeforce(0);
+      addToHit(-2);
+      updatePos();
+      sendTo("The ancestors are not pleased with you.\n\r");
+      sendTo("Your ancestors demand you gather lifeforce.\n\r");
+    } else {
+      addToLifeforce(-1);
+    }
+  }
+
+
   if (isAffected(AFF_SLEEP) && (getPosition() > POSITION_SLEEPING)) {
     sendTo("You grow sleepy and can remain awake no longer.\n\r");
     act("$n collapses as $e falls asleep.", TRUE, this, 0, 0, TO_ROOM);
@@ -1080,7 +1093,7 @@ int TBeing::updateHalfTickStuff()
         int mana_bump = manaGain(), mana_max = manaLimit(), mana_cur = getMana();
         if (foodReject || (drunk > 15)) {
           mana_bump = ::number(1,3);
-          if (!foodReject) {
+          if (!foodReject || (0 >= getLifeforce())) {
             addToHit(1);
             sendTo("Your condition prevents your body's full recovery.\n\r");
           } else 
@@ -1089,7 +1102,8 @@ int TBeing::updateHalfTickStuff()
           addToHit(hitGain());
       
         addToPiety(pietyGain(0.0));
-        if ((hasClass(CLASS_RANGER) || hasClass(CLASS_SHAMAN) || hasClass(CLASS_MAGIC_USER)) && 
+
+        if ((hasClass(CLASS_RANGER) || hasClass(CLASS_MAGIC_USER)) && 
               (stone = find_biggest_powerstone(this)) && 
               (mana_bump + mana_cur >= mana_max)) {
           addToMana(mana_max - mana_cur);
@@ -1600,7 +1614,7 @@ void TBeing::checkCharmMana()
     if (isthrall)
       mana = 2*mana/3;
 
-    if (!hasClass(CLASS_CLERIC) && !hasClass(CLASS_DEIKHAN)) {
+    if (!hasClass(CLASS_CLERIC) && !hasClass(CLASS_DEIKHAN) && !hasClass(CLASS_SHAMAN)) {
       if (getMana() < mana && isPc()) {
         sendTo(COLOR_MOBS, "You lack the mental concentration to control %s any longer.\n\r", ch->getName());
         ch->stopFollower(TRUE);

@@ -1673,6 +1673,16 @@ int TBeing::parseCommand(const char *orig_arg, bool typedIn)
         return FALSE;
     }
   }
+  // LIFEFORCE DRAIN ON EVERY DAMN TICK
+  if (hasClass(CLASS_SHAMAN)) {
+    if (0 >= getLifeforce()) {
+      setLifeforce(0);
+      addToHit(-1);
+    } else {
+      addToLifeforce(-1);
+    }
+  }
+  // END LIFEFORCE
 #if 0
   if (typedIn) {
     return (doCommand(cmd, argument, NULL, TRUE));

@@ -990,6 +990,18 @@ void TMonster::elementalFix(TBeing *caster, spellNumT spell, bool flags)
     case SPELL_CONJURE_WATER:
       level = (int) (1.0 * level);
       break;
+    case SPELL_ENTHRALL_SPECTRE:
+      level = (int) (0.7 * level);
+      break;
+    case SPELL_ENTHRALL_GHAST:
+      level = (int) (0.7 * level);
+      break;
+    case SPELL_ENTHRALL_GHOUL:
+      level = (int) (0.8 * level);
+      break;
+    case SPELL_ENTHRALL_DEMON:
+      level = (int) (0.8 * level);
+      break;
     default:
       forceCrash("Bad spellNumT (%d) to elementalFix", spell);
       break;
@@ -1421,15 +1433,12 @@ void TBeing::nothingHappens(silentTypeT silent_caster) const
                  FALSE, this, NULL, NULL, TO_ROOM);
       break;
     case 4:
-#if 0
-// bitching and moaning from PCs - removed for time being
       if (!silent_caster)
         act("Nope, nuh uh, nada, zip, the big mage fizzle.",
                  FALSE, this, NULL, NULL, TO_CHAR);
       act("Chant, chant, wave hands, wave hands, mages suck.",
                  FALSE, this, NULL, NULL, TO_ROOM);
       break;
-#endif
     case 5:
       if (!silent_caster)
         act("Damn!  Missed again.",
@@ -1516,9 +1525,9 @@ void TBeing::nothingHappens(silentTypeT silent_caster) const
       break;
     case 17:
       if (!silent_caster)
-        act("You manage to produce a bouquet of illusionary flowers.",
+        act("DAMN! Screwed up again!.",
                  FALSE, this, NULL, NULL, TO_CHAR);
-      act("$n's magic has produced a bouquet of illusionary flowers.",
+      act("Chant...Chant...Wave hands...Wave hands...Mages suck!",
                  FALSE, this, NULL, NULL, TO_ROOM);
       break;
   }

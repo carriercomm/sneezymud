@@ -41,6 +41,7 @@ extern bool bSuccess(TBeing *, int, spellNumT);
 extern bool bSuccess(TBeing *, int, double, spellNumT);
 
 extern bool bPassMageChecks(TBeing * , spellNumT, TThing *);
+extern bool bPassShamanChecks(TBeing * , spellNumT, TThing *);
 extern bool bPassClericChecks(TBeing *, spellNumT);
 extern byte defaultProficiency(byte, byte, byte);
 extern bool canDoVerbal(TBeing *);

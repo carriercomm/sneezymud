@@ -139,6 +139,7 @@ class CDiscipline
     int getLearnedness() const;
     void setLearnedness(int);
     int useMana(byte, byte);
+    int useLifeforce(byte, byte);
     double usePerc(byte, double);
 };
 

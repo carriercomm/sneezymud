@@ -278,6 +278,36 @@ bool bPassMageChecks(TBeing * caster, spellNumT spell, TThing *target)
   return TRUE;
 }
 
+bool bPassShamanChecks(TBeing * caster, spellNumT spell, TThing *target)
+{
+  if (!caster->getSkillLevel(spell)) {
+    // probably an immort with improper class
+    caster->sendTo("You need to have the appropriate level AND class for this to work.\n\r");
+    return FALSE;
+  }
+
+  if (caster->isImmortal() && caster->isPlayerAction(PLR_NOHASSLE))
+    return TRUE;
+
+  if (!enforceVerbal(caster, spell))
+    return FALSE;
+
+  if (!enforceGestural(caster, spell))
+    return FALSE;
+
+  // if spell uses component, check for it
+  if (IS_SET(discArray[spell]->comp_types, COMP_MATERIAL)) {
+    TBeing * vict = dynamic_cast<TBeing *>(target);
+    TObj * obj = dynamic_cast<TObj *>(target);
+    if (vict && !caster->useComponent(caster->findComponent(spell), vict, CHECK_ONLY_YES))
+      return FALSE;
+    if (obj && !caster->useComponentObj(caster->findComponent(spell), obj, CHECK_ONLY_YES))
+      return FALSE;
+  }
+
+  return TRUE;
+}
+
 static bool enforcePrayer(TBeing *ch, spellNumT spell)
 {
   if (!ch)
@@ -2077,6 +2107,13 @@ int CDiscipline::useMana(byte ubCompetence, byte ubDifficulty)
   return(max((int) ubDifficulty,(100-((int) ubCompetence))/2));
 }
 
+// LIFEFORCE
+int CDiscipline::useLifeforce(byte ubCompetence, byte ubDifficulty)
+{
+  return(max((int) ubDifficulty,(100-((int) ubCompetence))/2));
+}
+// END LIFEFORCE
+
 double CDiscipline::usePerc(byte ubCompetence, double fDifficulty)
 {
   return(fDifficulty+((fDifficulty*((double)(100-ubCompetence)))/100));
@@ -2091,6 +2128,18 @@ int checkMana(TBeing * caster, int mana)
   } else   
     return FALSE;
 }
+
+// LIFEFORCE
+int checkLifeforce(TBeing * caster, int lifeforce)
+{
+  if (caster->noLifeforce(lifeforce)) {
+    act("You don't seem to have enough lifeforce...", FALSE, caster, 0, 0, TO_CHAR, ANSI_ORANGE);
+    act("$n's eyes glow fire red and then quickly fade back to normal.", FALSE, caster, NULL, NULL, TO_ROOM, ANSI_RED);
+    return TRUE;
+  } else   
+    return FALSE;
+}
+// END LIFEFORCE
 
 #if FACTIONS_IN_USE
 bool checkPerc(const TBeing * caster, double align)

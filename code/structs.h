@@ -243,6 +243,7 @@ class lastChangeData {
     int minute;
     int fighting;
     byte full, thirst, pos;
+    sh_int lifeforce;
     lastChangeData();
     lastChangeData(const lastChangeData &a);
     ~lastChangeData();

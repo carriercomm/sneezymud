@@ -62,6 +62,31 @@ int TBeing::useMana(spellNumT spl)
   }
 }
 
+// LIFEFORCE
+int TBeing::useLifeforce(spellNumT spl)
+{
+  int arrayLifeforce;
+  int rounds;
+  spl = getSkillNum(spl);
+  discNumT das = getDisciplineNumber(spl, FALSE);
+  if (das == DISC_NONE) {
+    vlogf(LOG_BUG, "useLifeforce() with bad discipline for spell=%d", spl);
+    return 0;
+  }
+  // for arrayLifeforce im using minMana...should be replaced later on JESUS
+  arrayLifeforce = getDiscipline(das)->useLifeforce(getSkillValue(spl),discArray[spl]->minMana);
+
+// divide total LF/rounds for each spell if spell tasked
+  if (IS_SET(discArray[spl]->comp_types, SPELL_TASKED) &&
+      discArray[spl]->lag >= 0) {
+    rounds =  discArray[spl]->lag + 2;
+    return arrayLifeforce/rounds;
+  } else {
+    return arrayLifeforce;
+  }
+}
+
+// END LIFEFORCE
  
 double TBeing::usePiety(spellNumT spl)
 {
@@ -357,6 +382,20 @@ static int preflight_mana(TBeing *ch, spellNumT spl)
   return((howMuch <= totalAmt));
 }
 
+// LIFEFORCE
+static int preflight_lifeforce(TBeing *ch, spellNumT spl)
+{
+  int howMuch = 0, totalAmt = 0;
+
+  howMuch = ch->useLifeforce(spl);
+  totalAmt = ch->getLifeforce(); 
+
+  if (IS_SET(discArray[spl]->comp_types, SPELL_TASKED)) 
+    howMuch *= discArray[spl]->lag + 2;
+   
+  return((howMuch <= totalAmt));
+}
+// END LIFEFORCE
 
 static int preflight_piety(TBeing *ch, spellNumT spl)
 {
@@ -463,6 +502,39 @@ int TBeing::reconcileMana(spellNumT spl, bool checking, int mana)
   return TRUE;
 }
 
+// LIFEFORCE
+int TBeing::reconcileLifeforce(spellNumT spl, bool checking, int lifeforce)
+{
+  int lifeforce_to_burn;
+
+  if (desc && isImmortal())
+    return TRUE;
+    
+  if (spl > TYPE_UNDEFINED) {
+    if (!isImmortal() && !preflight_lifeforce(this, spl)) {
+      if (checking) {
+        return FALSE;
+      } else {
+      }
+    } else if (checking) {
+      return TRUE;
+    }
+    lifeforce_to_burn = useLifeforce(spl);
+  } else {
+    lifeforce_to_burn = lifeforce;
+  }
+  if (lifeforce_to_burn > 0) {
+    if (getLifeforce() >= lifeforce_to_burn) {
+      setLifeforce(max(0, getLifeforce() - lifeforce_to_burn));
+    } else {
+      lifeforce_to_burn -= getLifeforce();
+      lifeforce_to_burn = max(15, lifeforce_to_burn);
+      setLifeforce(0);
+    }
+  }
+  return TRUE;
+}
+// END LIFEFORCE
 
 char *skip_spaces(char *string)
 {

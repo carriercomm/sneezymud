@@ -261,7 +261,7 @@ const unsigned int ITEM_INVISIBLE       = (1<<5);     // 32
 const unsigned int ITEM_MAGIC           = (1<<6);     // 64
 const unsigned int ITEM_NODROP          = (1<<7);     // 128
 const unsigned int ITEM_BLESS           = (1<<8);     // 256
-const unsigned int ITEM_NOLOCATE        = (1<<9);     // 512      
+const unsigned int ITEM_UNUSED          = (1<<9);     // 512      
 const unsigned int ITEM_HOVER           = (1<<10);    // 1024
 const unsigned int ITEM_RUSTY           = (1<<11);    // 2048
 const unsigned int ITEM_ANTI_CLERIC     = (1<<12);    // 4096
@@ -283,9 +283,7 @@ const unsigned int ITEM_ONLY_NEUTER     = (1<<27);    // 134217728
 const unsigned int ITEM_ATTACHED        = (1<<28);    // 268435456 
 const unsigned int ITEM_BURNING         = (1<<29);    // 536870912
 const unsigned int ITEM_CHARRED         = (1<<30);    // 1073741824
-// const long int ITEM_NOLOCATE            = (1<<31);    // 2147483647 
-// Under Batopr's advice i commented the above in favor of using 
-// a different slot --jh
+const long int ITEM_NOLOCATE            = (1<<31);    // returns negitive int
 
 const int MAX_OBJ_STAT        = 32;        // move and change
 

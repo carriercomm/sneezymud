@@ -653,9 +653,9 @@ int TMonster::superScavenger()
     // if we loot a corpse, we need to update save file
     corpse = dynamic_cast<TPCorpse *>(best_o->parent);
     --(*best_o);
-    if (corpse) {
+    if (corpse) 
       corpse->saveCorpseToFile();
-    }
+    
     *roomp += *best_o;
   }
   if (best_o) {

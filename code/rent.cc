@@ -29,7 +29,7 @@ struct SInnkeeperHate {
 
   // This one is a marker one, add below it but before '_NORACE'
   {0, RACE_HUMAN, true, "Get out, we don't serve your kind here scum!"},
-
+  {10615, RACE_ELVEN, false, "We serve those of elven blood only thank you."},
   {0, RACE_NORACE, false, "Leave!"} // Add all new entries BEFORE this line.
 };
 

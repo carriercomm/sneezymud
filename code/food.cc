@@ -65,8 +65,10 @@ void TBaseCup::weightChangeObject(float wgt_amt)
     addToWeight(wgt_amt);
     mount(tmp);
   } else {
-        forceCrash("Unknown attempt to subtract weight from an object. (weightChangeObject) obj=%s", getName());
+    // if object (pool) is changing in weight at load time, this is ok
     //vlogf(LOG_BUG, "Unknown attempt to subtract weight from an object. (weightChangeObject) obj=%s", getName());
+
+    addToWeight(wgt_amt);
   }
 
   // weight debug: check if greater then max units
@@ -74,7 +76,7 @@ void TBaseCup::weightChangeObject(float wgt_amt)
   // obj weight > max
   if (compareWeights(getWeight(), max_amt) == -1) {
 #if DRINK_DEBUG
-    // this also happens, silly float round off
+    // this happens, silly float round off
     vlogf(LOG_BUG, "DRINK: Bad weight change on %s.  Location %s", getName(),
            (in_room != ROOM_NOWHERE ? roomp->getName() :
            (equippedBy ? equippedBy->getName() :

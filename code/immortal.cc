@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: immortal.cc,v $
+// Revision 5.1.1.2  1999/10/24 00:46:32  batopr
+// added drain info to hospital data on info gold
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -4135,7 +4138,7 @@ void TBeing::doInfo(const char *arg)
       buf += buf2;
       sprintf(buf2, "REPAIR ECONOMY:    pos %u, net gold = %d (drain: %d : %.2f%%)\n\r", tot_gold_repair, net_gold_repair, tot_gold_repair - net_gold_repair, 100.0 * (tot_gold_repair - net_gold_repair) / tot_drain);
       buf += buf2;
-      sprintf(buf2, "HOSPITAL ECONOMY:  pos %u, net gold = %d\n\r", tot_gold_hospital, net_gold_hospital);
+      sprintf(buf2, "HOSPITAL ECONOMY:  pos %u, net gold = %d (drain: %d : %.2f%%)\n\r", tot_gold_hospital, net_gold_hospital, tot_gold_hospital - net_gold_hospital, 100.0 * (tot_gold_hospital - net_gold_hospital) / tot_drain);
       buf += buf2;
       sprintf(buf2, "GAMBLE ECONOMY:    pos %u, net gold = %d\n\r", tot_gold_gamble, net_gold_gamble);
       buf += buf2;

@@ -2,33 +2,15 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: oldrace.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
+// oldrace.cc - old functions related to mobile race
 //
 //////////////////////////////////////////////////////////////////////////
-
-
-/* ************************************************************************
-
-      SneezyMUD - All rights reserved, SneezyMUD Coding Team
-      "oldrace.cc" - All functions related to Mobile race
-
-************************************************************************ */
 #include "stdsneezy.h"
 
 #include <iostream.h>
 #include <fstream.h>
 
 /* remove these races
-    case RACE_VEGMAN:
     case RACE_MYTHIC:
     case RACE_MAMMAL:
     case RACE_UNIDENT:

@@ -1171,43 +1171,35 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       }
       break;
     case 9581:
-      if ((cmd != CMD_PULL))
+      if ((cmd != CMD_PULL) && (cmd != CMD_PRESS))
         return FALSE;
       if (!strcasecmp(buf, "tape")) {
-        act("You pull on the tape, revealing a rip in the back of the tent.",
-            TRUE,ch,0,0,TO_CHAR);
-        act("$n fiddles with something at the back of the tent, revealing a small rip.",
-            TRUE,ch,0,0,TO_ROOM);
         ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
             "",
             "",
-            "",
-            "$n pulls the rip open, revealing a clearing behind the tent.",
-            "Someone fiddles with something on the back of the tent.",
-            "A rip in the back of the tent is revealed as someone outside opens it.",
-            "$n closes the rip in the back of the tent.",
-            "$n fiddles with something, completely concealing the rip."
+        "You peel the tape back, opening a rip in the back of the tent.",
+        "$n fiddles with something, opening a rip in the back of the tent.",
+            "A rip in the back of the tent has been opened.",
+        "You press the tape back over the rip, closing the breach.",
+        "$n fiddles with something, sealing the rip in the back of the tent.",
+            "A rip in the back of the tent has been closed."
         );
-	return TRUE;
+        return TRUE;
       }
       break;
     case 9582:
-      if ((cmd != CMD_PULL))
+      if ((cmd != CMD_PULL) && (cmd != CMD_PRESS))
         return FALSE;
       if (!strcasecmp(buf, "tape")) {
-        act("You pull on the tape, revealing a rip in the back of the tent.",
-            TRUE,ch,0,0,TO_CHAR);
-        act("$n fiddles with something at the back of the tent, revealing a small rip.",
-            TRUE,ch,0,0,TO_ROOM);
-        ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
+        ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
             "",
             "",
-            "",
-            "$n pulls the rip open, revealing the inside of  the tent.",
-            "Someone fiddles with something on the inside of the tent.",
-            "A rip in the back of the tent is revealed as someone inside opens it.",
-            "$n closes the rip in the back of the tent.",
-            "$n fiddles with something, completely concealing the rip."
+        "You peel the tape back, opening a rip in the back of the tent.",
+        "$n fiddles with something, opening a rip in the back of the tent.",
+            "A rip in the back of the tent has been opened.",
+        "You press the tape back over the rip, closing the breach.",
+        "$n fiddles with something, sealing the rip in the back of the tent.",
+            "A rip in the back of the tent has been closed."
         );
         return TRUE;
       }

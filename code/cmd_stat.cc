@@ -317,8 +317,9 @@ void TBeing::statObj(const TObj *j)
   str += buf;
 
   if (j->action_description) {
-    sprintf(buf, "Action Description: %s\n\r", j->action_description);
-    str += buf;
+    str += "Action Description: ";
+    str += j->action_description;
+    str += "\n\r";
   }
 
   sprintf(buf, "Action pointer: %s\n\r", (j->act_ptr ? "YES" : "no") );

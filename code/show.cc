@@ -1827,7 +1827,8 @@ void TPerson::doShow(const char *argument)
       zoneData &zd = zone_table[zone];
       if (!*argument ||
            isname(argument, zd.name) ||
-           (!strcasecmp(argument, "disabled") && !zd.enabled)) {
+	  (!strcasecmp(argument, "disabled") && !zd.enabled) ||
+	  (!strcasecmp(argument, "active") && zd.zone_value==-1)) {
         if (zd.enabled)
           strcpy(buf2, zd.name);
         else

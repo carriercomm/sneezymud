@@ -870,10 +870,20 @@ CSkill *TBeing::getSkill(spellNumT skill) const
 
 // disc_shaman
 
+    case SPELL_SHIELD_OF_MISTS: 
+      return &((CDShaman *) cd)->skShieldOfMists;
     case SPELL_ROOT_CONTROL:  //               340
       return &((CDShaman *) cd)->skRootControl;
     case SPELL_LIVING_VINES:  //               348
       return &((CDShaman *) cd)->skLivingVines;
+    case SPELL_ENTHRALL_SPECTRE:
+      return &((CDShaman *) cd)->skEnthrallSpectre;
+    case SPELL_ENTHRALL_GHAST:
+      return &((CDShaman *) cd)->skEnthrallGhast;
+    case SPELL_ENTHRALL_GHOUL:
+      return &((CDShaman *) cd)->skEnthrallGhoul;
+    case SPELL_ENTHRALL_DEMON:
+      return &((CDShaman *) cd)->skEnthrallDemon;
     case SPELL_CACAODEMON: // 400
       return &((CDShaman *) cd)->skCacaodemon;
     case SPELL_DANCING_BONES: // 402

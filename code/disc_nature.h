@@ -67,6 +67,10 @@ private:
     int treeWalk(TBeing *, const char *, int, byte);
     int treeWalk(TBeing *, const char *);
 
+    int shapeShift(TBeing *caster, int level, byte bKnown);
+    int shapeShift(TBeing *caster, const char * buffer);
+    int castShapeShift(TBeing *caster);
+
 const int LAST_TRANSFORM_LIMB = 6;
 extern struct TransformLimbType TransformLimbList[LAST_TRANSFORM_LIMB];
 

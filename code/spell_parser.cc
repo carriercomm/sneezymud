@@ -492,7 +492,7 @@ static void badCastSyntax(const TBeing *ch, spellNumT which)
     return;
   }
 
-  bool cast = (getSpellType(discArray[which]->typ) == SPELL_CASTER);
+  bool cast = ((getSpellType(discArray[which]->typ) == SPELL_CASTER) || (getSpellType(discArray[which]->typ) == SPELL_DANCER));
 
   if (discArray[which]->targets & TAR_IGNORE) {
     ch->sendTo("This spell isn't working right.\n\r");
@@ -1081,7 +1081,7 @@ int TBeing::parseTarget(spellNumT which, char *n, TThing **ret)
   ok = FALSE;
   ch = NULL;
   o = NULL;
-  bool cast = (getSpellType(discArray[which]->typ) == SPELL_CASTER);
+  bool cast = ((getSpellType(discArray[which]->typ) == SPELL_CASTER) || (getSpellType(discArray[which]->typ) == SPELL_DANCER));
 
   if (*n) {
     if (IS_SET(discArray[which]->targets, TAR_CHAR_ROOM)) {
@@ -1400,6 +1400,18 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       break;
     case SPELL_CONJURE_AIR:
       rc = conjureElemAir(this);
+      break;
+    case SPELL_ENTHRALL_SPECTRE:
+      rc = enthrallSpectre(this);
+      break;
+    case SPELL_ENTHRALL_GHAST:
+      rc = enthrallGhast(this);
+      break;
+    case SPELL_ENTHRALL_GHOUL:
+      rc = enthrallGhoul(this);
+      break;
+    case SPELL_ENTHRALL_DEMON:
+      rc = enthrallDemon(this);
       break;
     case SPELL_FEATHERY_DESCENT:
       rc = featheryDescent(this, ch);
@@ -1812,6 +1824,9 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       case SPELL_CREATE_GOLEM:
           createGolem(this);
         break;
+      case SPELL_SHIELD_OF_MISTS:
+        shieldOfMists(this, ch);
+        break;
       case SPELL_VOODOO:
           rc = voodoo(this, o);
         break;
@@ -1897,9 +1912,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
           rc = transfix(this, ch);
         break;
 
-      case SPELL_SHAPESHIFT:
-          shapeShift(this, n);
-        break;
 #endif
       case SPELL_BLESS_DEIKHAN:
       case SPELL_BLESS:
@@ -1935,6 +1947,9 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
         break;
     case SPELL_SECOND_WIND:
       secondWind(this, ch);
+      break;
+    case SPELL_SHAPESHIFT:
+      shapeShift(this, n);
       break;
     case SPELL_REMOVE_CURSE:
     case SPELL_REMOVE_CURSE_DEIKHAN:
@@ -2041,7 +2056,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SKILL_SWITCH_RANGER:
     case SKILL_RETREAT_RANGER:
     case SKILL_BEAST_CHARM:
-    case SPELL_SHAPESHIFT:
     case SKILL_CONCEALMENT:
     case SKILL_APPLY_HERBS:
     case SKILL_DIVINATION:

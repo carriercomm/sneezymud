@@ -37,7 +37,5 @@ private:
     int beastSummon(TBeing *, const char *);
     int beastSummon(TBeing *, const char *, int, byte);
 
-    void shapeShift(TBeing *, const char *);
-    int shapeShift(TBeing *, const char *, int, byte);
 
 #endif

@@ -701,6 +701,16 @@ int mapSpellnumToFile(spellNumT stt)
       return 507;
     case SKILL_SET_TRAP_GREN:
       return 508;
+    case SPELL_ENTHRALL_GHOUL:
+      return 551;
+    case SPELL_ENTHRALL_GHAST:
+      return 552;
+    case SPELL_ENTHRALL_DEMON:
+      return 553;
+    case SPELL_ENTHRALL_SPECTRE:
+      return 554;
+    case SPELL_SHIELD_OF_MISTS:
+      return 555;
     case SPELL_CACAODEMON:
       return 556;
     case SPELL_CREATE_GOLEM:
@@ -1542,6 +1552,16 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_SET_TRAP_MINE;
     case 508:
       return SKILL_SET_TRAP_GREN;
+    case 551:
+      return SPELL_ENTHRALL_GHOUL;
+    case 552:
+      return SPELL_ENTHRALL_GHAST;
+    case 553:
+      return SPELL_ENTHRALL_DEMON;
+    case 554:
+      return SPELL_ENTHRALL_SPECTRE;
+    case 555:
+      return SPELL_SHIELD_OF_MISTS;
     case 556:
       return SPELL_CACAODEMON;
     case 557:

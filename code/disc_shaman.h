@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_shaman.h,v $
+// Revision 5.1.1.2  2001/01/11 19:56:53  jesus
+// shaman stuff
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -24,7 +27,12 @@
 class CDShaman : public CDiscipline
 {
 public:
+    CSkill skShieldOfMists;
     CSkill skRootControl;
+    CSkill skEnthrallSpectre;
+    CSkill skEnthrallGhast;
+    CSkill skEnthrallGhoul;
+    CSkill skEnthrallDemon;
     CSkill skCacaodemon;
     CSkill skVoodoo;
     CSkill skControlUndead;
@@ -33,7 +41,12 @@ public:
     CSkill skDancingBones;
     CDShaman()
       : CDiscipline(),
+      skShieldOfMists(),
       skRootControl(),
+      skEnthrallSpectre(),
+      skEnthrallGhast(),
+      skEnthrallGhoul(),
+      skEnthrallDemon(),
       skCacaodemon(),
       skVoodoo(),
       skControlUndead(),
@@ -43,7 +56,12 @@ public:
     }
     CDShaman(const CDShaman &a)
       : CDiscipline(a),
+      skShieldOfMists(a.skShieldOfMists),
       skRootControl(a.skRootControl),
+      skEnthrallSpectre(a.skEnthrallSpectre),
+      skEnthrallGhast(a.skEnthrallGhast),
+      skEnthrallGhoul(a.skEnthrallGhoul),
+      skEnthrallDemon(a.skEnthrallDemon),
       skCacaodemon(a.skCacaodemon),
       skVoodoo(a.skVoodoo),
       skControlUndead(a.skControlUndead),
@@ -54,7 +72,12 @@ public:
     CDShaman & operator=(const CDShaman &a) {
       if (this == &a) return *this;
       CDiscipline::operator=(a);
+      skShieldOfMists = a.skShieldOfMists;
       skRootControl = a.skRootControl;
+      skEnthrallSpectre = a.skEnthrallSpectre;
+      skEnthrallGhast = a.skEnthrallGhast;
+      skEnthrallGhoul = a.skEnthrallGhoul;
+      skEnthrallDemon = a.skEnthrallDemon;
       skCacaodemon = a.skCacaodemon;
       skVoodoo = a.skVoodoo;
       skControlUndead = a.skControlUndead;
@@ -83,12 +106,33 @@ private:
     int dancingBones(TBeing *, TObj *, TMagicItem *);
     int dancingBones(TBeing *, TObj *, int, byte);
 
+    int enthrallSpectre(TBeing * caster, int level, byte bKnown);
+    int enthrallSpectre(TBeing * caster);
+    int castEnthrallSpectre(TBeing * caster);
+
+    int enthrallGhast(TBeing * caster, int level, byte bKnown);
+    int enthrallGhast(TBeing * caster);
+    int castEnthrallGhast(TBeing * caster);
+
+    int enthrallGhoul(TBeing * caster, int level, byte bKnown);
+    int enthrallGhoul(TBeing * caster);
+    int castEnthrallGhoul(TBeing * caster);
+
+    int enthrallDemon(TBeing * caster, int level, byte bKnown);
+    int enthrallDemon(TBeing * caster);
+    int castEnthrallDemon(TBeing * caster);
+
     void cacaodemon(TBeing *, const char *);
     int cacaodemon(TBeing *, const char *, int, byte);
 
     int resurrection(TBeing *, TObj *);
     int resurrection(TBeing *, TObj *, TMagicItem *);
     int resurrection(TBeing *, TObj *, int, byte);
+
+    int shieldOfMists(TBeing *, TBeing *);
+    int castShieldOfMists(TBeing *, TBeing *);
+    void shieldOfMists(TBeing *, TBeing *, TMagicItem *);
+    int shieldOfMists(TBeing *, TBeing *, int, byte);
 
 #endif
 

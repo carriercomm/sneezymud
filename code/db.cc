@@ -16,6 +16,7 @@
 #include "board.h"
 #include "stdsneezy.h"
 #include "loadset.h"
+#include "sys_loot.h"
 
 int top_of_world = 0;         // ref to the top element of world 
 
@@ -278,6 +279,9 @@ void bootDb(void)
   bootPulse("Calculating number of items in rent.");
   vlogf(LOG_MISC, "Totals on limited items:");
   printLimitedInRent();
+
+  bootPulse("Creating Loot List.");
+  sysLootBoot();
 
   bootPulse("Resetting zones:", false);
   for (i = 0; i < zone_table.size(); i++) {
@@ -2307,6 +2311,9 @@ void reset_zone(int zone, bool bootTime)
               }
             } // check for valid,legal exit
           }  // check for dest room
+          break;
+        case 'L':
+          sysLootLoad(rs, mob, obj);
           break;
         default:
           vlogf(LOG_BUG, "Undefd cmd in reset table; zone %d cmd %d.\n\r", zone, cmd_no);

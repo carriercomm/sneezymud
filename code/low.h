@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: low.h,v $
+// Revision 5.1.1.3  2000/01/12 20:03:46  mithros
+// Removed two mob descriptors I didn't need for Ranger L21 Quest
+//
 // Revision 5.1.1.2  2000/01/12 19:18:45  mithros
 // Added Some Mob descriptors for Ranger L21 Quest.
 //
@@ -326,7 +329,6 @@ const short int MOB_RAULDOPLIC     =9322;
 const short int MOB_ABNOR	   =9326;
 const short int MOB_GRIZWALD	   =9331;
 const short int MOB_MOAT_MONSTER   =9700;
-const short int MOB_CLERIC_VOLCANO =9727;
 const short int MOB_ASH            =9954;
 const short int MOB_FREEZING_MIST  =10022;
 const short int MOB_GERSARD        =10119;
@@ -377,7 +379,6 @@ const short int MOB_SEA_LION       =20430;
 const short int MOB_AQUATIC_DRAGON =22517;
 const short int MOB_SPIRIT_OF_WARRIOR =22518;
 const short int MOB_LOGRUS_INITIATION = 22713;
-const short int MOB_CLERIC_ARDEN   =23209;
 const short int MOB_DRAGON_CLOUD   =23633;
 const short int MOB_LORTO	   =28876;
 const short int MOB_HERMIT_GHPARK  =25404;

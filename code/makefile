@@ -145,8 +145,8 @@ LDFLAGS +=-lmysqlclient
 OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	alignment_deity.o ansi.o \
 	being.o blackjack.o body.o \
-	bounty_hunter.o breath.o cards.o \
-	chest.o client.o \
+	bounty_hunter.o breath.o \
+	cards.o client.o \
 	cmd_attribute.o \
 	cmd_bash.o cmd_bodyslam.o cmd_charge.o cmd_chop.o \
 	cmd_compare.o cmd_consider.o \
@@ -164,7 +164,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	cmd_zonefile.o \
 	cmd_zones.o color.o colorstring.o \
 	combat.o comm.o commodity.o components.o connect.o constants.o \
-	container.o corpse.o craps.o crazyeights.o create_engine.o \
+	craps.o crazyeights.o create_engine.o \
 	create_mobs.o create_objs.o create_rooms.o crit_combat.o damage.o \
 	db.o disc_adventuring.o disc_aegis.o disc_afflictions.o disc_air.o \
 	disc_alchemy.o disc_animal.o disc_blunt.o disc_brawling.o \
@@ -189,9 +189,11 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	multiclass.o newbie.o note.o obj.o \
 	obj_armor.o obj_armor_wand.o obj_arrow.o obj_appliedsub.o \
 	obj_audio.o \
-	obj_bag.o obj_bandaid.o obj_base_clothing.o obj_base_corpse.o \
+	obj_bag.o obj_bandaid.o obj_base_clothing.o \
+	obj_base_container.o obj_base_corpse.o \
 	obj_base_cup.o obj_base_light.o obj_base_weapon.o obj_bed.o \
 	obj_board.o obj_boat.o obj_book.o obj_bow.o \
+	obj_chest.o obj_corpse.o \
 	obj_scroll.o obj_seethru.o obj_smoke.o obj_spellbag.o \
 	obj_staff.o obj_statue.o obj_symbol.o \
 	obj_table.o obj_tool.o obj_trap.o \

@@ -447,8 +447,10 @@ void TBeing::doDisband()
     return;
   }
 
+#if 0
   sendTo("No disbanding is allowed at the present time.\n\r");
   return;
+#endif
 
   int ij;
   for (ij = 0;ij < FACT_LEADER_SLOTS;ij++) {
@@ -885,10 +887,10 @@ void TBeing::doAdjust(const char *arg)
     return;
   }
   if (hval == ADJ_CARAVAN) {
-if (!isImmortal()) {
-sendTo("Caravans are currently disabled.\n\r");
-return;
-}
+    if (!isImmortal()) {
+      sendTo("Caravans are currently disabled.\n\r");
+      return;
+    }
 
     if ((getFactionAuthority(fnum,FACT_LEADER_SLOTS-1) <= 0) && !isImmortal()) {
       sendTo("You lack the authority to change caravan parameters.\n\r");

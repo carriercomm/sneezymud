@@ -2,24 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: damage.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
-//
 //      "damage.cc" - functions for doing damage
 //
 //////////////////////////////////////////////////////////////////////////
@@ -323,7 +305,7 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
 }
 
 // DELETE_VICT or FALSE
-int TBeing::damageEpilog(TBeing *v, int dmg_type)
+int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 {
   char buf[256], buf2[256];
   int rc, questmob;
@@ -493,7 +475,8 @@ int TBeing::damageEpilog(TBeing *v, int dmg_type)
 
     reconcileHurt(v, 0.03);
 
-    if (dmg_type >= 0 && (dmg_type < MAX_SKILL) && discArray[dmg_type]) {
+    if (dmg_type >= MIN_SPELL && (dmg_type < MAX_SKILL) && 
+        discArray[dmg_type]) {
       strcpy(buf2, discArray[dmg_type]->name);
     } else if (dmg_type >= TYPE_MIN_HIT && dmg_type <= TYPE_MAX_HIT) {
       strcpy(buf2, attack_hit_text[(dmg_type - TYPE_MIN_HIT)].singular);
@@ -773,7 +756,7 @@ int TBeing::damageEpilog(TBeing *v, int dmg_type)
     return FALSE;
 }
 
-void TBeing::doDamage(int dam, int dmg_type)
+void TBeing::doDamage(int dam, spellNumT dmg_type)
 {
 //  dam = modifyForProtections(dam);
   points.hit -= dam;
@@ -810,7 +793,7 @@ int TBeing::getActualDamage(TBeing *v, TThing *o, int dam, spellNumT attacktype)
   return dam;
 }
 
-int TBeing::damageEm(int dam, string log, int dmg_type)
+int TBeing::damageEm(int dam, string log, spellNumT dmg_type)
 {
   int rc;
   int flying;

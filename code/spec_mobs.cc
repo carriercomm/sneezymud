@@ -1355,7 +1355,7 @@ int paralyzeBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj 
   if (!(v = myself->fight()) || !v->sameRoom(*myself)) 
     return FALSE;
 
-  if (v->isAffected(AFF_PARALYSIS)) {
+  if (v->isAffected(AFF_PARALYSIS) || myself->checkForSkillAttempt(SPELL_PARALYZE)) {
     return FALSE;
   }
 
@@ -1389,7 +1389,7 @@ int paralyzeBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj 
     aff2.location = APPLY_NONE;
     aff2.bitvector = 0;
     aff2.duration = aff.duration + (::number(1,3)); //one round should be enough, might as well randomize it a ittle though
-    aff2.modifier = 0;
+    aff2.modifier = SPELL_PARALYZE;
     myself->affectTo(&aff2);
   } else {
     v->sendTo("Good thing you are immortal.\n\r");
@@ -1409,7 +1409,7 @@ int paralyzeBite(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if (!(v = myself->fight()) || !v->sameRoom(*myself))
     return FALSE;
 
-  if (v->isAffected(AFF_PARALYSIS)) {
+  if (v->isAffected(AFF_PARALYSIS)|| myself->checkForSkillAttempt(SPELL_PARALYZE)) {
     return FALSE;
   }
 
@@ -1438,7 +1438,7 @@ int paralyzeBite(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
     aff2.location = APPLY_NONE;
     aff2.bitvector = 0;
     aff2.duration = aff.duration + (::number(1,3)); //one round should be enough, might as well randomize it a ittle though
-    aff2.modifier = 0;
+    aff2.modifier = SPELL_PARALYZE;
     myself->affectTo(&aff2);
   } else {
     v->sendTo("Good thing you are immortal.\n\r");

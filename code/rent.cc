@@ -2324,6 +2324,14 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
 #endif
 
   if (cmd == CMD_RENT) {
+    if (ch->isImmortal()) {
+      ch->sendTo(COLOR_BASIC, "<r>WARNING<z>\n\r----------\n\r");
+      ch->sendTo("Renting will almost certainly destroy your wizfile.  If you are used to\n\r");
+      ch->sendTo("doing this because of mortal life then it's best to get un-used to it.\n\r");
+      ch->sendTo("If you Have to rent out, such as testing, then go mortal first.\n\r");
+      ch->sendTo("----------\n\r");
+    }
+
     if (ch->recepOffer(recep, &cost)) {
       if (ch->desc && !ch->desc->client) {
         act("$n stores your stuff in the safe, and shows you to your room.", FALSE, recep, 0, ch, TO_VICT);

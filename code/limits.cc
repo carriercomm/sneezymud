@@ -340,8 +340,6 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
   sh_int prac;
   float num;
   bool preReqs = FALSE;
-  float fMin, fMax, avg ;
-  fMin = fMax = avg = 0;
   int combat = 0;
   bool doneCombat = FALSE;
 
@@ -357,6 +355,15 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
     doneCombat = TRUE;
   }
 
+  // these are the default number of practices to use for each class
+  // after they are done with their basic discs
+  // we override these numbers appropriately
+  float fMin = 5.0;
+  float fMax = 9.0;
+  float avg = 6.9;
+
+  // override the defaults as appropriate (i.e., if we want person to
+  // get practice gain appropriate for the basic discs
   switch (Class) {
     case MAGE_LEVEL_IND:
       if (!doneCombat || (getDiscipline(DISC_MAGE)->getLearnedness() < MAX_DISC_LEARNEDNESS) || forceBasic == 1) {
@@ -433,45 +440,31 @@ if (!doneCombat || (getDiscipline(DISC_CLERIC)->getLearnedness() < MAX_DISC_LEAR
       vlogf(LOG_BUG, "Bad class in calcNewPracs");
       break;
   } 
-  if (preReqs) {
-    if (!desc){
-      num = plotStat(STAT_CURRENT, STAT_INT, fMin, fMax, avg, 1.0);
-    } else {
-      num = plotStat(STAT_NATURAL, STAT_INT, fMin, fMax, avg, 1.0);
-    }
-    prac = (int) num;
-    num = num - prac;
-    if (isTripleClass()) {
-      prac *= 4;
-      prac /= 6;
-      num *= 4;
-      num /= 6;
-    } else if (isDoubleClass()) {
-      prac *= 3;
-      prac /= 4;
-      num *= 3;
-      num /= 4;
-    } 
-    if ((100*num) >= (::number(1,100))) {
-      prac++;
-    }
-    return prac;
+
+  if (!desc) {
+    num = plotStat(STAT_CURRENT, STAT_INT, fMin, fMax, avg, 1.0);
   } else {
-    fMin = 5.0;
-    avg = 6.9;
-    fMax = 9.0;
-    if (!desc) {
-      num = plotStat(STAT_CURRENT, STAT_INT, fMin, fMax, avg, 1.0);
-    } else {
-      num = plotStat(STAT_NATURAL, STAT_INT, fMin, fMax, avg, 1.0);
-    }
-    prac = (int) num;
-    num = num - prac;
-    if ((100*num) >= (::number(1,100))) {
-      prac++;
-    }
-    return prac;
+    num = plotStat(STAT_NATURAL, STAT_INT, fMin, fMax, avg, 1.0);
   }
+
+  prac = (int) num;
+  num = num - prac;
+  if (isTripleClass()) {
+    prac *= 4;
+    prac /= 6;
+    num *= 4;
+    num /= 6;
+  } else if (isDoubleClass()) {
+    prac *= 3;
+    prac /= 4;
+    num *= 3;
+    num /= 4;
+  } 
+
+  if ((100*num) >= (::number(1,100))) {
+    prac++;
+  }
+  return prac;
 }
 
 void TBeing::setPracs(sh_int prac, classIndT Class)

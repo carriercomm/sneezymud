@@ -2939,6 +2939,66 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
   return TRUE;
 }
 
+int squirtGun(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TObj *)
+{
+  TBeing *ch;
+  char //Command[30], // Should be 'squirt'
+    Target[30]; // target to be soaked!
+    
+  TDrinkCon *gun=dynamic_cast<TDrinkCon *>(o);
+
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+  if (((o->equippedBy != ch) && (o->parent != ch)))
+    return FALSE;
+Parg = one_argument(Parg, Target);
+if (!(cmd == CMD_SHOOT))
+  return FALSE;
+if (!gun) {
+  vlogf(LOG_PROC, "Squirt Gun proc on an object that isn't a drink container.");
+  return FALSE;
+}
+  
+if(gun->getDrinkUnits() < 1) {
+  act("<1>You squeeze the trigger with all your might, but $p appears to be empty.",TRUE,ch,o,vict,TO_CHAR,NULL);  
+  act("<1>$n squeezes the trigger on $s $p, but nothing happens.",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  return TRUE;
+}
+else {
+  TBeing *squirtee;
+  int bits = generic_find(Target, FIND_CHAR_ROOM, ch, &squirtee, &o);
+  if(!bits) {
+    ch->sendTo("You don't see them here.\n\r");
+    return TRUE;
+  } else {
+    const char *liqname =DrinkInfo[gun->getDrinkType()]->name;
+    int shot = (::number(1,min(5,gun->getDrinkUnits())));
+    gun->addToDrinkUnits(-shot);
+    ch->dropPool(shot, gun->getDrinkType());
+    
+    /*act("<1>You squeeze the trigger on your $p.",TRUE,ch,gun,squirtee,TO_CHAR,NULL);
+    ch->sendTo(COLOR_OBJECTS, "A deadly stream of %s squirts at %s!\n\r",liqname, squirtee->getName());
+    act("<1>$n squeezes the trigger on $s $p, shooting a deadly stream of liquid at $N!"
+	,TRUE,ch,gun,squirtee,TO_NOTVICT,NULL);
+    
+    act("<1>$n squeezes the trigger on $s $p.",TRUE,ch,gun,squirtee,TO_VICT,NULL);
+    squirtee->sendTo(COLOR_OBJECTS, "A deadly stream of %s squirts at you!\n\r",liqname);
+    */
+    char Buf[256];
+    sprintf(Buf, "You squeeze the trigger on $p, squirting a deadly stream of %s at $N!", liqname);
+    act(Buf, TRUE, ch, gun, squirtee, TO_CHAR);
+    sprintf(Buf, "$n squeezes the trigger on $p, squirting a deadly stream of %s at $N!", liqname);
+    act(Buf, TRUE, ch, gun, squirtee, TO_VICT);
+    sprintf(Buf, "$n squeezes the trigger on $p, squirting a deadly stream of %s at you!", liqname);
+    act(Buf, TRUE, ch, gun, squirtee, TO_NOTVICT);
+
+    return TRUE;
+  }
+}
+ return FALSE;
+}
+
+
 int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -2964,20 +3024,80 @@ int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 
 
   if (which == 1) {
-    act("<k>You <g>slice<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-    act("<k>$n <1>slices<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-    act("<k>$n <r>slices<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+    act("<k>You <g>slice<k> $N with the <1>blades<k> of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+    act("<k>$n <1>slices<k> $N with the <1>blades<k> of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+    act("<k>$n <r>slices<k> you with the <1>blades<k> of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   }
   else {
-    act("<k>You <g>stab<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-    act("<k>$n <1>stabs<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-    act("<k>$n <r>stabs<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+    act("<k>You <g>stab<k> $N with the <1>blades<k> of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+    act("<k>$n <1>stabs<k> $N with the <1>blades<k> of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+    act("<k>$n <r>stabs<k> you with the<1> blades<k> of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   }
 
   rc = ch->reconcileDamage(vict, dam, TYPE_PIERCE);
   if (IS_SET_DELETE(rc, DELETE_VICT))
     return DELETE_VICT;
   return TRUE;
+}
+
+int weaponShadowSlayer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  TBeing *ch;
+  int rc, dam = 1;
+//  ch = genricWeaponProcCheck(vict,cmd,o,5);
+//  if ((!(ch)) || !(vict->getFaction() == FACT_CULT || vict->isUndead()))
+//    return FALSE;
+//  
+
+  if (!o || !vict)
+    return FALSE;
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;       // weapon not equipped (carried or on ground)
+  if (::number(0,6))
+    return FALSE;
+  if (cmd != CMD_OBJ_HIT)
+    return FALSE;
+  if (!(vict->getFaction() == FACT_CULT || vict->isUndead()))
+    return FALSE;
+  int hitterLev = ch->GetMaxLevel();
+  dam = (::number((hitterLev / 10 + 1),(hitterLev / 3 + 4)));
+  
+act("<1>Your $o hums, and begins to glow with an incredible <W>white light<1>.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+act("<1>$n's $o hums, and begins to glow with an incredible <W>white light<1>.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+act("<1>$n's $o hums, and begins to glow with a painful <W>white light<1>.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+ 
+if (dam >= ( ( ((hitterLev/3+4)-(hitterLev/10+1))*4 )/5 + (hitterLev/10+1))) {
+act("<W>$N howls in pain as a HUGE flash of energy from your $o is released into $m! <1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+act("<W>$N howls in pain as a HUGE flash of energy from $n's $o is released into $m!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+act("<W>There is a huge flash as the energy from $n's $o is released into you!<1>  That really hurt!!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+} else {
+act("<W>$N grunts as the energy from your $o is released into $m.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+act("<W>$N grunts as the energy from $n's $o is released into $m.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+act("<W>You grunt in pain as the energy from $n's blasted $o is released into you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+}
+
+if (!(ch->getFaction() == FACT_BROTHERHOOD)) {
+dam = dam/2;
+act("<1>Your $o rebels against you, releasing <W>energy<1> into your hand!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+act("<1>$n's $o rebels against $m, releasing <W>energy<1> into $s hand!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+act("<1>$n's $o rebels against $m, releasing <W>energy<1> into $s hand!  Sucker!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+rc = ch->reconcileDamage(ch, dam, TYPE_SMITE);
+if (ch->getHit() < 0) {
+ch->setHit(0);
+ch->setPosition(POSITION_STUNNED);
+}
+if (!ch->isTough()) {
+*ch->roomp += *ch->unequip(o->eq_pos);
+act("$n screams loudly, dropping $s $p.", 1, ch, o, NULL, TO_ROOM);
+act("You scream loudly, dropping your $p.", 1, ch, o, NULL, TO_CHAR);
+}
+}
+
+
+rc = ch->reconcileDamage(vict, dam, TYPE_SMITE);
+if (IS_SET_DELETE(rc, DELETE_VICT))
+  return DELETE_VICT;
+return TRUE;
 }
 
 extern int board(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
@@ -3047,6 +3167,8 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "trolley", trolley},
   {FALSE, "Unused", NULL}, // 55
   {FALSE, "Razor Glove", razorGlove},
+  {FALSE, "ShadowSlayer", weaponShadowSlayer},
+  {FALSE, "Squirt Gun", squirtGun},
 };
 
 

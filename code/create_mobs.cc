@@ -2760,6 +2760,13 @@ void TPerson::doMedit(const char *argument)
       }
       return;
       break;
+    case 31:
+      if (!*string)
+        sendTo("Syntax: med average <mobile> <level> <class(optional)>\n\r");
+      else
+        cMob->editAverageMe(this, string);
+      return;
+      break;
     default:
       sendTo("Syntax : med <type> <flags>\n\r");
       break;

@@ -423,7 +423,7 @@ void oremove(TBeing *ch, int vnum)
 void TPerson::doOEdit(const char *argument)
 {
   const char *tString = NULL;
-  int vnum, field, zGot, oValue, ac_orig, str_orig, price_orig;
+  int vnum, field, zGot, oValue/*, ac_orig, str_orig, price_orig*/;
   float oFValue;
   TObj *cObj = NULL;
   string tStr;
@@ -708,6 +708,12 @@ void TPerson::doOEdit(const char *argument)
       return;
       break;
     case 19:
+#if 1
+      if (!*string)
+        sendTo("Syntax: oed average <object> <value>\n\r");
+      else
+        cObj->editAverageMe(this, string);
+#else
       if ((sscanf(string, "%f", &oFValue)) != 1 || oValue < 0){
 	sendTo("Syntax : oed default_ac_str <object> <level>\n\r");
 	return;
@@ -729,6 +735,7 @@ void TPerson::doOEdit(const char *argument)
              tbc->armorLevel(ARMOR_LEV_REAL),
              tbc->armorLevel(ARMOR_LEV_AC),
              tbc->armorLevel(ARMOR_LEV_STR));
+#endif
       return;
       break;
     case 20: // oedit replace <long/extra> <"extra"/"text"> <"text"> <"text">
@@ -3008,3 +3015,290 @@ void do_other_obj_stuff(void)
   }
 }
 
+int TThing::editAverageMe(TBeing *tBeing, const char *)
+{
+  tBeing->sendTo("Can not average this.  Sorry.\n\r");
+  return FALSE;
+}
+
+int TBeing::editAverageMe(TBeing *tBeing, const char *tString)
+{
+  string tStString(""),
+         tStBuffer(""),
+         tStArg(tString);
+
+  if (!tString || !*tString) {
+    tBeing->sendTo("Syntax: med average %s <level[1.0-60.0]> <class>\n\r");
+    return FALSE;
+  }
+
+  tStArg = two_arg(tStArg, tStString, tStBuffer);
+
+  classIndT tClass;
+  int tStr, tBra, tCon, tDex, tAgi, tInt, tWis, tFoc, tPer, tCha, tKar, tSpe;
+  double tLevel = atof(tStString.c_str());
+
+  if (tLevel <= 0 || tLevel > 60) {
+    tBeing->sendTo("Level must be between 1 and 60.\n\r");
+    return FALSE;
+  }
+
+  TMonster *tMonster;
+
+  if (!(tMonster = dynamic_cast<TMonster *>(this))) {
+    tBeing->sendTo("Target is not a monster.  Cannot do this, sorry.\n\r");
+    return FALSE;
+  }
+
+  if (tStBuffer.empty()) {
+    for (tClass = MIN_CLASS_IND; tClass < MAX_CLASSES; tClass++)
+      if (hasClass((1 << tClass))) {
+        tBeing->sendTo("Setting class to current: %s\n\r", classNames[tClass].capName);
+        break;
+      }
+
+    if (tClass == MAX_CLASSES || !hasClass((1 << tClass))) {
+      tBeing->sendTo("Something went wrong, tell a coder!\n\r");
+      return FALSE;
+    }
+
+    tStr = getStat(STAT_CHOSEN, STAT_STR);
+    tBra = getStat(STAT_CHOSEN, STAT_BRA);
+    tCon = getStat(STAT_CHOSEN, STAT_CON);
+    tDex = getStat(STAT_CHOSEN, STAT_DEX);
+    tAgi = getStat(STAT_CHOSEN, STAT_AGI);
+    tInt = getStat(STAT_CHOSEN, STAT_INT);
+    tWis = getStat(STAT_CHOSEN, STAT_WIS);
+    tFoc = getStat(STAT_CHOSEN, STAT_FOC);
+    tPer = getStat(STAT_CHOSEN, STAT_PER);
+    tCha = getStat(STAT_CHOSEN, STAT_CHA);
+    tKar = getStat(STAT_CHOSEN, STAT_KAR);
+    tSpe = getStat(STAT_CHOSEN, STAT_SPE);
+  } else {
+    tClass = getClassIndNum(tStBuffer.c_str(), EXACT_YES);
+
+    switch (tClass) {
+      case MAGE_LEVEL_IND:
+        tStr = -10;
+        tBra = -20;
+        tCon = -10;
+        tDex = -10;
+        tAgi = -20;
+        tInt = +20;
+        tWis = +20;
+        tFoc = +20;
+        tPer = - 5;
+        tCha = - 5;
+        tKar = +20;
+        tSpe = -10;
+        break;
+      case CLERIC_LEVEL_IND:
+        tStr =   0;
+        tBra = -10;
+        tCon = -10;
+        tDex = +10;
+        tAgi =   0;
+        tInt = +10;
+        tWis =   0;
+        tFoc = +10;
+        tPer = -20;
+        tCha =   0;
+        tKar = +20;
+        tSpe =   0;
+        break;
+      case WARRIOR_LEVEL_IND:
+        tStr = +20;
+        tBra = +10;
+        tCon = +20;
+        tDex = + 5;
+        tAgi = + 5;
+        tInt = -20;
+        tWis = -20;
+        tFoc = -10;
+        tPer = -10;
+        tCha = -10;
+        tKar = +10;
+        tSpe = +10;
+        break;
+      case THIEF_LEVEL_IND:
+        tStr = -10;
+        tBra = +10;
+        tCon = -10;
+        tDex = +10;
+        tAgi = +20;
+        tInt = -22;
+        tWis = -23;
+        tFoc = +10;
+        tPer = +20;
+        tCha = +10;
+        tKar =   0;
+        tSpe = +25;
+        break;
+      case SHAMAN_LEVEL_IND:
+        tStr = 0;
+        tBra = 0;
+        tCon = 0;
+        tDex = 0;
+        tAgi = 0;
+        tInt = 0;
+        tWis = 0;
+        tFoc = 0;
+        tPer = 0;
+        tCha = 0;
+        tKar = 0;
+        tSpe = 0;
+        break;
+      case DEIKHAN_LEVEL_IND:
+        tStr = +10;
+        tBra = -10;
+        tCon = -20;
+        tDex = -10;
+        tAgi =   0;
+        tInt = +10;
+        tWis = +20;
+        tFoc = +20;
+        tPer = -10;
+        tCha = -10;
+        tKar =   0;
+        tSpe =   0;
+        break;
+      case MONK_LEVEL_IND:
+        tStr = +10;
+        tBra =   0;
+        tCon = -20;
+        tDex = +10;
+        tAgi = +20;
+        tInt = -20;
+        tWis = -20;
+        tFoc = +20;
+        tPer = -20;
+        tCha =   0;
+        tKar =   0;
+        tSpe = +20;
+        break;
+      case RANGER_LEVEL_IND:
+        tStr = +20;
+        tBra = -20;
+        tCon = -20;
+        tDex = +10;
+        tAgi = +10;
+        tInt = -10;
+        tWis = -10;
+        tFoc = +20;
+        tPer = +20;
+        tCha = -20;
+        tKar = +10;
+        tSpe = -10;
+        break;
+      default:
+        tStr = 0;
+        tBra = 0;
+        tCon = 0;
+        tDex = 0;
+        tAgi = 0;
+        tInt = 0;
+        tWis = 0;
+        tFoc = 0;
+        tPer = 0;
+        tCha = 0;
+        tKar = 0;
+        tSpe = 0;
+        break;
+    }
+  }
+
+  setStat(STAT_CHOSEN, STAT_STR, tStr);
+  setStat(STAT_CHOSEN, STAT_BRA, tBra);
+  setStat(STAT_CHOSEN, STAT_CON, tCon);
+  setStat(STAT_CHOSEN, STAT_DEX, tDex);
+  setStat(STAT_CHOSEN, STAT_AGI, tAgi);
+  setStat(STAT_CHOSEN, STAT_INT, tInt);
+  setStat(STAT_CHOSEN, STAT_WIS, tWis);
+  setStat(STAT_CHOSEN, STAT_FOC, tFoc);
+  setStat(STAT_CHOSEN, STAT_PER, tPer);
+  setStat(STAT_CHOSEN, STAT_CHA, tCha);
+  setStat(STAT_CHOSEN, STAT_KAR, tKar);
+  setStat(STAT_CHOSEN, STAT_SPE, tSpe);
+
+  setClass((1 << tClass));
+
+  for (classIndT tNewClass = MIN_CLASS_IND; tNewClass < MAX_CLASSES; tNewClass++)
+    setLevel(tNewClass, 0);
+
+  setLevel(tClass, (int) tLevel);
+
+  tMonster->setHPLevel(tLevel);
+  tMonster->setHPFromHPLevel();
+  tMonster->setDamLevel(tLevel);
+  tMonster->setACLevel(tLevel);
+  tMonster->setACFromACLevel();
+  tMonster->setHitroll(10.0 * tLevel);
+
+  return FALSE;
+}
+
+int TBaseWeapon::editAverageMe(TBeing *tBeing, const char *tString)
+{
+  if (!tBeing->hasWizPower(POWER_OEDIT_WEAPONS)) {
+    tBeing->sendTo("You don't have the power to modify weapons, thus you can not use this.\n\r");
+    return FALSE;
+  }
+
+  if (!tString || !*tString) {
+    tBeing->sendTo("Syntax: oed average %s <level[1.0-60.0]>\n\r");
+    return FALSE;
+  }
+
+  double tLevel = atof(tString);
+
+  if (tLevel <= 0.0 || tLevel > 60.0) {
+    tBeing->sendTo("Level must be between 1 and 60.\n\r");
+    return FALSE;
+  }
+
+  double tNewStr = ((tLevel * 3.0) / 2.0) + 10;
+  double tNewDam = 4.0 * tLevel;
+  double tNewShr = ((tLevel * 3.0) / 2.0) + 10;
+  double tNewAvg = 10 - ((tLevel / 60) * 10);
+
+  tBeing->sendTo(COLOR_OBJECTS, "Setting %s to:  [Level: %6.2f]\n\r", getName(), tLevel);
+  tBeing->sendTo("Strength : %6.2f\n\r", tNewStr);
+  tBeing->sendTo("Damage   : %6.2f\n\r", tNewDam);
+  tBeing->sendTo("Shrapness: %6.2f\n\r", tNewShr);
+  tBeing->sendTo("Precison : %6.2f\n\r", tNewAvg);
+
+  setMaxSharp((int) tNewShr);
+  setCurSharp((int) tNewShr);
+  setWeapDamLvl((int) tNewDam);
+  setWeapDamDev((int) tNewAvg);
+  setStructPoints((int) tNewStr);
+  setMaxStructPoints((int) tNewStr);
+  obj_flags.cost = suggestedPrice();
+
+  return FALSE;
+}
+
+int TBaseClothing::editAverageMe(TBeing *tBeing, const char *tString)
+{
+  if (!tBeing->hasWizPower(POWER_OEDIT_APPLYS)) {
+    tBeing->sendTo("You can not set applies, AC is based off this.  Sorry.\n\r");
+    return FALSE;
+  }
+
+  if (!tString || !*tString) {
+    tBeing->sendTo("Syntax: oed average %s <level[1.0-60.0]>\n\r");
+    return FALSE;
+  }
+
+  double tLevel = atof(tString);
+
+  if (tLevel <= 0.0 || tLevel > 60.0) {
+    tBeing->sendTo("Level must be between 1 and 60.\n\r");
+    return FALSE;
+  }
+
+  setDefArmorLevel(tLevel);
+  obj_flags.cost = suggestedPrice();
+
+  return FALSE;
+}

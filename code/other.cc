@@ -2842,9 +2842,48 @@ void TBeing::doRefuel(const char *argument)
   t->refuelMeLight(this, fuel);
 }
 
-void TBeing::doStop()
+void TBeing::doStop(const string tStArg)
 {
-  sendTo("Stop what?  You aren't doing anything!\n\r");
+  if (tStArg.empty()) {
+    sendTo("Stop what?  You aren't doing anything!\n\r");
+    return;
+  }
+
+  if (!followers) {
+    sendTo("Nobody is following you, so how can you stop them?\n\r");
+    return;
+  }
+
+  TBeing * tBeing = get_best_char_room(this, tStArg.c_str());
+
+  if (!tBeing) {
+    sendTo("Whom?  You look around for '%s', but fail to find them...\n\r",
+           tStArg.c_str());
+    return;
+  }
+
+  if (isAffected(AFF_CHARM) ||
+      tBeing->isAffected(AFF_CHARM) ||
+      !tBeing->isPc())
+    return;
+
+  if (tBeing->isImmortal() &&
+      (!isImmortal()) || GetMaxLevel() < tBeing->GetMaxLevel()) {
+    sendTo("You just don't have the heart, or the guts, to tell them to stop.\n\r");
+    return;
+  }
+
+  if (tBeing->master != this) {
+    sendTo("You are not their leader, so don't tell them what to do!\n\r");
+    return;
+  }
+
+  act("$n orders you to stop...You are forced to comply.",
+      TRUE, this, NULL, tBeing, TO_VICT);
+
+  // This just goes through the normal setup to verify that future
+  // changes in the follow code are easily filtered into this.
+  tBeing->doFollow("self");
 }
 
 void TBeing::doContinue(const char *argument)

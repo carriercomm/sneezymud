@@ -397,6 +397,10 @@ int TBeing::doDisguise(const char *arg)
     sendTo("You know nothing about disguising yourself.\n\r");
     return FALSE;
   }
+  if (affectedBySpell(SKILL_BERSERK)){
+    sendTo("You can't disguise yourself while going berserk.\n\r");
+    return FALSE;
+  }
   one_argument(arg, name_buf);
 
   if (!*name_buf){

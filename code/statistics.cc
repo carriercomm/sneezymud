@@ -912,6 +912,33 @@ void checkGoldStats()
   // food purchases
   // income money : unrecovered corpse?
 
+#if 1
+  // rent costs are really off budget
+  // we definitely do not want rent to be significant part of economy
+  float target_rent = 0.10;
+
+  // get the drain associated with renting
+  int rent_drain = getPosGold(GOLD_RENT) - getNetGold(GOLD_RENT);
+  
+  // realize that we are flucuating these costs based on these costs
+  // which is rather problematic
+  // we essentially want the "true" rent drain
+  int adj_rent = (int) (rent_drain / gold_modifier[GOLD_RENT]);
+
+  int total_drain = pos_gold - net_gold;
+
+  if (adj_rent < (int) ((target_rent - .05) * total_drain)) {
+    // rent is too small a drain
+    // reduce the cost of renting so that folks will be able to rent more
+    gold_modifier[GOLD_RENT] -= 0.01;
+    should_reset = true;
+  } else if (adj_rent > (int) ((target_rent + .05) * total_drain)) {
+    // rent is too large a drain
+    // raise the cost of renting so that folks will be able to rent less
+    gold_modifier[GOLD_RENT] += 0.01;
+    should_reset = true;
+  }
+#else
   // bad drains
   // rent: means have goods beyond appropriate
   // pets: purchasing a "group" to raise their power
@@ -923,24 +950,6 @@ void checkGoldStats()
   // so we don't need to leave tremendous slack in the system
   const float target_drain = 0.90;
 
-#if 1
-  // We will have the rent modifier self-adjust in order to drive the
-  // economy to the desired value
-  int good_drain = (pos_gold_budget - net_gold_budget);
-
-  int total_drain = pos_gold - net_gold;
-  if (good_drain < (int) ((target_drain - .05) * total_drain)) {
-    // rent is too small a drain
-    gold_modifier[GOLD_RENT] += 0.01;
-//    vlogf(LOG_BUG, "ECONOMY: rent modifier raised. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_RENT]);
-    should_reset = true;
-  } else if (good_drain > (int) ((target_drain + .05) * total_drain)) {
-    // rent is too large a drain
-    gold_modifier[GOLD_RENT] -= 0.01;
-//    vlogf(LOG_BUG, "ECONOMY: rent modifier lowered. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_RENT]);
-    should_reset = true;
-  }
-#else
   // We will have the repair modifier self-adjust in order to drive the
   // economy to the desired value
   int good_drain = (pos_gold_budget - net_gold_budget);

@@ -2313,7 +2313,7 @@ void reset_zone(int zone, bool bootTime)
           }  // check for dest room
           break;
         case 'L':
-          sysLootLoad(rs, mob, obj);
+          sysLootLoad(rs, mob, obj, false);
           break;
         default:
           vlogf(LOG_BUG, "Undefd cmd in reset table; zone %d cmd %d.\n\r", zone, cmd_no);

@@ -7,7 +7,6 @@
 
 #include "stdsneezy.h"
 #include "statistics.h"
-#include <mysql/mysql.h>
 
 extern FILE *obj_f;
 extern FILE *mob_f;
@@ -167,8 +166,7 @@ objIndexData::~objIndexData()
   }
 }
 
-
-#if 1
+#if !USE_SQL
 // generate index table for object
 void generate_obj_index()
 {
@@ -237,53 +235,83 @@ void generate_obj_index()
 // generate index table for object
 void generate_obj_index()
 {
-  int i, vnum;
   objIndexData *tmpi = NULL;
-  extraDescription *new_descr = NULL;
-  MYSQL *db;
-  MYSQL_RES *res;
-  MYSQL_ROW row;
+  MYSQL_RES *res, *extra_res;
+  MYSQL_ROW row, extra_row;
+  MYSQL *extra_db;
+  extraDescription *new_descr;
 
   // to prevent constant resizing (slows boot), declare an appropriate initial
   // size.  Should be smallest power of 2 that will hold everything
   obj_index.reserve(8192);
 
-  db=mysql_init(NULL);
-  if(!mysql_real_connect(db, NULL, NULL, NULL, "test", 0, NULL, 0)){
-    vlogf(LOG_BUG, "Could not connect to database 'test'.\n");
+  extra_db=mysql_init(NULL);
+  if(!mysql_real_connect(extra_db, NULL, NULL, NULL, 
+	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+    vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
     exit(0);
   }
 
-  if(mysql_query(db, "select o.vnum, o.name, o.short_desc, o.long_desc, e.name, e.description from object o, extra e where o.vnum=e.vnum")){
+  if(mysql_query(extra_db, "select vnum, name, description from extra order by vnum")){
+    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(extra_db));
+    exit(0);
+  }
+  extra_res=mysql_use_result(extra_db);
+  extra_row=mysql_fetch_row(extra_res);
+
+  if(!db){
+    vlogf(LOG_MISC, "Connecting to database.");
+    db=mysql_init(NULL);
+    if(!mysql_real_connect(db, NULL, NULL, NULL, 
+	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+      vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
+      exit(0);
+    }
+  }
+
+  if(mysql_query(db, "select vnum, name, short_desc, long_desc, max_exist, spec_proc, weight, max_struct, wear_flag, type, price from object order by vnum")){
     vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(db));
     exit(0);
   }
   res=mysql_use_result(db);
 
   while((row=mysql_fetch_row(res))){
-    vnum=atoi(row[0]);
-    if(!tmpi || tmpi->virt!=vnum){
-      obj_index.push_back(*tmpi);
-      delete tmpi;
-
-      tmpi = new objIndexData();
-      if (!tmpi) {
-	perror("indexData");
-	exit(0);
-      }
+    tmpi = new objIndexData();
+    if (!tmpi) {
+      perror("indexData");
+      exit(0);
+    }
     
-      tmpi->virt=vnum;
-      tmpi->name=mud_str_dup(row[1]);
-      tmpi->short_desc=mud_str_dup(row[2]);
-      tmpi->long_desc=mud_str_dup(row[3]);
+    tmpi->virt=atoi(row[0]);
+    tmpi->name=mud_str_dup(row[1]);
+    tmpi->short_desc=mud_str_dup(row[2]);
+    tmpi->long_desc=mud_str_dup(row[3]);
+    tmpi->max_exist=atoi(row[4]);
+    tmpi->spec=atoi(row[5]);
+    tmpi->weight=atof(row[6]);
+    tmpi->max_struct=atoi(row[7]);
+    tmpi->where_worn=atoi(row[8]);
+    tmpi->itemtype=atoi(row[9]);
+    tmpi->value=atoi(row[10]);
+
+    while(extra_row && atoi(extra_row[0])==tmpi->virt){
+      new_descr = new extraDescription();
+      new_descr->keyword = mud_str_dup(row[1]);
+      new_descr->description = mud_str_dup(row[2]);
+      new_descr->next = tmpi->ex_description;
+      tmpi->ex_description = new_descr;
+
+      extra_row=mysql_fetch_row(extra_res);
     }
 
-    new_descr = new extraDescription();
-    new_descr->keyword = mud_str_dup(rpw[4]);
-    new_descr->description = mud_str_dup(row[5]);
-    new_descr->next = tmpi->ex_description;
-    tmpi->ex_description = new_descr;
+    obj_index.push_back(*tmpi);
+    delete tmpi;
   }
+
+  mysql_free_result(res);
+
+  mysql_free_result(extra_res);
+  mysql_close(extra_db);
 
   return;
 }

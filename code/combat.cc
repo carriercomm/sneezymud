@@ -4448,6 +4448,10 @@ void TBeing::catchLostLink(TBeing *v)
   char *tmstr;
   TRoom *rp;
 
+  if(v->affectedBySpell(AFFECT_PLAYERKILL)){
+    return;
+  }
+
   *buf = '\0';
 
   act("$n is rescued by divine forces.", TRUE, v, 0, 0, TO_ROOM);

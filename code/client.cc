@@ -174,10 +174,8 @@ void Descriptor::send_client_prompt(int, int update)
 
   if (update & CHANGED_MUD) {
     int tmp_num = (time_info.hours / 2);
-    clientf("%d|%2d:%s %s", CLIENT_MUDTIME,
-          (!(tmp_num % 12) ? 12 : (tmp_num % 12)),
-          (!(time_info.hours % 2) ? "00" : "30"),
-          ((time_info.hours >= 24) ? "PM" : "AM"));
+    clientf("%d|%s", CLIENT_MUDTIME,
+       hmtAsString(hourminTime()).c_str());
 
   }
   //prompt_mode = -1;

@@ -319,6 +319,15 @@ int wordOfRecall(TBeing * caster, TBeing * victim, int, byte bKnown)
     act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
     return SPELL_FAIL;
   }
+  
+  if (caster->affectedBySpell(AFFECT_PLAYERKILL) ||
+      victim->affectedBySpell(AFFECT_PLAYERKILL)){
+    act("$d will not provide refuge to a murderer.",
+	TRUE, caster, NULL, NULL, TO_CHAR);
+    act("Nothing seems to happen.",
+	FALSE, caster, NULL, NULL, TO_ROOM);
+    return SPELL_FAIL;
+  }
 
   if (victim->isImmortal()) {
     caster->sendTo("I don't think that is a good idea...\n\r");

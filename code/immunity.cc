@@ -688,6 +688,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case AFFECT_GROWTH_POTION:
     case LAST_ODDBALL_AFFECT:
     case SKILL_ALCOHOLISM:
+    case SKILL_FISHING:
       bit = IMMUNE_NONE;
       break;
   }

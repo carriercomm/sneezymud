@@ -1051,6 +1051,11 @@ bool TObj::canGetMe(const TBeing *ch, silentTypeT silent) const
   if (!ch->canSee(this)) 
     return FALSE;
 
+  // This is a safty bit, mostly auto-done by the storage
+  // monitoring code.
+  if (isname("[wizard]", name) && !hasWizPower(POWER_WIZARD))
+    return;
+
   if (ch->isImmortal() || 
       (canWear(ITEM_TAKE) && !isObjStat(ITEM_PROTOTYPE))) {
     // flat out deny

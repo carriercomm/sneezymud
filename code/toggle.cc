@@ -232,7 +232,8 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"", MOB_NONE},
   {"", MOB_NONE},
   {"Warrior L40 Quest: Eligable", MOB_NONE},                  
-  {"Warrior L40 Quest: Started", MOB_CHIEF_MALE_VILLAGER},
+  {"Warrior L40 Quest: Started", MOB_CHIEF_MALE_VILLAGER}, //220
+  {"", MOB_NONE},
   {"Warrior L40 Quest: Killing Shaman", MOB_ELDERLY_SHAMAN},
   {"Warrior L40 Quest: Finished Warrior", MOB_CHIEF_MALE_VILLAGER},
   {"", MOB_NONE}, 

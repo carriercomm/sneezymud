@@ -296,10 +296,11 @@ const int TOG_BOUGHT_CALDONIA_SHOT  = 214;
 
 // Warrior lvl 40 quest
 
-const int TOG_ELGIABLE_WARRIOR_L41 = 220; //f
-const int TOG_KILL_CHIEF = 221; // c
+const int TOG_ELGIABLE_WARRIOR_L41 = 219; //f
+const int TOG_KILL_SHAMAN = 220; // c
+const int TOG_KILL_CHIEF = 221;
 const int TOG_GAVE_HEAD_CHIEF = 222; // d
-const int TOG_KILL_SHAMAN = 223; //b
+const int TOG_FINISHED_WARRIOR_L41 = 223; //b
 
 
 // please recycle these toggles before assigning new ones
@@ -317,7 +318,7 @@ const int TOG_IMMORTAL_BLANK_9 = 95;
 const int TOG_IMMORTAL_BLANK_10 = 96;
 // end recycle
 
-const int MAX_TOG_INDEX       = 219;  // move and change
+const int MAX_TOG_INDEX       = 224;  // move and change
 
 extern TOGINFO TogIndex[MAX_TOG_INDEX + 1];
 

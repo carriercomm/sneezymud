@@ -618,15 +618,21 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
       }
       break;
     case WARRIOR_LEVEL_IND:
-      if (getLevel(Class)>=40) {
+      if (getLevel(Class)>=40 && 
+          !hasQuestBit(TOG_FINISHED_WARRIOR_L41) &&
+          !hasQuestBit(TOG_KILL_SHAMAN) &&
+          !hasQuestBit(TOG_KILL_CHIEF) &&
+          !hasQuestBit(TOG_GAVE_HEAD_CHIEF) &&
+          !hasQuestBit(TOG_ELIGABLE_WARRIOR_L41)) {
 	if(!silent){
-	  gm->doSay("Congratulations you faggot warrior!.");
-	  gm->doSay("You got a quest to do for one of those scarab things.");
-	  gm->doSay("Glint will add extra shit in here to make you feel special.");
-	  gm->doSay("want to attempt it?");
-	  gm->doSay("Say 'fag quest' and then glint will add something to the warrior guildmaster script to give directions.");
+	  gm->doSay("Congratulations Warrior!.");
+	  gm->doSay("I believe you are ready to obtain your scabbard.");
+	  gm->doSay("This task will challenge your skills, but is well worth the risk.");
+	  gm->doSay("Only a true champion can wear the scabbard.");
+          gm->doSay("Are you the ready to face your greatest test?");
+          gm->doSay("Say 'I am ready' if you are ready to undertake this task.");
 	}
-	setQuestBit(TOG_GLINT);
+	setQuestBit(TOG_ELIGIABLE_WARRIOR_L41);
       }
       break;
     default:

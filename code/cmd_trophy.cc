@@ -88,8 +88,7 @@ void TBeing::doTrophy(const char *arg)
   sprintf(buf, "Total mobs: %i\n\r", mcount);
   sb += buf;
   if(mcount>0){
-    sprintf(buf, "You have killed %i%% of all mobs.\n\r",
-	    (int)((float)((float)mcount/(float)mob_index.size())*100));
+    sprintf(buf, "You have killed %1.2f%% of all mobs.\n\r",((float)((float)mcount/(float)mob_index.size())*100.0));
     sb += buf;
   }
 

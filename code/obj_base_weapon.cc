@@ -827,6 +827,8 @@ int TGenWeapon::smiteWithMe(TBeing *ch, TBeing *v)
     if (tmon)
       tmon->developHatred(ch);
 
+    ch->reconcileDamage(v, 0, SKILL_SMITE);
+
     return TRUE;
   }
 

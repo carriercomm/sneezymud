@@ -465,6 +465,12 @@ class spellTaskData {
     ~spellTaskData();
 };
 
+class spellStoreData {
+public:
+  spellTaskData *spelltask;
+  bool storing;
+};
+
 class taskData {
   public:
     taskTypeT task;
@@ -539,6 +545,7 @@ class TBeing : public TThing {
     followData *followers;
      
     spellTaskData *spelltask;
+    spellStoreData spellstore;
     taskData *task;      
     skillApplyData *skillApplys;
 

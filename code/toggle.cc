@@ -93,10 +93,10 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Holy Devastator Quest:  cheat Sultress", MOB_SULTRESS},
   {"Holy Devastator Quest:  cheat Nesmum", MOB_NESMUM}, 
   {"Has Skill:  Read Magic", MOB_NONE},  //80
-  {"Immortal Skill: Show", MOB_NONE},
-  {"Immortal Skill: Low", MOB_NONE},
-  {"Immortal Skill: Oed", MOB_NONE},
-  {"Immortal Skill: Load", MOB_NONE},
+  {"Monk Red Quest: Is Eligible", MOB_MONK_GM_LEVEL50},
+  {"Monk Red Quest: Started Quest", MOB_MONK_GM_LEVEL50},
+  {"Monk Red Quest: Finished Quest", MOB_NONE},
+  {"Monk Red Quest: Has Sash", MOB_MONK_GM_LEVEL50},
   {"Immortal Skill: Stat", MOB_NONE},     //85
   {"Immortal Skill: Logs", MOB_NONE},
   {"", MOB_NONE},          // toggles 87-96 are open for future immortal toggles

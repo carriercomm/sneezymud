@@ -516,6 +516,15 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
 
 	setQuestBit(TOG_MONK_GREEN_ELIGIBLE);
       }
+      if(hasQuestBit(TOG_MONK_GREEN_OWNED) &&
+	 !hasQuestBit(TOG_STARTED_MONK_RED) &&
+	 !hasQuestBit(TOG_FINISHED_MONK_RED) &&
+	 !hasQuestBit(TOG_HAS_MONK_RED) &&
+	 getLevel(Class)>=45){
+	if(!silent)
+	  gm->doSay("You are now eligible to quest for your red sash.  Say \"red sash\" for more information.");
+
+      }
       break;
 
     case MAGE_LEVEL_IND:
@@ -1302,7 +1311,7 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
     }
   }
   if (discipline == DISC_RANGED) {
-    if (ch->getRawNatSkillValue(SKILL_BOW) < WEAPON_GAIN_LEARNEDNESS) {
+    if (ch->getRawNatSkillValue(SKILL_RANGED_PROF) < WEAPON_GAIN_LEARNEDNESS) {
       sprintf(buf, " %s You aren't proficient enough yet.", fname(ch->name).c_str());
       me->doTell(buf);
       return TRUE;

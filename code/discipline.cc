@@ -4422,6 +4422,20 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
 #endif
   setSkillValue(sknum, getSkillValue(sknum) + boost);
   setNatSkillValue(sknum, actual + boost);
+
+  if(hasQuestBit(TOG_STARTED_MONK_RED) && !hasQuestBit(TOG_FINISHED_MONK_RED)){
+    if(getNatSkillValue(SKILL_SLASH_PROF) >= 20 &&
+       getNatSkillValue(SKILL_BLUNT_PROF) >= 20 &&
+       getNatSkillValue(SKILL_PIERCE_PROF) >= 20 &&
+       getNatSkillValue(SKILL_RANGED_PROF) >= 20){
+      sendTo(COLOR_BASIC, "<c>You are now proficient enough with weapons to earn your red sash.<z>");
+      setQuestBit(TOG_FINISHED_MONK_RED);
+    } else if(getNatSkillValue(sknum) >= 20 &&
+	      (sknum == SKILL_SLASH_PROF || sknum == SKILL_BLUNT_PROF ||
+	       sknum == SKILL_PIERCE_PROF || sknum == SKILL_RANGED_PROF)){
+      sendTo(COLOR_BASIC, "<c>You feel that you have enough knowledge of %s to please your guildmaster.<z>", discArray[sknum]->name);
+    }
+  }
   
   sk->lastUsed = time(0);
   learnSuccessLog(this, sknum, boost);

@@ -325,7 +325,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 {
   char buf[256], buf2[256];
   int rc, questmob;
-  TBeing *k;
+  TBeing *k=NULL;
   followData *f;
   TThing *t, *t2;
   affectedData *af, *af2;
@@ -689,6 +689,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 
     // Mark a groupKill for all in the group
 
+    int ngroup=1;
     if (isAffected(AFF_GROUP) && (master || followers)) {
       if (master)
         k = master;
@@ -707,6 +708,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
         if (f->follower->isAffected(AFF_GROUP) && canSee(f->follower)) {
           if (sameRoom(*f->follower)) { 
             if (f->follower->desc) {
+	      ngroup++;
               f->follower->desc->session.groupKills++;
               f->follower->desc->career.group_kills++;
             }
@@ -714,6 +716,50 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
         }
       }
     }
+    
+    // track trophy count
+    if (desc &&!roomp->isRoomFlag(ROOM_ARENA) && !inPkZone() && 
+	dynamic_cast<TMonster *>(v)){
+      MYSQL_RES *res;
+      
+      if(k && ngroup>1){
+	if((rc=dbquery(&res, "sneezy", "damageEpilog(1)", "insert ignore into trophy values ('%s', %i, 0)", k->name, v->mobVnum()))){
+	  if(rc==-1)
+	    vlogf(LOG_BUG, "Database error in damageEpilog");
+	}
+	sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", (float)((float)1/(float)ngroup), k->name, v->mobVnum());
+	if((rc=dbquery(&res, "sneezy", "damageEpilog(2)", buf))){
+	  if(rc==-1)
+	    vlogf(LOG_BUG, "Database error in damageEpilog");
+	}
+
+	for (f = k->followers; f; f = f->next) {
+	  if (f->follower->isAffected(AFF_GROUP) && canSee(f->follower) &&
+	      sameRoom(*f->follower) && f->follower->desc) {
+	    if((rc=dbquery(&res, "sneezy", "damageEpilog(1)", "insert ignore into trophy values ('%s', %i, 0)", f->follower->name, v->mobVnum()))){
+	      if(rc==-1)
+		vlogf(LOG_BUG, "Database error in damageEpilog");
+	    }
+	    sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", (float)((float)1/(float)ngroup), f->follower->name, v->mobVnum());
+	    if((rc=dbquery(&res, "sneezy", "damageEpilog(2)", buf))){
+	      if(rc==-1)
+		vlogf(LOG_BUG, "Database error in damageEpilog");
+	    }
+	  }
+	}
+      } else {
+	if((rc=dbquery(&res, "sneezy", "damageEpilog(1)", "insert ignore into trophy values ('%s', %i, 0)", name, v->mobVnum()))){
+	  if(rc==-1)
+	    vlogf(LOG_BUG, "Database error in damageEpilog");
+	}
+	sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", (float)((float)1/(float)ngroup), name, v->mobVnum());
+	if((rc=dbquery(&res, "sneezy", "damageEpilog(2)", buf))){
+	  if(rc==-1)
+	    vlogf(LOG_BUG, "Database error in damageEpilog");
+	}
+      }
+    }
+
     strcpy(buf2, v->name);
     add_bars(buf2);
 

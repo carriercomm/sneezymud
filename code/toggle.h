@@ -202,10 +202,15 @@ const int TOG_MONK_GREEN_ELIGIBLE   = 151;
 const int TOG_MONK_GREEN_STARTED    = 152;
 const int TOG_MONK_GREEN_FALLING    = 153;
 const int TOG_MONK_GREEN_FALLEN     = 154;
+const int TOG_MONK_GREEN_OWNED      = 156;
+
+const int TOG_MONK_RED_ELIGIBLE     = 81;
+const int TOG_STARTED_MONK_RED      = 82;
+const int TOG_FINISHED_MONK_RED     = 83;
+const int TOG_HAS_MONK_RED          = 84;
+
 
 const int TOG_GAVE_ESSENCE_RAT_KING = 155; // non-monk toggle reused per request
-
-const int TOG_MONK_GREEN_OWNED      = 156;
 
 const int TOG_MAGE_BELT_ELIGIBLE    = 157;
 const int TOG_MAGE_BELT_STARTED     = 158;
@@ -284,10 +289,6 @@ const int TOG_FACTIONS_ELIGIBLE     = 213;
 const int TOG_BOUGHT_CALDONIA_SHOT  = 214;
 
 // please recycle these toggles before assigning new ones
-const int TOG_IMMORTAL_SHOW = 81;
-const int TOG_IMMORTAL_LOW =  82;
-const int TOG_IMMORTAL_OED =  83;
-const int TOG_IMMORTAL_LOAD =  84;
 const int TOG_IMMORTAL_STAT =  85;
 const int TOG_IMMORTAL_LOGS =  86;
 const int TOG_IMMORTAL_BLANK_1 = 87; //toggles 87-96 are blank

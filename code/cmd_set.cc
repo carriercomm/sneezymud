@@ -737,6 +737,19 @@ mob->getName());
       // log this because changing race *may* cause some equipment problems
       // due to wearability, etc.
       vlogf(LOG_MISC, "%s being changed to the %s race by %s", mob->getName(), mob->getMyRace()->getSingularName().c_str(), getName());
+
+      // oh yeah, may as well avoid equipment problems too  :)
+      wearSlotT ij;
+      for (ij = MIN_WEAR; ij < MAX_WEAR; ij++) {
+        if (mob->equipment[ij]) {
+          *mob += *mob->unequip(ij);
+        }
+      }
+
+      mob->sendTo("You are now of the %s race.\n\r",
+              mob->getMyRace()->getSingularName().c_str());
+      mob->sendTo("Your equipment has been placed into your inventory.\n\r");
+
     } else {
       sendTo("argument must be a number\n\r");
       return;

@@ -1910,7 +1910,7 @@ int Descriptor::nanny(const char *arg)
               connected = CON_QCLASS;
             }
 #endif
-            writeToQ("Shaman are not yet a playable class, sorry.\n\r");
+	    writeToQ("Shaman are not yet a playable class, sorry.\n\r");
             writeToQ("--> ");
             connected = CON_QCLASS;
             break;
@@ -3462,7 +3462,8 @@ bool Descriptor::canChooseClass(int Class, bool multi, bool triple)
   }
 
   if (Class & CLASS_SHAMAN) {
-    return FALSE;
+    return TRUE;
+    // enabled for development - was FALSE
   }
 
   if (Class &CLASS_DEIKHAN) {
@@ -3480,6 +3481,7 @@ bool Descriptor::canChooseClass(int Class, bool multi, bool triple)
   if (Class & CLASS_SHAMAN) {
     return TRUE;
   }
+  // boggle...why is this here if its also above about 10 lines up?
 
   if (Class & CLASS_THIEF) {
     return TRUE;
@@ -4816,7 +4818,7 @@ int Descriptor::sendLogin(const char *arg)
       // strip off the terminating newline char
       buf[strlen(buf) - 1] = '\0';
 
-      sprintf(buf2 + strlen(buf2), "\n\r\n\rWelcome to %s :\n\r%s :\n\r", MUD_NAME_VERS, buf);
+      sprintf(buf2 + strlen(buf2), "\n\r\n\rWelcome to %s (formerly SneezyMUD):\n\r%s :\n\r", MUD_NAME_VERS, buf);
       fclose(fp);
     }
     sprintf(buf2 + strlen(buf2), "Celebrating eight years providing quality Mudding.\n\r\n\r");

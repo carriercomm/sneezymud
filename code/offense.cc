@@ -1276,8 +1276,18 @@ int TObj::burnObject(TBeing *ch, int perc)
     }
   }
 
-  int orig = getStructPoints();
-  while (::number(0,101) < material_nums[getMaterial()].burned_susc) {
+
+
+  int orig = getMaxStructPoints();
+  int burndam = ::number(0,(int)((double)orig * 1.00 * 
+				 ((double)(material_nums[getMaterial()].flammability))/1000.0) +1);
+
+
+  // now apply the damage
+
+
+
+  while (burndam-- >= 0 && material_nums[getMaterial()].flammability) {
     addToStructPoints(-1);
     if (getStructPoints() <= 0) {
       if (ch) {
@@ -1319,7 +1329,12 @@ int TObj::burnObject(TBeing *ch, int perc)
            TRUE,this,0,0,TO_ROOM);
     }
 
-    if(material_nums[getMaterial()].flammability &&
+    //i want to give objs only a CHANCE to burn
+    // flamability is usually 1-10 so if we use this as a
+    // modifier
+    // and give flammable objects only a 25-75% chance of burning, it should be good
+
+    if(::number(0,100) < 25+(5*material_nums[getMaterial()].flammability) &&
        !isObjStat(ITEM_BURNING) && !isObjStat(ITEM_PAIRED)){
       setBurning(ch);
       sprintf(buf, "Your $o start$Q to burn!");

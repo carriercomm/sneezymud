@@ -88,7 +88,7 @@ void apocCheck()
     mob = NULL;
     return;
   }
-  vlogf(LOG_MISC,"Loading a horseman into the game.");
+  //vlogf(LOG_MISC,"Loading a horseman into the game.");
 }
 
 // this simplifies room specials since we have a huge number of rooms

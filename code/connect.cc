@@ -4235,8 +4235,8 @@ void setPrompts(fd_set out)
               SET_BIT(update, CHANGED_PERC);
             }
 #endif
-            if (time_info.hours != d->last.mudtime) {
-              d->last.mudtime = time_info.hours;
+            if (hourminTime() != d->last.mudtime) {
+              d->last.mudtime = hourminTime();
               SET_BIT(update, CHANGED_MUD);
             }
             if (update || ch->fight()) {

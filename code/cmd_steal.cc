@@ -233,14 +233,16 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
     return FALSE;
   }
 
-#ifdef SNEEZY2000
-
-  if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L && 
-      eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) || 
-      (victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && eq_pos != WEAR_FOOT_R &&
-      eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && eq_pos != WEAR_HEAD)) {
-    thief->sendTo("It is not possible to steal $o without being noticed.\n\r");
-    return FALSE;
+#if 0
+  // i moved this code down past where eq_pos is defined.... hehe -dash
+  if (!thief->isImmortal()) {
+    if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L && 
+	 eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) || 
+	(victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && eq_pos != WEAR_FOOT_R &&
+	 eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && eq_pos != WEAR_HEAD)) {
+      thief->sendTo("It is not possible to steal that without being noticed.\n\r");
+      return FALSE;
+    }
   }
   // The above was added to make steal a bit more realistic at Peel's request --jh
 
@@ -295,6 +297,22 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
   } else {
     eq_pos = WEAR_NOWHERE; // not equiped
   }
+
+
+#ifdef SNEEZY2000
+  if (!thief->isImmortal() && eq_pos != WEAR_NOWHERE) {
+    if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L &&
+         eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) ||
+        (victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && eq_pos != WEAR_FOOT_R &&
+         eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && eq_pos != WEAR_HEAD)) {
+      thief->sendTo("It is not possible to steal that without being noticed.\n\r");
+      return FALSE;
+    }
+  }
+  // The above was added to make steal a bit more realistic at Peel's request --jh
+
+#endif
+
 
   if (!is_imp && obj->isObjStat(ITEM_NODROP)) {
     thief->sendTo("You can't steal it, it must be CURSED!\n\r");

@@ -19,7 +19,7 @@ extern int max_stat(race_t, statTypeT);
 extern int min_stat(race_t, statTypeT);
 #endif
 #if USE_SQL
-extern MYSQL *db;
+int dbquery(MYSQL_RES **res, const char *, const char *, const char *,...);
 #endif
 extern wearSlotT slot_from_bit(int);
 extern void cleanCharBuf(char *);

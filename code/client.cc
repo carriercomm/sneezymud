@@ -754,6 +754,7 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
     case CLIENT_NEWACCOUNT: {
       char aname[256];
       char apassword[256];
+      static char *crypted;
       strcpy(aname, nextToken('|', 255, str2).c_str());
       strcpy(apassword, nextToken('|', 255, str2).c_str());
 

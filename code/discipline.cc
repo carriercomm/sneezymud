@@ -3745,12 +3745,14 @@ void TBeing::initSkillsBasedOnDiscLearning(discNumT disc_num)
         }
         setNatSkillValue(i, value);
         setSkillValue(i,value);
-        if (i ==  SKILL_TACTICS)
+        if (i ==  SKILL_TACTICS){
           setNatSkillValue(SKILL_TACTICS,min(100, (GetMaxLevel() * 12)));
           setSkillValue(SKILL_TACTICS,min(100, (GetMaxLevel() * 12)));
-        if (i == SKILL_RIDE)
+	}
+        if (i == SKILL_RIDE){
           setNatSkillValue(SKILL_RIDE,min(100,5 + GetMaxLevel() * 2));
           setSkillValue(SKILL_RIDE,min(100,5 + GetMaxLevel() * 2)); 
+	}
       }
     }
   }

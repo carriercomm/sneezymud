@@ -923,6 +923,14 @@ int TBeing::updateHalfTickStuff()
 // do nothing cause it doesnt involve nocturnal or diurnal mobs
     }
   }
+
+ 
+ // VERY TEMP FIX 10/99 -- COS
+  if (!roomp) {
+    vlogf(1, "%s has no roomp in updateHalf tick. Try to find", getName());
+      return FALSE;
+  }
+
   if (!isPc() || desc) {
     int mg = moveGain();
     mg = min(mg, moveLimit() - getMove());

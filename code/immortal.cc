@@ -3974,7 +3974,7 @@ void TBeing::doSetsev(const char *arg)
     } else
       sendTo("Incorrect Log Type.\n\r");
   } else {
-    if (tMatch-1 != LOG_LOW && !powerCheck(POWER_SETSEV_IMM))
+    if (tMatch-1 != LOG_LOW && powerCheck(POWER_SETSEV_IMM))
       return;
 
     if ((d->severity & (1 << (tMatch - 1))))

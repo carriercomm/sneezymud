@@ -405,7 +405,7 @@ void TBaseCorpse::decayMe()
 int TBaseCorpse::objectDecay()
 {
   if (parent)
-    act("$p biodegrades in your hands.", FALSE, parent, this, 0, TO_CHAR);
+    act("$p disintegrates in your hands.", FALSE, parent, this, 0, TO_CHAR);
   else if (roomp && roomp->stuff) {
     if (getMaterial() == MAT_POWDER) {
       sendrpf(COLOR_OBJECTS, roomp, "A gust of wind scatters %s.\n\r",

@@ -4228,7 +4228,7 @@ void TBeing::doInfo(const char *arg)
         buf += buf2;
         buf += "\n\r";
 
-        sprintf(buf2, "Economy-Total :   pos = %9u   net gold = %9d   drain = %9d\n\r",
+        sprintf(buf2, "Economy-Total :   pos = %10u   net gold = %10d   drain = %10d\n\r",
                 tTotalGlobal, tNetGlobal, tTotalDrain);
         buf += buf2;
 

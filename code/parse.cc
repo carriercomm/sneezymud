@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: parse.cc,v $
+// Revision 5.1.1.11  1999/11/05 18:28:39  peel
+// Added CMD_RESP_DESTINATION
+//
 // Revision 5.1.1.10  1999/11/05 17:16:16  peel
 // Added CMD_RESP_CHECKNROOM
 //
@@ -1400,6 +1403,7 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
 	case CMD_RESP_CHECKNROOM:
         case CMD_RESP_CHECKZONE:
 	case CMD_RESP_MOVETO:
+	case CMD_RESP_DESTINATION:
         case CMD_GENERIC_PULSE:
         case CMD_GENERIC_CREATED:
         case CMD_GENERIC_RESET:

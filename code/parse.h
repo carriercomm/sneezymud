@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: parse.h,v $
+// Revision 5.1.1.4  1999/11/05 18:27:32  peel
+// Added CMD_RESP_DESTINATION
+//
 // Revision 5.1.1.3  1999/11/05 17:15:22  peel
 // Added CMD_RESP_CHECKNROOM
 //
@@ -586,6 +589,7 @@ enum cmdTypeT {
        CMD_RESP_CHECKNROOM,
        CMD_RESP_CHECKZONE,
        CMD_RESP_MOVETO,
+       CMD_RESP_DESTINATION,
 
        CMD_GENERIC_PULSE,
        CMD_GENERIC_CREATED,

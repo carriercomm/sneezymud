@@ -1032,7 +1032,7 @@ mob->getName());
 
     if ((!mob->desc || mob->GetMaxLevel() <= MAX_MORT ||
          mob->hasWizPower(POWER_WIZARD) ||
-         !hasWizPower(POWER_SET_IMP)) && mob != this) {
+         !hasWizPower(POWER_SET_IMP_POWER)) && mob != this) {
       sendTo("You can not do this!\n\r");
       return;
     }
@@ -1048,7 +1048,7 @@ mob->getName());
 
     if ((!mob->desc || mob->GetMaxLevel() <= MAX_MORT ||
          mob->hasWizPower(POWER_WIZARD) ||
-         !hasWizPower(POWER_SET_IMP)) && mob != this) {
+         !hasWizPower(POWER_SET_IMP_POWER)) && mob != this) {
       sendTo("You can not do this!\n\r");
       return;
     }
@@ -1065,7 +1065,7 @@ mob->getName());
 
     if ((!mob->desc || mob->GetMaxLevel() <= MAX_MORT ||
          mob->hasWizPower(POWER_WIZARD) ||
-         !hasWizPower(POWER_SET_IMP)) && mob != this) {
+         !hasWizPower(POWER_SET_IMP_POWER)) && mob != this) {
       sendTo("You can not do this!\n\r");
       return;
     }

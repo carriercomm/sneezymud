@@ -5983,9 +5983,12 @@ void TBeing::describeArmor(const TBaseClothing *obj, int learn)
 #endif
 }
 
-void TBeing::describeImmunities(TBeing *vict, int learn)
+string TBeing::describeImmunities(const TBeing *vict, int learn) const
 {
   char buf[80];
+  char buf2[256];
+  string str;
+
   int x;
   for (immuneTypeT i = MIN_IMMUNE;i < MAX_IMMUNES; i++) {
     x = GetApprox(vict->getImmunity(i), learn);
@@ -6005,16 +6008,18 @@ void TBeing::describeImmunities(TBeing *vict, int learn)
     else
       strcpy(buf, "lightly");
 
-    if (vict == this)
-      sendTo(COLOR_MOBS, "You are %s %s to %s.\n\r",
+    if (vict == this) 
+      sprintf(buf2, "You are %s %s to %s.\n\r",
          buf, (x > 0 ? "resistant" : "susceptible"),
          immunity_names[i]);
     else
-      sendTo(COLOR_MOBS, "%s is %s %s to %s.\n\r",
+      sprintf(buf2, "%s is %s %s to %s.\n\r",
          good_cap(pers(vict)).c_str(),
          buf, (x > 0 ? "resistant" : "susceptible"),
          immunity_names[i]);
+    str += buf2;
   }
+  return str;
 }
 
 void TBeing::describeArrowDamage(const TArrow *obj, int learn)

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: ai_responses.cc,v $
+// Revision 5.1.1.2  1999/11/04 22:34:17  peel
+// Added moveto response
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -66,6 +69,7 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
   const char *arg2;
   cmdTypeT cmd_val;
   TRoom *tRoom;
+  dirTypeT dir=DIR_NONE;
 
   if (!awake())
     return TRUE;
@@ -328,6 +332,21 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
       if ((!roomp || !tRoom || tRoom->getZone() != roomp->getZone()) && !inImperia())
         return RET_STOP_PARSING;
 
+      break;
+    case CMD_RESP_MOVETO:
+       value = atoi(arg);
+
+       switch((dir=find_path(in_room, is_target_room_p, 
+				      (void *) value, 5000, 0))){
+	 case -1: // lost or arrived at destination
+	   break;
+	 case 0: case 1: case 2: case 3: case 4: 
+	 case 5: case 6: case 7: case 8: case 9:
+	   rc=goDirection(dir);
+	   break;
+	 default:
+	   // enter a portal here...
+       }
       break;
     default:
       mud_assert(cmd >= 0, "Unhandled special command in modifiedDoCommand array %d", cmd);
@@ -1182,6 +1201,8 @@ resp * TMonster::readCommand( FILE *fp)
       newCmd = new command(CMD_RESP_CHECKROOM, args);
     else if (is_abbrev(buf, "checkzone"))
       newCmd = new command(CMD_RESP_CHECKZONE, args);
+    else if (is_abbrev(buf, "moveto"))
+      newCmd = new command(CMD_RESP_MOVETO, args);
     else {
       if ((cmd=searchForCommandNum( buf)) >= MAX_CMD_LIST) {
         vlogf(9,"Responses::readCommand(): Parse error in %s. Unknown command %s.",

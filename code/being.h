@@ -962,8 +962,8 @@ class TBeing : public TThing {
     string describeSharpness(const TThing *) const;
     string describePointiness(const TBaseWeapon *) const;
     string describeBluntness(const TBaseWeapon *) const;
-    void describeMaterial(const int);
-    void describeMaterial(const TThing *);
+    string describeMaterial(const int);
+    string describeMaterial(const TThing *);
     void describeMaxStructure(const TObj *, int) const;
     void describeMaxSharpness(const TBaseWeapon *, int) const;
     void describeMaxBluntness(const TBaseWeapon *, int) const;

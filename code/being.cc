@@ -1309,7 +1309,7 @@ int TBeing::chiMe(TBeing *tLunatic)
         reconcileMana(TYPE_UNDEFINED, 0, tMana/2);
     }
 
-    return FALSE;
+    return true;
   }
 
   if (this->isImmortal() || this->inGroup(*tLunatic))
@@ -1357,5 +1357,5 @@ int TBeing::chiMe(TBeing *tLunatic)
         TRUE, tLunatic, NULL, this, TO_NOTVICT);
   }
 
-  return FALSE;
+  return true;
 }

@@ -724,7 +724,7 @@ int TFFlame::chiMe(TBeing *tLunatic)
   if (!bSuccess(tLunatic, bKnown, SKILL_CHI)) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   act("You focus your chi, causing $p to bursts momentarily!",
@@ -734,5 +734,5 @@ int TFFlame::chiMe(TBeing *tLunatic)
 
   obj_flags.decay_time += 10;
 
-  return FALSE;
+  return true;
 }

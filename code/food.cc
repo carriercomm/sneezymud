@@ -943,7 +943,7 @@ int TFood::chiMe(TBeing *tLunatic)
   if (!bSuccess(tLunatic, bKnown, SKILL_CHI) || isFoodFlag(FOOD_SPOILED)) {
     act("You fail to affect $p in any way.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   act("You focus your chi, causing $p to become a little fresher!",
@@ -953,5 +953,5 @@ int TFood::chiMe(TBeing *tLunatic)
 
   obj_flags.decay_time += ::number(1, 3);
 
-  return FALSE;
+  return true;
 }

@@ -204,7 +204,8 @@ void Descriptor::send_client_exits()
   clientf("%d|%d|%d", CLIENT_EXITS, bits, ch->isImmortal());
 }
 
-// returns DELETE_THIS
+// returns DELETE_THIS to delete the descriptor
+// returns DELETE_VICT if the desc->character should be toasted
 int Descriptor::read_client(char *str2)
 {
   Descriptor *k, *k2;
@@ -707,14 +708,48 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
           clientf("%d|0|%d", CLIENT_CHECKACCOUNTNAME, ERR_BADACCOUNT_PASSWORD);
         }
         if (IS_SET(account->flags, ACCOUNT_BANISHED)) {
+          writeToQ("Your account has been flagged banished.\n\r");
+          sprintf(buf, "If you do not know the reason for this, contact %s\n\r",
+                MUDADMIN_EMAIL);
+          writeToQ(buf);
+          outputProcessing();
+          return DELETE_THIS;
         }
         if (IS_SET(account->flags, ACCOUNT_EMAIL)) {
+          writeToQ("The email account you entered for your account is thought to be bogus.\n\r");
+          sprintf(buf, "You entered an email address of: %s\n\r", account->email);
+          writeToQ(buf);
+          sprintf(buf,"To regain access to your account, please send an email\n\rto: %s\n\r",
+              MUDADMIN_EMAIL);
+          writeToQ(buf);
+          writeToQ("Indicate the name of your account, and the reason for the wrong email address.\n\r");
+          outputProcessing();
+          return DELETE_THIS;
         }
         // let's yank the password out of their history list
         strcpy(history[0], "");
 
-        if (WizLock) {
+        if (WizLock && !IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
+          writeToQ("The game is currently wiz-locked.\n\r^G^G^G^G^G");
+          if (!lockmess.empty()) {
+            page_string(lockmess.c_str(), TRUE);
+          } else {
+            FILE *signFile;
+  
+            if ((signFile = fopen(SIGN_MESS, "r"))) {
+              fclose(signFile);
+              string iostring;
+              file_to_string(SIGN_MESS, iostring);
+              page_string(iostring.c_str(), TRUE);
+            }
+          }
+
+          // we ought to allow for them to enter the password here, but oh well
+
+          outputProcessing();
+          return DELETE_THIS;
         }
+
         account->status = TRUE;
         if (!IS_SET(account->flags, ACCOUNT_BOSS)) {
         }

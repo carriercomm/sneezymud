@@ -3053,6 +3053,8 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
   if (ch->fight() && ch->fight()->isPc() && ch->canSpeak()) {
     if (::number(0,99) < 65)
       return FALSE;   // have them shout a bit less 
+    if (ch->canSee(ch->fight())) {
+      // send the shout only if we can see person, but call guards regardless
       switch (number(1, 145)) {
         case 1:
         case 2:
@@ -3300,48 +3302,50 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
         act(buf2, TRUE, ch, 0, 0, TO_ROOM);
         act(buf3, TRUE, ch, 0, 0, TO_ROOM);
       }
-      if (ch->fight()) {
-        for (t1 = ch->roomp->stuff; t1; t1 = t2) {
-          t2 = t1->nextThing;
-          TBeing *tbt = dynamic_cast<TBeing *>(t1);
-          if (!tbt || (ch == tbt))
-            continue;
-          if (tbt->spec != SPEC_CITYGUARD)
-            continue;
-          if (tbt->fight()) {
-            if (ch->fight() == tbt->fight())
-              num2++;
-          } 
+    } // can see check
+
+    if (ch->fight()) {
+      for (t1 = ch->roomp->stuff; t1; t1 = t2) {
+        t2 = t1->nextThing;
+        TBeing *tbt = dynamic_cast<TBeing *>(t1);
+        if (!tbt || (ch == tbt))
           continue;
-        }
-        num = ::number(1, 2);
-        for (t1 = ch->roomp->stuff; t1; t1 = t2) {
-          t2 = t1->nextThing;
-          TBeing *tbt = dynamic_cast<TBeing *>(t1);
-	  if(!tbt)
-	    continue;
-          if (ch == tbt)
-            continue;
-          if (tbt->spec != SPEC_CITYGUARD)
-            continue;
-          if (tbt->fight())
-            continue;
-          if (tbt->master)
-            continue;
-          if (tbt->desc)
-            continue;
-          if (::number(0,1))
-            tbt->doSay("I will come to your assistance!");
-          if (tbt->getPosition() < POSITION_STANDING)
-            tbt->doStand();
-          rc = tbt->doAssist("", ch, TRUE);
-          num -= 1;
-        }
-        if (ch->fight() && (num > 0) && (num2 < 4))
-          CallForGuard(ch, ch->fight(), num);
+        if (tbt->spec != SPEC_CITYGUARD)
+          continue;
+        if (tbt->fight()) {
+          if (ch->fight() == tbt->fight())
+            num2++;
+        } 
+        continue;
       }
-      return TRUE;
+      num = ::number(1, 2);
+      for (t1 = ch->roomp->stuff; t1; t1 = t2) {
+        t2 = t1->nextThing;
+        TBeing *tbt = dynamic_cast<TBeing *>(t1);
+        if(!tbt)
+          continue;
+        if (ch == tbt)
+          continue;
+        if (tbt->spec != SPEC_CITYGUARD)
+          continue;
+        if (tbt->fight())
+          continue;
+        if (tbt->master)
+          continue;
+        if (tbt->desc)
+          continue;
+        if (::number(0,1))
+          tbt->doSay("I will come to your assistance!");
+        if (tbt->getPosition() < POSITION_STANDING)
+          tbt->doStand();
+        rc = tbt->doAssist("", ch, TRUE);
+        num -= 1;
+      }
+      if (ch->fight() && (num > 0) && (num2 < 4))
+        CallForGuard(ch, ch->fight(), num);
     }
+    return TRUE;
+  }
   if (ch->checkPeaceful("") || ch->fight())
     return FALSE;
 

@@ -471,9 +471,9 @@ int TBeing::triggerContTrap(TRealContainer *obj)
   obj->addContainerFlag(CONT_EMPTYTRAP);
 
   if (!::number(0, 100)) {
-    act("...But nothing happens...",
+    act("...But nothing happens.",
         TRUE, this, 0, 0, TO_CHAR);
-    act("...But nothing happens...",
+    act("...But nothing happens.",
         TRUE, this, 0, 0, TO_ROOM);
 
     return FALSE;

@@ -3373,7 +3373,7 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           return DELETE_THIS;
         
         return TRUE;
-      } else if(tch->hasDisease(DISEASE_LEPROSY)){
+      } else if(tch->hasDisease(DISEASE_LEPROSY) && !tch->isPc()){
 	if(!ch->checkSoundproof())
 	  act("$n screams 'There is no mercy for your kind, leper!'", FALSE, ch, 0, 0, TO_ROOM);
 

@@ -2183,8 +2183,8 @@ int Descriptor::nanny(const char *arg)
           writeToQ("\n\rPress return....");
           break;
         } else {
-          connected = CON_STAT_LEARN;
-          sendStatList(2, TRUE);
+          connected = CON_STAT_COMBAT2;
+          sendStatList(4, TRUE);
           break;       
         }
       } else if (*buf == '/') {
@@ -2986,7 +2986,7 @@ int TPerson::genericLoadPC()
         rp = real_roomp(30);
       else if (!strcmp(name, "Onslaught"))
         rp = real_roomp(31);
-      else if (!strcmp(name, "Custer"))
+      else if (!strcmp(name, "Dash"))
         rp = real_roomp(32);
       else if (!strcmp(name, "Connovar"))
         rp = real_roomp(33);
@@ -3471,11 +3471,12 @@ void Descriptor::sendStatList(int group, int)
 {
   char buf[1024];
   char buf1[80];
-  char buf2[80];
+  // char buf2[80];
   char pc_race[80];
-  int stat1, stat2;
+  int stat1;//, stat2;
   int free_stat;
-
+  // buf2 = "";
+  // stat2 = 0;
   // get the race description
   strcpy(pc_race, character->getMyRace()->getSingularName().c_str());
 #ifdef SNEEZY2000
@@ -3641,11 +3642,11 @@ void Descriptor::sendStatList(int group, int)
       stat1 = character->chosenStats.get(STAT_KAR);
       strcpy(buf1, getStatDescription(stat1));
       if (account->term == TERM_ANSI) {
-        sprintf(buf,"(%sK%s)%sarma%s          [%3d] (%s%s %s%s)\n\r", 
+        sprintf(buf,"(%sK%s)%sarma%s          [%3d] (%s%s %s%s)\n\r\n\r", 
           cyan(), norm(), cyan(), norm(), stat1, 
           orange(), buf1, pc_race, norm());
       } else {
-        sprintf(buf,"(K)arma          [%3d] (%s %s)\n\r", stat1, buf1,  pc_race);
+        sprintf(buf,"(K)arma          [%3d] (%s %s)\n\r\n\r", stat1, buf1,  pc_race);
       }
       writeToQ(buf);
 
@@ -3684,7 +3685,7 @@ void Descriptor::sendStatList(int group, int)
       break;
     case 4:
       character->cls();
-      writeToQ("Your current mental characteristics are: \n\r\n\r");
+      writeToQ("Your current physical characteristics are: \n\r\n\r");
       stat1 = character->chosenStats.get(STAT_DEX);
       strcpy(buf1, getStatDescription(stat1));
       if (account->term == TERM_ANSI) {

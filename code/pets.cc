@@ -7,6 +7,62 @@
 
 #include "stdsneezy.h"
 
+/* **********************************************************************
+Every mob that follows a PC should be classified as one of the following:
+
+A Mount: obvious.  Handled elsewhere and distinguished by having
+  non-NULL "this->rider"
+
+A Thrall: Basically, a mob that owes its life force to the master.  Will
+  do the masters bidding without question or hesitation.  Has no sense
+  of self-preservation.  e.g. zombies, automatons, golems, etc.
+        AFF_CHARM: yes
+        affect->type: AFFECT_THRALL
+
+A Charm: A mob beguiled by the master into following orders, most likely,
+  against the mob's will.  The charmed mob is "fighting" against the
+  master, so obviously destructive commands can be ignored, but otherwise
+  will do master's bidding.
+        AFF_CHARM: yes
+        affect->type: SPELL_ENSORCER
+
+A Pet: A faithful companion that will generally assist its master.  Pets are
+  not compelled to follow orders, but may do simple actions.  Pets have an
+  unhindered sense of self-preservation.
+        AFF_CHARM: yes
+        affect->type: AFFECT_PET
+
+Pets and Thralls may be "orphaned" if master dies.
+
+The effects of being a thrall trump the effects of being a charm, and in turn
+a pet.  That is, if I charm a pet, its a charm (not a pet).
+
+********************************************************************** */
+
+bool TBeing::isPet() const
+{
+  return (!isPc() && master &&
+          isAffected(AFF_CHARM) &&
+          affectedBySpell(AFFECT_PET) &&
+          !affectedBySpell(SPELL_ENSORCER) &&
+          !affectedBySpell(AFFECT_THRALL));
+}
+
+bool TBeing::isCharm() const
+{
+  return (!isPc() && master && 
+          isAffected(AFF_CHARM) &&
+          affectedBySpell(SPELL_ENSORCER) &&
+          !affectedBySpell(AFFECT_THRALL));
+}
+
+bool TBeing::isThrall() const
+{
+  return (!isPc() &&  master && 
+          isAffected(AFF_CHARM) &&
+          affectedBySpell(AFFECT_THRALL));
+}
+
 #if 0
   bool TMonster::reloadNPCAsNew()
 {

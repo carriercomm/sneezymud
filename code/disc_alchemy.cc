@@ -304,7 +304,8 @@ int divinationObj(TBeing *caster, const TObj *obj, int, byte bKnown)
         }
       }
     }
-    caster->describeMaterial(obj);
+    caster->sendTo(caster->describeMaterial(obj).c_str());
+
     return SPELL_SUCCESS;
   } else {
     caster->nothingHappens();

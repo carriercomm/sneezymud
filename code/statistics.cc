@@ -608,6 +608,14 @@ void checkGoldStats()
   if (pos_gold < 5000000U)
     return;
 
+  int net_gold = getNetGoldGlobal();
+  int net_gold_all_shops = getNetGoldShops();
+  int net_gold_budget = getNetGoldBudget();
+  unsigned int pos_gold_shop_arm = getPosGold(GOLD_SHOP_ARMOR);
+  unsigned int pos_gold_shop_weap = getPosGold(GOLD_SHOP_WEAPON);
+  unsigned int pos_gold_all_shops = getPosGoldShops();
+  unsigned int pos_gold_budget = getPosGoldBudget();
+
 #if 0
   int net_gold_shop_comp = getNetGold(GOLD_SHOP_COMPONENTS);
   int net_gold_shop_sym = getNetGold(GOLD_SHOP_SYMBOL);
@@ -619,26 +627,15 @@ void checkGoldStats()
   int net_gold_repair = getNetGold(GOLD_REPAIR);
   int net_gold_shop = getNetGold(GOLD_SHOP);
   int net_gold_income = getNetGold(GOLD_INCOME);
-#endif
-  int net_gold = getNetGoldGlobal();
-  int net_gold_all_shops = getNetGoldShops();
-  int net_gold_budget = getNetGoldBudget();
-#if 0
   unsigned int pos_gold_shop_food = getPosGold(GOLD_SHOP_FOOD);
   unsigned int pos_gold_shop_comp = getPosGold(GOLD_SHOP_COMPONENTS);
   unsigned int pos_gold_shop_sym = getPosGold(GOLD_SHOP_SYMBOL);
-#endif
-  unsigned int pos_gold_shop_arm = getPosGold(GOLD_SHOP_ARMOR);
-  unsigned int pos_gold_shop_weap = getPosGold(GOLD_SHOP_WEAPON);
-#if 0
   unsigned int pos_gold_shop_pet = getPosGold(GOLD_SHOP_PET);
   unsigned int pos_gold_shop_resp = getPosGold(GOLD_SHOP_RESPONSES);
   unsigned int pos_gold_repair = getPosGold(GOLD_REPAIR);
   unsigned int pos_gold_shop = getPosGold(GOLD_SHOP);
   unsigned int pos_gold_income = getPosGold(GOLD_INCOME);
 #endif
-  unsigned int pos_gold_all_shops = getPosGoldShops();
-  unsigned int pos_gold_budget = getPosGoldBudget();
 
   bool should_reset = false;
 

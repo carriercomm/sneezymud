@@ -1209,6 +1209,7 @@ void TPerson::doStat(const char *argument)
       statObj(j);
       return;
     }
+
     if ((k = get_char_room(arg1, in_room)) || 
         (k = get_char_vis_world(this, arg1, &count, EXACT_NO))) {
       if (!hasWizPower(POWER_STAT_MOBILES)) {
@@ -1217,7 +1218,34 @@ void TPerson::doStat(const char *argument)
       }
       statBeing(k);
       return;
-    } else
-      sendTo("No mobile or object by that name in The World.\n\r");
+    }
+
+    if (is_number(arg1)) {
+      TObj         *tObj;
+      TMonster     *tMonster;
+      unsigned int  tValue;
+
+      if (hasWizPower(POWER_STAT_OBJECT) &&
+          ((tValue = real_object(atoi(arg1))) < obj_index.size()) &&
+          tValue >= 0 && (tObj = read_object(tValue, REAL))) {
+        statObj(tObj);
+        delete tObj;
+        tObj = NULL;
+
+        return;
+      }
+
+      if (hasWizPower(POWER_STAT_MOBILES) &&
+          ((tValue = real_mobile(atoi(arg1))) < mob_index.size()) &&
+          tValue >= 0 && (tMonster = read_mobile(tValue, REAL))) {
+        statBeing(tMonster);
+        delete tMonster;
+        tMonster = NULL;
+
+        return;
+      }
+    }
+
+    sendTo("No mobile or object by that name in The World.\n\r");
   }
 }

@@ -676,7 +676,8 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
         strcat(buffer, " (charm)");
       if (isPet())
         strcat(buffer, " (pet)");
-      if (ch->isImmortal() && isLinkdead())
+      if ((ch->isImmortal() || affectedBySpell(AFFECT_PLAYERKILL)) && 
+	  isLinkdead())
         strcat(buffer, " (link-dead)");
       if (getTimer() >= 10)
         strcat(buffer, " (AFK)");

@@ -1,5 +1,6 @@
 03-12-00 / 03-16-00 / 03-19-00 / 03-21-00 / 03-22-00 - Lapsos
 03-23-00 / 03-25-00 / 03-26-00 / 03-29-00 / 03-30-00 - Lapsos
+04-01-00 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
@@ -69,6 +70,10 @@
   flag is applied to the object.
 - Added a new spec-obj for Therias.  Jambiya.  Proc 50.
   Triggers on successful stab/backstab.
+- Fixed up the summon gimp a little.  No longer triggers on pets or mobs with
+  a max greater than 10.
+- Re-Enabled the cheat-on-talens check for dropped/gotten talens.
+- Fixed up bags/pouchs to react on cheat-on-talens check.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

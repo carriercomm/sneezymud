@@ -1063,7 +1063,7 @@ void Descriptor::updateScreenVt100(unsigned int update)
 
       sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 62);
       sprintf(buf + strlen(buf), "%2d:%02d %2s",
-        (!(tptr->tm_hour%12) ? 12 : tptr->tm_hour%12, 
+        (!(tptr->tm_hour%12) ? 12 : tptr->tm_hour%12), 
         tptr->tm_min,
         (tptr->tm_hour >= 12) ? "PM" : "AM");
     }
@@ -1206,7 +1206,7 @@ void Descriptor::updateScreenAnsi(unsigned int update)
     
     sprintf(buf + strlen(buf), VT_CURSPOS, ch->getScreen(), 57);
     sprintf(buf + strlen(buf), "%2d:%02d %2s",
-        (!(tptr->tm_hour%12) ? 12 : tptr->tm_hour%12, 
+        (!(tptr->tm_hour%12) ? 12 : tptr->tm_hour%12), 
         tptr->tm_min,
         (tptr->tm_hour >= 12) ? "PM" : "AM");
   }

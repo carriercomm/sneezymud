@@ -3026,6 +3026,8 @@ int TBeing::editAverageMe(TBeing *tBeing, const char *tString)
   string tStString(""),
          tStBuffer(""),
          tStArg(tString);
+  char   tBuffer[256];
+  bool   tChanged = true;
 
   if (!tString || !*tString) {
     tBeing->sendTo("Syntax: med average %s <level[1.0-60.0]> <class>\n\r");
@@ -3051,11 +3053,11 @@ int TBeing::editAverageMe(TBeing *tBeing, const char *tString)
   }
 
   if (tStBuffer.empty()) {
+    tChanged = false;
+
     for (tClass = MIN_CLASS_IND; tClass < MAX_CLASSES; tClass++)
-      if (hasClass((1 << tClass))) {
-        tBeing->sendTo("Setting class to current: %s\n\r", classNames[tClass].capName);
+      if (hasClass((1 << tClass)))
         break;
-      }
 
     if (tClass == MAX_CLASSES || !hasClass((1 << tClass))) {
       tBeing->sendTo("Something went wrong, tell a coder!\n\r");
@@ -3234,6 +3236,26 @@ int TBeing::editAverageMe(TBeing *tBeing, const char *tString)
   tMonster->setACFromACLevel();
   tMonster->setHitroll(10.0 * tLevel);
 
+  sprintf(tBuffer, "$N: Level %.2f", tLevel);
+  colorAct(COLOR_MOBS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
+
+  sprintf(tBuffer, "$N: Class %s", classNames[tClass].capName);
+  colorAct(COLOR_MOBS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
+
+  if (tChanged) {
+    sprintf(tBuffer, "$N: Str: %3d   Bra: %3d   Con: %3d   Dex: %3d",
+            tStr, tBra, tCon, tDex);
+    colorAct(COLOR_MOBS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
+    sprintf(tBuffer, "$N: Agi: %3d   Int: %3d   Wis: %3d   Foc: %3d",
+            tAgi, tInt, tWis, tFoc);
+    colorAct(COLOR_MOBS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
+    sprintf(tBuffer, "$N: Per: %3d   Cha: %3d   Kar: %3d   Spe: %3d",
+            tPer, tCha, tKar, tSpe);
+    colorAct(COLOR_MOBS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
+  }
+
+  tBeing->immortalEvaluation(tMonster);
+
   return FALSE;
 }
 
@@ -3261,12 +3283,6 @@ int TBaseWeapon::editAverageMe(TBeing *tBeing, const char *tString)
   double tNewShr = ((tLevel * 3.0) / 2.0) + 10;
   double tNewAvg = 10 - ((tLevel / 60) * 10);
 
-  tBeing->sendTo(COLOR_OBJECTS, "Setting %s to:  [Level: %6.2f]\n\r", getName(), tLevel);
-  tBeing->sendTo("Strength : %6.2f\n\r", tNewStr);
-  tBeing->sendTo("Damage   : %6.2f\n\r", tNewDam);
-  tBeing->sendTo("Shrapness: %6.2f\n\r", tNewShr);
-  tBeing->sendTo("Precison : %6.2f\n\r", tNewAvg);
-
   setMaxSharp((int) tNewShr);
   setCurSharp((int) tNewShr);
   setWeapDamLvl((int) tNewDam);
@@ -3275,11 +3291,20 @@ int TBaseWeapon::editAverageMe(TBeing *tBeing, const char *tString)
   setMaxStructPoints((int) tNewStr);
   obj_flags.cost = suggestedPrice();
 
+  tBeing->sendTo(COLOR_OBJECTS, "Setting %s to:  [Level: %6.2f]\n\r", getName(), tLevel);
+  tBeing->sendTo("Strength : %6.2f (L: %6.2f)\n\r", tNewStr, structLevel());
+  tBeing->sendTo("Damage   : %6.2f (L: %6.2f)\n\r", tNewDam, damageLevel());
+  tBeing->sendTo("Sharpness: %6.2f (L: %6.2f)\n\r", tNewShr, sharpLevel());
+  tBeing->sendTo("Precison : %6.2f\n\r", tNewAvg);
+
   return FALSE;
 }
 
 int TBaseClothing::editAverageMe(TBeing *tBeing, const char *tString)
 {
+  char   tBuffer[256];
+  double tLevel;
+
   if (!tBeing->hasWizPower(POWER_OEDIT_APPLYS)) {
     tBeing->sendTo("You can not set applies, AC is based off this.  Sorry.\n\r");
     return FALSE;
@@ -3290,7 +3315,7 @@ int TBaseClothing::editAverageMe(TBeing *tBeing, const char *tString)
     return FALSE;
   }
 
-  double tLevel = atof(tString);
+  tLevel = atof(tString);
 
   if (tLevel <= 0.0 || tLevel > 60.0) {
     tBeing->sendTo("Level must be between 1 and 60.\n\r");
@@ -3299,6 +3324,13 @@ int TBaseClothing::editAverageMe(TBeing *tBeing, const char *tString)
 
   setDefArmorLevel(tLevel);
   obj_flags.cost = suggestedPrice();
+
+  sprintf(tBuffer, "$N: Overall  : L: %6.2f", armorLevel(ARMOR_LEV_REAL));
+  colorAct(COLOR_OBJECTS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
+  sprintf(tBuffer, "$N: Structure: L: %6.2f", armorLevel(ARMOR_LEV_STR));
+  colorAct(COLOR_OBJECTS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
+  sprintf(tBuffer, "$N: Armor    : L: %6.2f", armorLevel(ARMOR_LEV_AC));
+  colorAct(COLOR_OBJECTS, tBuffer, false, tBeing, NULL, this, TO_CHAR);
 
   return FALSE;
 }

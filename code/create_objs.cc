@@ -713,7 +713,13 @@ void TPerson::doOEdit(const char *argument)
             sprintf(string, "%s %d", tStString.c_str(), cObj->getSnum());
 
             osave(this, string);
+#if 1
+            --(*cObj);
+            delete cObj;
+            cObj = NULL;
+#else
             doJunk(tStString.c_str(), cObj);
+#endif
             doSave(SILENT_YES);
           }
         } else
@@ -740,8 +746,15 @@ void TPerson::doOEdit(const char *argument)
           sprintf(string, "%s %d", object, cObj->objVnum());
       }
       osave(this, string);
-      if (zGot == 1)
+      if (zGot == 1) {
+#if 1
+        --(*cObj);
+        delete cObj;
+        cObj = NULL;
+#else
         doJunk(object, cObj);
+#endif
+      }
       doSave(SILENT_YES);
 #endif
       return;

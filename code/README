@@ -1,7 +1,7 @@
 03-12-00 / 03-16-00 / 03-19-00 / 03-21-00 / 03-22-00 - Lapsos
 03-23-00 / 03-25-00 / 03-26-00 / 03-29-00 / 03-30-00 - Lapsos
 04-01-00 / 04-04-00 / 04-08-00 / 04-09-00 / 04-10-00 - Lapsos
-04-11-00 - Lapsos
+04-11-00 / 04-14-00 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
@@ -117,6 +117,11 @@
 - Setup a new function in parse.cc: willBreakHide that controls when hide
   should be removed.  In general it doesn't trigger on utility commands, such
   as look/help/who/ect...
+- Upon logon the game will now report if there is new NEWS/WIZNEWS and will
+  pull out and give you the first line of any 'new entries'.  This is 100%
+  dependent on the (<mon>-<day>-<year> : 00-00-00) format.
+- Added a new race for Therias: Wyvelin(temp name probably)  It's basically
+  a winged cat with a few slight diffs.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: connect.cc,v $
+// Revision 5.1.1.2  1999/10/23 01:47:50  mithros
+// Removed Lothar's room assignment, Added Demo's and Kechara's (Quelara)
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -2403,10 +2406,12 @@ int TPerson::genericLoadPC()
         rp = real_roomp(17);
       else if (!strcmp(name, "Messiah"))
         rp = real_roomp(18);
-      else if (!strcmp(name, "Lothar"))
-        rp = real_roomp(19);
       else if (!strcmp(name, "Marsh"))
         rp = real_roomp(20);
+      else if (!strcmp(name, "Demo"))
+        rp = real_roomp(21);
+      else if (!strcmp(name, "Kechara"))
+        rp = real_roomp(23);
       else if (!strcmp(name, "Dirk"))
         rp = real_roomp(24);
       else if (!strcmp(name, "Matel"))

@@ -528,6 +528,7 @@ int disguise(TBeing *caster, char * buffer)
     return FALSE;
   }
   thing_to_room(mob,ROOM_VOID);
+  mob->swapToStrung();
 
   // Check to make sure that there is no snooping going on. 
   if (!caster->desc || caster->desc->snoop.snooping) {
@@ -640,10 +641,6 @@ int disguise(TBeing *caster, char * buffer)
   REMOVE_BIT(mob->specials.act, ACT_NOCTURNAL);
 
   if (!awesom) {
-    // remake some of the strings on the player 
-    // disassociate the mob from global memory 
-    mob->swapToStrung();
-    
     if (caster->name) {
       delete [] mob->name;
       mob->name = mud_str_dup(caster->name);

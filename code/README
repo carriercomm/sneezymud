@@ -1,10 +1,13 @@
-03-12-00 - Lapsos
+03-12-00 / 03-16-00 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
   bad lapsos bad, that it was a mistake.  Changed it so it's only
   triggered if they don't have setsev-imm and try to set log-low.
   Mimic'ed the changes in utility/vlogf also.
+- Fixed up setsev to align based on avail commands.  Will fix this:
+  scribe    cutlink   repair    checklog  loglist   deathcheckredit
+  Perm, no matter what commands may be added in the future.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

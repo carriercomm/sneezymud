@@ -2757,7 +2757,7 @@ void TObj::setBurning(TBeing *ch){
     if(isObjStat(ITEM_CHARRED))
       remObjStat(ITEM_CHARRED);
     
-    int lightamount=max(1, getVolume()/500);
+    int lightamount=max(1, getVolume()/1000);
     addToLight(lightamount);
 #if 0
     if(ch){
@@ -2777,7 +2777,7 @@ void TObj::remBurning(TBeing *ch){
        !isObjStat(ITEM_CHARRED))
       setObjStat(ITEM_CHARRED);
     
-    int lightamount=max(1, getVolume()/500);
+    int lightamount=max(1, getVolume()/1000);
     addToLight(-lightamount);
 #if 0
     if(ch){

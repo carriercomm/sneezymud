@@ -813,6 +813,8 @@ void TThing::sacrificeMe(TBeing *ch, const char *arg)
   TBaseCorpse *corpse;
   TBeing *dummy;
 
+
+
   // Check to see if argument passed exists in room
   if (!generic_find(arg, FIND_OBJ_ROOM, ch, &dummy, &obj)) {
     ch->sendTo("You do not see a %s here.\n\r", arg);
@@ -867,6 +869,10 @@ void TTool::sacrificeMe(TBeing *ch, const char *arg)
 
 void TBeing::doSacrifice(const char *arg)
 {
+#ifdef SNEEZY2000
+  sendTo("Currently this is disabled.\n\r");
+  return;
+#else
   TThing *tobj;
 
   for (; isspace(*arg); arg++);
@@ -883,4 +889,14 @@ void TBeing::doSacrifice(const char *arg)
     return;
   }
   tobj->sacrificeMe(this, arg);
+#endif
 }
+
+
+
+
+
+
+
+
+

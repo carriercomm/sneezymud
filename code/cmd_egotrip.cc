@@ -202,6 +202,10 @@ void TBeing::doEgoTrip(const char *arg)
       TMonster *tmon = dynamic_cast<TMonster *>(t);
       if (!tmon)
         continue;
+      if (IS_SET(mob->specials.act, ACT_SENTINEL)) {
+        act("$n is set sentinel.", false, mob, 0, this, TO_VICT);
+        continue;
+      }
       int rc = tmon->wanderAround();
       if (IS_SET_DELETE(rc, DELETE_THIS)) {
         delete tmon;

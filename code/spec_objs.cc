@@ -2878,10 +2878,10 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
   if((path[where+*job])==-1){
     switch(*job){
       case -1:
-	sendrpf(trolleyroom, "The trolley has arrived in Grimhaven.");
+	sendrpf(trolleyroom, "The trolley has arrived in Grimhaven.\n\r");
 	break;
       case 1:
-	sendrpf(trolleyroom, "The trolley has arrived in Brightmoon.");
+	sendrpf(trolleyroom, "The trolley has arrived in Brightmoon.\n\r");
 	break;
     }
 
@@ -2893,14 +2893,14 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){
 
   switch(*job){
     case -1: 
-      act("$n continues towards Grimhaven.",
+      act("$n continues towards Grimhaven.\n\r",
 	  FALSE, myself, 0, 0, TO_ROOM); 
-      sendrpf(trolleyroom, "The trolley rumbles onwards to Grimhaven.");
+      sendrpf(trolleyroom, "The trolley rumbles onwards to Grimhaven.\n\r");
       break;
     case 1: 
-      act("$n continues towards Brightmoon.",
+      act("$n continues towards Brightmoon.\n\r",
 	  FALSE, myself, 0, 0, TO_ROOM); 
-      sendrpf(trolleyroom, "The trolley rumbles onwards to Brightmoon.");
+      sendrpf(trolleyroom, "The trolley rumbles onwards to Brightmoon.\n\r");
       break;
   }
   

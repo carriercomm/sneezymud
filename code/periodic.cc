@@ -12,6 +12,7 @@
 #include "mail.h"
 #include "disc_monk.h"
 #include "components.h"
+#include "drug.h"
 
 // this function gets called ever 120 pulse (30 secs?)
 // it should randomly load a deity and/or extract extra deitys
@@ -509,6 +510,7 @@ int TBeing::updateAffects()
 int TBeing::updateTickStuff()
 {
   int rc;
+  unsigned int i;
 
   if (desc && isPc()) {
     updateCharObjects();
@@ -521,6 +523,13 @@ int TBeing::updateTickStuff()
     if (IS_SET_DELETE(rc, DELETE_THIS)) {
       vlogf(LOG_SILENT, "updateTickStuff: %s (desc) caught idling", getName());
       return DELETE_THIS;
+    }
+
+    for(i=0;i<drugTypes.size();i++){
+      if(desc->drugs[i].current_consumed>0){
+	--desc->drugs[i].current_consumed;
+	applyDrugAffects(this, (drugTypeT) i, true);
+      }
     }
     
     if (getCond(DRUNK) > 15) {

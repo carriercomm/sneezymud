@@ -1297,13 +1297,18 @@ int siren(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 
 int ram(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 {
-  TBeing *vict;
-  
   if ((cmd != CMD_MOB_COMBAT) || !myself->awake())
     return FALSE;
-  if (!(vict = myself->fight()))
+
+  TBeing * vict = myself->fight();
+  if (!vict)
     return FALSE;
+
   if (!vict->sameRoom(myself))
+    return FALSE;
+  if (vict->riding)
+    return FALSE;
+  if (vict->getPosition() > POSITION_STANDING)
     return FALSE;
   if (::number(0,5))
     return FALSE;
@@ -1326,6 +1331,7 @@ int ram(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
     }
     myself->cantHit += myself->loseRound(1);
     vict->cantHit += vict->loseRound(2);
+
     vict->setPosition(POSITION_SITTING);
   } else {
     act("You sidestep quickly, and $n thunders by.   TORO!",

@@ -407,6 +407,7 @@ void TRoom::operator << (TThing &tThing)
 {
   if (!tBornInsideMe) {
     tBornInsideMe = &tThing;
+    tThing.nextBorn = NULL;
     return;
   }
 
@@ -420,6 +421,7 @@ void TRoom::operator << (TThing &tThing)
   }
 
   tList->nextBorn = &tThing;
+  tThing.nextBorn = NULL;
 }
 
 bool TRoom::operator |= (const TThing &tThing)

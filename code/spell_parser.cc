@@ -101,6 +101,7 @@ void TBeing::stopFollower(bool remove, stopFollowerT textLimits) // default argu
     return;
 
   if (affectedBySpell(AFFECT_PET) ||
+      affectedBySpell(AFFECT_CHARM) ||
       affectedBySpell(AFFECT_THRALL)) {
     // make pet retrainable 
     aff.type = AFFECT_ORPHAN_PET;
@@ -2219,6 +2220,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case AFFECT_DISEASE:
     case AFFECT_COMBAT:
     case AFFECT_PET:
+    case AFFECT_CHARM:
     case AFFECT_THRALL:
     case AFFECT_PLAYERKILL:
     case AFFECT_HORSEOWNED:

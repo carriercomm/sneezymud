@@ -40,8 +40,8 @@ void TBeing::doConsider(const char *argument)
     if (!isImmortal()) {
       sendTo("You consider your equipment...\n\r");
       int armor = 1000 - getArmor();
-      sh_int suggest = suggestArmor();
-      diff = (int) (suggest - armor);
+      int suggest = suggestArmor();
+      diff = suggest - armor;
       sendTo("Your equipment would seem %s for your class and level.\n\r",
              (diff >=  210 ? "laughably pathetic" :
              (diff >=  160 ? "horrid" :

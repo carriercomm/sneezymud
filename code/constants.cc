@@ -641,9 +641,9 @@ const char * const extra_bits[] =
   "Float",
   "No purge",
   "Newbie",
-  "Only-Male",
-  "Only-Female",
-  "Only-Neuter",
+  "", // now unused
+  "", // now unused
+  "", // now unused
   "Item Attached",
   "Burning",
   "Charred",

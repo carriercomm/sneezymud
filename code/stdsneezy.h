@@ -41,7 +41,6 @@
 #include "parse.h"
 #include "db.h"
 #include "ansi.h"
-#include "drug.h"
 #include "cmd_dissect.h"
 #include "connect.h"
 #include "client.h"

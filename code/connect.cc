@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: connect.cc,v $
+// Revision 5.1.1.5  1999/10/30 01:19:09  mithros
+// Changed Urvile's connect stuff over to Staffa
+//
 // Revision 5.1.1.4  1999/10/23 18:25:17  mithros
 // Changed spelling of Armaggedon's name for connect placement.
 //
@@ -2448,7 +2451,7 @@ int TPerson::genericLoadPC()
         rp = real_roomp(42);
       else if (!strcmp(name, "Moath"))
         rp = real_roomp(46);
-      else if (!strcmp(name, "Urvile"))
+      else if (!strcmp(name, "Staffa"))
         rp = real_roomp(47);
       else if (!strcmp(name, "Lapsos"))
         rp = real_roomp(48);

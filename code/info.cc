@@ -2993,7 +2993,7 @@ void TBeing::describeAffects(TBeing *ch)
     if (aff->type == AFFECT_DISEASE) {
       if (ch == this)
         sendTo("Disease: '%s'\n\r",
-                DiseaseInfo[DISEASE_INDEX(aff->modifier)].name);
+                DiseaseInfo[affToDisease(*aff)].name);
     } else if (aff->type == AFFECT_DUMMY) {
       if (this == ch)
         sendTo("Dummy Affect: \n\r");
@@ -3140,10 +3140,10 @@ void TBeing::describeLimbDamage(const TBeing *ch) const
         if (!aff->level) {
           if (ch == this)
             sendTo(COLOR_BASIC, "<y>You have %s.<1>\n\r",
-               DiseaseInfo[DISEASE_INDEX(aff->modifier)].name);
+               DiseaseInfo[affToDisease(*aff)].name);
           else
             sendTo(COLOR_BASIC, "<y>It seems %s has %s.<1>\n\r",
-                ch->hssh(), DiseaseInfo[DISEASE_INDEX(aff->modifier)].name);
+                ch->hssh(), DiseaseInfo[affToDisease(*aff)].name);
         }
       }
     }
@@ -5172,7 +5172,7 @@ void TBeing::doLimbs(const string & argument)
         if (!aff->level) {
           sendTo("%s %s %s.\n\r", who, 
 	         (v==this)?"have":"has",
-                 DiseaseInfo[DISEASE_INDEX(aff->modifier)].name);
+                 DiseaseInfo[affToDisease(*aff)].name);
           found = TRUE;
         }
       }

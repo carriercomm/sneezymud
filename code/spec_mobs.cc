@@ -5982,7 +5982,7 @@ int corpseMuncher(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj
   const char *munch[]={
       "$n stops eating, looks up at you and burps loudly, then resumes feasting on $p.",
       "<r>Blood<1> spatters about as $n bites deeply into $p.",
-      "$n growls lowly as $e rips a chunk of flesh off $p.",
+      "$n utters a low growl as $e rips a chunk of flesh off $p.",
       "$n stops to spit out a piece of <W>bone<1>, then resumes eating $p."};
 
 

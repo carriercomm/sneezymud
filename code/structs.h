@@ -141,6 +141,11 @@ const int MAX_BAN_HOSTS = 15;
 
 const int LIM_ITEM_COST_MIN =  1499;   /* mininum rent cost of a lim. item */
 
+// pet information
+const unsigned int PETTYPE_PET    = (1<<0);   // 1
+const unsigned int PETTYPE_CHARM  = (1<<1);   // 2
+const unsigned int PETTYPE_THRALL = (1<<2);   // 4
+
 struct show_room_zone_struct {
   int blank;
   int startblank, lastblank;
@@ -349,15 +354,6 @@ class saveAffectedData {
     saveAffectedData();
     saveAffectedData & operator=(const affectedData &a);
 };
-
-/*
-   Template Classes:
-   My understanding of this stuff is a wee bit weak, anyway...
- 
-   Essentially, this allows us to write a "generic" function.
-   if you pass it an int, the "template" is an int, pass it a long, and
-   the template is a long.  The type is being defined on the fly.
-*/
 
 #if 1
 template<class T>

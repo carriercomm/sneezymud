@@ -360,6 +360,8 @@ void TPerson::doPowers(const char *argument) const
   wizPowerT tWizPower;
   bool      wizPowerList[MAX_POWER_INDEX];
 
+  memset(&wizPowerList, 0, sizeof(wizPowerList));
+
   two_arg(argument, tStName, tStPower);
 
   if (!tStName.empty()) {

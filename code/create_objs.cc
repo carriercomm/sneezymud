@@ -2290,11 +2290,13 @@ void change_trap_value2(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT t
   o->changeTrapValue2(ch, arg, type);
 }
 
+
 void change_weapon_value1(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT type)
 {
   o->changeBaseWeaponValue1(ch, arg, type);
 }
 
+#if 1
 void change_weapon_value2(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT type)
 {
   //o->changeBaseWeaponValue2(ch, arg, type);
@@ -2304,7 +2306,7 @@ void change_weapon_value3(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT
 {
   //  o->changeBaseWeaponValue3(ch, arg, type);
 }
-
+#endif
 void change_trap_value3(TBeing *ch, TObj *o, const char *arg, editorEnterTypeT type)
 {
   o->changeTrapValue3(ch, arg, type);

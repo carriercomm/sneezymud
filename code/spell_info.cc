@@ -2,25 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: spell_info.cc,v $
-// Revision 5.1.1.2  1999/12/26 21:11:41  lapsos
-// Upped range prof learn rate
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-/////////////////////////////////////////////////////////////////
-// 
 //     spell_info.cc : All functions related to SpellInfo class
 //
 //     Copyright (c) 1998, SneezyMUD Development Team
@@ -797,7 +778,7 @@ void buildSpellArray()
 
   discArray[SKILL_RESCUE_DEIKHAN] = new spellInfo(SKILL_DEIKHAN, DISC_DEIKHAN, DISC_DEIKHAN_FIGHT, "rescue", TASK_NORMAL, LAG_2, POSITION_CRAWLING, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "", "", "", "", START_11, LEARN_2, START_DO_10, LEARN_DO_1, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_SKILLS, 0.15, 0, 0);
 
-  discArray[SKILL_SMITE] = new spellInfo(SKILL_DEIKHAN, DISC_DEIKHAN, DISC_DEIKHAN_FIGHT, "smite", TASK_NORMAL, LAG_3, POSITION_STANDING, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "Your deity empowers you to smite once more.", "", "", "", START_51, LEARN_2, START_DO_1, LEARN_DO_1, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_SKILLS, 0.0, 0, 0);
+  discArray[SKILL_SMITE] = new spellInfo(SKILL_DEIKHAN, DISC_DEIKHAN, DISC_DEIKHAN_FIGHT, "smite", TASK_NORMAL, LAG_3, POSITION_STANDING, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "Your deity empowers you to smite once more.", "", "", "", START_51, LEARN_2, START_DO_50, LEARN_DO_3, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_SKILLS, 0.0, 0, 0);
 
   discArray[SPELL_INFECT_DEIKHAN] = new spellInfo(SPELL_DEIKHAN, DISC_DEIKHAN, DISC_DEIKHAN_WRATH, "infect", TASK_DIFFICULT, LAG_3, POSITION_SITTING, MANA_0, PRAY_150, TAR_CHAR_ROOM | TAR_FIGHT_VICT | TAR_VIOLENT | TAR_SELF_NONO, SYMBOL_STRESS_40, "", "", "", "", START_63, LEARN_8, START_DO_20, LEARN_DO_5, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_PRAYERS, 0.04, COMP_GESTURAL | COMP_VERBAL, 0);
 
@@ -861,7 +842,7 @@ void buildSpellArray()
 
   discArray[SPELL_SALVE_DEIKHAN] = new spellInfo(SPELL_DEIKHAN, DISC_DEIKHAN_CURES, DISC_DEIKHAN_CURES, "salve", TASK_TRIVIAL, LAG_3, POSITION_SITTING, MANA_0, PRAY_200, TAR_CHAR_ROOM, SYMBOL_STRESS_10, "", "", "", "", START_1, LEARN_5, START_DO_20, LEARN_DO_2, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_PRAYERS, 0.02, COMP_GESTURAL | COMP_VERBAL, 0);
 
-  discArray[SKILL_LAY_HANDS] = new spellInfo(SKILL_DEIKHAN, DISC_DEIKHAN_CURES, DISC_DEIKHAN_CURES, "lay hands", TASK_NORMAL, LAG_1, POSITION_STANDING, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "", "", "", "", START_1, LEARN_1, START_DO_1, LEARN_DO_1, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_SKILLS, 0.4, 0, 0);
+  discArray[SKILL_LAY_HANDS] = new spellInfo(SKILL_DEIKHAN, DISC_DEIKHAN_CURES, DISC_DEIKHAN_CURES, "lay hands", TASK_NORMAL, LAG_1, POSITION_STANDING, MANA_0, PRAY_0, 0, SYMBOL_STRESS_0, "", "", "", "", START_1, LEARN_1, START_DO_35, LEARN_DO_2, START_DO_NO, LEARN_DO_NO, LEARN_DIFF_SKILLS, 0.4, 0, 0);
 
 // disc_wrath_deikhan
 

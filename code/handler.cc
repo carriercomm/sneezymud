@@ -430,7 +430,7 @@ void TBeing::affectModify(applyTypeT loc, long mod, long mod2, unsigned long bit
         // current stats, however, must be updated to reflect.
         // figure out how much natural changes by, and change current to match
         statTypeT whichStat;
-        for (whichStat = MIN_STAT; whichStat < MAX_STAT; whichStat++) {
+        for (whichStat = MIN_STAT; whichStat < MAX_STATS; whichStat++) {
           int oldVal = getStat(STAT_NATURAL, whichStat);
           age_mod += mod;
           int newVal = getStat(STAT_NATURAL, whichStat);

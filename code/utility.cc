@@ -611,6 +611,16 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
       strncpy(name, buf, strlen(buf)-2);
       name[strlen(buf)-2]='\0';
       break;
+    case LOG_JESUS:
+      strcpy(buf, "Jesus: ");
+      strncpy(name, buf, strlen(buf)-2);
+      name[strlen(buf)-2]='\0';
+      break;
+    case LOG_DASH:
+      strcpy(buf, "Dash: ");
+      strncpy(name, buf, strlen(buf)-2);
+      name[strlen(buf)-2]='\0';
+      break;
     default:
       buf[0] = '\0';
       name[0] = '\0';

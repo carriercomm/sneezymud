@@ -719,7 +719,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
     
     // track trophy count
     if (desc &&!roomp->isRoomFlag(ROOM_ARENA) && !inPkZone() && 
-	dynamic_cast<TMonster *>(v)){
+	dynamic_cast<TMonster *>(v) && v->mobVnum()!=-1){
       MYSQL_RES *res;
       
       if(k && ngroup>1){

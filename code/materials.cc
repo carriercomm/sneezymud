@@ -20,7 +20,7 @@ static bool genericDamCheck(int susc, int sharp)
     return false;
 #endif
 
-  if (::number(0,999) < 500)
+  if (::number(0,999) >= 300)
     return false;
 
   // num is the hardness of what i a hitting

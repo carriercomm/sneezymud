@@ -842,11 +842,12 @@ int TObj::foodItemUsed(TBeing *ch, const char *)
 {
   vlogf(LOG_LOW, "Undefined item (%s) with special proc: foodItem", getName());
   act("Oily black smoke pours from $p as something goes wrong.",
-             TRUE, ch, this, 0, TO_CHAR);
+      TRUE, ch, this, 0, TO_CHAR);
   act("Oily black smoke pours from $p as something goes wrong.",
-             TRUE, ch, this, 0, TO_ROOM);
+      TRUE, ch, this, 0, TO_ROOM);
   return FALSE;
 }
+
 
 int TWand::foodItemUsed(TBeing *ch, const char *arg)
 {
@@ -3047,15 +3048,394 @@ int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   return TRUE;
 }
 
+int keyInKnife(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *) 
+{
+  if (!(ch = dynamic_cast<TBeing *>(o->parent)))
+    return FALSE;
+  TObj *key = read_object(17211, VIRTUAL); 
+  char buf[256];
+
+  if (cmd != CMD_PUSH && cmd != CMD_PRESS) 
+    return FALSE;
+  
+  one_argument(arg, buf);
+  
+  
+  if(!strcmp(buf,"panel")) {
+    *ch += *key;
+    act("You press on the hilt of $p. *click*",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    act("The entire $o splits down the center, revealing a <Y>golden key<1>.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    act("$n fiddles with the hilt of $p. *click*.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    act("The entire $o splits down the center, revealing a small <Y>golden<1> object.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    o->makeScraps();
+    delete o;
+    return TRUE;
+  }
+  return FALSE;
+}
+
+
+int teleportVial(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *) 
+{
+  int targetroom;
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+  char objname[256],buf[256];
+  if (cmd != CMD_THROW) 
+    return FALSE;
+  strcpy(objname,o->name);
+  one_argument(one_argument(one_argument(objname,buf),buf),buf); //vial
+
+  if (sscanf(buf,"%d",&targetroom) != 1) {
+    act("Teleport vial with no target room. How crappy.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+  } else {
+    TRoom *newRoom;
+    if (!(newRoom = real_roomp(targetroom))) {
+      act("Teleport vial targeted to a non-existant room. How crappy.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      return TRUE;
+    }
+    act("You throw $p to the ground.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    act("The $o shatters, releasing a cloud of thick smoke all around you.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    
+    act("$n throws $p to the ground.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    act("The $o shatters, releasing a cloud of thick smoke all around $m.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    
+    
+    act("You feel the world shift around you.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    act("When the smoke clears, $n is gone!<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    --(*ch);
+    delete o;  
+    *newRoom += *ch;
+    vlogf(LOG_PROC, "TELEPORT VIAL: %s transfered to room #%d", ch->name, targetroom);
+    act("$n appears in the room with a puff of smoke.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    ch->doLook("", CMD_LOOK);
+    ch->addToWait(combatRound(2));
+    ch->cantHit += ch->loseRound(1);
+    if (ch->riding) {
+      int rc = ch->fallOffMount(ch->riding, POSITION_STANDING);
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
+	return DELETE_THIS;
+      }
+    }
+    return TRUE;
+  }
+  return FALSE;
+}
+
+
+
+
+int blazeOfGlory(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
+{
+  // Use of this quest prize weapon takes two seprate actions. One is a sort of
+  // 'charge-up' move, where the char steps back from combat, and focuses on
+  // charging up the weapon.
+  // the release part of the proc happens on a normal swing attempt. The energy
+  // stored in the first part is released in a giant ball of fire, consuming the
+  // char, and hopefully his victim as well. Kaboooom!   -love, Dash
+  int dam = 0, rc;
+  TBeing *ch;
+
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+  
+  if (cmd == CMD_OBJ_HITTING && ch->checkForSkillAttempt(SPELL_BLAST_OF_FURY)) {
+      act("<o>The air about you seems to crackle with power as you level your $o at $N<o>.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+      act("<o>Brandishing $p<o>, you prepare to charge!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+      act("  ...as you begin your rush, flames spread out from your $o, and envelope you...",TRUE,ch,o,vict,TO_CHAR,NULL);
+      act("    ...your vision begins to go red...",TRUE,ch,o,vict,TO_CHAR,NULL);
+      act("      ...white hot flames tear across your entire body, the pain is unbearable...",TRUE,ch,o,vict,TO_CHAR,NULL);
+      act("        ...with $N just ahead of you, you prepare your $o for impact...",TRUE,ch,o,vict,TO_CHAR,NULL);
+
+
+      act("<o>The air about $n<o> seems to crackle with power as $e levels $s $o at $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+      act("<o>Brandishing $p<o>, $n<o> prepares to charge!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+      act("  ...flames spread out from $s $o, and envelope $m...",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+      act("    ...$n screams with rage as $e barrels at $N...",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+      act("      ...white hot flames tear across $s entire body...",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+      act("        ...you see $n prepare $s $o for impact...",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+
+
+      act("<o>The air about $n<o> seems to crackle with power as $e levels $s $o at you. Uh oh.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      act("<o>Brandishing $p<o>, $n<o> prepares to charge!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      act("  ...flames spread out from $s $o, and envelope $m...",TRUE,ch,o,vict,TO_VICT,NULL);
+      act("    ...$n screams with rage as $e barrels at you...",TRUE,ch,o,vict,TO_VICT,NULL);
+      act("      ...white hot flames tear across $s entire body...",TRUE,ch,o,vict,TO_VICT,NULL);
+      act("        ...you see $n prepare $s $o for impact...",TRUE,ch,o,vict,TO_VICT,NULL);
+
+      dam = min(30000,ch->hitLimit() * 100); // kill them DEAD. I want NO survivors.
+      o->addToStructPoints(-5);
+      o->setDepreciation(o->getDepreciation() + 5);
+      if (o->getStructPoints() <= 0) {
+	o->makeScraps();
+	delete o;
+      }
+      int rc2 = ch->reconcileDamage(ch, dam, DAMAGE_FIRE);
+      act("<R>KA-BOOOOOOOOOOM! You explode in a <O>blaze of glory<R> as you crash into $N<R>!!!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+      act("<R>KA-BOOOOOOOOOOM! $n explodes in a <O>blaze of glory<R> as $e crashes into $N<R>!!!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+      act("<R>KA-BOOOOOOOOOOM! You're covered in <O>searing flames<R> as $e crashes into you!!!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+    act("<o>With a loud crack, $n<o>'s corpse shatters!<1>",TRUE,ch,o,vict,TO_ROOM,NULL);
+
+
+    dam = min(30000,ch->GetMaxLevel() * 40);
+    rc = ch->reconcileDamage(vict, dam, DAMAGE_FIRE);
+
+    ch->makeBodyPart(WEAR_HEAD);
+    ch->makeBodyPart(WEAR_ARM_L);
+    ch->makeBodyPart(WEAR_ARM_R);
+    ch->makeBodyPart(WEAR_LEGS_L);
+    ch->makeBodyPart(WEAR_LEGS_R);
+    //muahaha corpse explodes... limbs fly EVERYWHERE!!
+    if (IS_SET_DELETE(rc2, DELETE_VICT) || (ch->getHit() < -10))
+      delete ch;
+
+    if (IS_SET_DELETE(rc, DELETE_VICT))
+      return DELETE_VICT;
+    return TRUE;
+    
+  } else if ((cmd == CMD_SAY || cmd == CMD_SAY2) && !(ch->checkForSkillAttempt(SPELL_BLAST_OF_FURY))) {
+    affectedData aff;
+    char buf[256];
+      
+    one_argument(arg, buf);
+    if(!strcmp(buf, "aerolithe")) {  //this is the activation keyword
+      aff.type = AFFECT_SKILL_ATTEMPT;
+      aff.level = 0;
+      aff.location = APPLY_NONE;
+      aff.bitvector = 0;
+      aff.duration = 20; 
+      aff.modifier = SPELL_BLAST_OF_FURY;
+      ch->affectTo(&aff);
+      ch->addToWait(combatRound(4));
+      ch->cantHit += ch->loseRound(3);
+      
+      act("$n holds $p high above $s head, shouting <p>a word of power<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("A gust of scorching wind whips past $m, and flames lick out from $s $o.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<o>The air crackles with intense power as $n<o> is suddenly immolated in <r>flames<o>!<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+
+      act("You hold $p high above your head, shouting the <p>word of power<1>, <p>Aerolithe<1>!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("A gust of scorching wind whips past you, and flames lick out from your $o.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("<o>The air crackles with intense power as you are suddenly immolated in <r>flames<o>!<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+
+      dam = ch->hitLimit()/10;
+      rc = ch->reconcileDamage(ch, dam, DAMAGE_FIRE);
+      if (IS_SET_DELETE(rc, DELETE_VICT) || (ch->getHit() < -10))
+	delete ch;
+      return TRUE;
+    }
+    return FALSE;
+  } if (cmd == CMD_GENERIC_PULSE && ch->checkForSkillAttempt(SPELL_BLAST_OF_FURY)) {
+    act("<r>$n<r> seems to shudder in pain, and there is a strange fire burning in $s eyes.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    act("<r>The power contained within you is almost unbearable!<R> You're burning up!!!<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    dam = ch->hitLimit()/10;
+    rc = ch->reconcileDamage(ch, dam, DAMAGE_FIRE);
+    if (IS_SET_DELETE(rc, DELETE_VICT) || (ch->getHit() < -10))
+      delete ch; 
+    return TRUE;
+  }
+  return FALSE;
+}
+
+int mechanicalWings(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
+{
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+  if (cmd == CMD_FLY && ch->getPosition() == POSITION_STANDING) {
+    act("<k>$n<k>'s $o silently unfold and begin to beat the air forcefully.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    act("<k>Your $o silently unfold and begin to beat the air forcefully.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    return FALSE;
+  } else if (cmd == CMD_LAND && ch->getPosition() == POSITION_FLYING) {
+    act("<k>$n<k>'s $o stop beating the air and silently fold behind $s back.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    act("<k>Your $o stop beating the air and silently fold behind your back.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    return FALSE;
+  } else if ((cmd == CMD_GENERIC_PULSE) && (::number(1,10) == 1) && (ch->getPosition() == POSITION_FLYING)) {
+    act("<k>The $o on $n<k>'s back forcefully beat the air.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+    act("<k>The $o on your back forcefully beat the air.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    return FALSE;
+  }
+  return FALSE;
+}
+
+
+int elementalWeapon(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
+{
+  int dam = 0, rc = 0;
+  TBeing *ch;
+  //blaaaah blah blah
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+
+  if (cmd == CMD_OBJ_HIT && genericWeaponProcCheck(vict, cmd, o, 3)) {
+    dam = ::number(4,10);
+    if(ch->affectedBySpell(SPELL_CONJURE_WATER)) {
+      if (dam < 8) {
+	act("<b>Your <c>$o <b>becomes covered with ice and freezes $N.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+	act("<b>$n's <c>$o <b>becomes covered with ice and freezes $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+	act("<b>$n's <c>$o <b>becomes covered with ice and freezes you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      } else {
+	act("<B>Your <C>$o <B>becomes covered with ice and sends a violent chill through $N.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+	act("<B>$n's <C>$o <B>becomes covered with ice and sends a violent chill through $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+	act("<B>$n's <C>$o <B>becomes covered with ice and sends a violent chill through you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      }
+      rc = ch->reconcileDamage(vict, dam, DAMAGE_FROST);
+    } else if(ch->affectedBySpell(SPELL_CONJURE_FIRE)) {
+      if (dam < 8) {
+	act("<o>Your <r>$o <o>erupts into roaring flames and sears $N.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+	act("<o>$n's <r>$o <o>erupts into roaring flames and sears $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+	act("<o>$n's <r>$o <o>erupts into roaring flames and sears you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      } else {
+	act("<O>Your <R>$o <O>roars into a blaze of fire and scorches $N.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+	act("<O>$n's <R>$o <O>roars into a blaze of fire and scorches $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+	act("<O>$n's <R>$o <O>roars into a blaze of fire and scorches you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      }
+      rc = ch->reconcileDamage(vict, dam, DAMAGE_FIRE);
+    } else if(ch->affectedBySpell(SPELL_CONJURE_AIR)) {
+      if (dam < 8) {
+	act("<c>Your <w>$o <c>crackles with electricity and shocks $N.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+	act("<c>$n's <w>$o <c>crackles with electricity and shocks $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+	act("<c>$n's <w>$o <c>crackles with electricity and shocks you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      } else {
+	act("<C>Your <W>$o <C>discharges a large jolt of electricity at $N.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+	act("<C>$n's <W>$o <C>discharges a large jolt of electricity at $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+	act("<C>$n's <W>$o <C>discharges a large jolt of electricity at you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+      }
+      rc = ch->reconcileDamage(vict, dam, DAMAGE_ELECTRIC);
+    } else return FALSE;
+    if (rc == -1)
+      return DELETE_VICT;
+    return TRUE;
+  } else if (cmd == CMD_SAY || cmd == CMD_SAY2) {
+    affectedData aff, aff2;
+    char buf[256];
+    
+    one_argument(arg, buf);
+    if(!strcmp(buf, "rime")) {  //this is the activation keyword
+      if(ch->checkForSkillAttempt(SPELL_CONJURE_WATER)) {
+	act("The $o's power of ice can only be used once a day!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      } else if(ch->affectedBySpell(SPELL_CONJURE_FIRE)) {
+	act("The $o's power of ice cannot be used at the same time as the power of fire!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      } else if(ch->affectedBySpell(SPELL_CONJURE_AIR)) {
+	act("The $o's power of ice cannot be used at the same time as the power of lightning!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      }
+      aff.type = AFFECT_SKILL_ATTEMPT;
+      aff.level = 0;
+      aff.location = APPLY_NONE;
+      aff.bitvector = 0;
+      aff.duration = 24 * UPDATES_PER_MUDHOUR;
+      aff.modifier = SPELL_CONJURE_WATER;
+      aff2.type = SPELL_CONJURE_WATER;
+      aff2.level = 0;
+      aff2.location = APPLY_NONE;
+      aff2.bitvector = 0;
+      aff2.duration = 2 * UPDATES_PER_MUDHOUR;
+      aff2.modifier = 0;
+      if (!(ch->isImmortal())) ch->affectTo(&aff);
+      ch->affectTo(&aff2);
+      ch->addToWait(combatRound(2));
+      
+      act("$n brandishes $p, shouting a strange <p>word of power<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<b>A chill wind swirls around $n<b>, and $s <B>$o<1><b> forms a thin layer of ice<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      
+      
+      act("You brandish $p, shouting the command word, <p>rime<1>!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("<b>A chill wind swirls around you, and your <B>$o<1><b> forms a thin layer of ice<1>.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    } else if(!strcmp(buf, "incandesce")) {  //this is the activation keyword
+      if(ch->checkForSkillAttempt(SPELL_CONJURE_FIRE)) {
+	act("The $o's power of fire can only be used once a day!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      } else if(ch->affectedBySpell(SPELL_CONJURE_WATER)) {
+	act("The $o's power of fire cannot be used at the same time as the power of ice!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      } else if(ch->affectedBySpell(SPELL_CONJURE_AIR)) {
+	act("The $o's power of fire cannot be used at the same time as the power of lightning!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      }
+      aff.type = AFFECT_SKILL_ATTEMPT;
+      aff.level = 0;
+      aff.location = APPLY_NONE;
+      aff.bitvector = 0;
+      aff.duration = 24 * UPDATES_PER_MUDHOUR;
+      aff.modifier = SPELL_CONJURE_FIRE;
+      aff2.type = SPELL_CONJURE_FIRE;
+      aff2.level = 0;
+      aff2.location = APPLY_NONE;
+      aff2.bitvector = 0;
+      aff2.duration = 2 * UPDATES_PER_MUDHOUR;
+      aff2.modifier = 0;
+      if (!(ch->isImmortal())) ch->affectTo(&aff);
+      ch->affectTo(&aff2);
+      ch->addToWait(combatRound(2));
+      
+      act("$n brandishes $p, shouting a strange <p>word of power<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<r>A scorching wind swirls around $n<r>, and $s <R>$o<1><r> bursts into flame<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      
+      act("You brandish $p, shouting the command word, <p>incandesce<1>!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("<r>A scorching wind swirls around you, and your <R>$o<1><r> bursts into flame<1>.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    } else if(!strcmp(buf, "evoke")) {  //this is the activation keyword
+      if(ch->checkForSkillAttempt(SPELL_CONJURE_AIR)) {
+	act("The $o's power of lightning can only be used once a day!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      } else if(ch->affectedBySpell(SPELL_CONJURE_FIRE)) {
+	act("The $o's power of lightning cannot be used at the same time as the power of fire!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      } else if(ch->affectedBySpell(SPELL_CONJURE_WATER)) {
+	act("The $o's power of lightning cannot be used at the same time as the power of ice!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return TRUE;
+      } else 
+	aff.type = AFFECT_SKILL_ATTEMPT;
+      aff.level = 0;
+      aff.location = APPLY_NONE;
+      aff.bitvector = 0;
+      aff.duration = 24 * UPDATES_PER_MUDHOUR;
+      aff.modifier = SPELL_CONJURE_AIR;
+      aff2.type = SPELL_CONJURE_AIR;
+      aff2.level = 0;
+      aff2.location = APPLY_NONE;
+      aff2.bitvector = 0;
+      aff2.duration = 2 * UPDATES_PER_MUDHOUR;
+      aff2.modifier = 0;
+      if (!(ch->isImmortal())) ch->affectTo(&aff);
+      ch->affectTo(&aff2);
+      ch->addToWait(combatRound(2));
+      
+      act("$n brandishes $p, shouting a strange <p>word of power<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<c>A charged wind swirls around $n<c>, and $s <C>$o<1><c> releases a shower of sparks.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      
+      act("You brandish $p, shouting the command word, <p>evoke<1>!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("<c>A charged wind swirls around you, and your <C>$o<1><c> releases a shower of sparks.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    } else 
+      return FALSE;
+    return TRUE;
+  } if (cmd == CMD_GENERIC_PULSE && ::number(1,6) == 1) {
+    if(ch->affectedBySpell(SPELL_CONJURE_WATER)) {
+      act("<b>A few ice crystals break off from $n<b>'s <B>$o<1><b> and drift to the ground.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<b>A few ice crystals break off from your <B>$o<1><b> and drift to the ground.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    } else if(ch->affectedBySpell(SPELL_CONJURE_FIRE)) {
+      act("<r>$n<r>'s <R>$o<1><r> flares up momentarily, releasing a blast of heat.<1><1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<r>Your <R>$o<1><r> flares up momentarily, releasing a blast of heat.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+    } else if(ch->affectedBySpell(SPELL_CONJURE_AIR)) {
+      act("<c>$n<c>'s <C>$o<1><c> literally hums with power, releasing a few sparks into the air.<1><1>",
+	  TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<c>Your <C>$o<1><c> literally hums with power, releasing a few sparks into the air.<1>",
+	  TRUE,ch,o,NULL,TO_CHAR,NULL);
+    } else return FALSE;
+    return TRUE;
+  }
+  return FALSE;
+}
+
 int weaponShadowSlayer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
   int rc, dam = 1;
-//  ch = genricWeaponProcCheck(vict,cmd,o,5);
-//  if ((!(ch)) || !(vict->getFaction() == FACT_CULT || vict->isUndead()))
-//    return FALSE;
-//  
-
+  //  ch = genricWeaponProcCheck(vict,cmd,o,5);
+  //  if ((!(ch)) || !(vict->getFaction() == FACT_CULT || vict->isUndead()))
+  //    return FALSE;
+  //  
+  
   if (!o || !vict)
     return FALSE;
   if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
@@ -3067,45 +3447,228 @@ int weaponShadowSlayer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *
   if (!(vict->getFaction() == FACT_CULT || vict->isUndead()))
     return FALSE;
   int hitterLev = ch->GetMaxLevel();
-  dam = (::number((hitterLev / 10 + 1),(hitterLev / 3 + 4)));
+  dam = (::number((hitterLev / 10 + 1),(hitterLev / 3 + 4)));  
+  act("<1>Your $o hums, and begins to glow with an incredible <W>white light<1>.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+  act("<1>$n's $o hums, and begins to glow with an incredible <W>white light<1>.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  act("<1>$n's $o hums, and begins to glow with a painful <W>white light<1>.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   
-act("<1>Your $o hums, and begins to glow with an incredible <W>white light<1>.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-act("<1>$n's $o hums, and begins to glow with an incredible <W>white light<1>.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-act("<1>$n's $o hums, and begins to glow with a painful <W>white light<1>.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
- 
-if (dam >= ( ( ((hitterLev/3+4)-(hitterLev/10+1))*4 )/5 + (hitterLev/10+1))) {
-act("<W>$N howls in pain as a HUGE flash of energy from your $o is released into $m! <1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-act("<W>$N howls in pain as a HUGE flash of energy from $n's $o is released into $m!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-act("<W>There is a huge flash as the energy from $n's $o is released into you!<1>  That really hurt!!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-} else {
-act("<W>$N grunts as the energy from your $o is released into $m.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-act("<W>$N grunts as the energy from $n's $o is released into $m.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-act("<W>You grunt in pain as the energy from $n's blasted $o is released into you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+  if (dam >= ( ( ((hitterLev/3+4)-(hitterLev/10+1))*4 )/5 + (hitterLev/10+1))) {
+    act("<W>$N howls in pain as a HUGE flash of energy from your $o is released into $m! <1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+    act("<W>$N howls in pain as a HUGE flash of energy from $n's $o is released into $m!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+    act("<W>There is a huge flash as the energy from $n's $o is released into you!<1>  That really hurt!!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+  } else {
+    act("<W>$N grunts as the energy from your $o is released into $m.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+    act("<W>$N grunts as the energy from $n's $o is released into $m.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+    act("<W>You grunt in pain as the energy from $n's blasted $o is released into you.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+  }
+  
+  if (!(ch->getFaction() == FACT_BROTHERHOOD)) {
+    dam = dam/2;
+    act("<1>Your $o rebels against you, releasing <W>energy<1> into your hand!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+    act("<1>$n's $o rebels against $m, releasing <W>energy<1> into $s hand!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+    act("<1>$n's $o rebels against $m, releasing <W>energy<1> into $s hand!  Sucker!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+    rc = ch->reconcileDamage(ch, dam, TYPE_SMITE);
+    if (ch->getHit() < 0) {
+      ch->setHit(0);
+      ch->setPosition(POSITION_STUNNED);
+    }
+    if (!ch->isTough()) {
+      *ch->roomp += *ch->unequip(o->eq_pos);
+      act("$n screams loudly, dropping $s $p.", 1, ch, o, NULL, TO_ROOM);
+      act("You scream loudly, dropping your $p.", 1, ch, o, NULL, TO_CHAR);
+    }
+  }
+  
+  
+  rc = ch->reconcileDamage(vict, dam, TYPE_SMITE);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    return DELETE_VICT;
+  return TRUE;
 }
 
-if (!(ch->getFaction() == FACT_BROTHERHOOD)) {
-dam = dam/2;
-act("<1>Your $o rebels against you, releasing <W>energy<1> into your hand!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-act("<1>$n's $o rebels against $m, releasing <W>energy<1> into $s hand!<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-act("<1>$n's $o rebels against $m, releasing <W>energy<1> into $s hand!  Sucker!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-rc = ch->reconcileDamage(ch, dam, TYPE_SMITE);
-if (ch->getHit() < 0) {
-ch->setHit(0);
-ch->setPosition(POSITION_STUNNED);
+
+int stoneSkinAmulet(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
+{
+  TBeing *ch;
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+
+  if (cmd == CMD_SAY || cmd == CMD_SAY2) {
+    char buf[256];
+    one_argument(arg, buf);
+    if(!strcmp(buf, "fortify")) {
+      if(ch->affectedBySpell(SPELL_FLAMING_FLESH)) {
+	act("The $o's cannot function while you are affected by flaming flesh.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return FALSE;
+      } else if(ch->checkForSkillAttempt(SPELL_STONE_SKIN)) {
+	act("The $o's powers can only be used once per day.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	return FALSE;
+      }
+      affectedData aff1, aff2, aff3;
+      
+      act("$n grips $p in one hand, and utters the word, '<p>fortify<1>'.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("<k>The $o glows for a moment, and $s skin suddenly turns rock hard.<1>",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      
+      act("You grip $p in one hand, and utter the word, '<p>fortify<1>'.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("<k>The $o glows for a moment, and your skin suddenly turns rock hard.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      
+      // ARMOR APPLY
+      aff1.type = SPELL_STONE_SKIN;
+      aff1.level = 30;
+      aff1.duration = 8 * UPDATES_PER_MUDHOUR;
+      aff1.location = APPLY_ARMOR;
+      aff1.modifier = -75;
+      
+      // PIERCE IMMUNITY
+      aff2.type = SPELL_STONE_SKIN;
+      aff2.level = 30;
+      aff2.duration = 8 * UPDATES_PER_MUDHOUR;
+      aff2.location = APPLY_IMMUNITY;
+      aff2.modifier = IMMUNE_PIERCE;
+      aff2.modifier2 = 15;
+      
+      // SKILL ATTEMPT (PREVENT IMMEDIATE RE-USE)
+      aff3.type = AFFECT_SKILL_ATTEMPT;
+      aff3.level = 0;
+      aff3.duration = 24 * UPDATES_PER_MUDHOUR;
+      aff3.location = APPLY_NONE;
+      aff3.modifier = SPELL_STONE_SKIN;
+      
+      ch->affectTo(&aff1);
+      ch->affectTo(&aff2);
+      if (!(ch->isImmortal())) ch->affectTo(&aff3);
+      ch->addToWait(combatRound(3));
+      return TRUE;
+    }
+  }
+  return FALSE;
 }
-if (!ch->isTough()) {
-*ch->roomp += *ch->unequip(o->eq_pos);
-act("$n screams loudly, dropping $s $p.", 1, ch, o, NULL, TO_ROOM);
-act("You scream loudly, dropping your $p.", 1, ch, o, NULL, TO_CHAR);
+  
+
+int lifeLeechGlove(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
+{
+  char target[30];
+  TBeing *victim = NULL;
+  TObj *corpse = NULL;
+  TBaseCorpse *body = NULL;
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+  if (cmd == CMD_GRAB) {
+    arg = one_argument(arg, target);
+    int bits = generic_find(target, FIND_CHAR_ROOM | FIND_OBJ_ROOM, ch, &victim, &corpse);
+    if(!bits)
+      return FALSE;
+    if(victim == ch) 
+      act("Dude... like, no.",TRUE,ch,o,victim,TO_CHAR,NULL);
+    if(victim) {
+      int chance = 0,roll = 0;
+      chance = victim->GetMaxLevel() + 30;
+      roll = ::number(1,50+ch->GetMaxLevel());
+      if (chance > roll && victim->getPosition() > POSITION_SLEEPING) {
+	act("You try to grab $N, but $E dodges out of the way.",TRUE,ch,o,victim,TO_CHAR,NULL);
+	act("$n tries to grab you, but you dodge out of the way.",TRUE,ch,o,victim,TO_VICT,NULL);
+	act("$n tries to grab $N, but $E dodges out of the way.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
+	ch->addToWait(combatRound(3));
+	ch->cantHit += ch->loseRound(2);
+	return TRUE;
+      } else if (victim->isUndead()) {  // heheh trying to drain negative plane monsters is BAD!!
+	act("You deftly grab $N, and your $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_CHAR,NULL);
+	act("<k>You scream in pain as your life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_CHAR,NULL);
+	act("Maybe that wasn't such a good idea....",TRUE,ch,o,victim,TO_CHAR,NULL);
+	act("$n deftly grabs you, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_VICT,NULL);
+	act("<k>$n<k> screams in pain as $s life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_VICT,NULL);
+	act("Heh heh heh. That sucker tried to drain an undead!",TRUE,ch,o,victim,TO_VICT,NULL);
+	act("$n deftly grabs $N, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
+	act("<k>$n<k> screams in pain as $s life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_NOTVICT,NULL);       
+	int dam = victim->GetMaxLevel();
+	int rc = victim->reconcileDamage(ch, dam, DAMAGE_DRAIN);
+	victim->setHit(min((int)(victim->getHit() + victim->GetMaxLevel()),(int)(victim->hitLimit())));
+	if (rc == -1)
+	  delete victim;
+	ch->addToWait(combatRound(3));
+	ch->cantHit += ch->loseRound(2);
+	return TRUE;
+      }
+      act("You deftly grab $N, and your $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_CHAR,NULL);
+      act("<k>$N<k> screams in pain as you leech the life from $S body!<1>",TRUE,ch,o,victim,TO_CHAR,NULL);
+      act("$n deftly grabs you, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_VICT,NULL);
+      act("<k>You scream in pain as $n<k> leeches the life from your body!<1>",TRUE,ch,o,victim,TO_VICT,NULL);
+      act("$n deftly grabs $N, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
+      act("<k>$N<k> screams in pain as $n<k> leeches the life from $S body!<1>",TRUE,ch,o,victim,TO_NOTVICT,NULL);       
+      int dam = victim->GetMaxLevel();
+      int rc = ch->reconcileDamage(victim, dam, DAMAGE_DRAIN);
+      ch->setHit(min((int)(ch->getHit() + victim->GetMaxLevel()),(int)(ch->hitLimit())));
+      if (rc == -1)
+	delete victim;
+      ch->addToWait(combatRound(3));
+      ch->cantHit += ch->loseRound(2);
+      return TRUE;
+    }
+    if ((body = dynamic_cast<TBaseCorpse *>(corpse))) {
+      if (corpse->getMaterial() == MAT_POWDER || body->getCorpseLevel() <= 0) {
+	act("There is no life left in $N to leech!",TRUE,ch,o,body,TO_CHAR,NULL);
+	return TRUE;
+      }
+      act("You place your hand over $N, and your $o begins to glow with <r>sickly light<1>.",TRUE,ch,o,body,TO_CHAR,NULL);
+      act("<k>As you leech life, $N<k> visibly withers and begins to decompose rapidly.<1>",TRUE,ch,o,body,TO_CHAR,NULL);
+      
+      act("$n places $s hand over $N, and $s $o begins to glow with <r>sickly light<1>.",TRUE,ch,o,body,TO_ROOM,NULL);
+      act("<k>As $e leechs life, $N<k> visibly withers and begins to decompose rapidly<1>.",TRUE,ch,o,body,TO_ROOM,NULL);
+      
+      body->obj_flags.decay_time = 0;
+      ch->setHit(min((int)(ch->getHit() + body->getCorpseLevel()),(int)(ch->hitLimit())));
+      body->setCorpseLevel(0);
+      
+      ch->addToWait(combatRound(3));
+      ch->cantHit += ch->loseRound(2);
+      
+      return TRUE;
+    }
+  }
+  return FALSE;
 }
+
+int sunCircleAmulet(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
+{
+  TBeing *ch;
+  
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;
+
+  if (cmd == CMD_SAY || cmd == CMD_SAY2) {
+    char buf[256];
+    one_argument(arg, buf);
+    if(!strcmp(buf, "whullalo")) {
+      TObj *portal;
+      act("You grasp $p and utter the word '<p>whullalo<1>'.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("$n grasps $p and utters the word '<p>whullalo<1>'.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      if(ch->inRoom() != 30770) {
+	act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+	return TRUE;
+      } else if (!(portal = read_object(30750, VIRTUAL))) {
+	act("Problem in Sun Circle Amulet, tell a god you saw this.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+	act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+	vlogf(LOG_PROC, "Unable to load portal for sunCircleAmulet() proc. DASH!!");
+	return TRUE;
+      }
+      act("The runes on the center stone flare in respone to the <Y>$o's power<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("A beam of <c>energy<1> erupts from the center stone, ripping a hole in the fabric of reality!",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("It seems $n has caused a <W>portal<1> to another realm to open here.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+      act("The runes on the center stone flare in respone to the <Y>$o's power<1>.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("A beam of <c>energy<1> erupts from the center stone, ripping a hole in the fabric of reality!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      act("It seems you have caused a <W>portal<1> to another realm to open here.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+      *ch->roomp += *portal;
+      
+      return TRUE;
+    }
+  }
+  return FALSE;
 }
 
 
-rc = ch->reconcileDamage(vict, dam, TYPE_SMITE);
-if (IS_SET_DELETE(rc, DELETE_VICT))
-  return DELETE_VICT;
-return TRUE;
-}
+//MARKER: END OF SPEC PROCS
+
 
 extern int board(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponBlinder(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
@@ -3172,10 +3735,17 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {TRUE, "Energy Beam Weapon", energyBeam},
   {TRUE, "Viper Weapon (poison)", poisonViperBlade},
   {FALSE, "trolley", trolley},
-  {FALSE, "Unused", NULL}, // 55
+  {FALSE, "Stone Skin Amulet", stoneSkinAmulet}, // 55
   {FALSE, "Razor Glove", razorGlove},
   {FALSE, "ShadowSlayer", weaponShadowSlayer},
   {FALSE, "Squirt Gun", squirtGun},
+  {FALSE, "Glory Weapon", blazeOfGlory},
+  {TRUE, "Elemental Weapon", elementalWeapon}, // 60
+  {FALSE, "Life Leech Glove", lifeLeechGlove},
+  {TRUE, "Mechanical Wings", mechanicalWings},
+  {FALSE, "Key in Knife",  keyInKnife},
+  {FALSE, "Teleport Vial", teleportVial},
+  {FALSE, "Sun Circle Amulet", sunCircleAmulet}, // 65
 };
 
 

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: monster.h,v $
+// Revision 5.1.1.2  1999/10/18 15:25:43  batopr
+// Converted some funcs to use spellNumT arguments
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -505,7 +508,7 @@ class TMonster : public TBeing {
     void genericMobLoader(TRealContainer **);
     virtual int hitGain();
     virtual int manaGain();
-    virtual int rawKill(int);
+    virtual int rawKill(spellNumT);
     virtual int doQuit2();
     virtual void wizFileSave();
     virtual bool isDragonRideable() const;

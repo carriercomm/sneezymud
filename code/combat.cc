@@ -307,7 +307,7 @@ void TBeing::updatePos()
 }
 
 // always returns DELETE_THIS
-int TMonster::rawKill(int dmg_type)
+int TMonster::rawKill(spellNumT dmg_type)
 {
   TBeing *mob = NULL, *per = NULL;
 
@@ -347,7 +347,7 @@ int TMonster::rawKill(int dmg_type)
 }
 
 // always returns DELETE_THIS
-int TBeing::rawKill(int dmg_type)
+int TBeing::rawKill(spellNumT dmg_type)
 {
   if (fight())  {
     followData *f;
@@ -424,7 +424,7 @@ int TBeing::rawKill(int dmg_type)
 
 // returns DELETE_THIS is this should die
 // otherwise FALSE
-int TBeing::die(int dam_type)
+int TBeing::die(spellNumT dam_type)
 {
   Descriptor *d;
   TRoom *rp;
@@ -485,7 +485,7 @@ int TBeing::die(int dam_type)
   return DELETE_THIS;
 }
 
-int TBeing::dieReturn(const char *, int dam_type, int cmd)
+int TBeing::dieReturn(const char *, spellNumT dam_type, int cmd)
 {
   TBeing *mob = NULL, *per = NULL;
 

@@ -1381,10 +1381,10 @@ class TBeing : public TThing {
     int setVictFighting(TBeing *, int dam = 0);
     void setFighting(TThing *, int, bool);
     int damageTrivia(TBeing *v, TThing *o, int dam, spellNumT type);
-    void doDamage(int, int);
+    void doDamage(int, spellNumT);
     int tellStatus(int, int, int);
     int getActualDamage(TBeing *, TThing *, int, spellNumT);
-    int damageEm(int, string, int);
+    int damageEm(int, string, spellNumT);
     int skipImmortals(int) const;
     int applyDamage(TBeing *, int, spellNumT);
     int preProcDam(spellNumT, int) const;
@@ -1737,7 +1737,7 @@ class TBeing : public TThing {
     void saveChar(short int);
     int doFlee(const char *);
     int doDisarm(const char *, TThing *);
-    int dieReturn(const char *, int, int);
+    int dieReturn(const char *, spellNumT, int);
     void doReturn(const char *, wearSlotT, bool);
     int doWearOffReturn();
     int doHit(const char *, TBeing *);

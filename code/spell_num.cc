@@ -823,6 +823,8 @@ int mapSpellnumToFile(spellNumT stt)
       return 2516;
     case AFFECT_PLAYERKILL:
       return 2517;
+    case AFFECT_HORSEOWNED:
+      return 2518;
     case SPELL_FIRE_BREATH:
     case SPELL_CHLORINE_BREATH:
     case SPELL_FROST_BREATH:
@@ -920,7 +922,6 @@ int mapSpellnumToFile(spellNumT stt)
     case TYPE_KICK:
     case TYPE_MAUL:
     case TYPE_MAX_HIT:
-    case AFFECT_HORSEOWNED:
     case LAST_ODDBALL_AFFECT:
       break;
   }
@@ -1639,6 +1640,8 @@ spellNumT mapFileToSpellnum(int stt)
       return AFFECT_ORPHAN_PET;
     case 2517:
       return AFFECT_PLAYERKILL;
+    case 2518:
+      return AFFECT_HORSEOWNED;
     default:
       break;
   }

@@ -655,10 +655,13 @@ static bool immortalityNukeCheck(TBeing *ch, TObj * new_obj, bool corpse)
     autoMail(ch, NULL, buf);
     vlogf(LOG_SILENT, "%s's %s being recycled due to immortality.", ch->getName(), new_obj->getName());
 
+#if 0
+// noteLimited is increasing the counter, so skip this kludge bat 12/17/99
     // noteLimited didn't increment the counter for this item, so
     // we need to adjust number to make up for this delete
     if (new_obj->isRare() && (new_obj->number >= 0))
       obj_index[new_obj->number].number++;
+#endif
 
     delete new_obj;
     new_obj = NULL;
@@ -2425,8 +2428,11 @@ bool noteLimitedItems(FILE * fp, const char *tag, unsigned char version, bool im
         continue;
       }
       if (item.item_number != GENERIC_NOTE) {
+#if 0
+// not needed, count items owned by imms in rent (number should reflect them)
+// otherwise whacky things happen, bat 12/17/99
         if (immortal && shouldRecycle(robj)) {
-          vlogf(LOG_SILENT, "     [%d] - %s (recycled due to immortality)", item.item_number, tag);
+          vlogf(LOG_MISC, "     [%d] - %s (recycled due to immortality)", item.item_number, tag);
 
           // for now, we'll skip incrementing counter and remove it
           // from them on login
@@ -2435,6 +2441,7 @@ bool noteLimitedItems(FILE * fp, const char *tag, unsigned char version, bool im
           delete [] s;
           continue;
         }
+#endif
         vlogf(LOG_MISC, "     [%d] - %s%s", item.item_number, tag, immortal ? "  (immortal)" : "");
         obj_index[robj].number++;
       } else {

@@ -1,6 +1,8 @@
 #include "stdsneezy.h"
 #include "combat.h"
 
+//#define ALLOW_STAB_SEVER
+
 spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSlotT tLimb, int & tDamage, int tSever)
 {
   const float tDamageValues[MAX_WEAR] =
@@ -130,6 +132,113 @@ spellNumT doStabMsg(TBeing *tThief, TBeing *tSucker, TGenWeapon *tWeapon, wearSl
     act(tStringChar, FALSE, tThief, tWeapon, tSucker, TO_CHAR);
     act(tStringVict, FALSE, tThief, tWeapon, tSucker, TO_VICT);
     act(tStringOthr, FALSE, tThief, tWeapon, tSucker, TO_NOTVICT);
+
+    if (tLimb == WEAR_NECK)
+      tSucker->makeBodyPart(WEAR_HEAD);
+  } else {
+    // Apply some limb damage and have a *Very* remote chance of whacking the limb off.
+
+    int tHardness = material_nums[tSucker->getMaterial()].hardness *
+                    tSucker->getCurLimbHealth(tLimb) /
+                    tSucker->getMaxLimbHealth(tLimb);
+    int tRc;
+
+    // This was mostly pulled from combat.cc:damageLimb()
+    if ((::number(1, (tSucker->getMaxLimbHealth(tLimb) / 4)) < tDamage) &&
+        (::number(1, 101) >= (tSucker->getConShock() / 3)) &&
+        (!tHardness || (::number(1, 101) >= (tHardness / 2)))) {
+      float tNewDamage = (tDamage * (25 + tThief->GetMaxLevel()));
+
+      tNewDamage /= 100; // Make the damage *REAL* light
+      tNewDamage = max((float) 0.0, tNewDamage);
+
+      // These limbs should be VERY difficult to damage with this.
+      if (tLimb == WEAR_HEAD ||
+          tLimb == WEAR_NECK ||
+          tLimb == WEAR_BODY ||
+          tLimb == WEAR_BACK ||
+          tLimb == WEAR_WAISTE)
+        tNewDamage /= 10;
+
+      tRc = tSucker->hurtLimb(tNewDamage, tLimb);
+
+      if (IS_SET_DELETE(tRc, DELETE_THIS)) {
+        tDamage = -1;
+        return tDamageType;
+      }
+
+      // If weapon is poisoned, then toss that sucker in there!
+      // limb bleeding == poison victim
+      // not bleeding  == infect limb
+      for (int tSwingIndex = 0; tSwingIndex < MAX_SWING_AFFECT; tSwingIndex++) {
+        int tDuration = (tThief->GetMaxLevel() * UPDATES_PER_TICK);
+
+        if (tWeapon->oneSwing[tSwingIndex].bitvector == AFF_POISON)
+          if (tSucker->isLimbFlags(tLimb, PART_BLEEDING) &&
+              !tSucker->isAffected(AFF_POISON)) {
+            if (!tSucker->isImmune(IMMUNE_POISON, tThief->GetMaxLevel()) && !::number(0, 9)) {
+              affectedData tAff;
+
+              tAff.type      = SPELL_POISON;
+              tAff.duration  = tDuration;
+              tAff.modifier  = 0;
+              tAff.location  = APPLY_NONE;
+              tAff.bitvector = AFF_POISON;
+
+              tSucker->affectJoin(NULL, &tAff, AVG_DUR_NO, AVG_EFF_NO);
+
+              act("You poison $N with your stab!",
+                  FALSE, tThief, NULL, tSucker, TO_CHAR);
+              act("You begin to feel strange, that bastard $n just poisoned you!",
+                  FALSE, tThief, NULL, tSucker, TO_VICT);
+              act("$N gets a strange look on their face, apparently they are now poisoned!",
+                  FALSE, tThief, NULL, tSucker, TO_NOTVICT);
+            }
+          } else if (!tSucker->isLimbFlags(tLimb, PART_INFECTED))
+            if (!::number(0, 9) &&
+                tSucker->rawInfect(tLimb, tDuration, SILENT_YES, CHECK_IMMUNITY_YES)) {
+              sprintf(tStringChar, "Your stab to $N's %s infects it!", tStLimb.c_str());
+              sprintf(tStringVict, "Your %s gets infected from $n's stab!", tStLimb.c_str());
+              sprintf(tStringOthr, "$N's %s gets infected from $n's stab!", tStLimb.c_str());
+
+              act(tStringChar, FALSE, tThief, NULL, tSucker, TO_CHAR);
+              act(tStringVict, FALSE, tThief, NULL, tSucker, TO_VICT);
+              act(tStringOthr, FALSE, tThief, NULL, tSucker, TO_NOTVICT);
+            }
+      }
+    } else {
+#if ALLOW_STAB_SEVER
+      // Here is where we check the tSever bit.
+      // Crit 3: 30 : 31 in 531
+      // Crit 2: 15 : 16 in 516
+      // Crit 1:  5 :  6 in 506
+      // Normal:  0 :  1 in 501
+
+      int tNewSever = (int) (((float)tSever * -tDamageValues[tLimb]) - 4.0);
+
+      // We further modify it based on the limb for a reason:
+      // Chance for whacking:
+      // Head   :  2 (can not be whacked)
+      // Neck   :  1 (can not be whacked)
+      // Body   :  1 (can not be whacked)
+      // Back   :  1 (can not be whacked)
+      // Arms   :  0 (can     be whacked)
+      // Waiste :  2 (can not be whacked)
+      // Legs   :  1 (can not be whacked)
+      // Fingers: -4 (can     be whacked)
+      if (::number(tNewSever, 500) <= 0 && !tSucker->isLucky(tSucker->GetMaxLevel())) {
+        sprintf(tStringChar, "You slice $N's %s right off!", tStLimb.c_str());
+        sprintf(tStringVict, "$n slices your %s right off!", tStLimb.c_str());
+        sprintf(tStringOthr, "$n slices $N's %s right off!", tStLimb.c_str());
+
+        tSucker->makePartMissing(tLimb, false);
+
+        act(tStringChar, FALSE, tThief, NULL, tSucker, TO_CHAR);
+        act(tStringVict, FALSE, tThief, NULL, tSucker, TO_VICT);
+        act(tStringOthr, FALSE, tThief, NULL, tSucker, TO_NOTVICT);
+      }
+#endif
+    }
   }
 
   return tDamageType;
@@ -235,7 +344,8 @@ static int stab(TBeing *thief, TBeing * victim)
 
       spellNumT tDamageType = doStabMsg(thief, victim, obj, tLimb, dam, tSever);
 
-      if (thief->reconcileDamage(victim, dam, tDamageType) == -1)
+      // If they got nuked in doStabMsg then work with that.
+      if (dam == -1 || thief->reconcileDamage(victim, dam, tDamageType) == -1)
         return DELETE_VICT;
 
       return FALSE;

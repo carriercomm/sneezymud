@@ -1371,6 +1371,8 @@ int mapDoorTrapToFile(doorTrapT dt)
       return 14;
     case DOOR_TRAP_PEBBLE:
       return 15;
+    case MAX_TRAP_TYPES:
+      break;
   }
 
   forceCrash("Bad value (%d) in mapDoorTrapToFile", dt);

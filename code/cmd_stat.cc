@@ -918,6 +918,11 @@ void TBeing::statBeing(TBeing *k)
       sprintf(buf + strlen(buf), 
                 "     Expires in %d updates.  Status = %d.\n\r",
           aff->duration , aff->level);
+    } else if (aff->type == AFFECT_THRALL) {
+      sprintf(buf + strlen(buf), "thrall of: '%s'\n\r", ((char *) aff->be));
+      sprintf(buf + strlen(buf), 
+                "     Expires in %d updates.  Status = %d.\n\r",
+          aff->duration , aff->level);
     } else if (aff->type == AFFECT_PET) {
       sprintf(buf + strlen(buf), "pet of: '%s'\n\r", ((char *) aff->be));
       sprintf(buf + strlen(buf), 

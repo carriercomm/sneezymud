@@ -3520,6 +3520,16 @@ int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
 {
   TBeing *vict;
   int rc;
+  TObj *obj;
+
+  if(cmd == CMD_GENERIC_PULSE){
+    if(1 || !::number(0,100) && me->roomp && 
+       (obj = read_object(10030, VIRTUAL))){
+      *me->roomp += *obj;
+      act("$n defecates on the $g.",
+	  TRUE, me, NULL, NULL, TO_ROOM);
+    }
+  }
 
   if ((cmd != CMD_MOB_COMBAT) || !me->awake())
     return FALSE;

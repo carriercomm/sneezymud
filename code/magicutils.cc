@@ -1146,6 +1146,16 @@ int TBeing::rawSleep(int level, int duration, int crit, saveTypeT save)
   }
   setPosition(POSITION_SLEEPING);
 
+  // stop all fighting me too
+  TThing *t;
+  for (t = roomp->stuff; t; t = t->nextThing) {
+    TBeing *ch = dynamic_cast<TBeing *>(t);
+    if (!ch)
+      continue;
+    if (ch->fight() == this)
+      ch->stopFighting();
+  }
+ 
   return FALSE;
 }
 

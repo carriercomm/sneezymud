@@ -738,7 +738,6 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
               page_string(iostring.c_str(), SHOWNOW_YES);
             }
           }
-
           // we ought to allow for them to enter the password here, but oh well
 
           outputProcessing();
@@ -752,6 +751,9 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       }
       break;
     }
+    case CLIENT_NEWACCOUNT:
+      clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
+      break;
     default:
       vlogf(LOG_CLIENT, "Bad type in read_client (%d)", type);
       break;

@@ -996,7 +996,8 @@ int TBeing::moveGroup(dirTypeT dir)
         // sanity check, necessary cuz things going whacky occasionally
         // bat - 11/19/99
         if (tft->master != this) {
-          forceCrash("Bad critter looping through moveGroup()!");
+          // this happens, but I guess it's safe to just ignore
+          vlogf(10, "ERROR: Bad critter looping through moveGroup()! (this=[%s], badguy=[%s], master=[%s])", getName(), tft->getName() ? tft->getName() : "NoName", tft->master ? tft->master->getName() : "NoMaster");
           continue;
         }
 

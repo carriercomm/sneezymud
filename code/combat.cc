@@ -4588,25 +4588,6 @@ static int FRACT(TBeing *ch, TBeing *v)
 }
 
 
-void update_trophy(const char *name, int vnum, double add){
-  int rc;
-  char buf[256];
-  MYSQL_RES *res;
-
-  if(vnum==-1 || !name){ return; }
-  
-  if((rc=dbquery(&res, "sneezy", "update_trophy(1)", "insert ignore into trophy values ('%s', %i, 0)", name, vnum))){
-    if(rc==-1){
-      vlogf(LOG_BUG, "Database error in update_trophy");
-    }
-  }
-  sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", add, name, vnum);
-  if((rc=dbquery(&res, "sneezy", "update_trophy(2)", buf))){
-    if(rc==-1)
-      vlogf(LOG_BUG, "Database error in update_trophy");
-  }
-}
-
    
 #define EXP_DEBUG      0 
 void TBeing::gainExpPerHit(TBeing *v, double percent)
@@ -4658,7 +4639,6 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
     vlogf(LOG_COMBAT, "%s got %d.  perc  %f, %s lost %d",getName(),exp_received * fract / 100, percent, v->getName(), exp_received);
 #endif
     gain_exp(this, exp_received * fract/ 100);
-    update_trophy(this->getName(), v->mobVnum(), percent);
     gain_exp(v, -exp_received);
     return;
 
@@ -4683,7 +4663,6 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
       vlogf(LOG_COMBAT, "%s got %d.  perc  %f, %s lost %d",getName(),exp_received * fract / 100, percent, v->getName(), exp_received);
 #endif
       gain_exp(this, exp_received * fract/ 100);
-      update_trophy(this->getName(), v->mobVnum(), percent);
       gain_exp(v, -exp_received );
       return;
     } else {  //more than one in my group in room
@@ -4752,7 +4731,6 @@ void TBeing::gainExpPerHit(TBeing *v, double percent)
     if (inGroup(*f->follower) && sameRoom(*f->follower)) {
       exp_received = (tmp_exp * f->follower->getExpShare());
       gain_exp(f->follower, exp_received * fract/ 100);
-      update_trophy(f->follower->getName(), v->mobVnum(), tmp_perc * f->follower->getExpShare());
 #if EXP_DEBUG
       vlogf(LOG_COMBAT, "%s got %d.  perc  %f, %s lost %d",f->follower->getName(),exp_received * fract / 100, percent, v->getName(), exp_received);
 #endif

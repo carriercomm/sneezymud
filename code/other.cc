@@ -365,9 +365,9 @@ static int splitShares(const TBeing *ch, const TBeing *k)
 
   // what's left are basically mobs
   // pets and mounts are not forced to fight, so if they do, give 1 share
-  if (k->isMount() || k->isPet(PETTYPE_PET))
-    return 1;
-
+//  if (k->isMount() || k->isPet(PETTYPE_PET))
+//    return 1;
+// Took out splitting with pets 4/25/01 -- Cos
   return 0;
 }
 
@@ -402,10 +402,18 @@ void TBeing::doSplit(const char *argument, bool tell)
     // If I am here, I should get my share.
     no_members = splitShares(this, k);
 
-    for (f = k->followers; f; f = f->next)
+    int num_pc_foll = 0;
+    for (f = k->followers; f; f = f->next) {
       no_members += splitShares(this, f->follower);
+      // took out splitting with pets 4/25/01 -- cos
+        // still need loop no matter what, the no_members tracks total
+      if ((k == this)) {
+        if (f->desc)
+	  num_pc_foll++;
+      }
+    }
 
-    if ((no_members <= 1) || !isAffected(AFF_GROUP)) {
+    if ((!master && !num_pc_foll) || (no_members <= 1) || !isAffected(AFF_GROUP)) {
       // the auto-split logic kicks us in here
       // for some cases when it is not necessary to split
       // e.g. grouped with my pet

@@ -3373,7 +3373,21 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
           return DELETE_THIS;
         
         return TRUE;
+      } else if(tch->hasDisease(DISEASE_LEPROSY)){
+	if(!ch->checkSoundproof())
+	  act("$n screams 'There is no mercy for your kind, leper!'", FALSE, ch, 0, 0, TO_ROOM);
+
+	rc=ch->takeFirstHit(*tch);
+	
+
+        if (IS_SET_DELETE(rc, DELETE_VICT)) {
+          delete tch;
+          tch = NULL;
+        } else if (IS_SET_DELETE(rc, DELETE_THIS)) 
+          return DELETE_THIS;
+	return TRUE;
       }
+
     } else {
       // an undead or demon guard
       if (!tch->isUndead() && !tch->isDiabolic()) {

@@ -681,11 +681,17 @@ void loadSetClass::suitAdd(const char *tName, int tHelm, int tCollar,
                        bool otherClass = false;
 
         if (classValue == CLASS_MONK &&
+            dynamic_cast<TArmor *>(tObj))
+          otherClass = true;
+
+		       /*
+        if (classValue == CLASS_MONK &&
             !tObj->canWear(ITEM_WEAR_FINGER) &&
             ((tObj->getMaterial() >= 100 && tObj->getMaterial() != MAT_BONE) ||
              tObj->getMaterial() == MAT_IRON ||
              dynamic_cast<TArmor *>(tObj)))
           otherClass = true;
+		       */
 
         if (classValue == CLASS_RANGER && tObj->isMetal() &&
             dynamic_cast<TArmor *>(tObj) && !tObj->canWear(ITEM_WEAR_FINGER))

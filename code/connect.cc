@@ -51,7 +51,6 @@ static const char * const TER_DWARF_HELP = "help/territory help dwarf";
 static const char * const TER_GNOME_HELP = "help/territory help gnome";
 static const char * const TER_OGRE_HELP = "help/territory help ogre";
 static const char * const TER_HOBBIT_HELP = "help/territory help hobbit";
-static const char * const SIGN_MESS = "/mud/sign/currentMess";
 
 Descriptor::Descriptor() :
   output(true),

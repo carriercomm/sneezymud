@@ -360,7 +360,7 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
   sprintf(buf, "%s ", fname(name).c_str());
   strcat(buf, fname(the_arrow->name).c_str());
   bool hasAnotherArrow = false;
-  if (findArrow(the_arrow->name, SILENT_YES))
+  if (ch->findArrow(the_arrow->name, SILENT_YES))
     hasAnotherArrow = true;
 
   rc = throwThing(the_arrow, dir, ch->in_room, &targ, shoot_dist, max_distance, ch);

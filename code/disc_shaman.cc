@@ -28,7 +28,7 @@ int createGolem(TBeing * caster, int target, int power, int level, byte bKnown)
       golem->stopFollower(TRUE);
     caster->addFollower(golem);
 
-    aff.type = SPELL_ENSORCER;
+    aff.type = SPELL_CREATE_GOLEM;
     aff.level = level;
     aff.location = APPLY_NONE;
     aff.modifier = 0;
@@ -36,6 +36,10 @@ int createGolem(TBeing * caster, int target, int power, int level, byte bKnown)
     aff.duration = caster->followTime(); 
     aff.duration = (int) (caster->percModifier() * aff.duration);
 
+    golem->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
     golem->affectTo(&aff);
 
     if (critSuccess(caster, SPELL_CREATE_GOLEM)) {
@@ -181,7 +185,7 @@ int controlUndead(TBeing *caster,TBeing *victim,int level,byte bKnown)
       victim->stopFollower(TRUE);
     caster->addFollower(victim);
 
-    aff.type = SPELL_ENSORCER;
+    aff.type = SPELL_CONTROL_UNDEAD;
     aff.level = level;
     aff.modifier = 0;
     aff.location = APPLY_NONE;
@@ -202,6 +206,11 @@ int controlUndead(TBeing *caster,TBeing *victim,int level,byte bKnown)
         break;
     } 
     victim->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
     if (!victim->isPc())
       dynamic_cast<TMonster *>(victim)->genericCharmFix();
 
@@ -362,7 +371,7 @@ int voodoo(TBeing * caster, TObj * obj, int level, byte bKnown)
     act("$N slowly begins to move...it's slowly standing up!", 
              FALSE, caster, NULL, mob, TO_ROOM);
 
-    aff.type = SPELL_ENSORCER;
+    aff.type = SPELL_VOODOO;
     aff.level = level;
     aff.location = APPLY_NONE;
     aff.modifier = 0;
@@ -372,6 +381,10 @@ int voodoo(TBeing * caster, TObj * obj, int level, byte bKnown)
 
     aff.duration *= 2;   // zombie adjustment
 
+    mob->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
     mob->affectTo(&aff);
 
     return SPELL_SUCCESS + VICTIM_DEAD;
@@ -525,7 +538,7 @@ const int OBJ_6  = 10702; // runed obsidian sword
   if (bSuccess(caster, bKnown, caster->getPerc(), SPELL_CACAODEMON)) {
     caster->addFollower(el);
 
-    aff.type = SPELL_ENSORCER;
+    aff.type = SPELL_CACAODEMON;
     aff.level = level;
     aff.duration = caster->followTime(); 
     aff.modifier = 0;
@@ -540,6 +553,10 @@ const int OBJ_6  = 10702; // runed obsidian sword
       aff.duration /= 2;
     }
 
+    el->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
     el->affectTo(&aff);
 
     return SPELL_SUCCESS;
@@ -610,20 +627,25 @@ int resurrection(TBeing * caster, TObj * obj, int level, byte bKnown)
       act("$N refuses to enter a group the size of yours!", TRUE, caster, NULL, victim, TO_CHAR);
       act("$N refuses to enter a group the size of $n's!", TRUE, caster, NULL, victim, TO_ROOM);
       return SPELL_FALSE;
-    } else {
-      aff.type      = SPELL_ENSORCER;
-      aff.duration = caster->followTime(); 
-      aff.duration = (int) (caster->percModifier() * aff.duration);
-      aff.modifier = 0;
-      aff.location = APPLY_NONE;
-      aff.bitvector = AFF_CHARM;
     }
+
+    aff.type      = SPELL_RESURRECTION;
+    aff.duration = caster->followTime(); 
+    aff.duration = (int) (caster->percModifier() * aff.duration);
+    aff.modifier = 0;
+    aff.location = APPLY_NONE;
+    aff.bitvector = AFF_CHARM;
 
     if (critSuccess(caster, SPELL_RESURRECTION)) {
       CS(SPELL_RESURRECTION);
       aff.duration *= 2;
     }
     victim->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
     caster->addFollower(victim);
     victim->setCarriedWeight(0.0);
     victim->setCarriedVolume(0);
@@ -823,7 +845,7 @@ int dancingBones(TBeing * caster, TObj * obj, int level, byte bKnown)
     act("$N slowly begins to move...it's slowly standing up!", 
              FALSE, caster, NULL, mob, TO_ROOM);
 
-    aff.type = SPELL_ENSORCER;
+    aff.type = SPELL_DANCING_BONES;
     aff.level = level;
     aff.location = APPLY_NONE;
     aff.modifier = 0;
@@ -833,6 +855,10 @@ int dancingBones(TBeing * caster, TObj * obj, int level, byte bKnown)
 
     aff.duration *= 3;   // skeleton adjustment
 
+    mob->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
     mob->affectTo(&aff);
 
     return SPELL_SUCCESS + VICTIM_DEAD;

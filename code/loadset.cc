@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: loadset.cc,v $
+// Revision 5.1.1.2  1999/11/02 17:11:55  lapsos
+// Loadset now accepts non-clothing as slot options.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -428,21 +431,29 @@ void TBeing::loadSetEquipment(int num, char *arg, int tChance)
               StString += tString;
 
               if (suitSets.suits[suitIndex].equipment[pieceIndex] > -1) {
+                TThing        *tThing  = NULL;
                 TBaseClothing *tBCloth = NULL;
 
                 int rNum = real_object(suitSets.suits[suitIndex].equipment[pieceIndex]);
                 if (rNum < 0 || rNum >= (signed) obj_index.size() ||
-                    !(tBCloth = dynamic_cast<TBaseClothing *>(read_object(rNum, REAL))))
+                    !(tThing = read_object(rNum, REAL)))
                   StString += " ***Not Found***\n\r";
                 else {
-                  sprintf(tString, " [R:%6.2f] %s [%s] [%s]\n\r",
-                          tBCloth->armorLevel(ARMOR_LEV_REAL),
-                          suitClasses,
-                          tBCloth->getName(),
-                          material_nums[tBCloth->getMaterial()].mat_name);
+                  if ((tBCloth = dynamic_cast<TBaseClothing *>(tThing)))
+                    sprintf(tString, " [R:%6.2f] %s [%s] [%s]\n\r",
+                            tBCloth->armorLevel(ARMOR_LEV_REAL),
+                            suitClasses,
+                            tBCloth->getName(),
+                            material_nums[tBCloth->getMaterial()].mat_name);
+                  else
+                    sprintf(tString, " [R:      ] %s [%s] [%s]\n\r",
+                            suitClasses,
+                            tThing->getName(),
+                            material_nums[tThing->getMaterial()].mat_name);
+
                   StString += tString;
-                  delete tBCloth;
-                  tBCloth = NULL;
+                  delete tThing;
+                  tThing = NULL;
                 }
               } else
                 StString += "\n\r";
@@ -667,11 +678,13 @@ void loadSetClass::suitAdd(const char *tName, int tHelm, int tCollar,
     TObj          *tObj = read_object(realVNum, REAL);
     TBaseClothing *tClothing;
 
-    if (!tObj || !(tClothing = dynamic_cast<TBaseClothing *>(tObj)))
+    if (!tObj)
       newSuitStruct.equipment[suitIndex] = -1;
     else {
-      newSuitStruct.suitLevel += tClothing->armorLevel(ARMOR_LEV_REAL);
-      suitCount++;
+      if ((tClothing = dynamic_cast<TBaseClothing *>(tObj))) {
+        newSuitStruct.suitLevel += tClothing->armorLevel(ARMOR_LEV_REAL);
+        suitCount++;
+      }
 
       for (int classIndex = MIN_CLASS_IND; classIndex < MAX_CLASSES; classIndex++) {
         unsigned short int  classValue = (1 << classIndex);
@@ -697,6 +710,7 @@ void loadSetClass::suitAdd(const char *tName, int tHelm, int tCollar,
       }
 
       delete tObj;
+      tObj = NULL;
     }
   }
 

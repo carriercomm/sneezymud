@@ -2745,6 +2745,16 @@ void TBeing::doFollow(const char *argument)
 
 void TBeing::setPosition(positionTypeT pos)
 {
+  // Take care of possible riders.
+  if (rider && pos < POSITION_RESTING) {
+    act("Your mounts change in position forces you off.",
+        FALSE, rider, NULL, this, TO_CHAR);
+    act("$n is forced off $N.",
+        FALSE, rider, NULL, this, TO_ROOM);
+
+    rider->dismount((!::number(0, 9) ? POSITION_STANDING : POSITION_SITTING));
+  }
+
   if (dynamic_cast<TBeing *>(riding) && 
       (pos != POSITION_FIGHTING) && (pos != POSITION_MOUNTED)) {
     // for debug

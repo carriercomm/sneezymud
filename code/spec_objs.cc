@@ -2287,6 +2287,11 @@ int daySword(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   if (!ch)
     return FALSE;
 
+  if (!ch->outside())
+    return false;
+  if (!is_daytime())
+    return false;
+
   act("A pulse of light as bright as the sun travels up the blade of $p.",
       FALSE, ch, o, NULL, TO_CHAR, ANSI_YELLOW);
   act("A pulse of light as bright as the sun travels up the blade of $p.",

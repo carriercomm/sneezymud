@@ -143,10 +143,9 @@ LDFLAGS +=-lmysqlclient
 ###############################################################################
 
 OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
-	alignment_deity.o ansi.o appliedsub.o \
-	bag.o bandaid.o base_clothing.o base_corpse.o \
-	base_cup.o base_light.o base_weapon.o bed.o being.o blackjack.o \
-	board.o boat.o body.o book.o bounty_hunter.o bow.o breath.o cards.o \
+	alignment_deity.o ansi.o \
+	being.o blackjack.o body.o \
+	bounty_hunter.o breath.o cards.o \
 	chest.o client.o \
 	cmd_attribute.o \
 	cmd_bash.o cmd_bodyslam.o cmd_charge.o cmd_chop.o \
@@ -188,7 +187,11 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	magic_skills.o magicutils.o mail.o makecorpse.o materials.o \
 	meeting.o mob_loader.o mobact.o money.o monster.o movement.o \
 	multiclass.o newbie.o note.o obj.o \
-	obj_armor.o obj_armor_wand.o obj_arrow.o obj_audio.o \
+	obj_armor.o obj_armor_wand.o obj_arrow.o obj_appliedsub.o \
+	obj_audio.o \
+	obj_bag.o obj_bandaid.o obj_base_clothing.o obj_base_corpse.o \
+	obj_base_cup.o obj_base_light.o obj_base_weapon.o obj_bed.o \
+	obj_board.o obj_boat.o obj_book.o obj_bow.o \
 	obj_scroll.o obj_seethru.o obj_smoke.o obj_spellbag.o \
 	obj_staff.o obj_statue.o obj_symbol.o \
 	obj_table.o obj_tool.o obj_trap.o \
@@ -290,14 +293,8 @@ $(OBJDIR)ai_commands.o: combat.h
 $(OBJDIR)ai_reactions.o: combat.h
 $(OBJDIR)ai_responses.o: combat.h parse.h
 $(OBJDIR)ai_utility.o: combat.h
-$(OBJDIR)appliedsub.o: create_engine.h
-$(OBJDIR)base_clothing.o: shop.h
-$(OBJDIR)base_weapon.o: combat.h statistics.h shop.h
-$(OBJDIR)bed.o: $(CASINO_HEADS)
 $(OBJDIR)blackjack.o: $(CASINO_HEADS)
-$(OBJDIR)board.o: board.h
 $(OBJDIR)bounty_hunter.o: shop.h
-$(OBJDIR)bow.o: range.h
 $(OBJDIR)cards.o: $(CASINO_HEADS)
 $(OBJDIR)client.o: statistics.h
 $(OBJDIR)cmd_bash.o: combat.h
@@ -413,6 +410,12 @@ $(OBJDIR)money.o: statistics.h
 $(OBJDIR)monster.o: statistics.h
 $(OBJDIR)movement.o: combat.h $(CASINO_HEADS) disc_looting.h
 $(OBJDIR)obj.o: shop.h
+$(OBJDIR)obj_appliedsub.o: create_engine.h
+$(OBJDIR)obj_base_clothing.o: shop.h
+$(OBJDIR)obj_base_weapon.o: combat.h statistics.h shop.h
+$(OBJDIR)obj_bed.o: $(CASINO_HEADS)
+$(OBJDIR)obj_board.o: board.h
+$(OBJDIR)obj_bow.o: range.h
 $(OBJDIR)obj_symbol.o: shop.h
 $(OBJDIR)offense.o: $(CASINO_HEADS) combat.h
 $(OBJDIR)organic.o: shop.h

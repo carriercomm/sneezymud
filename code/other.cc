@@ -24,6 +24,7 @@ extern "C" {
 
 #include "disc_air.h"
 #include "disc_alchemy.h"
+#include "disc_animal.h"
 #include "disc_earth.h"
 #include "disc_fire.h"
 #include "disc_water.h"
@@ -2472,7 +2473,7 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_ROOT_CONTROL:
       rc = rootControl(caster, victim, obj);
       break;
-    case SPELL_BEAST_SOOTHER:
+    case SKILL_BEAST_SOOTHER:
       rc = beastSoother(caster, victim, obj);
       break;
     default:

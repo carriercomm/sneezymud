@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: wiz_powers.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/12 04:10:12  lapsos
-// Added power <name> <power> single power display output.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include <unistd.h>
 
 #include "stdsneezy.h"
@@ -379,6 +358,7 @@ void TPerson::doPowers(const char *argument) const
   char      tString[MAX_INPUT_LENGTH];
   const     TBeing *ch;
   wizPowerT tWizPower;
+  bool      wizPowerList[MAX_POWER_INDEX];
 
   two_arg(argument, tStName, tStPower);
 
@@ -389,14 +369,38 @@ void TPerson::doPowers(const char *argument) const
       ch = get_pc_world(this, tStName.c_str(), EXACT_NO);
 
     if (!ch) {
-      sendTo("Unable to locate them anywhere in the world.\n\r");
-      return;
+      char tStPath[256];
+      FILE *tFile;
+      unsigned int tValue;
+
+      sprintf(tStPath, "player/%c/%s.wizpower",
+              LOWER((tStName.c_str())[0]),
+              lower(tStName).c_str());
+
+      if ((tFile = fopen(tStPath, "r"))) {
+        sendTo("Player not logged in but file found.  Reading in...\n\r");
+
+        while (fscanf(tFile, "%u ", &tValue) == 1)
+          wizPowerList[mapFileToWizPower(tValue)] |= 0x1;
+
+        fclose(tFile);
+      } else {
+        sendTo("Unable to locate them anywhere in the world or in the files.\n\r");
+        return;
+      }
+    } else {
+      for (tWizPower = MIN_POWER_INDEX; tWizPower < MAX_POWER_INDEX; tWizPower++)
+         wizPowerList[tWizPower] = ch->hasWizPower(tWizPower);
     }
-  } else
+  } else {
     ch = this;
 
+    for (tWizPower = MIN_POWER_INDEX; tWizPower < MAX_POWER_INDEX; tWizPower++)
+      wizPowerList[tWizPower] = ch->hasWizPower(tWizPower);
+  }
+
   sprintf(tString, "%s%s Wiz-Powers:\n\r",
-          (ch == this ? "Your" : ch->getName()),
+          (ch == this ? "Your" : (ch ? ch->getName() : tStName.c_str())),
           (ch == this ? "" : "'s"));
   tStString += tString;
 
@@ -409,7 +413,7 @@ void TPerson::doPowers(const char *argument) const
          is_abbrev(tStPower.c_str(), getWizPowerName(tWizPower).c_str()))) {
       sprintf(tString, "%3d.) [%c] %-25.25s",
               (tWizPower + 1),
-              (ch->hasWizPower(tWizPower) ? '*' : ' '),
+              (wizPowerList[tWizPower] ? '*' : ' '),
               getWizPowerName(tWizPower).c_str());
       tStString += tString;
 
@@ -420,51 +424,10 @@ void TPerson::doPowers(const char *argument) const
     }
   }
 
-  if (!(tWizPower % 2))
+  if ((tWizPower % 2))
     tStString += "\n\r";
 
   desc->page_string(tStString.c_str(), 0, true);  
-
-  /*
-  char arg[MAX_INPUT_LENGTH];
-  one_argument(argument, arg);  
-
-  const TBeing *ch;
-  if (arg && *arg) {
-    ch = get_pc_world(this, arg, EXACT_YES);
-    if (!ch)
-      ch = get_pc_world(this, arg, EXACT_NO);
-    if (!ch) {
-      sendTo("Couldn't locate any such PC in world.\n\r");
-      return;
-    }
-  } else
-    ch = this;
-
-  string str;
-  char buf[256];
-  sprintf(buf, "%s%s Wiz-Powers:\n\r",
-    ch == this ? "Your" : ch->getName(),
-    ch == this ? "" : "'s");
-  str += buf;
-
-  wizPowerT wpt;
-  for (wpt = MIN_POWER_INDEX; wpt < MAX_POWER_INDEX; wpt++) {
-    sprintf(buf, "%3d.) [%c] %-25.25s",
-        wpt+1,
-        ch->hasWizPower(wpt) ? '*' : ' ',
-        getWizPowerName(wpt).c_str());
-    str += buf;
-    if ((wpt % 2) == 1)
-      str += "\n\r";
-    else
-      str += "      ";
-  }
-
-  str += "\n\r";
-
-  desc->page_string(str.c_str(), 0, true);  
-  */
 }
 
 const string getWizPowerName(wizPowerT wpt)

@@ -554,6 +554,7 @@ class TBeing : public TThing {
     virtual TThing& operator-- ();
 
     // VIRTUAL FUNCTIONS
+    virtual int chiMe(TBeing *);
     virtual const char *getName() const;
     virtual void remCastingList(TThing *);
     virtual roomDirData *exitDir(dirTypeT door) const;

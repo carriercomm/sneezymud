@@ -1342,7 +1342,7 @@ int ram(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   return TRUE;
 }
 
-int moss(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
+int paralyzeBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 {
   TBeing *v;
   affectedData aff;
@@ -1353,8 +1353,7 @@ int moss(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if (!(v = myself->fight()) || !v->sameRoom(*myself)) 
     return FALSE;
 
-  if (v->isAffected(AFF_PARALYSIS) || 
-      v->isImmune(IMMUNE_PARALYSIS, myself->GetMaxLevel())) {
+  if (v->isAffected(AFF_PARALYSIS)) {
     return FALSE;
   }
 
@@ -1363,12 +1362,21 @@ int moss(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   act("$n spits out some noxious fumes at you!", TRUE, myself, NULL, v, TO_VICT);
   act("You spit some noxious fumes out at $N.", TRUE, myself, NULL, v, TO_CHAR);
 
+  if (v->isImmune(IMMUNE_PARALYSIS, myself->GetMaxLevel())) {
+    act("Your immunity saves you.", false, v, 0, 0, TO_CHAR);
+    act("$n's immunity saves $m.", false, v, 0, 0, TO_ROOM);
+    return FALSE;
+  }
+
   if(!v->isImmortal()){
     aff.type = SPELL_PARALYZE;
     aff.level = myself->GetMaxLevel();
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_PARALYSIS;
-    aff.duration = 2 * number(1, aff.level);
+
+    // each update is a combat round long...
+    aff.duration = min(10, number(1, aff.level));
+
     aff.modifier = 0;
     
     v->affectTo(&aff);
@@ -1379,7 +1387,7 @@ int moss(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   return TRUE;
 }
 
-int ghoul(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
+int paralyzeBite(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 {
   TBeing *v;
   affectedData aff;
@@ -1390,8 +1398,7 @@ int ghoul(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   if (!(v = myself->fight()) || !v->sameRoom(*myself))
     return FALSE;
 
-  if (v->isAffected(AFF_PARALYSIS) || 
-      v->isImmune(IMMUNE_PARALYSIS, myself->GetMaxLevel())) {
+  if (v->isAffected(AFF_PARALYSIS)) {
     return FALSE;
   }
 
@@ -1399,12 +1406,18 @@ int ghoul(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   act("$n bites you!", 1, myself, 0, v, TO_VICT);
   act("$n bites $N!", 1, myself, 0, v, TO_NOTVICT);
 
+  if (v->isImmune(IMMUNE_PARALYSIS, myself->GetMaxLevel())) {
+    act("Your immunity saves you.", false, v, 0, 0, TO_CHAR);
+    act("$n's immunity saves $m.", false, v, 0, 0, TO_ROOM);
+    return FALSE;
+  }
+
   if(!v->isImmortal()){
     aff.type = SPELL_PARALYZE;
     aff.level = myself->GetMaxLevel();
     aff.location = APPLY_NONE;
     aff.bitvector = AFF_PARALYSIS;
-    aff.duration = 2 * number(1, aff.level);
+    aff.duration = min(10, number(1, aff.level));
     aff.modifier = 0;
     
     v->affectTo(&aff);
@@ -6337,12 +6350,12 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {TRUE, "repairman", repairman},
   {TRUE, "sharpener", sharpener},        // 40 
   {TRUE, "rust monster", rust_monster},
-  {TRUE, "paralyze bite", ghoul},
+  {TRUE, "paralyze bite", paralyzeBite},
   {FALSE, "caravan leader", caravan},
   {FALSE, "death", death},
   {FALSE, "pestilence", pestilence},        // 45 
   {FALSE, "firemaster", fireMaster},
-  {TRUE, "paralyze breath", moss},
+  {TRUE, "paralyze breath", paralyzeBreath},
   {FALSE, "doctor", doctor},
   {FALSE, "Trainer: fire", CDGenericTrainer},
   {TRUE, "frostbiter", frostbiter},       // 50 

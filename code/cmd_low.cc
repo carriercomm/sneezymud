@@ -685,10 +685,12 @@ void TMonster::checkMobStats(tinyfileTypeT forReal)
             getName(), mobVnum(), *s);
     }
   }
+#if 0
   if (strlen(getName()) > MAX_NAME_LENGTH-1) {
     vlogf(LOG_LOW, "%s (%d) had excessive mob name length.",
          getName(), mobVnum());
   }
+#endif
 
   
   if (forReal == TINYFILE_YES) {

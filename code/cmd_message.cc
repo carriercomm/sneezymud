@@ -311,6 +311,16 @@ bool TMessages::operator==(messageTypeT tValue)
 
 TMessages & TMessages::operator()(messageTypeT tValue, string tStString)
 {
+  // the string has the extra \n\r from the input attached, so strip that off
+  while (tStString.find("\n") != string::npos)
+    tStString.replace(tStString.find("\n"), 1, "");
+  while (tStString.find("\r") != string::npos)
+    tStString.replace(tStString.find("\r"), 1, "");
+
+  // look for "~R" and replace with newlines
+  while (tStString.find("~R") != string::npos)
+    tStString.replace(tStString.find("~R"), 2, "\n\r");
+  
   switch (tValue)
   {
     case MSG_IMM_TITLE: // Immortal Title

@@ -4004,6 +4004,9 @@ void TBeing::doSetsev(const char *arg)
     } else
       sendTo("Incorrect Log Type.\n\r");
   } else {
+    if (tMatch-1 != LOG_LOW && !powerCheck(POWER_SETSEV_IMM))
+      return;
+
     if ((d->severity & (1 << (tMatch - 1))))
       d->severity &= ~(1 << (tMatch - 1));
     else
@@ -4013,22 +4016,6 @@ void TBeing::doSetsev(const char *arg)
            tFields[(tMatch - 1)],
            ((d->severity & (1 << (tMatch - 1))) ? "On" : "Off"));
   }
-
-#if 0
-  if (!*arg || !arg || !strcmp(arg, "?")) {
-    sendTo("Your current log severity is set to %d.\n\r", d->severity);
-    return;
-  }
-  sev = atoi(arg);
-
-  if ((sev < 0) || (sev > 10)) {
-    sendTo("Severity must be between 0 and 10.\n\r");
-    return;
-  }
-  sendTo("Setting log severity level to %d.\n\r", sev);
-  d->severity = sev;
-  doSave(SILENT_YES);
-#endif
 }
 
 moneyTypeT & operator++(moneyTypeT &c, int)

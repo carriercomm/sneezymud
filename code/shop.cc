@@ -1101,6 +1101,8 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
   int chr;
   float perc;
   int discount = 100;
+  bool isWearable = false;
+  const TGenWeapon * tWeapon = dynamic_cast<const TGenWeapon *>(this);
 
   // display spells on things like scrolls
   // don't show the "level" of weaps/armor though
@@ -1111,7 +1113,6 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
     sprintf(capbuf, "%s", getNameNOC(ch).c_str());
 
   sprintf(atbuf, "%d", num);
-  strcpy(wcolor, ANSI_NORMAL);
 
   if (strlen(capbuf) > 29) {
     capbuf[26] = '.';
@@ -1121,7 +1122,7 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
   }
   chr = ch->plotStat(STAT_CURRENT, STAT_CHA, 3, 18, 13);
   // do not adjust for swindle on list, give them worst case price
-  chr = min(18,chr);
+  chr = min(18, chr);
 
   cost = shopPrice(1, shop_nr, chr, &discount);
 
@@ -1136,6 +1137,7 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
     perc = 0;
 
   const TBaseClothing *tbc = dynamic_cast<const TBaseClothing *>(this);
+
   if (!ch->canUseEquipment(this, SILENT_YES)) {
     sprintf(buf3, "forbidden");
   } else if (tbc && tbc->isSaddle()) {
@@ -1160,7 +1162,7 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
         }
       } else {
         sprintf(buf3, "paired");
-        sprintf(wcolor, "%s%s", ch->bold(), ch->green());
+        isWearable = true;
       }
     } else {
       // see if I can hold it in primary hand
@@ -1182,15 +1184,15 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
             sprintf(buf3, "too heavy");   // shields are secondary hand only
           else {
             sprintf(buf3, "primary only");
-            strcpy(wcolor, ch->green());
+            isWearable = true;
           }
         } else {
           if (tbc && tbc->isShield()) {
             sprintf(buf3, "secondary only");
-            strcpy(wcolor, ch->green());
+            isWearable = true;
           } else {
             sprintf(buf3, "either hand");
-            sprintf(wcolor, "%s%s", ch->bold(), ch->green());
+            isWearable = true;
           }
         }
       }
@@ -1203,14 +1205,15 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
         sprintf(buf3, "too small");
       else {
         sprintf(buf3, "yes");
-        sprintf(wcolor, "%s%s", ch->bold(), ch->green());
+        isWearable = true;
       }
     } else 
       sprintf(buf3, "N/A");
   } else {
     sprintf(buf3, "yes");
-    sprintf(wcolor, "%s%s", ch->bold(), ch->green());
+    isWearable = true;
   } 
+
   sprintf(buf4, "[%s]", (shop_producing(this, shop_nr) ? "Unlimited" : atbuf));
   found = FALSE;
   char equipCond[256];
@@ -1218,6 +1221,22 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
   int max_trade;
 
   max_trade=shop_index[shop_nr].type.size()-1;
+
+  strcpy(wcolor, ANSI_NORMAL);
+
+  if (isWearable)
+    if (tWeapon) {
+      if (isPaired() || (tbc && tbc->isShield()) || compareWeights(getWeight(), ch->maxWieldWeight(this, HAND_TYPE_SEC) == -1))
+        strcpy(wcolor, ch->greenBold());
+      else
+        strcpy(wcolor, ch->green());
+
+    } else {
+      if (isPaired())
+        strcpy(wcolor, ch->greenBold());
+      else
+        strcpy(wcolor, ch->green());
+    }
 
   for (counter = 0; counter < max_trade; counter++) {
     if ((shop_index[shop_nr].type[counter] == ITEM_WORN) ||
@@ -1243,12 +1262,13 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
       break;
     }
   }
+
   if (!found) {
     strcpy(equipColor, equip_condition(-1).c_str());
     strcpy(equipCond, equipColor + 3);
     equipColor[3] = '\0';
-    sprintf(buf, "[%2d] %-31s %s%-12s %-6d%s %-5s\n\r",
-            k + 1, cap(capbuf), equipColor, equipCond, cost,
+    sprintf(buf, "%s[%2d] %-31s %s%-12s %-6d%s %-5s\n\r",
+            wcolor, k + 1, cap(capbuf), equipColor, equipCond, cost,
             (discount < 100 ? "(*)" : "   "), buf4);
   }
 
@@ -1270,6 +1290,9 @@ const string TObj::shopList(const TBeing *ch, const char *arg, int iMin, int iMa
       (iMin == 999999 || (cost >= iMin && cost <= iMax)) &&
       ((FitT & (1 << 15)) == 0 || isObjStat(ITEM_GLOW)) &&
       ((FitT & (1 << 16)) == 0 || isObjStat(ITEM_SHADOWY)) &&
+      ((FitT & (1 << 18)) == 0 || (tWeapon && tWeapon->canStab())) &&
+      ((FitT & (1 << 19)) == 0 || (tWeapon && tWeapon->canCudgel())) &&
+      ((FitT & (1 << 20)) == 0 || (tWeapon && tWeapon->canBackstab())) &&
       (((FitT & (1 <<  1)) && isSlashWeapon()) ||
        ((FitT & (1 <<  2)) && isPierceWeapon()) ||
        ((FitT & (1 <<  3)) && isBluntWeapon()) ||
@@ -1356,7 +1379,22 @@ void shopping_list(const char *argument, TBeing *ch, TMonster *keeper, int shop_
     else if (is_abbrev(stString, "glowing")) FitT |= (1 << 15);
     else if (is_abbrev(stString, "shadowy")) FitT |= (1 << 16);
     else if (is_abbrev(stString, "paired") ) FitT |= (1 << 17);
-    else if (is_number(stString)) {
+    else if (is_abbrev(stString, "stab")) {
+      if ((ch->hasClass(CLASS_THIEF) && ch->doesKnowSkill(SKILL_STABBING)) || ch->isImmortal()) {
+        FitT |= (1 << 18);
+        FitT |= (1 <<  2);
+      }
+    } else if (is_abbrev(stString, "cudgel")) {
+      if ((ch->hasClass(CLASS_THIEF) && ch->doesKnowSkill(SKILL_CUDGEL)) || ch->isImmortal()) {
+        FitT |= (1 << 19);
+        FitT |= (1 <<  3);
+      }
+    } else if (is_abbrev(stString, "backstab")) {
+      if ((ch->hasClass(CLASS_THIEF) && ch->doesKnowSkill(SKILL_BACKSTAB)) || ch->isImmortal()) {
+        FitT |= (1 << 20);
+        FitT |= (1 <<  2);
+      }
+    } else if (is_number(stString)) {
       if (iMin == 999999) {
         iMin = 0;
         iMax = atoi(stString);
@@ -1640,7 +1678,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
     // Toss out idlers
     for(t=myself->roomp->stuff;t;t=t->nextThing){
       if((tbt=dynamic_cast<TBeing *>(t)) &&
-	 tbt->getTimer()>1){
+	 tbt->getTimer()>1 && !tbt->isImmortal()){
 	myself->doSay("Hey, no loitering!  Make room for the other customers.");
 	for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
 	  if (exit_ok(myself->exitDir(dir), NULL)) {

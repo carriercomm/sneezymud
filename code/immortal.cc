@@ -5573,8 +5573,8 @@ void TBeing::doHeaven(const char *arg)
     return;
   }
 
-  if (num > 24) {
-    sendTo("A higher power has decreed that 24 units is the most you may do at once.\n\r");
+  if (num > 100) {
+    sendTo("A higher power has decreed that 100 units is the most you may do at once.\n\r");
     return;
   }
 

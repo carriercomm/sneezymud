@@ -1445,7 +1445,7 @@ class TBeing : public TThing {
     bool canUseLimb(wearSlotT) const;
     bool canUseHand(bool) const;
     bool canUseArm(primaryTypeT) const;
-    bool canUseLeg(int) const;
+    bool canUseLeg(primLegT) const;
     int checkPassWard(dirTypeT) const;
     bool canSwim(dirTypeT);
     int rawKill(spellNumT);

@@ -872,7 +872,19 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
             if (comp != -1) {
               // skin is tasked and requires tools, just inform, don't do
               TObj *obj;
+#if 1
+// builder port uses stripped down database which was causing problems
+// hence this setup instead.
+              int robj = real_object(comp);
+              if (robj < 0 || robj >= (signed int) obj_index.size()) {
+                vlogf(LOG_BUG, "damageEpilog(): No object (%d) in database!", comp);
+                return false;
+              }
+
+              obj = read_object(robj, REAL);
+#else
               obj = read_object(comp, VIRTUAL);
+#endif
               act("You should be able to skin $p from $N.", FALSE, this, obj, corpse, TO_CHAR);
               delete obj;
             }

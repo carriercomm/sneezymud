@@ -777,7 +777,8 @@ int TBeing::updateHalfTickStuff()
         // they are removed via nocturnal, but we don't want them
         // "reappearing" by waking up, so if they get sucked out, just
         // whack them
-        if ((vnum == MOB_MALE_HOPPER) || (vnum == MOB_FEMALE_HOPPER)) 
+        if ((vnum == MOB_MALE_HOPPER) || (vnum == MOB_FEMALE_HOPPER) ||
+            (vnum == MOB_MALE_CHURCH_GOER) || (vnum == MOB_FEMALE_CHURCH_GOER))
           return DELETE_THIS;
 
         if (is_daytime()) {
@@ -850,9 +851,9 @@ int TBeing::updateHalfTickStuff()
     } else if (IS_SET(specials.act, ACT_NOCTURNAL) && !isAffected(AFF_CHARM)) {
       if ((in_room == ROOM_NOCTURNAL_STORAGE)) {
         if (!is_nighttime()) {
-          if ((vnum == MOB_MALE_HOPPER) || (vnum == MOB_FEMALE_HOPPER)) {
+          if ((vnum == MOB_MALE_HOPPER) || (vnum == MOB_FEMALE_HOPPER) ||
+              (vnum == MOB_MALE_CHURCH_GOER) || (vnum == MOB_FEMALE_CHURCH_GOER))
             return DELETE_THIS;
-          }
         } else {
           if (loadRoom == ROOM_NOCTURNAL_STORAGE) {
             return DELETE_THIS;

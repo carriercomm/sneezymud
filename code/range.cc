@@ -343,12 +343,13 @@ bool hitInnocent(const TBeing *ch, const TThing *thing, const TThing *vict)
 {
   // hit innocent due to misthrow
 
+  const TBeing * tbc = dynamic_cast<const TBeing *>(vict);
+
   if (ch) {
     if (ch->isImmortal())
       return FALSE;
  
     // presume anyone in group and near thrower, is safely out of the way
-    const TBeing * tbc = dynamic_cast<const TBeing *>(vict);
     if (tbc && tbc->inGroup(*ch) && tbc->sameRoom(*ch)) 
       return false;
   

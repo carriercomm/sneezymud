@@ -572,7 +572,7 @@ int TSocket::gameLoop()
 	  if (tmp_ch->task && (pulse >= tmp_ch->task->nextUpdate)) {
 	    TObj *tmper_obj = NULL;
 	    if (tmp_ch->task->obj) {
-	      tmper_obj = tmp_ch->task_obj; 
+	      tmper_obj = tmp_ch->task->obj; 
 	    } 
 	    rc = (*(tasks[tmp_ch->task->task].taskf))
       (tmp_ch, CMD_TASK_CONTINUE, "", pulse, tmp_ch->task->room, tmp_ch->task->obj);

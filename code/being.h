@@ -799,7 +799,7 @@ class TBeing : public TThing {
     void blowCount(bool, float &, float &);
     bool checkBusy(const char *);
     float lagAdjust(lag_t);
-    void addSkillLag(spellNumT);
+    void addSkillLag(spellNumT, int rc = 0);
     virtual void addToWait(int) { return; }
     virtual int getWait(void) const { return 0; }
     virtual void setWait(int) { return; }

@@ -39,28 +39,36 @@ a pet.  That is, if I charm a pet, its a charm (not a pet).
 
 ********************************************************************** */
 
-bool TBeing::isPet() const
+// bv is one of: the PETTYPES constants
+bool TBeing::isPet(const unsigned int bv) const
 {
-  return (!isPc() && master &&
-          isAffected(AFF_CHARM) &&
-          affectedBySpell(AFFECT_PET) &&
-          !affectedBySpell(SPELL_ENSORCER) &&
-          !affectedBySpell(AFFECT_THRALL));
-}
+  if (isPc() || !master)
+    return false;
 
-bool TBeing::isCharm() const
-{
-  return (!isPc() && master && 
-          isAffected(AFF_CHARM) &&
-          affectedBySpell(SPELL_ENSORCER) &&
-          !affectedBySpell(AFFECT_THRALL));
-}
+  // if not taking orders, don't consider me any of the above
+  if (!isAffected(AFF_CHARM))
+    return false;
 
-bool TBeing::isThrall() const
-{
-  return (!isPc() &&  master && 
-          isAffected(AFF_CHARM) &&
-          affectedBySpell(AFFECT_THRALL));
+  // check special case first (for speed)
+  // if considering ANY of the valid types, all I really need to look
+  // for is the AFF_CHARM bit, if we got here we have it, therefore...
+  if (bv == (PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL))
+    return true;
+
+  if (IS_SET(bv, PETTYPE_PET)) {
+    if (affectedBySpell(AFFECT_PET) &&
+        !affectedBySpell(AFFECT_CHARM))
+      return true;
+  }
+  if (IS_SET(bv, PETTYPE_CHARM)) {
+    if (affectedBySpell(AFFECT_CHARM))
+      return true;
+  }
+  if (IS_SET(bv, PETTYPE_THRALL)) {
+    if (affectedBySpell(AFFECT_THRALL))
+      return true;
+  }
+  return false;
 }
 
 #if 0

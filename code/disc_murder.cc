@@ -726,9 +726,21 @@ int cudgel(TBeing *thief, TBeing *victim)
     thief->sendTo("You cannot cudgel that creature.\n\r");
     return FALSE;
   }
+
   // Jesus's fix for cudgel...cheesy as hell but oh well
-  if (3*getHeight() < 2*victim->getHeight()) {
-    sendTo("You don't stand a chance at cudgeling a creature that tall.\n\r");
+  if (victim->isUndead()) {
+    thief->sendTo("You cannot cudgel a dead head.\n\r");
+    return FALSE;
+  }
+  // Jesus's fix for cudgel...cheesy as hell but oh well
+  if (victim->isFlying()) {
+    thief->sendTo("You cannot cudgel them while they are flying.\n\r");
+    return FALSE;
+  }
+
+  // Jesus's fix for cudgel...cheesy as hell but oh well
+  if (3*thief->getHeight() < 2*victim->getHeight()) {
+    thief->sendTo("You don't stand a chance at cudgeling a creature that tall.\n\r");
     return FALSE;
   }
 

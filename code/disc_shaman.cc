@@ -990,6 +990,489 @@ int ret,level;
   return TRUE;
 }
 
+int summonSpectre(TBeing * caster, int level, byte bKnown)
+{
+  affectedData aff;
+  TMonster * victim;
+
+  if (!(victim = read_mobile(THRALL_SPECTRE, VIRTUAL))) {
+    caster->sendTo("You cannot summon a being of that type.\n\r");
+    return SPELL_FAIL;
+  }
+
+  victim->elementalFix(caster, SPELL_SUMMON_SPECTRE, 0);
+
+  if (bSuccess(caster, bKnown, SPELL_SUMMON_SPECTRE)) {
+     act("You call upon the powers of your ancestors!",
+            TRUE, caster, NULL, NULL, TO_CHAR);
+     act("$n summons the powers of $s ancestors!",
+            TRUE, caster, NULL, NULL, TO_ROOM);
+
+    // charm them for a while
+    if (victim->master)
+      victim->stopFollower(TRUE);
+
+    aff.type = SPELL_SUMMON_SPECTRE;
+    aff.level = level;
+    aff.duration  = caster->followTime();
+    aff.modifier = 0;
+    aff.location = APPLY_NONE;
+    aff.bitvector = AFF_CHARM;
+    victim->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
+    victim->setMaxHit(victim->hitLimit() + number(1, level));
+    victim->setHit(victim->hitLimit());
+
+    *caster->roomp += *victim;
+
+    switch (critSuccess(caster, SPELL_SUMMON_SPECTRE)) {
+      case CRIT_S_DOUBLE:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_KILL:
+        CS(SPELL_SUMMON_SPECTRE);
+        act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
+        caster->sendTo("The gods have blessed your wishes greatly!\n\r");
+        victim->setMaxHit((int) (victim->hitLimit() * 1.5));
+        victim->setHit((int) (victim->hitLimit() * 1.5));
+        break;
+      case CRIT_S_NONE:
+        break;
+    }
+    if (caster->tooManyFollowers(victim, FOL_CHARM)) {
+      act("$N refuses to enter a group the size of yours!",
+             TRUE, caster, NULL, victim, TO_CHAR);
+      act("$N refuses to enter a group the size of $n's!",
+             TRUE, caster, NULL, victim, TO_ROOM);
+      act("Your loa is displeased! $N hates you!",
+             FALSE, caster, NULL, victim, TO_CHAR);
+      victim->affectFrom(SPELL_SUMMON_SPECTRE);
+      victim->affectFrom(AFFECT_THRALL);
+    } else
+      caster->addFollower(victim);
+
+    return SPELL_SUCCESS;
+  } else {
+    *caster->roomp += *victim;
+    act("<R>In a flash of red light you see $N standing before you!<1>", TRUE, caster, NULL, victim, TO_NOTVICT);
+    act("The gods are not pleased! $N hates you!", FALSE, caster, NULL, victim, TO_CHAR);
+    victim->developHatred(caster);
+    caster->setCharFighting(victim);
+    caster->setVictFighting(victim);
+    return SPELL_FAIL;
+  }
+}
+
+int summonSpectre(TBeing * caster)
+{
+  if (caster->roomp && caster->roomp->isUnderwaterSector()) {
+    caster->sendTo("You cannot dance the ritual under these wet conditions!\n\r");
+    return FALSE;
+  }
+
+  if (real_mobile(THRALL_SPECTRE) < 0) {
+    caster->sendTo("You cannot call upon a being of that type.\n\r");
+    return FALSE;
+  }
+
+  if (!bPassMageChecks(caster, SPELL_SUMMON_SPECTRE, NULL))
+    return FALSE;
+
+  lag_t rounds = discArray[SPELL_SUMMON_SPECTRE]->lag;
+  taskDiffT diff = discArray[SPELL_SUMMON_SPECTRE]->task;
+
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_SPECTRE, diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
+  return TRUE;
+}
+
+int castSummonSpectre(TBeing * caster)
+{
+   int ret,level;
+
+
+   if (!caster)
+     return TRUE;
+
+   level = caster->getSkillLevel(SPELL_SUMMON_SPECTRE);
+
+   if
+((ret=summonSpectre(caster,level,caster->getSkillValue(SPELL_SUMMON_SPECTRE))) == SPELL_SUCCESS) {
+   } else {
+     act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL, TO_CHAR);
+  }
+  return TRUE;
+}
+
+int summonDemon(TBeing * caster, int level, byte bKnown)
+{
+  affectedData aff;
+  TMonster * victim;
+
+  if (!(victim = read_mobile(THRALL_DEMON, VIRTUAL))) {
+    caster->sendTo("You cannot summon a being of that type.\n\r");
+    return SPELL_FAIL;
+  }
+
+  victim->elementalFix(caster, SPELL_SUMMON_DEMON, 0);
+
+  if (bSuccess(caster, bKnown, SPELL_SUMMON_DEMON)) {
+     act("You call upon the powers of your ancestors!",
+            TRUE, caster, NULL, NULL, TO_CHAR);
+     act("$n summons the powers of $s ancestors!",
+            TRUE, caster, NULL, NULL, TO_ROOM);
+
+    // charm them for a while
+    if (victim->master)
+      victim->stopFollower(TRUE);
+
+    aff.type = SPELL_SUMMON_DEMON;
+    aff.level = level;
+    aff.duration  = caster->followTime();
+    aff.modifier = 0;
+    aff.location = APPLY_NONE;
+    aff.bitvector = AFF_CHARM;
+    victim->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
+    victim->setMaxHit(victim->hitLimit() + number(1, level));
+    victim->setHit(victim->hitLimit());
+
+    *caster->roomp += *victim;
+
+    switch (critSuccess(caster, SPELL_SUMMON_DEMON)) {
+      case CRIT_S_DOUBLE:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_KILL:
+        CS(SPELL_SUMMON_DEMON);
+        act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
+        caster->sendTo("The gods have blessed your wishes greatly!\n\r");
+        victim->setMaxHit((int) (victim->hitLimit() * 1.5));
+        victim->setHit((int) (victim->hitLimit() * 1.5));
+        break;
+      case CRIT_S_NONE:
+        break;
+    }
+    if (caster->tooManyFollowers(victim, FOL_CHARM)) {
+      act("$N refuses to enter a group the size of yours!",
+             TRUE, caster, NULL, victim, TO_CHAR);
+      act("$N refuses to enter a group the size of $n's!",
+             TRUE, caster, NULL, victim, TO_ROOM);
+      act("Your loa is displeased! $N hates you!",
+             FALSE, caster, NULL, victim, TO_CHAR);
+      victim->affectFrom(SPELL_SUMMON_DEMON);
+      victim->affectFrom(AFFECT_THRALL);
+    } else
+      caster->addFollower(victim);
+
+    return SPELL_SUCCESS;
+  } else {
+    *caster->roomp += *victim;
+    act("<R>In a flash of red light you see $N standing before you!<1>", TRUE,
+caster, NULL, victim, TO_NOTVICT);
+    act("The gods are not pleased! $N hates you!", FALSE, caster, NULL,
+victim, TO_CHAR);
+    victim->developHatred(caster);
+    caster->setCharFighting(victim);
+    caster->setVictFighting(victim);
+    return SPELL_FAIL;
+  }
+}
+
+int summonDemon(TBeing * caster)
+{
+  if (caster->roomp && caster->roomp->isUnderwaterSector()) {
+    caster->sendTo("You cannot dance the ritual under these wet
+conditions!\n\r");
+    return FALSE;
+  }
+
+  if (real_mobile(THRALL_DEMON) < 0) {
+    caster->sendTo("You cannot call upon a being of that type.\n\r");
+    return FALSE;
+  }
+
+  if (!bPassMageChecks(caster, SPELL_SUMMON_DEMON, NULL))
+    return FALSE;
+
+  lag_t rounds = discArray[SPELL_SUMMON_DEMON]->lag;
+  taskDiffT diff = discArray[SPELL_SUMMON_DEMON]->task;
+
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_DEMON, diff, 1,
+"", rounds, caster->in_room, 0, 0,TRUE, 0);
+  return TRUE;
+}
+
+int castSummonDemon(TBeing * caster)
+{
+   int ret,level;
+
+
+   if (!caster)
+     return TRUE;
+
+   level = caster->getSkillLevel(SPELL_SUMMON_DEMON);
+
+   if
+((ret=summonDemon(caster,level,caster->getSkillValue(SPELL_SUMMON_DEMON)))
+== SPELL_SUCCESS) {
+   } else {
+     act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL,
+TO_CHAR);
+  }
+  return TRUE;
+}
+
+int summonGhast(TBeing * caster, int level, byte bKnown)
+{
+  affectedData aff;
+  TMonster * victim;
+
+  if (!(victim = read_mobile(THRALL_GHAST, VIRTUAL))) {
+    caster->sendTo("You cannot summon a being of that type.\n\r");
+    return SPELL_FAIL;
+  }
+
+  victim->elementalFix(caster, SPELL_SUMMON_GHAST, 0);
+
+  if (bSuccess(caster, bKnown, SPELL_SUMMON_GHAST)) {
+     act("You call upon the powers of your ancestors!",
+            TRUE, caster, NULL, NULL, TO_CHAR);
+     act("$n summons the powers of $s ancestors!",
+            TRUE, caster, NULL, NULL, TO_ROOM);
+
+    // charm them for a while
+    if (victim->master)
+      victim->stopFollower(TRUE);
+
+    aff.type = SPELL_SUMMON_GHAST;
+    aff.level = level;
+    aff.duration  = caster->followTime();
+    aff.modifier = 0;
+    aff.location = APPLY_NONE;
+    aff.bitvector = AFF_CHARM;
+    victim->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
+    victim->setMaxHit(victim->hitLimit() + number(1, level));
+    victim->setHit(victim->hitLimit());
+
+    *caster->roomp += *victim;
+
+    switch (critSuccess(caster, SPELL_SUMMON_GHAST)) {
+      case CRIT_S_DOUBLE:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_KILL:
+        CS(SPELL_SUMMON_GHAST);
+        act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
+        caster->sendTo("The gods have blessed your wishes greatly!\n\r");
+        victim->setMaxHit((int) (victim->hitLimit() * 1.5));
+        victim->setHit((int) (victim->hitLimit() * 1.5));
+        break;
+      case CRIT_S_NONE:
+        break;
+    }
+    if (caster->tooManyFollowers(victim, FOL_CHARM)) {
+      act("$N refuses to enter a group the size of yours!",
+             TRUE, caster, NULL, victim, TO_CHAR);
+      act("$N refuses to enter a group the size of $n's!",
+             TRUE, caster, NULL, victim, TO_ROOM);
+      act("Your loa is displeased! $N hates you!",
+             FALSE, caster, NULL, victim, TO_CHAR);
+      victim->affectFrom(SPELL_SUMMON_GHAST);
+      victim->affectFrom(AFFECT_THRALL);
+    } else
+      caster->addFollower(victim);
+
+    return SPELL_SUCCESS;
+  } else {
+    *caster->roomp += *victim;
+    act("<R>In a flash of red light you see $N standing before you!<1>", TRUE,
+caster, NULL, victim, TO_NOTVICT);
+    act("The gods are not pleased! $N hates you!", FALSE, caster, NULL,
+victim, TO_CHAR);
+    victim->developHatred(caster);
+    caster->setCharFighting(victim);
+    caster->setVictFighting(victim);
+    return SPELL_FAIL;
+  }
+}
+
+int summonGhast(TBeing * caster)
+{
+  if (caster->roomp && caster->roomp->isUnderwaterSector()) {
+    caster->sendTo("You cannot dance the ritual under these wet
+conditions!\n\r");
+    return FALSE;
+  }
+
+  if (real_mobile(THRALL_GHAST) < 0) {
+    caster->sendTo("You cannot call upon a being of that type.\n\r");
+    return FALSE;
+  }
+
+  if (!bPassMageChecks(caster, SPELL_SUMMON_GHAST, NULL))
+    return FALSE;
+
+  lag_t rounds = discArray[SPELL_SUMMON_GHAST]->lag;
+  taskDiffT diff = discArray[SPELL_SUMMON_GHAST]->task;
+
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_GHAST, diff, 1,
+"", rounds, caster->in_room, 0, 0,TRUE, 0);
+  return TRUE;
+}
+
+int castSummonGhast(TBeing * caster)
+{
+   int ret,level;
+
+
+   if (!caster)
+     return TRUE;
+
+   level = caster->getSkillLevel(SPELL_SUMMON_GHAST);
+
+   if
+((ret=summonGhast(caster,level,caster->getSkillValue(SPELL_SUMMON_GHAST)))
+== SPELL_SUCCESS) {
+   } else {
+     act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL,
+TO_CHAR);
+  }
+  return TRUE;
+}
+
+int summonGhoul(TBeing * caster, int level, byte bKnown)
+{
+  affectedData aff;
+  TMonster * victim;
+
+  if (!(victim = read_mobile(THRALL_GHOUL, VIRTUAL))) {
+    caster->sendTo("You cannot summon a being of that type.\n\r");
+    return SPELL_FAIL;
+  }
+
+  victim->elementalFix(caster, SPELL_SUMMON_GHOUL, 0);
+
+  if (bSuccess(caster, bKnown, SPELL_SUMMON_GHOUL)) {
+     act("You call upon the powers of your ancestors!",
+            TRUE, caster, NULL, NULL, TO_CHAR);
+     act("$n summons the powers of $s ancestors!",
+            TRUE, caster, NULL, NULL, TO_ROOM);
+
+    // charm them for a while
+    if (victim->master)
+      victim->stopFollower(TRUE);
+
+    aff.type = SPELL_SUMMON_GHOUL;
+    aff.level = level;
+    aff.duration  = caster->followTime();
+    aff.modifier = 0;
+    aff.location = APPLY_NONE;
+    aff.bitvector = AFF_CHARM;
+    victim->affectTo(&aff);
+
+    aff.type = AFFECT_THRALL;
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
+    victim->affectTo(&aff);
+
+    victim->setMaxHit(victim->hitLimit() + number(1, level));
+    victim->setHit(victim->hitLimit());
+
+    *caster->roomp += *victim;
+
+    switch (critSuccess(caster, SPELL_SUMMON_GHOUL)) {
+      case CRIT_S_DOUBLE:
+      case CRIT_S_TRIPLE:
+      case CRIT_S_KILL:
+        CS(SPELL_SUMMON_GHOUL);
+        act("$N flexes $S overly strong muscles.", TRUE, caster, 0, victim, TO_ROOM);
+        caster->sendTo("The gods have blessed your wishes greatly!\n\r");
+        victim->setMaxHit((int) (victim->hitLimit() * 1.5));
+        victim->setHit((int) (victim->hitLimit() * 1.5));
+        break;
+      case CRIT_S_NONE:
+        break;
+    }
+    if (caster->tooManyFollowers(victim, FOL_CHARM)) {
+      act("$N refuses to enter a group the size of yours!",
+             TRUE, caster, NULL, victim, TO_CHAR);
+      act("$N refuses to enter a group the size of $n's!",
+             TRUE, caster, NULL, victim, TO_ROOM);
+      act("Your loa is displeased! $N hates you!",
+             FALSE, caster, NULL, victim, TO_CHAR);
+      victim->affectFrom(SPELL_SUMMON_GHOUL);
+      victim->affectFrom(AFFECT_THRALL);
+    } else
+      caster->addFollower(victim);
+
+    return SPELL_SUCCESS;
+  } else {
+    *caster->roomp += *victim;
+    act("<R>In a flash of red light you see $N standing before you!<1>", TRUE,
+caster, NULL, victim, TO_NOTVICT);
+    act("The gods are not pleased! $N hates you!", FALSE, caster, NULL,
+victim, TO_CHAR);
+    victim->developHatred(caster);
+    caster->setCharFighting(victim);
+    caster->setVictFighting(victim);
+    return SPELL_FAIL;
+  }
+}
+
+int summonGhoul(TBeing * caster)
+{
+  if (caster->roomp && caster->roomp->isUnderwaterSector()) {
+    caster->sendTo("You cannot dance the ritual under these wet
+conditions!\n\r");
+    return FALSE;
+  }
+
+  if (real_mobile(THRALL_GHOUL) < 0) {
+    caster->sendTo("You cannot call upon a being of that type.\n\r");
+    return FALSE;
+  }
+
+  if (!bPassMageChecks(caster, SPELL_SUMMON_GHOUL, NULL))
+    return FALSE;
+
+  lag_t rounds = discArray[SPELL_SUMMON_GHOUL]->lag;
+  taskDiffT diff = discArray[SPELL_SUMMON_GHOUL]->task;
+
+  start_cast(caster, NULL, NULL, caster->roomp, SPELL_SUMMON_GHOUL, diff, 1,
+"", rounds, caster->in_room, 0, 0,TRUE, 0);
+  return TRUE;
+}
+
+int castSummonGhoul(TBeing * caster)
+{
+   int ret,level;
+
+
+   if (!caster)
+     return TRUE;
+
+   level = caster->getSkillLevel(SPELL_SUMMON_GHOUL);
+
+   if
+((ret=summonGhoul(caster,level,caster->getSkillValue(SPELL_SUMMON_GHOUL)))
+== SPELL_SUCCESS) {
+   } else {
+     act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL,
+TO_CHAR);
+  }
+  return TRUE;
+}
+
+
 
 
 

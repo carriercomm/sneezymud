@@ -1468,15 +1468,20 @@ int TBeing::passOut()
   af.location = APPLY_NONE;
   af.bitvector = AFF_SLEEP;
   affectJoin(NULL, &af, AVG_DUR_NO, AVG_EFF_NO);
-  sendTo("You pass out from too much drink.\n\r");
+
+  if (awake())
+    sendTo("You pass out from too much drink.\n\r");
+
   if (getPosition() > POSITION_SLEEPING) {
     if (riding) {
       rc = fallOffMount(riding, POSITION_STANDING);
       if (IS_SET_DELETE(rc, DELETE_THIS))
         return DELETE_THIS;
     }
-    act("$n passes out!", TRUE, this, NULL, NULL, TO_ROOM);
-    setPosition(POSITION_SLEEPING);
+    if (awake()) {
+      act("$n passes out!", TRUE, this, NULL, NULL, TO_ROOM);
+      setPosition(POSITION_SLEEPING);
+    }
   }
   return TRUE;
 }

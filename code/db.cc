@@ -2771,7 +2771,7 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
   va_end(ap);
   
   // try and process the query string a little bit, to find single quotes
-  // this is really messy
+  // this is really messy.  too messy.
   while(buf[ptr]){
     if(buf[ptr]=='\''){
       if(onstring){
@@ -2780,7 +2780,8 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
 	else
 	  buf2[ptr2++]='\'';
       } else {
-	if(buf[ptr-1]=='=' || !strncmp(&buf[ptr-5], "like", 4))
+	if(buf[ptr-1]=='=' || !strncmp(&buf[ptr-5], "like", 4) || 
+	   (buf[ptr-1]==' ' && buf[ptr-2]==','))
 	  onstring=1;
 	else {
 	  // serious klugery

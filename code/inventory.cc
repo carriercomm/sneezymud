@@ -3,6 +3,10 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: inventory.cc,v $
+// Revision 5.1.1.2  1999/10/17 05:31:54  batopr
+// genericGiveDrop now has a check to verify drop worked (otherwise, item
+// is moved the hard way)
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1309,6 +1313,14 @@ static int genericGiveDrop(TBeing *ch, TObj *obj)
   rc = ch->doDrop("", obj);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
+
+  // Yet another kludge, maybe mob can not see the obj to drop it
+  // (which might explain why the give failed too...)
+  if (obj->parent == ch) {
+    // we still have the obj
+    (*obj)--;
+    *ch->roomp += *obj;
+  }
   return FALSE;
 }
 

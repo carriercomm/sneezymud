@@ -42,7 +42,7 @@ void TBeing::makeCorpse(spellNumT dmg_type)
   sprintf(tmpbuf, "%s", getName());
   strcpy(namebuf, cap(tmpbuf));
 
-  if ((desc || isPc()) && (GetMaxLevel() < MAX_MORT)) {
+  if ((desc || isPc()) && (GetMaxLevel() <= MAX_MORT)) {
     pcorpse = race->makePCorpse();
     gen_corpse = pcorpse;
     pcorpse->setCorpseVnum(-2);  // flag for pc
@@ -91,6 +91,13 @@ void TBeing::makeCorpse(spellNumT dmg_type)
       gen_corpse->shortDescr = mud_str_dup("a small uncontrolled tornado");
       gen_corpse->addCorpseFlag(CORPSE_NO_REGEN);
       gen_corpse->setMaterial(MAT_POWDER);
+    } else {
+      // non-standard elementals
+      sprintf(buf, "corpse %s",name);
+      gen_corpse->name = mud_str_dup(buf);
+      gen_corpse->setDescr(mud_str_dup("The corpse of some sort of elemental is here."));
+      gen_corpse->shortDescr = mud_str_dup("the corpse of an elemental");
+      gen_corpse->addCorpseFlag(CORPSE_NO_REGEN);
     }
     specialCorpse = TRUE;
   } else if (isUndead() || (dmg_type == SKILL_TURN)) {

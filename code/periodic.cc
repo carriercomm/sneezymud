@@ -510,7 +510,6 @@ int TBeing::updateAffects()
 int TBeing::updateTickStuff()
 {
   int rc;
-  unsigned int i, hours_first, hours_last, severity;
 
   if (desc && isPc()) {
     updateCharObjects();
@@ -524,33 +523,6 @@ int TBeing::updateTickStuff()
       vlogf(LOG_SILENT, "updateTickStuff: %s (desc) caught idling", getName());
       return DELETE_THIS;
     }
-
-    for(i=0;i<drugTypes.size();i++){
-      if(desc->drugs[i].current_consumed>0){
-	--desc->drugs[i].current_consumed;
-	applyDrugAffects(this, (drugTypeT) i, true);
-	saveDrugStats();
-      }
-      if(desc->drugs[i].total_consumed>0){
-	hours_first=
-	  (((time_info.year - desc->drugs[i].first_use.year) * 12 * 28 * 24) +
-	   ((time_info.month - desc->drugs[i].first_use.month) * 28 * 24) +
-	   ((time_info.day - desc->drugs[i].first_use.day) * 24) +
-	   time_info.hours - desc->drugs[i].first_use.hours);
-	hours_last=
-	  (((time_info.year - desc->drugs[i].last_use.year) * 12 * 28 * 24) +
-	   ((time_info.month - desc->drugs[i].last_use.month) * 28 * 24) +
-	   ((time_info.day - desc->drugs[i].last_use.day) * 24) +
-	   time_info.hours - desc->drugs[i].last_use.hours);
-	if(hours_last && hours_first){
-	  severity=(desc->drugs[i].total_consumed / hours_first) * hours_last;
-	  if(severity>0)
-	    applyAddictionAffects(this, (drugTypeT) i, severity);
-	}
-      }
-    }
-
-
 
     if (getCond(DRUNK) > 15) {
       rc = passOut();
@@ -761,6 +733,8 @@ int TBeing::updateHalfTickStuff()
   affectedData *af;
   bool berserk_noheal=0;
   TBeing *trider=NULL;
+  unsigned int i, hours_first, hours_last, severity;
+
 
   if (isAffected(AFF_SLEEP) && (getPosition() > POSITION_SLEEPING)) {
     sendTo("You grow sleepy and can remain awake no longer.\n\r");
@@ -1020,6 +994,33 @@ int TBeing::updateHalfTickStuff()
         sendTo("Your shape can not survive without a connection to nature.\n\r");
         doReturn("", WEAR_NOWHERE, CMD_RETURN); 
         return FALSE;
+      }
+    }
+
+    if(desc && isPc()){
+      for(i=0;i<drugTypes.size();i++){
+	if(desc->drugs[i].current_consumed>0){
+	  --desc->drugs[i].current_consumed;
+	  applyDrugAffects(this, (drugTypeT) i, true);
+	  saveDrugStats();
+	}
+	if(desc->drugs[i].total_consumed>0){
+	  hours_first=
+	    (((time_info.year - desc->drugs[i].first_use.year) * 12 * 28 * 24) +
+	     ((time_info.month - desc->drugs[i].first_use.month) * 28 * 24) +
+	     ((time_info.day - desc->drugs[i].first_use.day) * 24) +
+	     time_info.hours - desc->drugs[i].first_use.hours);
+	  hours_last=
+	    (((time_info.year - desc->drugs[i].last_use.year) * 12 * 28 * 24) +
+	     ((time_info.month - desc->drugs[i].last_use.month) * 28 * 24) +
+	     ((time_info.day - desc->drugs[i].last_use.day) * 24) +
+	     time_info.hours - desc->drugs[i].last_use.hours);
+	  if(hours_last && hours_first){
+	    severity=(desc->drugs[i].total_consumed / hours_first) * hours_last;
+	    if(severity>0)
+	      applyAddictionAffects(this, (drugTypeT) i, severity);
+	  }
+	}
       }
     }
 

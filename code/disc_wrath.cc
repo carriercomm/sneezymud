@@ -467,7 +467,7 @@ void curse(TBeing * caster, TObj * target, TMagicItem * obj, spellNumT spell)
   ret=curse(caster,target,obj->getMagicLevel(),obj->getMagicLearnedness(), spell);
   if (IS_SET(ret,SPELL_SUCCESS)) {
     act("$n glows briefly with a dark forboding red!",
-       FALSE, target, NULL, 0, TO_ROOM);
+       TRUE, target, NULL, 0, TO_ROOM);
    act("You glow briefly with a dark forboding red!",
        FALSE, target, NULL, 0, TO_CHAR);
   }
@@ -480,7 +480,7 @@ void curse(TBeing * caster, TBeing * victim, TMagicItem * obj, spellNumT spell)
   ret=curse(caster,victim,obj->getMagicLevel(),obj->getMagicLearnedness(), spell);
   if (IS_SET(ret,SPELL_SUCCESS)) {
     act("$n glows evilly with a dark forboding red!", 
-       FALSE, victim, NULL, 0, TO_ROOM);
+       TRUE, victim, NULL, 0, TO_ROOM);
     act("You glow evilly with a dark forboding red!", 
        FALSE, victim, NULL, 0, TO_VICT);
   }
@@ -556,7 +556,7 @@ void curse(TBeing * caster, TBeing * victim)
 
   int ret=curse(caster,victim,level,bKnown, spell);
   if (ret == SPELL_SUCCESS) {
-    act("$N glows evilly with a dark forboding red!", FALSE, caster, NULL, victim, TO_ROOM);
+    act("$N glows evilly with a dark forboding red!", TRUE, caster, NULL, victim, TO_ROOM);
     act("You glow evilly with a dark forboding red!", FALSE, caster, NULL, victim, TO_VICT);
     act("You succeed in summoning a minor demon spirit to inhabit $N's body.", FALSE, caster, NULL, victim, TO_CHAR);
     act("You feel extremely uncomfortable, as if you don't have complete control over your body!", FALSE, victim, NULL, NULL, TO_CHAR);

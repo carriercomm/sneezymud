@@ -106,16 +106,17 @@ int TBeing::doHit(const char *argument, TBeing *vict)
     TThing      * tThing;
     TBaseWeapon * tWeapon;
 
-    if ((tThing   = equipment[getPrimaryHold()]) &&
-        !(tWeapon = dynamic_cast<TBaseWeapon *>(tThing)) &&
-        (tThing   = equipment[getSecondaryHold()]) &&
-        !(tWeapon = dynamic_cast<TBaseWeapon *>(tThing)) &&
-        !IS_SET(desc->autobits, AUTO_ENGAGE) &&
-        !IS_SET(desc->autobits, AUTO_ENGAGE_ALWAYS)) {
-      sendTo("You are wielding no weapons and intend to attack?\n\r");
-      sendTo("I'm afraid that's rather hard, use engage instead.\n\r");
-      return FALSE;
-    }
+    if (isPc())
+      if ((tThing   = equipment[getPrimaryHold()]) &&
+          !(tWeapon = dynamic_cast<TBaseWeapon *>(tThing)) &&
+          (tThing   = equipment[getSecondaryHold()]) &&
+          !(tWeapon = dynamic_cast<TBaseWeapon *>(tThing)) &&
+          !IS_SET(desc->autobits, AUTO_ENGAGE) &&
+          !IS_SET(desc->autobits, AUTO_ENGAGE_ALWAYS)) {
+        sendTo("You are wielding no weapons and intend to attack?\n\r");
+        sendTo("I'm afraid that's rather hard, use engage instead.\n\r");
+        return FALSE;
+      }
 
 
 //    if (!victim->fight()) 

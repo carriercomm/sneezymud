@@ -1673,6 +1673,7 @@ int TBeing::doDonate(const char *argument)
   char arg[256], newarg[256];
   int num;
   int p;
+  char buf[256];
 
   only_argument(argument, arg);
   if (!*arg) {
@@ -1743,6 +1744,8 @@ int TBeing::doDonate(const char *argument)
 
       --(*t_o);
       thing_to_room(t_o, ROOM_DONATION);
+      sprintf(buf,"A small portal appears for an instant, dropping %s in the room.\n\r",t_o->getName());
+      sendToRoom(COLOR_OBJECTS,buf, ROOM_DONATION);
     }
 
     if (num > 0)

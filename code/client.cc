@@ -730,7 +730,7 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
         if (WizLock && !IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
           writeToQ("The game is currently wiz-locked.\n\r^G^G^G^G^G");
           if (!lockmess.empty()) {
-            page_string(lockmess.c_str(), TRUE);
+            page_string(lockmess.c_str(), SHOWNOW_YES);
           } else {
             FILE *signFile;
   
@@ -738,7 +738,7 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
               fclose(signFile);
               string iostring;
               file_to_string(SIGN_MESS, iostring);
-              page_string(iostring.c_str(), TRUE);
+              page_string(iostring.c_str(), SHOWNOW_YES);
             }
           }
 
@@ -1651,14 +1651,14 @@ void Descriptor::clientShoppingList(const char *argument, TMonster *keeper, int 
     strcpy(buf2, "Nothing!\n\r");
     sb += buf2;
 
-    page_string(sb.c_str(), 0, TRUE);
+    page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 
     keeper->autoCreateShop(shop_nr);
     sprintf(buf2, "%s/%d", SHOPFILE_PATH, shop_nr);
     keeper->saveItems(buf2);
     return;
   }
-  page_string(sb.c_str(), 0, TRUE);
+  page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
   return;
 }
 

@@ -414,7 +414,7 @@ static void showStatsTo(const Descriptor *d, const TBeing *ch, bool hidden_stuff
            ch->cyan(), d->career.crit_kidney_suff, ch->norm());
     str += buffer;
   }
-  ch->desc->page_string(str.c_str(), 0);
+  ch->desc->page_string(str.c_str());
   return;
 }
 

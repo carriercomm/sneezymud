@@ -1815,7 +1815,7 @@ int fighter(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
 
   if ((vict = ch->fight())) {
     if (ch->getPosition() >= POSITION_SITTING) {
-      rc = ch->fighterMove(vict);
+      rc = ch->fighterMove(*vict);
       if (IS_SET_DELETE(rc, DELETE_VICT)) {
         delete vict;
         vict = NULL;

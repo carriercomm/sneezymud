@@ -578,7 +578,7 @@ int TBeing::doOrder(const char *argument)
     if (v->master == this && v->isAffected(AFF_CHARM)) {
       // pets aren't too eager to leap into the fray, but will do so on their
       // own.  Charms and zombies do what they are told
-      if (v->isPet()) {
+      if (v->isPet(PETTYPE_PET)) {
         if (!orderDenyCheck(cmd_buf))
           legitimate = true;
       } else

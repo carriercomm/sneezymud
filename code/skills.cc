@@ -1189,7 +1189,6 @@ byte TBeing::getSkillValue(spellNumT skill) const
 #endif
   value = max(value, 0);
   return value;
-//  return (max(0,min(sk->getLearnedness(), getMaxSkillValue(skill))));
 }
 
 void TBeing::setSkillValue(spellNumT skill, int lValue)

@@ -209,3 +209,13 @@ void TRealContainer::lowCheck()
   TContainer::lowCheck();
 }
 
+void TRealContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tShop)
+{
+  TObj::purchaseMe(ch, tKeeper, tCost, tShop);
+
+  // This prevents 'just bought from store' bags from having
+  // Ghost Traps unless they are already ghost trapped or have
+  // a real trap on them.
+  if (!isContainerFlag(CONT_TRAPPED) && !isContainerFlag(CONT_GHOSTTRAP))
+    addContainerFlag(CONT_EMPTYTRAP);
+}

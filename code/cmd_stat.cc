@@ -216,6 +216,7 @@ void TBeing::statRoom(TRoom *rmp)
       counter++;
       if (counter > 15) {
          str += "Too Many In Room to Stat More\n\r";
+         break;
       } else {
         sprintf(buf2, "%s%s   (%s)\n\r", 
            t->getName(), (dynamic_cast<TPerson *>(t) ? "(PC)" : "(NPC)"), t->name);
@@ -231,9 +232,10 @@ void TBeing::statRoom(TRoom *rmp)
     if ((tMonster = dynamic_cast<TMonster *>(t))) {
       counter++;
 
-      if (counter > 5)
+      if (counter > 5) {
         str += "Too Many Creators Born In Room To Show More\n\r";
-      else {
+        break;
+      } else {
         sprintf(buf2, "[%6d] %s\n\r", tMonster->mobVnum(), tMonster->getName());
         str += buf2;
       }
@@ -246,6 +248,7 @@ void TBeing::statRoom(TRoom *rmp)
       counter++;
       if (counter > 20) {
         str += "Too Many In Room to Stat More\n\r";
+        break;
       } else {
         sprintf(buf2, "%s   (%s)\n\r", t->getName(), t->name);
         str += buf2;

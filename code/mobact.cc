@@ -356,7 +356,9 @@ int TMonster::targetFound()
       string screamBuf = "$n screams, 'Time to die, ";
       screamBuf += pers(v);
       screamBuf += "!'";
-      act(screamBuf.c_str(), FALSE, this, 0, 0, TO_ROOM);
+      if(strcmp(pers(v),"someone"))
+	act(screamBuf.c_str(), FALSE, this, 0, 0, TO_ROOM);
+      // hee hee -GR
     } else 
       doAction(fname(v->name),CMD_GROWL);
     
@@ -446,8 +448,8 @@ int TMonster::hunt()
   } else if (hunted && hunted->roomp && canSee(hunted, INFRA_YES)) {
     // canSee needs to have hunted->roomp
     int count;
-    int amt = 1 + GetMaxLevel()/15;
-    if (::number(0, 14) < GetMaxLevel()%15)
+    int amt = 1 + GetMaxLevel()/10;
+    if (::number(0, 10) < GetMaxLevel()%10)
       amt++;
     for (count = 0; count < amt; count++) {
       if (persist <= 0)
@@ -797,7 +799,7 @@ int TMonster::senseWimps()
           setCharFighting(tmp_victim);
           return TRUE;
         } else return FALSE;
-      } else {
+      } else if (!tmp_victim->rider) {
         if (tmp_victim->isPc() && tmp_victim->task &&
             (tmp_victim->getStat(STAT_CURRENT, STAT_FOC) >= ::number(-10, 270))) {
           act("You feel nudged but you stay focused on your task.",
@@ -2719,7 +2721,7 @@ int TMonster::notFightingMove(int pulse)
       }
     }
   }
-  if (IS_SET(specials.act, ACT_HUNTING) && !(pulse%(3*PULSE_MOBACT))) {
+  if (IS_SET(specials.act, ACT_HUNTING) && !(pulse%(4*PULSE_MOBACT))) {
     // this was pulse/5 but was too slow
     rc = hunt();
     if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3132,20 +3134,26 @@ int TMonster::mobileActivity(int pulse)
         // if they heal back to max, make them track down the bad guys
         // don't do it if we have busted limbs
         // we also wait for the effects of a "fear" spell to decay
-        if (getHit() == hitLimit() &&
+        if (getHit() == (hitLimit()*4)/5 &&
             !eitherLegHurt() && !eitherArmHurt() &&
             !affectedBySpell(SPELL_FEAR)) {
-          if (fears.clist && 
-              (tmp_ch = get_char(fears.clist->name, EXACT_YES)) &&
-              !IS_SET(specials.act, ACT_HUNTING)) {
-            remFeared(tmp_ch, NULL);
-            setHunting(tmp_ch);
-            addHated(tmp_ch);
-            return TRUE;
+	  if(fears.clist) {
+	    int safety = 0;
+	    while(fears.clist && safety < 10) {
+	      if (fears.clist && 
+		  (tmp_ch = get_char(fears.clist->name, EXACT_YES)) &&
+		  !IS_SET(specials.act, ACT_HUNTING)) {
+		remFeared(tmp_ch, NULL);
+		setHunting(tmp_ch);
+		addHated(tmp_ch);
+	      }
+	      safety++; // this is just to make sure we dont go into an infinite loops here
+	    }
+	    return TRUE;
           }
         }
       }
-    } else {
+    } else if (getHit() <= (hitLimit()/4)) {
       // hp <= 1/2 max
       rc = fearCheck(NULL, true);
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3160,6 +3168,12 @@ int TMonster::mobileActivity(int pulse)
         else if (rc)
           return TRUE;
       }
+    } else if (IS_SET(specials.act, ACT_HATEFUL)) {
+      rc = doHatefulStuff();
+      if (IS_SET_DELETE(rc, DELETE_THIS))
+	return DELETE_THIS;
+      else if (rc)
+	return TRUE;
     }
     rc = aggroCheck(true);
     if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3175,8 +3189,13 @@ int TMonster::fearCheck(const TBeing *ch, bool mobpulse)
   // this function causes the mobs to flee
   // since this is semi-annoying for players, lets have it "miss" flees
   // a lot of the time.
-  if (::number(0,1))
+  if (::number(0,3))
     return false;
+
+  if (getHit() > hitLimit()/4 && (!eitherLegHurt() && !eitherArmHurt()) &&
+	  !affectedBySpell(SPELL_FEAR))
+    return false;
+
 
   if (IS_SET(specials.act, ACT_AFRAID)) {
     if (!ch) {
@@ -3342,6 +3361,7 @@ int TMonster::aggroCheck(bool mobpulse)
   TPerson *tmp_ch;
   int rc, numtargets, whichtarget;
   numtargets = 0;
+  bool hasWandered = FALSE;
 
   if(factionAggroCheck())
     return TRUE;
@@ -3351,6 +3371,26 @@ int TMonster::aggroCheck(bool mobpulse)
 
   if (desc)
     return FALSE;
+
+  // OK check this out.  I want to make sentenial aggro mobs not aggro unless they are in
+  // their starting room, and stay_zone aggro mobs not aggro unless they are in the zone
+  // that include their starting room.  This works in conjunction with the free tracking code
+  // i set up to make sure high level aggro mobs don't go and fuck lowbies up, but should also
+  // make mobs act like they should under normal circumstances
+  // ok, lets do it. -Dash 4/7/01
+  
+  TRoom *rp1 = NULL, *rp2 = NULL;
+
+  if (!(rp1 = roomp) || !(rp2 = real_roomp(brtRoom)))
+    return FALSE;
+  if (IS_SET(specials.act, ACT_STAY_ZONE) && rp1->getZone() != rp2->getZone())
+    hasWandered = TRUE;
+  if (IS_SET(specials.act, ACT_SENTINEL) && rp1 != rp2)
+    hasWandered = TRUE;
+
+  // ok now we know if theyre out of their home area, now we just tack on a level check later on
+  // to protect lowbies
+
 
   // Some randomization of who gets attacked added - Brutius 1/28/97
   if ((aggro() && (getHit() >= (hitLimit()/2)))){
@@ -3419,17 +3459,34 @@ int TMonster::aggroCheck(bool mobpulse)
 	     (plotStat(STAT_CURRENT, STAT_INT, 0, 200, 100) + anger()))){
 #endif
 
-          if (!isDumbAnimal() && ::number(0, 9)) {
+          if (!isDumbAnimal() && ::number(0,9)) {
             // This should basically prevent mobs from attacking when they
             // are grossly out-armed and they know it.  But it also gives
             // mobs a varience so a level 40 mob will be willing to attack
             // a level 48 PC.
-            if (tmp_ch->GetMaxLevel() > (GetMaxLevel() * 1.2))
-              return FALSE;
-          }
-
-          if (specials.act & ACT_WIMPY){
-            if (!tmp_ch->awake()) {
+            if ((double)(tmp_ch->GetMaxLevel()) > ((double)GetMaxLevel() * 1.5)) {
+	      if(!::number(0,6) || !mobpulse) {
+		act("$n considers killing $N, but thinks better of it.",TRUE,this,NULL,tmp_ch,TO_NOTVICT,NULL);
+		act("$n considers killing you, but thinks better of it.",TRUE,this,NULL,tmp_ch,TO_VICT,NULL);
+		act("You consider killing $N, but thinks better of it.",TRUE,this,NULL,tmp_ch,TO_CHAR,NULL);
+	      }
+	      
+	      return FALSE;
+	    }
+	  }
+	  if (hasWandered && ::number(0,29)) {
+	    // don't attack people less than 2/3rds my level if i'm somewhere i'm not 'expected' to be
+	    if ((double)(tmp_ch->GetMaxLevel()) < ((double)GetMaxLevel() * 0.67)) {
+	      if(!::number(0,4) || !mobpulse) {
+		act("$n considers killing $N, but decides not to waste $s time.",TRUE,this,NULL,tmp_ch,TO_NOTVICT,NULL);
+		act("$n considers killing you, but decides not to waste $s time.",TRUE,this,NULL,tmp_ch,TO_VICT,NULL);
+		act("You consider killing $N, but decides not to waste your time.",TRUE,this,NULL,tmp_ch,TO_CHAR,NULL);
+	      }
+	      return FALSE;
+	    }
+	  }
+	  if (specials.act & ACT_WIMPY){
+	    if (!tmp_ch->awake()) {
               stats.aggro_successes++;
               rc = takeFirstHit(*tmp_ch);
               if (IS_SET_DELETE(rc, DELETE_VICT)) {

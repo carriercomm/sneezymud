@@ -92,6 +92,28 @@ int TBeing::reconcileDamage(TBeing *v, int dam, spellNumT how)
   if (how2 >= MIN_SPELL && how2 < MAX_SKILL && this != v) 
     LogDam(this, how2, dam2);
 
+  if (!v->isPc()) {
+    TMonster *tmons = dynamic_cast<TMonster *>(v);
+    if (!tmons->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
+      tmons->developHatred(this);
+
+      // if we are fighting an NPC pet, develop hatred toward the master
+      // however, only do this is the pet was the aggressor (PC ordere pet
+      // to attack), to avoid guards "get thee back to.." from hating
+      // elemental's owner.  Only hate if the pet was the aggressor, or
+      // if the pet's owner is also fighting
+      if (!isPc() && isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
+        if (master && (master->isPc() || master->desc)) {
+          if (isAffected(AFF_AGGRESSOR) ||
+              master->fight() == tmons) {
+            tmons->developHatred(master);
+          }
+        }
+      }
+    }
+  }
+
+
   rc = applyDamage(v, dam, how);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
 //    if (desc);

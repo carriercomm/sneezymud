@@ -4,6 +4,7 @@
 #include "stdsneezy.h"
 #include "shop.h"
 #include "statistics.h"
+#include "drug.h"
 
 vector<shopData>shop_index(0);
 
@@ -1816,6 +1817,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
   return FALSE;
 }
 
+#if !USE_SQL
 void bootTheShops()
 {
   char *buf=0;
@@ -1884,7 +1886,121 @@ void bootTheShops()
   }
   fclose(shop_f);
 }
+#else
+void bootTheShops()
+{
+  int shop_nr;
+  MYSQL_RES *res, *producing_res, *type_res, *material_res;
+  MYSQL_ROW row, producing_row, type_row, material_row;
+  MYSQL *producing_db, *type_db, *material_db;
 
+
+
+  /****** producing ******/
+  producing_db=mysql_init(NULL);
+  if(!mysql_real_connect(producing_db, NULL, "sneezy", NULL, 
+	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+    vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
+    exit(0);
+  }
+
+  if(mysql_query(producing_db, "select shop_nr, producing from shopproducing order by shop_nr")){
+    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(producing_db));
+    exit(0);
+  }
+  producing_res=mysql_use_result(producing_db);
+  producing_row=mysql_fetch_row(producing_res);
+
+  /****** type ******/
+  type_db=mysql_init(NULL);
+  if(!mysql_real_connect(type_db, NULL, "sneezy", NULL, 
+	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+    vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
+    exit(0);
+  }
+
+  if(mysql_query(type_db, "select shop_nr, type from shoptype order by shop_nr")){
+    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(type_db));
+    exit(0);
+  }
+  type_res=mysql_use_result(type_db);
+  type_row=mysql_fetch_row(type_res);
+
+  /****** material ******/
+  material_db=mysql_init(NULL);
+  if(!mysql_real_connect(material_db, NULL, "sneezy", NULL, 
+	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+    vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
+    exit(0);
+  }
+
+  if(mysql_query(material_db, "select shop_nr, mat_type from shopmaterial order by shop_nr")){
+    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(material_db));
+    exit(0);
+  }
+  material_res=mysql_use_result(material_db);
+  material_row=mysql_fetch_row(material_res);
+
+  if(dbquery(&res, "sneezy", "bootTheShops", "select shop_nr, no_such_item1, no_such_item2, do_not_buy, missing_cash1, missing_cash2, message_buy, message_sell, temper1, temper2, keeper, flags, in_room, open1, close1, open2, close2, profit_buy, profit_sell from shop order by shop_nr")){
+    vlogf(LOG_BUG, "Database error: bootTheShops");
+    exit(0);
+  }
+
+  while((row=mysql_fetch_row(res))){
+    shopData sd;
+
+    shop_nr=atoi(row[0]);
+    sd.no_such_item1 = mud_str_dup(row[1]);
+    sd.no_such_item2 = mud_str_dup(row[2]);
+    sd.do_not_buy = mud_str_dup(row[3]);
+    sd.missing_cash1 = mud_str_dup(row[4]);
+    sd.missing_cash2 = mud_str_dup(row[5]);
+    sd.message_buy = mud_str_dup(row[6]);
+    sd.message_sell = mud_str_dup(row[7]);
+    sd.temper1=atoi(row[8]);
+    sd.temper2=atoi(row[9]);
+    sd.keeper=real_mobile(atoi(row[10]));
+    sd.flags=atoi(row[11]);
+    sd.in_room=atoi(row[12]);
+    sd.open1=atoi(row[13]);
+    sd.close1=atoi(row[14]);
+    sd.open2=atoi(row[15]);
+    sd.close2=atoi(row[16]);
+    sd.profit_buy=atoi(row[17]);
+    sd.profit_sell=atoi(row[18]);
+
+    while(producing_row && atoi(producing_row[0])==shop_nr){
+      sd.producing.push_back(atoi(producing_row[1]));
+      producing_row=mysql_fetch_row(producing_res);
+    }
+    sd.producing.push_back(-1);
+    
+    while(type_row && atoi(type_row[0])==shop_nr){
+      sd.type.push_back(atoi(type_row[1]));
+      type_row=mysql_fetch_row(type_res);
+    }
+    sd.type.push_back(-1);
+
+    while(material_row && atoi(material_row[0])==shop_nr){
+      sd.mat_type.push_back(atoi(material_row[1]));
+      material_row=mysql_fetch_row(material_res);
+    }
+    sd.mat_type.push_back(MAX_OBJ_TYPES);
+    
+    shop_index.push_back(sd);
+  }  
+
+  mysql_free_result(res);
+  mysql_free_result(producing_res);
+  mysql_close(producing_db);
+  mysql_free_result(type_res);
+  mysql_close(type_db);
+  mysql_free_result(material_res);
+  mysql_close(material_db);
+
+}
+
+#endif
 
 bool safe_to_save_shop_stuff(TMonster *ch)
 {

@@ -142,6 +142,7 @@ const short int ITEM_MOONGATE       = 5891;
 const short int OBJ_MINELIFT_UP    =  7085;
 const short int OBJ_MINELIFT_DOWN  =  7086;
 const short int OBJ_TALISMAN        = 9700;
+const short int OBJ_PILE_OFFAL      = 10030;  // horse poop, etc...
 const short int ITEM_RAINBOW_BRIDGE1 = 10041;
 const short int ITEM_RAINBOW_BRIDGE2 = 10042;
 const short int OBJ_HERALD          = 10543;

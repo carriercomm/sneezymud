@@ -857,8 +857,15 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
 {
   char buf[255];
 
-  if (!ch)
-   return FALSE;
+  if (!ch) {
+    mud_assert(ch != NULL, "No character in SecretDoors");
+    return FALSE;
+  }
+
+  if (!rp) {
+    mud_assert(rp != NULL, "No room in SecretDoors");
+    return FALSE;
+  }
 
   if (cmd >= MAX_CMD_LIST)
     return FALSE;
@@ -869,7 +876,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   }
   one_argument(arg,buf);
   switch (rp->number) {
-  case 450:
+    case 450:
       if ((cmd != CMD_CLOSE) && (cmd != CMD_PUSH))
         return FALSE;
       if (cmd == CMD_PUSH) {

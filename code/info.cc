@@ -1744,7 +1744,7 @@ void TBeing::describeLimbDamage(const TBeing *ch) const
 void TBeing::doTime(const char *argument)
 {
   char buf[100], arg[160];
-  int weekday, day, tmp_num, tmp2;
+  int weekday, day, tmp2;
 
   if (!desc) {
     sendTo("Silly mob, go home.\n\r");
@@ -1764,7 +1764,7 @@ void TBeing::doTime(const char *argument)
     return;
   }
   sprintf(buf, "It is %s, on ",
-          hmtAsString(hourMinTime()).c_str());
+          hmtAsString(hourminTime()).c_str());
 
   weekday = ((28 * time_info.month) + time_info.day + 1) % 7;        // 28 days in a month 
 

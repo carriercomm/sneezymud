@@ -1912,10 +1912,20 @@ int castFumble(TBeing *caster, TBeing *victim)
   int bKnown = caster->getSkillValue(SPELL_FUMBLE);
 
   ret=fumble(caster,victim,level,bKnown);
+
+#if 1
+  if (ret == SPELL_SUCCESS || ret == SPELL_CRIT_FAIL)
+    if ((ret = victim->hit(caster)))
+      return ret;
+    else
+      victim->setVictFighting(caster);
+#else
   if (ret == SPELL_SUCCESS) {
   } else {
     if (ret==SPELL_CRIT_FAIL) {
     }
   }
+#endif
+
   return TRUE;
 }

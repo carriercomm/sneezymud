@@ -292,6 +292,7 @@ int doctor(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)
                     ch->getName(), ++count,
                     discArray[aff->type]->name,
                     spell_regen_price(ch, SPELL_BLINDNESS));
+          me->doTell(buf);
         }
       }  // affects loop
     }

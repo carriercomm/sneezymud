@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: obj_base_container.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -70,3 +59,22 @@ int TContainer::getReducedVolume(const TThing *) const
   return getTotalVolume();
 }
 
+string TContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
+{
+  string tString("");
+
+  // Take 1 higher than the current used and minus 1 from it to get All of the
+  // bits set.  From there remove the hold/thrown/take items as we only care
+  // about those worn containers.  Ex: Mage Belt
+  int    tCanWear = canWear((1 << MAX_ITEM_WEARS) - 1 - ITEM_HOLD - ITEM_THROW - ITEM_TAKE);
+
+  if ((tMode == SHOW_MODE_SHORT_PLUS ||
+       tMode == SHOW_MODE_SHORT_PLUS_INV ||
+       tMode == SHOW_MODE_SHORT) && tCanWear) {
+    tString += " (";
+    tString += equip_condition(-1);
+    tString += ")";
+  }
+
+  return tString;
+}

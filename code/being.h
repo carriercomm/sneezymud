@@ -240,9 +240,14 @@ const unsigned long AFF_AGGRESSOR         = (1<<30);       // 873741824 (set aut
 // these are used to pass deletion bitvectors through functions
 // it is used in same functions that return degree of damage done
 // these values are essentially negative
+//
+// damage is sometimes passed in same manner as deletes, so make sure
+// value for damage is always less than smallest DELETE value
+//
 // they are combinations of bits, IS_SET, REMOVE_BIT, SET_BIT can not be used
 // use IS_SET_DELETE, ADD_DELETE, REM_DELETE instead
-#if 1 
+//
+#if 0 
 const int DELETE_ITEM          = ((1<<5));
 const int DELETE_THIS          = ((1<<6));
 const int DELETE_VICT          = ((1<<7));

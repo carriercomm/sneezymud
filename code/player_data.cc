@@ -288,7 +288,7 @@ bool raw_save_char(const char *name, charFile *char_element)
   return TRUE;
 }
 
-/* Load a char, TRUE if loaded, FALSE if not */
+// Load a char, TRUE if loaded, FALSE if not
 bool load_char(const char *name, charFile *char_element)
 {
   FILE *fl;
@@ -307,7 +307,7 @@ bool load_char(const char *name, charFile *char_element)
 }
 
 
-/* copy vital data from a players char-structure to the file structure */
+// copy vital data from a players char-structure to the file structure
 void TPerson::storeToSt(charFile *st)
 {
   affectedData *af;
@@ -509,7 +509,6 @@ void TPerson::storeToSt(charFile *st)
   }
   affectTotal();
 }				/* Char to store */
-
 
 void TPerson::loadFromSt(charFile *st)
 {
@@ -744,6 +743,7 @@ void TBeing::saveChar(sh_int load_room)
     if (!(tmp = desc->original))
       return;
     tmp->desc = desc;
+
   } else {
     if (!desc)
       return;
@@ -1537,7 +1537,6 @@ void TBeing::saveDrugStats()
 
 }
 
-
 void TBeing::loadDrugStats()
 {
   FILE *fp = NULL;
@@ -1604,7 +1603,6 @@ void TBeing::loadDrugStats()
 
   fclose(fp);
 }
-
 
 void TBeing::saveCareerStats()
 {

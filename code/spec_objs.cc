@@ -136,8 +136,8 @@ int warMaker(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *)
         return TRUE;
       case CMD_FLEE:
         if (o->equippedBy) {
-          act("$n's $o glows red-hot in $s hands!", 1, ch, o, NULL, TO_ROOM, NULL);
-          act("Your $o glows red-hot in your hands!", 1, ch, o, NULL, TO_CHAR);
+          act("$n's $p glows red-hot in $s hands!", 1, ch, o, NULL, TO_ROOM, NULL);
+          act("Your $p glows red-hot in your hands!", 1, ch, o, NULL, TO_CHAR);
           ch->addToHit(-dice(5, 5));
           if (ch->getHit() < 0) {
             ch->setHit(0);
@@ -621,22 +621,22 @@ int weaponDisruption(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   spellNumT w_type = o->getWtype();
   obj_act("hums softly which quickly becomes a high pitched whine.",
             ch,o,vict, ANSI_ORANGE);
-  sprintf(buf,"$n's $o screams with power as $e swings it at your %s!",
+  sprintf(buf,"$n's $p screams with power as $e swings it at your %s!",
      vict->describeBodySlot(part).c_str());
   act(buf,TRUE,ch,o,vict,TO_VICT,ANSI_RED);
-  sprintf(buf,"$n's $o screams with power as $e swings it at $N's %s!",
+  sprintf(buf,"$n's $p screams with power as $e swings it at $N's %s!",
      vict->describeBodySlot(part).c_str());
   act(buf,TRUE,ch,o,vict,TO_NOTVICT,ANSI_ORANGE);
-  sprintf(buf,"Your $o screams with power as you swing it at $N's %s!",
+  sprintf(buf,"Your $p screams with power as you swing it at $N's %s!",
      vict->describeBodySlot(part).c_str());
   act(buf,TRUE,ch,o,vict,TO_CHAR,ANSI_GREEN);
 
   sprintf(buf,
-    "A soft WOMPF! is heard as $o releases a shock wave into $n's %s!",
+    "A soft WOMPF! is heard as $p releases a shock wave into $n's %s!",
        (obj ? obj->getName() : (vict->isHumanoid() ? "skin" : "hide")));
   act(buf, TRUE, vict,o,0,TO_ROOM,ANSI_ORANGE);
   sprintf(buf,
-    "A soft WOMPF! is heard as $o releases a shock wave into your %s!",
+    "A soft WOMPF! is heard as $p releases a shock wave into your %s!",
        (obj ? obj->getName() : (vict->isHumanoid() ? "skin" : "hide")));
   act(buf, TRUE, vict,o,0,TO_CHAR,ANSI_RED);
   

@@ -935,7 +935,6 @@ void do_the_player_stuff(const char *name)
           isGagged = true;
           tLevel = 0;
 
-          vlogf(LOG_LOW, "Immortal %s has been idled.", longbuf);
 
           if ((fp = fopen(tString, "w"))) {
             for (; tWiz < MAX_POWER_INDEX; tWiz++)

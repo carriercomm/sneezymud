@@ -4354,7 +4354,7 @@ void TBeing::doInfo(const char *arg)
                 tTotalShops, tNetShops, tTotalShops - tNetShops);
         buf += buf2;
         sprintf(buf2, "Economy-Budget:   pos = %10u   net gold = %10d   drain = %10d\n\r",
-                tTotalBudget, tNetBudget, tTotalBudget = tNetBudget);
+                tTotalBudget, tNetBudget, tTotalBudget - tNetBudget);
         buf += buf2;
         buf += "\n\r";
 

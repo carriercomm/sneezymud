@@ -2,7 +2,10 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: spec_objs.cc,v $
+// #$Log: spec_objs.cc,v $
+// #Revision 5.1.1.2  1999/10/16 05:06:08  batopr
+// #*** empty log message ***
+// #
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //

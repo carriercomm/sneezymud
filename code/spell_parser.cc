@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spell_parser.cc,v $
+// Revision 5.1.1.3  1999/10/29 03:32:25  cosmo
+// Added a log to track a crash bug.
+//
 // Revision 5.1.1.2  1999/10/29 03:24:45  cosmo
 // just took out some commented code
 //
@@ -135,7 +138,11 @@ void TBeing::stopFollower(bool remove, stopFollowerT textLimits) // default argu
       char * tmp = mud_str_dup(master->name);
       aff.be = (TThing *) tmp;
     }
-    affectTo(&aff, -1);
+    if (roomp) {
+      affectTo(&aff, -1);
+    } else {
+      vlogf(9, "%s having AFFECT_ORPHAN_PET without a roomp  in stop follower, master is %s", getName(), master->getName());
+    }
 // take charm off so text is sent
     REMOVE_BIT(specials.affectedBy, AFF_CHARM | AFF_GROUP);
   }

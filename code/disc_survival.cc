@@ -750,6 +750,13 @@ int TBeing::inCamp() const
   if (!isAffected(AFF_GROUP))
     return FALSE;
 
+
+// VERY TEMP FIX 10/99 -- COS
+  if (!roomp) {
+    vlogf(1, "%s has no roomp in inCamp. Try to find", getName());
+    return FALSE;
+  }
+
   for (t = roomp->stuff; t; t = t->nextThing) {
     ch = dynamic_cast<TBeing *>(t);
     if (!ch)

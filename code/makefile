@@ -152,7 +152,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	cmd_compare.o cmd_consider.o \
 	cmd_deathstroke.o cmd_disarm.o cmd_dissect.o \
 	cmd_doorbash.o cmd_egotrip.o \
-	cmd_feigndeath.o cmd_grapple.o cmd_headbutt.o \
+	cmd_feigndeath.o cmd_get.o cmd_grapple.o cmd_headbutt.o \
 	cmd_help.o cmd_jump.o \
 	cmd_kick.o cmd_kneestrike.o cmd_look.o cmd_low.o \
 	cmd_mend_limb.o cmd_message.o \
@@ -310,6 +310,7 @@ $(OBJDIR)cmd_disarm.o: combat.h
 $(OBJDIR)cmd_dissect.o: components.h disc_adventuring.h
 $(OBJDIR)cmd_doorbash.o: disc_warrior.h combat.h
 $(OBJDIR)cmd_egotrip.o: disc_fire.h disc_aegis.h
+$(OBJDIR)cmd_get.o: games.h
 $(OBJDIR)cmd_kick.o: combat.h
 $(OBJDIR)cmd_kneestrike.o: combat.h
 $(OBJDIR)cmd_feigndeath.o: combat.h

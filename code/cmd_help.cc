@@ -253,7 +253,7 @@ void TBeing::doHelp(const char *arg)
     str = buf2;
 
     if (!strcmp(namebuf, "NEXTVERSION")) {
-      str += "THIS HELP FILE REFLECTS WHAT THE "news" COMMAND WILL SHOW NEXT TIME THERE\n\r";
+      str += "THIS HELP FILE REFLECTS WHAT THE \"news\" COMMAND WILL SHOW NEXT TIME THERE\n\r";
       str += "IS A CHANGE IN CODE (PROBABLY IN THE NEXT FEW DAYS).  IT IS HERE TO GIVE\n\r";
       str += "YOU SOME IDEA OF WHAT THINGS HAVE BEEN FIXED ALREADY, OR WHAT FEATURES ARE\n\r";
       str += "FORTHCOMING...\n\r";

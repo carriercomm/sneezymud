@@ -3942,6 +3942,9 @@ void TBeing::doSetsev(const char *arg)
   if (!(d = desc))
     return;
 
+  if (powerCheck(POWER_SETSEV))
+    return;
+
   for (; isspace(*arg); arg++);
 
   bisect_arg(arg, &tMatch, tString, tFields);

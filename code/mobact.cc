@@ -2777,7 +2777,7 @@ int TMonster::mobileActivity(int pulse)
     oldRoom = inRoom();
 
 #if 0 
-  if (isPet() && !isElemental()) {
+  if (isPet(PETTYPE_PET) && !isElemental()) {
     if (getCond(FULL) < 0) {
       setCond(FULL, 20);
     } else if (getCond(FULL) > 0) {

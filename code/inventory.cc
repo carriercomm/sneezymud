@@ -1,10 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 //////////////////////////////////////////////////////////////////////
 //
 //    SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -234,7 +227,7 @@ int TRealContainer::openMe(TBeing *ch)
         return FALSE;
       } else if (!isContainerFlag(CONT_TRAPPED) &&
                  !bSuccess(ch, ch->getSkillValue(SKILL_DETECT_TRAP), SKILL_DETECT_TRAP)) {
-        setContainerTrapType(trap_t(::number(0, (MAX_TRAP_TYPES - 1))));
+        setContainerTrapType(doorTrapT(::number(DOOR_TRAP_NONE+1, (MAX_TRAP_TYPES - 1))));
         setContainerTrapDam(0);
         addContainerFlag(CONT_GHOSTTRAP);
 

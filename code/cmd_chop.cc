@@ -134,9 +134,15 @@ static int chopHit(TBeing *c, TBeing *v, int score)
 
   item = dynamic_cast<TObj *>(c->equipment[c->getPrimaryHand()]);
   if (item)
-    if (item->isSpiked())
+    if (item->isSpiked() || item->isObjStat(ITEM_SPIKED)) {
+
+      act("The spikes on your $o sink into $N.", FALSE, c, item, v, TO_CHAR);
+      act("The spikes on $n's $o sink into $N.", FALSE, c, item, v, TO_NOTVICT);
+      act("The spikes on $n's $o sink into you.", FALSE, c, item, v, TO_VICT);
+
       if (c->reconcileDamage(v, dam*0.15, TYPE_STAB) == -1)
 	return DELETE_VICT;
+    }
 
   if (c->reconcileDamage(v, dam, SKILL_CHOP) == -1)
     return DELETE_VICT;

@@ -127,6 +127,10 @@ void TBeing::doSave(silentTypeT silent, const char *tArg = NULL)
       return;
     }
 
+    // copy the descriptor so that both can see it
+    // we need stuff on descriptor to properly evaluate handedness for eq-swap
+    tPerson->desc = desc;
+    
     // for a poly, we want to swap all the gear that is on the poly back
     // to the original char, save the person in that state, and then swap
     // it all back.  Fortunately, the original person shouldn't have anything
@@ -165,6 +169,9 @@ void TBeing::doSave(silentTypeT silent, const char *tArg = NULL)
         equipChar(obj, wearIndex, SILENT_YES);
       }
     }
+
+    // the original char should not know about the desc (by default)
+    tPerson->desc = NULL;
 
     return;
   } else {

@@ -1,26 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: spelltask.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:47:52  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "spelltask.cc" - All functions related to casting
 //
@@ -1731,7 +1710,7 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         castFear(this, victim);
         break;
      case SPELL_FUMBLE:
-        castFumble(this, victim);
+        rc = castFumble(this, victim);
         break;
 // disc_alchemy
       case SPELL_ILLUMINATE:

@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_nature.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -808,7 +797,7 @@ int rootControl(TBeing * caster, TBeing * victim, int, int dam, byte bKnown)
     return SPELL_FAIL;
   }
   if (victim->getPosition() <= POSITION_SLEEPING) {
-    act("$N seems to already be on the ground!", FALSE, caster, NULL, victim, TO_CHAR);
+    act("$N seems to already be on the $g!", FALSE, caster, NULL, victim, TO_CHAR);
     act("Nothing seems to happen.", TRUE, caster, 0, 0, TO_ROOM);
     return SPELL_FAIL;
   }

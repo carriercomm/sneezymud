@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: info.cc,v $
+// Revision 5.1.1.2  1999/11/03 20:26:59  lapsos
+// Continued work on the !prod new who system.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1046,7 +1049,7 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
 
 void TBeing::doWho(const char *argument)
 {
-#if 0
+#if 1
   // New Who Code to handle: who -ol j 20 40
 
   if (gamePort == BETA_GAMEPORT) {
@@ -1070,8 +1073,8 @@ void TBeing::doWho(const char *argument)
            tLinkD =  0;
     string tSb("");
     unsigned long int tBits = 0;
-    TBeing *tBeing,
-           *tFollower;
+    TBeing *tBeing;
+      //           *tFollower;
 
     while ((argument = one_argument(argument, tString))) {
       if (tString[0] == '-') {
@@ -1135,7 +1138,7 @@ void TBeing::doWho(const char *argument)
         else
           tCount++;
 
-        bool anonCheck == (isImmortal() || !tBeing->isPlayerAction(PLR_ANONYMOUS));
+        bool anonCheck = (isImmortal() || !tBeing->isPlayerAction(PLR_ANONYMOUS));
 
         if ((!(tBits & (1 <<  2)) || tBeing->inQuest()) &&
             (!(tBits & (1 <<  4)) || tBeing->isPlayerAction(PLR_SEEKSGROUP)) &&
@@ -1144,7 +1147,7 @@ void TBeing::doWho(const char *argument)
             (!(tBits & (1 <<  7)) || (tBeing->isLinkdead() && isImmortal())) && 
             (!(tBits & (1 <<  8)) || tBeing->hasWizPower(POWER_GOD)) &&
             (!(tBits & (1 <<  9)) || tBeing->hasWizPower(POWER_BUILDER)) &&
-            (!(tBits & (1 << 10)) || !tBeing->hasWizPower(POEWR_BUILDER)) &&
+            (!(tBits & (1 << 10)) || !tBeing->hasWizPower(POWER_BUILDER)) &&
             (!(tBits & (1 << 13)) || (anonCheck && tBeing->hasClass(CLASS_MAGE))) &&
             (!(tBits & (1 << 14)) || (anonCheck && tBeing->hasClass(CLASS_CLERIC))) &&
             (!(tBits & (1 << 15)) || (anonCheck && tBeing->hasClass(CLASS_WARRIOR))) &&
@@ -1171,7 +1174,17 @@ void TBeing::doWho(const char *argument)
           if ((tBits & (1 << 1)))
             strcat(tOutput, getWhoLevel(this, tBeing).c_str());
 
+          if (tBeing->isLinkdead())
+            sprintf(tString, "[%-12s]", pers(tBeing));
+          else if (tBeing->polyed == POLY_TYPE_SWITCH)
+            sprintf(tString, "[%-12s] (switched)", pers(tBeing));
+          else if (dynamic_cast<TMonster *>(tBeing) &&
+                   (tBeing->specials.act & ACT_POLYSELF))
+            sprintf(tString, "(%-12s)", pers(tBeing));
+          else
+            sprintf(tString, "%-14s", pers(tBeing));
 
+          strcat(tOutput, tString);
 	  // Name goes here.
 
           if ((tBits & (1 << 12))) {
@@ -1188,17 +1201,12 @@ void TBeing::doWho(const char *argument)
             strcat(tOutput, tString);
           }
 
-          if (isImmortal()) {
-            if (tBeing->polyed == POLY_TYPE_SWITCH)
-              strcat(tOutput, " (switched)")
-          }
-
           if ((tBits & (1 << 3)) && isImmortal()) {
             if (tBeing->hasClass(CLASS_CLERIC) || tBeing->hasClass(CLASS_DEIKHAN))
               sprintf(tString, "\n\r\tHit:[%-3d] Pty:[%-5.2f] Move:[%-3d] Talens:[%-8d] Bank:[%-8d]",
                       tBeing->getHit(), tBeing->getPiety(), tBeing->getMove(), tBeing->getMoney(), tBeing->getBank());
             else
-              sprintf(tString, "\n\r\tHit:[%-3d] Mna:[%-3f] Move:[%-3d] Talens:[%-8d] Bank:[%-8d]",
+              sprintf(tString, "\n\r\tHit:[%-3d] Mna:[%-3d] Move:[%-3d] Talens:[%-8d] Bank:[%-8d]",
                       tBeing->getHit(), tBeing->getMana(), tBeing->getMove(), tBeing->getMoney(), tBeing->getBank());
 
             strcat(tOutput, tString);
@@ -1223,20 +1231,6 @@ void TBeing::doWho(const char *argument)
           }
         }
       }
-    /*
-    char   tString[256],
-           tBuffer[256]  = "\0",
-           tOutput[1024] = "\0";
-    string tSb("");
-    TBeing *tBeing,
-           *tFollower;
-
-[-] [i]idle [l]levels [q]quests [h]hit/mana/move
-[-] [z]seeks-group [p]groups [y]currently-not-grouped
-[-] [d]linkdead [g]God [b]Builders [o]Mort [s]stats [f]action
-[-] [1]Mage[2]Cleric[3]War[4]Thief[5]Deikhan[6]Monk[7]Ranger[8]Shaman
-[-] [e]elf [t]hobbit [n]gnome [u]human [r]ogre [w]dwarven
-     */
 
     return;
   }

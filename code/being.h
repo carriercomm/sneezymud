@@ -1858,6 +1858,7 @@ class TBeing : public TThing {
     double getExpSharePerc() const;
     int genericRestore(restoreTypeT);
     void makeOutputPaged();
+    TThing * findArrow(const char *, silentTypeT) const;
 };
 
 #endif

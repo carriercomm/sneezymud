@@ -1095,9 +1095,21 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
       act("$n tells you 'I guess that means you rent free.", FALSE, recep, 0, this, TO_VICT);
     }
   } else {
-    sprintf(buf, "$n tells you 'That puts your daily rent at %d talens.'", cost->total_cost);
+    int daily_cost = cost->total_cost;
+    int adjusted_cost = (int) (daily_cost * gold_modifier[GOLD_RENT]);
+    cost->total_cost = adjusted_cost;
+
     if (recep) {
+#if 1
+      sprintf(buf, "$n tells you 'Your stuff is %d talens over your credit.'", daily_cost);
       act(buf, FALSE, recep, 0, this, TO_VICT);
+      sprintf(buf, "$n tells you 'The current rent multiplier is %.2f.'", gold_modifier[GOLD_RENT]);
+      act(buf, FALSE, recep, 0, this, TO_VICT);
+#endif
+
+      sprintf(buf, "$n tells you 'That puts your daily rent at %d talens.'", cost->total_cost);
+      act(buf, FALSE, recep, 0, this, TO_VICT);
+
 #if FACTIONS_IN_USE
       if (isSameFaction(recep) && !recep->isUnaff()) {
         act("$n tells you 'Because you are of the same allegiance, I will give you a discount based on your faction percentage.", FALSE, recep, 0, this, TO_VICT);
@@ -1134,7 +1146,7 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
     }
   } else {
     if (recep) 
-      act("$n tells you \"You can afford to rent as long as you'd like\"", FALSE, recep, 0, this, TO_VICT);
+      act("$n tells you \"You can afford to rent as long as you'd like.\"", FALSE, recep, 0, this, TO_VICT);
   }
   if (client && recep) {
     processStringForClient(str);
@@ -2187,12 +2199,27 @@ void TBeing::makeRentNote(TBeing *recip)
 
   sprintf(buf, "Rent Credit is : %d\n\r", credit);
   tStBuffer += buf;
-  sprintf(buf, "Daily Rent Cost : %d\n\r", 
-             max((int) (cost.total_cost-credit), 0));
-  tStBuffer += buf;
+  if (credit >= (unsigned int) cost.total_cost) {
+    sprintf(buf, "Daily Rent Cost : 0\n\r");
+    tStBuffer += buf;
+  } else {
+    sprintf(buf, "Equipment Cost : %d\n\r",
+               max((int) (cost.total_cost-credit), 0));
+    tStBuffer += buf;
+    sprintf(buf, "Current Rent Factor : %.2f\n\r",
+               gold_modifier[GOLD_RENT]);
+    tStBuffer += buf;
+    sprintf(buf, "Daily Rent Cost : %d\n\r",
+               max((int) ((cost.total_cost-credit)*gold_modifier[GOLD_RENT]), 0));
+    tStBuffer += buf;
+  }
+
+  // semi-weird : we want the note to have the summary, the itemized list,
+  // and then the summary again...
   longBuf += tStBuffer;
   tStBuffer += "\n\r";
   tStBuffer += longBuf;
+
   char *dummy = mud_str_dup(tStBuffer.c_str());
   TNote * note = createNote(dummy);
   note->addObjStat(ITEM_NEWBIE);

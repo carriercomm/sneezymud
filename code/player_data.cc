@@ -432,6 +432,9 @@ void TPerson::storeToSt(charFile *st)
   for (; ik < ABS_MAX_FACTION; ik++)
     st->f_percx[ik] = (double) 0.0;
 #endif
+  st->align_ge = faction.align_ge;
+  st->align_lc = faction.align_lc;
+  st->whichfaction = faction.whichfaction;
 
   st->f_type = getFaction();
   st->f_actions = getFactAct();
@@ -636,6 +639,9 @@ void TPerson::loadFromSt(charFile *st)
   for (ij = MIN_FACTION; ij < MAX_FACTIONS; ij++)
     setPercX(st->f_percx[ij], ij);
 #endif
+  faction.whichfaction = st->whichfaction;
+  faction.align_ge = st->align_ge;
+  faction.align_lc = st->align_lc;;
 
   mud_assert(st->f_type >= MIN_FACTION && st->f_type < MAX_FACTIONS, "bad faction");
   setFaction(factionTypeT(st->f_type));

@@ -58,6 +58,12 @@ class charFile {
    double f_percx[ABS_MAX_FACTION];
    byte   f_type;
    unsigned int f_actions;
+   //new faction stuff
+   int whichfaction;
+   int align_ge;
+   int align_lc;
+   // end new faction
+
    aliasData alias[16];
    pracData practices;
 

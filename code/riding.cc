@@ -168,7 +168,8 @@ int TMonster::lookForHorse()
       continue;
     if (!canSee(horse) || horse->fight())
       continue;
-    if (horse->isPet() || horse->isCharm() || horse->isZombie())
+
+    if (horse->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL))
       continue;
 
     // only choose healthy horses
@@ -231,7 +232,7 @@ TThing * TThing::dismount(positionTypeT pos)
 
   if (tbt && tbt->master == this) {
     // stop follower unless they are following for other reasons
-    if (!tbt->isPet() && !tbt->isZombie() && !tbt->isCharm()) {
+    is (!tbt->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
 
       // skill based check to let mount continue to follow, even when dismounted
       if (!ch->doesKnowSkill(SKILL_TRAIN_MOUNT) || 
@@ -307,7 +308,7 @@ int TBeing::doMount(const char *arg, cmdTypeT cmd, TBeing *h)
       sendTo("You do not have the skill to mount something that is fighting!\n\r");
       return FALSE;
     }
-    if (horse->isPet() && horse->master != this) {
+    if (horse->isPet(PETTYPE_PET) && horse->master != this) {
       act("You can't ride someone else's pet.", FALSE, this, 0, 0, TO_CHAR);
       return FALSE;
     }

@@ -986,6 +986,10 @@ void do_the_player_stuff(const char *name)
       }
     } 
 
+    // count active
+    if ((time(0) - st.last_logon) <= (7 * SECS_PER_REAL_DAY))
+      active_player++;
+    
     if (auto_deletion) {
       time_t ltime = time(0);
       tm *curtime;

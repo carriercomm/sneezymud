@@ -879,8 +879,8 @@ void TBeing::statBeing(TBeing *k)
 
   sprintbit(k->specials.affectedBy, affected_bits, buf2);
   strcat(buf, "Affected by: ");
-  strcat(buf2, "\n\r");
   strcat(buf, buf2);
+  strcat(buf, "\n\r");
 
   strcat(buf, "\n\rBody part          Hth Max Flgs StuckIn\n\r");
   strcat(buf, "-----------------------------------\n\r");

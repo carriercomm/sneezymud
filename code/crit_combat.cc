@@ -305,6 +305,15 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
           dam = getActualDamage(tbt, NULL, dam, w_type);
           dam /= 2;
           rc = applyDamage(tbt, dam,w_type);
+          if (IS_SET_DELETE(rc, DELETE_VICT)) {
+            if (tbt != this) {
+              delete tbt;
+              tbt = NULL;
+            } else
+              return DELETE_THIS;
+          }
+
+          // if nobody died from the hit, stop the fight
           if (tbt != this) {
             act("In the confusion, you and $N stop fighting.",
                   FALSE, this, 0, tbt, TO_CHAR);
@@ -313,14 +322,8 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
             act("In the confusion, $n and $N stop fighting.",
                   FALSE, this, 0, tbt, TO_NOTVICT);
             stopFighting();
-            tbt->stopFighting();
-          }
-          if (IS_SET_DELETE(rc, DELETE_VICT)) {
-            if (tbt != this) {
-              delete tbt;
-              tbt = NULL;
-            } else
-              return DELETE_THIS;
+            if (tbt->fight())
+              tbt->stopFighting();
           }
         }
         return SENT_MESS;

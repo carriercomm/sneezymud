@@ -7,14 +7,29 @@
 #include "stdsneezy.h"
 
 #if 0
+
 doCast -> doDiscipline -> flamingSword -> start_cast
 
-spelltask.cc 1439: check for flag and store as needed
+--
+doStore:
+go through normal cast, stop at spelltask.cc:1439 and check if we are storing
+a spell, if so, store it and return
 
-add storage class to TBeing
-use it to pass the info needed for the spelltask.cc check
+doTrigger:
+go through cast checks etc.  once number is parsed, search for that spell in
+the stored list, if its there, move to spelltask and call start_cast
+--
+
+need to make it a list so we can store more than one somehow
 
 spellTaskData
+
+class spellStoreData {
+public:
+  spellTaskData *spelltask;
+  bool storing;
+};
+
 
 #endif
 
@@ -26,8 +41,7 @@ int TBeing::doTrigger(const char *argument){
   TBeing *ch=NULL;
   TObj *o=NULL;
   TThing *t=NULL;
-
-  return FALSE;
+  int rc;
 
   if(!preCastCheck())
     return FALSE;
@@ -42,23 +56,39 @@ int TBeing::doTrigger(const char *argument){
     return FALSE;
   }
 
-  if (which <= TYPE_UNDEFINED) 
-    return FALSE;
-
-  if(!preDiscCheck(which))
-    return FALSE;
-
-  if(!parseTarget(which, arg, &t))
+  if (which <= TYPE_UNDEFINED || !preDiscCheck(which) || 
+      !parseTarget(which, arg, &t))
     return FALSE;
 
   ch=dynamic_cast<TBeing *>(t);
   o=dynamic_cast<TObj *>(t);
 
-  doSpellCast(this, ch, o, roomp, which, getSpellType(discArray[which]->typ));
+  spelltask=spellstore->spelltask;
 
-  return TRUE;
+  rc=doSpellCast(this, ch, o, roomp, which, getSpellType(discArray[which]->typ));
+  if(rc)
+    spellstore->spelltask=NULL;
+
+  return rc;
 }
 
-int TBeing::doStore(const char *argument){
-  return FALSE;
+int TBeing::doStore(const char *argument)
+{
+  int rc;
+
+  if(!spellstore){
+    spellstore=(class spellStoreData *) malloc(sizeof(class spellStoreData));
+  }
+
+  if(spellstore->storing || spelltask){
+    sendTo("You are already casting a spell.\n\r");
+    return FALSE;
+  }
+
+  spellstore->storing=TRUE;
+  rc=doCast(argument);
+  if(!rc){
+    spellstore->storing=FALSE;
+  }
+  return rc;
 }

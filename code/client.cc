@@ -173,7 +173,6 @@ void Descriptor::send_client_prompt(int, int update)
     clientf("%d|%d", CLIENT_POS, ch->getPosition());
 
   if (update & CHANGED_MUD) {
-    int tmp_num = (time_info.hours / 2);
     clientf("%d|%s", CLIENT_MUDTIME,
        hmtAsString(hourminTime()).c_str());
 

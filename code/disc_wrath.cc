@@ -604,17 +604,17 @@ int earthquake(TBeing *caster, int level, byte bKnown, spellNumT spell, int adv_
         else {
 	  caster->reconcileHurt(tmp_victim, discArray[spell]->alignMod);
 
+          if (tmp_victim->riding) {
+            rc = tmp_victim->fallOffMount(tmp_victim->riding, POSITION_STANDING);
+            if (IS_SET_DELETE(rc, DELETE_THIS)) {
+              delete tmp_victim;
+              tmp_victim = NULL;
+              continue;
+            }
+          }
+
 	  if (critSuccess(caster, spell))  {
             act_dam *= 2;
-            if (tmp_victim->riding) {
-              rc = tmp_victim->fallOffMount(tmp_victim->riding,
-POSITION_STANDING);
-              if (IS_SET_DELETE(rc, DELETE_THIS)) {
-                delete tmp_victim;
-                tmp_victim = NULL;
-                continue;
-              }
-            }
             if (tmp_victim->getPosition() >= POSITION_STANDING) {
                act("$n falls down and hurts $mself in the earthquake!", 
                    FALSE, tmp_victim, NULL, NULL, TO_ROOM);
@@ -627,31 +627,34 @@ POSITION_STANDING);
                act("You hurt yourself in the earthquake!", 
                    FALSE, tmp_victim, NULL, NULL, TO_CHAR);
             }
-          } else if (tmp_victim->isLucky(caster->spellLuckModifier(spell))) {
-
-	    act("The earthquake slightly injures $n!", 
-                 FALSE, tmp_victim, NULL, NULL, TO_ROOM);
-	    act("The earthquake slightly injures you!", 
-                 FALSE, tmp_victim, NULL, NULL, TO_CHAR);
-            act_dam /= 2;
-	  } else if (tmp_victim->getPosition() >= POSITION_STANDING) {
-	    act("The earth shakes and smashes $n into the $g!", 
-                 FALSE, tmp_victim, NULL, NULL, TO_ROOM);
-	    act("The earth shakes and smashes you into the $g!",
-                 FALSE, tmp_victim, NULL, NULL, TO_CHAR);
-	  } else {
-	    act("The earth shakes causing $n injury!", 
-                 FALSE, tmp_victim, NULL, NULL, TO_ROOM);
-	    act("The earth shakes causing you injury!",
-                 FALSE, tmp_victim, NULL, NULL, TO_CHAR);
+          } else {
+            // a non-critsuccess
+            if (tmp_victim->isLucky(caster->spellLuckModifier(spell))) {
+              act("The earthquake slightly injures $n!", 
+                   FALSE, tmp_victim, NULL, NULL, TO_ROOM);
+              act("The earthquake slightly injures you!", 
+                   FALSE, tmp_victim, NULL, NULL, TO_CHAR);
+              act_dam /= 2;
+            } else if (tmp_victim->getPosition() >= POSITION_STANDING) {
+              act("The earth shakes and smashes $n into the $g!", 
+                   FALSE, tmp_victim, NULL, NULL, TO_ROOM);
+              act("The earth shakes and smashes you into the $g!",
+                   FALSE, tmp_victim, NULL, NULL, TO_CHAR);
+              tmp_victim->setPosition(POSITION_SITTING);
+            } else {
+              act("The earth shakes causing $n injury!", 
+                   FALSE, tmp_victim, NULL, NULL, TO_ROOM);
+              act("The earth shakes causing you injury!",
+                   FALSE, tmp_victim, NULL, NULL, TO_CHAR);
+            }
           }
-	  if (caster->reconcileDamage(tmp_victim, act_dam, spell) == -1) {
+          if (caster->reconcileDamage(tmp_victim, act_dam, spell) == -1) {
             delete tmp_victim;
             tmp_victim = NULL;
           }
         }
       } else if ((caster != tmp_victim) &&
-		 (tmp_victim->in_room != ROOM_NOWHERE) &&
+        	 (tmp_victim->in_room != ROOM_NOWHERE) &&
 		 (caster->roomp->getZone() == tmp_victim->roomp->getZone())) {
 	tmp_victim->sendTo("The earth shakes for a moment...\n\r");
 	if ((tmp_victim->getPosition() > POSITION_SITTING) &&

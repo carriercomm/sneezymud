@@ -270,7 +270,7 @@ void ObjLoad(TBeing *ch, int vnum)
   MYSQL_ROW row;
   MYSQL_RES *res;
 
-  if((rc=dbquery(&res, "immortal", "ObjLoad(1)", "select type, name, short_desc, long_desc, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from object where vnum=%i and owner='%s'", vnum, ch->name))){
+  if((rc=dbquery(&res, "immortal", "ObjLoad(1)", "select type, name, short_desc, long_desc, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist, action_desc from object where vnum=%i and owner='%s'", vnum, ch->name))){
     if(rc==1)
       ch->sendTo("Object not found\n\r");
     else if(rc==-1)
@@ -305,6 +305,8 @@ void ObjLoad(TBeing *ch, int vnum)
   o->setVolume(atoi(row[17]));
   o->setMaterial(atoi(row[18]));
   o->max_exist = atoi(row[19]);
+  if(strcmp(row[20], "")) o->action_description=mud_str_dup(row[20]);
+  else o->action_description=NULL;
 
   o->ex_description = NULL;
 
@@ -415,13 +417,13 @@ static void ObjSave(TBeing *ch, TObj *o, int vnum)
   int tmp1, tmp2, tmp3, tmp4;
   o->getFourValues(&tmp1, &tmp2, &tmp3, &tmp4);
 
-  if(dbquery(NULL, "immortal", "ObjSave(1)", "replace object set vnum=%i, name='%s', short_desc='%s', long_desc='%s', type=%i, action_flag=%i, wear_flag=%i, val0=%i, val1=%i, val2=%i, val3=%i, weight=%f, price=%i, can_be_seen=%i, spec_proc=%i, max_exist=%i, cur_struct=%i, max_struct=%i, decay=%i, volume=%i, material=%i, owner='%s'", 
+  if(dbquery(NULL, "immortal", "ObjSave(1)", "replace object set vnum=%i, name='%s', short_desc='%s', long_desc='%s', type=%i, action_flag=%i, wear_flag=%i, val0=%i, val1=%i, val2=%i, val3=%i, weight=%f, price=%i, can_be_seen=%i, spec_proc=%i, max_exist=%i, cur_struct=%i, max_struct=%i, decay=%i, volume=%i, material=%i, owner='%s', action_desc='%s'", 
 	  vnum, o->name, o->shortDescr, o->getDescr(), o->itemType(), 
 	  o->getObjStat(), o->obj_flags.wear_flags, tmp1, tmp2, tmp3, tmp4, 
 	  o->getWeight(), o->obj_flags.cost, o->canBeSeen, o->spec, 
 	  o->max_exist, o->obj_flags.struct_points, 
 	  o->obj_flags.max_struct_points, o->obj_flags.decay_time, 
-		 o->getVolume(), o->getMaterial(), ch->name)){
+		 o->getVolume(), o->getMaterial(), ch->name, o->action_description)){
     ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   }
@@ -550,7 +552,7 @@ static void olist(TPerson *ch)
   MYSQL_RES *res;
   int rc;
 
-  if((rc=dbquery(&res, "immortal", "olist", "select vnum, name from object where owner='%s'", ch->name))){
+  if((rc=dbquery(&res, "immortal", "olist", "select vnum, name from object where owner='%s' order by vnum", ch->name))){
     if(rc==-1)
       ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     else if(rc==1)

@@ -2909,9 +2909,9 @@ int TBeing::checkShield(TBeing *v, TThing *weapon, wearSlotT part_hit, spellNumT
     return retCode;
 
   if (!v->desc || !(v->desc->autobits & AUTO_NOSPAM))
-    act("You parry $N's blow with $p.", TRUE, v, shield, this, TO_CHAR);
+    act("You parry $N's blow with $p.", TRUE, v, shield, this, TO_CHAR, ANSI_CYAN);
   if (!desc || !IS_SET(desc->autobits, AUTO_NOSPAM))
-    act("$n parries your blow with $p.", TRUE, v, shield, this, TO_VICT);
+    act("$n parries your blow with $p.", TRUE, v, shield, this, TO_VICT, ANSI_CYAN);
   for (t = roomp->stuff; t; t = t->nextThing) {
     other = dynamic_cast<TBeing *>(t);
     if (!other)

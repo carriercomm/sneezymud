@@ -1829,7 +1829,7 @@ void change_chest_value2(TBeing *ch, TRealContainer *o, const char *arg, editorE
         }
         if (loc_update == 0) {
           o->remContainerFlag( CONT_TRAPPED);
-          o->setContainerTrapType(0);
+          o->setContainerTrapType(DOOR_TRAP_NONE);
           o->setContainerTrapDam(0);
           ch->specials.edit = CHANGE_OBJ_VALUES;
           change_obj_values(ch, o, "", ENTER_CHECK);
@@ -1837,7 +1837,7 @@ void change_chest_value2(TBeing *ch, TRealContainer *o, const char *arg, editorE
         }
         o->addContainerFlag(CONT_TRAPPED);
 
-        o->setContainerTrapType(loc_update);
+        o->setContainerTrapType(doorTrapT(loc_update));
         ch->specials.edit = CHANGE_OBJ_VALUES;
         change_obj_values(ch, o, "", ENTER_CHECK);
         return;
@@ -2742,7 +2742,7 @@ void TTrap::changeTrapValue2(TBeing *ch, const char *arg, editorEnterTypeT type)
 void TTrap::changeTrapValue3(TBeing *ch, const char *arg, editorEnterTypeT type)
 { 
   int i, row;
-  trap_t loc_update;
+  doorTrapT loc_update;
   char buf[256];
  
   if (type != ENTER_CHECK) {
@@ -2752,7 +2752,7 @@ void TTrap::changeTrapValue3(TBeing *ch, const char *arg, editorEnterTypeT type)
       return;
     }
   }
-  loc_update = (trap_t) (atoi(arg) - 1);
+  loc_update = doorTrapT(atoi(arg) - 1);
 
   if (type != ENTER_CHECK) {
     if (loc_update <= 0 || loc_update > MAX_TRAP_TYPES) {

@@ -61,7 +61,7 @@ static void timediff(struct timeval *a, struct timeval *b, struct timeval *rslt)
   return;
 }
 
-void TSocket::addNewDescriptorsDuringBoot()
+void TSocket::addNewDescriptorsDuringBoot(string tStString)
 {
   fd_set input_set, output_set, exc_set;
   static struct timeval last_time, now, timespent, timeout, null_time;
@@ -139,8 +139,12 @@ void TSocket::addNewDescriptorsDuringBoot()
 
   // establish any new connections 
   if (FD_ISSET(sock, &input_set)) {
-    if (newDescriptor() < 0)
+    int tFd;
+
+    if ((tFd = newDescriptor()) < 0)
       perror("New connection");
+    else if (!tStString.empty() && tFd)
+      descriptor_list->writeToQ(tStString.c_str());
   }
   // close any connections with an exceptional condition pending 
   for (point = descriptor_list; point; point = next_to_process) {

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_murder.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:08:13  cosmo
+// Fixing lag on backstab resulting in death.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -194,7 +197,6 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
     return FALSE;
   }
   if ((rc = backstab(this, victim))) {
-    addSkillLag(SKILL_BACKSTAB);
     if (!victim->isPc())
       dynamic_cast<TMonster *>(victim)->US(25);
   }
@@ -204,6 +206,9 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
     delete victim;
     victim = NULL;
     REM_DELETE(rc, DELETE_VICT);
+    addSkillLag(combatRound(1));
+  } else if (rc) {
+    addSkillLag(SKILL_BACKSTAB);
   }
 
   return rc;

@@ -349,11 +349,11 @@ static void fastFight()
     FD_ZERO(&input_set);
     FD_ZERO(&output_set);
     FD_ZERO(&exc_set);
-    FD_SET(sock, &input_set);
+    FD_SET(m_sock, &input_set);
     for (point = descriptor_list; point; point = point->next) {
-      FD_SET(point->socket->sock, &input_set);
-      FD_SET(point->socket->sock, &exc_set);
-      FD_SET(point->socket->sock, &output_set);
+      FD_SET(point->socket->m_sock, &input_set);
+      FD_SET(point->socket->m_sock, &exc_set);
+      FD_SET(point->socket->m_sock, &output_set);
     }
 
     // check out the time
@@ -386,9 +386,9 @@ static void fastFight()
     // close any connections with an exceptional condition pending
     for (point = descriptor_list; point; point = next_to_process) {
       next_to_process = point->next;
-      if (FD_ISSET(point->socket->sock, &exc_set)) {
-        FD_CLR(point->socket->sock, &input_set);
-        FD_CLR(point->socket->sock, &output_set);
+      if (FD_ISSET(point->socket->m_sock, &exc_set)) {
+        FD_CLR(point->socket->m_sock, &input_set);
+        FD_CLR(point->socket->m_sock, &output_set);
         delete point;
       }
     }

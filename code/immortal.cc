@@ -4059,7 +4059,7 @@ void TBeing::doInfo(const char *arg)
     } else if (is_abbrev(arg1, "descriptors")) {
       for (i = descriptor_list; i; i = i->next) {
         if (i->character)  {
-          sprintf(buf2,"[%d] ",i->socket->sock);
+          sprintf(buf2,"[%d] ",i->socket->m_sock);
           strcat(buf2,((i->character->name) ? i->character->getName() : "unknown"));
           if (!i->connected)
             strcat(buf2," Connected");

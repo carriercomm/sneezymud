@@ -2,31 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: utility.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/15 21:37:06  batopr
-// Added crash protection sanity check to TObj::canGetMe
-//
-// Revision 1.2  1999/10/07 15:27:27  batopr
-// Added case for GOLD_DUMP to addMoney
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//
-//      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "utility.cc" - Various utility functions.
-//
-//      Last major revision : August 1996
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -672,7 +648,7 @@ bool TBeing::canSeeMe(const TBeing *ch, infraTypeT infra) const
     if (parent) 
       r = parent->roomp;
     else {
-      forceCrash("Thing (%s) has no rp pointer in TThing::canSee", name);
+      forceCrash("Thing (%s) has no rp pointer in TBeing::canSeeMe", name);
       return FALSE;
     }
   }

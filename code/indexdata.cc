@@ -287,23 +287,11 @@ void generate_obj_index()
   affect_row=mysql_fetch_row(affect_res);
   /********************/
 
-  if(!db){
-    vlogf(LOG_MISC, "generate_obj_index: initializing database.");
-    db=mysql_init(NULL);
 
-    vlogf(LOG_MISC, "generate_obj_index: Connecting to database.");
-    if(!mysql_real_connect(db, NULL, "sneezy", NULL, 
-	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
-      vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
-      exit(0);
-    }
-  }
-
-  if(mysql_query(db, "select vnum, name, short_desc, long_desc, max_exist, spec_proc, weight, max_struct, wear_flag, type, price from object order by vnum")){
-    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(db));
+  if(dbquery(&res, "sneezy", "generate_obj_index", "select vnum, name, short_desc, long_desc, max_exist, spec_proc, weight, max_struct, wear_flag, type, price from object order by vnum")){
+    vlogf(LOG_BUG, "Database error: generate_obj_index");
     exit(0);
   }
-  res=mysql_use_result(db);
 
   while((row=mysql_fetch_row(res))){
     tmpi = new objIndexData();
@@ -360,6 +348,8 @@ void generate_obj_index()
 
   mysql_free_result(extra_res);
   mysql_close(extra_db);
+  mysql_free_result(affect_res);
+  mysql_close(affect_db);
 
   return;
 }

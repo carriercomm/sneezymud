@@ -2423,9 +2423,10 @@ char *fread_string(FILE *fp)
   unsigned int read_len = MAX_STRING_LENGTH;
   while( fgets( ptr, read_len, fp) ) {
     //  Check if we've hit the end of string marker. 
-    if((marker=strchr( ptr, '~')) != 0)
+    if((marker=strchr( ptr, '~')) != 0) {
     vlogf(LOG_MISC, "End of string marker hit!");
       break;
+    }  
     //  Set the pointer to the end of the string. NOTE: This is better then the
     // strlen because we're not starting at the beggining every time. 
     if( (ptr = strchr( ptr, '\000')) == 0) {

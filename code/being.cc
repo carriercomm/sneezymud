@@ -83,6 +83,7 @@ pointData::pointData() :
   mana(0),
   maxMana(0),
   piety(0.0),
+  lifeforce(0),
   hit(0),
   maxHit(0),
   move(0),
@@ -101,6 +102,7 @@ pointData::pointData(const pointData &a) :
   mana(a.mana),
   maxMana(a.maxMana),
   piety(a.piety),
+  lifeforce(a.lifeforce),
   hit(a.hit),
   maxHit(a.maxHit),
   move(a.move),
@@ -132,6 +134,7 @@ pointData & pointData::operator=(const pointData &a)
   hitroll = a.hitroll;
   damroll = a.damroll;
   piety = a.piety;
+  lifeforce = a.lifeforce;
   return *this;
 }
 
@@ -170,7 +173,10 @@ factionData::factionData() :
   captiveOf(NULL),
   target(NULL),
   type(FACT_UNDEFINED),
-  actions(0)
+  actions(0),
+  align_ge(0),
+  align_lc(0),
+  whichfaction(0)
 {
 #if FACTIONS_IN_USE
   for (int i = 0; i < MAX_FACTIONS; i++)
@@ -185,7 +191,10 @@ factionData::factionData(const factionData &a) :
   captiveOf(a.captiveOf),
   target(a.target),
   type(a.type), 
-  actions(a.actions)
+  actions(a.actions),
+  align_ge(a.align_ge),
+  align_lc(a.align_lc),
+  whichfaction(a.whichfaction)
 {
 #if FACTIONS_IN_USE
   for (int i = 0; i < MAX_FACTIONS; i++)
@@ -468,6 +477,9 @@ charFile::charFile() :
   f_percent(0),
   f_type(0),
   f_actions(0),
+  whichfaction(0),
+  align_ge(0),
+  align_lc(0),
   practices(),
   pColor(0),
   plr_act(0),

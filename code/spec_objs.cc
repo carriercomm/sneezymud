@@ -2378,7 +2378,7 @@ int bloodDrain(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 int scirenDrown(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
-  //  int rc, dam;
+  int rc, dam;
 
   ch = genericWeaponProcCheck(vict, cmd, o, 8);
   if (!ch)

@@ -1395,6 +1395,7 @@ TObj *read_object(int nr, readFileTypeT type)
   obj->name = obj_index[nr].name;
   obj->shortDescr = obj_index[nr].short_desc;
   obj->setDescr(obj_index[nr].long_desc);
+  obj->action_description = obj_index[nr].description;
   obj->setObjStat(atoi(row[1]));
   obj->obj_flags.wear_flags = atoi(row[2]);
   obj->assignFourValues(atoi(row[3]), atoi(row[4]), atoi(row[5]), atoi(row[6]));
@@ -2826,14 +2827,14 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
   if(!strcmp(dbname, "sneezy")){
     if(!sneezydb){
       vlogf(LOG_MISC, "%s: Initializing database '%s'.", msg,
-	    (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"));
+	    (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"));
       sneezydb=mysql_init(NULL);
       
       vlogf(LOG_MISC, "%s: Connecting to database.", msg);
       if(!mysql_real_connect(sneezydb, NULL, "sneezy", NULL, 
-	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
 	vlogf(LOG_BUG, "Could not connect to database '%s'.",
-	      (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"));
+	      (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"));
 	return -1;
       }
     }    

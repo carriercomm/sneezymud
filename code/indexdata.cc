@@ -288,7 +288,7 @@ void generate_obj_index()
   /********************/
 
 
-  if(dbquery(&res, "sneezy", "generate_obj_index", "select vnum, name, short_desc, long_desc, max_exist, spec_proc, weight, max_struct, wear_flag, type, price from object order by vnum")){
+  if(dbquery(&res, "sneezy", "generate_obj_index", "select vnum, name, short_desc, long_desc, max_exist, spec_proc, weight, max_struct, wear_flag, type, price, action_desc from object order by vnum")){
     vlogf(LOG_BUG, "Database error: generate_obj_index");
     exit(0);
   }
@@ -311,6 +311,8 @@ void generate_obj_index()
     tmpi->where_worn=atoi(row[8]);
     tmpi->itemtype=atoi(row[9]);
     tmpi->value=atoi(row[10]);
+    if(strcmp(row[11], "")) tmpi->description=mud_str_dup(row[11]);
+    else tmpi->description=NULL;
 
     while(extra_row && atoi(extra_row[0])==tmpi->virt){
       new_descr = new extraDescription();

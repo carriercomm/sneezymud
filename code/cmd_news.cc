@@ -147,7 +147,7 @@ void TBeing::doNews(const char *argument)
     }
 
     if (hasWizPower(POWER_IMMORTAL_HELP) && isImmortal()) {
-      dfd = opendir(BUILDER_HELP_PATH);
+      dfd = opendir(IMMORTAL_HELP_PATH);
       if (!dfd) {
         vlogf(LOG_FILE, "doNews: Failed opening directory.");
         return;

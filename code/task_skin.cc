@@ -189,6 +189,11 @@ int TThing::skinPulse(TBeing *ch, TBaseCorpse *corpse)
   } else {
     // item skinned is a component, leave weight/vol/price alone
     // since these are from balance stuff
+
+    // But set the corpse to no skin, this prevents the 2 for one deal.
+
+    if (!corpse->isCorpseFlag(CORPSE_NO_SKIN))
+      corpse->addCorpseFlag(CORPSE_NO_SKIN);
   }
 
   // Tell the people we got the hide.

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: combat.cc,v $
+// Revision 5.1.1.2  1999/10/17 14:56:12  batopr
+// Enhanced checkSmashed to deal with an alternative blunt limb
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -628,7 +631,7 @@ bool TBeing::checkCut(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThing *w
     return FALSE;
 }
 
-bool TBeing::checkSmashed(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThing *weapon, int dam)
+bool TBeing::checkSmashed(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThing *weapon, int dam, const char * altPart)
 {
   int sharp;
   char buf[256], buf3[128];
@@ -674,7 +677,7 @@ bool TBeing::checkSmashed(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThin
         sprintf(buf, "Your %s$o%s $q %ssmashed%s by $N's %s!",
                 blue(), norm(),
                 purple(), norm(),
-        (weapon ? buf3 :  ch->getMyRace()->getBodyLimbBlunt().c_str()));
+        	(altPart ? altPart : (weapon ? buf3 :  ch->getMyRace()->getBodyLimbBlunt().c_str())));
         act(buf, FALSE, this, item, ch, TO_CHAR);
 
         for (t = roomp->stuff; t; t = t->nextThing) {
@@ -686,7 +689,9 @@ bool TBeing::checkSmashed(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThin
           sprintf(buf + strlen(buf), "%s%s ",
               (temp != ch ? temp->pers(ch) : "your"),
               (temp != ch ? "'s" : "") );
-          if (weapon) {
+          if (altPart) {
+            strcat(buf, colorString(temp, temp->desc, altPart, NULL, COLOR_OBJECTS, FALSE).c_str());
+          else if (weapon) {
             strcat(buf, colorString(temp, temp->desc, temp->objn(weapon).c_str(), NULL, COLOR_OBJECTS, FALSE).c_str());
           } else {
             strcat(buf, ch->getMyRace()->getBodyLimbBlunt().c_str());

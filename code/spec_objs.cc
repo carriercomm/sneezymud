@@ -2723,6 +2723,7 @@ extern int board(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponBlinder(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponManaDrainer(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponLightningRod(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
+extern int weaponJambiyaSpecial(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 
 // assign special procedures to objects
 
@@ -2777,6 +2778,8 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "potion of characteristics", statPotion},  
   {FALSE, "daySword", daySword},  
   {FALSE, "nightBlade", nightBlade},  
-  {TRUE, "Lightning Rod", weaponLightningRod},  
-  {FALSE, "BOGUS", bogusObjProc},  // 50
+  {TRUE, "Lightning Rod", weaponLightningRod},
+  {FALSE, "Jambiya", weaponJambiyaSpecial}, // 50
+
+  {FALSE, "BOGUS", bogusObjProc},  // 51
 };

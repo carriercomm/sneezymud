@@ -5676,7 +5676,7 @@ void TBeing::doAccount(const char *arg)
     return;
   }
 
-  if (powerCheck(POWER_ACCOUNT)) {
+  if (!hasWizPower(POWER_ACCOUNT)) {
     // person isn't an imm, only let them check their own account
     if (!desc->account || !desc->account->name ||
         strcmp(desc->account->name, namebuf)) {
@@ -5703,7 +5703,7 @@ void TBeing::doAccount(const char *arg)
   fread(&afp, sizeof(afp), 1, fp);
 
   // only let imms do this
-  if (!powerCheck(POWER_ACCOUNT)) {
+  if (hasWizPower(POWER_ACCOUNT)) {
     arg = one_argument(arg, buf2);
     if (is_abbrev(buf2, "banished")) {
       if (IS_SET(afp.flags, ACCOUNT_BANISHED)) {
@@ -5757,7 +5757,7 @@ void TBeing::doAccount(const char *arg)
   str += "\n\r";
 
   // only let imms see comments
-  if (!powerCheck(POWER_ACCOUNT)) {
+  if (hasWizPower(POWER_ACCOUNT)) {
     sprintf(buf2, "account/%c/%s/comment", LOWER(namebuf[0]), lower(namebuf).c_str());
     if ((fp = fopen(buf2, "r"))) {
       while (fgets(buf2, 255, fp))

@@ -834,17 +834,25 @@ int TBeing::rawMove(dirTypeT dir)
     } else if (riding) {
       sendTo("Your mount refuses to climb for you.\n\r");
       return FALSE;
-    } else if (dir == 4) 
+    } else if (dir == DIR_UP) 
       sendTo("You climb upward.\n\r");
-    else if (dir == 5) 
+    else if (dir == DIR_DOWN) 
       sendTo("You rappel downward.\n\r");
     else { // lateral movement
     }
   }
   if (getPosition() == POSITION_CRAWLING) 
     sendTo("You crawl %s.\n\r",dirs[dir]);
-  else if (isAffected(AFF_BLIND) && !isImmortal() && !isAffected(AFF_TRUE_SIGHT))
-    sendTo("You blindly stumble %s.\n\r",dirs[dir]);
+  else if (isAffected(AFF_BLIND) && !isImmortal() && !isAffected(AFF_TRUE_SIGHT)) {
+    if (dir == DIR_UP || dir == DIR_DOWN) {
+      // say nothing on these
+    } else if (isSwimming()) {
+      sendTo("You blindly paddle %s.\n\r",dirs[dir]);
+    } else {
+      sendTo("You blindly stumble %s.\n\r",dirs[dir]);
+    }
+  }
+
   
   foodNDrink(from_here->getSectorType(),1);
 

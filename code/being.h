@@ -1047,8 +1047,11 @@ class TBeing : public TThing {
     int doDissect(const char *);
     int socialLimbBad(TBeing *, cmdTypeT);
     int doPray(const char *);
+    int preCastCheck();
+    int preDiscCheck(spellNumT);
     int doCast(const char *);
     spellNumT parseSpellNum(char *);
+    int parseTarget(spellNumT, char *, TThing **ret);
     int doTrigger(const char *);
     int doStore(const char *);
     int passOut();

@@ -195,36 +195,36 @@ static const string factionLeaderTitle(factionTypeT faction, int slot)
 
   if (faction == FACT_CULT) {
     if (slot == 0)
-      strcpy(buf, "Grand Master of the Way");
+      mud_str_copy(buf, "Grand Master of the Way", 64);
     else if (slot == 1)
-      strcpy(buf, "Tharchion (Lesser Master)");
+      mud_str_copy(buf, "Tharchion (Lesser Master)", 64);
     else if (slot == 2)
-      strcpy(buf, "Head of the Templar Guard (Lesser Master)");
+      mud_str_copy(buf, "Head of the Templar Guard (Lesser Master)", 64);
     else if (slot == 3)
-      strcpy(buf, "Keeper of the Way (Lesser Master)");
+      mud_str_copy(buf, "Keeper of the Way (Lesser Master)", 64);
   } else if (faction == FACT_BROTHERHOOD) {
     if (slot == 0)
-      strcpy(buf, "Chief Councillor of Three");
+      mud_str_copy(buf, "Chief Councillor of Three", 64);
     else if (slot == 1 || slot == 2)
-      strcpy(buf, "Councillor of Three");
+      mud_str_copy(buf, "Councillor of Three", 64);
     else if (slot == 3)
-      strcpy(buf, "Master Guardian of the Steps");
+      mud_str_copy(buf, "Master Guardian of the Steps", 64);
   } else if (faction == FACT_SNAKE) {
     if (slot == 0)
-      strcpy(buf, "Overlord of the Serpents");
+      mud_str_copy(buf, "Overlord of the Serpents", 64);
     else if (slot == 1)
-      strcpy(buf, "Emir of the Serpents");
+      mud_str_copy(buf, "Emir of the Serpents", 64);
     else if (slot == 2 || slot == 3)
-      strcpy(buf, "Commander of the Serpents");
+      mud_str_copy(buf, "Commander of the Serpents", 64);
   } else {
     if (slot == 0)
-      strcpy(buf, "Faction Leader");
+      mud_str_copy(buf, "Faction Leader", 64);
     else if (slot == 1)
-      strcpy(buf, "Sub-Leader 1");
+      mud_str_copy(buf, "Sub-Leader 1", 64);
     else if (slot == 2)
-      strcpy(buf, "Sub-Leader 2");
+      mud_str_copy(buf, "Sub-Leader 2", 64);
     else if (slot == 3)
-      strcpy(buf, "Sub-Leader 3");
+      mud_str_copy(buf, "Sub-Leader 3", 64);
   }
 
   return buf;
@@ -494,6 +494,7 @@ void sendToFaction(factionTypeT fnum, const char *who, const char *arg)
   }
 }
 
+
 void TBeing::doSend(const char *arg)
 { 
   factionTypeT fnum = getFaction();
@@ -510,12 +511,12 @@ void TBeing::doSend(const char *arg)
       fnum = fnum2;
       wizSent = true;
       for (;b3 && *b3 && isspace(*b3); b3++);
-      strncpy(buf2, b3, MAX_INPUT_LENGTH);
+      mud_str_copy(buf2, b3, MAX_INPUT_LENGTH);
     }
   }
   if (!wizSent) {
     for (;arg && *arg && isspace(*arg); arg++);
-    strncpy(buf2, arg, MAX_INPUT_LENGTH);
+    mud_str_copy(buf2, arg, MAX_INPUT_LENGTH);
   }
 
 #if 0
@@ -785,11 +786,11 @@ void TBeing::doFactions(const char *arg)
           factionLeaderTitle(which, 3).c_str(), FactionInfo[which].leader[3]);
 
     if (which == FACT_BROTHERHOOD)
-      strcpy(fileBuf, FACT_LIST_BROTHER);
+      mud_str_copy(fileBuf, FACT_LIST_BROTHER, 256);
     else if (which == FACT_CULT)
-      strcpy(fileBuf, FACT_LIST_CULT);
+      mud_str_copy(fileBuf, FACT_LIST_CULT, 256);
     else if (which == FACT_SNAKE)
-      strcpy(fileBuf, FACT_LIST_SNAKE);
+      mud_str_copy(fileBuf, FACT_LIST_SNAKE, 256);
 
     // reveal membership only to leaders, otherwise someone can cross reference
     if ((getFactionAuthority(which,FACT_LEADER_SLOTS - 1) > 0) ||
@@ -798,7 +799,7 @@ void TBeing::doFactions(const char *arg)
         vlogf(LOG_BUG,"bad call to list faction function %s", fileBuf);
         return;
       }
-      strcpy(timebuf, ctime(&(timestat.st_mtime)));
+      mud_str_copy(timebuf, ctime(&(timestat.st_mtime)), 256);
       timebuf[strlen(timebuf) - 1] = '\0';
 
       sprintf(buf + strlen(buf), "\n\rMembership as of last rollcall (%s):\n\r", timebuf);
@@ -950,7 +951,7 @@ return;
         sendTo("Grimhaven, Brightmoon, Logrus, Amber\n\r");
         return;
       }
-      strcpy(tmpbuf2, lower(tmpbuf2).c_str());
+      mud_str_copy(tmpbuf2, lower(tmpbuf2).c_str(), 128);
       if (is_abbrev(tmpbuf2, "grimhaven")) {
         uamount = CARAVAN_DEST_GH;
       } else if (is_abbrev(tmpbuf2, "brightmoon")) {

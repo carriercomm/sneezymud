@@ -1027,11 +1027,11 @@ void TBeing::doWrite(const char *arg)
     }
   }
 
-  if (!(paper = searchLinkedListVis(this, papername, stuff))) {
+  if (!paper && !(paper = searchLinkedListVis(this, papername, stuff))) {
     sendTo("You have no %s.\n\r", papername);
     return;
   }
-  if (!(pen = searchLinkedListVis(this, penname, stuff))) {
+  if (!pen && !(pen = searchLinkedListVis(this, penname, stuff))) {
     sendTo("You have no %s.\n\r", penname);
     return;
   }

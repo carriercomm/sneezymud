@@ -26,6 +26,12 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_POWERS);
     ch->setWizPower(POWER_GOTO);
     ch->setWizPower(POWER_IMMORTAL_HELP);
+  } else if (is_abbrev(arg, "rembasic")) {
+    ch->remWizPower(POWER_BUILDER);
+    ch->remWizPower(POWER_WIZNET);
+    ch->remWizPower(POWER_POWERS);
+    ch->remWizPower(POWER_GOTO);
+    ch->remWizPower(POWER_IMMORTAL_HELP);
   } else if (is_abbrev(arg, "rooms")) {
     ch->setWizPower(POWER_REDIT);  
     ch->setWizPower(POWER_RSAVE);
@@ -35,14 +41,30 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_SHOW);
     ch->setWizPower(POWER_PURGE);
     ch->setWizPower(POWER_LOAD);  // load rooms backdoor   
-  } else if (is_abbrev(arg, "mobiles")) {
+  } else if (is_abbrev(arg, "remrooms")) {
+    ch->remWizPower(POWER_REDIT);  
+    ch->remWizPower(POWER_RSAVE);
+    ch->remWizPower(POWER_EDIT);
+    ch->remWizPower(POWER_RLOAD);
+    ch->remWizPower(POWER_STAT);
+    ch->remWizPower(POWER_SHOW);
+    ch->remWizPower(POWER_PURGE);
+    ch->remWizPower(POWER_LOAD);  // load rooms backdoor   
+  } else if (is_abbrev(arg, "mobs")) {
     ch->setWizPower(POWER_MEDIT);
     ch->setWizPower(POWER_STAT_MOBILES);
     ch->setWizPower(POWER_SHOW_MOB);
     ch->setWizPower(POWER_SEDIT);
     ch->setWizPower(POWER_IMMORTAL_OUTFIT);
     ch->setWizPower(POWER_WIZNET_ALWAYS);
-  } else if (is_abbrev(arg, "objects")) {
+  } else if (is_abbrev(arg, "remmobs")) {
+    ch->remWizPower(POWER_MEDIT);
+    ch->remWizPower(POWER_STAT_MOBILES);
+    ch->remWizPower(POWER_SHOW_MOB);
+    ch->remWizPower(POWER_SEDIT);
+    ch->remWizPower(POWER_IMMORTAL_OUTFIT);
+    ch->remWizPower(POWER_WIZNET_ALWAYS);
+  } else if (is_abbrev(arg, "objs")) {
     ch->setWizPower(POWER_LOAD_SET);
     ch->setWizPower(POWER_STAT_OBJECT);
     ch->setWizPower(POWER_SHOW_OBJ);
@@ -50,7 +72,33 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_OEDIT_APPLYS);
     ch->setWizPower(POWER_OEDIT_WEAPONS);
     ch->setWizPower(POWER_OEDIT_COST);
-  } else if (is_abbrev(arg, "demigod")) {
+  } else if (is_abbrev(arg, "remobjs")) {
+    ch->remWizPower(POWER_LOAD_SET);
+    ch->remWizPower(POWER_STAT_OBJECT);
+    ch->remWizPower(POWER_SHOW_OBJ);
+    ch->remWizPower(POWER_OEDIT);
+    ch->remWizPower(POWER_OEDIT_APPLYS);
+    ch->remWizPower(POWER_OEDIT_WEAPONS);
+    ch->remWizPower(POWER_OEDIT_COST);
+  } else if (is_abbrev(arg, "quest")) {
+    ch->setWizPower(POWER_SWITCH);
+    ch->setWizPower(POWER_NOSHOUT);
+    ch->setWizPower(POWER_STEALTH);
+    ch->setWizPower(POWER_QUEST);
+    ch->setWizPower(POWER_AT);
+    ch->setWizPower(POWER_WHERE);
+    ch->setWizPower(POWER_SYSTEM);
+    ch->setWizPower(POWER_LOAD_NOPROTOS);
+  } else if (is_abbrev(arg, "remquest")) {
+    ch->remWizPower(POWER_SWITCH);
+    ch->remWizPower(POWER_NOSHOUT);
+    ch->remWizPower(POWER_STEALTH);
+    ch->remWizPower(POWER_QUEST);
+    ch->remWizPower(POWER_AT);
+    ch->remWizPower(POWER_WHERE);
+    ch->remWizPower(POWER_SYSTEM);
+    ch->remWizPower(POWER_LOAD_NOPROTOS);
+  } else if (is_abbrev(arg, "demi")) {
     ch->setWizPower(POWER_COLOR_LOGS);
     ch->setWizPower(POWER_LONGDESC);
     ch->setWizPower(POWER_COMMENT);
@@ -58,15 +106,11 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_CLIENTS);
     ch->setWizPower(POWER_TRACEROUTE);
     ch->setWizPower(POWER_HOSTLOG);
-    ch->setWizPower(POWER_NOSHOUT);
     ch->setWizPower(POWER_DEATHCHECK);
     ch->setWizPower(POWER_SNOWBALL);
     ch->setWizPower(POWER_PEE);
-    ch->setWizPower(POWER_SWITCH);
-    ch->setWizPower(POWER_STEALTH);
     ch->setWizPower(POWER_WIZLOCK);
     ch->setWizPower(POWER_CUTLINK);
-    ch->setWizPower(POWER_QUEST);
     ch->setWizPower(POWER_SEE_COMMENTARY);  // view bugs, ideas, typos
     ch->setWizPower(POWER_ECHO);
     ch->setWizPower(POWER_TRANSFER);
@@ -75,11 +119,29 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_HEAVEN);
     ch->setWizPower(POWER_ZONEFILE_UTILITY);
     ch->setWizPower(POWER_INFO);
-  } else if (is_abbrev(arg, "trusted")) {
+  } else if (is_abbrev(arg, "remdemi")) {
+    ch->remWizPower(POWER_COLOR_LOGS);
+    ch->remWizPower(POWER_LONGDESC);
+    ch->remWizPower(POWER_COMMENT);
+    ch->remWizPower(POWER_FINDEMAIL);
+    ch->remWizPower(POWER_CLIENTS);
+    ch->remWizPower(POWER_TRACEROUTE);
+    ch->remWizPower(POWER_HOSTLOG);
+    ch->remWizPower(POWER_DEATHCHECK);
+    ch->remWizPower(POWER_SNOWBALL);
+    ch->remWizPower(POWER_PEE);
+    ch->remWizPower(POWER_WIZLOCK);
+    ch->remWizPower(POWER_CUTLINK);
+    ch->remWizPower(POWER_SEE_COMMENTARY);  // view bugs, ideas, typos
+    ch->remWizPower(POWER_ECHO);
+    ch->remWizPower(POWER_TRANSFER);
+    ch->remWizPower(POWER_TOGGLE);
+    ch->remWizPower(POWER_VISIBLE);  // PCs can see them now
+    ch->remWizPower(POWER_HEAVEN);
+    ch->remWizPower(POWER_ZONEFILE_UTILITY);
+    ch->remWizPower(POWER_INFO);
+  } else if (is_abbrev(arg, "trust")) {
     ch->setWizPower(POWER_INFO_TRUSTED);
-    ch->setWizPower(POWER_AT);
-    ch->setWizPower(POWER_WHERE);
-    ch->setWizPower(POWER_SYSTEM);
     ch->setWizPower(POWER_GAMESTATS);
     ch->setWizPower(POWER_FLAG);
     ch->setWizPower(POWER_SHOW_TRUSTED);
@@ -87,6 +149,15 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_ACCESS);
     ch->setWizPower(POWER_USERS);
     ch->setWizPower(POWER_ACCOUNT);
+  } else if (is_abbrev(arg, "remtrust")) {
+    ch->remWizPower(POWER_INFO_TRUSTED);
+    ch->remWizPower(POWER_GAMESTATS);
+    ch->remWizPower(POWER_FLAG);
+    ch->remWizPower(POWER_SHOW_TRUSTED);
+    ch->remWizPower(POWER_RESTORE);
+    ch->remWizPower(POWER_ACCESS);
+    ch->remWizPower(POWER_USERS);
+    ch->remWizPower(POWER_ACCOUNT);
   } else if (!strcmp(arg, "god")) {
     ch->setWizPower(POWER_LOW);
     ch->setWizPower(POWER_GOD);
@@ -97,7 +168,6 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_IMM_EVAL);
     ch->setWizPower(POWER_FORCE);
     ch->setWizPower(POWER_LOG);
-    ch->setWizPower(POWER_LOAD_NOPROTOS);
     ch->setWizPower(POWER_PURGE_PC);
     ch->setWizPower(POWER_PURGE_ROOM);
     ch->setWizPower(POWER_EGOTRIP);
@@ -105,6 +175,23 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_LOGLIST);
     ch->setWizPower(POWER_REPLACE);
     ch->setWizPower(POWER_RESIZE);
+  } else if (!strcmp(arg, "remgod")) {
+    ch->remWizPower(POWER_LOW);
+    ch->remWizPower(POWER_GOD);
+    ch->remWizPower(POWER_COMPARE);
+    ch->remWizPower(POWER_REDIT_ENABLED);  // redit an enabled zone
+    ch->remWizPower(POWER_STAT_SKILL);
+    ch->remWizPower(POWER_RESTORE_MORTAL);
+    ch->remWizPower(POWER_IMM_EVAL);
+    ch->remWizPower(POWER_FORCE);
+    ch->remWizPower(POWER_LOG);
+    ch->remWizPower(POWER_PURGE_PC);
+    ch->remWizPower(POWER_PURGE_ROOM);
+    ch->remWizPower(POWER_EGOTRIP);
+    ch->remWizPower(POWER_CHECKLOG);
+    ch->remWizPower(POWER_LOGLIST);
+    ch->remWizPower(POWER_REPLACE);
+    ch->remWizPower(POWER_RESIZE);
   } else if (!strcmp(arg, "allpowers")) {
     wizPowerT wpt;
     for (wpt = MIN_POWER_INDEX; wpt < MAX_POWER_INDEX; wpt++)
@@ -113,13 +200,22 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     doer->sendTo("This gives them *ALL* powers, don't do it unless you really really mean to.\n\r");
     doer->sendTo("You have to type the whole word 'allpowers' to do it too.\n\r");
     return;
+  } else if (!strcmp(arg, "remall")) {
+    wizPowerT wpt;
+    for (wpt = MIN_POWER_INDEX; wpt < MAX_POWER_INDEX; wpt++)
+      ch->remWizPower(wpt);
+  } else if (is_abbrev(arg, "remall")) {
+    doer->sendTo("This removes *ALL* powers, don't do it unless you really really mean to.\n\r");
+    doer->sendTo("You have to type the whole word 'remall' to do it too.\n\r");
+    return;
   } else {
     doer->sendTo("Outside of range.\n\r");
     doer->sendTo("Syntax: @set wizpower <person> <power>.\n\r");
-    doer->sendTo("Syntax: @set wizpower <person> <\"basic\" | \"rooms\" | \"mobiles\" | \"objects\" | \"demigod\" | \"trusted\" | \"allpowers\">\n\r");
+    doer->sendTo("Syntax: @set wizpower <person> <\"basic\" | \"rooms\" | \"mobs\" | \"objs\" | \"demi\" | \"quest\" | \"trust\" | \"allpowers\">\n\r");
+    doer->sendTo("Syntax: @set wizpower <person> <\"rembasic\" | \"remrooms\" | \"remmobs\" | \"remobjs\" | \"remdemi\" | \"remquest\" | \"remtrust\" | \"remall\">\n\r");
     return;
   }
-  doer->sendTo("Wiz Powers set OK!\n\r");
+  doer->sendTo("Wizpowers have been toggled.\n\r");
 }
 
 bool TBeing::hasWizPower(wizPowerT) const
@@ -305,7 +401,7 @@ void TPerson::doPowers(const char *argument) const
          is_abbrev(tStPower.c_str(), getWizPowerName(tWizPower).c_str()))) {
       sprintf(tString, "%3d.) [%c] %-25.25s",
               (tWizPower + 1),
-              (wizPowerList[tWizPower] ? '*' : ' '),
+              (wizPowerList[tWizPower] ? 'X' : ' '),
               getWizPowerName(tWizPower).c_str());
       tStString += tString;
 

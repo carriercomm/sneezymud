@@ -599,7 +599,8 @@ void Race::initRace(const char *whichRace)
         tDissectItem[1].message_to_others = buf_string;
     }
   }
-
+// COSMO STRING
+  delete buf_string;
   fclose(raceFile);
   vlogf(LOG_FILE, "Racefile fclose.");
 

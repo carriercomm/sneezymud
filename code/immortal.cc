@@ -653,11 +653,13 @@ TO_CHAR);
     if (victim->isPlayerAction(PLR_BANISHED)) {
       victim->remPlayerAction(PLR_BANISHED);
       act("You just removed $N's banished flag", FALSE, this, 0, victim, TO_CHAR);
+      victim->sendTo("Your banishment flag has been removed.\n\r");
       vlogf(LOG_MISC, "%s removed %s's banish flag.", getName(), victim->getName());
     } else {
       victim->addPlayerAction(PLR_BANISHED);
       act("You just set $N's banished flag.", FALSE, this, 0, victim, TO_CHAR);
       vlogf(LOG_MISC, "%s banished %s.", getName(), victim->getName());
+      victim->sendTo("Your banishment flag has just been activated!\n\r");
     }
   } else if (is_abbrev(buf2, "solo")) {
     // check for quest stuff first
@@ -1257,7 +1259,7 @@ int TBeing::doGoto(const string & argument)
       TBeing *tbt = dynamic_cast<TBeing *>(t);
 
       if (tbt && this != tbt && (!hasStealth || tbt->GetMaxLevel() > MAX_MORT)) {
-        string s = nameColorString(tbt, tbt->desc, msgVariables[MSG_BAMFOUT].c_str(), NULL, COLOR_BASIC, TRUE);
+        string s = nameColorString(this, tbt->desc, msgVariables(MSG_BAMFOUT, (TThing *)NULL, (const char *)NULL, false).c_str(), NULL, COLOR_BASIC, TRUE);
         act(s.c_str(), TRUE, this, 0, tbt, TO_VICT);
       }
     }
@@ -1307,7 +1309,7 @@ int TBeing::doGoto(const string & argument)
       TBeing *tbt = dynamic_cast<TBeing *>(t);
 
       if (tbt && this != tbt && (!hasStealth || tbt->GetMaxLevel() > MAX_MORT)) {
-        string s = nameColorString(tbt, tbt->desc, msgVariables[MSG_BAMFIN].c_str(), NULL, COLOR_BASIC, TRUE);
+        string s = nameColorString(this, tbt->desc, msgVariables(MSG_BAMFIN, (TThing *)NULL, (const char *)NULL, false).c_str(), NULL, COLOR_BASIC, TRUE);
         act(s.c_str(), TRUE, this, 0, tbt, TO_VICT);
       }
     }
@@ -3526,10 +3528,16 @@ void TBeing::doWipe(const char *argument)
     sendTo("Wrong wipe password.\n\r");
     return;
   }
-  if ((victim = get_char_vis_world(this, namebuf, NULL, EXACT_YES)) != NULL) {
+  victim = get_char_vis_world(this, namebuf, NULL, EXACT_YES);
+  if (victim) {
     if (!victim->isPc() || victim->GetMaxLevel() > MAX_IMMORT ||
         (victim->GetMaxLevel() >= GetMaxLevel()) || !(d = victim->desc)) {
       sendTo("You can only banish players less than your level.\n\r");
+      return;
+    }
+    if (!victim->isPlayerAction(PLR_BANISHED)) {
+      act("$N is not flagged banished.", false, this, 0, victim, TO_CHAR);
+      sendTo("Please explore the punishment of temporarily banishing the player\n\rbefore resorting to wiping first.\n\r");
       return;
     }
     sendTo("Ok.\n\r");
@@ -3915,7 +3923,7 @@ void TBeing::doSetsev(const char *arg)
       else
         d->severity |= (1 << LOG_BATOPR);
 
-      sendTo("Your Personal Log Messages are now %s",
+      sendTo("Your Personal Log Messages are now %s\n\r",
              ((d->severity & (1 << LOG_BATOPR)) ? "On" : "Off"));
     } else if (is_abbrev(arg, "brutius") && !strcmp(getName(), "Brutius")) {
       if ((d->severity & (1 << LOG_BRUTIUS)))
@@ -3923,7 +3931,7 @@ void TBeing::doSetsev(const char *arg)
       else
         d->severity |= (1 << LOG_BRUTIUS);
 
-      sendTo("Your Personal Log Messages are now %s",
+      sendTo("Your Personal Log Messages are now %s\n\r",
              ((d->severity & (1 << LOG_BRUTIUS)) ? "On" : "Off"));
     } else if (is_abbrev(arg, "cosmo") && !strcmp(getName(), "Cosmo")) {
       if ((d->severity & (1 << LOG_COSMO)))
@@ -3931,7 +3939,7 @@ void TBeing::doSetsev(const char *arg)
       else
         d->severity |= (1 << LOG_COSMO);
 
-      sendTo("Your Personal Log Messages are now %s",
+      sendTo("Your Personal Log Messages are now %s\n\r",
              ((d->severity & (1 << LOG_COSMO)) ? "On" : "Off"));
     } else if (is_abbrev(arg, "lapsos") && !strcmp(getName(), "Lapsos")) {
       if ((d->severity & (1 << LOG_LAPSOS)))
@@ -3939,7 +3947,7 @@ void TBeing::doSetsev(const char *arg)
       else
         d->severity |= (1 << LOG_LAPSOS);
 
-      sendTo("Your Personal Log Messages are now %s",
+      sendTo("Your Personal Log Messages are now %s\n\r",
              ((d->severity & (1 << LOG_LAPSOS)) ? "On" : "Off"));
     } else if (is_abbrev(arg, "peel") && !strcmp(getName(), "Peel")) {
       if ((d->severity & (1 << LOG_PEEL)))
@@ -3947,7 +3955,7 @@ void TBeing::doSetsev(const char *arg)
       else
         d->severity |= (1 << LOG_PEEL);
 
-      sendTo("Your Personal Log Messages are now %s",
+      sendTo("Your Personal Log Messages are now %s\n\r",
              ((d->severity & (1 << LOG_PEEL)) ? "On" : "Off"));
     } else
       sendTo("Incorrect Log Type.\n\r");

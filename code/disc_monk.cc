@@ -390,7 +390,14 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
     return FALSE;
   }
 
-  only_argument(tString, tTarget);
+  if (tString && *tString)
+    only_argument(tString, tTarget);
+  else {
+    if (!fight())
+      tVictim = this;
+    else
+      tVictim = fight();
+  }
 
   if (is_abbrev(tTarget, getName())) {
     tRc = chiMe(this);
@@ -398,13 +405,16 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
   } else if (!strcmp(tTarget, "all")) {
     tRc = roomp->chiMe(this);
     addSkillLag(SKILL_CHI, tRc);
+  } else if (tVictim) {
+    tRc = tVictim->chiMe(this);
+    addSkillLag(SKILL_CHI, tRc);
   } else {
     generic_find(tTarget, FIND_CHAR_ROOM | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, this, &tVictim, &tObj);
 
     if (tObj)
-      tObj->chiMe(this);
+      tRc = tObj->chiMe(this);
     else if (tVictim)
-      tVictim->chiMe(this);
+      tRc = tVictim->chiMe(this);
     else {
       sendTo("Yes, good.  Use chi...on what or whom?\n\r");
       return FALSE;
@@ -415,6 +425,8 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
     REM_DELETE(tRc, RET_STOP_PARSING);
 
   if (IS_SET_DELETE(tRc, DELETE_VICT)) {
+    vlogf(1, "Passive Delete: %s/%s", (tVictim ? "tVictim" : "-"), (tObj ? "tObj" : "-"));
+
     if (tVictim) {
       delete tVictim;
       tVictim = NULL;

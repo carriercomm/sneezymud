@@ -1206,7 +1206,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SKILL_PIERCE_SPEC:
       case SKILL_BAREHAND_SPEC:
       case SKILL_RANGED_SPEC:
-      case SKILL_BOW:
+      case SKILL_RANGED_PROF:
       case SKILL_FAST_LOAD:
       case SKILL_SHARPEN:
       case SKILL_DULL:
@@ -4316,17 +4316,17 @@ void TBeing::describeRoomLight()
 {
   int illum = roomp->getLight();
 
-  sendTo("This area is %s.\n\r", 
-          ((illum < -4) ? "super dark" :
-          ((illum < 0) ? "pitch dark" :
-          ((illum < 1) ? "dark" :
-          ((illum < 3) ? "very dimly lit" :
-          ((illum < 5) ? "dimly lit" :
+  sendTo(COLOR_BASIC, "This area is %s.\n\r", 
+          ((illum < -4) ? "<k>super dark<1>" :
+          ((illum < 0) ? "<k>pitch dark<1>" :
+          ((illum < 1) ? "<k>dark<1>" :
+          ((illum < 3) ? "<w>very dimly lit<1>" :
+          ((illum < 5) ? "<w>dimly lit<1>" :
           ((illum < 9) ? "barely lit" :
           ((illum < 13) ? "lit" :
           ((illum < 19) ? "brightly lit" :
-          ((illum < 25) ? "very brightly lit" :
-                           "bright as day"))))))))));
+          ((illum < 25) ? "<Y>very brightly lit<1>" :
+                           "<Y>bright as day<1>"))))))))));
 }
 
 void TBeing::describeBowRange(const TBow *obj, int learn)

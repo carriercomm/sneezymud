@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_rescue.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:33:27  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -152,7 +155,7 @@ int TBeing::doRescue(const char *argument)
   }
   rc = rescue(this, victim, skill);
   if (rc)
-    addSkillLag(skill);
+    addSkillLag(skill, rc);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
 

@@ -195,7 +195,7 @@ int TMonster::charmeeStuff()
           } else {
             act("$n tries to rescue you but fails.",FALSE,this,0,master,TO_VICT);
           }
-          addSkillLag(getSkillNum(SKILL_RESCUE));
+          addSkillLag(getSkillNum(SKILL_RESCUE), 0);
         }
       }
     } else {
@@ -1685,7 +1685,7 @@ int TMonster::mageMove(TBeing *vict)
 // COSMO MAGE MARKER - check for tasking
   if (!(IS_SET(discArray[spell]->comp_types, SPELL_TASKED)) &&
         discArray[spell]->lag > 0) {
-    addSkillLag(spell);
+    addSkillLag(spell, 0);
   } else {
     addToWait(combatRound(2));
   }
@@ -2393,7 +2393,7 @@ int TMonster::clerMove(TBeing *vict)
   if (spell == TYPE_UNDEFINED)
     return FALSE;
 
-  addSkillLag(spell);
+  addSkillLag(spell, 0);
 
   if (on_me) {
     if (IS_SET(discArray[spell]->targets, TAR_SELF_ONLY | TAR_IGNORE | TAR_FIGHT_SELF)) {
@@ -2432,7 +2432,7 @@ int TMonster::takeFirstHit(TBeing *vict)
             // can't backstab them (mounted), scrag the horse instead
             rc = backstabHit(v2, stabber);
 
-            addSkillLag(SKILL_BACKSTAB);
+            addSkillLag(SKILL_BACKSTAB, 0);
 
             if (IS_SET_DELETE(rc, DELETE_VICT)) {
               if (vict->riding) {
@@ -2446,7 +2446,7 @@ int TMonster::takeFirstHit(TBeing *vict)
           } else  {
             rc = backstabHit(vict, stabber);
 
-            addSkillLag(SKILL_BACKSTAB);
+            addSkillLag(SKILL_BACKSTAB, 0);
 
             if (IS_SET_DELETE(rc, DELETE_VICT)) {
               return DELETE_VICT;
@@ -2903,7 +2903,7 @@ int TMonster::mobileActivity(int pulse)
 	act("$n tries to rescue you but fails.",FALSE,this,0,tmp_ch,TO_VICT);
 	act("$n tries to rescue $N but fails.",TRUE,this,0,tmp_ch,TO_NOTVICT);
       }
-      addSkillLag(getSkillNum(SKILL_RESCUE));
+      addSkillLag(getSkillNum(SKILL_RESCUE), 0);
       return TRUE;
     }
   }

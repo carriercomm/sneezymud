@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_ranger.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:41:31  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -449,7 +452,7 @@ void TBeing::doConceal(const char *argument)
   }
   rc = conceal(this, vict);
   if (rc)
-    addSkillLag(SKILL_CONCEALMENT);
+    addSkillLag(SKILL_CONCEALMENT, rc);
 
   return;
 }

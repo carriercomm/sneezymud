@@ -380,7 +380,7 @@ int TBeing::doSteal(const char *argument, TBeing *vict)
     rc = steal(this,victim,obj_name);
 
   if (rc)
-    addSkillLag(SKILL_STEAL);
+    addSkillLag(SKILL_STEAL, rc);
 
   if (rc == DELETE_VICT) {
     if (vict)

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_feigndeath.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:26:15  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -96,7 +99,7 @@ int TBeing::doFeignDeath()
 
   rc = feignDeath(this);
   if (rc)
-    addSkillLag(SKILL_FEIGN_DEATH);
+    addSkillLag(SKILL_FEIGN_DEATH, rc);
 
   return rc;
 }

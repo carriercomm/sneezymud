@@ -5369,7 +5369,7 @@ int MSwarmer(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     act("$n curses as $s spell fizzles.",TRUE,me,0,0,TO_ROOM);
     act("The spell fizzles  :(",TRUE,me,0,0,TO_CHAR);
   }
-  me->addSkillLag(SPELL_METEOR_SWARM);
+  me->addSkillLag(SPELL_METEOR_SWARM, 0);
   return TRUE;
 }
 
@@ -5408,7 +5408,7 @@ int IceStormer(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     act("$n curses as $s spell fizzles.",TRUE,me,0,0,TO_ROOM);
     act("The spell fizzles  :(",TRUE,me,0,0,TO_CHAR);
   }
-  me->addSkillLag(SPELL_ICE_STORM);
+  me->addSkillLag(SPELL_ICE_STORM, 0);
   return TRUE;
 }
 
@@ -5443,7 +5443,7 @@ int Edrain(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     act("$n curses as $s spell fizzles.",TRUE,me,0,0,TO_ROOM);
     act("The spell fizzles  :(",TRUE,me,0,0,TO_CHAR);
   }
-  me->addSkillLag(SPELL_ENERGY_DRAIN);
+  me->addSkillLag(SPELL_ENERGY_DRAIN, 0);
   return TRUE;
 }
 
@@ -5477,7 +5477,7 @@ int LBolter(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     act("$n curses as $s spell fizzles.",TRUE,me,0,0,TO_ROOM);
     act("The spell fizzles  :(",TRUE,me,0,0,TO_CHAR);
   }
-  me->addSkillLag(SPELL_BLAST_OF_FURY);
+  me->addSkillLag(SPELL_BLAST_OF_FURY, 0);
   return TRUE;
 }
 

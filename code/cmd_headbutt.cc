@@ -317,7 +317,7 @@ int TBeing::doHeadbutt(const char *argument, TBeing *vict)
   }
   rc = headbutt(this, v);
   if (rc)
-    addSkillLag(SKILL_HEADBUTT);
+    addSkillLag(SKILL_HEADBUTT, rc);
 
   if (IS_SET_ONLY(rc, DELETE_VICT)) {
     if (vict)

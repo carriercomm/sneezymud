@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spell_parser.cc,v $
+// Revision 5.1.1.4  1999/10/29 05:47:31  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.3  1999/10/29 03:32:25  cosmo
 // Added a log to track a crash bug.
 //
@@ -2212,7 +2215,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
 // Need to modify to seperate casting and lag spells
   // one combat round is 2 seconds 
   if (!IS_SET(discArray[which]->comp_types, SPELL_TASKED))
-    addSkillLag(which);
+    addSkillLag(which, rc);
     
 #if 0
   if (cast)

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_murder.cc,v $
+// Revision 5.1.1.3  1999/10/29 05:41:08  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.2  1999/10/29 05:08:13  cosmo
 // Fixing lag on backstab resulting in death.
 //
@@ -199,6 +202,7 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
   if ((rc = backstab(this, victim))) {
     if (!victim->isPc())
       dynamic_cast<TMonster *>(victim)->US(25);
+    addSkillLag(SKILL_BACKSTAB, rc);
   }
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
@@ -206,9 +210,6 @@ int TBeing::doBackstab(const char *argument, TBeing *vict)
     delete victim;
     victim = NULL;
     REM_DELETE(rc, DELETE_VICT);
-    addSkillLag(combatRound(1));
-  } else if (rc) {
-    addSkillLag(SKILL_BACKSTAB);
   }
 
   return rc;
@@ -358,7 +359,7 @@ int TBeing::doPoisonWeapon(const char * argument)
 
   rc = poisonWeapon(this, obj);
   if (rc)
-    addSkillLag(SKILL_POISON_WEAPON);
+    addSkillLag(SKILL_POISON_WEAPON, rc);
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
   return rc;
@@ -473,7 +474,7 @@ int TBeing::doGarrotte(const char * argument, TBeing *vict)
   }
   rc = garrotte(this, victim);
   if (rc)
-    addSkillLag(SKILL_GARROTTE);
+    addSkillLag(SKILL_GARROTTE, rc);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
       return rc;
@@ -623,7 +624,7 @@ int TBeing::doCudgel(const char * argument, TBeing *vict)
   }
   rc = cudgel(this, victim);
   if (rc)
-    addSkillLag(SKILL_CUDGEL);
+    addSkillLag(SKILL_CUDGEL, rc);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
       return rc;

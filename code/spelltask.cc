@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spelltask.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:47:52  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1442,7 +1445,7 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
 // COSMO MARKER: Spell lag added here
 #if 0
   // one combat round is 2 seconds
-  addSkillLag(which);
+  addSkillLag(which, rc);
   // We can call the spell now, switch to see which to call!
   sendTo("Ok.\n\r");
 // COSMO MARKER: Mana..Piety taken through here ...have to change useMana too

@@ -54,7 +54,7 @@ int TBeing::doSneak(const char *argument)
   }
   rc = sneak(this, skill);
   if (rc)
-    addSkillLag(skill);
+    addSkillLag(skill, rc);
 
   return rc;
 }
@@ -131,7 +131,7 @@ int TBeing::doHide()
   }
   int rc = hide(this, skill);
   if (rc)
-    addSkillLag(skill);
+    addSkillLag(skill, rc);
 
   return rc;
 }
@@ -179,7 +179,7 @@ int TBeing::doSubterfuge(const char *arg)
   }
   rc = subterfuge(this, victim);
   if (rc)
-    addSkillLag(SKILL_SUBTERFUGE);
+    addSkillLag(SKILL_SUBTERFUGE, rc);
 
   return rc;
 }
@@ -405,7 +405,7 @@ int TBeing::doDisguise(const char *arg)
   }
   rc = disguise(this, name_buf);
   if (rc)
-    addSkillLag(SKILL_DISGUISE);
+    addSkillLag(SKILL_DISGUISE, rc);
 
   return rc;
 }

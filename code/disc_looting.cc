@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_looting.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:38:19  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -132,7 +135,7 @@ int TBeing::disarmTrap(const char *arg, TObj *tp)
       trap = NULL;
     }
     if (rc)
-      addSkillLag(SKILL_DISARM_TRAP);
+      addSkillLag(SKILL_DISARM_TRAP, rc);
 
     if (IS_SET_DELETE(rc, DELETE_THIS))
       return DELETE_THIS;
@@ -141,7 +144,7 @@ int TBeing::disarmTrap(const char *arg, TObj *tp)
   } else if ((door = findDoor(type, dir, DOOR_INTENT_OPEN, SILENT_YES)) >= 0) {
     rc = disarmTrapDoor(this, door);
     if (rc)
-      addSkillLag(SKILL_DISARM_TRAP);
+      addSkillLag(SKILL_DISARM_TRAP, rc);
 
     if (IS_SET_DELETE(rc, DELETE_THIS))
       return DELETE_THIS;

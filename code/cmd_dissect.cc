@@ -145,7 +145,7 @@ int TBeing::doDissect(const char *argument)
 
   rc = dissect(this, obj);
   if (rc)
-    addSkillLag(SKILL_DISSECT);
+    addSkillLag(SKILL_DISSECT, rc);
   if (IS_SET_DELETE(rc, DELETE_ITEM)) {
     delete obj;
     obj = NULL;

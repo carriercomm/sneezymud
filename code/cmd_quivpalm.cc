@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_quivpalm.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:33:09  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -168,7 +171,7 @@ int TBeing::doQuiveringPalm(const char *arg, TBeing *vict)
   }
   rc = quiveringPalm(this, victim);
   if (rc)
-    addSkillLag(SKILL_QUIV_PALM);
+    addSkillLag(SKILL_QUIV_PALM, rc);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
       return rc;

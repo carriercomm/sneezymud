@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_monk.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:39:36  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -180,7 +183,7 @@ int TBeing::doSpringleap(const char *argument, bool should_lag, TBeing *vict)
   }
   rc = springleap(this,victim, should_lag);
   if (rc && should_lag) // auto springleap doesn't lag
-    addSkillLag(SKILL_SPRINGLEAP);
+    addSkillLag(SKILL_SPRINGLEAP, rc);
 
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
@@ -403,7 +406,7 @@ int TBeing::doChi(const char *argument, TThing *target)
       return FALSE;
     }
     rc=chi(this, (TBeing *) NULL);
-    addSkillLag(SKILL_CHI);
+    addSkillLag(SKILL_CHI, rc);
     // DELETE_THIS will fall through
   } else {
     bits = generic_find(argument, FIND_CHAR_ROOM | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, this, &victim, &obj);
@@ -435,7 +438,7 @@ int TBeing::doChi(const char *argument, TThing *target)
 	  break;
 	}
 	rc=chi(this, victim);
-	addSkillLag(SKILL_CHI);
+	addSkillLag(SKILL_CHI, rc);
 	
 	if (IS_SET_DELETE(rc, DELETE_VICT)) {
 	  delete victim;
@@ -447,7 +450,7 @@ int TBeing::doChi(const char *argument, TThing *target)
       case FIND_OBJ_ROOM:
       case FIND_OBJ_EQUIP:
 	rc=chi(this, obj);
-	addSkillLag(SKILL_CHI);
+	addSkillLag(SKILL_CHI, rc);
 	break;
 #if 0
     // generic_find looks inv first, so if not goingto do anything with it, ignore it

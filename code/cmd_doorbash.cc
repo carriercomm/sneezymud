@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_doorbash.cc,v $
+// Revision 5.1.1.3  1999/10/29 05:28:37  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.2  1999/10/16 21:43:02  batopr
 // Decreased stunned lag from miss
 //
@@ -253,7 +256,7 @@ TO_CHAR);
     return DELETE_THIS;
 
   if (rc)
-    addSkillLag(SKILL_DOORBASH);
+    addSkillLag(SKILL_DOORBASH, rc);
 
   return rc;
 }

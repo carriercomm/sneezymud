@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_deathstroke.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:23:45  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -278,7 +281,7 @@ int TBeing::doDeathstroke(const char *argument, TBeing *vict)
   rc = deathstroke(this,victim);
 
   if (rc)
-    addSkillLag(SKILL_DEATHSTROKE);
+    addSkillLag(SKILL_DEATHSTROKE, rc);
 
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_hth.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:37:02  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -74,7 +77,7 @@ int TBeing::doShove(const char *argument, TBeing *vict)
         return DELETE_THIS;
 
       act("You land face-down on the $g.", FALSE, this, 0, 0, TO_CHAR, ANSI_RED);
-      addSkillLag(skill);
+      addSkillLag(skill, rc);
       reconcileDamage(victim, 0, skill);
 
       if (!victim->isPc()) {
@@ -103,7 +106,7 @@ int TBeing::doShove(const char *argument, TBeing *vict)
         victim = NULL;
         return TRUE;
       }
-      addSkillLag(skill);
+      addSkillLag(skill, rc);
       reconcileDamage(victim, 0, skill);
       return TRUE;
     }
@@ -120,7 +123,7 @@ int TBeing::doShove(const char *argument, TBeing *vict)
   if (IS_SET_DELETE(rc, DELETE_THIS))
     return DELETE_THIS;
   if (rc)
-    addSkillLag(skill);
+    addSkillLag(skill, rc);
   return rc;
 }
  

@@ -776,7 +776,7 @@ int TBeing::doEncamp()
   
   rc = encamp(this);
   if (rc)
-    addSkillLag(SKILL_ENCAMP);
+    addSkillLag(SKILL_ENCAMP, rc);
   return rc;
 }
 

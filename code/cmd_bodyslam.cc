@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_bodyslam.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:19:44  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -340,7 +343,7 @@ int TBeing::doBodyslam(const char *argument, TBeing *vict)
   }
   rc = bodyslam(this, victim);
   if (rc)
-    addSkillLag(SKILL_BODYSLAM);
+    addSkillLag(SKILL_BODYSLAM, rc);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
       return rc;

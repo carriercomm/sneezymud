@@ -237,7 +237,7 @@ int TBeing::doSmite(const char *arg, TBeing *victim)
     return FALSE;
   rc = smite(this, vict);
   if (rc)
-    addSkillLag(SKILL_SMITE);
+    addSkillLag(SKILL_SMITE, rc);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (victim)
       return rc;

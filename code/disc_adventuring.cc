@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_adventuring.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:35:11  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -227,7 +230,7 @@ void TBeing::doBandage(const char *arg)
         sendTo("Your lack of skill causes you to screw up the bandage.\n\r");
         sendTo("The bandage must be thrown out as it is worthless now.\n\r");
       }
-      addSkillLag(SKILL_BANDAGE);
+      addSkillLag(SKILL_BANDAGE, 0);
     }
   } else
     sendTo("You need %d total bandages to cover that area.  You have %d.\n\r", band_num, count);

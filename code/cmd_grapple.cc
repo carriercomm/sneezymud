@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_grapple.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:31:11  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -252,7 +255,7 @@ int TBeing::doGrapple(const char *argument, TBeing *vict)
   }
   rc = grapple(this, victim, skill);
   if (rc)
-    addSkillLag(skill);
+    addSkillLag(skill, rc);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)
       return rc;

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_kneestrike.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:32:42  cosmo
+// *** empty log message ***
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -474,7 +477,7 @@ int TBeing::doKneestrike(const char *argument, TBeing *vict)
   }
   rc = kneestrike(this, v);
   if (rc) 
-    addSkillLag(SKILL_KNEESTRIKE);
+    addSkillLag(SKILL_KNEESTRIKE, rc);
 
   if (IS_SET_ONLY(rc, DELETE_VICT)) {
     if (vict)

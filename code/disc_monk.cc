@@ -374,8 +374,8 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
 
   int     tRc = 0;
   char    tTarget[256];
-  TObj   *tObj;
-  TBeing *tVictim;
+  TObj   *tObj    = NULL;
+  TBeing *tVictim = NULL;
 
   if (checkBusy(NULL))
     return FALSE;
@@ -399,16 +399,13 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
       tVictim = fight();
   }
 
-  if (is_abbrev(tTarget, getName())) {
+  if (is_abbrev(tTarget, getName()))
     tRc = chiMe(this);
-    addSkillLag(SKILL_CHI, tRc);
-  } else if (!strcmp(tTarget, "all")) {
+  else if (!strcmp(tTarget, "all"))
     tRc = roomp->chiMe(this);
-    addSkillLag(SKILL_CHI, tRc);
-  } else if (tVictim) {
+  else if (tVictim)
     tRc = tVictim->chiMe(this);
-    addSkillLag(SKILL_CHI, tRc);
-  } else {
+  else {
     generic_find(tTarget, FIND_CHAR_ROOM | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, this, &tVictim, &tObj);
 
     if (tObj)
@@ -420,6 +417,8 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
       return FALSE;
     }
   }
+
+  addSkillLag(SKILL_CHI, tRc);
 
   if (IS_SET_DELETE(tRc, RET_STOP_PARSING))
     REM_DELETE(tRc, RET_STOP_PARSING);

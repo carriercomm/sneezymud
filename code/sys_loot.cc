@@ -5,6 +5,7 @@
 
 TLootStructure * tLoot;
 
+
 // Put objects that should *NOT* be loaded through the LootBooter here.
 // List these by VNum, Not RNum
 bool isLegalLoot(int tValue)

@@ -458,3 +458,10 @@ void TRoom::operator >> (const TThing &tThing)
 
   vlogf(LOG_BUG, "Attempt to remove mob from born list that isn't in born list! [%s]", tThing.getName());
 }
+
+
+int TRoom::getLight()
+{
+  return ((isRoomFlag(ROOM_ALWAYS_LIT)) ? 18 : TThing::getLight());
+
+}

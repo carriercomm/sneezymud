@@ -105,6 +105,7 @@ bool willBreakHide(cmdTypeT tCmd, bool isPre)
 
     case CMD_LOOK:
     case CMD_SCORE:
+    case CMD_TROPHY:
     case CMD_INVENTORY:
     case CMD_HELP:
     case CMD_WHO:
@@ -1454,6 +1455,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_LOOT:
           doLoot(tmpstring);
           break;
+        case CMD_TROPHY:
+	  doTrophy(newarg);
+	  break;
         case MAX_CMD_LIST:
         case CMD_RESP_TOGGLE:
         case CMD_RESP_UNTOGGLE:
@@ -2098,6 +2102,7 @@ void buildCommandArray(void)
   commandArray[CMD_WIELD] = new commandInfo("wield", POSITION_RESTING, 0);
   commandArray[CMD_LOOK] = new commandInfo("look", POSITION_RESTING, 0);
   commandArray[CMD_SCORE] = new commandInfo("score", POSITION_DEAD, 0);
+  commandArray[CMD_TROPHY] = new commandInfo("trophy", POSITION_DEAD, 0);
   commandArray[CMD_CACKLE] = new commandInfo("cackle", POSITION_RESTING, 0);
   commandArray[CMD_SHOUT] = new commandInfo("shout", POSITION_RESTING, 0);
   commandArray[CMD_TELL] = new commandInfo("tell",POSITION_RESTING, 0);

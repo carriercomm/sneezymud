@@ -2382,6 +2382,7 @@ bool TBeing::castAllowCommand(cmdTypeT cmd)
     case CMD_GLANCE:
     case CMD_TIME:
     case CMD_SCORE:
+    case CMD_TROPHY:
     case CMD_HELP:
     case CMD_WHO:
     case CMD_NEWS:

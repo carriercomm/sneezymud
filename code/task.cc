@@ -240,6 +240,7 @@ bool TBeing::utilityTaskCommand(cmdTypeT cmd)
     case CMD_GLANCE:
     case CMD_TIME:
     case CMD_SCORE:
+    case CMD_TROPHY:
     case CMD_HELP:
     case CMD_ZONES:
     case CMD_WHO:

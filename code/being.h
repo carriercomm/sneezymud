@@ -1804,6 +1804,7 @@ class TBeing : public TThing {
     void doUnlock(const char *);
     void doLock(const char *);
     void doScore();
+    void doTrophy(const char *);
     void doWhozone();
     void doWho(const char *);
     void doTime(const char *);

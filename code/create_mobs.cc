@@ -2,27 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: create_mobs.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/09/30 03:33:36  lapsos
-// Added code for mobile strings and the advanced menu stuff.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//   SneezyMUD           (c) 1993 SneezyMUD Coding Team.   All Rights Reserved.
-//
 //   create_mobs.cc : Online mobile creation/saving/loading for builders.
 //
 //////////////////////////////////////////////////////////////////////////
@@ -145,7 +124,7 @@ static void send_mob_menu(const TBeing *ch, const TMonster *tMon)
     strcpy(tStringOut[16], tMon->getProfName());
     int tHeight = (int)(tMon->getHeight() / 12);
     sprintf(tStringOut[17], "%d\'%d\" (%d)", tHeight, (tMon->getHeight() - (tHeight * 12)), tMon->getHeight());
-    sprintf(tStringOut[18], "%d (lbs)", tMon->getWeight());
+    sprintf(tStringOut[18], "%.0f (lbs)", tMon->getWeight());
     strcpy(tStringOut[19], ((tMon->spec < NUM_MOB_SPECIALS) ? (tMon->spec <= 0 ? "Proc: none" : mob_specials[GET_MOB_SPE_INDEX(tMon->spec)].name) : "Confused..."));
     sprintf(tStringOut[20], "%d", tMon->visionBonus);
     sprintf(tStringOut[21], "%d", tMon->canBeSeen);
@@ -372,7 +351,7 @@ static void TBeingSave(TBeing *ch, TMonster *mob, int vnum)
     int tMarker = 0;
 
     if (tExDescr->description) {
-      for (int tPos = 0; tPos <= strlen(tExDescr->description); tPos++)
+      for (unsigned int tPos = 0; tPos <= strlen(tExDescr->description); tPos++)
         if (tExDescr->description[tPos] != 13)
           temp[tMarker++] = tExDescr->description[tPos];
 
@@ -2752,9 +2731,7 @@ static void change_mob_string_values(TBeing *ch, TMonster *tMob, const char *tSt
     "%s5%s) movein [message when mobile enters a room]\n\r%s<z>\n\r\n\r"
     "%s6%s) moveout [message when mobile leaves a room]\n\r%s<z>\n\r\n\r";
 
-  int  tRow,
-       tUpdate;
-  char tBuffer[256];
+  int tUpdate;
   bool tHas = (tMob->ex_description ? true : false);
 
   if (tEnterT != ENTER_CHECK) {

@@ -1584,28 +1584,13 @@ void buildComponentArray()
   unsigned int j;
   int vnum, usage;
   spellNumT spell;
-  char buf[256];
   MYSQL_RES *res;
   MYSQL_ROW row;
 
-  if(!db){
-    vlogf(LOG_MISC, "buildComponentArray: Initializing database.");
-    db=mysql_init(NULL);
-
-    vlogf(LOG_MISC, "buildComponentArray: Connecting to database.");
-    if(!mysql_real_connect(db, NULL, "sneezy", NULL, 
-	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
-      vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
-      exit(0);
-    }
-  }
-
-  sprintf(buf, "select vnum, val2, val3 from object where type=%d", mapFileToItemType(ITEM_COMPONENT));
-  if(mysql_query(db, buf)){
-    vlogf(LOG_BUG, "Database query failed: %s", mysql_error(db));
+  if(dbquery(&res, "sneezy", "buildComponentArray", "select vnum, val2, val3 from object where type=%d", mapFileToItemType(ITEM_COMPONENT))){
+    vlogf(LOG_BUG, "Database error! buildComponentArray");
     exit(0);
   }
-  res=mysql_use_result(db);
   while((row=mysql_fetch_row(res))){
     vnum=atoi(row[0]);
     spell=mapFileToSpellnum(atoi(row[1]));

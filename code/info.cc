@@ -4716,7 +4716,7 @@ void TBeing::doWorld()
          blue(), accStat.player_count, norm());
 
   if (hasWizPower(POWER_WIZARD)) {
-    sendTo("Total number of active accounts:%s               %d%s\n\r", 
+    sendTo("Total number of active accounts:%s              %d%s\n\r", 
            blue(), accStat.active_account, norm());
     sendTo("Total number of active players:%s               %d%s\n\r", 
            blue(), accStat.active_player, norm());

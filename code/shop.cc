@@ -2067,9 +2067,9 @@ void bootTheShops()
 void bootTheShops()
 {
   int shop_nr;
-  MYSQL_RES *res, *producing_res, *type_res, *material_res, *shopfaction_res;
-  MYSQL_ROW row, producing_row, type_row, material_row, shopfaction_row;
-  MYSQL *producing_db, *type_db, *material_db, *shopfaction_db;
+  MYSQL_RES *res, *producing_res, *type_res, *material_res;
+  MYSQL_ROW row, producing_row, type_row, material_row;
+  MYSQL *producing_db, *type_db, *material_db;
 
   /****** producing ******/
   producing_db=mysql_init(NULL);
@@ -2116,22 +2116,6 @@ void bootTheShops()
   material_res=mysql_use_result(material_db);
   material_row=mysql_fetch_row(material_res);
 
-  /****** shop faction ******/
-  shopfaction_db=mysql_init(NULL);
-  if(!mysql_real_connect(shopfaction_db, NULL, "sneezy", NULL, 
-	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
-    vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
-    exit(0);
-  }
-
-  if(mysql_query(shopfaction_db, "select shop_nr, faction, profit_buy, profit_sell from shopfaction order by shop_nr")){
-    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(shopfaction_db));
-    exit(0);
-  }
-  shopfaction_res=mysql_use_result(shopfaction_db);
-  shopfaction_row=mysql_fetch_row(shopfaction_res);
-
-
   if(dbquery(&res, "sneezy", "bootTheShops", "select shop_nr, no_such_item1, no_such_item2, do_not_buy, missing_cash1, missing_cash2, message_buy, message_sell, temper1, temper2, keeper, flags, in_room, open1, close1, open2, close2, profit_buy, profit_sell from shop order by shop_nr")){
     vlogf(LOG_BUG, "Database error: bootTheShops");
     exit(0);
@@ -2158,16 +2142,8 @@ void bootTheShops()
     sd.open2=atoi(row[15]);
     sd.close2=atoi(row[16]);
 
-    if(shopfaction_row && atoi(shopfaction_row[0])==shop_nr){
-      sd.profit_buy=atof(shopfaction_row[2]);
-      sd.profit_sell=atof(shopfaction_row[3]);
-
-      shopfaction_row=mysql_fetch_row(shopfaction_res);
-      
-    } else {
-      sd.profit_buy=atof(row[17]);
-      sd.profit_sell=atof(row[18]);
-    }
+    sd.profit_buy=atof(row[17]);
+    sd.profit_sell=atof(row[18]);
 
     while(type_row && atoi(type_row[0])==shop_nr){
       sd.type.push_back(atoi(type_row[1]));
@@ -2196,8 +2172,6 @@ void bootTheShops()
   mysql_close(type_db);
   mysql_free_result(material_res);
   mysql_close(material_db);
-  mysql_free_result(shopfaction_res);
-  mysql_close(shopfaction_db);
 }
 
 #endif

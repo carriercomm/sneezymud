@@ -414,6 +414,16 @@ static void showStatsTo(const Descriptor *d, const TBeing *ch, bool hidden_stuff
            ch->cyan(), d->career.crit_kidney_suff, ch->norm());
     str += buffer;
   }
+  if (d->career.crit_genitalia) {
+    sprintf(buffer, "COMBAT_CRIT: Genitalia Severings inflicted   : %s %u%s\n\r",
+	    ch->cyan(), d->career.crit_genitalia, ch->norm());
+    str += buffer;
+  }
+  if (d->career.crit_genitalia_suff) {
+    sprintf(buffer, "COMBAT_CRIT: Genitalia Severings suffered   : %s %u%s\n\r",
+	    ch->cyan(), d->career.crit_genitalia_suff, ch->norm());
+    str += buffer;
+  }
   ch->desc->page_string(str.c_str());
   return;
 }

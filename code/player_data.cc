@@ -1611,7 +1611,7 @@ void TBeing::saveCareerStats()
 {
   FILE *fp;
   char buf[160];
-  int current_version = 16;
+  int current_version = 17;
 // version 9  : 7/3/98
 // version 10 : 8/17/98
 // version 11 : 10/06/98
@@ -1620,6 +1620,7 @@ void TBeing::saveCareerStats()
 // version 14 : 11/16/98
 // version 15 : 12/04/98
 // version 16 : 12/13/98
+// version 17 : 02/15/00
   int i;
 
   if (!isPc() || !desc)
@@ -1682,6 +1683,9 @@ void TBeing::saveCareerStats()
       desc->career.crit_eviscerate_suff,
       desc->career.crit_kidney,
       desc->career.crit_kidney_suff);
+  fprintf(fp, "%u %u\n",
+      desc->career.crit_genitalia,
+      desc->career.crit_genitalia_suff);
   fprintf(fp, "%u %u\n", 
       desc->career.arena_victs,
       desc->career.arena_loss);
@@ -1868,18 +1872,29 @@ if (current_version < 16) {
   desc->career.crit_impale = num3;
   desc->career.crit_impale_suff = num4;
 
-if (current_version >= 14) {
-  if (fscanf(fp, "%u %u %u %u\n", 
-      &num1, &num2, &num3, &num4) != 4) {
-    vlogf(LOG_BUG, "Bad data in career stat read (%s)", getName());
-    fclose(fp);
-    return;
+  if (current_version >= 14) {
+    if (fscanf(fp, "%u %u %u %u\n", 
+	       &num1, &num2, &num3, &num4) != 4) {
+      vlogf(LOG_BUG, "Bad data in career stat read (%s)", getName());
+      fclose(fp);
+      return;
+    }
+    desc->career.crit_eviscerate = num1;
+    desc->career.crit_eviscerate_suff = num2;
+    desc->career.crit_kidney = num3;
+    desc->career.crit_kidney_suff = num4;
   }
-  desc->career.crit_eviscerate = num1;
-  desc->career.crit_eviscerate_suff = num2;
-  desc->career.crit_kidney = num3;
-  desc->career.crit_kidney_suff = num4;
-}
+  
+  if (current_version >= 17) {
+    if (fscanf(fp, "%u %u\n",
+	       &num1, &num2) !=2){
+      vlogf(LOG_BUG, "Bad data in career stat read (%s)", getName());
+      fclose(fp);
+      return;
+    }
+    desc->career.crit_genitalia = num1;
+    desc->career.crit_genitalia_suff = num2;    
+  }
 
   if (fscanf(fp, "%u %u\n", 
       &num1, &num2) != 2) {

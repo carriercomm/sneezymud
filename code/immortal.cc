@@ -5659,9 +5659,6 @@ void TBeing::doAccount(const char *arg)
   FILE *fp;
   string str;
 
-  if (powerCheck(POWER_ACCOUNT))
-    return;
-
   if (!desc)
     return;
 
@@ -5671,6 +5668,16 @@ void TBeing::doAccount(const char *arg)
   if (!namebuf || !*namebuf || (*namebuf == '.'))  {
     sendTo("Syntax: account <account name>\n\r");
     return;
+  }
+
+  if (powerCheck(POWER_ACCOUNT)) {
+    // person isn't an imm, only let them check their own account
+    if (!desc->account || !desc->account->name ||
+        strcmp(desc->account->name, namebuf)) {
+      sendTo("You may only check your own account.\n\r");
+      sendTo("Syntax: account <account name>\n\r");
+      return;
+    }
   }
 
   sprintf(buf2, "account/%c/%s", LOWER(namebuf[0]), lower(namebuf).c_str());
@@ -5689,33 +5696,36 @@ void TBeing::doAccount(const char *arg)
 
   fread(&afp, sizeof(afp), 1, fp);
 
-  arg = one_argument(arg, buf2);
-  if (is_abbrev(buf2, "banished")) {
-    if (IS_SET(afp.flags, ACCOUNT_BANISHED)) {
-      REMOVE_BIT(afp.flags, ACCOUNT_BANISHED);
-      sendTo("You have unbanished the %s account.\n\r", afp.name);
-    } else {
-      SET_BIT(afp.flags, ACCOUNT_BANISHED);
-      sendTo("You have set the %s account banished.\n\r", afp.name);
+  // only let imms do this
+  if (!powerCheck(POWER_ACCOUNT)) {
+    arg = one_argument(arg, buf2);
+    if (is_abbrev(buf2, "banished")) {
+      if (IS_SET(afp.flags, ACCOUNT_BANISHED)) {
+        REMOVE_BIT(afp.flags, ACCOUNT_BANISHED);
+        sendTo("You have unbanished the %s account.\n\r", afp.name);
+      } else {
+        SET_BIT(afp.flags, ACCOUNT_BANISHED);
+        sendTo("You have set the %s account banished.\n\r", afp.name);
+      }
+      
+      rewind(fp);
+      fwrite(&afp, sizeof(accountFile), 1, fp);
+      fclose(fp);
+      return;
+    } else if (is_abbrev(buf2, "email")) {
+      if (IS_SET(afp.flags, ACCOUNT_EMAIL)) {
+        REMOVE_BIT(afp.flags, ACCOUNT_EMAIL);
+        sendTo("You have un-email-banished the %s account.\n\r", afp.name);
+      } else {
+        SET_BIT(afp.flags, ACCOUNT_EMAIL);
+        sendTo("You have set the %s account email-banished.\n\r", afp.name);
+      }
+      
+      rewind(fp);
+      fwrite(&afp, sizeof(accountFile), 1, fp);
+      fclose(fp);
+      return;
     }
-    
-    rewind(fp);
-    fwrite(&afp, sizeof(accountFile), 1, fp);
-    fclose(fp);
-    return;
-  } else if (is_abbrev(buf2, "email")) {
-    if (IS_SET(afp.flags, ACCOUNT_EMAIL)) {
-      REMOVE_BIT(afp.flags, ACCOUNT_EMAIL);
-      sendTo("You have un-email-banished the %s account.\n\r", afp.name);
-    } else {
-      SET_BIT(afp.flags, ACCOUNT_EMAIL);
-      sendTo("You have set the %s account email-banished.\n\r", afp.name);
-    }
-    
-    rewind(fp);
-    fwrite(&afp, sizeof(accountFile), 1, fp);
-    fclose(fp);
-    return;
   }
 
   fclose(fp);
@@ -5739,11 +5749,14 @@ void TBeing::doAccount(const char *arg)
     str += "No characters in account.\n\r";
   str += "\n\r";
 
-  sprintf(buf2, "account/%c/%s/comment", LOWER(namebuf[0]), lower(namebuf).c_str());
-  if ((fp = fopen(buf2, "r"))) {
-    while (fgets(buf2, 255, fp))
-      str += buf2;
-    fclose(fp);
+  // only let imms see comments
+  if (!powerCheck(POWER_ACCOUNT)) {
+    sprintf(buf2, "account/%c/%s/comment", LOWER(namebuf[0]), lower(namebuf).c_str());
+    if ((fp = fopen(buf2, "r"))) {
+      while (fgets(buf2, 255, fp))
+        str += buf2;
+      fclose(fp);
+    }
   }
   desc->page_string(str.c_str(), 0);
 

@@ -1145,19 +1145,24 @@ void TBeing::doWimpy(const char *arg)
        return;
     }
   }
-  if (is_abbrev(buf, "off") || buf[0] == '0') {
+
+  int hl = hitLimit();
+  int wimplimit = hl / 2 + hl % 2;
+
+  if (is_abbrev(buf, "max")) {
+    sendTo("Setting Wimpy to Max(%d).\n\r", wimplimit - 1);
+    num = wimplimit - 1;
+  } else if (is_abbrev(buf, "off") || (num = atoi(buf)) <= 0) {
     sendTo("Turning wimpy mode off.\n\r");
     wimpy = 0;
     return;
   }
-  num = atoi(buf);
 
-  int hl = hitLimit();
-  int wimplimit = hl/2 + hl%2;
   if ((num < 0) || (wimplimit <= num)) {
     sendTo("Please enter a number between 0-%d.\n\r", wimplimit-1);
     return;
   }
+
   sendTo("You are now a wimp!!\n\r");
   sendTo("You will now flee at %d hit points!\n\r", num);
   wimpy = num;

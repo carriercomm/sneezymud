@@ -335,12 +335,17 @@ int TBeing::doMount(const char *arg, cmdTypeT cmd, TBeing *h)
            TRUE, this, 0, horse, TO_NOTVICT);
       return FALSE;
     }
-    if (isPlayerAction(PLR_SOLOQUEST) && 
-	!(hasQuestBit(TOG_MONK_GREEN_STARTED) && 
-	  horse->mobVnum()==MOB_ELEPHANT)){
-      sendTo("You are on a solo-quest!  No use of mounts allowed!\n\r");
-      return FALSE;
-    }
+
+    //    if (isPlayerAction(PLR_SOLOQUEST) && 
+    // !(hasQuestBit(TOG_MONK_GREEN_STARTED) && 
+    //  horse->mobVnum()==MOB_ELEPHANT)){
+    //  sendTo("You are on a solo-quest!  No use of mounts allowed!\n\r");
+    //  return FALSE;
+    // }
+
+    // I commented out the above to allow use of mounts on solo quests.
+    // Deikhan skills depend on mounts and whats fair is fair for all classes --jh
+
     // keep these two checks identical to whats in canRide
     if(!(horse->mobVnum()==MOB_ELEPHANT &&
 	 hasQuestBit(TOG_MONK_GREEN_STARTED))){

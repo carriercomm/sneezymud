@@ -24,7 +24,7 @@ static int si_sunSet = 0;
 // the hour is simply val/4, and the minute is val%4
 int hourminTime()
 {
-  return time_info.hour*4 + (time_info.minute/15);
+  return time_info.hours*4 + (time_info.minutes/15);
 }
 
 const char * moonType()
@@ -124,7 +124,7 @@ void anotherHour()
     time_info.hours++;
     time_info.minutes = 0;
 
-    if (time_info.hours == 12) {
+    if (time_info.hours == 12)
       sendToOutdoor(COLOR_NONE, "It is noon.\n\r","It is noon.\n\r");
 
     // check for new day
@@ -632,6 +632,7 @@ void GetMonth(int month)
       break;
   }
 
+  char buf[256];
   sprintf(buf, "It is now the %s of %s.\n\r", numberAsString(time_info.day + 1).c_str(), month_name[month]);
   descriptor_list->worldSend(buf, NULL);
 }
@@ -956,3 +957,16 @@ void calcNewSunSet()
   si_sunSet = (18*4+0) + (int) (x*4 + 0.5);
 }
 
+// display time (given in hourminTime format) as a string
+string hmtAsString(int hmt)
+{
+  int hour = hmt/4;
+  int minute = hmt%4 * 15;
+
+  char buf[64];
+  sprintf(buf, "%d:%2.2d %s",
+     (!(hour % 12) ? 12 : hmt%12),
+     minute,
+     (hour >= 12) ? "PM" : "AM");
+  return buf;
+}

@@ -2625,6 +2625,7 @@ int TMonster::notFightingMove(int pulse)
       if (!isAffected(AFF_GROUP) && IS_SET(specials.act, ACT_WIMPY) &&
 	 !IS_SET(specials.act, ACT_SENTINEL) && tmp_ch->fight() &&
 	 ::number(0,1)) {
+        act("$n looks distressed.", false, this, 0, 0, TO_ROOM);
         rc = wanderAround();
 	if (IS_SET_DELETE(rc, DELETE_THIS))
 	  return DELETE_THIS;

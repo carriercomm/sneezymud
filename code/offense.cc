@@ -500,6 +500,31 @@ static int applyOrder(TBeing *ch, TBeing *vict, const char * message, silentType
   return FALSE;
 }
 
+static bool orderDenyCheck(const char * cmd_buf)
+{
+  return (is_abbrev(cmd_buf, "kill") ||
+      is_abbrev(cmd_buf, "hit") ||
+      is_abbrev(cmd_buf, "engage") ||
+      is_abbrev(cmd_buf, "assist") ||
+      is_abbrev(cmd_buf, "attack") ||
+      is_abbrev(cmd_buf, "kick") ||
+      is_abbrev(cmd_buf, "bash") ||
+      is_abbrev(cmd_buf, "deathstroke") ||
+      is_abbrev(cmd_buf, "grapple") ||
+      is_abbrev(cmd_buf, "shove") ||
+      is_abbrev(cmd_buf, "bodyslam") ||
+      is_abbrev(cmd_buf, "rescue") ||
+      is_abbrev(cmd_buf, "kneestrike") ||
+      is_abbrev(cmd_buf, "sleep") || // order sleep, backstab....
+      is_abbrev(cmd_buf, "emote") ||
+      is_abbrev(cmd_buf, "mount") ||
+      is_abbrev(cmd_buf, "headbutt") ||
+      is_abbrev(cmd_buf, "open") ||
+      is_abbrev(cmd_buf, "lower") ||
+      is_abbrev(cmd_buf, "lift") ||
+      is_abbrev(cmd_buf, "raise"));
+}
+
 // returns DELETE_THIS
 int TBeing::doOrder(const char *argument)
 {
@@ -550,36 +575,28 @@ int TBeing::doOrder(const char *argument)
     bool messSent = false;
 
     // I am a charm taking orders from my master
-    if (v->master == this && v->isAffected(AFF_CHARM))
-      legitimate = true;
+    if (v->master == this && v->isAffected(AFF_CHARM)) {
+      // pets aren't too eager to leap into the fray, but will do so on their
+      // own.  Charms and zombies do what they are told
+      if (v->isPet()) {
+        if (!orderDenyCheck(cmd_buf))
+          legitimate = true;
+      } else
+        legitimate = true;
+    }
+
     // I am a captive, taking orders from my capter
     if (!legitimate &&
         v->getCaptiveOf() == this)
       legitimate = true;
+
     // I am a horse, taking orders from my master
     if (!legitimate &&
       v->horseMaster() == this) {
       int check = MountEgoCheck(this, v);
-      if (is_abbrev(cmd_buf, "kill") ||
-          is_abbrev(cmd_buf, "hit") ||
-          is_abbrev(cmd_buf, "engage") ||
-          is_abbrev(cmd_buf, "assist") ||
-          is_abbrev(cmd_buf, "attack") ||
-          is_abbrev(cmd_buf, "kick") ||
-          is_abbrev(cmd_buf, "bash") ||
-          is_abbrev(cmd_buf, "deathstroke") ||
-          is_abbrev(cmd_buf, "grapple") ||
-          is_abbrev(cmd_buf, "shove") ||
-          is_abbrev(cmd_buf, "bodyslam") ||
-          is_abbrev(cmd_buf, "rescue") ||
-          is_abbrev(cmd_buf, "kneestrike") ||
-          is_abbrev(cmd_buf, "sleep") || // order sleep, backstab....
-          is_abbrev(cmd_buf, "emote") ||
-          is_abbrev(cmd_buf, "headbutt") ||
-          is_abbrev(cmd_buf, "open") ||
-          is_abbrev(cmd_buf, "lower") ||
-          is_abbrev(cmd_buf, "lift") ||
-          is_abbrev(cmd_buf, "raise"))
+
+      // mounts are not gung-ho supporters of their riders
+      if (orderDenyCheck(cmd_buf))
         check = 3;   // force indifference
 
       // if mount has no ego (check <=0) do command

@@ -202,7 +202,7 @@ int TBeing::doEngagedHit(const char *argument, TBeing *vict)
   only_argument(argument, arg);
 
   if (!(victim = vict)) {
-    if (!(victim = get_char_room_vis(this, arg))) {
+    if (!(victim = get_char_room_vis(this, arg, NULL, EXACT_NO, INFRA_YES))) {
       sendTo("Hit whom?\n\r");
       return FALSE;
     }
@@ -289,7 +289,7 @@ int TBeing::doEngage(const char *argument, TBeing *vict)
       return FALSE;
     }
   } else {
-      if ((tmp = get_char_room_vis(this,arg))) {
+      if ((tmp = get_char_room_vis(this,arg, NULL, EXACT_NO, INFRA_YES))) {
         victim = tmp; 
       } else if (fight() && !isAffected(AFF_ENGAGER)) {
         victim = fight();
@@ -443,7 +443,7 @@ int TBeing::doKill(const char *argument, TBeing *vict)
   only_argument(argument, arg);
 
   if (!(v = vict)) {
-    if (!(v = get_char_room_vis(this, arg))) {
+    if (!(v = get_char_room_vis(this, arg, NULL, EXACT_NO, INFRA_YES))) {
       sendTo("They aren't here.\n\r");
       return FALSE;
     }
@@ -548,7 +548,7 @@ int TBeing::doOrder(const char *argument)
     sendTo("Order whom to do what?\n\r");
     return FALSE;
   }
-  TBeing *v = get_char_room_vis(this, caName);
+  TBeing *v = get_char_room_vis(this, caName, NULL, EXACT_NO, INFRA_YES);
   if (!v && !is_abbrev(caName, "followers") && strcmp("all", caName)) {
     sendTo("That person isn't here.\n\r");
     return FALSE;
@@ -1005,7 +1005,7 @@ int TBeing::doAssist(const char *argument, TBeing *vict, bool flags)
   only_argument(argument, v_name);
 
   if (!(v = vict)) {
-    if (!(v = get_char_room_vis(this, v_name))) {
+    if (!(v = get_char_room_vis(this, v_name, NULL, EXACT_NO, INFRA_YES))) {
       sendTo("Whom do you want to assist?\n\r");
       return FALSE;
     }

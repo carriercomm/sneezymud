@@ -4648,11 +4648,29 @@ void TBeing::doInfo(const char *arg)
         sendTo("You cannot access that information at your level.\n\r");
         return;
       }
-      int w2 = atoi(arg1);
-      spellNumT which = spellNumT(w2);
-      if (which < MIN_SPELL || which >= MAX_SKILL) {
-        sendTo("Syntax: info skills <skill #>\n\r");
-        return;
+
+      spellNumT which;
+
+      if (is_number(arg1)) {
+        which = spellNumT(atoi(arg1));
+
+        if (which < MIN_SPELL || which >= MAX_SKILL) {
+          sendTo("Syntax: info skills <skill #:%d - %d>\n\r", MIN_SPELL, (MAX_SKILL + 1));
+          return;
+        }
+      } else {
+        for (which = MIN_SPELL; which < MAX_SKILL; which++) {
+          if (!discArray[which] || hideThisSpell(which))
+            continue;
+
+          if (is_abbrev(arg1, discArray[which]->name))
+            break;
+        }
+
+        if (which >= MAX_SKILL) {
+          sendTo("Unable to find requested skill.\n\r");
+          return;
+        }
       }
 
       if (hideThisSpell(which)) {

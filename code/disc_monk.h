@@ -2,16 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_monk.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -119,7 +109,7 @@ private:
     int task_yoginsa(TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
     int grappleMonk(TBeing *, TBeing *, int);
     int springleap(TBeing *, TBeing *, bool);
-    void chiMe(TBeing *);
+    int chiMe(TBeing *);
     int chi(TBeing *, TBeing *);
     int chi(TBeing *, TObj *);
 

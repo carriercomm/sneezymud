@@ -658,7 +658,7 @@ bool TBeing::checkSmashed(TBeing *ch, wearSlotT part_hit, spellNumT wtype, TThin
               (temp != ch ? "'s" : "") );
           if (altPart) {
             strcat(buf, colorString(temp, temp->desc, altPart, NULL, COLOR_OBJECTS, FALSE).c_str());
-          else if (weapon) {
+          } else if (weapon) {
             strcat(buf, colorString(temp, temp->desc, temp->objn(weapon).c_str(), NULL, COLOR_OBJECTS, FALSE).c_str());
           } else {
             strcat(buf, ch->getMyRace()->getBodyLimbBlunt().c_str());

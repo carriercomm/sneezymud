@@ -146,7 +146,10 @@ void TPerson::resetChar()
   }
   hunt_dist = 0;
 
-  setSpellHitroll(0);
+// this hitroll is set by spells (affects) which were already zero'd and
+// are (at this point) in effect.  Bad, bad, bad!
+//  setSpellHitroll(0);
+
   setHitroll(0);
   setDamroll(0);
 

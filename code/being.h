@@ -1048,6 +1048,8 @@ class TBeing : public TThing {
     int socialLimbBad(TBeing *, cmdTypeT);
     int doPray(const char *);
     int doCast(const char *);
+    int doTrigger(const char *);
+    int doStore(const char *);
     int passOut();
     int shieldAbsorbDamage(int);
     void chlorineRoom();

@@ -809,6 +809,9 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
     if (!vict->isPc()) {
       sprintf(buf, "%d", amount);
       rc = dynamic_cast<TMonster *>(vict)->checkResponses(this, NULL, buf, CMD_GIVE);
+
+      TMonster *tMob;
+
       if (rc) {
         // giving money is a trigger, delete the money
         vict->addToMoney(-amount, GOLD_XFER);
@@ -820,8 +823,26 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
           gold_statistics[GOLD_SHOP_RESPONSES][GetMaxLevel()-1] -= amount;
           // since -amount < 0, I need do nothing to gold_positive
         }
-        // vict is known to be an NPC, so need not worry about statistics there
+      } else if (!vict->isPc() && (tMob = dynamic_cast<TMonster *>(vict)) &&
+                   (mob_index[tMob->getMobIndex()].max_exist > 1) &&
+                   !IS_SET(tMob->specials.act, ACT_SENTINEL)) {
+          // vict is known to be an NPC, so need not worry about statistics
+          // Let's have a little fun.
+          // If mob and isn't sentinal...
+
+          if ((amount           >= (vict->GetMaxLevel() * 1000)) ||
+              (vict->getMoney() >= (vict->GetMaxLevel() * 1000))) {
+            act("$N stares at $n and smiles.",
+                TRUE, this, NULL, vict, TO_ROOM);
+            act("$N stares at you and smiles, I think they like you.",
+                TRUE, this, NULL, vict, TO_CHAR);
+            act("$n leaves to make use of their new found cash.",
+                TRUE, vict, NULL, NULL, TO_ROOM);
+
+            ADD_DELETE(rc, DELETE_THIS);
+          }
       }
+
       if (IS_SET_DELETE(rc, DELETE_THIS)) {
         delete vict;
         vict = NULL;
@@ -832,8 +853,10 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
         delete obj;
         obj = NULL;
         doSave(SILENT_YES);
+
         if (vict)
           vict->doSave(SILENT_YES);
+
         REM_DELETE(rc, DELETE_ITEM);
         return rc;
       }
@@ -841,13 +864,17 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
         return DELETE_THIS;
     }
 
-    rc = vict->checkSpec(this, CMD_MOB_GIVEN_COINS, arg, (TObj *) amount);
-    if (IS_SET_DELETE(rc, DELETE_THIS)) {
-      delete vict;
-      vict = NULL;
+    if (vict) {
+      rc = vict->checkSpec(this, CMD_MOB_GIVEN_COINS, arg, (TObj *) amount);
+
+      if (IS_SET_DELETE(rc, DELETE_THIS)) {
+        delete vict;
+        vict = NULL;
+      }
+
+      if (IS_SET_DELETE(rc, DELETE_VICT))
+        return DELETE_THIS;
     }
-    if (IS_SET_DELETE(rc, DELETE_VICT))
-      return DELETE_THIS;
     return FALSE;
   } else {
     argument = one_argument(argument, vict_name);

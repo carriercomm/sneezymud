@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: task_smythe.cc,v $
+// Revision 5.1.1.3  2000/11/19 22:20:48  jesus
+// smythe update
+//
 // Revision 5.1.1.2  2000/11/19 13:44:19  jesus
 // smythe fixed
 //
@@ -172,8 +175,8 @@ int task_smythe(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj
       if (bSuccess(ch, learning, SKILL_SMYTHE)) {
 	w->smythePulse(ch, o);
       } else if (!(::number(0,1)))
-      act("$n examines $p carefully, and continues $s repair.", FALSE, ch, o, 0, TO_ROOM);
-      act("You carefully examine and continue to repair $p.", FALSE, ch, o, 0, TO_CHAR);
+      act("$n examines $p carefully.", FALSE, ch, o, 0, TO_ROOM);
+      act("You carefully examine $p.", FALSE, ch, o, 0, TO_CHAR);
       return FALSE;
     } else {
       ch->task->calcNextUpdate(pulse, 2 * PULSE_MOBACT);

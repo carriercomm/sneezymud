@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: discipline.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:17:28  cosmo
+// Reducing lag on mob death.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -4565,10 +4568,12 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
   return TRUE;
 }
 
-void TBeing::addSkillLag(spellNumT skill)
+void TBeing::addSkillLag(spellNumT skill, int rc)
 {
   lag_t lag_num = discArray[skill]->lag;
   float f_lag = lagAdjust(lag_num);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    f_lag = min(1, f_lag);
   f_lag *= combatRound(1);
   int i_lag = static_cast<int>(f_lag);
 

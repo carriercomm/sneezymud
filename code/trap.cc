@@ -1558,7 +1558,8 @@ int TBeing::trapSleep(int amt)
   }
 
   if (!isLucky(levelLuckModifier(GetMaxLevel()))) {
-    rc = rawSleep(0, (6 * UPDATES_PER_MUDHOUR), 1, SAVE_YES);
+    // at 2 minutes per mudhour, let's not make this too painful
+    rc = rawSleep(0, (2 * UPDATES_PER_MUDHOUR), 1, SAVE_NO);
   } else
     sendTo("You feel sleepy, but you recover.\n\r");
 

@@ -331,7 +331,7 @@ int TSocket::gameLoop()
       update_stuff = (pulse % (PULSE_NOISES/2));
       tick_updates = (pulse % (PULSE_MUDHOUR/2));
       mobstuff = (pulse % (PULSE_MOBACT/2));
-      points = (pulse % (PULSE_UPDATES2));
+      points = (pulse % (PULSE_UPDATE/2));
     }
 
     if (!points) {

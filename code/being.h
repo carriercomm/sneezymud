@@ -298,11 +298,12 @@ class playerData
 class Craps;
 class charFile;    // defined below
 
-class pointData {
-  public:
+class pointData { // NOTE: pointdata is saved directly into charfile SO YOU CAN NOT CHANGE THIS SHIT
+ public:// without charfile conversion or wipe or whatnot. 
    sh_int mana;         
    sh_int maxMana;
    double piety;
+   sh_int lifeforce;
    sh_int hit;   
    sh_int maxHit;      
    sh_int move;  
@@ -371,7 +372,10 @@ class factionData {
     TBeing *captiveOf;
     TBeing *target;
     factionTypeT type;          // actual affiliation
-    unsigned long actions;     // other stuff
+    unsigned long actions;
+    int align_ge;              // alignment on good/evil axis
+    int align_lc;              // alignment on chaotic/lawful axis
+    int whichfaction;
     factionData();
     factionData(const factionData &a);
     factionData & operator=(const factionData &a);
@@ -514,7 +518,7 @@ class TBeing : public TThing {
 
   private:
     double multAtt;
-    factionData faction;
+
     int heroNum;
   public:
     Craps * m_craps;
@@ -525,7 +529,7 @@ class TBeing : public TThing {
     attack_mode_t combatMode;      
 
   public:
-
+    factionData faction;
     CMasterDiscipline *discs;
     bool inPraying;
     bool inQuaffUse;
@@ -589,9 +593,11 @@ class TBeing : public TThing {
     virtual bool hasWizPower(wizPowerT) const;
     virtual void setWizPower(wizPowerT);
     virtual void remWizPower(wizPowerT);
+
     bool limitPowerCheck(cmdTypeT, int);
     bool isGenericObj(int);
     bool isGenericMob(int);
+
     virtual string yourDeity(spellNumT, personTypeT, const TBeing *who = NULL) const;
     virtual bool isPolice() const { return false; }
     virtual bool isDiurnal() const { return false; }

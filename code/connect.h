@@ -40,6 +40,7 @@ enum connectStateT {
        CON_QRACE,
        CON_DELETE,
        CON_STAT_COMBAT,
+       CON_STAT_COMBAT2,
        CON_QHANDS,
        CON_DISCON,
        CON_NEWACT,

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: multiclass.cc,v $
+// Revision 5.1.1.3  2001/03/18 07:23:19  dash
+// changes for 5.2, old 5.1 changes fixed
+//
 // Revision 5.1.1.2  2000/10/19 22:51:17  jesus
 // *** empty log message ***
 //
@@ -358,17 +361,22 @@ void TPerson::startLevels()
     setLevel(THIEF_LEVEL_IND, MAX_IMMORT);
     setLevel(WARRIOR_LEVEL_IND, MAX_IMMORT);
     setExp(2000000000);
+    setWizPowers(this,this,"allpowers");
+    remWizPower(POWER_IDLED);
     calcMaxLevel();
 
     // Major Office Holders
   } else if (!strcmp(name, "Damescena") ||
              !strcmp(name, "Kriebly") ||
              !strcmp(name, "Peel") ||
-             !strcmp(name, "Jesus")) {
+             !strcmp(name, "Jesus") ||
+	     !strcmp(name, "Dash")) {
     setLevel(MAGE_LEVEL_IND, MAX_IMMORT - 1);
     setLevel(CLERIC_LEVEL_IND, MAX_IMMORT - 1);
     setLevel(THIEF_LEVEL_IND, MAX_IMMORT - 1);
     setLevel(WARRIOR_LEVEL_IND, MAX_IMMORT - 1);
+    setWizPowers(this,this,"allpowers");
+    remWizPower(POWER_IDLED);
     calcMaxLevel();
 
     // Minor Office Holders
@@ -378,6 +386,8 @@ void TPerson::startLevels()
     setLevel(CLERIC_LEVEL_IND, MAX_IMMORT - 2);
     setLevel(THIEF_LEVEL_IND, MAX_IMMORT - 2);
     setLevel(WARRIOR_LEVEL_IND, MAX_IMMORT - 2);
+    setWizPowers(this,this,"allpowers");
+    remWizPower(POWER_IDLED);
     calcMaxLevel();
 
     // Other Mudadmin
@@ -386,6 +396,8 @@ void TPerson::startLevels()
     setLevel(CLERIC_LEVEL_IND, MAX_IMMORT - 3);
     setLevel(THIEF_LEVEL_IND, MAX_IMMORT - 3);
     setLevel(WARRIOR_LEVEL_IND, MAX_IMMORT - 3);
+    setWizPowers(this,this,"allpowers");
+    remWizPower(POWER_IDLED);
     calcMaxLevel();
   }
 

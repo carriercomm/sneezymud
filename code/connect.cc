@@ -2457,8 +2457,7 @@ int Descriptor::nanny(const char *arg)
       } else if (*buf == 'e' || *buf == 'E') {
         free_stat = (0 - ((character->chosenStats.values[STAT_PER]) +
                  (character->chosenStats.values[STAT_KAR]) +
-                 (character->chosenStats.values[STAT_CHA]) +
-                 (character->chosenStats.values[STAT_SPE])));
+                 (character->chosenStats.values[STAT_CHA])));
         if (free_stat < 0) {
           character->cls();
           writeToQ("You may not continue with negative free points.\n\r");
@@ -2753,8 +2752,7 @@ int Descriptor::nanny(const char *arg)
       } else if (*buf == 'e' || *buf == 'E') {
         free_stat = (0 - ((character->chosenStats.values[STAT_PER]) +
                  (character->chosenStats.values[STAT_KAR]) +
-                 (character->chosenStats.values[STAT_CHA]) +
-                 (character->chosenStats.values[STAT_SPE])));
+                 (character->chosenStats.values[STAT_CHA])));
         if (free_stat < 0) {
           character->cls();
           writeToQ("You may not continue with negative free points.\n\r");
@@ -3456,7 +3454,7 @@ void Descriptor::sendStatRules(int num)
     writeToQ("Please remember the following as you customize your characteristics.  First,\n\rall characteristics are merely modifiers on preselected racial norms.\n\rThat is, if you elected to be an ogre, you start off with an ogre's\n\rcharacteristics (strength, brawn, intellect, etc).  Likewise, those who\n\relected to be elves, have the elven norm as their starting point.\n\r\n\r");
     writeToQ("REALIZE THAT A ZERO STAT IS YOUR RACIAL NORM.\n\r\n\r");
   } else if (num == 2) {
-    sprintf(buf, "Characteristics on %s are separated into three sections, physical,\n\rmental, and utility.  Each section has 3-5 characteristics.  You are free\n\rto move points between characteristics in the same section, but you may not\n\rmove points between characteristics in different sections.  Additionally, no\n\rcharacteristic may be raised or lowered more than 25 points above or below\n\rthe racial norm.\n\r\n\r", MUD_NAME);
+    sprintf(buf, "Characteristics on %s are split into four groups, two for physical,\n\rmental, and utility.  Each section has 3 characteristics.  You are free\n\rto move points between characteristics in the same section, but you may not\n\rmove points between characteristics in different sections.  Additionally, no\n\rcharacteristic may be raised or lowered more than 25 points above or below\n\rthe racial norm.\n\r\n\r", MUD_NAME);
     writeToQ(buf);
     writeToQ("The customization process begins on the following screens.\n\r\n\r");
     writeToQ("To change any characteristic, you may do ('+', '-'){amount}(characteristic).\n\rWhere {amount} represents the number of points of the (characteristic)\n\rto change, and (characteristic) represents the letter corresponding to the\n\rcharacteristic.\n\r\n\r");
@@ -3483,7 +3481,7 @@ void Descriptor::sendStatList(int group, int)
   switch (group) {
     case 1:
       character->cls();
-      writeToQ("Your current mental characteristics are: \n\r\n\r");
+      writeToQ("Your current physical characteristics are: \n\r\n\r");
       stat1 = character->chosenStats.get(STAT_STR);
       strcpy(buf1, getStatDescription(stat1));
       if (account->term == TERM_ANSI) {
@@ -3950,8 +3948,7 @@ void Descriptor::sendStatList(int group, int)
       writeToQ("(S)peed affects how fast you are able to do things.\n\r\n\r");
       free_stat = (0 - ((character->chosenStats.values[STAT_PER]) +
                  (character->chosenStats.values[STAT_KAR]) +
-                 (character->chosenStats.values[STAT_CHA]) +
-                 (character->chosenStats.values[STAT_SPE])));
+                 (character->chosenStats.values[STAT_CHA])));
       sprintf(buf, "You have %d free utility stat points.\n\r\n\r", free_stat);
       writeToQ(buf);
       if (account->term == TERM_ANSI) {
@@ -5483,7 +5480,9 @@ int Descriptor::sendLogin(const char *arg)
       fclose(fp);
     }
     sprintf(buf2 + strlen(buf2), "Celebrating eight years providing quality Mudding.\n\r\n\r");
-    sprintf(buf2 + strlen(buf2), "Enter NEW for a new account, or ? for help.\n\r");
+    sprintf(buf2 + strlen(buf2), "Enter NEW for a new account, or ? for help.\n\r\n\r");
+    sprintf(buf2 + strlen(buf2), "ATTENTION! In moving to v5.2, all accounts have been wiped.\n\r");
+    sprintf(buf2 + strlen(buf2), "Please type NEW (case sensitive) to remake your old account.\n\r");
     sprintf(buf2 + strlen(buf2), "\n\rLogin: ");
     output.putInQ(buf2);
     return FALSE;

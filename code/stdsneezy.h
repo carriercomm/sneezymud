@@ -126,6 +126,11 @@ extern bool nuke_inactive_mobs;
 // deleted.
 #define NO_DAMAGED_ITEMS_SHOP    0
 
+
+// hard coded limits on builder powers, toggled on/off using with wizpower #111
+
+#define LIMITPOWERS 1
+
 // ********************************************************************
 // ECONOMIC BALANCE
 

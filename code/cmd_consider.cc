@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include "stdsneezy.h"
+#include "cmd_trophy.h"
 
 void TBeing::doConsider(const char *argument)
 {
@@ -152,7 +153,8 @@ void TBeing::doConsider(const char *argument)
 #ifdef SNEEZY2000
   MYSQL_ROW row;
   MYSQL_RES *res;
-  int rc, count;
+  int rc;
+  float count;
 
   if((rc=dbquery(&res, "sneezy", "consider/trophy", "select mobvnum, count from trophy where name='%s' and mobvnum=%i", getName(), tmon->mobVnum()))){
     if(rc!=1){
@@ -160,16 +162,20 @@ void TBeing::doConsider(const char *argument)
       return;
     }
   } else if((row=mysql_fetch_row(res))){
-    count=atoi(row[1]);
+    count=atof(row[1]);
     sendTo(COLOR_BASIC, "You will gain %s experience when fighting %s.\n\r", 
 	   describe_trophy_exp(count),
 	    namebuf);
+  } else {
+    sendTo(COLOR_BASIC, "You will gain %s experience when fighting %s.\n\r",
+	   describe_trophy_exp(0.0),
+	   namebuf);
   }
 
 
   mysql_free_result(res);
-
 #endif
+
 
 
 

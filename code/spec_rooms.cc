@@ -211,7 +211,7 @@ int dump(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     act("$n has been rewarded for good citizenship.", TRUE, ch, 0, 0, TO_ROOM);
 
     if (ch->GetMaxLevel() < 3)
-      gain_exp(ch, min(0.010, value/1000.0));
+      gain_exp(ch, min(0.010, value/1000.0), -1);
     else { 
       // take the global income modifier into account, in times of drought, we
       // don't want folks resorting to using the dump to get their money

@@ -71,7 +71,7 @@ int init_game_stats(void)
   // 1.05 resulted in 25-30 day to L50 (4.1)
   // 0.80 had reasonable rages for 4.5 beta
 #ifdef SNEEZY2000
-  stats.xp_modif = 0.85;   // people had is too easy in 5.0-5.1
+  stats.xp_modif = 0.65;   // people had is too easy in 5.0-5.1
   // 5.2 will be more challenging
 #else
   stats.xp_modif = 0.75;   // this affects xp mobs will have
@@ -83,7 +83,7 @@ int init_game_stats(void)
   // value of 1.0 makes fair fights take about 30 rounds = 90 seconds
   // a value of 0.75 should make for 120 second fights
 #ifdef SNEEZY2000
-  stats.damage_modifier = 0.68;
+  stats.damage_modifier = 0.65;
   // 5.0-5.1 was too easy and too fast
   // people could level to 50 in 2-6 play days
   // this should be better for 5.2

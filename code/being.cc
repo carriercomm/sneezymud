@@ -504,10 +504,10 @@ charFile::charFile() :
   plr_color(0),
   plr_colorSub(COLOR_SUB_NONE),
   plr_colorOff(0),
-  temp1(0),
-  temp2(0),
-  temp3(0),
-  temp4(0)
+  temp1(-999),
+  temp2(-999),
+  temp3(-999),
+  temp4(-999)
 {
   classIndT cit;
   for (cit=MIN_CLASS_IND; cit < MAX_SAVED_CLASSES; cit++) {

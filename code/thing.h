@@ -53,6 +53,7 @@ class TThing {
     wearSlotT eq_stuck;
     void *act_ptr;
 
+
     int max_exist;
     int in_room;
     int spec;

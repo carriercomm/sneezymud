@@ -227,6 +227,12 @@ void TPerson::doEdit(const char *arg)
     return;
   }
 
+  if (!limitPowerCheck(CMD_EDIT, roomp->number)) {
+    sendTo("You are not allowed to edit this room, sorry.\n\r");
+    return;
+  }
+
+
   bisect_arg(arg, &field, string, room_fields);
 
   /******************** NOTES ********************
@@ -337,6 +343,12 @@ void TPerson::doEdit(const char *arg)
             return;
           }
 
+	  if (!limitPowerCheck(CMD_EDIT, toRoom)) {
+	    sendTo("You are not allowed to make an exit out to that room, sorry.\n\r");
+	    return;
+	  }
+
+
           CreateOneRoom(toRoom);
 
           if (!(newrpTo = real_roomp(toRoom))) {
@@ -388,6 +400,12 @@ void TPerson::doEdit(const char *arg)
                      (WORLD_SIZE - 1));
               return;
             }
+
+	    if (!limitPowerCheck(CMD_EDIT, rdir)) {
+	      sendTo("You are not allowed to make an exit out to that room, sorry.\n\r");
+	      return;
+	    }
+
 
             CreateOneRoom(rdir);
 
@@ -482,6 +500,12 @@ void TPerson::doEdit(const char *arg)
           return;
         }
       }
+
+      if (!limitPowerCheck(CMD_EDIT, exroom)) {
+	sendTo("You are not allowed to make an exit out to that room, sorry.\n\r");
+	return;
+      }
+
       if (!real_roomp(exroom)) {
         if ((exroom > -1) && (exroom < WORLD_SIZE)) {
           sendTo("Exit room does not exist. Creating room....");
@@ -1511,6 +1535,13 @@ void TPerson::doRedit(const char *argument)
     return;
   }
 
+  if (!limitPowerCheck(CMD_REDIT, roomp->number)) {
+    sendTo("You are not allowed to redit this room, sorry.\n\r");
+    return;
+  }
+
+
+
   for (; isspace(*argument); argument++);
   if (*argument) {
     doEdit(argument);
@@ -2520,6 +2551,13 @@ static void ChangeExitNumber(TRoom *rp, TBeing *ch, const char *arg, editorEnter
     ch->sendTo("\n\rExit to Room: ");
     return;
   }
+
+  if (!ch->limitPowerCheck(CMD_REDIT, update)) {
+    ch->sendTo("\n\rYou are not allowed to make an exit out to that room, sorry.\n\r");
+    ch->sendTo("\n\rExit to Room: ");
+    return;
+  }
+
   if (!rp->dir_option[dir]) {
     vlogf(LOG_EDIT, "Bad news in redit!  no dir where it should be!");
     ch->specials.edit = MAIN_MENU;

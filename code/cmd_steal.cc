@@ -235,7 +235,10 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
 
 #ifdef SNEEZY2000
 
-  if (eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L && eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) {
+  if ((eq_pos != WEAR_NECK && eq_pos != WEAR_FINGER_R && eq_pos != WEAR_FINGER_L && 
+      eq_pos != WEAR_WRIST_R && eq_pos != WEAR_WRIST_L) || 
+      (victim->getPosition() <= POSITION_SLEEPING && eq_pos != WEAR_FOOT_L && eq_pos != WEAR_FOOT_R &&
+      eq_pos != WEAR_HAND_L && eq_pos != WEAR_HAND_R && eq_pos != WEAR_HEAD)) {
     thief->sendTo("It is not possible to steal $o without being noticed.\n\r");
     return FALSE;
   }

@@ -441,6 +441,7 @@ static void medit(TBeing *ch, char *arg)
     return;
   }
 
+
   TMonster * mons = dynamic_cast<TMonster *>(mob);
   ch->specials.edit = MAIN_MENU;
   ch->desc->connected = CON_MEDITING;
@@ -2302,8 +2303,10 @@ void TPerson::doMedit(const char *argument)
         sendTo("Unable to find %s...Sorry...\n\r", string);
       else if (cMob->getSnum() == cMob->mobVnum() && !hasWizPower(POWER_MEDIT_IMP_POWER))
         sendTo("Unknown value on this mobile.  resave only usable on med loaded mobiles...\n\r");
+
       else if (!limitPowerCheck(CMD_MEDIT, cMob->getSnum())) 
 	sendTo("You are not allowed to edit that monster.\n\r");
+
       else {
         sprintf(string, "%s %d", string, cMob->getSnum());
         msave(this, string);
@@ -2325,8 +2328,10 @@ void TPerson::doMedit(const char *argument)
             sendTo("Unable to find %s...Sorry...\n\r", tStString.c_str());
           else if (cMob->getSnum() <= 0)
             sendTo("That mobile has a bad snum.  Sorry.  Can not resave.\n\r");
+
 	  else if (!limitPowerCheck(CMD_MEDIT, cMob->getSnum()))
 	    sendTo("You are not allowed to edit that monster.\n\r");
+
 	  else {
             sprintf(string, "%s %d", tStString.c_str(), cMob->getSnum());
 
@@ -2417,6 +2422,7 @@ void TPerson::doMedit(const char *argument)
     sendTo("Someone is using that mob or they're a PC, Very Very bad to edit it.\n\r");
     return;
   }
+
   if (!limitPowerCheck(CMD_MEDIT, cMob->getSnum())) {
     sendTo("You are not allowed to edit that monster.\n\r");
     return;

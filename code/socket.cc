@@ -612,32 +612,7 @@ int TSocket::gameLoop()
               continue;
             }
           }
-	  /*
-	  if (tmp_ch->isImmortal() && !tmp_ch->limitPowerCheck(CMD_GOTO, tmp_ch->roomp->number)) {
-	    vlogf(LOG_CHEAT, "%s was in room %d, and is not allowed there, extracting to office (%d)",
-		  tmp_ch->getName(), tmp_ch->roomp->number, tmp_ch->desc->office);
-	    tmp_ch->sendTo("You feel a tremendous force pulling you back to Imperia...\n\r");
-	    act("$n is pulled back from whence $e came.",
-		TRUE, tmp_ch, NULL, NULL, TO_ROOM, NULL, TRUE));
 
-	    if (tmp_ch->fight())
-	      tmp_ch->stopFighting();
-
-	    // this is mostly here for blackjack, but what the heck...
-	    tmp_ch->removeAllCasinoGames();
-
-	    --(*tmp_ch);
-
-	    if (tmp_ch->riding) {
-	      --(tmp_ch->riding);
-	      real_roomp(tmp_ch->desc->office) += tmp_ch->riding;
-	    }
-	    real_roomp(ch->desc->office) += *tmp_ch;
-
-	    if (!tmp_ch->riding && !tmp_ch->isFlying())
-	      tmp_ch->setPosition(POSITION_STANDING);
-	  }
-	  */
           rc = tmp_ch->updateAffects();
           if (IS_SET_DELETE(rc, DELETE_THIS)) {
             // died in update (disease) 

@@ -615,10 +615,12 @@ static void oedit(TBeing *ch, const char *arg)
     ch->sendTo("You can't edit an object unless it's empty and standalone.\n\r");
     return;
   }
+
   if (!ch->limitPowerCheck(CMD_OEDIT, o->getSnum())) {
     ch->sendTo("You are not allowed to edit that object, sorry.\n\r");
     return;
   }
+
 
 
   if (!o->isObjStat(ITEM_PROTOTYPE) && !ch->hasWizPower(POWER_OEDIT_NOPROTOS)) {
@@ -696,8 +698,10 @@ void TPerson::doOEdit(const char *argument)
 	sendTo("Unable to find %s...Sorry...\n\r", string);
       else if (cObj->getSnum() == cObj->objVnum() && !hasWizPower(POWER_OEDIT_IMP_POWER))
         sendTo("Unknown value on this object.  resave only usable on oed loaded objects...\n\r");
+
       else if (!limitPowerCheck(CMD_OEDIT, cObj->getSnum()))
 	sendTo("You are not allowed to oedit that object, sorry.\n\r");
+
       else {
         sprintf(string, "%s %d", string, cObj->getSnum());
         osave(this, string);
@@ -719,8 +723,10 @@ void TPerson::doOEdit(const char *argument)
             sendTo("Unable to find %s...Sorry...\n\r", tStString.c_str());
           else if (cObj->getSnum() <= 0)
             sendTo("That object has a bad snum.  Sorry.  Can not resave.\n\r");
+
 	  else if (!limitPowerCheck(CMD_OEDIT, cObj->getSnum()))
 	    sendTo("You are not allowed to oedit that object, sorry.\n\r");
+
 	  else {
             sprintf(string, "%s %d", tStString.c_str(), cObj->getSnum());
 
@@ -823,10 +829,12 @@ void TPerson::doOEdit(const char *argument)
     if (!cObj->isObjStat(ITEM_STRUNG))
       cObj->addObjStat(ITEM_STRUNG);
   */
+
   else if (!limitPowerCheck(CMD_OEDIT, cObj->getSnum())) {
     sendTo("You are not allowed to oedit that object, sorry.\n\r");
     return;
   }
+
   switch (field) {
     case 7: // Name
       if (!*string) {

@@ -3773,7 +3773,7 @@ void TObj::describeMe(const TBeing *ch) const
         ch->sendTo("It is not limited for immortals.\n\r");
     }
 
-
+#ifndef SNEEZY2000
     if (isRentable()) {
       int temp = max(0, rentCost());
   
@@ -3781,7 +3781,7 @@ void TObj::describeMe(const TBeing *ch) const
           temp, (temp != 1 ? "s" : ""));
     } else 
       ch->sendTo("It can't be rented.\n\r");
-
+#endif
     int volume = getVolume();
     volume = ((volume >= 100) ? volume/100 * 100 :
               ((volume >= 10) ? volume/10 * 10 : volume));

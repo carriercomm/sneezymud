@@ -3568,7 +3568,7 @@ int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
 
   spellNumT skill = me->getSkillNum(SKILL_KICK);
   if (!me->doesKnowSkill(skill)) {
-    me->setSkillValue(skill,me->GetMaxLevel() << 1);
+    me->setSkillValue(skill,me->GetMaxLevel()*2);
   }
   rc = me->doKick("", vict);
   if (IS_SET_DELETE(rc, DELETE_VICT)) {

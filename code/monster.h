@@ -227,6 +227,7 @@ class TMonster : public TBeing {
     int pissed();
     int aggro();
     int aggroCheck(bool);
+    int factionAggroCheck();
     int fearCheck(const TBeing *, bool);
     int aiUglyMug(TBeing *);
     void aiTarget(TBeing *);

@@ -873,7 +873,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_CLOSE) && (cmd != CMD_PUSH))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "nail")) {
+        if (!strcasecmp(buf, "nail")) {
           ch->openUniqueDoor(DIR_SOUTH,DOOR_UNIQUE_OPEN_ONLY,
             "",
             "Nothing seems to happen as you push the nail.",
@@ -920,7 +920,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "painting")) {
+        if (!strcasecmp(buf, "painting")) {
           ch->openUniqueDoor(DIR_NORTH,DOOR_UNIQUE_CLOSE_ONLY,
             "The painting seems securely \"closed\".",
             "",
@@ -938,7 +938,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   case 774:
       if (cmd != CMD_TWIST)
         return FALSE;
-      if (is_abbrev(buf, "lid")) {
+      if (!strcasecmp(buf, "lid")) {
         ch->openUniqueDoor(DIR_UP, DOOR_UNIQUE_DEF,
           "",
           "",
@@ -956,7 +956,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_RAISE) && (cmd != CMD_LOWER) && (cmd != CMD_LIFT))
         return FALSE;
       if ((cmd == CMD_RAISE) || (cmd == CMD_LIFT)) {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_OPEN_ONLY, 
               "",
               "The lever is already raised.",
@@ -970,7 +970,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_CLOSE_ONLY,
               "The lever is already lowered.",
               "",
@@ -989,7 +989,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_RAISE) && (cmd != CMD_LOWER) && (cmd != CMD_LIFT))
         return FALSE;
       if ((cmd == CMD_RAISE) || (cmd == CMD_LIFT)) {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_OPEN_ONLY,
               "",
               "The lever is already raised.",
@@ -1003,7 +1003,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_CLOSE_ONLY,
              "The lever is already lowered.",
               "",
@@ -1021,7 +1021,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 7005:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "trigger")) {
+      if (!strcasecmp(buf, "trigger")) {
         ch->openUniqueDoor(DIR_DOWN, DOOR_UNIQUE_DEF,
               "",
               "",
@@ -1038,7 +1038,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 7015:
       if (cmd != CMD_TWIST)
         return FALSE;
-      if (is_abbrev(buf, "lamp")) {
+      if (!strcasecmp(buf, "lamp")) {
         ch->openUniqueDoor(DIR_NORTHEAST, DOOR_UNIQUE_DEF,
           "",
           "",
@@ -1055,7 +1055,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 7016:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "trigger")) {
+      if (!strcasecmp(buf, "trigger")) {
         ch->openUniqueDoor(DIR_UP, DOOR_UNIQUE_DEF,
              "",
              "",
@@ -1072,7 +1072,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 7023:
       if ((cmd != CMD_PULL) && (cmd != CMD_SHOVE))
         return FALSE;
-      if (is_abbrev(buf, "lever")) {
+      if (!strcasecmp(buf, "lever")) {
         ch->openUniqueDoor(DIR_SOUTHWEST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1090,7 +1090,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_TWIST) && (cmd != CMD_TURN))
         return FALSE;
       if (cmd == CMD_TWIST) {
-      if (is_abbrev(buf, "lid")) {
+      if (!strcasecmp(buf, "lid")) {
         ch->openUniqueDoor(DIR_DOWN, DOOR_UNIQUE_DEF,
           "",
           "",
@@ -1104,7 +1104,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
         return TRUE;
       }
     } else {
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_DEF,
               "",
               "",
@@ -1122,7 +1122,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   case 9064:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_DEF,
               "",
               "",
@@ -1139,7 +1139,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 9390:
       if ((cmd != CMD_PULL) && (cmd != CMD_PUSH) && (cmd != CMD_SHOVE))
         return FALSE;
-      if (is_abbrev(buf, "brush")) {
+      if (!strcasecmp(buf, "brush")) {
         ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1156,7 +1156,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 9391:
       if ((cmd != CMD_PULL) && (cmd != CMD_PUSH) && (cmd != CMD_SHOVE))
         return FALSE;
-      if (is_abbrev(buf, "brush")) {
+      if (!strcasecmp(buf, "brush")) {
         ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1173,7 +1173,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10111:
       if ((cmd != CMD_PULL) && (cmd != CMD_PRESS) && (cmd != CMD_PUSH))
         return FALSE;
-      if (is_abbrev(buf, "branch")) {
+      if (!strcasecmp(buf, "branch")) {
         act("You press on the branch.",
             TRUE,ch,0,0,TO_CHAR);
         act("$n fiddles with something.",
@@ -1194,7 +1194,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10144:
       if ((cmd != CMD_PULL) && (cmd != CMD_PRESS) && (cmd != CMD_PUSH))
         return FALSE;
-      if (is_abbrev(buf, "branch")) {
+      if (!strcasecmp(buf, "branch")) {
         act("You press on the branch.",
             TRUE,ch,0,0,TO_CHAR);
         act("$n fiddles with something.",
@@ -1215,7 +1215,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10721:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1232,7 +1232,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10722:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1249,7 +1249,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10727:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "lever")) {
+      if (!strcasecmp(buf, "lever")) {
         ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1266,7 +1266,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10730:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "lever")) {
+      if (!strcasecmp(buf, "lever")) {
         ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1283,7 +1283,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10752:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_SOUTHEAST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1300,7 +1300,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10753:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_SOUTHWEST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1317,7 +1317,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10759:
       if (cmd != CMD_PUSH) 
         return FALSE;
-      if (is_abbrev(buf, "footrest")) {
+      if (!strcasecmp(buf, "footrest")) {
         ch->openUniqueDoor(DIR_NORTHWEST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1334,7 +1334,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10760:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "footrest")) {
+      if (!strcasecmp(buf, "footrest")) {
         ch->openUniqueDoor(DIR_NORTHEAST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1351,7 +1351,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10764:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "stone")) {
+      if (!strcasecmp(buf, "stone")) {
         ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1368,7 +1368,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10772:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "stone")) {
+      if (!strcasecmp(buf, "stone")) {
         ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1385,7 +1385,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10782:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1402,7 +1402,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10785:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1419,7 +1419,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10790:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "stone")) {
+      if (!strcasecmp(buf, "stone")) {
         ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1437,7 +1437,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_OPEN_ONLY,
               "",
               "Nothing happens as the lever is already pushed forward.",
@@ -1451,7 +1451,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_CLOSE_ONLY,
               "Nothing happens as the lever is already pulled erect.",
               "",
@@ -1469,7 +1469,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10814:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "stone")) {
+      if (!strcasecmp(buf, "stone")) {
         ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1486,7 +1486,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10815:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "stone")) {
+      if (!strcasecmp(buf, "stone")) {
         ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_DEF,
             "",
             "",
@@ -1504,7 +1504,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_OPEN_ONLY,
               "",
               "Nothing happens as the lever is already pushed forward.",
@@ -1518,7 +1518,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "lever")) {
+        if (!strcasecmp(buf, "lever")) {
           ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_CLOSE_ONLY,
               "Nothing happens as the lever is already pulled erect.",
               "",
@@ -1536,7 +1536,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 10821:
       if (cmd != CMD_TURN)
         return FALSE;
-      if (is_abbrev(buf, "bracket")) {
+      if (!strcasecmp(buf, "bracket")) {
         ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_DEF,
               "",
               "",
@@ -1553,7 +1553,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 14152:
       if (cmd != CMD_SAY && cmd != CMD_SAY2)
         return FALSE;
-      if (is_abbrev(buf, "time")) {
+      if (!strcasecmp(buf, "time")) {
         ch->doSay(arg);
         ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
             "",
@@ -1571,7 +1571,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 14153:
       if (cmd != CMD_SAY && cmd != CMD_SAY2)
         return FALSE;
-      if (is_abbrev(buf, "time")) {
+      if (!strcasecmp(buf, "time")) {
         ch->doSay(arg);
         ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
             "",
@@ -1589,7 +1589,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   case 14296:
     if (cmd != CMD_SAY && cmd != CMD_SAY2)
       return FALSE;
-    if (is_abbrev(buf, "knowledge")) {
+    if (!strcasecmp(buf, "knowledge")) {
       ch->doSay(arg);
       ch->openUniqueDoor(DIR_NORTH, DOOR_UNIQUE_DEF,
 			 "",
@@ -1606,7 +1606,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   case 14299:
     if (cmd != CMD_SAY && cmd != CMD_SAY2)
       return FALSE;
-    if (is_abbrev(buf, "knowledge")) {
+    if (!strcasecmp(buf, "knowledge")) {
       ch->doSay(arg);
       ch->openUniqueDoor(DIR_SOUTH, DOOR_UNIQUE_DEF,
 			 "",
@@ -1624,7 +1624,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "stone")) {
+        if (!strcasecmp(buf, "stone")) {
           ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_OPEN_ONLY,
             "",
             "The stone is already pushed aside.",
@@ -1638,7 +1638,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "stone")) {
+        if (!strcasecmp(buf, "stone")) {
           ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_CLOSE_ONLY,
             "The stone is already pulled into place.",
             "",
@@ -1657,7 +1657,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "stone")) {
+        if (!strcasecmp(buf, "stone")) {
           ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_OPEN_ONLY,
             "",
             "The stone is already pushed aside.",
@@ -1671,7 +1671,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "stone")) {
+        if (!strcasecmp(buf, "stone")) {
           ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_CLOSE_ONLY,
             "The stone is already pulled into place.",
             "",
@@ -1690,7 +1690,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "shrub")) {
+        if (!strcasecmp(buf, "shrub")) {
           ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_OPEN_ONLY,
               "",
               "Nothing happens as the passageway is already revealed.",
@@ -1704,7 +1704,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "shrub")) {
+        if (!strcasecmp(buf, "shrub")) {
           ch->openUniqueDoor(DIR_WEST, DOOR_UNIQUE_CLOSE_ONLY_FORCE,
               "The shrubbery has already been pulled into place.",
               "",
@@ -1723,7 +1723,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "shrub")) {
+        if (!strcasecmp(buf, "shrub")) {
           ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_OPEN_ONLY,
               "",
               "Nothing happens as the path is already revealed.",
@@ -1737,7 +1737,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "shrub")) {
+        if (!strcasecmp(buf, "shrub")) {
           ch->openUniqueDoor(DIR_EAST, DOOR_UNIQUE_CLOSE_ONLY_FORCE,
               "The shrubbery has already been pulled into place.",
               "",
@@ -1756,7 +1756,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "anatomy")) {
+        if (!strcasecmp(buf, "anatomy")) {
           ch->openUniqueDoor(DIR_EAST,DOOR_UNIQUE_OPEN_ONLY,
               "",
               "Nothing happens as the bookshelf has already been opened.",
@@ -1770,7 +1770,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "anatomy")) {
+        if (!strcasecmp(buf, "anatomy")) {
           ch->openUniqueDoor(DIR_EAST,DOOR_UNIQUE_CLOSE_ONLY,
                "Nothing happens as the bookshelf has already been closed.",
               "",
@@ -1789,7 +1789,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd!= CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if (is_abbrev(buf, "anatomy")) {
+        if (!strcasecmp(buf, "anatomy")) {
           ch->openUniqueDoor(DIR_WEST,DOOR_UNIQUE_OPEN_ONLY,
               "",
               "Nothing happens as the bookshelf has already been opened.",
@@ -1803,7 +1803,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "anatomy")) {
+        if (!strcasecmp(buf, "anatomy")) {
           ch->openUniqueDoor(DIR_WEST,DOOR_UNIQUE_CLOSE_ONLY,
               "Nothing happens as the bookshelf has already been closed.",
               "",
@@ -1821,7 +1821,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 20541:
       if ((cmd != CMD_USE) && (cmd != CMD_TURN) && (cmd != CMD_OPERATE))
         return FALSE;
-      if (is_abbrev(buf, "winch")) {
+      if (!strcasecmp(buf, "winch")) {
         act("You operate the winch.",
             TRUE,ch,0,0,TO_CHAR);
         act("$n operates the winch.",
@@ -1842,7 +1842,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     case 20582:
       if (cmd != CMD_CHIP)
         return FALSE;
-      if (is_abbrev(buf, "ice")) {
+      if (!strcasecmp(buf, "ice")) {
         ch->openUniqueDoor(DIR_UP,DOOR_UNIQUE_OPEN_ONLY,
             "",
             "All the loose ice has been chipped away already.",
@@ -1872,7 +1872,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_DIG) && (cmd != CMD_COVER) && (cmd != CMD_FILL))
         return FALSE;
       if (cmd == CMD_DIG) {
-        if (is_abbrev(buf, "grave")) {
+        if (!strcasecmp(buf, "grave")) {
           ch->openUniqueDoor(DIR_DOWN,DOOR_UNIQUE_OPEN_ONLY,
             "",
             "The grave has already been dug up!",
@@ -1886,7 +1886,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if (is_abbrev(buf, "grave")) {
+        if (!strcasecmp(buf, "grave")) {
           ch->openUniqueDoor(DIR_DOWN,DOOR_UNIQUE_CLOSE_ONLY,
             "The grave is already covered.",
             "",
@@ -1916,7 +1916,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   case 27146:
       if (cmd != CMD_DIG)
         return FALSE;
-      if (is_abbrev(buf, "earth")) {
+      if (!strcasecmp(buf, "earth")) {
         ch->openUniqueDoor(DIR_UP,DOOR_UNIQUE_OPEN_ONLY,
             "",
             "The earth overhead is already removed.",
@@ -1934,7 +1934,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd != CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if(is_abbrev(buf, "crate")){
+        if(!strcasecmp(buf, "crate")){
           ch->openUniqueDoor(DIR_DOWN,DOOR_UNIQUE_OPEN_ONLY,
                "",
                "Nothing happens as the crate is already not covering the hole.",
@@ -1948,7 +1948,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if(is_abbrev(buf, "crate")){
+        if(!strcasecmp(buf, "crate")){
           ch->openUniqueDoor(DIR_DOWN,DOOR_UNIQUE_CLOSE_ONLY,
               "Nothing happens as the crate is already covering the hole.",
               "",
@@ -1967,7 +1967,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       if ((cmd != CMD_PUSH) && (cmd != CMD_PULL))
         return FALSE;
       if (cmd == CMD_PUSH) {
-        if(is_abbrev(buf, "crate")){
+        if(!strcasecmp(buf, "crate")){
           ch->openUniqueDoor(DIR_UP,DOOR_UNIQUE_OPEN_ONLY,
               "",
               "Nothing happens as the crate is already not covering the hole.",
@@ -1981,7 +1981,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
           return TRUE;
         }
       } else {
-        if(is_abbrev(buf, "crate")){
+        if (!strcasecmp(buf, "crate")) {
           ch->openUniqueDoor(DIR_UP,DOOR_UNIQUE_CLOSE_ONLY,
             "Nothing happens as the crate is already covering the hole.",
             "",
@@ -1999,7 +1999,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   case 27828:
       if (cmd != CMD_PUSH)
         return FALSE;
-      if (is_abbrev(buf, "button")) {
+      if (!strcasecmp(buf, "button")) {
         ch->openUniqueDoor(DIR_UP, DOOR_UNIQUE_DEF,
               "",
               "",
@@ -2016,7 +2016,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   case 27890:
       if (cmd != CMD_PULL)
         return FALSE;
-      if (is_abbrev(buf, "lever")) {
+      if (!strcasecmp(buf, "lever")) {
         ch->openUniqueDoor(DIR_DOWN, DOOR_UNIQUE_DEF,
               "",
               "",

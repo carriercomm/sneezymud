@@ -1220,8 +1220,10 @@ int castDispelMagic(TBeing *caster, TBeing * victim)
 // returns DELETE_VICT (vict)
 int generic_dispel_magic(TBeing *caster, TBeing *victim, int, immortalTypeT immortal, safeTypeT safe)
 {
-  // we call this function with caster specifically set to NULL
-  //  mud_assert(caster != NULL, "generic_dispel_magic(): no caster");
+  // caster might be NULL (death-time), however, in such cases immortal is generally
+  // true.  Some of the logic that follows doesn't check for !caster, but uses
+  // immortal==true instead.
+
   mud_assert(victim != NULL, "generic_dispel_magic(): no victim");
 
   TMonster *tvm = dynamic_cast<TMonster *>(victim);

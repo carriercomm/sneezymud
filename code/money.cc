@@ -2,22 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: money.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/04 03:02:53  batopr
-// Added onObjLoad function
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
-
 
 #include "stdsneezy.h"
 #include "statistics.h"
@@ -256,4 +241,12 @@ void TMoney::onObjLoad()
   int x = getMoney();
   x = (int) (x * gold_modifier[GOLD_INCOME]);
   setMoney(x);
+}
+
+string TMoney::getNameForShow(bool useColor, bool useName, const TBeing *ch) const
+{
+  char buf2[256];
+  sprintf(buf2, "%s [%d talens]", useName ? name : (useColor ? getName() : getNameNOC(ch).c_str()), 
+      getMoney());
+  return buf2;
 }

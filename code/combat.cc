@@ -307,7 +307,7 @@ void TBeing::updatePos()
 }
 
 // always returns DELETE_THIS
-int TMonster::rawKill(spellNumT dmg_type)
+int TMonster::rawKill(spellNumT dmg_type, TBeing *tKiller)
 {
   TBeing *mob = NULL, *per = NULL;
 
@@ -336,18 +336,18 @@ int TMonster::rawKill(spellNumT dmg_type)
 
     desc->character->desc = desc;
     desc = NULL;
-    if ((per->rawKill(dmg_type)) == DELETE_THIS) {
+    if ((per->rawKill(dmg_type, tKiller)) == DELETE_THIS) {
       per->reformGroup();
       delete per;
       per = NULL;
     }
     return DELETE_THIS;
   }
-  return TBeing::rawKill(dmg_type);
+  return TBeing::rawKill(dmg_type, tKiller);
 }
 
 // always returns DELETE_THIS
-int TBeing::rawKill(spellNumT dmg_type)
+int TBeing::rawKill(spellNumT dmg_type, TBeing *tKiller)
 {
   // using this to keep an eye on potential problem cropping up. bat - 12/26/99
   Descriptor * tmpdesc = desc;
@@ -395,9 +395,8 @@ int TBeing::rawKill(spellNumT dmg_type)
     setMoney(0);
   }
 
-  makeCorpse(dmg_type);
+  makeCorpse(dmg_type, tKiller);
   deathCry();
-
   genericKillFix();
 
   if (isPc()) {
@@ -433,7 +432,7 @@ int TBeing::rawKill(spellNumT dmg_type)
 
 // returns DELETE_THIS is this should die
 // otherwise FALSE
-int TBeing::die(spellNumT dam_type)
+int TBeing::die(spellNumT dam_type, TBeing *tKiller = NULL)
 {
   Descriptor *d;
   TRoom *rp;
@@ -446,12 +445,12 @@ int TBeing::die(spellNumT dam_type)
       return FALSE;
     }
     if ((polymorph = dieReturn("", dam_type, 1)) == DELETE_THIS) {
-      rawKill(dam_type);
+      rawKill(dam_type, tKiller);
       return DELETE_THIS;
     } else if (polymorph == FALSE) 
       return FALSE;
     else if (polymorph == 1) {  // switch
-      rawKill(dam_type);
+      rawKill(dam_type, tKiller);
       return DELETE_THIS;
     }
   }
@@ -489,7 +488,7 @@ int TBeing::die(spellNumT dam_type)
     test_fight_death(this, dynamic_cast<TBeing *>(aff->be), aff->level);
   }
 
-  rawKill(dam_type);
+  rawKill(dam_type, tKiller);
 
   return DELETE_THIS;
 }
@@ -4377,7 +4376,7 @@ int TBeing::objDamage(spellNumT damtype, int amnt, TThing *t)
         desc->career.deaths++;
     }
     DeleteHatreds(this, NULL);
-    rc = die(damtype);
+    rc = die(damtype, dynamic_cast<TBeing *>(t));
     if (IS_SET_ONLY(rc, DELETE_THIS))
       return DELETE_THIS;
   }

@@ -345,7 +345,7 @@ void TBeing::doCommand(const char *arg)
   sprintf(buf, "\n\r\n\rTotal number of commands: %u\n\r", cmdVec.size());
   str += buf;
 
-  desc->page_string(str.c_str(), 0);
+  desc->page_string(str.c_str());
 }
 
 void TBeing::doSplit(const char *argument, bool tell)
@@ -781,7 +781,7 @@ void TBeing::doPractice(const char *argument)
     }
 
     tOutput += describe_practices(tC).c_str();
-    desc->page_string(tOutput.c_str(), 0);
+    desc->page_string(tOutput.c_str());
 
     return;
   }
@@ -829,7 +829,7 @@ void TBeing::doPractice(const char *argument)
     }
 
     tOutput += describe_practices(tC).c_str();
-    desc->page_string(tOutput.c_str(), 0);
+    desc->page_string(tOutput.c_str());
 
     return;
   }
@@ -951,7 +951,7 @@ void TBeing::doPractice(const char *argument)
       }
     }
     sprintf(buf + strlen(buf), "%s", describe_practices(this).c_str());
-    d->page_string(buf, 0);
+    d->page_string(buf);
     return;
   }
   argument = one_argument(argument, arg);
@@ -1005,7 +1005,7 @@ void TBeing::doPractice(const char *argument)
       }
     }
     sprintf(buf + strlen(buf), "%s", describe_practices(this).c_str());
-    d->page_string(buf, 0);
+    d->page_string(buf);
     return;
   }
 
@@ -1258,7 +1258,7 @@ void TBeing::sendSkillsList(discNumT which)
     strcat(buffer, buf);
   } 
   strcat(buffer, describe_practices(this).c_str());
-  d->page_string(buffer, 0);
+  d->page_string(buffer);
 }
 
 void TBeing::doPracSkill(const char *argument, spellNumT skNum)

@@ -135,7 +135,7 @@ void TBeing::statZone(const char *zoneNumber)
     sb += tString;
   }
 
-  desc->page_string(sb.c_str(), 0, TRUE);
+  desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 }
 
 void TBeing::statRoom(TRoom *rmp)
@@ -293,7 +293,7 @@ void TBeing::statRoom(TRoom *rmp)
         str += "UNDEFINED\n\r";
     }
   }
-  desc->page_string(str.c_str(), 0);
+  desc->page_string(str.c_str());
   return;
 }
 
@@ -450,7 +450,7 @@ void TBeing::statObj(const TObj *j)
       str += buf;
     }
   }
-  desc->page_string(str.c_str(), 0);
+  desc->page_string(str.c_str());
   return;
 }
 
@@ -1045,7 +1045,7 @@ void TBeing::statBeing(TBeing *k)
     if (km->distantSnds)
       sprintf(buf + strlen(buf), "Distant Sound:\n\r%s", km->distantSnds);
   }
-  desc->page_string(buf, 0);
+  desc->page_string(buf);
   return;
 }
 

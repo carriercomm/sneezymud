@@ -67,7 +67,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
         // found ansi section
         strcat(buf, buf2.c_str());
         sprintf(buf + strlen(buf), "\n\rEnd of section %d.\n\r", section);
-        ch->desc->page_string(buf, 0);
+        ch->desc->page_string(buf);
         return;
       }
     }
@@ -77,7 +77,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
       strcat(buf, buf2.c_str());
       sprintf(buf + strlen(buf), "\n\rEnd of section %d.\n\r", section);
       if (!ch->desc->client)
-        ch->desc->page_string(buf, 0);
+        ch->desc->page_string(buf);
       else {
         string sb = buf;
         processStringForClient(sb);
@@ -90,7 +90,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
     }
     sprintf(buf + strlen(buf), "Apparently, %s doesn't have that section.\n\r",
            getName());
-    ch->desc->page_string(buf, 0);
+    ch->desc->page_string(buf);
     return;
   } else {
     if (ch->hasColorVt()) {
@@ -100,7 +100,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
         // found ansi section
         strcat(buf, buf2.c_str());
         strcat(buf, "\n\r");
-        ch->desc->page_string(buf, 0);
+        ch->desc->page_string(buf);
         return;
       }
     }
@@ -110,7 +110,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
       strcat(buf, buf2.c_str());
       strcat(buf, "\n\r");
       if (!ch->desc->client)
-        ch->desc->page_string(buf, 0);
+        ch->desc->page_string(buf);
       else {
         string sb = buf;
         processStringForClient(sb);
@@ -123,7 +123,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
     }
     sprintf(buf + strlen(buf), "Apparently, %s is blank.\n\r", getName());
     vlogf(LOG_FILE, "Object %d has no book file!", vnum);
-    ch->desc->page_string(buf, 0);
+    ch->desc->page_string(buf);
     return;
   }
 }

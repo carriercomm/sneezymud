@@ -807,7 +807,7 @@ void TBeing::doFactions(const char *arg)
       strcat(buf, str.c_str());
     }
   }
-  desc->page_string(buf, 0);
+  desc->page_string(buf);
 
   return;
 }

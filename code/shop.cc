@@ -1529,7 +1529,7 @@ void shopping_list(const char *argument, TBeing *ch, TMonster *keeper, int shop_
     sb += buf2;
 
     if (ch->desc)
-      ch->desc->page_string(sb.c_str(), 0, TRUE);
+      ch->desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 
     keeper->autoCreateShop(shop_nr);
     sprintf(buf2, "%s/%d", SHOPFILE_PATH, shop_nr);
@@ -1538,9 +1538,9 @@ void shopping_list(const char *argument, TBeing *ch, TMonster *keeper, int shop_
   }
   if (ch->desc) {
     if (!ch->desc->client)
-      ch->desc->page_string(sb.c_str(), 0, TRUE);
+      ch->desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
     else 
-      ch->desc->page_string(sb.c_str(), 0, TRUE);
+      ch->desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
   }
   return;
 }
@@ -1615,7 +1615,7 @@ static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int sho
 
   tmp_desc = NULL;
   if ((tmp_desc = temp1->ex_description->findExtraDesc(fname(temp1->name).c_str()))) {
-    ch->desc->page_string(tmp_desc, 0);
+    ch->desc->page_string(tmp_desc);
   } else {
     ch->sendTo("You see nothing special.\n\r");
   }

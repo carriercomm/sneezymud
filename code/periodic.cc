@@ -331,7 +331,7 @@ int TBeing::teleportRoomFlow(int pulse)
   thing_to_room(this, tmprp->getTeleTarg());
   if ((tmp_desc = tmprp->ex_description->findExtraDesc("_tele_"))) {
     if (desc)
-      desc->page_string(tmp_desc, 0);
+      desc->page_string(tmp_desc);
   }
   if (tmprp->getTeleLook())
     doLook("", CMD_LOOK);

@@ -30,7 +30,7 @@ void TNote::showMe(TBeing *ch) const
     sb += action_description;
     if (ch->desc && !ch->desc->client) {
       if (ch->desc)
-        ch->desc->page_string(sb.c_str(), 0, FALSE);
+        ch->desc->page_string(sb.c_str());
     } else {
       processStringForClient(sb);
       ch->desc->clientf("%d", CLIENT_NOTE);
@@ -202,7 +202,7 @@ void TObj::show_me_mult_to_char(TBeing *ch, showModeT mode, unsigned int num) co
   strcat(buffer, "\n\r");
   cap(buffer);
   sprintf(buffer, "%s",colorString(ch, ch->desc, buffer, NULL, COLOR_OBJECTS, TRUE).c_str());
-  ch->desc->page_string(buffer, 0);
+  ch->desc->page_string(buffer);
 }
 
 void TTrap::listMeExcessive(TBeing *ch) const
@@ -1895,7 +1895,7 @@ void TPerson::doShow(const char *argument)
         }
 
         if (desc)
-          desc->page_string(sb.c_str(), 0, TRUE);
+          desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 
         return;
       }
@@ -1913,7 +1913,7 @@ void TPerson::doShow(const char *argument)
     if ((zone < 0 || zone >= (signed int) zone_table.size()) && !*zonenum) {
       sb += "That is not a valid zone_number\n\r";
       if (desc)
-        desc->page_string(sb.c_str(), 0, FALSE);
+        desc->page_string(sb.c_str());
 
       return;
     }
@@ -1973,7 +1973,7 @@ void TPerson::doShow(const char *argument)
         }  
       }
       if (desc)
-        desc->page_string(sb.c_str(), 0, TRUE);
+        desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 
       return;
     } else if (is_abbrev(zonenum, "hunters")) {
@@ -1995,7 +1995,7 @@ void TPerson::doShow(const char *argument)
         }
       }
       if (desc)
-        desc->page_string(sb.c_str(), 0, TRUE);
+        desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
       return;
     } else if (is_abbrev(zonenum, "response")) {
       sb += "Response Mobs\n\r";
@@ -2009,7 +2009,7 @@ void TPerson::doShow(const char *argument)
         }
       }
       if (desc)
-        desc->page_string(sb.c_str(), 0, TRUE);
+        desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
       return;
     } else if (is_abbrev(zonenum, "bounty")) {
       struct bounty_hunt_struct *job;
@@ -2032,7 +2032,7 @@ void TPerson::doShow(const char *argument)
         }
       }
       if (desc)
-        desc->page_string(sb.c_str(), 0, TRUE);
+        desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
       return;
     }
 
@@ -2077,7 +2077,7 @@ void TPerson::doShow(const char *argument)
         }
 
         if (desc)
-          desc->page_string(sb.c_str(), 0, TRUE);
+          desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 
         return;
       }
@@ -2093,7 +2093,7 @@ void TPerson::doShow(const char *argument)
     if ((zone < 0 || zone >= (signed int) zone_table.size()) && !*zonenum) {
       sb += "That is not a valid zone_number\n\r";
       if (desc)
-        desc->page_string(sb.c_str(), 0, TRUE);
+        desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
       return;
     }
     if (zone >= 0) {
@@ -2443,7 +2443,7 @@ void TPerson::doShow(const char *argument)
   }
 
   if (desc)
-    desc->page_string(sb.c_str(), 0, TRUE);
+    desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
   return;
 }
 

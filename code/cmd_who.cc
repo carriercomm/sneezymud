@@ -309,7 +309,7 @@ void TBeing::doWho(const char *argument)
             }
 
             if (desc)
-              desc->page_string(tSb.c_str(), 0, TRUE);
+              desc->page_string(tSb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 
             return;
           }
@@ -525,7 +525,7 @@ void TBeing::doWho(const char *argument)
     sprintf(buf, "\n\rTotal Players : [%d] Max since last reboot : [%d] Avg Players : [%.1f]\n\r", count, accStat.max_player_since_reboot, stats.useage_iters ? (float) stats.num_users / stats.useage_iters : 0);
     sb += buf;
     if (desc)
-      desc->page_string(sb.c_str(), 0, TRUE);
+      desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 
     return;
   } else {
@@ -547,7 +547,7 @@ void TBeing::doWho(const char *argument)
 #endif
         }
         if (desc)
-          desc->page_string(sb.c_str(), 0, TRUE);
+          desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
         return;
       }
       bool level, statsx, iPoints, quest, idle, align, group;
@@ -746,7 +746,7 @@ void TBeing::doWho(const char *argument)
         sb += "No one logged in with that name.\n\r";
 
       if (desc)
-        desc->page_string(sb.c_str(), 0, TRUE);
+        desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
       return;
     }
   }
@@ -767,7 +767,7 @@ void TBeing::doWho(const char *argument)
   }
   sb += buf;
   if (desc)
-    desc->page_string(sb.c_str(), 0, TRUE);
+    desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
   return;
 }
 

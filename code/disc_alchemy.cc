@@ -201,7 +201,7 @@ int identify(TBeing *caster, TBeing * victim, int, byte bKnown)
       string str = identifyBeingStuff(caster, victim);
       str += caster->describeImmunities(victim, bKnown);
 
-      caster->desc->page_string(str.c_str(), 0);
+      caster->desc->page_string(str.c_str());
     }
 
     return SPELL_SUCCESS;
@@ -366,7 +366,7 @@ int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
       }
       str += describeMaterial(victim);
 
-      caster->desc->page_string(str.c_str(), 0);
+      caster->desc->page_string(str.c_str());
     }
   
     return SPELL_SUCCESS;

@@ -318,7 +318,7 @@ int board_display_msg(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
       sprintf(buffer, "%sEnd of message %d.\n\r",ch->norm(), msg);
       sb += buffer;
       if (ch->desc)
-        ch->desc->page_string(sb.c_str(), 0, FALSE);
+        ch->desc->page_string(sb.c_str());
 
       return TRUE;
     }
@@ -413,7 +413,7 @@ int board_show_board(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
   }
 
   if (ch->desc)
-    ch->desc->page_string(buf, FALSE);
+    ch->desc->page_string(buf);
 
   return TRUE;
 }

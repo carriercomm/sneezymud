@@ -745,7 +745,7 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
               }
               if (tmpObj->ex_description) {
                 if ((tmp_desc = tmpObj->ex_description->findExtraDesc(tmp))) {
-                  desc->page_string(tmp_desc, 0);
+                  desc->page_string(tmp_desc);
                   found = TRUE;
                   describeObject(tmpObj);
                   if (tmpObj->riding)
@@ -821,13 +821,13 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
                       continue;
                     if (o2 == t) {
                       // look at XX where XX is the item's name and extradesc
-                      desc->page_string(tmp_desc, 0);
+                      desc->page_string(tmp_desc);
                       found = TRUE;
                       describeObject(t);
                       o2 = dynamic_cast<TObj *>(t);  // for showTo(o2,6) later on
                     } else {
                       // look at XX where XX is some random desc on the obj
-                        desc->page_string(tmp_desc, 0);
+                        desc->page_string(tmp_desc);
                         found = TRUE;
                         return;
                     }
@@ -868,13 +868,13 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
                         continue;
                       if (o2 == t) {
                         // look at XX where XX is the item's name and extradesc
-                        desc->page_string(tmp_desc, 0);
+                        desc->page_string(tmp_desc);
                         found = TRUE;
                         describeObject(t);
                         o2 = dynamic_cast<TObj *>(t);  // for showTo(o2,6) later on
                       } else {
                         // look at XX where XX is some random desc on the obj
-                        desc->page_string(tmp_desc, 0);
+                        desc->page_string(tmp_desc);
                         found = TRUE;
                         return;
                       }
@@ -905,13 +905,13 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
                     if (iNum != totalFound)
                       continue;
                     if (o2 == (TObj *) t) {
-                      desc->page_string(tmp_desc, 0);
+                      desc->page_string(tmp_desc);
                       found = TRUE;
                       describeObject(t);
                       return;
                     } else {
                       // look at XX where XX is some random desc on the obj
-                      desc->page_string(tmp_desc, 0);
+                      desc->page_string(tmp_desc);
                       found = TRUE;
                       return;
                     }
@@ -937,7 +937,7 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
                       totalFound++;
                       if (iNum != totalFound)
                         continue;
-                      desc->page_string(tmp_desc, 0);
+                      desc->page_string(tmp_desc);
                       found = TRUE;
                       describeObject(t2);
                       sendTo(COLOR_OBJECTS, "%s is on %s.", t2->getName(), t->getName());
@@ -962,7 +962,7 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
               if ((tmp_desc = roomp->ex_description->findExtraDesc(tmp))) {
                 totalFound++;
                 if (totalFound == iNum) {
-                  desc->page_string(tmp_desc, 0);
+                  desc->page_string(tmp_desc);
                   return;
                 }
               }
@@ -2160,7 +2160,7 @@ void TBeing::doWizhelp()
   }
 
   strcat(buf, "\n\r      Check out HELP GODS (or HELP BUILDERS) for an index of help files.\n\r");
-  desc->page_string(buf, 0);
+  desc->page_string(buf);
 }
 
 void TBeing::doUsers(const char *)
@@ -2217,7 +2217,7 @@ void TPerson::doUsers(const char *argument)
     sprintf(buf2, "\n\rTotal Descriptors : %d\n\r", count);
     sb += buf2;
     if (desc)
-      desc->page_string(sb.c_str(), 0, TRUE);
+      desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
     return;
   } else if (is_abbrev(arg1, "site")) {
     if (!*arg2 || !arg2) {
@@ -2485,7 +2485,7 @@ void TBeing::doWizlist()
       wizlist_used_num++;
 
       file_to_string(WIZLIST_FILE, tStString);
-      desc->page_string(tStString.c_str(), 0);
+      desc->page_string(tStString.c_str());
       fclose(tFile);
     }
   }
@@ -2693,7 +2693,7 @@ void TBeing::doWhere(const char *argument)
         }
       }
       if (desc)
-        desc->page_string(sb.c_str(), 0, TRUE);
+        desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
       return;
     }
   }
@@ -2761,7 +2761,7 @@ void TBeing::doWhere(const char *argument)
     sendTo("Couldn't find any such thing.\n\r");
   else {
     if (desc)
-      desc->page_string(sb.c_str(), 0, TRUE);
+      desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
   }
 
 }
@@ -2816,7 +2816,7 @@ void TBeing::doLevels(const char *argument)
   tStString += "\n\r";
 
   if (desc)
-    desc->page_string(tStString.c_str(), 0, TRUE);
+    desc->page_string(tStString.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 #else
   int i;
   classIndT Class;
@@ -2933,7 +2933,7 @@ void TBeing::doLevels(const char *argument)
   }
   sb += "\n\r";
   if (desc)
-    desc->page_string(sb.c_str(), 0, TRUE);
+    desc->page_string(sb.c_str(), SHOWNOW_NO, ALLOWREP_YES);
   return;
 #endif
 }
@@ -5164,7 +5164,7 @@ void TBeing::doSpells(const char *argument)
       strcat(buffer, buf);
     } 
   }
-  d->page_string(buffer, 0);
+  d->page_string(buffer);
   return;
 }
 
@@ -5370,6 +5370,6 @@ void TBeing::doPrayers(const char *argument)
       strcat(buffer, buf);
     } 
   }
-  d->page_string(buffer, 0);
+  d->page_string(buffer);
   return;
 }

@@ -3812,7 +3812,7 @@ void TPerson::doAccess(const char *arg)
       listAccount(afp.name, lStr);
       strcat(buf, lStr.c_str());
     }
-    desc->page_string(buf, 0);
+    desc->page_string(buf);
     return;
   }
 }
@@ -4229,7 +4229,7 @@ void TBeing::doInfo(const char *arg)
       sprintf(buf2, "DUMP ECONOMY:      pos %.2f, net gold = %.2f\n\r", tot_gold_dump, net_gold_dump);
       buf += buf2;
 
-      desc->page_string(buf.c_str(), 0);
+      desc->page_string(buf.c_str());
 #elif 0
       buf += "\n\rGold Income/Outlay statistics:\n\r\n\r";
       for (j=0; j < MAX_IMMORT; j++ ) {
@@ -4315,7 +4315,7 @@ void TBeing::doInfo(const char *arg)
               gold_statistics[GOLD_DUMP][j]);
         buf += buf2;
       }
-      desc->page_string(buf.c_str(), 0);
+      desc->page_string(buf.c_str());
 #elif 1
       unsigned int tTotalGold[MAX_MONEY_TYPE],
                    tTotalGlobal = getPosGoldGlobal(),
@@ -4450,7 +4450,7 @@ void TBeing::doInfo(const char *arg)
           break;
       }
 
-      desc->page_string(buf.c_str(), 0);
+      desc->page_string(buf.c_str());
 #else
       unsigned int tot_gold = getPosGoldGlobal();
       unsigned int tot_gold_shop = getPosGold(GOLD_SHOP);
@@ -4648,7 +4648,7 @@ void TBeing::doInfo(const char *arg)
               gold_statistics[GOLD_DUMP][j]);
         buf += buf2;
       }
-      desc->page_string(buf.c_str(), 0);
+      desc->page_string(buf.c_str());
 #endif
     } else if (is_abbrev(arg1, "discipline")) {
       if (!hasWizPower(POWER_INFO_TRUSTED)) {
@@ -4681,7 +4681,7 @@ void TBeing::doInfo(const char *arg)
               discArray[snt]->saves);
         buf += buf2;
       }
-      desc->page_string(buf.c_str(), 0);
+      desc->page_string(buf.c_str());
     } else if (is_abbrev(arg1, "skills")) {
       arg = one_argument(arg, arg1);
 
@@ -4833,7 +4833,7 @@ void TBeing::doInfo(const char *arg)
         *this += *note;
         sendTo("Note created.\n\r");
       } else
-        desc->page_string(buf.c_str(), 0);
+        desc->page_string(buf.c_str());
       return;
     } else if (is_abbrev(arg1, "mobskills")) {
       if (!hasWizPower(POWER_INFO_TRUSTED)) {
@@ -4866,7 +4866,7 @@ void TBeing::doInfo(const char *arg)
               discArray[snt]->mobSaves);
         buf += buf2;
       }
-      desc->page_string(buf.c_str(), 0);
+      desc->page_string(buf.c_str());
     } else if (is_abbrev(arg1, "immskills")) {
       if (!hasWizPower(POWER_INFO_TRUSTED)) {
         sendTo("You cannot access that information at your level.\n\r");
@@ -4898,7 +4898,7 @@ void TBeing::doInfo(const char *arg)
               discArray[snt]->immSaves);
           buf += buf2;
       }
-      desc->page_string(buf.c_str(), 0);
+      desc->page_string(buf.c_str());
     } else {
       sendTo("What would you like info on?\n\r");
       sendTo(str.c_str());
@@ -5298,7 +5298,7 @@ void TBeing::doSysTasks(const char *arg)
   strcpy(argument, arg);
   cleanCharBuf(argument);
   string lst = systask->Tasks(this, argument);
-  desc->page_string(lst.c_str(), 0);
+  desc->page_string(lst.c_str());
 }
 
 void TBeing::doSysLoglist()
@@ -5748,7 +5748,7 @@ void TBeing::doAccount(const char *arg)
   if ((afp.flags & ACCOUNT_IMMORTAL) && !hasWizPower(POWER_VIEW_IMM_ACCOUNTS)) {
     str += "This account belongs to an immortal.\n\r";
     str += "*** Information Concealed ***\n\r";
-    desc->page_string(str.c_str(), 0);
+    desc->page_string(str.c_str());
     return;
   }
 
@@ -5771,7 +5771,7 @@ void TBeing::doAccount(const char *arg)
       fclose(fp);
     }
   }
-  desc->page_string(str.c_str(), 0);
+  desc->page_string(str.c_str());
 
   return;
 }

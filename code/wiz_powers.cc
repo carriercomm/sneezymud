@@ -303,7 +303,7 @@ void TPerson::doPowers(const char *argument) const
   if ((tWizPower % 2))
     tStString += "\n\r";
 
-  desc->page_string(tStString.c_str(), 0, true);  
+  desc->page_string(tStString.c_str(), SHOWNOW_NO, ALLOWREP_YES);  
 }
 
 const string getWizPowerName(wizPowerT wpt)

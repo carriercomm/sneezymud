@@ -109,7 +109,7 @@ void TBeing::doHelp(const char *arg)
     str = "";
     file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
-    desc->page_string(str.c_str(), 0);
+    desc->page_string(str.c_str());
 #endif
     return;
   }
@@ -166,7 +166,7 @@ void TBeing::doHelp(const char *arg)
       str = buf2;
       file_to_string(helppath, str, CONCAT_YES);
       str += "\n\r";
-      desc->page_string(str.c_str(), 0);
+      desc->page_string(str.c_str());
       return;
     }
   }
@@ -206,7 +206,7 @@ void TBeing::doHelp(const char *arg)
       str = buf2;
       file_to_string(helppath, str, CONCAT_YES);
       str += "\n\r";
-      desc->page_string(str.c_str(), 0);
+      desc->page_string(str.c_str());
       return;
     }
   }
@@ -253,7 +253,7 @@ void TBeing::doHelp(const char *arg)
     str = buf2;
     file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
-    desc->page_string(str.c_str(), 0);
+    desc->page_string(str.c_str());
     return;
   }
   for (i = 0; i < spellIndex.size(); i++) {
@@ -528,7 +528,7 @@ void TBeing::doHelp(const char *arg)
 
     file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
-    desc->page_string(str.c_str(), 0);
+    desc->page_string(str.c_str());
     return;
   }
   for (i = 0; i < skillIndex.size(); i++) {
@@ -681,7 +681,7 @@ void TBeing::doHelp(const char *arg)
     str += "\n\r";
     file_to_string(helppath, str, CONCAT_YES);
     str += "\n\r";
-    desc->page_string(str.c_str(), 0);
+    desc->page_string(str.c_str());
     return;
   }
   sendTo("No such help file available.\n\r");

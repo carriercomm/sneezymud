@@ -1012,10 +1012,21 @@ void TBeing::doWrite(const char *arg)
     sendTo("You can't write when you can't see!!\n\r");
     return;
   }
-  if (!*papername || !*penname) {       // nothing was delivered
-    sendTo("write (on) papername (with) penname.\n\r");
-    return;
+  if(!*papername){
+    for(paper=stuff;paper && !dynamic_cast<TNote *>(paper);paper=paper->nextThing);
+    if(!paper){
+      sendTo("write (on) papername (with) penname.\n\r");
+      return;
+    }
   }
+  if(!*penname){
+    for(pen=stuff;pen && !dynamic_cast<TPen *>(pen);pen=pen->nextThing);
+    if(!pen){
+      sendTo("write (on) papername (with) penname.\n\r");
+      return;
+    }
+  }
+
   if (!(paper = searchLinkedListVis(this, papername, stuff))) {
     sendTo("You have no %s.\n\r", papername);
     return;

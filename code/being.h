@@ -589,6 +589,9 @@ class TBeing : public TThing {
     virtual bool hasWizPower(wizPowerT) const;
     virtual void setWizPower(wizPowerT);
     virtual void remWizPower(wizPowerT);
+    bool limitPowerCheck(cmdTypeT, int);
+    bool isGenericObj(int);
+    bool isGenericMob(int);
     virtual string yourDeity(spellNumT, personTypeT, const TBeing *who = NULL) const;
     virtual bool isPolice() const { return false; }
     virtual bool isDiurnal() const { return false; }

@@ -6443,7 +6443,7 @@ void TBeing::describeComponentSpell(const TComponent *obj, int learn) const
   return;
 }
 
-string TBeing::describeMaterial(const TThing *t)
+string describeMaterial(const TThing *t)
 {
   string str;
   char buf[256];
@@ -6464,7 +6464,7 @@ string TBeing::describeMaterial(const TThing *t)
   return str;
 }
 
-string TBeing::describeMaterial(int mat)
+string describeMaterial(int mat)
 {
   string str;
   char buf[256];

@@ -85,6 +85,7 @@ void bootPulse(const char *str, bool end_str)
   Descriptor *d;
   string sc;
   static string tLastRealMessage("");
+  bool tLRMN = false;
 
   if (str) {
     if (strcmp(str, ".")) {
@@ -94,6 +95,7 @@ void bootPulse(const char *str, bool end_str)
       // Set the last real output.
       tLastRealMessage  = sc;
       tLastRealMessage += str;
+      tLRMN = true;
     } else
       sc = "";
 
@@ -105,7 +107,8 @@ void bootPulse(const char *str, bool end_str)
     sc += "\n\r";
   }
 
-  gSocket->addNewDescriptorsDuringBoot(tLastRealMessage);
+  gSocket->addNewDescriptorsDuringBoot((tLRMN ? "\n\r" : tLastRealMessage));
+
   for (d = descriptor_list; d; d = d->next) {
     (&d->output)->putInQ(colorString(NULL, d, sc.c_str(), NULL, COLOR_BASIC, TRUE).c_str());
     d->outputProcessing();

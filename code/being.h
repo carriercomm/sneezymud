@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: being.h,v $
+// Revision 5.1.1.2  1999/10/17 14:53:30  batopr
+// checkSmashed : added optional arg for const char * part
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -1414,7 +1417,7 @@ class TBeing : public TThing {
     void makeOtherPart(const char *, const char *);
     bool checkCut(TBeing *, wearSlotT, spellNumT, TThing *, int);
     bool checkPierced(TBeing *, wearSlotT, spellNumT, TThing *, int);
-    bool checkSmashed(TBeing *, wearSlotT, spellNumT, TThing *, int);
+    bool checkSmashed(TBeing *, wearSlotT, spellNumT, TThing *, int, const char * = NULL);
     int hit(TBeing *, int pulse = -1);
     bool canCounterMove(int);
     int trySpringleap(TBeing *);

@@ -575,7 +575,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
 
   strcat(buf, message);
 
-  fprintf(stderr, "%4.4d%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
+  fprintf(stderr, "%4.4d|%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
           this_time->tm_year + 1900, this_time->tm_mon + 1, this_time->tm_mday,
           this_time->tm_hour, this_time->tm_min, this_time->tm_sec, buf);
 
@@ -597,14 +597,14 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
     sprintf(buf, "// L.O.W. Error:   %s \n\r", message); 
     severity = 5;
 
-    fprintf(stderr,  "%2.2d%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: L.O.W. Error: %s\n",
-         this_time->tm_year, this_time->tm_mon + 1, this_time->tm_mday,
+    fprintf(stderr,  "%4.4d|%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: L.O.W. Error: %s\n",
+         this_time->tm_year +1900, this_time->tm_mon + 1, this_time->tm_mday,
          this_time->tm_hour, this_time->tm_min, this_time->tm_sec, message);
   } else {
     sprintf(buf, "// %s", message);
 
-    fprintf(stderr,  "%2.2d%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
-         this_time->tm_year, this_time->tm_mon + 1, this_time->tm_mday,
+    fprintf(stderr,  "%4.4d|%2.2d%2.2d|%2.2d:%2.2d:%2.2d :: %s\n",
+         this_time->tm_year + 1900, this_time->tm_mon + 1, this_time->tm_mday,
          this_time->tm_hour, this_time->tm_min, this_time->tm_sec, message);
   }
 

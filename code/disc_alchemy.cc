@@ -139,7 +139,7 @@ static void identifyBeingStuff(const TBeing *caster, const TBeing *victim)
               describe_level(victim->GetMaxLevel()), 
               victim->getMyRace()->getPluralName().c_str());
 
-  if (dynamic_cast<TPerson *>(victim))
+  if (dynamic_cast<const TPerson *>(victim))
     caster->sendTo("%d years, %d months, %d days, %d hours old.\n\r",
              victim->age()->year, victim->age()->month, 
              victim->age()->day, victim->age()->hours / 2);

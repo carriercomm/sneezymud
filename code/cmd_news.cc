@@ -96,7 +96,7 @@ void TBeing::doNews(const char *argument)
     }
     closedir(dfd);
 
-    if (GetMaxLevel() > MAX_MORTAL && isImmortal()) {
+    if (GetMaxLevel() > MAX_MORT && isImmortal()) {
       dfd = opendir(BUILDER_HELP_PATH);
       if (!dfd) {
         vlogf(LOG_FILE, "doNews: Failed opening directory.");

@@ -2,16 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_thief.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
 //
 //////////////////////////////////////////////////////////////////////////
 
@@ -239,11 +229,9 @@ int subterfuge(TBeing *thief, TBeing *victim)
       return TRUE;
     }
     thief->sendTo("You have totally confused the monster!\n\r");
-    if (IS_SET(victim->specials.act, ACT_HUNTING))
-      REMOVE_BIT(victim->specials.act, ACT_HUNTING);
 
-    if (IS_SET(victim->specials.act, ACT_HATEFUL))
-      REMOVE_BIT(victim->specials.act, ACT_HATEFUL);
+    REMOVE_BIT(victim->specials.act, ACT_HUNTING);
+    REMOVE_BIT(victim->specials.act, ACT_HATEFUL);
 
     return TRUE;
   } else {

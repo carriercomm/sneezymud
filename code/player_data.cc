@@ -415,8 +415,24 @@ void TPerson::storeToSt(charFile *st)
   st->practices = practices;
   st->wimpy = wimpy;
 
-  st->points = points;
-
+//  st->points = points;
+// storing pointsData
+  st->mana = points.mana;
+  st->maxMana = points.maxMana;
+  st->piety = points.piety;
+  st->lifeforce = points.lifeforce;
+  st->hit = points.hit;
+  st->maxHit = points.maxHit;
+  st->move = points.move;
+  st->maxMove = points.maxMove;
+  st->money = points.money;
+  st->bankmoney = points.bankmoney;
+  st->exp = points.exp;
+  st->spellHitroll = points.spellHitroll;
+  st->hitroll = points.hitroll;
+  st->damroll = points.damroll;
+  st->armor = points.armor;
+// end storing pointsData
 #if FACTIONS_IN_USE
   st->f_percent = getPerc();
   factionTypeT ik;
@@ -626,7 +642,24 @@ void TPerson::loadFromSt(charFile *st)
   chosenStats.values = st->stats;
   convertAbilities();
 
-  points = st->points;
+  // points = st->points;
+  // loading pointData info
+   points.mana = st->mana;
+   points.maxMana = st->maxMana;
+   points.piety = st->piety;
+   points.lifeforce = st->lifeforce;
+   points.hit = st->hit;
+   points.maxHit = st->maxHit;
+   points.move = st->move;
+   points.maxMove = st->maxMove;
+   points.money = st->money;
+   points.bankmoney = st->bankmoney;
+   points.exp = st->exp;
+   points.spellHitroll = st->spellHitroll;
+   points.hitroll = st->hitroll;
+   points.damroll = st->damroll;
+   points.armor = st->armor;
+  // end loading pointData info
   if (desc) {
     desc->bad_login = st->bad_login;
     desc->screen_size = st->screen;

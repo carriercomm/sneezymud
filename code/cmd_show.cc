@@ -816,7 +816,7 @@ void TPerson::doShow(const char *argument)
       register int i;
       for (i = 0; i < WORLD_SIZE; i++) {
 	TRoom *temp = real_roomp(i);
-	if(temp && strstr(temp->name, zonenum)){
+	if (temp && temp->name && strstr(temp->name, zonenum)){
 	  print_room(i, temp, sb, NULL);
 	}
       }

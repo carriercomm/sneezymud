@@ -1086,7 +1086,7 @@ int conjureElemAir(TBeing * caster, int level, byte bKnown)
     victim->affectTo(&aff);
 
     aff.type = AFFECT_THRALL;
-    aff.be = static_cast<TThing *>(mud_str_dup(caster->getName()));
+    aff.be = static_cast<TThing *>((void *) mud_str_dup(caster->getName()));
     victim->affectTo(&aff);
 
     // Add hp for higher levels - Russ 

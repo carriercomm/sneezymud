@@ -24,15 +24,6 @@ extern "C" {
 #include "obj_base_weapon.h"
 #include "obj_base_clothing.h"
 
-
-const bool sstring::isWord() const
-{       
-  for(unsigned int i=0;i<size();++i){
-    if (!isalpha((*this)[i]))
-      return false;
-  }     
-  return true;
-}
 // fname will look for the first non-alpha character
 // I added - and ' as valid fname chars since this allows us to do better things
 // with items and mobs in the name field.  - Bat 6-30-97

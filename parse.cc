@@ -1613,7 +1613,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_MESSAGE:
-	doMessage(newarg.c_str());
+	doMessage(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_FINDEMAIL:

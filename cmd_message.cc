@@ -18,7 +18,7 @@ messageTypeT & operator++ (messageTypeT &c, int)
   return c = (c == MSG_TYPE_MAX) ? MSG_MIN : messageTypeT(c + 1);
 }
 
-const char * messageCommandFormat =
+const sstring messageCommandFormat =
 "Syntax: message <field> <message>\n\r\
 \tmessage <field> default   -  resets the type to the standard.\n\r\
 \tmessage <field>           -  displays that field's current setting.\n\r\
@@ -71,26 +71,20 @@ const sstring messageCommandTypes[] =
   "\n"
 };
 
-void TBeing::doMessage(const char *tArg)
+void TBeing::doMessage(const sstring arg)
 {
-  sstring tStString(tArg),
-          tStCommand("");
+  sstring str(arg),
+          cmd("");
   sstring tString;
-  char   *tMark = NULL;
   int     tValue = -1;
 
-  tStString = one_argument(tStString, tStCommand);
-  strcpy(tString, tStString.c_str());
-  tMark = tString;
+  str = one_argument(str, cmd);
 
-  if (isspace(*tMark))
-    tMark++;
+  str = str.substr(str.find_first_not_of(" \t"), str.length());
 
-  tStString = tMark;
-
-  if (tStCommand.empty())
+  if (cmd.empty())
     sendTo(messageCommandFormat);
-  else if (tStCommand.word(0).lower() == "list") {
+  else if (cmd.word(0).lower() == "list") {
     for (tValue = MSG_MIN; tValue < MSG_TYPE_MAX; tValue++ ) {
       if (messageCommandSwitches[tValue][2] &&
           hasWizPower(wizPowerT(messageCommandSwitches[tValue][2])))
@@ -100,24 +94,24 @@ void TBeing::doMessage(const char *tArg)
     }
     return;
   } else {
-    tString = bisect_arg(tStCommand, &tValue, messageCommandTypes);
+    tString = bisect_arg(cmd, &tValue, messageCommandTypes);
 
     if (tValue < 1 || tValue >= MSG_TYPE_MAX)
       sendTo("Incorrect message type.\n\r");
     else if (messageCommandSwitches[tValue][2] &&
              !hasWizPower(wizPowerT(messageCommandSwitches[tValue][2])))
       sendTo("You do not have the power to change that, sorry.\n\r");
-    else if (tStString.length() > 250)
+    else if (str.length() > 250)
       sendTo("All sstrings have a hard limit of 250 characters, please use less than you did.\n\r");
     else {
-      if (tStString.empty()) {
+      if (str.empty()) {
         sendTo(COLOR_BASIC, fmt("Message Type: %s set to:\n\r%s\n\r") %
                messageCommandTypes[(tValue - 1)] %
                msgVariables(messageTypeT(tValue), (TThing *)NULL, (const char *)NULL, false));
         return;
       }
 
-      if (is_abbrev(tStString, "default")) {
+      if (is_abbrev(str, "default")) {
         msgVariables(messageTypeT(tValue), "");
         sendTo(fmt("Message Type: %s set to default.\n\r") %
                messageCommandTypes[(tValue - 1)]);
@@ -127,7 +121,7 @@ void TBeing::doMessage(const char *tArg)
 
       bool isNamed = (colorString(this, desc, getName(), NULL, COLOR_NONE, TRUE).find(getNameNOC(this)) != sstring::npos);
 
-      if (colorString(this, desc, tStString, NULL, COLOR_NONE, TRUE).length() >
+      if (colorString(this, desc, str, NULL, COLOR_NONE, TRUE).length() >
           messageCommandSwitches[tValue][0]) {
         sendTo(fmt("String length, for this field, is limited to %d characters in total.\n\r") %
                messageCommandSwitches[tValue][0]);
@@ -135,50 +129,50 @@ void TBeing::doMessage(const char *tArg)
       }
 
       if (tValue == MSG_IMM_TITLE &&
-          (tStString.find("~R") != sstring::npos)) {
+          (str.find("~R") != sstring::npos)) {
         sendTo("You Can NOT use newlines in the god title, Bad Bad.\n\r");
         return;
       }
 
       // sstring has the extra \n\r from the input attached, so strip that off
-      while (tStString.find("\n") != sstring::npos)
-        tStString.replace(tStString.find("\n"), 1, "");
-      while (tStString.find("\r") != sstring::npos)
-        tStString.replace(tStString.find("\r"), 1, "");
+      while (str.find("\n") != sstring::npos)
+        str.replace(str.find("\n"), 1, "");
+      while (str.find("\r") != sstring::npos)
+        str.replace(str.find("\r"), 1, "");
 
       if ((messageCommandSwitches[tValue][1] & MSG_REQ_GNAME) &&
-          !isNamed && (tStString.find("<n>") == sstring::npos)) {
+          !isNamed && (str.find("<n>") == sstring::npos)) {
         sendTo(fmt("This type requires your name.  Either use %s or <n>\n\r") %
                getNameNOC(this));
         return;
       }
 
       if ((messageCommandSwitches[tValue][1] & MSG_REQ_ONAME) &&
-          (tStString.find("<N>") == sstring::npos)) {
+          (str.find("<N>") == sstring::npos)) {
         sendTo("This type requires <N> in it.\n\r");
         return;
       }
 
       if ((messageCommandSwitches[tValue][1] & MSG_REQ_STRING) &&
-          (tStString.find("<a>") == sstring::npos)) {
+          (str.find("<a>") == sstring::npos)) {
         sendTo("This type requires <a> in it.\n\r");
         return;
       }
 
       if ((messageCommandSwitches[tValue][1] & MSG_REQ_DIR) &&
-          (tStString.find("<d>") == sstring::npos)) {
+          (str.find("<d>") == sstring::npos)) {
         sendTo("This type requires <d> in it.\n\r");
         return;
       }
 
-      msgVariables(messageTypeT(tValue), tStString);
+      msgVariables(messageTypeT(tValue), str);
 
       sendTo(COLOR_BASIC, fmt("Message %s set to:\n\r%s\n\r") %
               messageCommandTypes[(tValue - 1)] %
               msgVariables(messageTypeT(tValue), (TThing *)NULL, (const char *)NULL, false));
       msgVariables.savedown();
 
-      if (tStString.find("$") != sstring::npos)
+      if (str.find("$") != sstring::npos)
         sendTo("You used $ in your sstring, this will be replaced with -, sorry.\n\r");
     }
   }
@@ -187,7 +181,7 @@ void TBeing::doMessage(const char *tArg)
 sstring TMessages::getImmortalTitles(TBeing *tChar)
 {
   int tLevel = (tChar ? (tChar->GetMaxLevel() - 51) : -1);
-  const char * levelMessages[] =
+  const sstring levelMessages[] =
   {
     "Area Designer ",
     "--------------", // Heroine/Hero caught below.
@@ -433,7 +427,7 @@ sstring TMessages::operator()(messageTypeT tValue,
                    (tBeing->getSex() == SEX_FEMALE ? 0 :
                     (tBeing->getSex() == SEX_MALE ? 1 : 2)));
 
-  const char * sexTypes[][3] =
+  const sstring sexTypes[][3] =
   {
     {"her", "him", "it"},
     {"she", "he" , "it"},
@@ -703,6 +697,3 @@ sstring mapMessageToFile(TMessages *tMsgStore, messageTypeT tType)
   sprintf(tString, "%c%s~", tType, (*tMsgStore)[tType].c_str());
   return tString;
 }
-
-
-

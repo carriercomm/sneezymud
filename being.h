@@ -1813,7 +1813,7 @@ class TBeing : public TThing {
     void doReport(const char *);
     virtual void doTitle(const char *);
     int doTithe();
-    void doMessage(const char *);
+    void doMessage(const sstring);
     int getTrainerPracs(const TBeing *, const TMonster *, classIndT, discNumT, int) const;
     int checkTrainDeny(const TBeing *, TMonster *, discNumT, int) const;
     int checkForPreReqs(const TBeing *, TMonster *, discNumT, classIndT, int, int) const;

@@ -409,6 +409,7 @@ int TBeing::updateAffects()
            (af->type == SKILL_TRACK) ||
            (af->type == SKILL_SEEKWATER) ||
            (af->type == AFFECT_PET) ||
+           (af->type == AFFECT_THRALL) ||
            (af->type == SKILL_BERSERK))) {
       continue;
     }

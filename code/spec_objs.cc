@@ -2828,6 +2828,94 @@ int newbieHelperWProc(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TOb
   return FALSE;
 }
 
+int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){  
+  int *job=NULL, where=0;
+  int path[]={-1, 100, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185,
+	    200, 215, 650, 651, 652, 653, 654, 655, 656, 657, 658, 659,
+	    660, 667, 668, 669, 670, 671, 672, 673, 674, 700, 702,
+	    703, 704, 705, 706, 707, 708, 709, 710, 711, 712, 713, 714,
+	    715, 716, 728, 729, 730, 731, 732, 733, 734, 735, 736, 737,
+	    738, 739, 1381, 1200, 1201, 1204, 1207, 1215, 1218, 1221, 
+	    1301, 1302, 1303, -1};
+  TRoom *trolleyroom=real_roomp(15344);
+  static int timer;
+
+  if (cmd == CMD_GENERIC_DESTROYED) {
+    delete static_cast<int *>(myself->act_ptr);
+    myself->act_ptr = NULL;
+    return FALSE;
+  }
+
+  if (cmd != CMD_GENERIC_PULSE)
+    return FALSE;
+
+  if(!myself->in_room)
+    return FALSE;
+
+  if(timer>0){
+    --timer;
+    return FALSE;
+  }
+
+  if (!myself->act_ptr) {
+    if (!(myself->act_ptr = new int)) {
+     perror("failed new of trolley.");
+     exit(0);
+    }
+    job = static_cast<int *>(myself->act_ptr);
+    *job=1;
+  } else {
+    job = static_cast<int *>(myself->act_ptr);
+  }
+
+  for(where=1;path[where]!=-1 && myself->in_room != path[where];++where);
+
+  if(path[where]==-1){
+    vlogf(LOG_PEEL, "trolley lost");
+    return FALSE;
+  }
+
+  if((path[where+*job])==-1){
+    switch(*job){
+      case -1:
+	sendrpf(trolleyroom, "The trolley has arrived in Grimhaven.");
+	break;
+      case 1:
+	sendrpf(trolleyroom, "The trolley has arrived in Brightmoon.");
+	break;
+    }
+
+    *job=-*job;
+    timer=10;
+    return TRUE;
+  }
+
+
+  switch(*job){
+    case -1: 
+      act("$n continues towards Grimhaven.",
+	  FALSE, myself, 0, 0, TO_ROOM); 
+      sendrpf(trolleyroom, "The trolley rumbles onwards to Grimhaven.");
+      break;
+    case 1: 
+      act("$n continues towards Brightmoon.",
+	  FALSE, myself, 0, 0, TO_ROOM); 
+      sendrpf(trolleyroom, "The trolley rumbles onwards to Brightmoon.");
+      break;
+  }
+  
+  --(*myself);
+  *real_roomp(path[where+*job])+=*myself;
+
+  if(!trolleyroom->dir_option[0]){
+    trolleyroom->dir_option[0] = new roomDirData();
+  }
+  
+  trolleyroom->dir_option[0]->to_room=path[where+*job];
+
+  return TRUE;
+}
+
 extern int board(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponBlinder(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponManaDrainer(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
@@ -2892,6 +2980,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {TRUE, "Sciren's Suffocation", scirenDrown},
   {TRUE, "Energy Beam Weapon", energyBeam},
   {TRUE, "Viper Weapon (poison)", poisonViperBlade},
+  {FALSE, "trolley", trolley},
 
-  {FALSE, "BOGUS", bogusObjProc},  // 54
+  {FALSE, "BOGUS", bogusObjProc},  // 55
 };

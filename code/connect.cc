@@ -4446,54 +4446,6 @@ void Descriptor::worldSend(const char *text, TBeing *ch)
   }
 }
 
-void Descriptor::sendShout(TBeing *ch, const char *arg)
-{
-  Descriptor *i;
-  TBeing *b;
-  char capbuf[256];
-  char namebuf[100];
-
-  for (i = descriptor_list; i; i = i->next) {
-    if ((b = i->character) && (b != ch) && !i->connected &&
-       b->awake() &&
-       (dynamic_cast<TMonster *>(b) ||
-        (!b->isImmortal() && ch->isImmortal()) ||
-        (b->desc && !IS_SET(i->autobits, AUTO_NOSHOUT))) &&
-       !b->checkSoundproof() && 
-       !b->isPlayerAction(PLR_MAILING | PLR_BUGGING)) {
-      strcpy(capbuf, b->pers(ch));
-      if (!capbuf) {
-        forceCrash("No capbuf in sendShout!");
-        continue;
-      }
-      string argbuf = colorString(b, i, arg, NULL, COLOR_NONE, FALSE);
-      sprintf(namebuf, "<g>%s<z>", cap(capbuf));
-      string nameStr = colorString(b, i, namebuf, NULL, COLOR_NONE, FALSE);
-      if(hasColorStrings(NULL, capbuf, 2)) {
-        if (IS_SET(b->desc->plr_color, PLR_COLOR_MOBS)) {
-          string tmpbuf = colorString(b, i, cap(capbuf), NULL, COLOR_MOBS, FALSE);
-          string tmpbuf2 = colorString(b, i, cap(capbuf), NULL, COLOR_NONE, FALSE);
-
-          if (i->client) 
-            i->clientf("%d|%s|%s", CLIENT_SHOUT, tmpbuf2.c_str(), argbuf.c_str());
-
-          b->sendTo(COLOR_SHOUTS, "%s shouts, \"%s<1>\"\n\r",tmpbuf.c_str(), arg);
-        } else { 
-          if (i->client) 
-            i->clientf("%d|%s|%s%s", CLIENT_SHOUT, nameStr.c_str(), argbuf.c_str());
-
-          b->sendTo(COLOR_SHOUTS, "<g>%s<z> shouts, \"%s<1>\"\n\r", cap(capbuf), arg);
-        }
-      } else {
-        if (i->client) 
-          i->clientf("%d|%s|%s", CLIENT_SHOUT, nameStr.c_str(), argbuf.c_str());
-
-        b->sendTo(COLOR_SHOUTS, "<g>%s<z> shouts, \"%s<1>\"\n\r", cap(capbuf), arg);
-      }
-    }
-  }
-}
-
 void processAllInput()
 {
   Descriptor *d;

@@ -18,8 +18,8 @@ extern char hostlist[MAX_BAN_HOSTS][40];
 
 class TSocket {
   public:
-    int sock;
-    int port;
+    int m_sock;
+    int m_port;
     
   int gameLoop();
   int writeToSocket(const char *);

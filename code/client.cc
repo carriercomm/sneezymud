@@ -756,6 +756,7 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       char apassword[256];
       char buf2[256];
       strcpy(aname, nextToken('|', 255, str2).c_str());
+      strcpy(apassword, nextToken('|', 255, str2).c_str());
 
       account = new TAccount;
       // Does account exist or is it a bogus name? This function will return TRUE is so
@@ -764,7 +765,6 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       if (strlen(aname) >= 10) {
       }
       strcpy(account->name, aname);
-
       clientf("%d|0", CLIENT_CHECKACCOUNTNAME);
       break;
     } 

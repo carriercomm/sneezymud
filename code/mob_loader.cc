@@ -893,7 +893,21 @@ void TMonster::buffMobLoader()
       return;
   }
 
-  if (!(obj = read_object(vnum, VIRTUAL))) {
+#if 1
+// builder port uses stripped down database which was causing problems
+// hence this setup instead.
+  int robj = real_object(vnum);
+  if (robj < 0 || robj >= (signed int) obj_index.size()) {
+    vlogf(LOG_BUG, "buffMobLoader(): No object (%d) in database!", vnum);
+    return;
+  }
+
+  TObj * obj = read_object(robj, REAL);
+#else
+  TObj * obj = read_object(vnum, VIRTUAL);
+#endif
+
+  if (!obj) {
     vlogf(LOG_BUG, "Error in buffMobLoader (%d)", vnum);
     return;
   }

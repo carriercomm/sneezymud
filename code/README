@@ -19,6 +19,7 @@
 - Added the ability to use 'attr reset' to reset current session stats.
 - Fixed up the listExits(for look) to show closed exits to mortals with
   a good perception.
+- Fixed stab so a missed stab still lags.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

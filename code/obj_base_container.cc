@@ -150,10 +150,10 @@ int TBaseContainer::getAllFrom(TBeing *ch, const char *argument)
 
 int TBaseContainer::getObjFrom(TBeing *ch, const char *arg1, const char *arg2)
 {                                                             
-  char newarg[100], capbuf[256];                              
-  int rc;                                                     
-  int p;                                                      
-                                                              
+  char newarg[100], capbuf[256];
+  int rc;
+  int p;
+
   if (getall(arg1, newarg)) {                                 
     if (!searchLinkedListVis(ch, newarg, stuff)) {            
       ch->sendTo(COLOR_OBJECTS, "There are no \"%s\"'s visible in %s.\n\r",

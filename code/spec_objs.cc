@@ -2959,7 +2959,7 @@ int portableHole(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *ob2)
 int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
-  TThing *obj;
+  int rc, dam = 1, which;
 
   if (!o || !vict)
     return FALSE;
@@ -2969,14 +2969,24 @@ int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
     return FALSE;
   if (cmd != CMD_OBJ_HIT)
     return FALSE;
+  dam = (::number( 1, (ch->GetMaxLevel()) / 3 + 4));
+  which = ::number(1,2);
+
+  if (which == 1) {
   act("<k>Three long, thin blades spring from your <1>$o<k> as you swing at $N, slicing $M.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
   act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings at $N, slicing $M.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings, slicing you painfully.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-
-  if (ch->reconcileDamage(vict,::number(1,(char->MaxLevel()/3)+4), DAMAGE_SLASH) {
-    return DELETE_VICT;
+  rc = ch->reconcileDamage(vict, dam, TYPE_SLASH);
+  }
+  else {
+  act("<k>Three long, thin blades spring from your <1>$o<k> as you swing at $N, stabbing $M.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings at $N, stabbing $M.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings, stabbing you painfully.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  rc = ch->reconcileDamage(vict, dam, TYPE_PIERCE);
   }
 
+  if (rc == -1)
+    return DELETE_VICT;
   return TRUE;
 }
 

@@ -1030,7 +1030,7 @@ void TBeing::gainCondition(condTypeT condition, int value)
 	value = max(1, value);
 
 	// modify for SKILL_ALCOHOLISM
-	value *= ((100 - getSkillValue(SKILL_ALCOHOLISM)) / 200);
+	value = (int)((double) value * (double)(((double)(200 - getSkillValue(SKILL_ALCOHOLISM)) / 200)));
 
         break;
       case MAX_COND_TYPE:

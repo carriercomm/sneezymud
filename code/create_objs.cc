@@ -1920,10 +1920,17 @@ void change_chest_value2(TBeing *ch, TRealContainer *o, const char *arg, editorE
       loc_update--;
 
       if (type != ENTER_CHECK) {
-	if (loc_update < 0 || loc_update > 4)
+	if (loc_update < 0 || loc_update >= MAX_CONTAINER_FLAG)
 	  return;
 	i = 1 << loc_update;
 
+        if (i == CONT_TRAPPED ||
+            i == CONT_EMPTYTRAP ||
+            i == CONT_GHOSTTRAP) {
+          sendTo("This flag is set automatically and can not be changed.\n\r"); 
+          return;
+        }
+     
 	if (o->isContainerFlag(i))
 	  o->remContainerFlag(i);
 	else
@@ -1931,7 +1938,7 @@ void change_chest_value2(TBeing *ch, TRealContainer *o, const char *arg, editorE
       }
       ch->sendTo(VT_HOMECLR);
       row = 0;
-      for (i = 0; i < 5; i++) {
+      for (i = 0; i < MAX_CONTAINER_FLAG; i++) {
 	sprintf(buf, VT_CURSPOS, row + 4, ((i & 1) ? 45 : 5));
 	if (i & 1)
 	  row++;

@@ -619,6 +619,24 @@ void TBeing::doPoint(const char *arg)
     return;
   }
 
+  // point in a direction
+  dirTypeT dir = getDirFromChar(arg);
+  if (dir != DIR_NONE) {
+    sendTo("You point %s%s%s%s.", 
+        buf ? "your " : "",
+        buf ? buf : "",
+        buf ? " " : "",
+        dirs_to_blank[dir]);
+    sprintf(holdBuf, "$n points %s%s%s%s.", 
+        buf ? "$s " : "",
+        buf ? buf : "",
+        buf ? " " : "",
+        dirs_to_blank[dir]);
+    act(holdBuf, false, this, NULL, NULL, TO_ROOM);
+    return;
+  }
+
+  // point at someone
   for (t = roomp->stuff; t; t = t->nextThing) {
     if (isname(arg, t->name)) {
       obj = dynamic_cast<TObj *>(t);

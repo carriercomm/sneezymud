@@ -168,7 +168,7 @@ int TMoney::moneyMeMoney(TBeing *ch, TThing *sub)
   TThing *t;
   char buf[256];
   bool isMyCorpse = false;
-  //  TPerson *tP;
+  TPerson *tP;
 
   if (sub && isname(ch->name, sub->name) && dynamic_cast<TPCorpse*>(sub))
     isMyCorpse = true;

@@ -649,6 +649,22 @@ int castEnergyDrain(TBeing *caster, TBeing *victim)
   return rc;
 }
 
+int energyDrain(TBeing *tMaster, TBeing *tSucker, TMagicItem *tMagItem)
+{
+  int tRc = FALSE,
+      tReturn;
+
+  tReturn = energyDrain(tMaster, tSucker, tMagItem->getMagicLevel(), tMagItem->getMagicLearnedness(), 0);
+
+  if (IS_SET(tReturn, VICTIM_DEAD))
+    ADD_DELETE(tRc, DELETE_VICT);
+
+  if (IS_SET(tReturn, CASTER_DEAD))
+    ADD_DELETE(tRc, DELETE_THIS);
+
+  return tRc;
+}
+
 int acidBlast(TBeing *caster, int level, byte bKnown, int adv_learn)
 {
   TThing *t, *temp;
@@ -857,6 +873,22 @@ int castAtomize(TBeing *caster, TBeing *victim)
   if (IS_SET(ret, CASTER_DEAD))
     ADD_DELETE(rc, DELETE_THIS);
   return rc;
+}
+
+int atomize(TBeing *tMaster, TBeing *tSucker, TMagicItem *tMagItem)
+{
+  int tRc = FALSE,
+      tReturn;
+
+  tReturn = atomize(tMaster, tSucker, tMagItem->getMagicLevel(), tMagItem->getMagicLearnedness(), 0);
+
+  if (IS_SET(tReturn, VICTIM_DEAD))
+    ADD_DELETE(tRc, DELETE_VICT);
+
+  if (IS_SET(tReturn, CASTER_DEAD))
+    ADD_DELETE(tRc, DELETE_THIS);
+
+  return tRc;
 }
 
 int animate(TBeing *caster, int level, byte bKnown)

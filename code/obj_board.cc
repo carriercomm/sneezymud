@@ -254,7 +254,7 @@ int TBoard::boardHandler(TBeing *ch, cmdTypeT cmd, const char *arg)
     case CMD_LOOK:		
       return (board_show_board(ch, arg, this, nb));
     case CMD_GET:			
-      return (get_note_from_board(ch, arg, nb));
+      return (get_note_from_board(ch, arg, nb, this));
     case CMD_READ:	
       return (board_display_msg(ch, arg, this, nb));
     case CMD_POST:
@@ -562,7 +562,7 @@ void post_note_on_board(TBeing *ch, const char *argument, boardStruct *b)
   // note is possibly invalid here
 }
 
-int get_note_from_board(TBeing *ch, const char *arg, boardStruct *b)
+int get_note_from_board(TBeing *ch, const char *arg, boardStruct *b, TBoard *tb)
 {
   unsigned int ind;
   int msg;
@@ -587,11 +587,14 @@ int get_note_from_board(TBeing *ch, const char *arg, boardStruct *b)
   }
   ind = msg - 1;
 
-  if (strcmp(b->writer[ind], ch->name)) {
-    if (!ch->hasWizPower(POWER_BOARD_POLICE)) {
+  if (strcmp(b->writer[ind], ch->name) &&
+      !ch->hasWizPower(POWER_BOARD_POLICE) &&
+       !(tb->objVnum()==FACT_BOARD_SERPENT && 
+	 ch->getFactionAuthority(FACT_SNAKE, 0)) &&
+      !(tb->objVnum()==FACT_BOARD_BROTHER && 
+	ch->getFactionAuthority(FACT_BROTHERHOOD, 0))){
       ch->sendTo("You didn't write that note!\n\r");
       return TRUE;
-    }
   }
   // copy over stuff from note on board, and put it on a new note  
   // and give that note to the player who removed the note - Russ 

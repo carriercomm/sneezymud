@@ -2,42 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: info.cc,v $
-// Revision 5.1.1.2  1999/11/03 20:26:59  lapsos
-// Continued work on the !prod new who system.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.6  1999/10/12 03:00:08  batopr
-// Fixed renew display prob in describeAffect
-//
-// Revision 1.5  1999/10/07 17:20:21  batopr
-// Changed check on aff->renew in describeAffects
-//
-// Revision 1.4  1999/10/03 09:47:28  lapsos
-// Added gag to failed sneak display.
-//
-// Revision 1.3  1999/10/02 06:37:44  lapsos
-// Fixed up who -y to ignore immortals.
-//
-// Revision 1.2  1999/09/29 03:28:27  lapsos
-// Added who -y flag.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//    SneezyMUD++ - All rights reserved, SneezyMUD Coding Team      //
-//                                                                      //
 //    "info.cc" - All informative functions and routines                //
 //                                                                      //
 //////////////////////////////////////////////////////////////////////////

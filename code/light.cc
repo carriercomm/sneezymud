@@ -2,26 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: light.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
 //      "light.cc" - Methods for TLight class
-//
-//      Last revision December 18, 1997.
 //
 ///////////////////////////////////////////////////////////////////////////
 
@@ -144,8 +125,8 @@ void TLight::lightDecay()
       putLightOut();
 
       if (roomp && roomp->stuff) {
-        act("$p flickers a bit, and then burns out.",
-                 FALSE, roomp->stuff, this, 0, TO_CHAR);
+        act("$n flickers a bit, and then burns out.",
+                 FALSE, this, 0, 0, TO_ROOM);
         roomp->addToLight(-getLightAmt());
       } else if (parent) {
         act("$p flickers a bit, and then burns out.",
@@ -160,7 +141,7 @@ void TLight::lightDecay()
       }
     } else if (getCurBurn() < 4) {
       if (roomp && roomp->stuff) 
-        act("$p flickers a bit.", FALSE, roomp->stuff, this, 0, TO_CHAR);
+        act("$n flickers a bit.", FALSE, this, 0, 0, TO_ROOM);
       else if (parent) 
         act("$p flickers a bit.", FALSE, parent, this, 0, TO_CHAR);
       else if (equippedBy) 

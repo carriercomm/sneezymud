@@ -206,6 +206,7 @@ enum liqTypeT {
      LIQ_PORT,
      LIQ_MUSHROOM_ALE,
      LIQ_VOMIT,
+     LIQ_COLA,
      MAX_DRINK_TYPES     // move and change
 };
 extern liqTypeT & operator++(liqTypeT &, int);
@@ -505,6 +506,8 @@ class TObj : public TThing {
     virtual string getNameForShow(bool = true, bool = true, const TBeing * = NULL) const;
     virtual int foodItemUsed(TBeing *ch, const char *arg);
     virtual void changeBaseWeaponValue1(TBeing *, const char *, editorEnterTypeT) {}
+    //virtual void changeBaseWeaponValue2(TBeing *, const char *, editorEnterTypeT) {}
+    //virtual void changeBaseWeaponValue3(TBeing *, const char *, editorEnterTypeT) {}
     virtual void objMenu(const TBeing *) const;
     virtual int rentCost() const;
     virtual int galvanizeMe(TBeing *, byte);

@@ -741,6 +741,8 @@ int TBeing::inCamp() const
   TBeing *ch;
   affectedData *aff;
 
+  return FALSE;
+
   for (aff = affected; aff; aff = aff->next) {
     if (aff->type == SKILL_ENCAMP)
       return aff->level;

@@ -317,10 +317,14 @@ int faerieFire(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   aff.type = SPELL_FAERIE_FIRE;
   aff.level = level;
-  aff.duration = (aff.level * UPDATES_PER_MUDHOUR / 4);
   aff.location = APPLY_ARMOR;
-  aff.modifier = 100;
   aff.bitvector = 0;
+
+  // we'd like it to last about 5 minutes
+  aff.duration = 5 * UPDATES_PER_MUDHOUR / 2;
+
+  // let the affect be level dependant
+  aff.modifier = 100 + (aff.level*4);
 
   if (bSuccess(caster, bKnown, SPELL_FAERIE_FIRE)) {
     ret = SPELL_SUCCESS;

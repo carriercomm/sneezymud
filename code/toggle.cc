@@ -207,24 +207,24 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Mage Robe Quest: getting metal",  MOB_SIMON_SPELLCRAFTER},
   {"Mage Robe Quest: getting fabric", MOB_SIMON_SPELLCRAFTER},
   {"Mage Robe Quest: has mage robe", MOB_SIMON_SPELLCRAFTER},
-  {"", MOB_NONE}, // 195-212 reserved for Ranger Lvl 21 Quest
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE}, //200
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE}, //205
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE},
-  {"", MOB_NONE}, //210
-  {"", MOB_NONE},
-  {"", MOB_NONE},
+  {"Ranger L21 Quest: Eligible", MOB_NONE},  //195
+  {"Ranger L21 Quest: Started", MOB_RANGER_AMBER},
+  {"Ranger L21 Quest: Killed Volcano Cleric", MOB_NONE},
+  {"Ranger L21 Quest: Failed to kill Volcano Cleric", MOB_NONE},
+  {"Ranger L21 Quest: Proving self L21A", MOB_RANGER_AMBER},
+  {"Ranger L21 Quest: Seeking Arden Cleric", MOB_RANGER_AMBER},  //200
+  {"Ranger L21 Quest: Killed Arden Cleric", MOB_NONE},
+  {"Ranger L21 Quest: Failed to kill Arden Cleric", MOB_NONE},
+  {"Ranger L21 Quest: Proving self L21B", MOB_RANGER_AMBER},
+  {"Ranger L21 Quest: Seeking Aarakocra Chief", MOB_RANGER_AMBER},
+  {"Ranger L21 Quest: Talked to Aarakocra Chief", MOB_CHIEF_AARAKOCRA},  //205
+  {"Ranger L21 Quest: Got feathers", MOB_CHIEF_AARAKOCRA},
+  {"Ranger L21 Quest: Seeking two rabbit skins", MOB_RANGER_AMBER},
+  {"Ranger L21 Quest: Gave one rbbit skin", MOB_RANGER_AMBER},
+  {"Ranger L21 Quest: Seeking Bullywug Oil", MOB_RANGER_AMBER},
+  {"Ranger L21 Quest: Seeking Bandits in Bullywug", MOB_SHAMAN_BULLY},  //210
+  {"Ranger L21 Quest: Got Bullywug Oil", MOB_SHAMAN_BULLY},
+  {"Ranger L21 Quest: Finished Ranger L21 Quest", MOB_AMBER_RANGER},
   {"Faction Membership: eligible", MOB_NONE},
   {"Caldonia: bought her a shot of whisky", MOB_CALDONIA},
   {"", MOB_NONE}, //215

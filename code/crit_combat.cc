@@ -133,7 +133,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
         if (weapon) {
           act("$n gets clumsy, and nails $mself with $p.", TRUE, this, weapon, v, TO_ROOM);
           act("You become careless, and nail yourself with $p.", FALSE, this, weapon, v, TO_CHAR, ANSI_ORANGE);
-          int dam = getWeaponDam(this, weapon,(weapon == heldInPrimHand()));
+          int dam = getWeaponDam(this, weapon,(weapon == heldInPrimHand() ? HAND_PRIMARY : HAND_SECONDARY));
           dam = getActualDamage(this, weapon, dam, w_type);
           dam /= 4;
           rc = applyDamage(this, dam,w_type);
@@ -142,7 +142,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
         } else {
           act("With stunning grace, $n has just struck $mself.", TRUE, this, NULL, v, TO_ROOM);
           act("You strike yourself in your carelessness.", FALSE, this, NULL, v, TO_CHAR, ANSI_ORANGE);
-          int dam = getWeaponDam(this, NULL,0);
+          int dam = getWeaponDam(this, NULL, HAND_SECONDARY);
           dam = getActualDamage(this, NULL, dam, w_type);
           dam /= 4;
           rc = applyDamage(this, dam,w_type);
@@ -155,7 +155,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
         if (weapon) {
           act("$n slips, and smacks $mself with $p.", TRUE, this, weapon, v, TO_ROOM);
           act("You become careless, and smack yourself with your $o.", FALSE, this, weapon, v, TO_CHAR, ANSI_ORANGE);
-          int dam = getWeaponDam(this, weapon,(weapon == heldInPrimHand()));
+          int dam = getWeaponDam(this, weapon,(weapon == heldInPrimHand() ? HAND_PRIMARY : HAND_SECONDARY));
           dam = getActualDamage(this, weapon, dam, w_type);
           dam /= 2;
           rc = applyDamage(this, dam,w_type);
@@ -164,7 +164,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
         } else {
           act("With stunning grace, $n has just struck $mself.", TRUE, this, NULL, v, TO_ROOM);
           act("You strike yourself in your carelessness.", FALSE, this, NULL, v, TO_CHAR, ANSI_ORANGE);
-          int dam = getWeaponDam(this, NULL,0);
+          int dam = getWeaponDam(this, NULL, HAND_SECONDARY);
           dam = getActualDamage(this, NULL, dam, w_type);
           dam /= 2;
           rc = applyDamage(this, dam,w_type);
@@ -195,7 +195,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
             act("$n slips, and smacks $mself with $p.", TRUE, this, weapon, this, TO_ROOM);
             act("You become careless, and smack yourself with your $o.", FALSE, this, weapon, this, TO_CHAR, ANSI_ORANGE);
           }
-          int dam = getWeaponDam(tbt, weapon,(weapon == heldInPrimHand()));
+          int dam = getWeaponDam(tbt, weapon,(weapon == heldInPrimHand() ? HAND_PRIMARY : HAND_SECONDARY));
           dam = getActualDamage(tbt, weapon, dam, w_type);
           dam /=4;
           rc = applyDamage(tbt, dam,w_type);
@@ -227,7 +227,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
             act("$n slips, and smacks $mself.", TRUE, this, NULL, this, TO_ROOM);
             act("You become careless, and smack yourself.", FALSE,this, NULL, this, TO_CHAR, ANSI_ORANGE);
           }
-          int dam = getWeaponDam(tbt, NULL, false);
+          int dam = getWeaponDam(tbt, NULL,  HAND_SECONDARY);
           dam = getActualDamage(tbt, NULL, dam, w_type);
           dam /=4;
           rc = applyDamage(tbt, dam,w_type);
@@ -271,7 +271,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
             act("$n slips, and smacks $mself with $p.", TRUE, this, weapon, this, TO_ROOM);
             act("You become careless, and smack yourself with your $o.", FALSE,this, weapon, this, TO_CHAR, ANSI_ORANGE);
           }
-          int dam = getWeaponDam(tbt, weapon,(weapon == heldInPrimHand()));
+          int dam = getWeaponDam(tbt, weapon,(weapon == heldInPrimHand() ? HAND_PRIMARY : HAND_SECONDARY));
           dam = getActualDamage(tbt, weapon, dam, w_type);
           dam /= 2;
           rc = applyDamage(tbt, dam,w_type);
@@ -301,7 +301,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
             act("$n slips, and smacks $mself.", TRUE, this, NULL, this, TO_ROOM);
             act("You become careless, and smack yourself.", FALSE,this, NULL, this, TO_CHAR, ANSI_ORANGE);
           }
-          int dam = getWeaponDam(tbt, NULL,0);
+          int dam = getWeaponDam(tbt, NULL, HAND_SECONDARY);
           dam = getActualDamage(tbt, NULL, dam, w_type);
           dam /= 2;
           rc = applyDamage(tbt, dam,w_type);
@@ -344,7 +344,7 @@ int TBeing::critFailureChance(TBeing *v, TThing *weap, spellNumT w_type)
           sprintf(buf, "$n miserably misses you, %sand sticks $p in $s foot%s!",
                   v->cyan(),v->norm());
           act(buf, TRUE, this, weapon, v, TO_VICT);
-          num2 = getWeaponDam(this,weapon,(weapon == heldInPrimHand()));
+          num2 = getWeaponDam(this,weapon,(weapon == heldInPrimHand() ? HAND_PRIMARY : HAND_SECONDARY));
           num2 /= 2;
           rc = stickIn(unequip(weapon->eq_pos), WEAR_FOOT_R);
           if (desc)

@@ -1,27 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_doorbash.cc,v $
-// Revision 5.1.1.3  1999/10/29 05:28:37  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.2  1999/10/16 21:43:02  batopr
-// Decreased stunned lag from miss
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "combat.h"
 #include "disc_warrior.h"
@@ -48,11 +24,14 @@ int TBeing::slamIntoWall(roomDirData * exitp)
   if (reconcileDamage(this, (::number(1, 10) * 2), DAMAGE_COLLISION) == -1)
     return DELETE_THIS;
 
-  affectedData aff;
-  aff.type = SKILL_DOORBASH;
-  aff.duration = 2 * UPDATES_PER_TICK / 3;
-  aff.bitvector = AFF_STUNNED;
-  affectTo(&aff, -1);
+  if (!isImmortal()) {
+    affectedData aff;
+
+    aff.type = SKILL_DOORBASH;
+    aff.duration = 2 * UPDATES_PER_TICK / 3;
+    aff.bitvector = AFF_STUNNED;
+    affectTo(&aff, -1);
+  }
 
 #if 0
   addToWait(combatRound(12));
@@ -100,7 +79,7 @@ static int doorbash(TBeing * caster, dirTypeT dir)
 
   if (dir == DIR_UP) {
     if (rp->isAirSector() && !caster->isFlying()) {
-      caster->sendTo("You woould need to be flying to go there!\n\r");
+      caster->sendTo("You would need to be flying to go there!\n\r");
       return FALSE;
     }
   }

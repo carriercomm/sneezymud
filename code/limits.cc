@@ -714,7 +714,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
           double peak2 = getExpClassLevel(i,ch->getLevel(i) + 2);
           double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
           double curr = getExpClassLevel(i,ch->getLevel(i));
-	  double gainmod = ((ch->getLevel(i)) + 1);
+	  double gainmod = ((ch->getLevel(i))); // removed +1
           if (ch->getLevel(i)) {
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
@@ -760,7 +760,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
       if(dam > 0) {
 	double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
 	double curr = getExpClassLevel(i,ch->getLevel(i));
-	double gainmod = ((ch->getLevel(i) + 1));
+	double gainmod = ((ch->getLevel(i))); // removed +1
 	newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
 	// the 100 compensates for dam
 	gain = min(gain, newgain); 

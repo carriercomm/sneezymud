@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: connect.cc,v $
+// Revision 5.1.1.4  1999/10/23 18:25:17  mithros
+// Changed spelling of Armaggedon's name for connect placement.
+//
 // Revision 5.1.1.3  1999/10/23 03:02:37  mithros
 // Removed some other old builder's room loads.
 //
@@ -2425,7 +2428,7 @@ int TPerson::genericLoadPC()
         rp = real_roomp(27);
       else if (!strcmp(name, "Mithros"))
         rp = real_roomp(28);
-      else if (!strcmp(name, "Armagedon"))
+      else if (!strcmp(name, "Armaggedon"))
         rp = real_roomp(30);
       else if (!strcmp(name, "Onslaught"))
         rp = real_roomp(31);

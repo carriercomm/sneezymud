@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: drug.h,v $
+// Revision 5.1.1.2  2000/01/31 23:29:27  peel
+// added applyDrugAffects prototype
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -55,5 +58,9 @@ class drugData {
     drugData & operator =(const drugData &t);
 
 };
+
+
+void applyDrugAffects(TBeing *, drugTypeT, bool);
+
 
 #endif

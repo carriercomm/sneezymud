@@ -1319,13 +1319,15 @@ int TObj::burnObject(TBeing *ch, int perc)
       act("The flame slightly singes $n, but it looks intact.",
            TRUE,this,0,0,TO_ROOM);
     }
-    return TRUE;
-  }
 
-  if(material_nums[getMaterial()].flammability){
-    setBurning(ch);
-    sprintf(buf, "Your $o start$Q to burn!");
-    act(buf,TRUE,ch,this,0,TO_CHAR);
+    if(material_nums[getMaterial()].flammability &&
+       !isObjStat(ITEM_BURNING) && !isObjStat(ITEM_PAIRED)){
+      setBurning(ch);
+      sprintf(buf, "Your $o start$Q to burn!");
+      act(buf,TRUE,ch,this,0,TO_CHAR);
+    }
+
+    return TRUE;
   }
 
   return FALSE;

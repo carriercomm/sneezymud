@@ -2745,6 +2745,43 @@ int bloodspike(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
   return TRUE;
 }
 
+int vorpal(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *){
+  TThing *weap=dynamic_cast<TThing *>(o);
+  int dam, rc=0;
+  wearSlotT part;
+  spellNumT wtype;
+  TBeing *ch;
+  int crits[20]={67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,91,92,98,99};
+
+  if(!(ch=genericWeaponProcCheck(vict, cmd, o, 15)))
+     return FALSE;
+
+  part = vict->getPartHit(ch, TRUE);
+  dam = ch->getWeaponDam(vict, weap, HAND_PRIMARY);
+
+  if (weap)
+    wtype = ch->getAttackType(weap);
+  else
+    wtype = TYPE_HIT;
+
+  act("$p <r>begins glowing deep red!<1>", 0, vict, o, 0, TO_ROOM);
+
+    
+  rc = ch->critSuccessChance(vict, weap, &part, wtype, &dam, crits[::number(0,20)]);
+  if (IS_SET_DELETE(rc, DELETE_VICT)) {
+    return DELETE_VICT;
+  } else if (!rc) {
+    act("$p swings abruptly, but fails to hit anything.", 0, vict, o, 0, TO_ROOM);
+    return FALSE;
+  }
+  rc = ch->applyDamage(vict, dam, wtype);
+  if (IS_SET_DELETE(rc, DELETE_VICT)) {
+    return DELETE_VICT;
+  }
+  return FALSE;
+}
+
+
 // Is what is says, This is a special proc that will one day help newbies
 // understand sneezy more.
 int newbieHelperWProc(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TObj *)
@@ -4307,6 +4344,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "Better Vender", vending_machine2},
   {FALSE, "Mine Cart", minecart},
   {FALSE, "Switchtrack", switchtrack},
+  {FALSE, "vorpal", vorpal},
 };
 
 

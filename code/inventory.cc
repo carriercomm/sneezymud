@@ -1729,6 +1729,14 @@ int TBeing::doDonate(const char *argument)
       }
     }
 
+    if (o && (o->obj_flags.cost <= 0 || o->isObjStat(ITEM_NORENT))) {
+      act("$p has no real long term value, so you junk it instead.",
+          FALSE, this, o, NULL, TO_CHAR);
+      doJunk("", o);
+
+      return FALSE;
+    }
+
     act("You donate $p.", false, this, t_o, NULL, TO_CHAR);
     act("$n donates $p.", false, this, t_o, NULL, TO_ROOM);
 

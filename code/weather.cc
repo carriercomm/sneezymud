@@ -823,8 +823,8 @@ bool moonIsUp()
 
 bool sunIsUp()
 {
-  int sr = sunRise();
-  int ss = sunSet();
+  int sr = sunTime(SUN_TIME_RISE);
+  int ss = sunTime(SUN_TIME_SET);
   int hmt = hourminTime();
 
   // assumption that sr is always < ss

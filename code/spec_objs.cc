@@ -2969,7 +2969,7 @@ int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
     return FALSE;
   if (cmd != CMD_OBJ_HIT)
     return FALSE;
-  dam = (::number( 1, (ch->GetMaxLevel()) / 10 + 1));
+  dam = (::number( 1, (ch->GetMaxLevel()) / 10 + 2));
   which = ::number(1,2);
 
   act("<k>Three long, thin blades spring from your <1>$o<k>.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);

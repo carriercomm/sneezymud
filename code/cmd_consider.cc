@@ -149,8 +149,7 @@ void TBeing::doConsider(const char *argument)
   else
     sendTo("There are better ways to suicide.\n\r");
 
-#if 0
-  // this code is duplicated somewhat in doTrophy
+#ifdef SNEEZY2000
   MYSQL_ROW row;
   MYSQL_RES *res;
   int rc, count;
@@ -163,10 +162,7 @@ void TBeing::doConsider(const char *argument)
   } else if((row=mysql_fetch_row(res))){
     count=atoi(row[1]);
     sendTo(COLOR_BASIC, "You will gain %s experience when fighting %s.\n\r", 
-	    ((count < 5) ? "<Y>full<1>" :
-	     ((count < 7) ? "<o>much<1>" :
-	     ((count < 9) ? "a fair amount" :
-	      ((count < 11) ? "<w>some<1>" : "<k>little<1>")))),
+	   describe_trophy_exp(count),
 	    namebuf);
   }
 #endif

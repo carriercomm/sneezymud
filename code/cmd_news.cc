@@ -9,9 +9,35 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <algorithm>
 
 #include "stdsneezy.h"
 #include "statistics.h"
+
+class newsFileList {
+  public:
+    string fileName;
+    time_t modTime;
+
+  newsFileList(string a, time_t tim) :
+    fileName(a),
+    modTime(tim)
+  {}
+  newsFileList() :
+    fileName(""),
+    modTime(0)
+  {}
+};
+
+class newsFileSorter {
+  public:
+    bool operator() (const newsFileList &, const newsFileList &) const;
+};
+
+bool newsFileSorter::operator() (const newsFileList &x, const newsFileList &y) const
+{
+  return  (x.modTime < y.modTime);
+}
 
 void TBeing::doNews(const char *argument)
 {
@@ -26,6 +52,9 @@ void TBeing::doNews(const char *argument)
     char buf[256];
     char timebuf[256];
     struct stat theStat;
+    vector<newsFileList>vecFiles(0);
+
+    vecFiles.clear();
 
     sendTo("The following files have changed recently:\n\r");
     sendTo("------------------------------------------\n\r");
@@ -43,10 +72,9 @@ void TBeing::doNews(const char *argument)
       sprintf(buf, "%s/%s", HELP_PATH, dp->d_name);
       if (!stat(buf, &theStat)) {
         if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-          strcpy(timebuf, ctime(&(theStat.st_mtime)));
-          timebuf[strlen(timebuf) - 1] = '\0';
+          newsFileList nfl(dp->d_name, theStat.st_mtime);
 
-          sendTo("%s : %s\n\r", dp->d_name, timebuf); 
+          vecFiles.push_back(nfl);
         }
       }
     }
@@ -65,10 +93,8 @@ void TBeing::doNews(const char *argument)
       sprintf(buf, "%s/%s", SKILL_HELP_PATH, dp->d_name);
       if (!stat(buf, &theStat)) {
         if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-          strcpy(timebuf, ctime(&(theStat.st_mtime)));
-          timebuf[strlen(timebuf) - 1] = '\0';
-
-          sendTo("%s : %s\n\r", dp->d_name, timebuf); 
+          newsFileList nfl(dp->d_name, theStat.st_mtime);
+          vecFiles.push_back(nfl);
         }
       }
     }
@@ -87,10 +113,8 @@ void TBeing::doNews(const char *argument)
       sprintf(buf, "%s/%s", SPELL_HELP_PATH, dp->d_name);
       if (!stat(buf, &theStat)) {
         if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-          strcpy(timebuf, ctime(&(theStat.st_mtime)));
-          timebuf[strlen(timebuf) - 1] = '\0';
-
-          sendTo("%s : %s\n\r", dp->d_name, timebuf); 
+          newsFileList nfl(dp->d_name, theStat.st_mtime);
+          vecFiles.push_back(nfl);
         }
       }
     }
@@ -110,10 +134,8 @@ void TBeing::doNews(const char *argument)
         sprintf(buf, "%s/%s", BUILDER_HELP_PATH, dp->d_name);
         if (!stat(buf, &theStat)) {
           if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-            strcpy(timebuf, ctime(&(theStat.st_mtime)));
-            timebuf[strlen(timebuf) - 1] = '\0';
-  
-            sendTo("%s : %s\n\r", dp->d_name, timebuf); 
+            newsFileList nfl(dp->d_name, theStat.st_mtime);
+            vecFiles.push_back(nfl);
           }
         }
       }
@@ -134,16 +156,23 @@ void TBeing::doNews(const char *argument)
         sprintf(buf, "%s/%s", BUILDER_HELP_PATH, dp->d_name);
         if (!stat(buf, &theStat)) {
           if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-            strcpy(timebuf, ctime(&(theStat.st_mtime)));
-            timebuf[strlen(timebuf) - 1] = '\0';
-  
-            sendTo("%s : %s\n\r", dp->d_name, timebuf); 
+            newsFileList nfl(dp->d_name, theStat.st_mtime);
+            vecFiles.push_back(nfl);
           }
         }
       }
       closedir(dfd);
     }
 
+    sort(vecFiles.begin(), vecFiles.end(), newsFileSorter());
+
+    unsigned int iter;
+    for (iter = 0; iter < vecFiles.size(); iter++) {
+      strcpy(timebuf, ctime(&(vecFiles[iter].modTime)));
+      timebuf[strlen(timebuf) - 1] = '\0';
+  
+      sendTo("%s : %s\n\r", timebuf, vecFiles[iter].fileName.c_str()); 
+    }
     return;
   }
 

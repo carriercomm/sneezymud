@@ -5,7 +5,8 @@ int weaponJambiyaSpecial(TBeing *tVictim, cmdTypeT tCmd, const char *tArg, TObj 
   if (tCmd != CMD_STAB && tCmd != CMD_BACKSTAB)
     return FALSE;
 
-  if (strcmp(tArg, "-special-") || !tVictim || !tObj)
+  if (strcmp(tArg, "-special-") ||
+      !tVictim || !tObj)
     return FALSE;
 
   TBaseWeapon *tWeapon;

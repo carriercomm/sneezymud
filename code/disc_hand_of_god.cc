@@ -779,50 +779,42 @@ void heroesFeast(TBeing * caster)
   }
 }
 
-int portal(TBeing * caster, TBeing * victim, int level, byte bKnown)
+struct portalRoomT {
+      int roomnum;
+      const char *name;
+};
+
+portalRoomT portalRooms[] =
+{
+  {15346, "grimhaven"},
+  {15347, "brightmoon"},
+  {15348, "logrus"},
+};
+
+const int NUM_PORTAL_ROOMS = 3;
+
+
+int portal(TBeing * caster, const char * portalroom, int level, byte bKnown)
 {
   char buf[256];
-  TMonster *tmon;
   TPerson *tPerson = dynamic_cast<TPerson *>(caster);
+  int i, location=0;
 
-  int location = victim->in_room;
-  TRoom * rp = victim->roomp;
 
-  if (!rp) {
+  for(i=0;i<NUM_PORTAL_ROOMS;++i){
+    if(is_abbrev(portalroom, portalRooms[i].name)){
+      location=portalRooms[i].roomnum;
+    }
+  }
+ 
+  TRoom * rp = real_roomp(location);
+
+  if (!rp || !location) {
     caster->sendTo("You can't seem to portal to that location.\n\r");
-    vlogf(LOG_BUG, "Attempt to portal to room %d",location);
+    //    vlogf(LOG_BUG, "Attempt to portal to room %d",location);
     return SPELL_FAIL;
   }
 
-  if (victim->isImmortal() && !caster->isImmortal()) {
-    caster->sendTo("Portalling to a God could be hazardous to your health.\n\r");
-    act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
-    return SPELL_FAIL;
-  }
-
-  if (caster->roomp->isRoomFlag(ROOM_NO_PORTAL) &&
-	!caster->isImmortal()) {
-    caster->sendTo("You can't seem to escape the defenses of this area.\n\r");
-    act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
-    return SPELL_FAIL;
-  }
-
-  if ((victim->GetMaxLevel() > MAX_MORT ||
-       rp->isRoomFlag(ROOM_NO_SUM) ||
-       rp->isRoomFlag(ROOM_HAVE_TO_WALK) ||
-       rp->isRoomFlag(ROOM_NO_MAGIC)) &&
-	!caster->isImmortal()) {
-    caster->sendTo("You can't seem to penetrate the defenses of that area.\n\r");
-    act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
-    return SPELL_FAIL;
-  }
-
-  if((tmon=dynamic_cast<TMonster *>(victim)) && 
-     ((tmon->mobVnum()==MOB_TIGER_SHARK) || tmon->mobVnum()==MOB_ELEPHANT)){
-    caster->sendTo("You can't seem to penetrate the defenses of that area.\n\r");
-    act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
-    return SPELL_FAIL;  
-  }
 
   if (bSuccess(caster,bKnown,caster->getPerc(),SPELL_PORTAL)) {
     TPortal * tmp_obj = new TPortal();
@@ -869,15 +861,18 @@ int portal(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
     act("$p suddenly appears out of a swirling mist.", TRUE, caster, tmp_obj, NULL, TO_ROOM);
     act("$p suddenly appears out of a swirling mist.", TRUE, caster, tmp_obj, NULL, TO_CHAR);
-    act("$p suddenly appears out of a swirling mist.", TRUE, victim, next_tmp_obj, NULL, TO_ROOM);
-    act("$p suddenly appears out of a swirling mist.", TRUE, victim, next_tmp_obj, NULL, TO_CHAR);
+
+    sprintf(buf, "%s suddenly appears out of a swirling mist.", next_tmp_obj->shortDescr);
+    sendToRoom(buf, location);
+
     return SPELL_SUCCESS;
   } else {
     return SPELL_FAIL;
   }
 }
 
-void portal(TBeing * caster, TBeing * victim)
+
+void portal(TBeing * caster, const char * portalroom)
 {
   int ret,level;
 
@@ -886,7 +881,7 @@ void portal(TBeing * caster, TBeing * victim)
 
   level = caster->getSkillLevel(SPELL_PORTAL);
 
-  ret=portal(caster,victim,level,caster->getSkillValue(SPELL_PORTAL));
+  ret=portal(caster,portalroom,level,caster->getSkillValue(SPELL_PORTAL));
   if (ret==SPELL_SUCCESS) {
   } else  {
     caster->sendTo("Nothing seems to happen.\n\r");

@@ -668,7 +668,7 @@ void TPerson::setTitle(bool tForm)
   title = mud_str_dup(tString);
 }
 
-void gain_exp(TBeing *ch, double gain)
+void gain_exp(TBeing *ch, double gain, int rawdamage)
 {
   classIndT i;
 

@@ -3,6 +3,10 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: peelpk.cc,v $
+// Revision 5.1.1.4  2001/01/25 03:35:15  sneezy
+// added damage cut to peelpk
+// (dash)
+//
 // Revision 5.1.1.3  2000/12/28 19:42:03  peel
 // uh made some changes or something
 //
@@ -30,6 +34,7 @@
 
 struct TPeelPk {
   int zones;
+  bool cutdam;
   sh_int zone[4];
   int respawns[2];
   int respawn[2][4];
@@ -43,7 +48,7 @@ struct TPeelPk {
   int teamdeaths[2][PEELPK_TEAMSIZE];
   int holding[2];
   time_t endtime;
-} peelPk={0, {0,0,0,0}, {0,0}, {{0,0,0,0}, {0,0,0,0}}, 
+} peelPk={0, false, {0,0,0,0}, {0,0}, {{0,0,0,0}, {0,0,0,0}}, 
 	  0, 100, 0, {0, 0}, {0, 0},
 	  {{NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,},
 	  {NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,}},
@@ -51,6 +56,13 @@ struct TPeelPk {
 	  {{0,0,0,0,0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0,0,0,0,0}},
 	  {0,0},0};
 
+
+bool TBeing::cutPeelPkDam() const
+{
+  if (inPkZone())
+    return peelPk.cutdam;
+  return FALSE;
+}
 
 bool TBeing::inPkZone() const
 {
@@ -94,13 +106,14 @@ void TBeing::doPeelPk(const char *argument)
       sendTo("Syntax : peelpk <command>\n\r");
       sendTo("Syntax : peelpk <variable|command> <value>\n\r");
       sendTo("Syntax : peelpk <variable|command> <index> <value>\n\r");
-      sendTo("Variables : zones, zone, respawns, respawn, announce, holding, settimer, respawnlag, default_respawn\n\r");
+      sendTo("Variables : zones, zone, respawns, respawn, announce, holding, settimer, respawnlag, default_respawn, cutdam\n\r");
       sendTo("Commands : addmember, remmember, echoscore, checktime, resetscore, resetteam, toholding, torespawn\n\r");
       sendTo("  # zones     =  %i\n\r", peelPk.zones);
       sendTo("  zones       =  %i, %i, %i, %i\n\r", peelPk.zone[0],
 	     peelPk.zone[1], peelPk.zone[2], peelPk.zone[3]);
       sendTo("  announce    =  %i\n\r", peelPk.announce);
       sendTo("  def respawn =  %i\n\r", peelPk.default_respawn);
+      sendTo("  cutdam      =  %s\n\r", (peelPk.cutdam)?"is ON, damage reduced by one half":"is OFF, no damage reduction");
     }
     if(peelPk.endtime>0)
       sendTo("  time left   =  %i:%i\n\r", (peelPk.endtime-time(NULL))/60,
@@ -216,6 +229,11 @@ void TBeing::doPeelPk(const char *argument)
   } else if(!strcmp(buf, "holding")){
     half_chop(buf2, buf, buf2);
     peelPk.holding[atoi(buf)]=atoi(buf2);
+  } else if (!strcmp(buf, "cutdam")) {
+    if (!strcmp(buf2, "on")) peelPk.cutdam = TRUE;
+    else if (!strcmp(buf2, "off")) peelPk.cutdam = FALSE;
+    else sendTo("syntax: peelpk cutdam <on | off>");
+    sendTo("PkQuest: %s\n\r", (peelPk.cutdam)?"Damage cut by 50 percent":"No damage modification");
   } else if(!strcmp(buf, "respawnlag")){
     peelPk.respawnlag=atoi(buf2);
   } else if(!strcmp(buf, "settimer")){
@@ -287,7 +305,7 @@ void TBeing::doPeelPk(const char *argument)
 	}
       }
     }
-  }
+  } 
 } 
 
 // returns DELETE_THIS

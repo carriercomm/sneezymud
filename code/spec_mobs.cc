@@ -5733,7 +5733,7 @@ int hobbitEmissary(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj 
       delete [] hunted_victim;
     }
   };
-  static hunt_struct *job;
+  hunt_struct *job;
 
   TBeing *targ;
   char buf[160];

@@ -172,7 +172,7 @@ int TSocket::gameLoop()
   Descriptor *point;
   int pulse = 0;
   int teleport, combat, drowning, special_procs, update_stuff;
-  int points, tick_updates, mobstuff;
+  int pulse_tick, pulse_mudhour, mobstuff;
   TBeing *tmp_ch, *temp;
   TObj *obj, *next_thing;
   static int sent = 0;
@@ -320,31 +320,35 @@ int TSocket::gameLoop()
       drowning = (pulse % PULSE_DROWNING);
       special_procs = (pulse % PULSE_SPEC_PROCS);
       update_stuff = (pulse % PULSE_NOISES);
-      tick_updates = (pulse % PULSE_MUDHOUR);
+      pulse_mudhour = (pulse % PULSE_MUDHOUR);
       mobstuff = (pulse % PULSE_MOBACT);
-      points = (pulse % PULSE_UPDATE);
+      pulse_tick = (pulse % PULSE_UPDATE);
     } else {
       teleport = (pulse % (PULSE_TELEPORT/2));
       combat = (pulse % (PULSE_COMBAT/2));
       drowning = (pulse % (PULSE_DROWNING/2));
       special_procs = (pulse % (PULSE_SPEC_PROCS/2));
       update_stuff = (pulse % (PULSE_NOISES/2));
-      tick_updates = (pulse % (PULSE_MUDHOUR/2));
+      pulse_mudhour = (pulse % (PULSE_MUDHOUR/2));
       mobstuff = (pulse % (PULSE_MOBACT/2));
-      points = (pulse % (PULSE_UPDATE/2));
+      pulse_tick = (pulse % (PULSE_UPDATE/2));
     }
 
-    if (!points) {
+    if (!pulse_tick) {
+      // these are done per tick (15 mud minutes)
       doGlobalRoomStuff();
       deityCheck(FALSE);
       apocCheck();
       save_factions();
+
+      weatherAndTime(1);
     }
 
     if (!combat)
       perform_violence(pulse);
 
-    if (!tick_updates) {
+    if (!pulse_mudhour) {
+      // these are done per mud hour
       recalcFactionPower();
 
       // adjust zones for nuking
@@ -366,7 +370,6 @@ int TSocket::gameLoop()
 
 
       // weather and time stuff
-      weatherAndTime(1);
       if (time_info.hours == 1)
 	update_time();
       zone_update();
@@ -388,11 +391,11 @@ int TSocket::gameLoop()
       }
       checkGoldStats();
     }
-    if (!teleport || !special_procs || !tick_updates) {
+    if (!teleport || !special_procs || !pulse_mudhour) {
       call_room_specials();
 // this is advanced weather stuff, do not activate - Bat
 #if 0 
-      if (!tick_updates)
+      if (!pulse_mudhour)
         update_world_weather();
 #endif
       // note on this loop
@@ -458,7 +461,7 @@ int TSocket::gameLoop()
             }
           }
 	}
-	if (!tick_updates) {
+	if (!pulse_mudhour) {
 	  rc = obj->objectTickUpdate(pulse);
           if (IS_SET_DELETE(rc, DELETE_THIS)) {
             next_thing = obj->next;
@@ -471,7 +474,7 @@ int TSocket::gameLoop()
       } // object list
     }
 
-    if (!combat || !mobstuff || !teleport || !drowning || !update_stuff || !points) {
+    if (!combat || !mobstuff || !teleport || !drowning || !update_stuff || !pulse_tick) {
       // note on this loop
       // it is possible that temp gets deleted in one of the sub funcs
       // we don't get acknowledgement of this in any way.
@@ -606,7 +609,7 @@ int TSocket::gameLoop()
         }
 #endif
 
-	if (!points) {
+	if (!pulse_tick) {
 	  rc = tmp_ch->updateHalfTickStuff();
 	  if (IS_SET_DELETE(rc, DELETE_THIS)) {
 	    if (!tmp_ch)
@@ -618,7 +621,7 @@ int TSocket::gameLoop()
             continue;
           }
 	}
-	if (!tick_updates) {
+	if (!pulse_mudhour) {
 	  rc = tmp_ch->updateTickStuff();
 	  if (IS_SET_DELETE(rc, DELETE_THIS)) {
             temp = tmp_ch->next;

@@ -2173,7 +2173,7 @@ void buildCommandArray(void)
   commandArray[CMD_TASTE] = new commandInfo("taste", POSITION_RESTING, 0);
   commandArray[CMD_SNOOP] = new commandInfo("snoop", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_FOLLOW] = new commandInfo("follow", POSITION_RESTING, 0);
-  commandArray[CMD_RENT] = new commandInfo("rent", POSITION_CRAWLING, 0);
+  commandArray[CMD_RENT] = new commandInfo("rent", POSITION_RESTING, 0);
   commandArray[CMD_OFFER] = new commandInfo("offer", POSITION_RESTING, 0);
   commandArray[CMD_POKE] = new commandInfo("poke", POSITION_RESTING, 0);
   commandArray[CMD_ACCUSE] = new commandInfo("accuse", POSITION_SITTING, 0);

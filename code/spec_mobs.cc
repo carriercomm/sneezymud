@@ -6371,7 +6371,7 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"Trainer: blunt", CDGenericTrainer},
   {FALSE,"Trainer: pierce", CDGenericTrainer},
   {FALSE,"Trainer: ranged", CDGenericTrainer},    // 85 
-  {TRUE, "BOGUS", bogus_mob_proc},       
+  {TRUE,"Tunneler/Earthquake", tunnelerEarthquake},
   {FALSE,"Trainer: deikhan", CDGenericTrainer},
   {TRUE, "Ram", ram},
   {TRUE, "Insulter", insulter},
@@ -6437,5 +6437,8 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"Trainer: theology", CDGenericTrainer},   
   {FALSE,"attuner", attuner},                      // 150 
   {TRUE,"paralyze gaze", paralyzeGaze},
+  {TRUE,"Doppleganger/Mimic", doppleganger},
+  {TRUE,"Tusker/Goring", tuskGoring}
+
 // replace non-zero, bogus_mob_procs above before adding
 };

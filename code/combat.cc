@@ -351,6 +351,8 @@ int TBeing::rawKill(spellNumT dmg_type)
 {
   // using this to keep an eye on potential problem cropping up. bat - 12/26/99
   Descriptor * tmpdesc = desc;
+  if (tmpdesc) {
+  }
 
   if (fight())  {
     followData *f;

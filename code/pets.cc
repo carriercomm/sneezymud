@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: pets.cc,v $
+// Revision 5.1.1.2  1999/10/29 03:14:52  cosmo
+// Just adding a log message to see if can isolate bad orphan pet affects
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -261,6 +264,10 @@ bool TMonster::restorePetToPc(TBeing *ch)
   if (!aff || !aff->be) {
     act("$N has never been a pet and can not be retrained.",
         FALSE, ch, NULL, this, TO_CHAR);
+    if (affectedBySpell(AFFECT_ORPHAN_PET)) {
+      affectFrom(AFFECT_ORPHAN_PET); 
+      vlogf(9, "A non pet with AFFECT_ORPHAN_PET (%s).", getName());
+    }
     return FALSE;
   }
   // **semicolon added to end of line**

@@ -9,6 +9,7 @@
 #include "rent.h"
 #include "statistics.h"
 #include "mail.h"
+#include "shop.h"
 
 static const char ROOM_SAVE_PATH[] = "roomdata/saved";
 static const int NORMAL_SLOT   = -1;
@@ -1189,6 +1190,36 @@ void TMonster::saveItems(const char *filepath)
   i = CONTENTS_END;
   fwrite(&i, sizeof(i), 1, fp);
   fclose(fp);
+
+  if(spec==SPEC_SHOPKEEPER){
+    unsigned int shop_nr;
+    int rc;
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != this->number); shop_nr++);
+    
+    if (shop_nr >= shop_index.size()) {
+      vlogf(LOG_BUG, "Warning... shop # for mobile %d (real nr) not found.", this->number);
+      return;
+    }
+    
+    if((rc=dbquery(&res, "sneezy", "saveItems", "select * from shopownedaccess where shop_nr=%i", shop_nr+1))==-1){
+      vlogf(LOG_BUG, "Database error in shop_keeper");
+      return;
+    }
+    if((row=mysql_fetch_row(res))){
+      mysql_free_result(res);
+      if((rc=dbquery(&res, "sneezy", "saveItems", "update shopowned set gold=%i where shop_nr=%i", getMoney(), shop_nr+1))){
+	if(rc==-1){
+	  vlogf(LOG_BUG, "Database error in shop_keeper");
+	  return;
+	}
+      }
+
+      mysql_free_result(res);
+    }
+  }
 }
 
 void TRoom::saveItems(const char *)

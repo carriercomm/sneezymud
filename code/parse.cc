@@ -108,13 +108,39 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
   TBeing *ch;
   bool isPoly = FALSE;
   char newarg[1024];
+  string tStNewArg("");
 
-  for (;isspace(*argument);argument++);
+  for (; isspace(*argument); argument++);
 
-  if (!strcasecmp(argument, "self") || !strcasecmp(argument, "me"))
-    strcpy(newarg, getName());
-  else
-    strcpy(newarg, argument);
+  tStNewArg = argument;
+
+  if (tStNewArg.find("self") != string::npos)
+    tStNewArg.replace(tStNewArg.find("self"), 4, getName());
+
+  else if (tStNewArg.find("me") != string::npos)
+    tStNewArg.replace(tStNewArg.find("me"), 2, getName());
+
+  else if (tStNewArg.find("tank") != string::npos && fight() &&
+           isAffected(AFF_GROUP) && fight()->fight()) {
+    tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(fight()->fight()).c_str());
+  } else if (tStNewArg.find("tank") != string::npos &&
+           cmd == CMD_PRAY && isAffected(AFF_GROUP)) {
+    if ((master && master->followers) || followers) {
+      followData * tF = (master ? master->followers : followers);
+
+      for (; tF; tF = tF->next)
+        if ((ch = tF->follower->specials.fighting) &&
+            ch->specials.fighting == tF->follower) {
+          tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(tF->follower).c_str());
+          break;
+        }
+
+      if (!tF)
+        tStNewArg.replace(tStNewArg.find("tank"), 4, getName());
+    }
+  }
+
+  strcpy(newarg, tStNewArg.c_str());
 
   if (typedIn && desc && dynamic_cast<TMonster *>(this)) 
     isPoly = TRUE;

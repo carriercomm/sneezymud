@@ -583,6 +583,26 @@ int TSocket::gameLoop()
 
         if (!combat) {
 
+	  if (tmp_ch->isPc() && tmp_ch->desc && tmp_ch->GetMaxLevel() > MAX_MORT &&
+	      !tmp_ch->limitPowerCheck(CMD_GOTO, tmp_ch->roomp->number)) {
+	    char tmpbuf[256];
+	    strcpy(tmpbuf, "");
+	    tmp_ch->sendTo("An incredibly powerful force pulls you back into Imperia.\n\r");
+	    act("$n is pulled back from whence $e came.", TRUE, tmp_ch, 0, 0, TO_ROOM);
+	    vlogf(LOG_BUG,"%s was wandering around the mortal world (R:%d) so moving to office.",
+		  tmp_ch->getName(), tmp_ch->roomp->number);
+	    
+	    if (!tmp_ch->hasWizPower(POWER_GOTO)) {
+	      tmp_ch->setWizPower(POWER_GOTO);
+	      tmp_ch->doGoto(tmpbuf);
+	      tmp_ch->remWizPower(POWER_GOTO);
+	    } else {
+	      tmp_ch->doGoto(tmpbuf);
+	    }
+	    act("$n appears in the room with a sheepish look in $s face.", TRUE, tmp_ch, 0, 0, TO_ROOM);
+	  }
+
+
           if (tmp_ch->spelltask) {
             rc = (tmp_ch->cast_spell(tmp_ch, CMD_TASK_CONTINUE, pulse));
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
@@ -592,7 +612,32 @@ int TSocket::gameLoop()
               continue;
             }
           }
+	  /*
+	  if (tmp_ch->isImmortal() && !tmp_ch->limitPowerCheck(CMD_GOTO, tmp_ch->roomp->number)) {
+	    vlogf(LOG_CHEAT, "%s was in room %d, and is not allowed there, extracting to office (%d)",
+		  tmp_ch->getName(), tmp_ch->roomp->number, tmp_ch->desc->office);
+	    tmp_ch->sendTo("You feel a tremendous force pulling you back to Imperia...\n\r");
+	    act("$n is pulled back from whence $e came.",
+		TRUE, tmp_ch, NULL, NULL, TO_ROOM, NULL, TRUE));
 
+	    if (tmp_ch->fight())
+	      tmp_ch->stopFighting();
+
+	    // this is mostly here for blackjack, but what the heck...
+	    tmp_ch->removeAllCasinoGames();
+
+	    --(*tmp_ch);
+
+	    if (tmp_ch->riding) {
+	      --(tmp_ch->riding);
+	      real_roomp(tmp_ch->desc->office) += tmp_ch->riding;
+	    }
+	    real_roomp(ch->desc->office) += *tmp_ch;
+
+	    if (!tmp_ch->riding && !tmp_ch->isFlying())
+	      tmp_ch->setPosition(POSITION_STANDING);
+	  }
+	  */
           rc = tmp_ch->updateAffects();
           if (IS_SET_DELETE(rc, DELETE_THIS)) {
             // died in update (disease) 

@@ -3780,7 +3780,7 @@ void TPerson::doAccess(const char *arg)
            st.stats[STAT_SPE]);
 
     sprintf(buf + strlen(buf), "Gold:  %d,    Bank:  %d,   Exp:  %.3f\n\r",
-          st.points.money, st.points.bankmoney, st.points.exp);
+          st.money, st.bankmoney, st.exp);
     sprintf(buf + strlen(buf), "Height:  %d,    Weight:  %.1f\n\r",
           st.height, st.weight);
 

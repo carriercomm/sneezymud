@@ -36,15 +36,14 @@ extern "C" {
 #include "socket.h"
 #include "mail.h"
 #include "games.h"
-#include "cmd_trophy.h"
 
 const int DONT_SEND = -1;
 const int FORCE_LOW_INVSTE = 1;
 
 static const char * const WIZLOCK_PASSWORD           = "motelvi";
-const char * const MUD_NAME      = "SneezyMUD";
-const char * const MUD_NAME_VERS = "SneezyMUD v5.2";
-static const char * const WELC_MESSG = "\n\rWelcome to SneezyMUD 5.2! May your journeys be interesting!\n\r\n\r";
+const char * const MUD_NAME      = "Grimhaven";
+const char * const MUD_NAME_VERS = "Grimhaven v5.2";
+static const char * const WELC_MESSG = "\n\rWelcome to Grimhaven 5.2! May your journeys be interesting!\n\r\n\r";
 
 static const char * const TER_HUMAN_HELP = "help/territory help human";
 static const char * const TER_ELF_HELP = "help/territory help elf";
@@ -598,7 +597,7 @@ Descriptor::~Descriptor()
       character->desc = NULL;
       if((!character->affectedBySpell(AFFECT_PLAYERKILL) &&
           !character->affectedBySpell(AFFECT_PLAYERLOOT)) ||
-	  character->isImmortal()) {
+	  character->isImmortal()){
 	character->setInvisLevel(GOD_LEVEL1);
       }
 
@@ -1009,7 +1008,7 @@ int Descriptor::nanny(const char *arg)
             connected = CON_QRACE;
             break;
 	  case 'X':
-	    if(IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
+	    if(IS_SET(account->flags, ACCOUNT_IMMORTAL)){
 	      int racenum=atoi((arg+1));
 	      character->setRace(race_t(racenum));
 	      character->cls();
@@ -1244,7 +1243,6 @@ int Descriptor::nanny(const char *arg)
             return DELETE_THIS;
           }
 #endif
-	  
           if (should_be_logged(character)) {
             objCost cost;
 
@@ -1263,7 +1261,6 @@ int Descriptor::nanny(const char *arg)
           act("$n has reconnected.", TRUE, tmp_ch, 0, 0, TO_ROOM);
           tmp_ch->loadCareerStats();
 	  tmp_ch->loadDrugStats();
-	  tmp_ch->loadFactionStats();
           if (tmp_ch->getHit() < 0) 
             dynamic_cast<TPerson *>(tmp_ch)->autoDeath();
           
@@ -1377,7 +1374,6 @@ int Descriptor::nanny(const char *arg)
               act("$n has reconnected.", TRUE, tmp_ch, 0, 0, TO_ROOM);
               tmp_ch->loadCareerStats();
               tmp_ch->loadDrugStats();
-	      tmp_ch->loadFactionStats();
               if (tmp_ch->getHit() < 0) 
                 dynamic_cast<TPerson *>(tmp_ch)->autoDeath();
               
@@ -1827,7 +1823,7 @@ int Descriptor::nanny(const char *arg)
       writeToQ("\n\r\n*** PRESS RETURN: ");
       connected = CON_RMOTD;
       break;
-    case CON_QCLASS: {
+    case CON_QCLASS:{
       mud_assert(character != NULL, "Character NULL where it shouldn't be");
       for (; isspace(*arg); arg++);
       character->setClass(0);
@@ -1912,11 +1908,19 @@ int Descriptor::nanny(const char *arg)
               writeToQ("--> ");
               connected = CON_QCLASS;
             }
-	    writeToQ("Shaman are currently being play-tested.\n\r");
+	    writeToQ("Shaman are not yet a playable class.\n\r");
+	    writeToQ("At some point in time, Jesus may authorize your use of this\n\r");
+	    writeToQ("class as a play tester or whatever. If not consider this a \n\r");
+	    writeToQ("warning to go back and create something else.\n\r\n\r");
+	    writeToQ("Shaman are to be a very high maintainance class. You are\n\r");
+	    writeToQ("therefore warned now that this class may be unplayable by\n\r");
+	    writeToQ("even the average mudder. This class is meant for the most\n\r");
+	    writeToQ("experienced of players. Not paying attention to your Shaman\n\r");
+	    writeToQ("can and will result in multiple deaths. YOU HAVE BEEN WARNED!\n\r");
 	    // writeToQ("Shaman are not yet a playable class, sorry.\n\r");
             // writeToQ("--> ");
             // connected = CON_QCLASS;
-	    vlogf(LOG_JESUS, "Shaman created in the %s account, please check.", account->name);
+	    vlogf(LOG_JESUS, "UNAUTHERIZED SHAMAN CREATION: %s ", character->getName());
             break;
 #ifdef SNEEZY2000
 #else
@@ -2895,12 +2899,6 @@ int TPerson::genericLoadPC()
     return DELETE_THIS;
 #endif
 
-  if (!TestCode1 && hasClass(CLASS_SHAMAN) && !isImmortal()) {
-    sendTo("Shaman playtesting is temporarily disabled.\n");
-    desc->outputProcessing();
-    return DELETE_THIS;
-  }
-    
   if (should_be_logged(this))
     vlogf(LOG_PIO, "Loading %s's equipment", name);
   resetChar();
@@ -2988,8 +2986,8 @@ int TPerson::genericLoadPC()
         rp = real_roomp(26);
       else if (!strcmp(name, "Dolgan"))
         rp = real_roomp(27);
-//      else if (!strcmp(name, "Mithros"))
-//        rp = real_roomp(28);
+      else if (!strcmp(name, "Mithros"))
+        rp = real_roomp(28);
       else if (!strcmp(name, "Armaggedon"))
         rp = real_roomp(30);
       else if (!strcmp(name, "Onslaught"))
@@ -3016,6 +3014,8 @@ int TPerson::genericLoadPC()
         rp = real_roomp(46);
       else if (!strcmp(name, "Staffa"))
         rp = real_roomp(47);
+      else if (!strcmp(name, "Lapsos"))
+        rp = real_roomp(48);
       else if (!strcmp(name, "Alyria"))
         rp = real_roomp(50);
       else if (!strcmp(name, "Syl"))
@@ -3081,7 +3081,6 @@ int TPerson::genericLoadPC()
   loadFollowers();
   loadCareerStats();
   loadDrugStats();
-  loadFactionStats();
 
   stats.logins++;
   save_game_stats();
@@ -4130,6 +4129,7 @@ bool Descriptor::canChooseClass(int Class, bool multi, bool triple)
 
   if (Class & CLASS_SHAMAN) {
     return TRUE;
+    // enabled for development - was FALSE
   }
 
   if (Class &CLASS_DEIKHAN) {
@@ -4143,6 +4143,11 @@ bool Descriptor::canChooseClass(int Class, bool multi, bool triple)
       return FALSE;
     return TRUE;
   }
+
+  if (Class & CLASS_SHAMAN) {
+    return TRUE;
+  }
+  // boggle...why is this here if its also above about 10 lines up?
 
   if (Class & CLASS_THIEF) {
     return TRUE;
@@ -4676,6 +4681,7 @@ const string Descriptor::badClassMessage(int Class, bool multi, bool triple)
   }
 
   if (Class & CLASS_MONK) {
+    strcat(buf, "Monks temporarily Disabled.\n\r");
   }
   if (Class & CLASS_WARRIOR) {
   }
@@ -4692,6 +4698,8 @@ const string Descriptor::badClassMessage(int Class, bool multi, bool triple)
       strcat(buf, "Ogre's don't have the sensitivity to become Rangers.\n\r");
   }
   if (Class & CLASS_SHAMAN) {
+    strcat(buf, "Shaman class is not currently supported.\n\r");
+
   }
   if (Class & CLASS_THIEF) {
   }
@@ -4997,10 +5005,6 @@ void setPrompts(fd_set out)
           sprintf(promptbuf, "\n\rMANA : %d > ", ch->getMana());
           d->output.putInQ(cap(promptbuf));
         }
-        if (ch->task->task == TASK_SACRIFICE) {
-          sprintf(promptbuf, "\n\rLIFEFORCE : %d > ", ch->getLifeforce());
-          d->output.putInQ(cap(promptbuf));
-        }
         if ((ch->task->task == TASK_SHARPEN || 
              ch->task->task == TASK_DULL) && 
             (obj = ch->heldInPrimHand())) {
@@ -5139,7 +5143,7 @@ void setPrompts(fd_set out)
             if (ch->isImmortal() && IS_SET(d->prompt_d.type, PROMPT_BUILDER_ASSISTANT)) {
               sprintf(promptbuf + strlen(promptbuf),
                       StPrompts[0],
-                      ch->roomp->getZoneNum(),
+                      ch->roomp->getZone(),
                       (ch->roomp->funct ? "Y" : "N"),
                       ch->roomp->getLight(),
                       ch->roomp->getRoomHeight(),
@@ -5152,27 +5156,25 @@ void setPrompts(fd_set out)
                       (hasColor ? d->prompt_d.hpColor : ""),
                       ch->getHit(),
                       ch->norm());
-            if (IS_SET(d->prompt_d.type, PROMPT_MANA)) {
-              if (ch->hasClass(CLASS_CLERIC) || ch->hasClass(CLASS_DEIKHAN)) {
+            if (IS_SET(d->prompt_d.type, PROMPT_MANA))
+              if (ch->hasClass(CLASS_CLERIC) || ch->hasClass(CLASS_DEIKHAN))
                 sprintf(promptbuf + strlen(promptbuf),
                         StPrompts[2],
                         (hasColor ? d->prompt_d.manaColor : ""),
                         ch->getPiety(),
                         ch->norm());
-	      } else if (ch->hasClass(CLASS_SHAMAN)) {
+              else if (ch->hasClass(CLASS_SHAMAN))
                 sprintf(promptbuf + strlen(promptbuf),
                         StPrompts[12],
                         (hasColor ? d->prompt_d.manaColor : ""),
                         ch->getLifeforce(),
                         ch->norm());
-	      } else {
+              else
                 sprintf(promptbuf + strlen(promptbuf),
                         StPrompts[3],
                         (hasColor ? d->prompt_d.manaColor : ""),
                         ch->getMana(),
                         ch->norm());
-	      }
-	    }
             if (IS_SET(d->prompt_d.type, PROMPT_MOVE))
               sprintf(promptbuf + strlen(promptbuf),
                       StPrompts[4],
@@ -5493,7 +5495,7 @@ int Descriptor::sendLogin(const char *arg)
       // strip off the terminating newline char
       buf[strlen(buf) - 1] = '\0';
 
-      sprintf(buf2 + strlen(buf2), "\n\r\n\rWelcome to %s:\n\r%s :\n\r", MUD_NAME_VERS, buf);
+      sprintf(buf2 + strlen(buf2), "\n\r\n\rWelcome to %s (a.k.a. SneezyMUD):\n\r%s :\n\r", MUD_NAME_VERS, buf);
       fclose(fp);
     }
     sprintf(buf2 + strlen(buf2), "Celebrating nine years of quality mudding (est. 5-1-1992)\n\r\n\r");
@@ -5994,12 +5996,11 @@ int Descriptor::doAccountStuff(char *arg)
       DeleteHatreds(NULL, delname);
       autobits = 0;
       // remove trophy entries so they do not carry over if the character is recreated
-      wipeTrophy(delname);
+    
 
-      //if((rc=dbquery(NULL, "sneezy", "doTrophy", "delete * from trophy where name='%s'", ch->getName()))==-1) {
+      //if((rc=dbquery(NULL, "sneezy", "doTrophy", "delete * from trophy where name='%s'", ch->getName()))==-1){
       //vlogf(LOG_BUG, "Database error for trophy character delete");
       //}
-    
 
 
 
@@ -6644,7 +6645,7 @@ int TBeing::applyAutorentPenalties(int secs)
 
 int TBeing::applyRentBenefits(int secs)
 {
-  int local_tics, rc = 0, lfmod = -1;
+  int local_tics, rc = 0;
   affectedData *af = NULL, *next_af_dude = NULL;
   int amt, transFound = FALSE;
 
@@ -6659,11 +6660,6 @@ int TBeing::applyRentBenefits(int secs)
   setMana(min((int) manaLimit(), getMana() + (local_tics * manaGain())));
   setMove(min((int) moveLimit(), getMove() + (local_tics * moveGain())));
   setPiety(min(pietyLimit(), getPiety() + (local_tics * pietyGain(0.0))));
-  setLifeforce(min(getLifeforce(), getLifeforce() + (local_tics * lfmod)));
-  if ((getLifeforce() + (local_tics * lfmod)) < 50)
-    setLifeforce(50);
-  // THIS WILL NEED TO BE REVIEWED
-
  
   wearSlotT ij;
   for (ij=MIN_WEAR;ij < MAX_WEAR; ij++) {

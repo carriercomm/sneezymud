@@ -37,7 +37,7 @@ bool Silence = FALSE;
 bool Sleep = TRUE;
 
 // please document what each testcode does if you use it!!!!!
-bool TestCode1 = TRUE;       // This code disabled shaman login if it is FALSE - dash 6/6/01
+bool TestCode1 = FALSE;       // unfinished code 
   // code1 in use for tracking pulse/sec - batopr
 bool TestCode2 = false;       // unfinished code 
   // code2 in use, lets players see level on items
@@ -45,10 +45,6 @@ bool TestCode3 = true;       // unfinished code
   // code3 in use, hiding new spell
 bool TestCode4 = true;       // unfinished code 
   // code4 in use, hiding new spell
-bool TestCode5 = false;
-  // code5 is to disable/enable certain aspects of the new faction code - dash 6/24/01
-bool TestCode6 = false;
-  // not in use
 
 bool NewbiePK = FALSE;
 bool QuestCode = false;       // spec-procs for quests 
@@ -226,8 +222,6 @@ void TPerson::doToggle(const char *arg)
     sendTo("Test code #2      : %s\n\r", TestCode2 ? "in-use" : "deactivated");
     sendTo("Test code #3      : %s\n\r", TestCode3 ? "in-use" : "deactivated");
     sendTo("Test code #4      : %s\n\r", TestCode4 ? "in-use" : "deactivated");
-    sendTo("Test code #5      : %s\n\r", TestCode5 ? "in-use" : "deactivated");
-    sendTo("Test code #6      : %s\n\r", TestCode6 ? "in-use" : "deactivated");
     sendTo("Quest code        : %s\n\r", QuestCode ? "active" : "deactivated");
     sendTo("Quest code 2      : %s\n\r", QuestCode2 ? "active" : "deactivated");
     return;
@@ -278,8 +272,8 @@ void TPerson::doToggle(const char *arg)
     }
 #endif
     TestCode1 = ! TestCode1;
-    sendTo("TestCode #1 (Shaman use) is now %s.\n\r", TestCode1 ? "in use" : "off");
-    vlogf(LOG_MISC,"%s has %s TestCode #1 (shaman use).",getName(),TestCode1 ? "enabled" : "disabled");
+    sendTo("TestCode #1 is now %s.\n\r", TestCode1 ? "in use" : "off");
+    vlogf(LOG_MISC,"%s has %s TestCode #1.",getName(),TestCode1 ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "testcode2")) {
 #if 0
     // if you are using testcode, change this so we don't collide usages
@@ -312,29 +306,7 @@ void TPerson::doToggle(const char *arg)
 #endif
     TestCode4 = ! TestCode4;
     sendTo("TestCode #4 is now %s.\n\r", TestCode4 ? "in use" : "off");
-    vlogf(LOG_MISC,"%s has %s TestCode #5.",getName(),TestCode4 ? "enabled" : "disabled");
-  } else if (is_abbrev(arg, "testcode5")) {
-#if 1
-    // if you are using testcode, change this so we don't collide usages
-    if (strcmp(name, "Dash")) {
-      sendTo("Sorry, this is only for Dash's use in testing.\n\r");
-      return;
-    }
-#endif
-    TestCode5 = ! TestCode5;
-    sendTo("TestCode #5 is now %s.\n\r", TestCode5 ? "in use" : "off");
-    vlogf(LOG_MISC,"%s has %s TestCode #5.",getName(),TestCode5 ? "enabled" : "disabled");
-  } else if (is_abbrev(arg, "testcode6")) {
-#if 0
-    // if you are using testcode, change this so we don't collide usages
-    if (strcmp(name, "Batopr")) {
-      sendTo("Sorry, this is only for Batopr's use in testing.\n\r");
-      return;
-    }
-#endif
-    TestCode6 = ! TestCode6;
-    sendTo("TestCode #6 is now %s.\n\r", TestCode6 ? "in use" : "off");
-    vlogf(LOG_MISC,"%s has %s TestCode #6.",getName(),TestCode6 ? "enabled" : "disabled");
+    vlogf(LOG_MISC,"%s has %s TestCode #4.",getName(),TestCode4 ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "questcode")) {
     QuestCode = !QuestCode;
     sendTo("Questcode is now %s.\n\r", QuestCode ? "in use" : "off");
@@ -2686,9 +2658,8 @@ void TPerson::doPurge(const char *argument)
       if (is_abbrev(argument, "all")) {
         int oldnum = mobCount;
         for (zone = 1; zone < zone_table.size(); zone++) {
-          if (zone_table[zone].zone_value > 0 && 
-	      zone_table[zone].isEmpty()) {
-            zone_table[zone].nukeMobs();
+          if (zone_table[zone].zone_value > 0 && isEmpty(zone)) {
+            nukeMobsInZone(zone);
             zone_table[zone].zone_value = 0;
           }
         }
@@ -2703,7 +2674,7 @@ void TPerson::doPurge(const char *argument)
         return;
       }
 
-      zone_table[zone].nukeMobs();
+      nukeMobsInZone(zone);
       sendTo("Mobs nuked.\n\r");
       zone_table[zone].zone_value = 0;
       return;
@@ -2974,20 +2945,18 @@ void TPerson::doStart()
     obj = read_object(r_num, REAL);
     *this += *obj;    // newbie book 
   }
-#ifdef NOGUIDE
-  // Damescena wants this to NOT load
   if ((r_num = real_object(1459)) >= 0) {
     obj = read_object(r_num, REAL);
     *this += *obj;    // conversion book 
   }
-#endif
+
   // give a weapon
   if (hasClass(CLASS_WARRIOR) || hasClass(CLASS_RANGER) || hasClass(CLASS_DEIKHAN)) {
     if ((r_num = real_object(WEAPON_T_SWORD)) >= 0) {
       obj = read_object(r_num, REAL);
       *this += *obj;    // newbie sword
     }
-  } else if (!hasClass(CLASS_CLERIC) && !hasClass(CLASS_MONK) && !hasClass(CLASS_SHAMAN)) {
+  } else if (!hasClass(CLASS_CLERIC) && !hasClass(CLASS_MONK)) {
     if ((r_num = real_object(WEAPON_T_DAGGER)) >= 0) {
       obj = read_object(r_num, REAL);
       *this += *obj;    // newbie dagger
@@ -3005,10 +2974,6 @@ void TPerson::doStart()
   if (hasClass(CLASS_MAGIC_USER))
     personalize_object(NULL, this, 321, -1);
 
-  if (hasClass(CLASS_SHAMAN)) {
-    personalize_object(NULL, this, 31317, -1);
-    personalize_object(NULL, this, 31395, -1);
-  }
   if (hasClass(CLASS_DEIKHAN))
     personalize_object(NULL, this, 500, -1);
 
@@ -3021,28 +2986,11 @@ void TPerson::doStart()
     sendTo("If you are feeling lost, read HELP GOTO for some quick directions.\n\r");
   }
 
-  if (hasClass(CLASS_SHAMAN)) {
-    sendTo("\n\r%s**%s\a\t*+*+*+*+*+*+*+*+*+*+*+ %sWARNING%s +*+*+*+*+*+*+*+*+*+*+*+\n\r\n\r", red(), norm(), red(), norm());
-    sendTo("%s**%s\tThe class you are about to play has been designed with\n\r", red(), norm());
-    sendTo("%s**%s\tthe most advanced of players in mind. The class is not\n\r", red(), norm());
-    sendTo("%s**%s\tan easy one to play in the least. Please be sure, if \n\r", red(), norm());
-    sendTo("%s**%s\tyou decide to dedicate time to a Shaman character, that\n\r", red(), norm());
-    sendTo("%s**%s\tyou can deal with playing an advanced class that would\n\r", red(), norm());
-    sendTo("%s**%s\tbe by most considered impossible or unplayable. Please\n\r", red(), norm());
-    sendTo("%s**%s\tfamiliarize yourself with the help files pertaining to\n\r", red(), norm());
-    sendTo("%s**%s\tthe Shaman class before undertaking this challenge.\n\r%s**%s\n\r", red(), norm(), red(), norm());
-    sendTo("%s**%s\tSee %sHELP LIFEFORCE%s for more details.\n\r", red(), norm(), cyan(), norm());
-    sendTo("%s**%s\tBe sure to read your %snewbie guide%s...\n\r", red(), norm(), green(), norm());
-    sendTo("%s**%s\tIf you have serious problems, by all means,\n\r", red(), norm());
-    sendTo("%s**%s\task a player with the %sNEWBIE HELPER%s flag.\n\r", red(), norm(), red(), norm());
-    sendTo("***********************************************************************\n\r\n\r");
-  }
-
   setMaxHit(21);
   setMana(manaLimit());
   setPiety(pietyLimit());
   setMove(moveLimit());
-  setLifeforce(50);
+  setLifeforce(25);
 
   // Ripped from the level gain functions to give classes a variant 
   // from the standard 25 hp based on con etc. Brutius 06/18/1999
@@ -3117,6 +3065,7 @@ int TBeing::genericRestore(restoreTypeT partial)
 {
   setCond(FULL, 24);
   setCond(THIRST, 24);
+  setLifeforce(25);
   setPiety(pietyLimit());
   setMana(manaLimit());
   setHit(hitLimit());
@@ -3384,7 +3333,7 @@ void TBeing::doRestore(const char *argument)
     checkForStr(SILENT_NO);
   }
   victim->updatePos();
-  sendTo("Done.\n\rIf Shaman lifeforce needs to be changed please do so with \"@set\".\n\r");
+  sendTo("Done.\n\r");
   if (partial == RESTORE_PARTIAL)
     act("You have been partially healed by $N!", FALSE, victim, 0, this, TO_CHAR);
   else {
@@ -6092,7 +6041,6 @@ static bool isSanctionedCommand(cmdTypeT tCmd)
   switch (tCmd) {
     case CMD_MEDIT:
     case CMD_OEDIT:
-    case CMD_FEDIT:
     case CMD_SEDIT:
     case CMD_REDIT:
     case CMD_RLOAD:

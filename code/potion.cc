@@ -209,10 +209,6 @@ int TPotion::suggestedPrice() const
 
       // since it's from an obj, arbitrarily double it
       value *= 2;
-      // potions are really cheap for some reason
-      value *= 15;
-      if (curspell == SPELL_FLY)
-	value *= 4;
     }
 
     tot += value;

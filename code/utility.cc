@@ -121,21 +121,6 @@ int dice(int number, int size)
   return (sum);
 }
 
-// takes a percent (expressed as a fraction of 1) and returns true if
-// a random roll is greater equal to it.  ie, fract*100 percent chance of true.
-// this is useful when we want a whole number, so we give a chance of
-// +1 if there is a fraction
-bool roll_chance(double fract){
-  fract*=100.0;
-
-  if(fract >= ::number(0,100)){
-    return TRUE;
-  }
-  return FALSE;
-}
-
-
-
 bool scan_number(const char *text, int *rval)
 {
   if (1 != sscanf(text, " %i ", rval))
@@ -1483,11 +1468,7 @@ void TPerson::addToWait(int orig_amt)
   int mod = 100;
   if (affectedBySpell(SPELL_ACCELERATE))
     mod = 80;
-  if (affectedBySpell(SPELL_CHEVAL))
-    mod = 75;
   if (affectedBySpell(SPELL_HASTE))
-    mod = 60;
-  if (affectedBySpell(SPELL_CELERITE))
     mod = 60;
 
   int amt = orig_amt * mod / 100;

@@ -117,11 +117,6 @@ bool TBeing::canUseEquipment(const TObj *o, silentTypeT silent) const
         sendTo("That item is too ostentatious for you to wear it.\n\r");
       return FALSE;
     }
-    if (o->shamanRestrictedItem(this)) {
-      if (!silent)
-        sendTo("That item would interfere with communication to the ancestors.\n\r");
-      return FALSE;
-    }
     if (o->rangerRestrictedItem(this)) {
       if (!silent)
         sendTo("Rangers shun the use of metal armor.\n\r");
@@ -1893,45 +1888,6 @@ void TBeing::wearNTear(void)
 bool TObj::monkRestrictedItem(const TBeing *ch) const
 {
   if (ch && !ch->hasClass(CLASS_MONK))
-    return FALSE;
-
-  if (objVnum() == OBJ_SLEEPTAG_STAFF)
-    return FALSE;
-
-  if (objVnum() == DEITY_TOKEN)
-    return FALSE;
-
-  if (objVnum() == CRAPS_DICE)
-    return FALSE;
-
-  if (canWear(ITEM_WEAR_FINGER))
-    return FALSE;
-
-#if 0
-  // this includes all minerals (100-150) and metals (150-200)
-  ubyte mat = getMaterial();
-  if (mat >= 100 &&
-      (mat != MAT_BONE))
-    return TRUE;
-
-  // this is here just for adding other ones (later) if needed
-  switch (getMaterial()) {
-    case MAT_IRON:
-      return TRUE;
-    default:
-      break;
-  }
-#endif
-
-  if (dynamic_cast<const TArmor *>(this))
-    return TRUE;
-
-  return FALSE;
-}
-
-bool TObj::shamanRestrictedItem(const TBeing *ch) const
-{
-  if (ch && !ch->hasClass(CLASS_SHAMAN))
     return FALSE;
 
   if (objVnum() == OBJ_SLEEPTAG_STAFF)

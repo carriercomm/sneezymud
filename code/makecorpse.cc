@@ -103,14 +103,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       gen_corpse->addCorpseFlag(CORPSE_NO_REGEN);
     }
     specialCorpse = TRUE;
-  } else if (dmg_type == SPELL_RAZE) {
-    sprintf(buf, "green powder pile strange %s",name);
-    gen_corpse->name = mud_str_dup(buf);
-    gen_corpse->setDescr(mud_str_dup("A strange looking pile of green powder lies here."));
-    gen_corpse->shortDescr = mud_str_dup("a pile of strange green powder");
-    gen_corpse->addCorpseFlag(CORPSE_NO_REGEN);
-    gen_corpse->setMaterial(MAT_POWDER);
-    specialCorpse = TRUE;
   } else if (isUndead() || (dmg_type == SKILL_TURN)) {
     sprintf(buf, "dust pile %s",name);
     gen_corpse->name = mud_str_dup(buf);
@@ -153,8 +145,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
           "The skin on %s's corpse has been torn to shreds by something explosive.",
           getName());
         break;
-      case SPELL_DEATHWAVE:
-      case SPELL_DISTORT:
       case SKILL_QUIV_PALM:
         sprintf(buf,
           "%s's corpse has been shattered from within by a powerful shockwave.",
@@ -190,7 +180,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_TSUNAMI:
         sprintf(buf, "The bloated, water-filled corpse of %s is here.",getName());
         break;
-      case SPELL_CARDIAC_STRESS:
       case DAMAGE_HEMORRAGE:
         sprintf(buf, "The skin of %s corpse is bright red, but no wound presents itself.",getName());
         break;
@@ -205,7 +194,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
         break;
       case SPELL_POISON_DEIKHAN:
       case SPELL_POISON:
-      case SPELL_DEATH_MIST:
       case DAMAGE_TRAP_POISON:
         sprintf(buf, "The sickly, green poisoned corpse of %s is here.",getName());
         break;
@@ -253,7 +241,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_FIRE_BREATH:
       case SPELL_SPONTANEOUS_COMBUST:
       case SPELL_FLAMING_SWORD:
-      case SPELL_BLOOD_BOIL:
       case DAMAGE_TRAP_FIRE:
       case TYPE_FIRE:
       case DAMAGE_FIRE:
@@ -283,7 +270,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
         sprintf(buf, "It appears %s was punched incredibly hard by someone.", getName());
         break;
       case SPELL_ENERGY_DRAIN:
-      case SPELL_LICH_TOUCH:
       case SPELL_SYNOSTODWEOMER:
       case DAMAGE_DRAIN:
       case SPELL_HARM_DEIKHAN:
@@ -293,7 +279,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_HARM_CRITICAL_DEIKHAN:
       case SPELL_HARM_LIGHT:
       case SPELL_HARM_SERIOUS:
-      case SPELL_SOUL_TWIST:
       case SPELL_HARM_CRITICAL:
       case SPELL_WITHER_LIMB:
       case DAMAGE_TRAP_ENERGY:
@@ -301,9 +286,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
         break;
       case SPELL_BLEED:
         sprintf(buf, "The corpse of %s lies in a pool of blood.",getName());
-        break;
-      case SPELL_SQUISH:
-        sprintf(buf, "The corpse of %s has been squished into a ball.", getName());
         break;
       case DAMAGE_KICK_HEAD:
         sprintf(buf, "The body of %s has a footprint on its forehead.", getName());
@@ -350,7 +332,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case DAMAGE_TRAP_DISEASE:
         sprintf(buf, "%s's corpse is here.  It appears %s was consumed by disease.",namebuf, hssh());
         break;
-      case SPELL_FLATULENCE:
       case DAMAGE_SUFFOCATION:
       case SPELL_SUFFOCATE:
       case SKILL_GARROTTE:
@@ -510,10 +491,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_ILLUMINATE:
       case SPELL_DETECT_MAGIC:
       case SPELL_MATERIALIZE:
-      case SPELL_CHRISM:
-      case SPELL_STUPIDITY:
-      case SPELL_DJALLA:
-      case SPELL_LEGBA:
       case SPELL_PROTECTION_FROM_EARTH:
       case SPELL_PROTECTION_FROM_AIR:
       case SPELL_PROTECTION_FROM_FIRE:
@@ -525,29 +502,20 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_FAERIE_FOG:
       case SPELL_TELEPORT:
       case SPELL_SENSE_LIFE:
-      case SPELL_SENSE_LIFE_SHAMAN:
       case SPELL_CALM:
       case SPELL_ACCELERATE:
-      case SPELL_CHEVAL:
-      case SPELL_CELERITE:
       case SPELL_LEVITATE:
       case SPELL_FEATHERY_DESCENT:
       case SPELL_STEALTH:
       case SPELL_GILLS_OF_FLESH:
       case SPELL_AQUALUNG:
       case SPELL_TELEPATHY:
-      case SPELL_ROMBLER:
       case SPELL_FEAR:
-      case SPELL_INTIMIDATE:
       case SPELL_SLUMBER:
       case SPELL_ENTHRALL_SPECTRE:
       case SPELL_ENTHRALL_GHAST:
       case SPELL_ENTHRALL_GHOUL:
       case SPELL_ENTHRALL_DEMON:
-      case SPELL_CREATE_WOOD_GOLEM:
-      case SPELL_CREATE_ROCK_GOLEM:
-      case SPELL_CREATE_IRON_GOLEM:
-      case SPELL_CREATE_DIAMOND_GOLEM:
       case SPELL_CONJURE_EARTH:
       case SPELL_CONJURE_AIR:
       case SPELL_CONJURE_FIRE:
@@ -584,10 +552,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_BREATH_OF_SARAHAGE:
       case SPELL_PLASMA_MIRROR:
       case SPELL_THORNFLESH:
-      case SPELL_RAZE:
-      case SPELL_DETECT_SHADOW:
       case SPELL_ETHER_GATE:
-      case SPELL_CLARITY:
       case SPELL_HEAL_LIGHT:
       case SPELL_CREATE_FOOD:
       case SPELL_CREATE_WATER:
@@ -622,7 +587,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_HEAL_FULL_SPRAY:
       case SPELL_RESTORE_LIMB:
       case SPELL_KNIT_BONE:
-      case SPELL_SHADOW_WALK:
       case SKILL_RESCUE:
       case SKILL_SMYTHE:
       case SKILL_SACRIFICE:
@@ -741,6 +705,8 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SKILL_DUAL_WIELD_THIEF:
       case SKILL_DISARM_THIEF:
       case SKILL_COUNTER_STEAL:
+      case SPELL_CACAODEMON:
+      case SPELL_CREATE_GOLEM:
       case SPELL_DANCING_BONES:
       case SPELL_CONTROL_UNDEAD:
       case SPELL_RESURRECTION:
@@ -770,7 +736,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SKILL_OFFENSE:
       case SKILL_WHITTLE:
       case SKILL_WIZARDRY:
-      case SKILL_RITUALISM:
       case SKILL_MEDITATE:
       case SKILL_DEVOTION:
       case SKILL_PENANCE:
@@ -789,7 +754,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SKILL_DULL:
       case SKILL_ATTUNE:
       case SKILL_STAVECHARGE:
-      case SPELL_HYPNOSIS:
       case SPELL_SHIELD_OF_MISTS:
       case MAX_SKILL:
       case TYPE_MAX_HIT:
@@ -817,9 +781,6 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case AFFECT_PLAYERLOOT:
       case AFFECT_HORSEOWNED:
       case AFFECT_GROWTH_POTION:
-      case AFFECT_WARY:
-      case AFFECT_DEFECTED:
-      case AFFECT_OFFER:
       case LAST_ODDBALL_AFFECT:
       case SKILL_ALCOHOLISM:
       case SKILL_FISHING:

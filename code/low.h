@@ -41,7 +41,6 @@ const short int ROOM_WARD_1            = 13142;
 const short int ROOM_WARD_2            = 9734;
 const short int ROOM_TREE_BRIDGE       = 15277;
 const short int ROOM_SLEEPTAG_CONTROL  = 23599;
-const short int ROOM_FACTION_BUREAU    = 395;
 
 // ------------------------- OBJS
 
@@ -127,6 +126,10 @@ const short int ST_CANISTER          = 932;
 const short int ST_CRYSTALINE        = 933;
 const short int ST_RAZOR_DISK        = 934;
 const short int GENERIC_DAGGER      = 1000;
+const short int WOOD_COMPONENT      = 1700;
+const short int ROCK_COMPONENT      = 1701;
+const short int IRON_COMPONENT      = 1702;
+const short int DIAMOND_COMPONENT   = 1703;
 const short int GENERIC_NOTE        = 3090;
 const short int GENERIC_PEN         = 3091;
 const short int OBJ_VENISON         = 3114;
@@ -379,7 +382,7 @@ const short int THRALL_DEMON       =31303;
 const short int MOB_JUJU_BUNNY     =4497;
 const short int MOB_JUJU_MARE      =31307;
 const short int MOB_JUJU_TETRARCH  =15104;
-const short int MOB_FACTION_REGISTRAR = 360;
+
 
 #endif
 

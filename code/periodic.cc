@@ -371,10 +371,8 @@ void TMonster::makeNoise()
       MakeRoomNoise(this, in_room, sounds, distantSnds);
   }
 
-#if 0
   checkResponses((opinion.random ? opinion.random : (targ() ? targ() : this)),
                  NULL, NULL, CMD_RESP_PULSE);
-#endif
 }
 
 // return DELETE_THIS if this should die
@@ -742,42 +740,20 @@ int TBeing::updateHalfTickStuff()
   bool berserk_noheal=0;
   TBeing *trider=NULL;
   unsigned int i, hours_first, hours_last, severity;
+  
 
-  updatePos();
-
-  if (hasClass(CLASS_SHAMAN) && !affectedBySpell(SPELL_SHAPESHIFT)) {
-    if ((isPc()) && (GetMaxLevel() < 51)) {
-      if (0 >= getLifeforce()) {
-	reconcileDamage(this,::number(0,2),DAMAGE_DRAIN);
-	setLifeforce(0);
-	updatePos();
-	if ((0 > getHit()) && (getHit() > -3)) {
-	  updatePos();
-	} 
-	if ((-3 > getHit()) && (getHit() > -6)) {
-	  updatePos();
-	}
-	if ((-6 > getHit()) && (getHit() > -10)) {
-	  updatePos();
-	}
-	if (-10 > getHit()) {
-	  vlogf(LOG_MISC, "%s autokilled by excessive lifeforce drain at %s (%d)",
-		getName(), roomp ? roomp->getName() : "nowhere", inRoom());
-	  if (reconcileDamage(this, 1,DAMAGE_DRAIN) == -1)
-	    die(DAMAGE_DRAIN);
-	    return DELETE_THIS;
-	  doSave(SILENT_YES);
-	}
-      } else {
-	addToLifeforce(-1);
-	updatePos();
-      }
-    } else {
-      setLifeforce(9000);
+  if (hasClass(CLASS_SHAMAN)) {
+    if (0 >= getLifeforce()) {
+      setLifeforce(0);
+      addToHit(-2);
       updatePos();
+      sendTo("The ancestors are not pleased with you.\n\r");
+      sendTo("Your ancestors demand you gather lifeforce.\n\r");
+    } else {
+      addToLifeforce(-1);
     }
-
   }
+
 
   if (isAffected(AFF_SLEEP) && (getPosition() > POSITION_SLEEPING)) {
     sendTo("You grow sleepy and can remain awake no longer.\n\r");
@@ -820,7 +796,7 @@ int TBeing::updateHalfTickStuff()
       vlogf(LOG_BUG, "Somehow %s was not flying in flying sector", getName());
     }
   }
-  if (roomp && (zone_table[roomp->getZoneNum()].enabled == TRUE) && 
+  if (roomp && (zone_table[roomp->getZone()].enabled == TRUE) && 
       (!inImperia() || (in_room == ROOM_NOCTURNAL_STORAGE)) && 
       ((specials.act & ACT_DIURNAL) || (specials.act & ACT_NOCTURNAL)) &&
        !fight() && (getPosition() > POSITION_STUNNED) &&
@@ -1119,7 +1095,6 @@ int TBeing::updateHalfTickStuff()
           mana_bump = ::number(1,3);
           if (!foodReject || (0 >= getLifeforce())) {
             addToHit(1);
-	    updatePos();
             sendTo("Your condition prevents your body's full recovery.\n\r");
           } else 
             sendTo("Your condition takes its toll on your body.\n\r"); 

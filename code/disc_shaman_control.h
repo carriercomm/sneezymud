@@ -6,65 +6,55 @@
 class CDShamanControl : public CDiscipline
 {
 public:
+    CSkill skEnthrallGhoul;
     CSkill skEnthrallDemon;
-    CSkill skCreateWoodGolem;
-    CSkill skCreateRockGolem;
-    CSkill skCreateIronGolem;
-    CSkill skCreateDiamondGolem;
+    CSkill skCacaodemon;
     CSkill skResurrection;
+    CSkill skCreateGolem;
 
     CDShamanControl()
       : CDiscipline(),
+      skEnthrallGhoul(),
       skEnthrallDemon(),
-      skCreateWoodGolem(),
-      skCreateRockGolem(),
-      skCreateIronGolem(),
-      skCreateDiamondGolem(),
-      skResurrection() {
+      skCacaodemon(),
+      skResurrection(),
+      skCreateGolem() {
     }
     CDShamanControl(const CDShamanControl &a)
       : CDiscipline(a),
+      skEnthrallGhoul(a.skEnthrallGhoul),
       skEnthrallDemon(a.skEnthrallDemon),
-      skCreateWoodGolem(a.skCreateWoodGolem),
-      skCreateRockGolem(a.skCreateRockGolem),
-      skCreateIronGolem(a.skCreateIronGolem),
-      skCreateDiamondGolem(a.skCreateDiamondGolem),
-      skResurrection(a.skResurrection) {
+      skCacaodemon(a.skCacaodemon),
+      skResurrection(a.skResurrection),
+      skCreateGolem(a.skCreateGolem) {
     }
     CDShamanControl & operator=(const CDShamanControl &a) {
       if (this == &a) return *this;
       CDiscipline::operator=(a);
+      skEnthrallGhoul = a.skEnthrallGhoul;
       skEnthrallDemon = a.skEnthrallDemon;
-      skCreateWoodGolem = a.skCreateWoodGolem;
-      skCreateRockGolem = a.skCreateRockGolem;
-      skCreateIronGolem = a.skCreateIronGolem;
-      skCreateDiamondGolem = a.skCreateDiamondGolem;
+      skCacaodemon = a.skCacaodemon;
       skResurrection = a.skResurrection;
+      skCreateGolem = a.skCreateGolem;
       return *this;
     }
     virtual ~CDShamanControl() {}
     virtual CDShamanControl * cloneMe() { return new CDShamanControl(*this); }
 private:
 };
+    int enthrallGhoul(TBeing * caster, int level, byte bKnown);
+    int enthrallGhoul(TBeing * caster);
+    int castEnthrallGhoul(TBeing * caster);
+
     int enthrallDemon(TBeing * caster, int level, byte bKnown);
     int enthrallDemon(TBeing * caster);
     int castEnthrallDemon(TBeing * caster);
 
-    int createWoodGolem(TBeing * caster, int level, byte bKnown);
-    int createWoodGolem(TBeing * caster);
-    int castCreateWoodGolem(TBeing * caster);
+    void cacaodemon(TBeing *, const char *);
+    int cacaodemon(TBeing *, const char *, int, byte);
 
-    int createRockGolem(TBeing * caster, int level, byte bKnown);
-    int createRockGolem(TBeing * caster);
-    int castCreateRockGolem(TBeing * caster);
-
-    int createIronGolem(TBeing * caster, int level, byte bKnown);
-    int createIronGolem(TBeing * caster);
-    int castCreateIronGolem(TBeing * caster);
-
-    int createDiamondGolem(TBeing * caster, int level, byte bKnown);
-    int createDiamondGolem(TBeing * caster);
-    int castCreateDiamondGolem(TBeing * caster);
+    int createGolem(TBeing *);
+    int createGolem(TBeing *, int, int, int, byte);
 
     int resurrection(TBeing *, TObj *, int, byte);
     void resurrection(TBeing *, TObj *, TMagicItem *);

@@ -1619,9 +1619,6 @@ static bool okForJanitor(TMonster *myself, TObj *obj)
   TBaseCorpse *corpse = dynamic_cast<TBaseCorpse *>(obj);
   if (corpse && corpse->isCorpseFlag(CORPSE_PC_SKINNING))
     return false;
-  // nor sacrificing
-  if (corpse && corpse->isCorpseFlag(CORPSE_SACRIFICE))
-    return false;
 
   // Dont let them loot pcorpses with stuff in it
   TPCorpse *tmpcorpse = dynamic_cast<TPCorpse *>(obj);
@@ -3537,7 +3534,7 @@ void CallForGuard(TBeing *ch, TBeing *vict, int lev)
       continue;
     // get only critters in my zone
     // treat grimhaven as all one zone
-    if (tmons->roomp->getZoneNum() != vict->roomp->getZoneNum() &&
+    if (tmons->roomp->getZone() != vict->roomp->getZone() &&
         !(tmons->inGrimhaven() && vict->inGrimhaven()))
       continue;
     if (tmons->fight() || !::number(0,4))
@@ -5476,7 +5473,7 @@ int Fireballer(TBeing *ch, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     } else if (tmp->isImmortal() && me->sameRoom(*tmp)) {
       act("The Djinn chokes on a hairball.",TRUE,tmp,0,0,TO_CHAR);
       act("$n causes the Djinn to choke on a hairball before it can breathe at $m.",TRUE,tmp,0,0,TO_ROOM);
-    } else if ((me != tmp) && (tmp->in_room != ROOM_NOWHERE) && (rp->getZoneNum() == tmp->roomp->getZoneNum())) {
+    } else if ((me != tmp) && (tmp->in_room != ROOM_NOWHERE) && (rp->getZone() == tmp->roomp->getZone())) {
       tmp->sendTo("You hear a loud explosion and feel a gust of hot air.\n\r");
     }
   }
@@ -6262,7 +6259,7 @@ int grimhavenHooker(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TO
     }
     return FALSE;
   } else  if ((cmd != CMD_GENERIC_PULSE) ||
-	      !myself->awake() || myself->fight() || ::number(0,25))
+	      !myself->awake() || myself->fight())
     return FALSE;
 
   if (!myself->act_ptr) {
@@ -6531,53 +6528,6 @@ int grimhavenHooker(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TO
 }
 
 
-// this proc is kind of ugly, but it works
-int bankGuard(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
-{
-  Descriptor *i;
-  int zone_nr=real_roomp(31750)->getZoneNum(), v=0;
-  TBeing *victims[10], *vict;
-  int saferooms[7]={31750, 31751, 31756, 31757, 31758, 31759, 31764};  
-
-  // only on pulse and only if we're not already hunting someone
-  if(cmd != CMD_GENERIC_PULSE || IS_SET(myself->specials.act, ACT_HUNTING))
-    return FALSE;
-
-  for (i = descriptor_list; i && v<=9; i = i->next){
-    if (!i->connected && i->character && i->character->roomp &&
-	i->character->roomp->getZoneNum() == zone_nr &&
-	i->character->in_room != saferooms[0] &&
-	i->character->in_room != saferooms[1] &&
-	i->character->in_room != saferooms[2] &&
-	i->character->in_room != saferooms[3] &&
-	i->character->in_room != saferooms[4] &&
-	i->character->in_room != saferooms[5] &&
-	i->character->in_room != saferooms[6]){
-      victims[v]=i->character;
-      ++v;
-    }
-  }
-
-  if(!v)
-    return FALSE;
-
-  vict=victims[::number(0,v-1)];
-  vlogf(LOG_PEEL, "bank guard hunting %s", vict->getName());
-  myself->setHunting(vict);
-  myself->addHated(vict);
-  
-  // set my followers to hate them too
-  for (followData *f = myself->followers; f; f = f->next) {
-    if(myself->inGroup(*f->follower)){
-      f->follower->addHated(vict);
-    }
-  }
-
-  return TRUE;
-}
-
-extern int factionRegistrar(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int realEstateAgent(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int grimhavenPosse(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 
 // Fields: display_under_medit, name_of_special, name_of_function_to_call
@@ -6724,9 +6674,9 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"Trainer: skunk", CDGenericTrainer},
   {FALSE,"Trainer: spider", CDGenericTrainer},
   {FALSE,"Trainer: control", CDGenericTrainer},       // 140 
-  {FALSE,"Trainer: ritualism", CDGenericTrainer},
+  {FALSE,"Trainer: totemism", CDGenericTrainer},
   {FALSE,"Trainer: ranger fight", CDGenericTrainer},
-  {FALSE,"shaman guildmaster", ShamanGuildMaster},
+  {FALSE, "shaman guildmaster", ShamanGuildMaster},
   {FALSE,"Trainer: combat", CDGenericTrainer},
   {FALSE,"Trainer: stealth", CDGenericTrainer},     // 145 
   {FALSE,"Trainer: traps", CDGenericTrainer},       
@@ -6738,9 +6688,5 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {TRUE,"Doppleganger/Mimic", doppleganger},
   {TRUE,"Tusker/Goring", tuskGoring},
   {FALSE,"Fish Tracker", fishTracker},
-  {FALSE, "Bank Guard", bankGuard},               // 155
-  {FALSE, "Real Estate Agent", realEstateAgent},
-  {FALSE, "Faction Registrar", factionRegistrar},
 // replace non-zero, bogus_mob_procs above before adding
 };
-

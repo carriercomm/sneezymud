@@ -797,7 +797,7 @@ int TBeing::damageLimb(TBeing *v, wearSlotT part_hit, TThing *weapon, int *dam)
  // 2) Strength in limb(How healthy it is)  (body_parts[].health)     
  // 3) Constitution                         (getConShock())         
  // 4) Skin type                            (getMaterial())           
- // The healtheir the limb, the less chance of this happening, and    
+ // The healthier the limb, the less chance of this happening, and    
  // the more damage, the more chance of it happening. - Russ          
 
   if (setCharFighting(v, 0) == -1)
@@ -1195,6 +1195,10 @@ void TBeing::checkForQuestTog(TBeing *vict)
       if (hasQuestBit(bitnum = TOG_AVENGER_HUNTING))
         found = TRUE;
       break;
+    case MOB_JUJU_TETRARCH:
+      if (hasQuestBit(bitnum = TOG_GET_BEADS))
+	found = TRUE;
+      break;
     case MOB_CAPTAIN_RYOKEN:
       if (hasQuestBit(bitnum = TOG_VINDICATOR_HUNTING_1))
         found = TRUE;
@@ -1295,6 +1299,16 @@ void TBeing::sendCheatMessage(char *cheater)
     case MOB_ORC_MAGI:
       sendTo("<c>You realize you did not follow the guidelines of your quest, so this fight will be for naught.<1>\n\r");
       setQuestBit(TOG_FAILED_TO_KILL_MAGI);
+      break;
+    case MOB_JUJU_TETRARCH:
+      sendTo("<c>You realize you did not follow the guidelines of your quest, sorry.<1>\n\r");
+      sendTo("<c>You may not retake this quest. You may appeal to Jesus if you wish but you must have a DAMN good reason.<1>\n\r");
+      setQuestBit(TOG_DONE_JUJU);
+      remQuestBit(TOG_ELIGABLE_JUJU);
+      remQuestBit(TOG_GET_THONG);
+      remQuestBit(TOG_MARE_HIDE);
+      remQuestBit(TOG_GET_SINEW);
+      remQuestBit(TOG_GET_BEADS);
       break;
     case MOB_CLERIC_VOLCANO:
       sprintf(buf, "%s You have failed to defeat me in single combat.", nameBuf);
@@ -2434,16 +2448,6 @@ int TBeing::specialAttack(TBeing *target, spellNumT skill)
   int offense = attackRound(target);
   int defense = target->defendRound(this);
   int mod = offense - defense;
-
-  if(skill == SKILL_BACKSTAB || skill == SKILL_CUDGEL) {
-    // other surprise attacks should be added here
-    if(target->isWary())
-      mod /= 4;
-    else {
-      target->makeWary();
-      vlogf(LOG_DASH,"%s being made wary by sneak attack from %s.", target->getName(), getName());
-    }
-  }
   return hits(target, mod);
 }
 
@@ -3576,9 +3580,7 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
       critKillCheck(this, vict, mess_sent);
       return retCode | DELETE_VICT;
     }
-    if (hasClass(CLASS_SHAMAN) && (0 >= dam)) {
-      addToLifeforce(1);
-    }
+
     rc = damageWeapon(vict, part_hit, &weapon);
     if (IS_SET_ONLY(rc, DELETE_ITEM))
       retCode |= DELETE_ITEM;
@@ -3593,6 +3595,9 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
       }
     }
   }
+  if (hasClass(CLASS_SHAMAN) && (dam == 0)) {
+    addToLifeforce(1);
+  }    
   combatFatigue(weapon);
   updatePos();
   vict->updatePos();
@@ -5270,8 +5275,6 @@ void TBeing::genericKillFix(void)
   if (isPc()) {
     if (hasClass(CLASS_SHAMAN)) {
       setHit(25);
-      setLifeforce(50);
-      updatePos();
     } else {
       setHit(1);
     }

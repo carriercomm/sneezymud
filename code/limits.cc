@@ -126,7 +126,7 @@ double TBeing::pietyGain(double modif)
     // at 30.0 : Average piety regen           : 12.90 (attempts : 2091)
     // at L50, cleric has 100 piety, think we desire regen of 5
     // since this makes it REAL slow at low level, go with 10 or so instead
-    gain *= 20.0;  // arbitrary
+    gain *= 25.0;  // arbitrary
   }
 
   // lower this to make faction power drain quicker
@@ -163,7 +163,7 @@ double TBeing::pietyGain(double modif)
 //  gain *= (50.0 + 100.0 + modif)/200.;
 //  gain *= 25.0;  // arbitrary
   // simplify math
-  gain = (150.0 + modif)/18.0;
+  gain = (150.0 + modif)/16.0;
 #endif
 
   if (dynamic_cast<TPerson *>(this)) {
@@ -261,9 +261,6 @@ int TMonster::hitGain()
   
   if (fight())
     gain = 0;
-
-  if (affectedBySpell(SKILL_CUDGEL))
-    gain = oldgain;
 
 
   TBed * tb = dynamic_cast<TBed *>(riding);
@@ -383,7 +380,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
   int combat = 0;
   bool doneCombat = FALSE;
 
-  if (Class == MAGE_LEVEL_IND) {
+  if (Class == MAGE_LEVEL_IND || Class == SHAMAN_LEVEL_IND) {
     combat = getDiscipline(DISC_COMBAT)->getLearnedness() + getDiscipline(DISC_LORE)->getLearnedness();
   } else if (Class == CLERIC_LEVEL_IND || Class == DEIKHAN_LEVEL_IND) {
     combat = getDiscipline(DISC_COMBAT)->getLearnedness() + getDiscipline(DISC_THEOLOGY)->getLearnedness();
@@ -399,7 +396,6 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
   // as of March 2001, each class has the following specialized disciplines:
   // (Normal Spec disc is 60 pracs, weapon spec is 20, allow 1 weapon spec
   // for each of the 'fighting' classes)
-  // Shaman:   8
   // Mages:    7
   // Monks:    4.33
   // Warriors: 4.33
@@ -464,7 +460,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
       discs = 4.666;
       break;
     case THIEF_LEVEL_IND:
-      discs = 5.5;
+      discs = 6.333;
       break;
     case DEIKHAN_LEVEL_IND:
       discs = 5.5;
@@ -476,9 +472,8 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
       discs = 5.5;
       break;
     case SHAMAN_LEVEL_IND:
-      discs = 6.00;
-      break; // I lowered this because I dont want shaman to jump too far ahead
-             // I think this is a good start - Jesus
+      discs = 6.333;
+      break;
     case UNUSED1_LEVEL_IND:
     case UNUSED2_LEVEL_IND:
     case UNUSED3_LEVEL_IND:
@@ -551,6 +546,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
       break;
     case THIEF_LEVEL_IND:
       if (!doneCombat || (getDiscipline(DISC_THIEF)->getLearnedness() < MAX_DISC_LEARNEDNESS) || forceBasic == 1) {
+
         preReqs = TRUE;
         fMin =5.0;
         fMax =8.0;
@@ -567,6 +563,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
       break;
     case MONK_LEVEL_IND:
       if (!doneCombat || (getDiscipline(DISC_MONK)->getLearnedness() < MAX_DISC_LEARNEDNESS) || forceBasic == 1) {
+
         preReqs = TRUE;
         fMin =5.0;
         fMax =8.0;
@@ -575,6 +572,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
       break;
     case RANGER_LEVEL_IND:
       if (!doneCombat || (getDiscipline(DISC_RANGER)->getLearnedness() < MAX_DISC_LEARNEDNESS) || forceBasic == 1) {
+
         preReqs = TRUE;
         fMin =5.0;
         fMax =8.0;
@@ -583,10 +581,11 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
       break;
     case SHAMAN_LEVEL_IND:
       if (!doneCombat || (getDiscipline(DISC_SHAMAN)->getLearnedness() < MAX_DISC_LEARNEDNESS) || forceBasic == 1) {
+
         preReqs = TRUE;
         fMin =5.0;
         fMax =8.0;
-        avg =6.7;
+        avg =7.0;
       }
       break;
     case UNUSED1_LEVEL_IND:
@@ -625,6 +624,8 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
   if(isPc()) {
     vlogf(LOG_DASH, "%s gaining %d pracs roll = %d (%d + %4.2f) lev: %d, advancedlev: %5.2f", getName(),
 	  prac, roll, (int)temp, num, getLevel(Class), advancedlevel);
+    vlogf(LOG_JESUS, "%s gaining %d pracs roll = %d (%d + %4.2f) lev: %d, advancedlev: %5.2f", getName(),
+          prac, roll, (int)temp, num, getLevel(Class), advancedlevel);
 
   }
   return prac;
@@ -751,7 +752,18 @@ void TPerson::advanceLevel(classIndT Class, TMonster *gm)
 
 void TPerson::doHPGainForLev(classIndT Class)
 {
-  points.maxHit += hpGainForLevel(Class);
+  double add_hp = hpGainForLevel(Class);
+
+  int tmp;
+  tmp = (int) add_hp;   // tmp is holding the rounded off portion of hp
+
+  // chance of an extra hp
+  add_hp -= (double) tmp;
+  add_hp *= 100;
+  if (((int) add_hp) > (::number(0,99)))
+    tmp++;
+
+  points.maxHit += max(1, tmp);
 }
 
 void TBeing::dropLevel(classIndT Class)
@@ -851,10 +863,12 @@ void gain_exp(TBeing *ch, double gain, int dam)
 {
   classIndT i;
   double newgain = 0;
-  double oldcap = 0;
   bool been_here = false;
-
+#if 0
   if (!ch->isPc() && ch->isAffected(AFF_CHARM)) {
+#else
+  if (!ch->isPc() && gain > 0) {
+#endif
     // do_nothing so they get no extra exp
     return;
   } else if (ch->roomp && ch->roomp->isRoomFlag(ROOM_ARENA)) {
@@ -870,33 +884,35 @@ void gain_exp(TBeing *ch, double gain, int dam)
           double curr = getExpClassLevel(i,ch->getLevel(i));
 	  double gainmod = ((1.15*ch->getLevel(i)) ); // removed +1
           if (ch->getLevel(i)) {
+	    
+
             if (!been_here && gain > ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000))+2.0 && dam > 0) {
               been_here = TRUE; // don't show multiple logs for multiclasses
               // the 100 turns dam into a %
-              newgain = ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000)) + 1.0;
-	      // 05/24/01 - adding a 'soft' cap here
-	      oldcap = newgain;
-	      double softmod = (1.0 - pow( 1.1 , -1.0*(gain/newgain))) + 1.0;     
-	      // this gives us a range of 1-2
-	      newgain *= softmod;
-	      //newgain = (newgain*0.95) +  (((float)::number(0,100))*newgain)/1000.0;
-	      // don't need this anymore since no hard cap - dash
-	      if (gain < newgain)
-		newgain = gain;
-	      vlogf(LOG_DASH, "%s(L%d) vs %s(L%d)    (%5.2f soft <- %5.2f hard)",
-                    ch->getName(), ch->getLevel(i),(ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
-                    (ch->specials.fighting)?ch->specials.fighting->GetMaxLevel() : -1, (gain/newgain), (gain/oldcap));
-	      vlogf(LOG_DASH, "   gain: %6.2f   oldc: %6.2f   newc: %6.2f   softm: %6.2f",
-		    gain, oldcap, softmod, newgain);
+              newgain = ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000)) + 2.0;
+	    
+	      newgain = (newgain*0.95) +  (((float)::number(0,100))*newgain)/1000.0;
+
+
+              vlogf(LOG_DASH, "%s(L%d) vs %s(L%d) cap: D: %d%%, E: %5.2f -> %5.2f (%5.2fx)",
+                    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
+                    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, gain,
+                    newgain, (gain/newgain));
 	      gain = newgain;
+
+
             }
+
+
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
               ch->sendTo(COLOR_BASIC, "<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
               ch->setExp(peak2);
               return;
+
             } else if (ch->getExp() >= peak) {
               // do nothing..this rules! Tell Brutius Hey, I didnt get any exp? 
+
             } else if ((ch->getExp() + gain >= peak) && (ch->GetMaxLevel() < MAX_MORT)) {
               ch->sendTo(COLOR_BASIC, "<G>You have gained enough to be a Level %d %s.<1>\n\r", 
 			 ch->getLevel(i)+1, classNames[i].capName);
@@ -906,24 +922,30 @@ void gain_exp(TBeing *ch, double gain, int dam)
                 return;
               }
 	    }
+
 	    // if(gain > ((peak - curr) / gainmod)) {
 #if 0
 	    if (!been_here && gain > ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000))+2.0 && dam > 0) { 
 	      been_here = TRUE; // don't show multiple logs for multiclasses
 	      // the 100 turns dam into a %
 	      newgain = ((double)(dam)*(peak-curr))/(gainmod*(double)(ch->howManyClasses()*10000)) + 2.0;
+
+
+
 	      vlogf(LOG_DASH, "%s(L%d) vs %s(L%d) cap: D: %d, E: %f, C: %f (%fx), MK: %f, %d classes",
 		    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a", 
 		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, gain,	
 		    newgain, (gain/newgain), gainmod, ch->howManyClasses());
+
 	    }  
 #endif
 	  }
 	}
+	
       }
 #if 0
       // Theoretically, a players peak - curr / gainmod is extremely reasonable
-      // for a veteran player hitting mobs above their level but not too far
+      // for a veteran player hitting mobs above thier level but not too far
       // We may need to watch for the backstabbers
       if(dam > 0) {
 	double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
@@ -934,7 +956,8 @@ void gain_exp(TBeing *ch, double gain, int dam)
 	gain = min(gain, newgain); 
 	//	gain += (rand()%(int)(gain*.1))-(gain*.05);
 	gain = (gain*0.95) +  (((float)::number(0,100))*gain)/1000.0;
-      }
+    }
+#else
 #endif
       ch->addToExp(gain);
       // we check mortal level here...
@@ -956,8 +979,8 @@ void gain_exp(TBeing *ch, double gain, int dam)
         ch->setExp(0);
     }
   }
-}
-
+  }
+  // whats this shit above?
 void TFood::findSomeFood(TFood **last_good, TBaseContainer **last_cont, TBaseContainer *cont) 
 {
   // get item closest to spoiling.
@@ -1282,6 +1305,15 @@ void TBeing::classSpecificStuff()
 
     setMult(value);
   }
+  // going to set this stuff in getImmunity instead, messes stuff up here
+#if 0
+  if (hasClass(CLASS_MONK) && doesKnowSkill(SKILL_DUFALI)) {
+    amount = getSkillValue(SKILL_DUFALI);
+    addToImmunity(IMMUNE_PARALYSIS, amount/3);
+    addToImmunity(IMMUNE_CHARM, amount);
+    addToImmunity(IMMUNE_POISON, amount/2);
+  }
+#endif
 }
 
 // computes the time it takes to get back 1 point of hp,mana and move
@@ -1308,54 +1340,84 @@ int TBeing::regenTime()
   return iTime;
 }
 
-int TBeing::hpGainForClass(classIndT Class) const
+double TBeing::hpGainForLevel(classIndT Class) const
 {
-  int hpgain = 0;
+  double hpgain = 0;
 
   // add for classes first
   if (hasClass(CLASS_MAGIC_USER) && Class == MAGE_LEVEL_IND)
-    hpgain += ::number(3,7); // old 2,8
+    hpgain += (double) ::number(2,8);
 
   if (hasClass(CLASS_CLERIC) && Class == CLERIC_LEVEL_IND)
-    hpgain += ::number(5,7); // old 4,8
+    hpgain += (double) ::number(4,8);
 
   if (hasClass(CLASS_WARRIOR) && Class == WARRIOR_LEVEL_IND)
-    hpgain += ::number(6,11); // old 5,12
+    hpgain += (double) ::number(5,12);
 
   if (hasClass(CLASS_THIEF) && Class == THIEF_LEVEL_IND)
-    hpgain += ::number(4,8); // old 3,9
+    hpgain += (double) ::number(3,9);
 
   if (hasClass(CLASS_DEIKHAN) && Class == DEIKHAN_LEVEL_IND)
-    hpgain += ::number(6,9); // old 5,10
+    hpgain += (double) ::number(5,10);
 
   if (hasClass(CLASS_MONK) && Class == MONK_LEVEL_IND)
-    hpgain += ::number(4,7); // old 3,8
+    hpgain += (double) ::number(3,8);
 
   if (hasClass(CLASS_RANGER) && Class == RANGER_LEVEL_IND)
-    hpgain += ::number(6,8); // old 5,9
+    hpgain += (double) ::number(5,9);
 
   if (hasClass(CLASS_SHAMAN) && Class == SHAMAN_LEVEL_IND)
-    hpgain += ::number(3,8); 
+    hpgain += (double) ::number(2,8);
+  
+  
+
+#if 0
+  vlogf(LOG_DASH,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
+	hpgain*(double)getConHpModifier() - hpgain,
+	(int)(hpgain*(double)getConHpModifier()));
+  vlogf(LOG_JESUS,"%s gaining %5.2f + %5.2f hitpoints (%d)", getName(),hpgain,
+	hpgain*(double)getConHpModifier() - hpgain,
+	(int)(hpgain*(double)getConHpModifier()));
+  // added a log for myself out of curiosity
+  
+#endif
+  double raw = hpgain;
+  
+  // tack on CON modifier
+  hpgain *= (double) getConHpModifier();
+  
+  
+  hpgain /= (double) howManyClasses();
+  
+  double bonus = hpgain - raw;
+  
+  double roundoff = hpgain - (int)(hpgain);
+  hpgain = (int)hpgain;
+  
+  int roll;
+  roll = ::number(1,99);
+  
+  if(100.0*roundoff >= roll) {
+    hpgain += 1.0;
+  }
+  
+
+  if(isPc()) {
+    vlogf(LOG_DASH,"%s gaining %d + %4.2f hitpoints %d (%d > %d)", getName(),(int)raw,
+          bonus, (int)hpgain, (int)(100.0*roundoff), roll);
+    vlogf(LOG_JESUS,"%s gaining %d + %4.2f hitpoints -> %4.2f (%d > %d)", getName(),(int)raw,
+          bonus, hpgain, (int)(100.0*roundoff), roll);
+  }
+
 
   return hpgain;
 }
 
 
-int TBeing::hpGainForLevel(classIndT Class) const
-{
-  double hpgain = 0;
 
-  hpgain = (double) hpGainForClass(Class);  
 
-  hpgain *= (double) getConHpModifier();
 
-  hpgain /= (double) howManyClasses();
 
-  if(roll_chance(hpgain - (int) hpgain)){
-    hpgain += 1.0;
-  }
 
-  return max(1, (int)hpgain);
-}
 
 

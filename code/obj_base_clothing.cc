@@ -421,10 +421,6 @@ int TBaseClothing::suggestedPrice() const
   if (!isObjStat(ITEM_ANTI_MONK) && !monkRestrictedItem(NULL))
     lev_mod = max(lev_mod, 10.0);
 
-  // shaman = hitrate of 90%
-  if (!isObjStat(ITEM_ANTI_SHAMAN) && !shamanRestrictedItem(NULL))
-    lev_mod = max(lev_mod, 10.0);
-
   // ranger = hitrate of 69%
   if (!isObjStat(ITEM_ANTI_RANGER) && !rangerRestrictedItem(NULL))
     lev_mod = max(lev_mod, 3.0);
@@ -658,20 +654,28 @@ bool TBaseClothing::isPluralItem() const
 
 void TBaseClothing::purchaseMe(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
 {
+  int discount=100;
+  vlogf(LOG_PEEL, "shopDebug: %s value %i cost %i, purchased for %i",
+	this->getName(), this->obj_flags.cost, 
+	this->shopPrice(1, shop_nr, -1, &discount), cost);
+      
+
   ch->addToMoney(-cost, GOLD_SHOP_ARMOR);
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY)) {
     keeper->addToMoney(cost, GOLD_SHOP_ARMOR);
   }
-
-  shoplog(shop_nr, ch, keeper, getName(), cost, "buying");
 }
 
 void TBaseClothing::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
 {
+  int discount=100;
+  vlogf(LOG_PEEL, "shopDebug: %s value %i cost %i, sold for %i",
+	this->getName(), this->obj_flags.cost, 
+	this->shopPrice(1, shop_nr, -1, &discount), cost);
+
+
   ch->addToMoney(cost, GOLD_SHOP_ARMOR);
   if (!IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_INFINITE_MONEY))
     keeper->addToMoney(-cost, GOLD_SHOP_ARMOR);
-
-  shoplog(shop_nr, ch, keeper, getName(), cost, "selling");
 }
 

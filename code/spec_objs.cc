@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "spec_objs.cc" - Special procedures for Objects 
@@ -63,7 +63,7 @@
 #include "stdsneezy.h"
 #include "disease.h"
 
-// CMD_OBJ_GOTTEN returns DELETE_THIS if this goes bye bye
+//CMD_OBJ_GOTTEN returns DELETE_THIS if this goes bye bye
 // returns DELETE_VICT if t goes bye bye
 // returns DELETE_ITEM if t2 goes bye bye
 int TObj::checkSpec(TBeing *t, cmdTypeT cmd, const char *arg, TThing *t2)
@@ -523,7 +523,7 @@ int flameWeapon(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   } else {
     act("$p roars into a blaze of fire and scorches $n.", 
                   0, vict, o, 0, TO_ROOM, ANSI_ORANGE_BOLD);
-   act("$p roars into a blaze of fire and scorches you.", 
+    act("$p roars into a blaze of fire and scorches you.", 
                   0, vict, o, 0, TO_CHAR, ANSI_ORANGE_BOLD);
   }
 
@@ -2652,7 +2652,6 @@ int boneStaff(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
     act("$p draws the life force of $n through it into $N.",
        TRUE, vict, o, ch, TO_NOTVICT);
     ch->addToHit(amount);
-    ch->addToLifeforce(10);
   }
 
   return TRUE;
@@ -2745,8 +2744,6 @@ int bloodspike(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
     return DELETE_VICT;
   return TRUE;
 }
-
-
 
 int vorpal(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *){
   TThing *weap=dynamic_cast<TThing *>(o);
@@ -2980,90 +2977,6 @@ int newbieHelperWProc(TBeing *vict, cmdTypeT cmd, const char *Parg, TObj *o, TOb
   }
 
   return FALSE;
-}
-
-int maquahuitl(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
-{
-  TBeing *ch;
-  int randomizer = ::number(0,9);
-  TGenWeapon *weapon = dynamic_cast<TGenWeapon *>(o);
-  // Proc goes off like mad but damage is way minimal to produce the 
-  // affect of a blunt item slashing
-
-  if(!(ch=genericWeaponProcCheck(vict, cmd, weapon, 0)))
-     return FALSE;
-
-  if (randomizer >= 5) {
-    weapon->setWeaponType(WEAPON_TYPE_SLASH);
-  } else {
-    weapon->setWeaponType(WEAPON_TYPE_SMITE);
-  }
-  return TRUE;
-}
-
-int bluntPierce(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
-{
-  TBeing *ch;
-  int randomizer = ::number(0,9);
-  TGenWeapon *weapon = dynamic_cast<TGenWeapon *>(o);
-  // Proc goes off like mad but damage is way minimal to produce the 
-  // affect of a blunt item slashing
-
-  if(!(ch=genericWeaponProcCheck(vict, cmd, weapon, 0)))
-     return FALSE;
-
-  if (randomizer >= 5) {
-    weapon->setWeaponType(WEAPON_TYPE_PIERCE);
-  } else {
-    weapon->setWeaponType(WEAPON_TYPE_SMITE);
-  }
-  return TRUE;
-}
-
-int randomizer(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
-{
-  TBeing *ch;
-  int randomizer = ::number(0,9);
-  TGenWeapon *weapon = dynamic_cast<TGenWeapon *>(o);
-  // Proc goes off like mad but damage is way minimal to produce the 
-  // affect of a blunt item slashing
-
-  if(!(ch=genericWeaponProcCheck(vict, cmd, weapon, 0)))
-     return FALSE;
-
-  switch (randomizer) {
-    case 9:
-      weapon->setWeaponType(WEAPON_TYPE_SLASH);
-      break;
-    case 8:
-      weapon->setWeaponType(WEAPON_TYPE_CRUSH);
-      break;
-    case 7:
-      weapon->setWeaponType(WEAPON_TYPE_BITE);
-      break;
-    case 6:
-      weapon->setWeaponType(WEAPON_TYPE_THUMP);
-      break;
-    case 5:
-      weapon->setWeaponType(WEAPON_TYPE_WHIP);
-      break;
-    case 4:
-      weapon->setWeaponType(WEAPON_TYPE_STAB);
-      break;
-    case 3:
-      weapon->setWeaponType(WEAPON_TYPE_CLEAVE);
-      break;
-    case 2:
-      weapon->setWeaponType(WEAPON_TYPE_CLAW);
-      break;
-    case 1:
-      weapon->setWeaponType(WEAPON_TYPE_SLICE);
-      break;
-    default:
-      weapon->setWeaponType(WEAPON_TYPE_SPEAR);
-      break;
-  }
-  return TRUE;
 }
 
 int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *){  
@@ -3876,113 +3789,6 @@ int lifeLeechGlove(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
   return FALSE;
 }
 
-int manaBurnRobe(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *) {
-#if 0
-  
-    TBeing *ch;
-
-    if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
-      return FALSE;
-
-    if (cmd == CMD_SAY || cmd == CMD_SAY2) {
-      char buf[256];
-      one_argument(arg, buf);
-      if(!strcmp(buf, "manifest")) {
-	double currentMana = ch-> getMana();
-	double percentBurn = ch->hitLimit() * .2;
-	double healthSteal = min((ch->hitLimit()- percentBurn),(ch->getHit() - percentBurn));
-	double manaGain = healthSteal * .8;
-	//	ch->setManaLimit(currentMana + manaGain);
-	ch->setHit(healthSteal);
-	act ("Your robe begins to glow with an eerie <b>light<1>, thin tendrils of light thrash wildly and then burrow into your skin, you scream as they rip the lifeforce from you.",TRUE,ch,NULL,NULL,TO_CHAR,NULL);
-	act ("&n screams in agony as thin <b>tendrils emerge from his robe and burrow into his skin!",TRUE,ch,NULL,NULL,TO_ROOM,NULL);
-	return TRUE;
-      }
-    }
-
-#endif
-    return FALSE;
-
-  } // end manaBurnRobe
-
-int healingNeckwear(TBeing *, cmdTypeT cmd, const char *, TObj *me, TObj *)
-{
-  TBeing *tmp;
-
-  if (cmd != CMD_GENERIC_PULSE)
-    return FALSE;
-
-  if (!(tmp = dynamic_cast<TBeing *>(me->equippedBy)))
-    return FALSE;
-
-  // if they areholding it, don't be silly
-  if (me->eq_pos != WEAR_NECK)
-    return FALSE;
-
-  if (!tmp->roomp)
-    return FALSE;
-
-  if (!tmp->isPc())
-    return FALSE;
-
-  act("$p constricts about your throat!", 0, tmp, me, 0, TO_CHAR);
-  act("$p constricts about $n's throat!", 0, tmp, me, 0, TO_ROOM);
-  if (tmp->hasClass(CLASS_SHAMAN)) {
-    tmp->addToHit(::number(1,((tmp->GetMaxLevel() *2) / 3)));
-    act("The power of the loa enters your body through $p!", 0, tmp, me, 0, TO_CHAR);
-    act("$p disappears in a puff of smoke!", 0, tmp, me, 0, TO_CHAR);
-    act("In a puff of smoke, $p dissappears from $n's throat!", 0, tmp, me, 0, TO_ROOM);
-    delete me;
-  } else {
-    int rc;
-    rc = tmp->applyDamage(tmp, ::number(1,10), DAMAGE_SUFFOCATION);
-    act("$p disappears in a puff of smoke!", 0, tmp, me, 0, TO_CHAR);
-    act("In a puff of smoke, $p dissappears from $n's throat!", 0, tmp, me, 0, TO_ROOM);
-    delete me;
-    if (IS_SET_DELETE(rc, DELETE_VICT)) {
-      delete tmp;
-      tmp = NULL;
-    }
-  }
-  return TRUE;
-}
-
-int blessingHoldItem(TBeing *, cmdTypeT cmd, const char *, TObj *me, TObj *)
-{
-  TBeing *tmp;
-
-  if (cmd != CMD_GENERIC_PULSE)
-    return FALSE;
-
-  if (!(tmp = dynamic_cast<TBeing *>(me->equippedBy)))
-    return FALSE;
-
-  if (!tmp->roomp)
-    return FALSE;
-
-  if (!tmp->isPc())
-    return FALSE;
-
-  if (tmp->hasClass(CLASS_SHAMAN)) {
-    genericBless(tmp, tmp, 5, false);
-    act("The power of the loa blesses you through $p!", 0, tmp, me, 0, TO_CHAR);
-    act("$p disappears in a puff of smoke!", 0, tmp, me, 0, TO_CHAR);
-    act("In a puff of smoke, $p dissappears!", 0, tmp, me, 0, TO_ROOM);
-    delete me;
-  } else {
-    int rc;
-    rc = tmp->applyDamage(tmp, ::number(1,10), DAMAGE_DRAIN);
-    act("$p disappears in a puff of smoke!", 0, tmp, me, 0, TO_CHAR);
-    act("In a puff of smoke, $p dissappears! OW!", 0, tmp, me, 0, TO_ROOM);
-    delete me;
-    if (IS_SET_DELETE(rc, DELETE_VICT)) {
-      delete tmp;
-      tmp = NULL;
-    }
-  }
-  return TRUE;
-}
-
 int sunCircleAmulet(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -4461,248 +4267,6 @@ int switchtrack(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
 }
 
 
-int berserkerWeap(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
-{
-  TBeing *ch;
-  int rc, dam;
-  affectedData af,aff;
-
-  ch = genericWeaponProcCheck(vict, cmd, o, 5);
-  if (!ch)
-    return FALSE;
-  if(ch->hasClass(CLASS_WARRIOR) && ch->doesKnowSkill(SKILL_BERSERK)) {
-    if(ch->isCombatMode(ATTACK_BERSERK) || !ch->isPc()) {
-      
-      if(!::number(0,3) && !ch->affectedBySpell(SPELL_HASTE)) {
-	act("$p<1> glows with a <c>soft blue light<1>, and lends new energy to your attacks!",TRUE,ch,o,vict,TO_CHAR,NULL);
-	act("$p<1> glows with a <c>soft blue light<1>, and lends new energy to $n's attacks!",TRUE,ch,o,vict,TO_ROOM,NULL);
-	aff.type = SPELL_HASTE;
-	aff.level = 45;
-	aff.duration = ONE_SECOND * 12; // seconds are weird so this is a 1 min cast of haste
-	aff.modifier = 0;
-	aff.location = APPLY_NONE;
-	aff.bitvector = 0;
-	ch->affectTo(&af, -1);
-	act("$N has gained a bounce in $S step!",
-	    FALSE, ch, NULL, NULL, TO_ROOM);
-	act("You seem to be able to move with the greatest of ease!",
-	    FALSE, ch, NULL, NULL, TO_CHAR);
-
-	return TRUE;
-      }	
-      
-      act("<o>Your blood boils and you feel your wrath being amplified by $p.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-      dam = ch->getSkillValue(SKILL_BERSERK) / 5 + 2;
-      if (ch->getRace() == RACE_OGRE)
-	dam +=5;
-      if (dam > 21) {
-	act("<r>Your $o releases a HUGE burst of concentrated fury upon $N<1><r>!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-	act("<r>$n clenches $s teeth as $s $o releases a HUGE burst of fury upon $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-	act("<o>$n clenches $s teeth as $s $o releases a HUGE burst of fury upon you!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-      } else {
-	act("<r>Your $o releases a burst of concentrated fury upon $N<1><r>!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-	act("<r>$n clenches $s teeth as $s $o releases a burst of fury upon $N.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
-	act("<o>$n clenches $s teeth as $s $o releases a burst of fury upon you!<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-      }
-
-      rc = ch->reconcileDamage(vict, dam, DAMAGE_HACKED);
-      if (IS_SET_DELETE(rc, DELETE_VICT))
-	return DELETE_VICT;
-      return TRUE;
-
-
-    } else if (ch->isPc() && !::number(0,10)) {
-     
-      ch->setCombatMode(ATTACK_BERSERK);
-     
-      act("<r>$p<r> amplifies your wrath, and you launch into a blood rage!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-      act("<r>$p<r> amplifies $n's wrath, and $e launches into a blood rage!<1>",TRUE,ch,o,vict,TO_ROOM,NULL);
-
-      act("You go berserk!",TRUE,ch,0,0,TO_CHAR);
-      act("$n goes berserk!", TRUE, ch,0,0,TO_ROOM);
-
-      if(ch->getHit() > (ch->hitLimit()/2)){
-	af.type = SKILL_BERSERK;
-	af.modifier = ::number(ch->getSkillValue(SKILL_BERSERK),
-			       ch->getSkillValue(SKILL_BERSERK)*2);
-	af.level = ch->GetMaxLevel();
-	//      af.duration = ch->getSkillValue(SKILL_BERSERK);;
-	af.duration = PERMANENT_DURATION;
-	af.location = APPLY_HIT;
-	af.bitvector = 0;
-	ch->affectTo(&af, -1);
-
-	af.location = APPLY_CURRENT_HIT;
-	ch->affectTo(&af, -1);
-
-	ch->sendTo("Berserking increases your ability to withstand damage!\n\r");
-      }
-
-      if (!ch->fight())
-	ch->goBerserk(NULL);
-    }
-  } 
-
-  return FALSE;
-
-}
-
-
-int travelGear(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
-{
-  // this is a custom proc for the Wanderlust/Cloak of the Traveler combo - Dash
-
-
-  TBeing *ch;
-  TObj *cloak;
-  TObj *hammer = NULL;
-  affectedData aff;
-
-  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
-    return FALSE;
-  if (obj_index[o->getItemIndex()].virt == 9583) {
-    
-    if (cmd != CMD_GENERIC_QUICK_PULSE)
-      return FALSE;
-    
-    if(!(cloak = dynamic_cast<TObj *>(ch->equipment[WEAR_BACK]))) 
-      return FALSE;
-    if (obj_index[cloak->getItemIndex()].virt != 9582)
-      return FALSE;
-    
-    // ok... so he's wielding the hammer, wearing the cloak....
-    
-    if (!::number(0,1) && (ch->getMaxMove() > 4*ch->getMove())) {
-      ch->addToMove(ch->getMaxMove()/(::number(2,5)));
-      act("<k>$p<Y> glows softly<1>, and you feel renewed strength flow into your legs.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-      act("<k>$p<Y> glows softly<1>, and $n seems to look more refreshed.<1>",TRUE,ch,o,vict,TO_ROOM,NULL);
-      return TRUE;
-    }
-    return FALSE;
-  } else if (obj_index[o->getItemIndex()].virt == 9582) {
-    if (cmd != CMD_OBJ_BEEN_HIT)
-      return FALSE;
-    if (!((hammer = dynamic_cast<TObj *>(ch->equipment[HOLD_RIGHT])) && obj_index[hammer->getItemIndex()].virt == 9583)
-	||((hammer = dynamic_cast<TObj *>(ch->equipment[HOLD_LEFT])) && obj_index[hammer->getItemIndex()].virt == 9583))
-      // no hammer
-      return FALSE;
-    if (ch->affectedBySpell(SPELL_SORCERERS_GLOBE))
-      return FALSE;
-    
-    
-    act("<1>$p<Y> glows brightly<1> as it is struck!",TRUE,ch,o,vict,TO_CHAR,NULL);
-    act("<1>$p<Y> glows brightly<1> as it is struck!",TRUE,ch,o,vict,TO_ROOM,NULL);
-    act("Your $o emits an audible hum and suddenly <W>a shield of force<1> slams into being around you!",
-	TRUE,ch,o,vict,TO_CHAR,NULL);
-    act("$n's $o emits an audible hum and suddenly <W>a shield of force<1> slams into being around $m!",
-	TRUE,ch,o,vict,TO_ROOM,NULL);
-
-    aff.type = SPELL_SORCERERS_GLOBE;
-    aff.level = 37;
-    aff.duration = ONE_SECOND * 2;
-    aff.location = APPLY_ARMOR;
-    aff.modifier = -100;
-    aff.bitvector = 0;
-    ch->affectTo(&aff, -1);
-    return TRUE;
-  }
-  return FALSE;
-}
-
-
-
-
-int dualStyleWeapon(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
-{
-
-  // this code is for weapons with more than one damage type
-  // it utilizes two 'styles' that can be changed with the switch <weapon> command
-  // to favor one or the other damage types
-  // dash - may 2001
-
-  TGenWeapon *weap = dynamic_cast<TGenWeapon *>(o);
-  if (!weap)
-    return FALSE;
-  
-  class spectype_struct {
-  public:
-    weaponT norm;
-    weaponT type1;
-    weaponT type2;
-    int vnum;
-    
-    spectype_struct()
-    {
-    }
-    ~spectype_struct()
-    {
-    }
-  };
-
-  spectype_struct *weapspec = NULL;
-  if (cmd == CMD_GENERIC_CREATED || !(weapspec = static_cast<spectype_struct *>(o->act_ptr))) {
-    o->act_ptr = new spectype_struct();
-    vlogf(LOG_PROC, "obj (%s) with dualstyle proc ... attempting to alocate.", o->getName());
-    if (!(weapspec = static_cast<spectype_struct *>(o->act_ptr))) {
-      vlogf(LOG_PROC, "obj (%s) with dualstyle proc had no memory alocated, investigate.", o->getName());
-      return FALSE;
-    }
-    weapspec->type1 = weap->getWeaponType();
-    weapspec->norm = weapspec->type1;
-    weapspec->vnum = obj_index[o->getItemIndex()].virt;
-    switch (weapspec->vnum) {                             // this proc is versatile - add more vnums/secondary damage types
-      case 9595:                                // here to make it work with another weapon
-	weapspec->type2 = WEAPON_TYPE_SMITE; // hammerblade - dash 05/01
-      default:
-	weapspec->type2 = WEAPON_TYPE_SMASH;
-    }
-    return FALSE;
-  }
-
-  if (cmd == CMD_GENERIC_DESTROYED) {
-    delete static_cast<spectype_struct *>(o->act_ptr);
-    o->act_ptr = NULL;
-    return FALSE;
-  }  
-
-
-  TBeing *ch;
-  char parg[30];
-
-  if(!(ch=genericWeaponProcCheck(vict, CMD_OBJ_HIT, weap, 0)))
-    return FALSE;
-  
-  if (cmd != CMD_SWITCH && cmd != CMD_OBJ_HIT) {
-    if (cmd != CMD_OBJ_HITTING && cmd != CMD_OBJ_MISS)
-      weap->setWeaponType(weapspec->type1);
-    return FALSE;
-  }
-  
-
-  if(cmd == CMD_SWITCH) {
-    arg = one_argument(arg, parg);
-    isname(parg, weap->name);
-    act("<c>You deftly change your grip on $p<c> to use it in a different style!<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-    act("<c>$n deftly changes $s grip on $p to use it in a different style!<1>",TRUE,ch,o,vict,TO_ROOM,NULL);    
-    if (weapspec->type1 == weapspec->norm) {
-      weapspec->type1 = weapspec->type2;
-      weapspec->type2 = weapspec->norm;
-    } else {
-      weapspec->type2 = weapspec->type1;
-      weapspec->type1 = weapspec->norm;
-    }
-    return TRUE;
-  }
- 
-  if (::number(0,3)) { // 3/4 is type 1, 1/4 is type two
-    weap->setWeaponType(weapspec->type1);
-  } else {
-    weap->setWeaponType(weapspec->type2);
-  }
-  return TRUE;
-}
-
-
 
 
 //MARKER: END OF SPEC PROCS
@@ -4788,14 +4352,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "Mine Cart", minecart},
   {FALSE, "Switchtrack", switchtrack},
   {FALSE, "vorpal", vorpal},
-  {TRUE, "Berserker Weapon", berserkerWeap},// 70
-  {FALSE, "Travel Gear", travelGear},
-  {FALSE, "Maquahuitl", maquahuitl},
-  {FALSE, "Randomizer", randomizer},
-  {FALSE, "Blunt/Pierce", bluntPierce},
-  {TRUE, "Dual Style Weapon", dualStyleWeapon}, //75
-  {FALSE, "Mana Burn Robe", manaBurnRobe},
-  {FALSE, "Chrism: minor heal", healingNeckwear},
-  {FALSE, "Chrism: bless hold item", blessingHoldItem}
 };
+
+
 

@@ -353,7 +353,7 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
 
       tRoom = real_roomp(value);
 
-      if ((!roomp || !tRoom || tRoom->getZoneNum() != roomp->getZoneNum()) && !inImperia())
+      if ((!roomp || !tRoom || tRoom->getZone() != roomp->getZone()) && !inImperia())
         return RET_STOP_PARSING;
 
       break;
@@ -409,18 +409,6 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
       tMem = resps->respMemory;
       resps->respMemory = new RespMemory(CMD_RESP_DESTINATION, NULL, arg);
       resps->respMemory->next = tMem;
-
-      break;
-    case CMD_RESP_CHECKPERSON:
-      TThing *tt;
-      TBeing *tb;
-
-      for(tt=roomp->stuff;tt;tt=tt->nextThing){
-	if((tb=dynamic_cast<TBeing *>(tt)) &&
-	   isname(tb->getName(), arg)){
-	  return RET_STOP_PARSING;
-	}
-      }
 
       break;
     default:
@@ -1282,8 +1270,6 @@ resp * TMonster::readCommand( FILE *fp)
       newCmd = new command(CMD_RESP_MOVETO, args);
     else if (is_abbrev(buf, "destination"))
       newCmd = new command(CMD_RESP_DESTINATION, args);
-    else if (is_abbrev(buf, "checkperson"))
-      newCmd = new command(CMD_RESP_CHECKPERSON, args);
     else {
       if ((cmd=searchForCommandNum( buf)) >= MAX_CMD_LIST) {
         vlogf(LOG_MOB_RS,"Responses::readCommand(): Parse error in %s. Unknown command %s.",

@@ -76,8 +76,7 @@ void SwitchStuff(TBeing *giver, TBeing *taker)
   taker->setPiety(giver->getPiety());
   taker->setMana(giver->getMana());
   taker->setMove(giver->getMove());
-  //  taker->setLifeforce(giver->getLifeforce());
-  taker->setMaxMove(giver->getMaxMove());   
+//  taker->setMaxMove(giver->getMaxMove());   
 
   statTypeT iStat;
   for (iStat=MIN_STAT;iStat<MAX_STATS;iStat++) {
@@ -155,7 +154,6 @@ void DisguiseStuff(TBeing *giver, TBeing *taker)
   taker->setMaxMove(giver->getMaxMove());
   taker->setMana(giver->getMana());
   taker->setMaxMana(giver->manaLimit());
-  //  taker->setLifeforce(giver->getLifeforce());
 }
 
 void TMonster::failCharm(TBeing *ch)
@@ -244,13 +242,14 @@ int TBeing::spellWearOff(spellNumT s, safeTypeT safe)
     act(discArray[s]->fadeAwayRoom, TRUE, this, 0, 0, TO_ROOM);
 
   if (s == SPELL_ENSORCER ||
-      s == SPELL_HYPNOSIS ||
       s == SPELL_CONJURE_AIR ||
       s == SPELL_CONJURE_EARTH ||
       s == SPELL_CONJURE_FIRE ||
       s == SPELL_CONJURE_WATER ||
+      s == SPELL_CREATE_GOLEM ||
       s == SPELL_CONTROL_UNDEAD ||
       s == SPELL_VOODOO ||
+      s == SPELL_CACAODEMON ||
       s == SPELL_RESURRECTION ||
       s == SPELL_DANCING_BONES) {
     rc = checkDecharm(FORCE_NO, safe);
@@ -370,16 +369,14 @@ TComponent *comp_from_object(TThing *item, spellNumT spell)
 // This only returns components that are for spell-casting
 TComponent *TBeing::findComponent(spellNumT spell) const
 {
-  TThing *primary, *secondary, *belt, *juju, *wristpouch, *inventory;
+  TThing *primary, *secondary, *belt, *juju, *inventory;
   TComponent *item;
   wizardryLevelT wizlevel = WIZ_LEV_NONE;
-  ritualismLevelT ritlevel = RIT_LEV_NONE;
 
   primary = heldInPrimHand();
   secondary = heldInSecHand();
   belt = equipment[WEAR_WAISTE];
   juju = equipment[WEAR_NECK];
-  wristpouch = equipment[WEAR_WRIST_R | WEAR_WRIST_L];
   inventory = stuff;
   item = NULL;
 
@@ -390,131 +387,65 @@ TComponent *TBeing::findComponent(spellNumT spell) const
     else 
       wizlevel = WIZ_LEV_COMP_BELT;
   } else {
-    if (hasClass(CLASS_SHAMAN)) {
-      ritlevel = getRitualismLevel();
-    } else {
-      wizlevel = getWizardryLevel();
+    wizlevel = getWizardryLevel();
+  }
+
+  if (isPc()) {
+    if (wizlevel <= WIZ_LEV_COMP_PRIM_OTHER_FREE) {
+      if (primary)
+	return comp_from_object(primary, spell);
+      else
+	return NULL;
+    }
+    if (wizlevel <= WIZ_LEV_COMP_EITHER) {
+      if (primary || secondary) {
+        if (primary)
+	  item = comp_from_object(primary, spell);
+        if (!item && secondary)
+          item = comp_from_object(secondary, spell);
+        return item;
+      } else
+	return NULL;
+    }
+    if (wizlevel <= WIZ_LEV_NO_MANTRA) {
+      if (primary || secondary || inventory) {
+	if (primary)
+	  item = comp_from_object(primary, spell);
+	if (!item && secondary)
+	  item = comp_from_object(secondary, spell);
+        if (!item && inventory) {
+          TThing *t;
+          for (t = stuff; t && !item; t = t->nextThing) {
+            inventory = dynamic_cast<TObj *>(t);
+            if (inventory)
+              item = comp_from_object(inventory, spell);
+          }
+        }
+	return item;
+      } else
+	return NULL;
     }
   }
-  if (hasClass(CLASS_SHAMAN)) {
-    if (isPc()) {
-      if (ritlevel <= RIT_LEV_COMP_PRIM_OTHER_FREE) {
-	if (primary)
-	  return comp_from_object(primary, spell);
-	else
-	  return NULL;
-      }
-      if (ritlevel <= RIT_LEV_COMP_EITHER) {
-	if (primary || secondary) {
-	  if (primary)
-	    item = comp_from_object(primary, spell);
-	  if (!item && secondary)
-	    item = comp_from_object(secondary, spell);
-	  return item;
-	} else
-	  return NULL;
-      }
-      if (ritlevel <= RIT_LEV_NO_MANTRA) {
-	if (primary || secondary || inventory) {
-	  if (primary)
-	    item = comp_from_object(primary, spell);
-	  if (!item && secondary)
-	    item = comp_from_object(secondary, spell);
-	  if (!item && inventory) {
-	    TThing *t;
-	    for (t = stuff; t && !item; t = t->nextThing) {
-	      inventory = dynamic_cast<TObj *>(t);
-	      if (inventory)
-		item = comp_from_object(inventory, spell);
-	    }
-	  }
-	  return item;
-	} else
-	  return NULL;
+  if (primary || secondary || belt || juju || inventory) {
+    if (primary)
+      item = comp_from_object(primary, spell);
+    if (!item && secondary)
+      item = comp_from_object(secondary, spell);
+    if (!item && belt)
+      item = comp_from_object(belt, spell);
+    if (!item && juju)
+      item = comp_from_object(juju, spell);
+    if (!item && inventory) {
+      TThing *t;
+      for (t = stuff; t && !item; t = t->nextThing) {
+        inventory = dynamic_cast<TObj *>(t);
+        if (inventory)
+          item = comp_from_object(inventory, spell);
       }
     }
-    if (primary || secondary || belt || juju || wristpouch || inventory) {
-      if (primary)
-	item = comp_from_object(primary, spell);
-      if (!item && secondary)
-	item = comp_from_object(secondary, spell);
-      if (!item && belt)
-	item = comp_from_object(belt, spell);
-      if (!item && juju)
-	item = comp_from_object(juju, spell);
-      if (!item && wristpouch)
-	item = comp_from_object(wristpouch, spell);
-      if (!item && inventory) {
-	TThing *t;
-	for (t = stuff; t && !item; t = t->nextThing) {
-	  inventory = dynamic_cast<TObj *>(t);
-	  if (inventory)
-	    item = comp_from_object(inventory, spell);
-	}
-      }
-      return item;
-    } else
-      return NULL;
-  } else {
-    if (isPc()) {
-      if (wizlevel <= WIZ_LEV_COMP_PRIM_OTHER_FREE) {
-	if (primary)
-	  return comp_from_object(primary, spell);
-	else
-	  return NULL;
-      }
-      if (wizlevel <= WIZ_LEV_COMP_EITHER) {
-	if (primary || secondary) {
-	  if (primary)
-	    item = comp_from_object(primary, spell);
-	  if (!item && secondary)
-	    item = comp_from_object(secondary, spell);
-	  return item;
-	} else
-	  return NULL;
-      }
-      if (wizlevel <= WIZ_LEV_NO_MANTRA) {
-	if (primary || secondary || inventory) {
-	  if (primary)
-	    item = comp_from_object(primary, spell);
-	  if (!item && secondary)
-	    item = comp_from_object(secondary, spell);
-	  if (!item && inventory) {
-	    TThing *t;
-	    for (t = stuff; t && !item; t = t->nextThing) {
-	      inventory = dynamic_cast<TObj *>(t);
-	      if (inventory)
-		item = comp_from_object(inventory, spell);
-	    }
-	  }
-	  return item;
-	} else
-	  return NULL;
-      }
-    }
-    if (primary || secondary || belt || juju || wristpouch || inventory) {
-      if (primary)
-	item = comp_from_object(primary, spell);
-      if (!item && secondary)
-	item = comp_from_object(secondary, spell);
-      if (!item && belt)
-	item = comp_from_object(belt, spell);
-      if (!item && juju)
-	item = comp_from_object(juju, spell);
-      if (!item && wristpouch)
-	item = comp_from_object(wristpouch, spell);
-      if (!item && inventory) {
-	TThing *t;
-	for (t = stuff; t && !item; t = t->nextThing) {
-	  inventory = dynamic_cast<TObj *>(t);
-	  if (inventory)
-	    item = comp_from_object(inventory, spell);
-	}
-      }
-      return item;
-    } else
-      return NULL;
-  }
+    return item;
+  } else
+    return NULL;
 }
 
 static void missingComponent(const TBeing * ch)
@@ -522,8 +453,8 @@ static void missingComponent(const TBeing * ch)
   if (ch->hasClass(CLASS_RANGER)) {
     ch->sendTo("You seem to lack the proper materials to complete this magic skill.\n\r");
   } else {
-    ch->sendTo("You seem to lack the proper materials to complete your task.\n\r");
-    act("$n kicks $mself as $e realizes $e just screwed up.",
+    ch->sendTo("You seem to lack the proper materials to complete this spell.\n\r");
+    act("$n kicks $mself as $e realizes $e just screwed up $s spell.",
       TRUE, ch, 0, 0, TO_ROOM);
   }
 }
@@ -978,8 +909,8 @@ int TThing::genericTeleport(silentTypeT silent, bool keepZone)
     // note, all rooms below 100 are ignored
 
     if (keepZone) {
-      int minroom = zone_table[roomp->getZoneNum() - 1].top + 1;
-      int maxroom = zone_table[roomp->getZoneNum()].top;
+      int minroom = zone_table[roomp->getZone() - 1].top + 1;
+      int maxroom = zone_table[roomp->getZone()].top;
       to_room = ::number(minroom, maxroom);
     } else {
       to_room = ::number(100, top_of_world);
@@ -994,7 +925,7 @@ int TThing::genericTeleport(silentTypeT silent, bool keepZone)
       continue;
     if (rp->isFlyingSector())
       continue;
-    if (zone_table[rp->getZoneNum()].enabled == FALSE)
+    if (zone_table[rp->getZone()].enabled == FALSE)
       continue;
 
     break;
@@ -1063,28 +994,16 @@ void TMonster::elementalFix(TBeing *caster, spellNumT spell, bool flags)
       level = (int) (1.0 * level);
       break;
     case SPELL_ENTHRALL_SPECTRE:
-      level = (int) (0.8 * level);
+      level = (int) (0.7 * level);
       break;
     case SPELL_ENTHRALL_GHAST:
-      level = (int) (0.8 * level);
+      level = (int) (0.7 * level);
       break;
     case SPELL_ENTHRALL_GHOUL:
-      level = (int) (0.85 * level);
+      level = (int) (0.8 * level);
       break;
     case SPELL_ENTHRALL_DEMON:
-      level = (int) (0.85 * level);
-      break;
-    case SPELL_CREATE_WOOD_GOLEM:
-      level = (int) (0.9 * level);
-      break;
-    case SPELL_CREATE_ROCK_GOLEM:
-      level = (int) (0.95 * level);
-      break;
-    case SPELL_CREATE_IRON_GOLEM:
-      level = (int) (1.0 * level);
-      break;
-    case SPELL_CREATE_DIAMOND_GOLEM:
-      level = (int) (1.0 * level);
+      level = (int) (0.8 * level);
       break;
     default:
       forceCrash("Bad spellNumT (%d) to elementalFix", spell);
@@ -1415,22 +1334,13 @@ void TBeing::spellMessUp(spellNumT spell)
         act("Your brain is jumbled and confused, and you flub the prayer.",
              FALSE, this, 0, 0, TO_CHAR); 
       else
-        act("Your brain is jumbled and confused.",
+        act("Your brain is jumbled and confused, and you flub the spell.",
              FALSE, this, 0, 0, TO_CHAR); 
       act("$n must have done something wrong.",
               FALSE, this, 0, 0, TO_ROOM); 
       break;
     case 3:
       if (getWizardryLevel() < WIZ_LEV_NO_GESTURES &&
-          IS_SET(discArray[spell]->comp_types, COMP_GESTURAL)) {
-        // requires gestures
-        act("Darn it!  You mess up one of the intricate gestures.",
-              FALSE, this, 0, 0, TO_CHAR); 
-        act("$n must have done something wrong.",
-              FALSE, this, 0, 0, TO_ROOM); 
-        break;
-      } // otherwise drop through for different text
-      if (getRitualismLevel() < RIT_LEV_NO_GESTURES &&
           IS_SET(discArray[spell]->comp_types, COMP_GESTURAL)) {
         // requires gestures
         act("Darn it!  You mess up one of the intricate gestures.",
@@ -1453,14 +1363,6 @@ void TBeing::spellMessUp(spellNumT spell)
               FALSE, this, 0, 0, TO_ROOM); 
         break;
       } // otherwise drop through for different text
-      if (getRitualismLevel() < RIT_LEV_NO_GESTURES &&
-          IS_SET(discArray[spell]->comp_types, COMP_GESTURAL)) {
-	act("You pathetic excuse for a houngan....Grrrrrr!!!",
-	    FALSE, this, 0, 0, TO_CHAR); 
-        act("$n must have done something wrong.",
-	    FALSE, this, 0, 0, TO_ROOM); 
-        break;
-      } // otherwise drop through for different text
     case 5:
       if (getWizardryLevel() < WIZ_LEV_NO_MANTRA &&
           IS_SET(discArray[spell]->comp_types, COMP_VERBAL)) {
@@ -1471,29 +1373,11 @@ void TBeing::spellMessUp(spellNumT spell)
               FALSE, this, 0, 0, TO_ROOM); 
         break;
       } // otherwise drop through for different text
-      if (getRitualismLevel() < RIT_LEV_NO_MANTRA &&
-          IS_SET(discArray[spell]->comp_types, COMP_VERBAL)) {
-        // requires incantation
-        act("Oops...  You messed that one up....",
-              FALSE, this, 0, 0, TO_CHAR); 
-        act("$n must have done something wrong.",
-              FALSE, this, 0, 0, TO_ROOM); 
-        break;
-      } // otherwise drop through for different text
     case 6:
       if (getWizardryLevel() < WIZ_LEV_NO_MANTRA &&
           IS_SET(discArray[spell]->comp_types, COMP_VERBAL)) {
         // requires incantation
         act("You trip over your tongue and mis-speak the incantation.",
-              FALSE, this, 0, 0, TO_CHAR); 
-        act("$n must have done something wrong.",
-              FALSE, this, 0, 0, TO_ROOM); 
-        break;
-      } // otherwise drop through for different text
-      if (getRitualismLevel() < RIT_LEV_NO_MANTRA &&
-          IS_SET(discArray[spell]->comp_types, COMP_VERBAL)) {
-        // requires incantation
-        act("You trip over your own feet trying to dance for the loa!",
               FALSE, this, 0, 0, TO_CHAR); 
         act("$n must have done something wrong.",
               FALSE, this, 0, 0, TO_ROOM); 
@@ -1524,183 +1408,131 @@ void TBeing::nothingHappens(silentTypeT silent_caster) const
     }
   }
 
-  if (hasClass(CLASS_SHAMAN)) {
-    int num = ::number(0,6);
-    switch(num) {
-      default:
-      case 0:
-	if (!silent_caster)
-	  sendTo("Nothing seems to happen.\n\r");
-	act("Nothing seems to happen.", TRUE, this, 0, 0, TO_ROOM);
-	break;
-      case 1:
-	if (!silent_caster)
-	  sendTo("Nothing happens.\n\r");
-	act("Nothing happens.", TRUE, this, 0, 0, TO_ROOM);
-	break;
-      case 2:
-	if (!silent_caster)
-	  act("Uh oh, maybe you ought to try that again.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("Make like it worked.....shhhhhhhhhhh.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 3:
-	if (!silent_caster)
-	  act("That didn't work...",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n's invokation didn't work.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 4:
-	if (!silent_caster)
-	  act("Nope, nuh uh, nada, zip.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("Chant, dance, do the bugaloo...whatever, shaman suck.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 5:
-	if (!silent_caster)
-	  act("Damn!  Missed again.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("No luck here! Maybe something more simple for a shaman?",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 6:
-	if (!silent_caster)
-	  act("The power of your ancestors is not there.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("I feel like dancin'....YEAH!",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-    }
-  } else {
-    int num = ::number(0,17);
-    switch(num) {
-      default:
-      case 0:
-	if (!silent_caster)
-	  sendTo("Nothing seems to happen.\n\r");
-	act("Nothing seems to happen.", TRUE, this, 0, 0, TO_ROOM);
-	break;
-      case 1:
-	if (!silent_caster)
-	  sendTo("Nothing happens.\n\r");
-	act("Nothing happens.", TRUE, this, 0, 0, TO_ROOM);
-	break;
-      case 2:
-	if (!silent_caster)
-	  act("Uh oh, maybe you ought to try that again.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("Humor the little mage and pretend the spell worked.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 3:
-	if (!silent_caster)
-	  act("That didn't work...ONE MORE TIME!",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n's spell didn't work.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 4:
-	if (!silent_caster)
-	  act("Nope, nuh uh, nada, zip, the big mage fizzle.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("Chant, chant, wave hands, wave hands, mages suck.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 5:
-	if (!silent_caster)
-	  act("Damn!  Missed again.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("The mage casts and misses!",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 6:
-	if (!silent_caster)
-	  act("The forces of magic fail to come forth.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("The forces of magic fail to come forth.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 7:
-	if (!silent_caster)
-	  act("Try as you might, your magic fails you.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-  	  act("Try as $n might, the magic fails.",
-	      FALSE, this, NULL, NULL, TO_ROOM);
-	  break;
-      case 8:
-	if (!silent_caster)
-	  act("Your attempt at magic is unsuccessful.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n's attempt at magic is unsuccessful.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 9:
-	if (!silent_caster)
-	  act("Your spell dissipates without effect.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n's magic dissipates without any effect.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 10:
-	if (!silent_caster)
-	  act("Your mind lacks the focus to control the magic.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n's magic starts to form, but then collapses.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 11:
-	if (!silent_caster)
-	  act("Your thoughts go awry, and the magic fades harmlessly.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n looks perplexed and $s magic fades harmlessly.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 12:
-	if (!silent_caster)
-	  act("You're pretty sure that should have worked, but no such luck.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n blinks in bewilderment.  Perhaps $e was expecting something to happen...?",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 13:
-	if (!silent_caster)
-	  act("Dang, you forgot part of the incantation and cease casting.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n throws $s hands up in disgust.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 14:
-	if (!silent_caster)
-	  act("Something seems amiss, and you give up on your spell.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n acts like $s spell is finished, but the magic ain't there.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 15:
-	if (!silent_caster)
-	  act("You slip up and manage to fill the air with goose feathers.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n fills the air with goose feathers.  Neat!",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 16:
-	if (!silent_caster)
-	  act("You make an error and sparks seem to surround you.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("$n makes a mistake, and becomes surrounded by magical sparks.",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-      case 17:
-	if (!silent_caster)
-	  act("DAMN! Screwed up again!.",
-	      FALSE, this, NULL, NULL, TO_CHAR);
-	act("Chant...Chant...Wave hands...Wave hands...Mages suck!",
-	    FALSE, this, NULL, NULL, TO_ROOM);
-	break;
-    }
+  int num = ::number(0,17);
+  switch(num) {
+    default:
+    case 0:
+      if (!silent_caster)
+        sendTo("Nothing seems to happen.\n\r");
+      act("Nothing seems to happen.", TRUE, this, 0, 0, TO_ROOM);
+      break;
+    case 1:
+      if (!silent_caster)
+        sendTo("Nothing happens.\n\r");
+      act("Nothing happens.", TRUE, this, 0, 0, TO_ROOM);
+      break;
+    case 2:
+      if (!silent_caster)
+        act("Uh oh, maybe you ought to try that again.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("Humor the little mage and pretend the spell worked.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 3:
+      if (!silent_caster)
+        act("That didn't work...ONE MORE TIME!",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n's spell didn't work.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 4:
+      if (!silent_caster)
+        act("Nope, nuh uh, nada, zip, the big mage fizzle.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("Chant, chant, wave hands, wave hands, mages suck.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 5:
+      if (!silent_caster)
+        act("Damn!  Missed again.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("The mage casts and misses!",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 6:
+      if (!silent_caster)
+        act("The forces of magic fail to come forth.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("The forces of magic fail to come forth.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 7:
+      if (!silent_caster)
+        act("Try as you might, your magic fails you.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("Try as $n might, the magic fails.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 8:
+      if (!silent_caster)
+        act("Your attempt at magic is unsuccessful.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n's attempt at magic is unsuccessful.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 9:
+      if (!silent_caster)
+        act("Your spell dissipates without effect.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n's magic dissipates without any effect.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 10:
+      if (!silent_caster)
+        act("Your mind lacks the focus to control the magic.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n's magic starts to form, but then collapses.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 11:
+      if (!silent_caster)
+        act("Your thoughts go awry, and the magic fades harmlessly.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n looks perplexed and $s magic fades harmlessly.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 12:
+      if (!silent_caster)
+        act("You're pretty sure that should have worked, but no such luck.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n blinks in bewilderment.  Perhaps $e was expecting something to happen...?",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 13:
+      if (!silent_caster)
+        act("Dang, you forgot part of the incantation and cease casting.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n throws $s hands up in disgust.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 14:
+      if (!silent_caster)
+        act("Something seems amiss, and you give up on your spell.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n acts like $s spell is finished, but the magic ain't there.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 15:
+      if (!silent_caster)
+        act("You slip up and manage to fill the air with goose feathers.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n fills the air with goose feathers.  Neat!",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 16:
+      if (!silent_caster)
+        act("You make an error and sparks seem to surround you.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("$n makes a mistake, and becomes surrounded by magical sparks.",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
+    case 17:
+      if (!silent_caster)
+        act("DAMN! Screwed up again!.",
+                 FALSE, this, NULL, NULL, TO_CHAR);
+      act("Chant...Chant...Wave hands...Wave hands...Mages suck!",
+                 FALSE, this, NULL, NULL, TO_ROOM);
+      break;
   }
 }
 
@@ -1848,13 +1680,3 @@ string displayDifficulty(spellNumT skill)
   }
   return "BOGUS, tell a god";
 }
-
-
-
-
-
-
-
-
-
-

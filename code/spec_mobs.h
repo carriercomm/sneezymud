@@ -3,19 +3,6 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spec_mobs.h,v $
-// Revision 5.4  2001/07/03 08:57:25  jesus
-// added ritualismLevelT
-// removed totemism disc
-// added ritualism disc
-// removed wizardry from shaman
-// added ritualism as a replacement
-// added a rituals command for spell and comp listing
-// took shaman out of dospells
-// now 2 seperate so gods can list seperatly
-//
-// Revision 5.3  2001/06/28 04:47:24  peel
-// added spec mob stub for realEstateAgent
-//
 // Revision 5.2  2001/06/18 04:31:00  peel
 // Added bankGuard proc
 //
@@ -159,7 +146,7 @@ const int SPEC_TRAINER_SHAMAN_ALCHEMY=137;
 const int SPEC_TRAINER_SHAMAN_SKUNK =138;
 const int SPEC_TRAINER_SHAMAN_SPIDER=139;
 const int SPEC_TRAINER_SHAMAN_CONTROL=140;
-const int SPEC_TRAINER_RITUALISM=141;
+const int SPEC_TRAINER_TOTEM=141;
 const int SPEC_TRAINER_RANGER_FIGHT=142;
 const int SPEC_GM_SHAMAN         =143;
 const int SPEC_TRAINER_COMBAT  =144;
@@ -173,8 +160,7 @@ const int SPEC_DOPPLEGANGER    =152;
 const int SPEC_TUSKGORE        =153;
 const int SPEC_FISHTRACKER     =154;
 const int SPEC_BANK_GUARD      =155;
-const int SPEC_REAL_ESTATE_AGENT=156;
-const int NUM_MOB_SPECIALS     =157;
+const int NUM_MOB_SPECIALS     =156;
 
 extern const int GET_MOB_SPE_INDEX(int d);
 
@@ -217,7 +203,6 @@ extern int tunnelerEarthquake(TBeing *, cmdTypeT, const char *, TMonster *, TObj
 extern int tuskGoring(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int fishTracker(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int bankGuard(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int realEstateAgent(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 
 class attune_struct {
   public:

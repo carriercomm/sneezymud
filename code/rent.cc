@@ -1212,7 +1212,7 @@ void TMonster::saveItems(const char *filepath)
   TObj *obj;
 
   if (!(fp = fopen(filepath, "w+b"))) {
-    //    vlogf(LOG_BUG, "Error saving mob [%s] items.", getName());
+    vlogf(LOG_BUG, "Error saving mob [%s] items.", getName());
     return;
   }
   memset(&st, 0, sizeof(rentHeader));
@@ -1248,13 +1248,13 @@ void TMonster::saveItems(const char *filepath)
       return;
     }
     
-    if((rc=dbquery(&res, "sneezy", "saveItems", "select * from shopownedaccess where shop_nr=%i", shop_nr))==-1){
+    if((rc=dbquery(&res, "sneezy", "saveItems", "select * from shopownedaccess where shop_nr=%i", shop_nr+1))==-1){
       vlogf(LOG_BUG, "Database error in shop_keeper");
       return;
     }
     if((row=mysql_fetch_row(res))){
       mysql_free_result(res);
-      if((rc=dbquery(&res, "sneezy", "saveItems", "update shopowned set gold=%i where shop_nr=%i", getMoney(), shop_nr))){
+      if((rc=dbquery(&res, "sneezy", "saveItems", "update shopowned set gold=%i where shop_nr=%i", getMoney(), shop_nr+1))){
 	if(rc==-1){
 	  vlogf(LOG_BUG, "Database error in shop_keeper");
 	  return;
@@ -3167,7 +3167,6 @@ float old_ac_lev = mob->getACLevel();
       mob->setDamPrecision(tmp);
     }
 
-    mob->setLifeforce(9000);
     mob->setMana(10);
     mob->setMaxMana(10);
     mob->setPiety(mob->pietyLimit());
@@ -3378,7 +3377,10 @@ float old_ac_lev = mob->getACLevel();
           }
           delete new_obj;
         }
+      } else {
+        mob->equipment[mapped_slot] = NULL;
       }
+
       mob->setStuckIn(mapped_slot, NULL);
     }
 

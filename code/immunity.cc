@@ -165,7 +165,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
   immuneTypeT bit = IMMUNE_NONE;
 
   switch (type) {
-    case SPELL_BLOOD_BOIL:
     case DAMAGE_FIRE:
     case SPELL_FIREBALL:
     case SPELL_HANDS_OF_FLAME:
@@ -204,9 +203,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_COLOR_SPRAY:
     case SPELL_BLAST_OF_FURY:
     case SPELL_ATOMIZE:
-    case SPELL_RAZE:
-    case SPELL_DISTORT:
-    case SPELL_DEATHWAVE:
     case DAMAGE_TRAP_ENERGY:
       bit = IMMUNE_ENERGY;
       break;
@@ -232,13 +228,9 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_DUST_BREATH:
       bit = IMMUNE_AIR;
       break;
-    case SPELL_VAMPIRIC_TOUCH:
-    case SPELL_LIFE_LEECH:
-    case SPELL_LICH_TOUCH:
     case SPELL_ENERGY_DRAIN:
     case DAMAGE_DRAIN:
     case SPELL_HARM_DEIKHAN:
-    case SPELL_SOUL_TWIST:
     case SPELL_HARM:
     case SPELL_HARM_LIGHT_DEIKHAN:
     case SPELL_HARM_SERIOUS_DEIKHAN:
@@ -318,7 +310,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
       break;
     case SPELL_POISON_DEIKHAN:
     case SPELL_POISON:
-    case SPELL_DEATH_MIST:
     case SPELL_CHLORINE_BREATH:
     case DAMAGE_TRAP_POISON:
       bit = IMMUNE_POISON;
@@ -336,8 +327,9 @@ immuneTypeT getTypeImmunity(spellNumT type)
       bit = IMMUNE_PARALYSIS;
       break;
     case SPELL_ENSORCER:
-    case SPELL_HYPNOSIS:
+    case SPELL_CACAODEMON:
     case SPELL_CONTROL_UNDEAD:
+    case SPELL_CREATE_GOLEM:
     case SPELL_ANIMATE:
     case SPELL_VOODOO:
     case SPELL_DANCING_BONES:
@@ -350,14 +342,12 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SKILL_TRANSFIX:
       bit = IMMUNE_CHARM;
       break;
-    case SPELL_FLATULENCE:
     case DAMAGE_SUFFOCATION:
     case DAMAGE_DROWN:
     case SPELL_SUFFOCATE:
     case SKILL_GARROTTE:
       bit = IMMUNE_SUFFOCATION;
       break;
-    case SPELL_SQUISH:
     case SPELL_BONE_BREAKER:
       bit = IMMUNE_BONE_COND;
       break;
@@ -374,7 +364,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
       bit = IMMUNE_WATER;
       break;
     case SPELL_FEAR:
-    case SPELL_INTIMIDATE:
       bit = IMMUNE_FEAR;
       break; 
     case SPELL_DISEASE:
@@ -417,20 +406,14 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_ILLUMINATE:
     case SPELL_DETECT_MAGIC:
     case SPELL_DISPEL_MAGIC:
-    case SPELL_CARDIAC_STRESS:
     case SPELL_COPY:
-    case SPELL_CHRISM:
-    case SPELL_DETECT_SHADOW:
     case SPELL_MATERIALIZE:
     case SPELL_SPONTANEOUS_GENERATION:
     case SPELL_GALVANIZE:
     case SPELL_STONE_SKIN:
     case SPELL_TRAIL_SEEK:
     case SPELL_FAERIE_FIRE:
-    case SPELL_STUPIDITY:
     case SPELL_FLAMING_FLESH:
-    case SPELL_DJALLA: // shaman
-    case SPELL_LEGBA: // shaman
     case SPELL_PROTECTION_FROM_FIRE:
     case SPELL_PROTECTION_FROM_ELEMENTS:
     case SPELL_PROTECTION_FROM_EARTH:
@@ -439,7 +422,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_FLARE:
     case SPELL_INFRAVISION:
     case SPELL_SENSE_LIFE:
-    case SPELL_SENSE_LIFE_SHAMAN:
     case SPELL_SILENCE:
     case SPELL_STEALTH:
     case SPELL_CALM:
@@ -447,12 +429,10 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_DETECT_INVISIBLE:
     case SPELL_DISPEL_INVISIBLE:
     case SPELL_TELEPATHY:
-    case SPELL_ROMBLER:
+//    case SPELL_FREE_ACTION:
     case SPELL_TRUE_SIGHT:
     case SPELL_POLYMORPH:
     case SPELL_ACCELERATE:
-    case SPELL_CELERITE:
-    case SPELL_CHEVAL: // shaman
     case SPELL_HASTE:
     case SPELL_FAERIE_FOG:
     case SPELL_GILLS_OF_FLESH:
@@ -528,10 +508,10 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_CURE_DISEASE_DEIKHAN:
     case SPELL_PLASMA_MIRROR:
     case SPELL_THORNFLESH:
-    case SPELL_CLARITY:
     case SPELL_GARMULS_TAIL:
     case SPELL_ETHER_GATE:
-    case SPELL_SHADOW_WALK:
+    case SPELL_VAMPIRIC_TOUCH:
+    case SPELL_LIFE_LEECH:
     case SKILL_SKIN:
     case SKILL_WHITTLE:
     case SKILL_STAVECHARGE:
@@ -643,7 +623,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SKILL_DEFENSE:
     case SKILL_OFFENSE:
     case SKILL_WIZARDRY:
-    case SKILL_RITUALISM:
     case SKILL_MEDITATE:
     case SKILL_DEVOTION:
     case SKILL_PENANCE:
@@ -655,10 +634,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_ENTHRALL_GHAST:
     case SPELL_ENTHRALL_GHOUL:
     case SPELL_ENTHRALL_DEMON:
-    case SPELL_CREATE_WOOD_GOLEM:
-    case SPELL_CREATE_ROCK_GOLEM:
-    case SPELL_CREATE_IRON_GOLEM:
-    case SPELL_CREATE_DIAMOND_GOLEM:
     case DAMAGE_NORMAL:
     case DAMAGE_BEHEADED:
     case DAMAGE_RAMMED:
@@ -711,9 +686,6 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case AFFECT_PLAYERLOOT:
     case AFFECT_HORSEOWNED:
     case AFFECT_GROWTH_POTION:
-    case AFFECT_WARY:
-    case AFFECT_DEFECTED:
-    case AFFECT_OFFER:
     case LAST_ODDBALL_AFFECT:
     case SKILL_ALCOHOLISM:
     case SKILL_FISHING:
@@ -728,5 +700,3 @@ immuneTypeT getTypeImmunity(spellNumT type)
   }
   return bit;
 }
-
-

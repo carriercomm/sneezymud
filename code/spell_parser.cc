@@ -73,7 +73,8 @@ int TBeing::useLifeforce(spellNumT spl)
     vlogf(LOG_BUG, "useLifeforce() with bad discipline for spell=%d", spl);
     return 0;
   }
-  arrayLifeforce = getDiscipline(das)->useLifeforce(getSkillValue(spl),discArray[spl]->minLifeforce);
+  // for arrayLifeforce im using minMana...should be replaced later on JESUS
+  arrayLifeforce = getDiscipline(das)->useLifeforce(getSkillValue(spl),discArray[spl]->minMana);
 
 // divide total LF/rounds for each spell if spell tasked
   if (IS_SET(discArray[spl]->comp_types, SPELL_TASKED) &&
@@ -83,7 +84,6 @@ int TBeing::useLifeforce(spellNumT spl)
   } else {
     return arrayLifeforce;
   }
-  updatePos();
 }
 
 // END LIFEFORCE
@@ -162,8 +162,6 @@ void TBeing::stopFollower(bool remove, stopFollowerT textLimits) // default argu
     }
     if (affectedBySpell(SPELL_ENSORCER) && remove)
       affectFrom(SPELL_ENSORCER);
-    if (affectedBySpell(SPELL_HYPNOSIS) && remove)
-      affectFrom(SPELL_HYPNOSIS);
   } else {
     int levelLimit = (isPlayerAction(PLR_STEALTH) ? MAX_MORT : 0);
 
@@ -352,9 +350,6 @@ void TBeing::saySpell(spellNumT si)
   if (discArray[si]->minMana) {
     sprintf(buf2, "$n utters the incantation, '%s'", buf);
     sprintf(buf, "$n utters the incantation, '%s'", discArray[si]->name);
-  } else if (discArray[si]->minLifeforce) {
-    sprintf(buf2, "$n chants the invokation, '%s'", buf);
-    sprintf(buf, "$n chants the invokation, '%s'", discArray[si]->name);
   } else {
     sprintf(buf2, "$n utters the holy words, '%s'", buf);
     sprintf(buf, "$n utters the holy words, '%s'", discArray[si]->name);
@@ -372,7 +367,6 @@ void TBeing::saySpell(spellNumT si)
 
     }
   }
-  updatePos();
 }
 
 static int preflight_mana(TBeing *ch, spellNumT spl)
@@ -538,7 +532,6 @@ int TBeing::reconcileLifeforce(spellNumT spl, bool checking, int lifeforce)
       setLifeforce(0);
     }
   }
-  updatePos();
   return TRUE;
 }
 // END LIFEFORCE
@@ -1066,14 +1059,6 @@ spellNumT TBeing::parseSpellNum(char *arg)
     }
     return SPELL_TELEPATHY;
   }
-  if (isname(kludge, "romble")) {
-    strcpy(arg, one_argument(arg, kludge));
-    if (!doesKnowSkill(SPELL_ROMBLER)) {
-      sendTo("You don't know that spell!\n\r");
-      return TYPE_UNDEFINED;
-    }
-    return SPELL_ROMBLER;
-  }
   spellNumT which;
   if (((which = searchForSpellNum(arg, EXACT_YES)) > TYPE_UNDEFINED) ||
       ((which = searchForSpellNum(arg, EXACT_NO)) > TYPE_UNDEFINED)) {
@@ -1422,11 +1407,6 @@ int TBeing::preDiscCheck(spellNumT which)
         sendTo("You can't summon enough energy to cast the spell.\n\r");
         return FALSE;
       }
-    } else if (discArray[which]->minLifeforce) {
-      if (!preflight_lifeforce(this, which)) {
-        sendTo("You don't have enough lifeforce to perform the ritual.\n\r");
-        return FALSE;
-      }
     } else {
       if (!preflight_piety(this, which)) {
         sendTo("You lack the piety to pray to your deity for that.\n\r");
@@ -1473,11 +1453,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
         (getWizardryLevel() < WIZ_LEV_NO_MANTRA))
       saySpell(which);
   }
-  if (isPc() && canSpeak()) {
-    if (discArray[which]->minLifeforce && 
-        (getRitualismLevel() < RIT_LEV_NO_MANTRA))
-      saySpell(which);
-  }
 #endif
   if (isPc() && canSpeak()) {
     if (discArray[which]->holyStrength && 
@@ -1492,9 +1467,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
   if (isPc()) {
     if (discArray[which]->minMana) {
       if (!reconcileMana(which, TRUE)) 
-        return FALSE;
-    } else if (discArray[which]->minLifeforce) {
-      if (!reconcileLifeforce(which, TRUE)) 
         return FALSE;
     } else {
       if (!reconcilePiety(which, TRUE)) 
@@ -1535,18 +1507,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SPELL_ENTHRALL_DEMON:
       rc = enthrallDemon(this);
       break;
-    case SPELL_CREATE_WOOD_GOLEM:
-      rc = createWoodGolem(this);
-      break;
-    case SPELL_CREATE_ROCK_GOLEM:
-      rc = createRockGolem(this);
-      break;
-    case SPELL_CREATE_IRON_GOLEM:
-      rc = createIronGolem(this);
-      break;
-    case SPELL_CREATE_DIAMOND_GOLEM:
-      rc = createDiamondGolem(this);
-      break;
     case SPELL_FEATHERY_DESCENT:
       rc = featheryDescent(this, ch);
       break;
@@ -1564,12 +1524,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       break;
     case SPELL_PROTECTION_FROM_AIR:
       rc = protectionFromAir(this, ch);
-      break;
-    case SPELL_DJALLA:
-      rc = djallasProtection(this, ch);
-      break;
-    case SPELL_LEGBA:
-      rc = legbasGuidance(this, ch);
       break;
     case SPELL_IDENTIFY:
       if (!o) {
@@ -1679,9 +1633,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SPELL_CONJURE_FIRE:
       rc = conjureElemFire(this);
       break;
-    case SPELL_STUPIDITY:
-      stupidity(this, ch);
-      break;
     case SPELL_FLARE:
       rc = flare(this);
       break;
@@ -1696,24 +1647,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       break;
     case SPELL_STUNNING_ARROW:
       rc = stunningArrow(this, ch);
-      break;
-    case SPELL_STICKS_TO_SNAKES:
-      sticksToSnakes(this, ch);
-      break;
-    case SPELL_DISTORT:
-      rc = distort(this, ch);
-      break;
-    case SPELL_DEATHWAVE:
-      rc = deathWave(this, ch);
-      break;
-    case SPELL_SOUL_TWIST:
-      rc = soulTwist(this, ch);
-      break;
-    case SPELL_BLOOD_BOIL:
-      rc = bloodBoil(this, ch);
-      break;
-    case SPELL_FLATULENCE:
-      rc = flatulence(this);
       break;
     case SPELL_BLAST_OF_FURY:
       rc = blastOfFury(this, ch);
@@ -1753,9 +1686,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SPELL_SENSE_LIFE:
       senseLife(this, ch);
       break;
-    case SPELL_SENSE_LIFE_SHAMAN:
-      senseLifeShaman(this, ch);
-      break;
     case SPELL_SILENCE:
       silence(this, ch);
       break;
@@ -1765,17 +1695,11 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SPELL_CALM:
       calm(this, ch);
       break;
-    case SPELL_SQUISH:
-      rc = squish(this, ch);
-      break;
     case SPELL_ENSORCER:
       rc = ensorcer(this, ch);
       break;
     case SPELL_FEAR:
       rc = fear(this, ch);
-      break;
-    case SPELL_INTIMIDATE:
-      rc = intimidate(this, ch);
       break;
     case SPELL_INVISIBILITY:
       if (!o) {
@@ -1789,9 +1713,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SPELL_DETECT_INVISIBLE:
       detectInvisibility(this, ch);
       break;
-    case SPELL_DETECT_SHADOW:
-      detectShadow(this, ch);
-      break;
     case SPELL_DISPEL_INVISIBLE:
       if (!o) 
         dispelInvisible(this, ch);
@@ -1800,12 +1721,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       break;
     case SPELL_TELEPATHY:
       telepathy(this, n);
-      break;
-    case SPELL_ROMBLER:
-      rombler(this, n);
-      break;
-    case SPELL_RAZE:
-      rc = raze(this, ch);
       break;
     case SPELL_TRUE_SIGHT:
       trueSight(this, ch);
@@ -1830,9 +1745,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       break;
     case SPELL_AQUATIC_BLAST:
       rc = aquaticBlast(this, ch);
-      break;
-    case SPELL_CARDIAC_STRESS:
-      rc = cardiacStress(this, ch);
       break;
     case SPELL_FAERIE_FOG:
       faerieFog(this);
@@ -2006,50 +1918,26 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       case SPELL_EXPEL_DEIKHAN:
           expel(this, ch);
         break;
-      case SPELL_CONTROL_UNDEAD:
-	controlUndead(this, ch);
+      case SPELL_CACAODEMON:
+          cacaodemon(this, n);
         break;
-      case SPELL_CLARITY:
-        clarity(this, ch);
-        break;
-      case SPELL_LICH_TOUCH:
-        rc = lichTouch(this, ch);
-        break;
-      case SPELL_CHEVAL:
-        cheval(this, ch);
-        break;
-      case SPELL_CELERITE:
-        celerite(this, ch);
-        break;
-      case SPELL_VAMPIRIC_TOUCH:
-        rc = vampiricTouch(this, ch);
-        break;
-      case SPELL_LIFE_LEECH:
-        rc = lifeLeech(this, ch);
-        break;
-      case SPELL_HYPNOSIS:
-        rc = hypnosis(this, ch);
+      case SPELL_CREATE_GOLEM:
+          createGolem(this);
         break;
       case SPELL_THORNFLESH:
         rc = thornflesh(this);
 	break;
-      case SPELL_DEATH_MIST:
-	rc = deathMist(this);
-	break;
       case SPELL_SHIELD_OF_MISTS:
         shieldOfMists(this, ch);
         break;
-      case SPELL_SHADOW_WALK:
-	rc = shadowWalk(this, ch);
-	break;
-      case SPELL_CHRISM:
-        chrism(this, n); 
-	break;
       case SPELL_VOODOO:
           rc = voodoo(this, o);
         break;
       case SPELL_DANCING_BONES:
           rc = dancingBones(this, o);
+        break;
+      case SPELL_CONTROL_UNDEAD:
+          controlUndead(this, ch);
         break;
       case SPELL_RESURRECTION:
           rc = resurrection(this, o);
@@ -2079,6 +1967,14 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       case SPELL_SUMMON:
           rc = summon(this, ch);
         break;
+#if 0
+      case SPELL_VAMPIRIC_TOUCH:
+          vampiricTouch(this, ch);
+        break;
+      case SPELL_LIFE_LEECH:
+          lifeLeech(this);
+        break;
+#endif
       case SPELL_SYNOSTODWEOMER:
           rc = synostodweomer(this, ch);
         break;
@@ -2087,6 +1983,9 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
           rc = barkskin(this, ch);
         break;
 #endif
+      case SPELL_STICKS_TO_SNAKES:
+          sticksToSnakes(this, ch);
+        break;
       case SPELL_ROOT_CONTROL:
           rootControl(this, ch);
         break;
@@ -2094,7 +1993,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
           livingVines(this, ch);
         break;
       case SPELL_STORMY_SKIES:
-        rc = stormySkies(this, ch);
+          stormySkies(this, ch);
         break;
 #if 0
       case SKILL_TRANSFORM_LIMB:
@@ -2344,6 +2243,8 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SKILL_DISARM_THIEF:
     case SKILL_COUNTER_STEAL:
     case SKILL_BREW:
+    case SPELL_VAMPIRIC_TOUCH:
+    case SPELL_LIFE_LEECH:
     case SKILL_TURN:
     case SKILL_SIGN:
     case SKILL_SWIM:
@@ -2366,7 +2267,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SKILL_OFFENSE:
     case SKILL_WHITTLE:
     case SKILL_WIZARDRY:
-    case SKILL_RITUALISM:
     case SKILL_MEDITATE:
     case SKILL_DEVOTION:
     case SKILL_PENANCE:
@@ -2451,9 +2351,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case AFFECT_PLAYERLOOT:
     case AFFECT_HORSEOWNED:
     case AFFECT_GROWTH_POTION:
-    case AFFECT_WARY:
-    case AFFECT_DEFECTED:
-    case AFFECT_OFFER:
     case LAST_ODDBALL_AFFECT:
     case SKILL_ALCOHOLISM:
     case SKILL_FISHING:
@@ -2468,8 +2365,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
   if (isPc()) {
     if (discArray[which]->minMana) {
       reconcileMana(which, FALSE);
-    } else if (discArray[which]->minLifeforce) {
-      reconcileLifeforce(which, FALSE);
     } else {
       reconcilePiety(which, FALSE);
     }
@@ -2517,9 +2412,6 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
             if (discArray[which]->minMana) {
               act("Your enemies sense your offensive magic.", FALSE, this, NULL, NULL ,TO_CHAR);
               act("You sense offensive magic emanating from $n.", FALSE, this, NULL, NULL, TO_ROOM);
-            } else if (discArray[which]->minLifeforce) {
-              act("Your enemies sense your harmful invokation is directed toward them.", FALSE, this, NULL, NULL ,TO_CHAR);
-              act("You sense evil from $n.", FALSE, this, NULL, NULL, TO_ROOM);
             } else {
               act("Your enemies sense your offensive praying.", FALSE, this, NULL, NULL ,TO_CHAR);
               act("You sense offensive praying emanating from $n.", FALSE, this, NULL, NULL, TO_ROOM);
@@ -2530,7 +2422,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       }
     }
   }
-  updatePos();
+
   return FALSE;
 }
 

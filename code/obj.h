@@ -231,9 +231,10 @@ const unsigned int CORPSE_NO_DISSECT    = (1<<1);
 const unsigned int CORPSE_NO_SKIN       = (1<<2);
 const unsigned int CORPSE_HALF_SKIN     = (1<<3);
 const unsigned int CORPSE_PC_SKINNING   = (1<<4);
-const unsigned int CORPSE_SACRIFICE     = (1<<5);
+const unsigned int CORPSE_NO_SACRIFICE  = (1<<5);
+const unsigned int CORPSE_SACRIFICE     = (1<<6);
 
-const int MAX_CORPSE_FLAGS     = 6;  // move and change
+const int MAX_CORPSE_FLAGS     = 7;  // move and change
 
 /* for containers  - value[1] */
 
@@ -291,7 +292,7 @@ const unsigned int ITEM_NORENT          = (1<<21);    // 2097152
 const unsigned int ITEM_FLOAT           = (1<<22);    // 4194304
 const unsigned int ITEM_NOPURGE         = (1<<23);    // 8388608
 const unsigned int ITEM_NEWBIE          = (1<<24);    // 16777216
-const unsigned int ITEM_NOJUNK_PLAYER   = (1<<25);    // 33554432 USE THIS SPOT FOR EXTRA
+const unsigned int ITEM_NOT_USED1       = (1<<25);    // 33554432 USE THIS SPOT FOR EXTRA
 const unsigned int ITEM_NOT_USED2       = (1<<26);    // 67108864 USE THIS SPOT FOR EXTRA
 const unsigned int ITEM_NOT_USED3       = (1<<27);    // 134217728  USE THIS SPOT FOR EXTRA
 const unsigned int ITEM_ATTACHED        = (1<<28);    // 268435456 
@@ -441,7 +442,6 @@ class TObj : public TThing {
 
     virtual void weightCorrection() {}
     virtual bool monkRestrictedItem(const TBeing *ch) const;
-    virtual bool shamanRestrictedItem(const TBeing *ch) const;
     virtual bool rangerRestrictedItem(const TBeing *ch) const;
     virtual void assignFourValues(int, int, int, int) = 0;
     virtual void getFourValues(int *, int *, int *, int *) const = 0;

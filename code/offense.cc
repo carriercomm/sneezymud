@@ -1282,44 +1282,46 @@ int TObj::burnObject(TBeing *ch, int perc)
   int orig = getMaxStructPoints();
   int burndam = ::number(0,(int)((double)orig * 1.00 * 
 				 ((double)(material_nums[getMaterial()].flammability))/1000.0) +1);
-  burndam/=5;
-  if(burndam<=0) burndam=1;
 
-  if(material_nums[getMaterial()].flammability &&
-     burndam > getStructPoints()){
-    // destroyed
-    setStructPoints(0);
-    if (ch) {
-      sprintf(buf, "Your $o $q consumed in <r>flame<1>.");
-      act(buf,TRUE,ch,this,0,TO_CHAR, ANSI_YELLOW);
-      sprintf(buf, "$n's $o $q consumed in the flames.");
-      act(buf,TRUE,ch,this,0,TO_ROOM);
-    } else {
-      act("The flame consumes $n.",TRUE,this,0,0,TO_ROOM);
-    }
-    // since bag went poof, lets (re)check contents 
-    // with an even higher percentage, and empty bag into owner
-    while ((t = stuff)) {
-      (*t)--;
-      if (parent)
-	*parent += *t;
-      else if (roomp)
-	*roomp += *t;
-      else
-	vlogf(LOG_BUG, "Bad struct on burnObj %s", t->name);
-      TObj * tot = dynamic_cast<TObj *>(t);
-      if (tot) {
-	rc = tot->burnObject(ch, 100);
-	if (IS_SET_DELETE(rc, DELETE_THIS)) {
-	  delete tot;
-	  tot = NULL;
-	}
+
+  // now apply the damage
+
+
+
+  while (burndam-- >= 0 && material_nums[getMaterial()].flammability) {
+    addToStructPoints(-1);
+    if (getStructPoints() <= 0) {
+      if (ch) {
+        sprintf(buf, "Your $o $q consumed in <r>flame<1>.");
+        act(buf,TRUE,ch,this,0,TO_CHAR, ANSI_YELLOW);
+        sprintf(buf, "$n's $o $q consumed in the flames.");
+        act(buf,TRUE,ch,this,0,TO_ROOM);
+      } else {
+        act("The flame consumes $n.",TRUE,this,0,0,TO_ROOM);
       }
+      // since bag went poof, lets (re)check contents 
+      // with an even higher percentage, and empty bag into owner
+      while ((t = stuff)) {
+        (*t)--;
+        if (parent)
+          *parent += *t;
+        else if (roomp)
+          *roomp += *t;
+        else
+          vlogf(LOG_BUG, "Bad struct on burnObj %s", t->name);
+        TObj * tot = dynamic_cast<TObj *>(t);
+        if (tot) {
+          rc = tot->burnObject(ch, 100);
+          if (IS_SET_DELETE(rc, DELETE_THIS)) {
+            delete tot;
+            tot = NULL;
+          }
+        }
+      }
+      return DELETE_THIS; 
     }
-    return DELETE_THIS; 
-  } else {
-    setStructPoints(getStructPoints()-burndam);
-    
+  }
+  if (orig != getStructPoints()) {
     if (ch) {
       sprintf(buf, "Your $o $q singed slightly, but look$Q intact.");
       act(buf,TRUE,ch,this,0,TO_CHAR);
@@ -1331,9 +1333,9 @@ int TObj::burnObject(TBeing *ch, int perc)
     //i want to give objs only a CHANCE to burn
     // flamability is usually 1-10 so if we use this as a
     // modifier
-    // and give flammable objects only a 0-50% chance of burning, it should be good
+    // and give flammable objects only a 0-75% chance of burning, it should be good
 
-    if(::number(0,100) < (int)(0.050*(double)material_nums[getMaterial()].flammability) &&
+    if(::number(0,100) < (int)(7.5*(double)material_nums[getMaterial()].flammability) &&
        !isObjStat(ITEM_BURNING) && !isObjStat(ITEM_PAIRED)){
       setBurning(ch);
       sprintf(buf, "Your $o start$Q to burn!\a");
@@ -2027,12 +2029,6 @@ void TBeing::blowCount(bool check, float &fx, float &fy)
 
   // haste
   if (affectedBySpell(SPELL_HASTE) && getPosition() >= POSITION_STANDING) {
-    if (fx > 0.0)
-      fx += 0.5;
-    if (fy > 0.0)
-      fy += 0.5;
-  }
-  if (affectedBySpell(SPELL_CELERITE) && getPosition() >= POSITION_STANDING) {
     if (fx > 0.0)
       fx += 0.5;
     if (fy > 0.0)

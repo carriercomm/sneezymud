@@ -57,7 +57,6 @@ bool TSpellBag::lowCheckSlots(silentTypeT silent)
   // spellbags should be (take hold) or (take waist) or (take hold waiste)
   // no other combos allowed, although permit the throw flag too
   // neck for juju
-  // wrist for wristpouches
 
   unsigned int value = obj_flags.wear_flags;
   REMOVE_BIT(value, ITEM_THROW);
@@ -65,7 +64,6 @@ bool TSpellBag::lowCheckSlots(silentTypeT silent)
   REMOVE_BIT(value, ITEM_HOLD);
   REMOVE_BIT(value, ITEM_WEAR_WAISTE);
   REMOVE_BIT(value, ITEM_WEAR_NECK);
-  REMOVE_BIT(value, ITEM_WEAR_WRIST);
 
   if (value != 0) {
     if (!silent)
@@ -124,4 +122,3 @@ void TSpellBag::getObjFromMeText(TBeing *tBeing, TThing *tThing, getTypeT tType,
   }
 #endif
 }
-

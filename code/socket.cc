@@ -346,7 +346,6 @@ int TSocket::gameLoop()
       deityCheck(FALSE);
       apocCheck();
       save_factions();
-      save_newfactions();
 
       weatherAndTime(1);
     }
@@ -364,10 +363,10 @@ int TSocket::gameLoop()
         // g_zone_value == -1 always for !nuke_inactive_mobs
         unsigned int i;
         for (i = 0; i < zone_table.size(); i++) {
-          if (!zone_table[i].isEmpty())
+          if (!isEmpty(i))
             continue;
           if (zone_table[i].zone_value == 1)
-            zone_table[i].nukeMobs();
+            nukeMobsInZone(i);
           if (zone_table[i].zone_value > 0) {
             zone_table[i].zone_value -= 1;
           }
@@ -499,7 +498,7 @@ int TSocket::gameLoop()
     if (!combat || !mobstuff || !teleport || !drowning || !update_stuff || !pulse_tick) {
       unsigned int i;
       for (i = 0; i < zone_table.size(); i++) {
-	if (zone_table[i].isEmpty())
+	if (isEmpty(i))
 	  zone_table[i].zone_value=1;
 	else{
 	  zone_table[i].zone_value=-1;
@@ -545,15 +544,6 @@ int TSocket::gameLoop()
             tmp_ch = NULL;
             continue;
           }
-
-	  TMonster *tmon = dynamic_cast<TMonster *>(tmp_ch);
-	  if(tmon){
-	    tmon->checkResponses((tmon->opinion.random ? tmon->opinion.random : 
-			    (tmon->targ() ? tmon->targ() : tmon)),
-			   NULL, NULL, CMD_RESP_PULSE);
-
-	  }
-
         }
 
 	if (!mobstuff) {
@@ -569,7 +559,7 @@ int TSocket::gameLoop()
             }
           }
 	  if (!tmp_ch->isPc() && dynamic_cast<TMonster *>(tmp_ch) &&
-	      (zone_table[tmp_ch->roomp->getZoneNum()].zone_value!=1 || 
+	      (zone_table[tmp_ch->roomp->getZone()].zone_value!=1 || 
 	       tmp_ch->spec==SPEC_SHOPKEEPER)){
 	    rc = dynamic_cast<TMonster *>(tmp_ch)->mobileActivity(pulse);
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
@@ -606,8 +596,7 @@ int TSocket::gameLoop()
         if (!combat) {
 
 	  if (tmp_ch->isPc() && tmp_ch->desc && tmp_ch->GetMaxLevel() > MAX_MORT &&
-	      !tmp_ch->limitPowerCheck(CMD_GOTO, tmp_ch->roomp->number)
-	      && !tmp_ch->affectedBySpell(SPELL_POLYMORPH)) {
+	      !tmp_ch->limitPowerCheck(CMD_GOTO, tmp_ch->roomp->number)) {
 	    char tmpbuf[256];
 	    strcpy(tmpbuf, "");
 	    tmp_ch->sendTo("An incredibly powerful force pulls you back into Imperia.\n\r");
@@ -622,7 +611,7 @@ int TSocket::gameLoop()
 	    } else {
 	      tmp_ch->doGoto(tmpbuf);
 	    }
-	    act("$n appears in the room with a sheepish look on $s face.", TRUE, tmp_ch, 0, 0, TO_ROOM);
+	    act("$n appears in the room with a sheepish look in $s face.", TRUE, tmp_ch, 0, 0, TO_ROOM);
 	  }
 
 
@@ -775,15 +764,11 @@ int TSocket::gameLoop()
       unsigned int secs = time(0) - ticktime;
       ticktime = time(0);
 
-      if (TestCode6) {
-    	vlogf(LOG_MISC, "2400 pulses took %ld seconds.  ONE_SEC=%.3f pulses", secs, 2400.0/(float) secs);
+      if (TestCode1) {
+        vlogf(LOG_MISC, "2400 pulses took %ld seconds.  ONE_SEC=%.3f pulses", secs, 2400.0/(float) secs);
       }
-
-      // THIS PUSLE = 0 IS NOT SIMPLY FOR LOGGING PURPOSES.
-      // if it gets removed all tasks go into hyper mode. So don't.
       pulse = 0;
     }
-
 
     systask->CheckTask();
     tics++;			// tics since last checkpoint signal 

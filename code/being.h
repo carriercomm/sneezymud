@@ -61,7 +61,6 @@ extern TMonster *read_mobile(int nr, readFileTypeT type);
 // these functions are used in methods
 extern int number(int from, int to);
 extern int dice(int, int);
-extern bool roll_chance(double);
 
 const unsigned long ACT_STRINGS_CHANGED    = (1<<0); //1
 const unsigned long ACT_SENTINEL   = (1<<1);// 2
@@ -377,7 +376,6 @@ class factionData {
     int align_ge;              // alignment on good/evil axis
     int align_lc;              // alignment on chaotic/lawful axis
     int whichfaction;
-    int rank;                  // rank in the newfaction system
     factionData();
     factionData(const factionData &a);
     factionData & operator=(const factionData &a);
@@ -461,7 +459,7 @@ class spellTaskData {
     int nextUpdate;
     int rounds;
     const char *orig_arg;
-    int wasInRoom;
+    unsigned short wasInRoom;
     int status;
     int text;
     unsigned int flags;
@@ -493,7 +491,7 @@ class taskData {
     int nextUpdate;
     int timeLeft;
     const char *orig_arg;
-    int wasInRoom;
+    unsigned short wasInRoom;
     ubyte status;
     int flags;
     TObj *obj;
@@ -504,54 +502,6 @@ class taskData {
     taskData & operator=(const taskData &a);
     ~taskData();
 };
-
-class equipmentData {
- private:
-  TThing *equipment[MAX_WEAR];
-
- public:
-  TThing *operator[] (int slot) const {
-    return this->equipment[slot]; 
-  }
-
-  TThing *remove(enum wearSlotT slot){
-    TThing *t=equipment[slot];
-
-    TObj *tobj = dynamic_cast<TObj *>(t);
-    if (tobj && tobj->usedAsPaired()) {
-      if (slot == WEAR_LEGS_R || 
-	  slot == HOLD_RIGHT || 
-	  slot == WEAR_EX_LEG_R)
-	equipment[slot + 1] = NULL;
-      else
-	equipment[slot - 1] = NULL;
-    }
-
-    equipment[slot]=NULL;
-    return t;
-  }
-
-  void wear(TThing *t, enum wearSlotT slot){
-    TObj *tobj = dynamic_cast<TObj *>(t);
-    if (tobj && tobj->usedAsPaired()) {
-      if (slot == WEAR_LEGS_R ||
-	  slot == HOLD_RIGHT || 
-	  slot == WEAR_EX_LEG_R)
-	equipment[slot + 1] = t;
-      else
-	equipment[slot - 1] = t;
-    }
-
-    equipment[slot]=t;
-  }
-
-   equipmentData();
-   equipmentData(const equipmentData &a);
-   equipmentData & operator=(const equipmentData &a);
-   ~equipmentData();
-};
-
-
 
 class TBeing : public TThing {
 
@@ -597,9 +547,8 @@ class TBeing : public TThing {
     specialData specials;  
     pracData practices; 
     affectedData *affected;    
-    equipmentData equipment;
 
-
+    TThing *equipment[MAX_WEAR];
 
     TBeing *master;            
     TPerson *orig;    // a pointer to who I really am (if poly'd)
@@ -884,7 +833,6 @@ class TBeing : public TThing {
     virtual int getWait(void) const { return 0; }
     virtual void setWait(int) { return; }
     wizardryLevelT getWizardryLevel() const;
-    ritualismLevelT getRitualismLevel() const;
     devotionLevelT getDevotionLevel() const;
     void addCaptive(TBeing *);
     void remCaptive(TBeing *);
@@ -1058,7 +1006,7 @@ class TBeing : public TThing {
     void listExits(const TRoom *) const;
     virtual bool listThingRoomMe(const TBeing *) const;
     void genericKillFix();
-    virtual int genericMovedIntoRoom(TRoom *, int, checkFallingT = CHECK_FALL_YES);
+    virtual int genericMovedIntoRoom(TRoom *, sh_int, checkFallingT = CHECK_FALL_YES);
     int genericItemCheck(TThing *);
     void genericEvaluateItem(const TThing *);
     void preKillCheck(bool rent = FALSE);
@@ -1284,8 +1232,6 @@ class TBeing : public TThing {
     void loadCareerStats();
     void saveDrugStats();
     void loadDrugStats();
-    void saveFactionStats();
-    void loadFactionStats();
     bool saveFollowers(bool);
     bool loadFollowers();
     void goThroughPortalMsg(const TPortal *) const;
@@ -1384,19 +1330,6 @@ class TBeing : public TThing {
     int doTurn(const char *, TBeing *);
     virtual void doMedit(const char *);
     virtual void doSEdit(const char *);
-    void edit_faction(const char *);
-    void show_faction(const char *);
-    void add_faction(const char *);
-    void doJoin(const char *);
-    void doRecruit(const char *);
-    void doDefect(const char *);
-    bool hasOffer(TFaction *);
-    void removeOffers();
-    void addOffer(TFaction *);
-    bool recentlyDefected();
-    void setDefected();
-
-
     int doMendLimb(const char *);
     void doYoginsa();
     void doMeditate();
@@ -1637,14 +1570,10 @@ class TBeing : public TThing {
     TBeing *fight() const;
 
     virtual TThing *heldInPrimHand() const {
-      return (isRightHanded() ? 
-	      equipment[HOLD_RIGHT] : 
-	      equipment[HOLD_LEFT]);
+      return (isRightHanded() ? equipment[HOLD_RIGHT] : equipment[HOLD_LEFT]);
     }
     virtual TThing *heldInSecHand() const {
-      return (isRightHanded() ? 
-	      equipment[HOLD_LEFT] : 
-	      equipment[HOLD_RIGHT]);
+      return (isRightHanded() ? equipment[HOLD_LEFT] : equipment[HOLD_RIGHT]);
     }
     bool isAffected(unsigned long bv) const;
     unsigned int rentCredit() const;
@@ -1659,12 +1588,6 @@ class TBeing : public TThing {
       heroNum = num;
     }
     void addToHero(int num);
-    // new faction functions - dash
-    TFaction * newfaction() const;
-    const char * rank();
-    bool canCreateFaction(bool);
-    bool hasPermission(unsigned int);
-
     factionTypeT getFaction() const;
     void setFaction(factionTypeT num);
     double getPerc() const;
@@ -1742,7 +1665,6 @@ class TBeing : public TThing {
     void doPracSkill(const char *, spellNumT);
     void doPracDisc(const char *, int);
     void doSpells(const char *);
-    void doRituals(const char *);
     void doPrayers(const char *);
     void sendSkillsList(discNumT);
     void doPractice(const char *);
@@ -1817,7 +1739,6 @@ class TBeing : public TThing {
     int doGive(const char *, giveTypeT = GIVE_FLAG_DEF);
     int doMount(const char *, cmdTypeT, TBeing *);
     int doJunk(const char *, TObj *);
-    int doNoJunk(const char *, TObj *);
     int doDonate(const char *);
     int doSteal(const char *, TBeing *);
     void doRestore(const char *);
@@ -1955,13 +1876,10 @@ class TBeing : public TThing {
     bool isTough() const;
     bool isUgly() const;
     bool isRealUgly() const;
-    bool isWary() const;
-    void makeWary();
     string displayExp() const;
     int hurtLimb(unsigned int, wearSlotT);
     int flightCheck();
-    int hpGainForLevel(classIndT) const;
-    int hpGainForClass(classIndT) const;
+    double hpGainForLevel(classIndT) const;
     unsigned int numberInGroupInRoom() const;
     double getExpShare() const;
     double getExpSharePerc() const;

@@ -1036,8 +1036,8 @@ void TBeing::equipChar(TThing *obj, wearSlotT pos, silentTypeT silent)
   mud_assert(pos >= MIN_WEAR && pos < MAX_WEAR, "pos in equip_char(%s %s %d) was out of range!!", getName(), obj->name, pos);
 
   if (equipment[pos]) {
-    forceCrash("equip_char(%s %s %d) called with position already equipped!", getName(), obj->name, pos);
-    return;
+    forceCrash("equip_char(%s %s %d) called with position already equipped! Setting equip slot to NULL!", getName(), obj->name, pos);
+    equipment[pos] = NULL;
   }
   if (obj->parent) {
     vlogf(LOG_BUG, "EQUIP: Obj is in something when equip.");
@@ -1096,10 +1096,17 @@ void TBeing::equipChar(TThing *obj, wearSlotT pos, silentTypeT silent)
     }
   }
 
-
+  equipment[pos] = obj;
   obj->equippedBy = this;
-  obj->eq_pos = pos;  
-  equipment.wear(obj, pos);
+  obj->eq_pos = pos;
+
+  TObj *tobj = dynamic_cast<TObj *>(obj);
+  if (tobj && tobj->usedAsPaired()) {
+    if ((pos == WEAR_LEGS_R) || (pos == HOLD_RIGHT) || pos == WEAR_EX_LEG_R)
+      equipment[pos + 1] = tobj;
+    else
+      equipment[pos - 1] = tobj;
+  }
 
   int origamt = specials.affectedBy;
 
@@ -1190,11 +1197,19 @@ TThing *TBeing::unequip(wearSlotT pos)
   if (!equipment[pos])
     return NULL;
 
-  o = equipment.remove(pos);
+  o = equipment[pos];
 
   if (o->parent || o->riding || (o->in_room != ROOM_NOWHERE))
     vlogf(LOG_BUG, "Item was two places(or more) in unequip()");
 
+  TObj *tobj = dynamic_cast<TObj *>(o);
+  if (tobj && tobj->usedAsPaired()) {
+    if ((pos == WEAR_LEGS_R) || (pos == HOLD_RIGHT) || (pos == WEAR_EX_LEG_R))
+      equipment[pos + 1] = NULL;
+    else
+      equipment[pos - 1] = NULL;
+  }
+  equipment[pos] = NULL;
   o->equippedBy = NULL;
   o->stuckIn = NULL;
   o->eq_pos = WEAR_NOWHERE;
@@ -1240,11 +1255,19 @@ TThing *unequip_char_for_save(TBeing *ch, wearSlotT pos)
   if (!ch->equipment[pos])
     return NULL;
 
-  o = ch->equipment.remove(pos);
+  o = ch->equipment[pos];
 
   if (o->parent || o->riding || (o->in_room != ROOM_NOWHERE))
     vlogf(LOG_BUG, "Item was two places(or more) in unequip()");
 
+  TObj *tobj = dynamic_cast<TObj *>(ch->equipment[pos]);
+  if (tobj && tobj->usedAsPaired()) {
+    if ((pos == WEAR_LEGS_R) || (pos == HOLD_RIGHT) || pos == WEAR_EX_LEG_R)
+      ch->equipment[pos + 1] = NULL;
+    else
+      ch->equipment[pos - 1] = NULL;
+  }
+  ch->equipment[pos] = NULL;
   o->equippedBy = NULL;
   o->stuckIn = NULL;
   o->eq_pos = WEAR_NOWHERE;
@@ -1297,7 +1320,7 @@ int get_number(char **name)
   return 1;
 }
 
-TThing *get_thing_in_equip(TBeing *ch, const char *arg, equipmentData equipment, wearSlotT *j, bool vis, int *count)
+TThing *get_thing_in_equip(TBeing *ch, const char *arg, TThing *equipment[], wearSlotT *j, bool vis, int *count)
 {
   int num;
   int numx;

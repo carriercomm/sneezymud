@@ -2741,8 +2741,9 @@ void TBeing::doWorld()
   if(isImmortal()){
     for(i=0;i<10;++i){
       if(lag_info.lagcount[i]) {
-	sprintf(buf, "%sLag %i:                              %ld/%ld%s\n\r",
-	       blue(), i, lag_info.lagtime[i], lag_info.lagcount[i], norm());
+	sprintf(buf, "%sLag %i:                               %ld (%ld/%ld)%s\n\r",
+		blue(), i, (lag_info.lagcount[i] ? lag_info.lagtime[i]/lag_info.lagcount[i] : 0),
+		lag_info.lagtime[i], lag_info.lagcount[i], norm());
         str += buf;
       }
     }

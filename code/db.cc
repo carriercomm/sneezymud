@@ -2451,8 +2451,7 @@ char *fread_string(FILE *fp)
       //    }
     //  if( *buf == 0)
     //    return NULL;
-    return mud_str_dup(ptr);
-//  return mud_str_dup( buf);
+    return mud_str_dup( buf);
     vlogf(LOG_MISC, "mud_str_dup called");
 }
 

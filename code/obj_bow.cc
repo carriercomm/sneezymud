@@ -228,7 +228,7 @@ void TBow::bloadArrowBow(TBeing *ch, TArrow *the_arrow)
 
   if (getArrowType() != the_arrow->getArrowType()) {
     ch->sendTo("That arrow is just too %s to fit properly.\n\r",
-               ((getArrowType() > the_arrow->getArrowType()) ? "small" : "big"));
+               ((getArrowType() < the_arrow->getArrowType()) ? "small" : "big"));
 
     return;
   }

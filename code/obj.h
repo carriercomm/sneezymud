@@ -26,7 +26,7 @@ const float SIP_WEIGHT         = 0.065;
 const float SIP_VOLUME         = 1.8046875;
 
 const int MAX_SWING_AFFECT  = 5;
-const int MAX_OBJ_AFFECT    = 5;     
+//const int MAX_OBJ_AFFECT    = 5;     
 const int OBJ_NOTIMER    = -1;
 const int MAX_TOUNGE  = 3;
 const int MAX_AFFECT  = 25;

@@ -826,8 +826,7 @@ int TBeing::rawSummon(TBeing *v)
   act("$n is exhausted from interplanar travel.", FALSE, v, NULL, NULL, TO_ROOM);
 
   // summon newbie to aggro zone far from GH, allow us to check for it
-  if (v->isPc())
-    vlogf(LOG_SILENT, "%s summoned %s to %s (%d)",
+  vlogf(LOG_SILENT, "%s summoned %s to %s (%d)",
           getName(), v->getName(), roomp->getName(), inRoom());
 
   if (v->riding) {

@@ -947,8 +947,9 @@ int TBeing::affectJoin(TBeing * caster, affectedData *af, avgDurT avg_dur, avgEf
         return FALSE;
       }
       renew = max(af->duration, hjp->duration) / 2;
-      
+
       af->duration += hjp->duration;
+
       if (avg_dur)
         af->duration /= 2;
 

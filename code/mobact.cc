@@ -3820,7 +3820,8 @@ vlogf(4, "Mob invoking (5) prayer %d on self with possibly bad target flags for 
       if(!found){
 	spell = SKILL_TRANSFORM_LIMB;
 	if (doesKnowSkill(spell) && (getSkillValue(spell) > 33) &&
-	    isTransformableLimb(WEAR_HAND_R, TRUE) && 
+	    isTransformableLimb(WEAR_HAND_R, TRUE) &&
+            roomp && !roomp->notRangerLandSector() &&
 	    !equipment[WEAR_HAND_R] && !equipment[WEAR_HAND_L]){
 	  act("$n utters, 'Shred!'",
 	      TRUE, this, 0, 0, TO_ROOM);

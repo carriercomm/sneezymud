@@ -355,8 +355,13 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
   ch->addToWait(combatRound(1));
 
   // construct reload buf, do it here since arrow might go bye-bye
+  // as sanity check, verify that person has an arrow to reload at this
+  // point too.
   sprintf(buf, "%s ", fname(name).c_str());
   strcat(buf, fname(the_arrow->name).c_str());
+  bool hasAnotherArrow = false;
+  if (findArrow(&this, the_arrow->name, SILENT_YES))
+    hasAnotherArrow = true;
 
   rc = throwThing(the_arrow, dir, ch->in_room, &targ, shoot_dist, max_distance, ch);
   if (IS_SET_DELETE(rc, DELETE_ITEM)) {
@@ -368,7 +373,7 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
     targ = NULL;
   }
 
-  if (ch->doesKnowSkill(SKILL_FAST_LOAD)) {
+  if (ch->doesKnowSkill(SKILL_FAST_LOAD) && hasAnotherArrow) {
     ch->sendTo("You quickly try to reload.\n\r");
 
     rc = ch->doRemove("", this);

@@ -1482,7 +1482,7 @@ static int getMonkWeaponDam(const TBeing *ch, const TBeing *v, primaryTypeT ispr
     // they are in skills rather than simply doing a GetMaxLevel though.
 
     // convert level to dam
-    float weapDam = (7.0 * sqrt(value) / 2.0);
+    float weapDam = (6.0 * sqrt(value) / 2.0);
 
     // make balance adjustment
     weapDam *= balanceCorrectionForLevel(ch->GetMaxLevel());
@@ -1503,7 +1503,8 @@ static int getMonkWeaponDam(const TBeing *ch, const TBeing *v, primaryTypeT ispr
     return (0);
 
   // account for stats
-  float statDam = (ch->getStrDamModifier() + ch->getDexDamModifier()) / 2;
+  // float statDam = (ch->getStrDamModifier() + ch->getDexDamModifier()) / 2;
+  float statDam = ch->getStrDamModifier(); // we already account for dex bonuses in tohit -dash
   int dam = (int) (wepDam * statDam);
 
   // add bonuses
@@ -2450,7 +2451,21 @@ int TBeing::hits(TBeing *v, int mod)
 
   if (!v->awake() || (v->getPosition() < POSITION_RESTING))
     return GUARANTEED_SUCCESS;
-  
+#if DASHO
+  vlogf(LOG_DASH,"%s is in hits. checking %s for dummy affect.",getName(), v->getName());
+  if (v && v->affected && v->affectedBySpell(AFFECT_DUMMY)) {
+    affectedData *an = NULL;
+
+    vlogf(LOG_DASH,"%s has dummy affect and is victim in hits(), forcing success now.",v->getName());
+
+    for (an = v->affected; an; an = an->next) {
+      if (an->type == AFFECT_DUMMY && an->level == 60) {
+	return GUARANTEED_SUCCESS;
+      }
+    }
+  }
+#endif
+
   // factor = 60.0 + (3.0 per level * (mod * 3 / 50 levels));
   int factor = 600 + (9 * mod / 5);
   factor = min(max(factor, 0), 1000);
@@ -3158,7 +3173,7 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
       if (vict->desc->connected == CON_WRITING) {
         vlogf(LOG_COMBAT, "%s using editing trick to prevent combat with %s at room %d",
               vict->getName(), getName(), vict->in_room);
-
+ 
         // grab their stuff if they were REALLY cheating
         catchLostLink(vict);
       }

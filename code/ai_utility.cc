@@ -110,16 +110,16 @@ void TMonster::aiTarget(TBeing *vict)
     else  // mob acting on its own 
       setTarg(NULL);
   }
-  TBeing * targ = targ();
-  if (!sameRoom(*targ)) {
+  TBeing * targy = targ();
+  if (!sameRoom(*targy)) {
     setTarg(NULL);
     return;
   }
 
-  if (targ)
+  if (targy)
     return;
 
-  if (!targ->isPc()) {
+  if (!targy->isPc()) {
     vlogf(LOG_MOB_AI, "Bug in aiTarget()");
     setTarg(NULL);
   }

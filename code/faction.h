@@ -91,6 +91,8 @@ const char * const FACTION_BAK       = "faction/faction_info.bak";
 const char * const FACT_LIST_BROTHER   = "faction/fact_list.1";
 const char * const FACT_LIST_CULT      = "faction/fact_list.2";
 const char * const FACT_LIST_SNAKE     = "faction/fact_list.3";
+
+const int FACT_BOARD_BROTHER=1387;
   
 // the amount of faction % help received for donating 1 talen to your faction
 const float TITHE_FACTOR   = (0.0003);

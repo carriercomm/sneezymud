@@ -7,7 +7,7 @@
 
 #include "stdsneezy.h"
 #include "statistics.h"
-// #include <libpq++.H>
+#include <mysql/mysql.h>
 
 extern FILE *obj_f;
 extern FILE *mob_f;
@@ -240,24 +240,28 @@ void generate_obj_index()
   int i, vnum;
   objIndexData *tmpi = NULL;
   extraDescription *new_descr = NULL;
+  MYSQL *db;
+  MYSQL_RES *res;
+  MYSQL_ROW row;
 
   // to prevent constant resizing (slows boot), declare an appropriate initial
   // size.  Should be smallest power of 2 that will hold everything
   obj_index.reserve(8192);
 
-  PgDatabase data("dbname=objects");
-  if(data.ConnectionBad()) {
-    vlogf(LOG_BUG, "Could not connect to database 'objects'.\n");
+  db=mysql_init(NULL);
+  if(!mysql_real_connect(db, NULL, NULL, NULL, "test", 0, NULL, 0)){
+    vlogf(LOG_BUG, "Could not connect to database 'test'.\n");
     exit(0);
   }
 
-  if(data.Exec("select o.vnum, o.name, o.short_desc, o.long_desc, e.name, e.description from object o, extra e where o.vnum=e.vnum") != PGRES_TUPLES_OK){
-    vlogf(LOG_BUG, "Database query failed: %s\n", data.ErrorMessage());
+  if(mysql_query(db, "select o.vnum, o.name, o.short_desc, o.long_desc, e.name, e.description from object o, extra e where o.vnum=e.vnum")){
+    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(db));
     exit(0);
   }
-    
-  for (i=0;i<data.Tuples();i++){
-    vnum=atoi(data.GetValue(i,0));
+  res=mysql_use_result(db);
+
+  while((row=mysql_fetch_row(res))){
+    vnum=atoi(row[0]);
     if(!tmpi || tmpi->virt!=vnum){
       obj_index.push_back(*tmpi);
       delete tmpi;
@@ -269,14 +273,14 @@ void generate_obj_index()
       }
     
       tmpi->virt=vnum;
-      tmpi->name=mud_str_dup(data.GetValue(i,1));
-      tmpi->short_desc=mud_str_dup(data.GetValue(i,2));
-      tmpi->long_desc=mud_str_dup(data.GetValue(i,3));
+      tmpi->name=mud_str_dup(row[1]);
+      tmpi->short_desc=mud_str_dup(row[2]);
+      tmpi->long_desc=mud_str_dup(row[3]);
     }
 
     new_descr = new extraDescription();
-    new_descr->keyword = mud_str_dup(data.GetValue(i,4));
-    new_descr->description = mud_str_dup(data.GetValue(i,5));
+    new_descr->keyword = mud_str_dup(rpw[4]);
+    new_descr->description = mud_str_dup(row[5]);
     new_descr->next = tmpi->ex_description;
     tmpi->ex_description = new_descr;
   }

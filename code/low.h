@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: low.h,v $
+// Revision 5.1.1.5  2000/02/10 19:13:44  mithros
+// Added Rat King Mob Desc for a quest toggle.
+//
 // Revision 5.1.1.4  2000/01/13 04:53:50  mithros
 // Umm, put those two mobs back :)
 //
@@ -287,6 +290,7 @@ const short int MOB_RALIKI         =4822 ;
 const short int MOB_PHOENIX        =4847;
 const short int MOB_DRAGON_BRONZE  =4858;
 const short int MOB_SNAKE          =5112;
+const short int MOB_RAT_KING       =5131;
 const short int MOB_HOBBIT_ADVENTURER     =5347;
 const short int MOB_OVERLORD	   =5443;
 const short int MOB_MARCUS	   =5555;

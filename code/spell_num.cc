@@ -967,6 +967,7 @@ int mapSpellnumToFile(spellNumT stt)
     case TYPE_MAUL:
     case TYPE_MAX_HIT:
     case LAST_ODDBALL_AFFECT:
+    case SKILL_ALCOHOLISM:
       break;
   }
   forceCrash("Bogus value (%d) in mapSpellNumToFile", stt);

@@ -581,7 +581,7 @@ int TSocket::gameLoop()
 	        delete tmper_obj;
 	        tmper_obj = NULL;
 	      } else {
-	        vlogf(LOG_BUG, "bad temper object in taskorbash (2)");
+	        vlogf(LOG_BUG, "bad item delete in gameloop -- task calling");
 	      }
 	    }
             if (IS_SET_DELETE(rc, DELETE_THIS)) {

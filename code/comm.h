@@ -45,7 +45,6 @@ const int PULSE_TICK        =1;
 // - 9600 pulses take 1237 secs : Bat 05/05/99  (low load)
 // - 7200 pulses take 2744 secs : Bat 01/12/00  (avg load, 1 day uptime)
 
-#if 1
 const int ONE_SECOND        =3;
 const int PULSE_MOBACT      =ONE_SECOND * 3;
 const int PULSE_TELEPORT    =ONE_SECOND * 3;
@@ -57,32 +56,16 @@ const int PULSE_NOISES      =ONE_SECOND * 12;
 // Altering PULSE_UPDATES will speed up ticks, but also causes "mud time"
 // to totally recalculate (making it shorter will age people).
 // use caution!
-const int PULSE_UPDATES     =ONE_SECOND * 72;
-const int PULSE_TICKS       =PULSE_UPDATES * 2;
+const int PULSE_UPDATES     =ONE_SECOND * 36;
+const int PULSE_TICKS       =PULSE_UPDATES * 4;
 
-// there are 2 ticks per "hour"
+// this "hour" is really the number of seconds between "partial-tick calls"
 const int SECS_PER_MUD_HOUR  = PULSE_UPDATES/ONE_SECOND;
-const int SECS_PER_MUD_DAY   = (48*SECS_PER_MUD_HOUR);
+
+// currently, there are 4 partial calls per hour
+const int SECS_PER_MUD_DAY   = (24*SECS_PER_MUD_HOUR * 4);
 const int SECS_PER_MUD_MONTH = (28*SECS_PER_MUD_DAY);
 const int SECS_PER_MUD_YEAR  = (12*SECS_PER_MUD_MONTH);
-
-#else
-const int ONE_SECOND        =7;
-const int PULSE_MOBACT      =18;  // ONE_SEC * 2.5
-const int PULSE_TELEPORT    =18;  // ONE_SEC * 2.5
-const int PULSE_COMBAT      =18;  // ONE_SEC * 2.5
-const int PULSE_DROWNING    =35;  // ONE_SEC * 7.5
-const int PULSE_SPEC_PROCS  =53;  // ONE_SEC * 7.5
-const int PULSE_NOISES      =105;  // ONE_SEC * 15
-const int PULSE_UPDATES     =280;  // ONE_SEC * 40
-const int PULSE_TICKS       =560;  // PULSE_UPDATE * 2
-
-const int SECS_PER_MUD_HOUR  = 75;
-const int SECS_PER_MUD_DAY   = (48*SECS_PER_MUD_HOUR);
-const int SECS_PER_MUD_MONTH = (28*SECS_PER_MUD_DAY);
-const int SECS_PER_MUD_YEAR  = (12*SECS_PER_MUD_MONTH);
-
-#endif
 
 // updateAffects() is called on combat counter (socket.cc)
 // this will tell us how many combat-calls needed to simulate a "tick"

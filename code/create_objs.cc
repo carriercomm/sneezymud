@@ -265,33 +265,20 @@ void ObjLoad(TBeing *ch, int vnum)
 {
   TObj *o;
   TBaseClothing *tbc;
-  char buf[256];
-  int i;
+  int i, rc;
   extraDescription *new_descr;
-  MYSQL *immodb;
   MYSQL_ROW row;
   MYSQL_RES *res;
 
-  vlogf(LOG_MISC, "ObjLoad: Initializing immortal database.");
-  db=mysql_init(NULL);
-
-  vlogf(LOG_MISC, "ObjLoad: Connecting to immortal database.");
-  if(!mysql_real_connect(db, NULL, "sneezy", NULL, 
-			 "immortal", 0, NULL, 0)){
-    vlogf(LOG_BUG, "Could not connect (1) to database 'immortal'.");
-    exit(0);
-  }
-
-  sprintf(buf, "select type, name, short_desc, long_desc, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from object where vnum=%i and owner='%s'", vnum, ch->name);
-  if(mysql_query(db, buf)){
-    vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
-    exit(0);
-  }
-  res=mysql_store_result(db);
-  if(!(row=mysql_fetch_row(res))){
-    //    vlogf(LOG_BUG, "No such object in read_object: %i", nr);
+  if((rc=dbquery(&res, "immortal", "ObjLoad(1)", "select type, name, short_desc, long_desc, action_flag, wear_flag, val0, val1, val2, val3, weight, price, can_be_seen, spec_proc, max_struct, cur_struct, decay, volume, material, max_exist from object where vnum=%i and owner='%s'", vnum, ch->name))){
+    if(rc==1)
+      ch->sendTo("Object not found\n\r");
+    else if(rc==-1)
+      ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
     return;
   }
+  if(!(row=mysql_fetch_row(res)))
+    return;
 
   ch->sendTo("Loading saved object number %d\n\r", vnum);
 
@@ -324,13 +311,12 @@ void ObjLoad(TBeing *ch, int vnum)
   mysql_free_result(res);
 
 
-  sprintf(buf, "select name, description from extra where vnum=%i and owner='%s'", vnum, ch->name);
-  if(mysql_query(db, buf)){
-    vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
-    exit(0);
+  if((dbquery(&res, "immortal", "ObjLoad(2)", "select name, description from extra where vnum=%i and owner='%s'", vnum, ch->name)==-1)){
+    ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+    return;
   }
-  res=mysql_store_result(db);
-  while(row=mysql_fetch_row(res)){
+  
+  while((row=mysql_fetch_row(res))){
     new_descr = new extraDescription();
     new_descr->keyword = mud_str_dup(row[0]);
     new_descr->description = mud_str_dup(row[1]);
@@ -342,13 +328,12 @@ void ObjLoad(TBeing *ch, int vnum)
   o->setLight(0);
   i=0;
 
-  sprintf(buf, "select type, mod1, mod2 from affect where vnum=%i and owner='%s'", vnum, ch->name);
-  if(mysql_query(db, buf)){
-    vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
-    exit(0);
+
+  if((dbquery(&res, "immortal", "ObjLoad(3)", "select type, mod1, mod2 from affect where vnum=%i and owner='%s'", vnum, ch->name)==-1)){
+    ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+    return;
   }
-  res=mysql_store_result(db);
-  while(row=mysql_fetch_row(res)){
+  while((row=mysql_fetch_row(res))){
     o->affected[i].location = mapFileToApply(atoi(row[0]));
 
     if (applyTypeShouldBeSpellnum(o->affected[i].location))
@@ -390,11 +375,10 @@ void ObjLoad(TBeing *ch, int vnum)
   act(ch->msgVariables(MSG_OEDIT, o).c_str(), TRUE, ch, 0, 0, TO_ROOM);
 
   *ch += *o;
-
-  mysql_close(immodb);
 }
 #endif
 
+#if !USE_SQL
 static void ObjSave(TBeing *ch, TObj *o, int vnum)
 {
   FILE *fp;
@@ -423,6 +407,77 @@ static void ObjSave(TBeing *ch, TObj *o, int vnum)
   raw_write_out_object(o, fp, vnum);
   fclose(fp);
 }
+#else
+static void ObjSave(TBeing *ch, TObj *o, int vnum)
+{
+  ch->sendTo("Saving.\n\r");
+
+  int tmp1, tmp2, tmp3, tmp4;
+  o->getFourValues(&tmp1, &tmp2, &tmp3, &tmp4);
+
+  if(dbquery(NULL, "immortal", "ObjSave(1)", "replace object set vnum=%i, name='%s', short_desc='%s', long_desc='%s', type=%i, action_flag=%i, wear_flag=%i, val0=%i, val1=%i, val2=%i, val3=%i, weight=%f, price=%i, can_be_seen=%i, spec_proc=%i, max_exist=%i, cur_struct=%i, max_struct=%i, decay=%i, volume=%i, material=%i, owner='%s'", 
+	  vnum, o->name, o->shortDescr, o->getDescr(), o->itemType(), 
+	  o->getObjStat(), o->obj_flags.wear_flags, tmp1, tmp2, tmp3, tmp4, 
+	  o->getWeight(), o->obj_flags.cost, o->canBeSeen, o->spec, 
+	  o->max_exist, o->obj_flags.struct_points, 
+	  o->obj_flags.max_struct_points, o->obj_flags.decay_time, 
+		 o->getVolume(), o->getMaterial(), ch->name)){
+    ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+    return;
+  }
+
+  if(dbquery(NULL, "immortal", "ObjSave(2)", "delete from extra where vnum=%i and owner='%s'", vnum, ch->name)){
+    ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+    return;
+  }
+
+
+  int i, j, k;
+  char temp[2048];
+  extraDescription *exdes;
+  for (exdes = o->ex_description; exdes; exdes = exdes->next) {
+    j = 0;
+    if (exdes->description) {
+      for (k = 0; k <= (int) strlen(exdes->description); k++) {
+	if (exdes->description[k] != 13)
+	  temp[j++] = exdes->description[k];
+      }
+      temp[j] = '\0';
+
+      if(dbquery(NULL, "immortal", "ObjSave(3)", "replace extra set name='%s', description='%s', owner='%s', vnum=%i", exdes->keyword, temp, ch->name, vnum)){
+	ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+	return;
+      }           
+    } else {
+      if(dbquery(NULL, "immortal", "ObjSave(4)", "replace extra set name='%s', description='', owner='%s'", exdes->keyword, ch->name)){
+	ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+	return;
+      }
+    }
+  }
+
+  if(dbquery(NULL, "immortal", "ObjSave(5)", "delete from affect where vnum=%i and owner='%s'", vnum, ch->name)){
+    ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+    return;
+  }
+  
+  for (i = 0; i < MAX_OBJ_AFFECT; i++) {
+    if (o->affected[i].location == APPLY_LIGHT)
+      continue;
+    
+    if (o->affected[i].location != APPLY_NONE) {
+      if(dbquery(NULL, "immortal", "ObjSave(6)", "replace affect set type=%i, mod1=%ld, mod2=%ld, owner='%s', vnum=%i",
+		 mapApplyToFile(o->affected[i].location), 
+		 applyTypeShouldBeSpellnum(o->affected[i].location) ? mapSpellnumToFile(spellNumT(o->affected[i].modifier)) : o->affected[i].modifier,
+		 o->affected[i].modifier2, ch->name, vnum)){
+	ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+	return;
+      }
+    }
+  }
+
+}
+#endif
 
 static void osave(TBeing *ch, const char *argument)
 {
@@ -451,6 +506,7 @@ static void osave(TBeing *ch, const char *argument)
   }
 }
 
+#if !USE_SQL
 static void olist(TPerson *ch)
 {
   char buf[256];
@@ -486,6 +542,34 @@ static void olist(TPerson *ch)
   generic_dirlist(buf, ch);
 #endif
 }
+#else
+static void olist(TPerson *ch)
+{
+  string longstr;
+  MYSQL_ROW row;
+  MYSQL_RES *res;
+  int rc;
+
+  if((rc=dbquery(&res, "immortal", "olist", "select vnum, name from object where owner='%s'", ch->name))){
+    if(rc==-1)
+      ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+    else if(rc==1)
+      ch->sendTo("No objects saved.\n\r");
+    return;
+  }
+    
+
+  while((row=mysql_fetch_row(res))){
+    longstr += row[0];
+    longstr += " ";
+    longstr += row[1];
+    longstr += "\n\r";
+  }
+  mysql_free_result(res);
+
+  ch->desc->page_string(longstr.c_str(), SHOWNOW_NO, ALLOWREP_YES);
+}
+#endif
 
 static void ocreate(TBeing *ch)
 {
@@ -545,6 +629,22 @@ static void oedit(TBeing *ch, const char *arg)
 
 void oremove(TBeing *ch, int vnum)
 {
+#if USE_SQL
+  MYSQL_RES *res;
+  if(dbquery(&res, "immortal", "oremove(0)", "select * from object where vnum=%i and owner='%s'", vnum, ch->name)==1){
+    ch->sendTo("Object not found.\n\r");
+    mysql_free_result(res);
+    return;
+  }
+    
+  if(dbquery(NULL, "immortal", "oremove(1)", "delete from object where vnum=%i and owner='%s'", vnum, ch->name) ||
+     dbquery(NULL, "immortal", "oremove(2)", "delete from affect where vnum=%i and owner='%s'", vnum, ch->name) ||
+     dbquery(NULL, "immortal", "oremove(3)", "delete from extra where vnum=%i and owner='%s'", vnum, ch->name)){
+    ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+    return;
+  } else
+    ch->sendTo("Removed.\n\r");
+#else
   char buf[256];
 
   sprintf(buf, "immortals/%s/objects/%d", ch->getName(), vnum);
@@ -552,6 +652,7 @@ void oremove(TBeing *ch, int vnum)
     ch->sendTo("Unable to remove that object.  Sure you got the # right?\n\r");
   else
     ch->sendTo("Successfully removed object #%d.\n\r", vnum);
+#endif
 }
 
 // This is the main function that controls all the object stuff - Russ 
@@ -2889,7 +2990,7 @@ void generic_dirlist(const char *buf, const TBeing *ch)
     longstr += "Nothing found.\n\r";
 
   closedir(dfd);
-  ch->desc->page_string(longstr.c_str(), SHOWNOW_NO, ALLOW_REP_YES);
+  ch->desc->page_string(longstr.c_str(), SHOWNOW_NO, ALLOWREP_YES);
 }
 
 int TObj::addApply(TBeing *ch, applyTypeT apply)
@@ -3446,3 +3547,7 @@ int TBaseClothing::editAverageMe(TBeing *tBeing, const char *tString)
 
   return FALSE;
 }
+
+
+
+

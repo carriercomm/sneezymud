@@ -3631,7 +3631,7 @@ void TBeing::doEvaluate(const char *argument)
     else if (roomp->isMountainSector())
       sendTo("This appears to be a mountain.\n\r");
     else if (roomp->isForestSector())
-      sendTo("Judging by the trees you bet your in a forest.\n\r");
+      sendTo("Judging by the trees you bet you're in a forest.\n\r");
     else if (roomp->isAirSector())
       sendTo("You are up in the air, are you sure you should be here?\n\r");
     else if (roomp->isOceanSector())

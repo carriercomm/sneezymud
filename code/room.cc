@@ -359,6 +359,11 @@ int TRoom::chiMe(TBeing *tLunatic)
   TThing *tThing,
          *tNextThing;
 
+  if (!this) {
+    forceCrash("No roomp in TRoom::chiMe");
+    return FALSE;
+  }
+
   if (tLunatic->getSkillValue(SKILL_CHI) < 100 ||
       tLunatic->getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 25) {
     tLunatic->sendTo("I'm afraid you don't have the training to do this.\n\r");

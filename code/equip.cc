@@ -118,24 +118,6 @@ bool TBeing::canUseEquipment(const TObj *o, silentTypeT silent) const
         sendTo("Rangers shun the use of metal armor.\n\r");
       return FALSE;
     }
-    if ((getSex() != SEX_MALE) &&
-        (o->isObjStat(ITEM_ONLY_MALE))) {
-      if (!silent)
-        sendTo("That item seems a bit too butch for you.\n\r");
-      return FALSE;
-    }
-    if ((getSex() != SEX_FEMALE) &&
-        (o->isObjStat(ITEM_ONLY_FEMALE))) {
-      if (!silent)
-        sendTo("That item seems a bit too effeminate for you.\n\r");
-      return FALSE;
-    }
-    if ((getSex() != SEX_NEUTER) &&
-        (o->isObjStat(ITEM_ONLY_NEUTER))) {
-      if (!silent)
-        sendTo("You seem to have too much in the way of genetalia to wear this.\n\r");
-      return FALSE;
-    }
     if (getRace() == RACE_HOBBIT && o->canWear(ITEM_WEAR_FEET)) {
       if (!silent)
         sendTo("Cover up your beautiful, furry feet?!?  No way!\n\r");

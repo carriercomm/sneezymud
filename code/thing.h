@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: thing.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -99,6 +88,7 @@ class TThing {
     }
     
     // VIRTUAL FUNCTIONS
+    virtual int chiMe(TBeing *);
     virtual void eatMe(TBeing *);
     virtual const char *hshr() const { return "its"; }
     virtual const char *hssh() const { return "it"; }
@@ -224,7 +214,7 @@ class TThing {
     virtual void describeContains(const TBeing *) const;
     virtual void describeObjectSpecifics(const TBeing *) const {}
     virtual void nukeFood();
-    virtual void evaporate(TBeing *) {}
+    virtual void evaporate(TBeing *, silentTypeT) {}
     virtual int quaffMe(TBeing *);
     virtual bool waterSource() { return FALSE; }
     virtual void spill(const TBeing *) {}
@@ -352,7 +342,7 @@ class TThing {
     virtual bool listThingRoomMe(const TBeing *) const;
     virtual bool canSeeMe(const TBeing *, infraTypeT) const;
     virtual bool getObjFromMeCheck(TBeing *);
-    virtual void getObjFromMeText(TBeing *, TThing *);
+    virtual void getObjFromMeText(TBeing *, TThing *, getTypeT, bool);
 
     // ch can not be const, due to showMe
     virtual void show_me_mult_to_char(TBeing *, showModeT, unsigned int) const {}

@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: room.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -218,6 +207,7 @@ class TRoom : public TThing {
     void setDescr(long, char *);
     const char * getDescr();
 
+    virtual int chiMe(TBeing *);
     int checkPointroll();
     virtual void sendTo(colorTypeT, const char *, ...) const;
     virtual void sendTo(const char *, ...) const;

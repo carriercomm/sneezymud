@@ -355,7 +355,7 @@ TComponent *comp_from_object(TThing *item, spellNumT spell)
 
   item->findComp(&ret, spell);
 
-  TRealContainer *trc = dynamic_cast<TRealContainer *>(item);
+  TOpenContainer *trc = dynamic_cast<TOpenContainer *>(item);
   if (trc && trc->isClosed())
     return ret;
 
@@ -597,24 +597,6 @@ int TBeing::useComponentObj(TComponent *o, TObj *targ, checkOnlyT checkOnly)
   return 1;
 }
 
-void TContainer::powerstoneCheck(TOpal **topMax)
-{
-  TThing *t;
-
-  for (t = stuff; t; t = t->nextThing) {
-    t->powerstoneCheck(topMax);
-  }
-}
-
-void TContainer::powerstoneCheckCharged(TOpal **topMax)
-{
-  TThing *t;
-
-  for (t = stuff; t; t = t->nextThing) {
-    t->powerstoneCheckCharged(topMax);
-  }
-}
-
 TOpal *find_biggest_charged_powerstone(TBeing *ch)
 {
   TOpal *stone = NULL;
@@ -633,16 +615,6 @@ TOpal *find_biggest_charged_powerstone(TBeing *ch)
     t->powerstoneCheckCharged(&stone);
   }
   return stone;
-}
-
-
-void TContainer::powerstoneMostMana(int *topMax)
-{
-  TThing *t;
-
-  for (t = stuff; t; t = t->nextThing) {
-    t->powerstoneMostMana(topMax);
-  }
 }
 
 int TBeing::mostPowerstoneMana() const
@@ -791,7 +763,7 @@ const char *what_does_it_open(const TKey *o)
     }
   }
   for (k = object_list; k; k = k->next)	{ // check if it opens an item 
-    TRealContainer *trc = dynamic_cast<TRealContainer *>(k);
+    TOpenContainer *trc = dynamic_cast<TOpenContainer *>(k);
     if (trc) {
       if (trc->getKeyNum() == vnum)
 	return "a container";

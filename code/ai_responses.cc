@@ -301,7 +301,7 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
       if (mob && tThing && canSee(mob))
         rc = doGiveObj(mob, tThing, GIVE_FLAG_DROP_ON_FAIL);
       else if (!mob || !tThing)
-        vlogf(LOG_LAPSOS, "Error in doGiveObj:%s%s Mob[%s]",
+        vlogf(LOG_BUG, "Error in doGiveObj:%s%s Mob[%s]",
               (mob ? "" : " !mob"),
               (tThing ? "" : " !tThing"),
               getNameNOC(this).c_str());
@@ -310,10 +310,28 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
         doSay("Well I guess I'll just drop it here...");
         --(*tThing);
         *roomp += *tThing;
+      
       }
 #else
       //    Force the mob to drop if the give fails
       rc = doGive(arg, GIVE_FLAG_DROP_ON_FAIL);
+      // the force drop shit is lame, so another safety check here. give SHOULD return 
+      // FALSE if it failed, soooo... i'm gonna throw in a little hack -dash
+      tStArgument = two_arg(tStArgument, tStObj, tStSucker);
+      if (!rc) {
+	TThing *tThing = searchLinkedList(tStObj, stuff, TYPEOBJ);
+	if (tThing && tThing->parent == this && roomp) {
+	  doSay("Well I guess I'll just drop it here...");
+	  --(*tThing);
+	  *roomp += *tThing;
+	  
+	  act("You drop $p",
+	      FALSE, this, tThing, NULL, TO_CHAR);
+	  act("$n drops $p.",
+	      FALSE, this, tThing, NULL, TO_ROOM);
+
+	}
+      }
 #endif
       break;
     case CMD_RESP_CHECKROOM:

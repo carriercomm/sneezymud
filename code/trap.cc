@@ -88,14 +88,20 @@ int TBeing::doSetTraps(const char *arg)
   int rc;
   TObj *obj;
 
-  if (!isImmortal() && !hasClass(CLASS_THIEF)) {
-    sendTo("I guess you think you are a thief now?\n\r");
-    return FALSE;
-  }
   bisect_arg(arg, &field, string, user_trap_types);
 
   switch (field - 1) {
     case TRAP_TARG_DOOR:  // exit traps
+      if (!doesKnowSkill(SKILL_SET_TRAP_DOOR)) {
+        sendTo("You know nothing about making door traps.\n\r");
+        return FALSE;
+      }
+      if (getDoorTrapLearn(type) <= 0) {
+        sendTo("You need more training before setting a door trap.\n\r");
+        return FALSE;
+      }
+ 
+
       sscanf(string, "%s %s", direct, trap_type);
       if ((dir = old_search_block(direct, 0, strlen(direct), dirs, 0)) <= 0) {
 	sendTo("No such direction.\n\r");
@@ -152,11 +158,6 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("Syntax: trap exit <direction> <trap-type>\n\r");
         return FALSE;
       }
-      if (getDoorTrapLearn(type) <= 0) {
-        sendTo("You need more training before setting a door trap.\n\r");
-        return FALSE;
-      }
- 
       if (!hasTrapComps(trap_type, TRAP_TARG_DOOR, 0)) {
         sendTo("You need more items to make that trap.\n\r");
         return FALSE;
@@ -169,6 +170,15 @@ int TBeing::doSetTraps(const char *arg)
       start_task(this, NULL, NULL, TASK_TRAP_DOOR, task_arg, 3, inRoom(), type, door, 5);
       return FALSE;
     case TRAP_TARG_CONT:
+      if (!doesKnowSkill(SKILL_SET_TRAP_CONT)) {
+        sendTo("You know nothing about making container traps.\n\r");
+        return FALSE;
+      }
+      if (getContainerTrapLearn(type) <= 0) {
+        sendTo("You need more training before setting a container trap.\n\r");
+        return FALSE;
+      }
+ 
       sscanf(string, "%s %s", direct, trap_type);
       if (!(obj = get_obj_vis_accessible(this, direct))) {
 	sendTo("No such item present.\n\r");
@@ -185,6 +195,16 @@ int TBeing::doSetTraps(const char *arg)
       }
       return FALSE;
     case TRAP_TARG_MINE:
+      if (!doesKnowSkill(SKILL_SET_TRAP_MINE)) {
+        sendTo("You know nothing about making mines.\n\r");
+        return FALSE;
+      }
+      if (getMineTrapLearn(type) <= 0) {
+        sendTo("You need more training before setting a mine trap.\n\r");
+        return FALSE;
+      }
+ 
+
       sscanf(string, "%s", trap_type);
 
       if (is_abbrev(trap_type, "fire")) {
@@ -216,11 +236,6 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("Syntax: trap mine <trap-type>\n\r");
         return FALSE;
       }
-      if (getMineTrapLearn(type) <= 0) {
-        sendTo("You need more training before setting a mine trap.\n\r");
-        return FALSE;
-      }
- 
       if (!hasTrapComps(trap_type, TRAP_TARG_MINE, 0)) {
         sendTo("You need more items to make that trap.\n\r");
         return FALSE;
@@ -231,6 +246,16 @@ int TBeing::doSetTraps(const char *arg)
       start_task(this, NULL, NULL, TASK_TRAP_MINE, trap_type, 3, inRoom(), type, 0, 5);
       return FALSE;
     case TRAP_TARG_GRENADE:
+      if (!doesKnowSkill(SKILL_SET_TRAP_GREN)) {
+        sendTo("You know nothing about making grenades.\n\r");
+        return FALSE;
+      }
+      if (getGrenadeTrapLearn(type) <= 0) {
+        sendTo("You need more training before setting a grenade trap.\n\r");
+        return FALSE;
+      }
+ 
+
       sscanf(string, "%s", trap_type);
 
       if (is_abbrev(trap_type, "fire")) {
@@ -262,11 +287,6 @@ int TBeing::doSetTraps(const char *arg)
         sendTo("Syntax: trap grenade <trap-type>\n\r");
         return FALSE;
       }
-      if (getGrenadeTrapLearn(type) <= 0) {
-        sendTo("You need more training before setting a grenade trap.\n\r");
-        return FALSE;
-      }
- 
       if (!hasTrapComps(trap_type, TRAP_TARG_GRENADE, 0)) {
         sendTo("You need more items to make that trap.\n\r");
         return FALSE;
@@ -3847,11 +3867,6 @@ int TRealContainer::trapMe(TBeing *ch, const char *trap_type)
     ch->sendTo("Syntax: trap container <item> <trap-type>\n\r");
     return FALSE;
   }
-  if (ch->getContainerTrapLearn(type) <= 0) {
-    ch->sendTo("You need more training before setting a container trap.\n\r");
-    return FALSE;
-  }
- 
   if (!ch->hasTrapComps(trap_type, TRAP_TARG_CONT, 0)) {
     ch->sendTo("You need more items to make that trap.\n\r");
     return FALSE;

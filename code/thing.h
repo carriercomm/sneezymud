@@ -195,7 +195,8 @@ class TThing {
     virtual int bumpHeadDoor(roomDirData *, int *) {return FALSE; }
     TThing *thingHolding() const;
     virtual bool isRideable() const { return FALSE; }
-    virtual int genericMovedIntoRoom(TRoom *, sh_int, checkFallingT) { return FALSE; }
+    virtual int genericMovedIntoRoom(TRoom *, sh_int, checkFallingT = CHECK_FALLING_YES)
+    { return FALSE; }
     int genericTeleport(silentTypeT, bool keepZone = FALSE);
     virtual bool isFlying() const { return FALSE; }
     virtual bool isLevitating() const { return FALSE; }

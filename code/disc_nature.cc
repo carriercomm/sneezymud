@@ -13,7 +13,7 @@
 
 struct TransformLimbType TransformLimbList[LAST_TRANSFORM_LIMB] =
 {
-  {"hands", 8, 20, "bear claws", WEAR_HAND_R, AFFECT_TRANSFORMED_HANDS, DISC_RANGER},
+  {"hands", 6, 20, "bear claws", WEAR_HAND_R, AFFECT_TRANSFORMED_HANDS, DISC_RANGER},
   {"arms", 30, 75,"falcon wings", WEAR_ARM_R, AFFECT_TRANSFORMED_ARMS,
 DISC_ANIMAL},
   {"legs", 20, 15, "a dolphin's tail", WEAR_LEGS_R, AFFECT_TRANSFORMED_LEGS, DISC_ANIMAL},

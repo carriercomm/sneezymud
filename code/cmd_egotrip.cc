@@ -66,8 +66,11 @@ void TBeing::doEgoTrip(const char *arg)
     for (d = descriptor_list; d; d = d->next) {
       if (d->connected != CON_PLYNG)
         continue;
+
       TBeing *ch = d->character;
-      if (!ch)
+
+      // Try and ditch some of the un-needed spam/waste.
+      if (!ch || ch->GetMaxLevel() > MAX_MORT)
         continue;
 #if 0
 // doesn't work if not in room

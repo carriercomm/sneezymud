@@ -435,6 +435,7 @@ extern int age_mod_for_stat(int age_num, statTypeT whichStat);
 extern string describeDuration(const TBeing *, int);
 extern bool is_ok(TMonster *, TBeing *, int);
 extern int compareDetermineMessage(const int tDrift, const int tValue);
+extern bool in_range(int, int, int);
 }
 
 // these needs C++ linkage to avoid conflict with functions in stdlib

@@ -2,27 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: cmd_stat.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/01 16:57:58  batopr
-// Changed so monks will show prim/second hand attack breakdown too
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////// 
-//
-//      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
-//
 //      "stat_command.cc" - The stat command
 //  
 //////////////////////////////////////////////////////////////////////////

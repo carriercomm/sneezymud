@@ -2,17 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: opinion.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -72,11 +61,9 @@ bool TMonster::addHated(TBeing *hatee)
     list->name = mud_str_dup(hatee->name);
     list->next = hates.clist;
     hates.clist = list;
-    if (!IS_SET(specials.act, ACT_HATEFUL))
-      SET_BIT(specials.act, ACT_HATEFUL);
 
-    if (!IS_SET(hatefield, HATE_CHAR))
-      SET_BIT(hatefield, HATE_CHAR);
+    SET_BIT(specials.act, ACT_HATEFUL);
+    SET_BIT(hatefield, HATE_CHAR);
 
     if (hatee->isImmortal())
       hatee->sendTo("---Someone hates you.\n\r");
@@ -88,8 +75,7 @@ int TMonster::addHatred(zoneHateT parm_type, int parm)
 {
   switch (parm_type) {
     case OP_SEX:
-      if (!IS_SET(hatefield, HATE_SEX))
-	SET_BIT(hatefield, HATE_SEX);
+      SET_BIT(hatefield, HATE_SEX);
       if (parm != SEX_MALE && parm != SEX_FEMALE && parm != SEX_NEUTER) {
         vlogf(8, "bad parm to adHatred-sex for %s : %d", getName(), parm);
         parm = 0;

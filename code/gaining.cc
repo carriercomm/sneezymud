@@ -1738,10 +1738,6 @@ int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset,
 
         one_argument(tStArg, tStRes);
 
-        vlogf(LOG_LAPSOS, "%s: %d-[%d]-%d / %d-%d", tStRes.c_str(),
-              tOldSL, DisguiseList[tType].learning, tNewSL,
-              ch->GetMaxLevel(), DisguiseList[tType].level);
-
         sprintf(tString, "%s you can now use the '%s' disguise.",
                 ch->getNameNOC(ch).c_str(), tStRes.c_str());
         me->doWhisper(tString);

@@ -1134,6 +1134,10 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_SWITCH_RANGER:
       case SKILL_RETREAT_RANGER:
       case SPELL_STICKS_TO_SNAKES:
+      case SPELL_ENTHRALL_SPECTRE:
+      case SPELL_ENTHRALL_GHAST:
+      case SPELL_ENTHRALL_GHOUL:
+      case SPELL_ENTHRALL_DEMON:
       case SPELL_STORMY_SKIES:
       case SPELL_TREE_WALK:
       case SKILL_BEAST_CHARM:
@@ -1268,6 +1272,7 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_DULL:
       case SKILL_ATTUNE:
       case SKILL_STAVECHARGE:
+      case SPELL_SHIELD_OF_MISTS:
         if (!discArray[aff->type]) {
           vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", aff->type, k->getName());
           k->affectRemove(aff);

@@ -774,23 +774,47 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
 	return FALSE;
       } 
       if (strlen(aname) >= 10) {
+        clientf("%d|Account name must be less than 10 characters! Try another name please.", CLIENT_ERROR);
+        delete account;
+        account = NULL;
+        return FALSE;
       }
       strcpy(account->name, aname);
 
       if (strlen(apassword) < 5) {
+        clientf("%d|Password must be longer than 5 characters.", CLIENT_ERROR);
+        delete account;
+        account = NULL;
+        return FALSE;
       } else if (strlen(apassword) > 10) {
+        clientf("%d|Password must be shorter than 10 characters.", CLIENT_ERROR);
+        delete account;
+        account = NULL;
+        return FALSE;
       }
       if (!hasDigit(apassword)) {
+        clientf("%d|Password must contain at least 1 numerical digit.", CLIENT_ERROR);
+        delete account;
+        account = NULL;
+        return FALSE;
       }
       crypted =(char *) crypt(apassword, account->name);
       strncpy(account->passwd, crypted, 10);
       *(account->passwd + 10) = '\0';
 
       if (illegalEmail(email, this, SILENT_YES)) {
+        clientf("%d|The email address you entered failed validity tests, please try another one.", CLIENT_ERROR);
+        delete account;
+        account = NULL;
+        return FALSE;
       }
       strcpy(account->email, email);
 
       if (!*timezone || (atoi(timezone) > 23) || (atoi(timezone) < -23)) {
+        clientf("%d|Invalid timezone please enter a number between 23 and -23!", CLIENT_ERROR);
+        delete account;
+        account = NULL;
+        return FALSE;
       }
       account->time_adjust = atoi(timezone);
 

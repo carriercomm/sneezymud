@@ -307,12 +307,18 @@ static bool will_not_repair(TBeing *ch, TMonster *repair, TObj *obj, silentTypeT
     }
     return TRUE;
   }
-  if (obj->isObjStat(ITEM_BURNING) || obj->isObjStat(ITEM_CHARRED)){
+  if (obj->isObjStat(ITEM_BURNING)) {
     if (!silent) {
-      sprintf(buf, "%s I can't repair fire damage.", fname(ch->name).c_str());
+      sprintf(buf, "%s I can't repair burning items.", fname(ch->name).c_str());
       repair->doTell(buf);
     }
     return TRUE;
+  }
+  if (obj->isObjStat(ITEM_CHARRED)) {
+    if (!silent) {
+      sprintf(buf, "%s I can repair this, but it is very badly fire-damaged.", fname(ch->name).c_str());
+      repair->doTell(buf);
+    }
   }
   if (obj_index[obj->getItemIndex()].number > 
       obj_index[obj->getItemIndex()].max_exist) {
@@ -486,6 +492,7 @@ static TObj *make_ticket(TMonster *repair, TBeing *buyer, TObj *repaired, time_t
     return NULL;
   }
   tmp_obj->noteMe(repair, buyer, repaired, when_ready, tick_num);
+  tmp_obj->max_exist = repaired->max_exist;
   return tmp_obj;
 }
 

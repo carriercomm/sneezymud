@@ -83,15 +83,23 @@ int identify(TBeing *caster, TObj *obj, int, byte bKnown)
     else
       y = obj->rentCost();
 
-    if ((x <= 0) && (y <= 0))
+    if ((x <= 0) && (y <= 0 || obj->max_exist > 10))
       caster->sendTo("You'd judge it to be completely worthless.\n\r");
+#ifndef SNEEZY2000
     else if (x <= 0)
       caster->sendTo("Although it looks worthless, you'd guess they'll charge you %d talen%s to rent it.\n\r", y, (y != 1) ? "s" : "");
     else if (y <= 0)
       caster->sendTo("Although it looks worth at least %d talen%s, you guess its unrentable.\n\r", x, (x != 1) ? "s" : "");
     else
       caster->sendTo("You'd judge its worth to be about %d talen%s.  Rent, around %d.\n\r", x, (x != 1) ? "s" : "", y);
-
+#else
+    else if(obj->max_exist <= 10 && x <= 0)
+      caster->sendTo("Although it looks worthless, you'd guess they'll charge you %d talen%s to rent it.\n\r", y, (y !=1) ? "s" : "");
+    else if(obj->max_exist <= 10 && x > 0)
+      caster->sendTo("You'd judge its worth to be about %d talen%s.  Rent, around %d.\n\r", x, (x != 1) ? "s" : "", y);
+    else
+      caster->sendTo("You'd judge its worth to be about %d talen%s.\n\r", x, (x != 1) ? "s" : "");
+#endif
     return SPELL_SUCCESS;
   } else {
     caster->nothingHappens();
@@ -1810,7 +1818,7 @@ int TScroll::copyMe(TBeing *caster, byte bKnown)
     }
     /* lets not make this a gold creating bug  -- bat */
     new_obj->obj_flags.cost = 1;
-
+    new_obj->obj_flags.decay_time = (int)((double)caster->getSkillLevel(SPELL_COPY)*95) + 50;
     *caster->roomp += *new_obj;
     return SPELL_SUCCESS;
   } else {

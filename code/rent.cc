@@ -16,7 +16,7 @@ static const int NORMAL_SLOT   = -1;
 static const int CONTENTS_END  = -2;
 static const int CORPSE_END  = -3;
 
-static const int LIMITED_RENT_ITEM = 10;  
+static const int LIMITED_RENT_ITEM = 9;  
 // in 5.2 anything with max exists <= this number will be charged rent
 
 struct SInnkeeperHate {
@@ -962,7 +962,7 @@ void TBeing::addObjCost(TBeing *re, TObj *obj, objCost *cost, string &str)
     temp = max(0, obj->rentCost());
 #ifdef SNEEZY2000
     // in sneezy 5.2 we don't want to charge for anything that isn't limited. -dash 01/01
-    if(obj->max_exist > LIMITED_RENT_ITEM - 1) temp = 0;
+    if(obj->max_exist > LIMITED_RENT_ITEM) temp = 0;
     //    vlogf(LOG_DASH, "%s getting cost on %s, max exist %d, limit %d, cost %d", getName(), obj->getName(),
     //	  obj->max_exist, LIMITED_RENT_ITEM, temp);
     

@@ -2988,10 +2988,17 @@ else {
     sprintf(Buf, "You squeeze the trigger on $p, squirting a deadly stream of %s at $N!", liqname);
     act(Buf, TRUE, ch, gun, squirtee, TO_CHAR);
     sprintf(Buf, "$n squeezes the trigger on $p, squirting a deadly stream of %s at $N!", liqname);
-    act(Buf, TRUE, ch, gun, squirtee, TO_VICT);
-    sprintf(Buf, "$n squeezes the trigger on $p, squirting a deadly stream of %s at you!", liqname);
     act(Buf, TRUE, ch, gun, squirtee, TO_NOTVICT);
-
+    sprintf(Buf, "$n squeezes the trigger on $p, squirting a deadly stream of %s at you!", liqname);
+    act(Buf, TRUE, ch, gun, squirtee, TO_VICT);
+    if (shot>4) {
+    char Buf2[256];
+    sprintf(Buf2, "$N is totally soaked with %s!", liqname);
+    act(Buf2, TRUE, ch, gun, squirtee, TO_CHAR);
+    act(Buf2, TRUE, ch, gun, squirtee, TO_NOTVICT);
+    sprintf(Buf2, "You're totally soaked with %s!", liqname);
+    act(Buf2, TRUE, ch, gun, squirtee, TO_VICT);
+    }
     return TRUE;
   }
 }

@@ -243,7 +243,8 @@ int poison(TBeing * caster, TBeing * victim, int level, byte bKnown, spellNumT s
     return SPELL_FALSE;
   }
 
-  if (victim->affectedBySpell(SPELL_POISON) || victim->affectedBySpell(SPELL_POISON_DEIKHAN)) {
+  if (victim->affectedBySpell(SPELL_POISON) ||
+      victim->affectedBySpell(SPELL_POISON_DEIKHAN)) {
     act("You can't poison $N. $E is already poisoned!", 
         FALSE, caster, NULL, victim, TO_CHAR);
     act("$n just tried to poison you again!", 
@@ -265,15 +266,15 @@ int poison(TBeing * caster, TBeing * victim, int level, byte bKnown, spellNumT s
 
   aff.type = SPELL_POISON;
   aff.level = level;
-  aff.duration = (level << 1) * UPDATES_PER_MUDHOUR;
+  aff.duration = (2 + level/10) * UPDATES_PER_MUDHOUR;
   aff.modifier = -20;
   aff.location = APPLY_STR;
   aff.bitvector = AFF_POISON;
   aff.duration = (int) (caster->percModifier() * aff.duration);
 
+  // we'll be tweaking duration, so we'll set it at the end
   aff2.type = AFFECT_DISEASE;
   aff2.level = 0;
-  aff2.duration = aff.duration;
   aff2.modifier = DISEASE_POISON;
   aff2.location = APPLY_NONE;
   aff2.bitvector = AFF_POISON;
@@ -282,8 +283,6 @@ int poison(TBeing * caster, TBeing * victim, int level, byte bKnown, spellNumT s
     if (victim->isLucky(caster->spellLuckModifier(spell))) {
       SV(spell);
       aff.duration /= 2;
-      aff2.duration /= 2;
-      aff.modifier /= 2;
     }
     switch (critSuccess(caster, spell)) {
       case CRIT_S_DOUBLE:
@@ -291,12 +290,16 @@ int poison(TBeing * caster, TBeing * victim, int level, byte bKnown, spellNumT s
       case CRIT_S_KILL:
         CS(spell);
         aff.duration *= 2;
-        aff2.duration *= 2;
-        aff.modifier *= 2;
         break;
       case CRIT_S_NONE:
         break;
     }
+ 
+    // we've made raw immunity check, but allow it to reduce effects too
+    aff.duration *= (100 - victim->getImmunity(IMMUNE_POISON));
+    aff.duration /= 100;
+
+    aff2.duration = aff.duration;
     victim->affectTo(&aff);
     victim->affectTo(&aff2);
     disease_start(victim, &aff2);
@@ -307,8 +310,16 @@ int poison(TBeing * caster, TBeing * victim, int level, byte bKnown, spellNumT s
       case CRIT_F_HITOTHER:
       case CRIT_F_HITSELF:
         CF(spell);
+
+        //we've made raw immunity check, but allow it to reduce effects too
+        aff.duration *= (100 - caster->getImmunity(IMMUNE_POISON));
+        aff.duration /= 100;
+
         caster->affectTo(&aff);
+
+        aff2.duration = aff.duration;
         caster->affectTo(&aff2);
+
         disease_start(caster, &aff2);
         return SPELL_CRIT_FAIL;
       case CRIT_F_NONE:
@@ -1012,6 +1023,11 @@ int paralyze(TBeing * caster, TBeing * victim, int level, byte bKnown)
       case CRIT_S_NONE:
         break;
     }
+
+    //we've made raw immunity check, but allow it to reduce effects too
+    aff.duration *= (100 - victim->getImmunity(IMMUNE_PARALYSIS));
+    aff.duration /= 100;
+
     victim->affectTo(&aff);
 
     if (victim->riding && dynamic_cast<TBeing *>(victim->riding))
@@ -1027,6 +1043,10 @@ int paralyze(TBeing * caster, TBeing * victim, int level, byte bKnown)
       case CRIT_F_HITSELF:
         CF(SPELL_PARALYZE);
         if (!caster->isImmune(IMMUNE_PARALYSIS, level)) {
+          // we've made raw immunity check, but allow it to reduce effects too
+          aff.duration *= (100 - caster->getImmunity(IMMUNE_PARALYSIS));
+          aff.duration /= 100;
+
           caster->affectTo(&aff);
           caster->setPosition(POSITION_STUNNED);
           return SPELL_CRIT_FAIL;
@@ -2002,6 +2022,10 @@ int numb(TBeing * caster, TBeing * victim, int level, byte bKnown, spellNumT spe
       CS(spell);
       aff.duration *= 2;
     }
+
+    // we've made raw immunity check, but allow it to reduce effects too
+    aff.duration *= (100 - victim->getImmunity(IMMUNE_PARALYSIS));
+    aff.duration /= 100;
 
     victim->affectTo(&aff);                                                  
     disease_start(victim, &aff); 

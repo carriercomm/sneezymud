@@ -2041,7 +2041,16 @@ void TPerson::doUsers(const char *argument)
             !hasWizPower(POWER_VIEW_IMM_ACCOUNTS)) {
         sprintf(line + strlen(line), "*** Information Concealed ***\n\r");
       } else {
-        sprintf(buf2, "[%s]", (d->host ? d->host : "????"));
+	MYSQL_RES *res;
+	MYSQL_ROW row;
+	
+	dbquery(&res, "sneezy", "doWorld", "select pingtime from pings where host='%s'", d->host);
+	if((row=mysql_fetch_row(res))){
+	  sprintf(buf2, "[%s](%s)", (d->host ? d->host : "????"), row[0]);
+	} else {
+	  sprintf(buf2, "[%s](???)", (d->host ? d->host : "????"));
+	}
+
         sprintf(buf3, "[%s]", ((d->connected < MAX_CON_STATUS && d->connected >= 0) ? connected_types[d->connected] : "Editing"));
         sprintf(buf4, "[%s]", (d->account && d->account->name) ? d->account->name : "UNDEFINED");
         sprintf(line + strlen(line), "%s%-34.34s%s %s%-10.10s%s %s%s%s\n\r", red(), buf2, norm(), green(), buf3, norm(), cyan(), buf4, norm());
@@ -2843,7 +2852,9 @@ void TBeing::doWorld()
   int i;
   string str;
   char buf[256];
-  
+  MYSQL_RES *res;
+  MYSQL_ROW row;
+
   if (!desc)
     return;
 
@@ -2883,6 +2894,14 @@ void TBeing::doWorld()
 	  lag_info.high,
 	  lag_info.low, norm());
   str += buf;
+
+  dbquery(&res, "sneezy", "doWorld", 
+	  "select pingtime from pings where host='%s'", desc->host);
+  if((row=mysql_fetch_row(res))){
+    sprintf(buf, "%sNetwork Lag:                         %sms%s\n\r",
+	    blue(), row[0], norm());
+    str += buf;
+  }
 
   sprintf(buf, "Total number of rooms in world:               %ld\n\r", 
         roomCount);

@@ -68,7 +68,7 @@ void TBeing::doMortalQuest(const char *tArg)
       }
 
       sprintf(questPath, "mobdata/responses/help/%d", questNumber);
-      if (file_to_string(questPath, tStString, true))
+      if (file_to_string(questPath, tStString))
         desc->page_string(tStString.c_str(), 0);
       else
         sendTo("No such quest helpfile seems to exist.\n\r");
@@ -106,7 +106,7 @@ void TBeing::doMortalQuest(const char *tArg)
   }
 
   sprintf(questPath, "mobdata/responses/help/%d", questRes);
-  if (file_to_string(questPath, tStString, true))
+  if (file_to_string(questPath, tStString))
     desc->page_string(tStString.c_str(), 0);
   // else condition not needed, it should be valid based on above logic
 }

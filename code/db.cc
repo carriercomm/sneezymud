@@ -2468,7 +2468,7 @@ char *fread_string(FILE *fp)
 }
 
 // read contents of a text file, and place in buf 
-bool file_to_string(const char *name, string &buf, bool concat)
+bool file_to_string(const char *name, string &buf, concatT concat)
 {
   FILE *fl;
   char tmp[256];

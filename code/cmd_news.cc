@@ -213,7 +213,7 @@ void TBeing::doNews(const char *argument)
 //  }
 
 #if 1
-  file_to_string(NEWS_FILE, str, true);
+  file_to_string(NEWS_FILE, str, CONCAT_YES);
   if (desc) {
     news_used_num++;
     desc->page_string(str.c_str(), 0);

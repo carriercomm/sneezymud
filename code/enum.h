@@ -449,6 +449,13 @@ enum primaryTypeT {
   HAND_PRIMARY = true,
 };
 
+enum primLegT {
+  LEG_SECONDARY = 0,
+  LEG_PRIMARY = 1,
+  LEG_SECONDARY_BACK = 2,
+  LEG_PRIMARY_BACK = 3
+};
+
 enum checkOnlyT {
   CHECK_ONLY_NO = false,
   CHECK_ONLY_YES = true

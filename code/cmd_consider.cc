@@ -149,6 +149,30 @@ void TBeing::doConsider(const char *argument)
   else
     sendTo("There are better ways to suicide.\n\r");
 
+
+  // this code is duplicated somewhat in doTrophy
+  MYSQL_ROW row;
+  MYSQL_RES *res;
+  int rc, count;
+
+  if((rc=dbquery(&res, "sneezy", "consider/trophy", "select mobvnum, count from trophy where name='%s' and mobvnum=%i", getName(), tmon->mobVnum()))){
+    if(rc!=1){
+      sendTo("Database error!  Talk to a coder ASAP.\n\r");
+      return;
+    }
+  } else if((row=mysql_fetch_row(res))){
+    count=atoi(row[1]);
+    sendTo(COLOR_BASIC, "You will gain %s experience when fighting %s.\n\r", 
+	    ((count < 5) ? "<Y>full<1>" :
+	     ((count < 7) ? "<o>much<1>" :
+	     ((count < 9) ? "a fair amount" :
+	      ((count < 11) ? "<w>some<1>" : "<k>little<1>")))),
+	    mob_index[real_mobile(atoi(row[0]))].short_desc);
+  }
+
+
+
+
   if (getDiscipline(DISC_ADVENTURING)) {
     int learn = 0;
     spellNumT sknum = TYPE_UNDEFINED;

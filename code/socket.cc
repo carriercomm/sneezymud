@@ -475,6 +475,16 @@ int TSocket::gameLoop()
     }
 
     if (!combat || !mobstuff || !teleport || !drowning || !update_stuff || !pulse_tick) {
+      unsigned int i;
+      for (i = 0; i < zone_table.size(); i++) {
+	if (isEmpty(i))
+	  zone_table[i].zone_value=1;
+	else{
+	  zone_table[i].zone_value=-1;
+	  //	  vlogf(LOG_PEEL, "zone %i not empty", i);
+	}
+      }
+
       // note on this loop
       // it is possible that temp gets deleted in one of the sub funcs
       // we don't get acknowledgement of this in any way.
@@ -515,7 +525,7 @@ int TSocket::gameLoop()
           }
         }
 
-	if (!mobstuff) {
+	if (!mobstuff && zone_table[tmp_ch->roomp->getZone()].zone_value==1) {
           if (Gravity) {
 	    tmp_ch->checkSinking(tmp_ch->in_room);
 
@@ -527,7 +537,7 @@ int TSocket::gameLoop()
 	      continue;
             }
           }
-	  if (!tmp_ch->isPc() && dynamic_cast<TMonster *>(tmp_ch)) {
+	  if (!tmp_ch->isPc() && dynamic_cast<TMonster *>(tmp_ch)){
 	    rc = dynamic_cast<TMonster *>(tmp_ch)->mobileActivity(pulse);
             if (IS_SET_DELETE(rc, DELETE_THIS)) {
               temp = tmp_ch->next;

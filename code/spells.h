@@ -249,6 +249,8 @@ enum spellNumT {
      SKILL_DEATHSTROKE,
      SKILL_DUAL_WIELD_WARRIOR,  
      SKILL_POWERMOVE,
+     SKILL_TRANCE_OF_BLADES,
+   
      // end of warrior
      // start of ranger
 

@@ -41,7 +41,7 @@ int TBeing::doShove(const char *argument, TBeing *vict)
     return FALSE;
   }
   if (noHarmCheck(victim))
-    return FALSE;
+   return FALSE;
 
   if (riding) {
     act("You can't shove very well while on $p.",
@@ -196,6 +196,105 @@ int shove(TBeing *caster, TBeing * victim, char * direction, spellNumT skill)
   return TRUE;
 }
 
+// DASH MARKER: this is my revamped copy of parryWarrior(), with the stuff for the
+// trance of blades skill
+#if 1
+
+int TBeing::parryWarrior(TBeing *v, TThing *weapon, int *dam, int w_type, wearSlotT part_hit)
+{
+  char buf[256], type[16], type2[16];
+  bool trance = FALSE;
+  TObj *vweap = NULL;
+
+  // presumes warrior is in appropriate position for parry already
+
+  if (!v->doesKnowSkill(SKILL_PARRY_WARRIOR) && hasClass(CLASS_WARRIOR))
+    return FALSE;
+  if (v->doesKnowSkill(SKILL_TRANCE_OF_BLADES) && (v->task) &&
+      (v->task->task = TASK_TRANCE_OF_BLADES) &&
+      (vweap = dynamic_cast<TBaseWeapon *>(v->heldInPrimHand())))
+    trance = TRUE;
+  
+  w_type -= TYPE_HIT;
+  
+  // base amount, modified for difficulty
+  // the higher amt is, the more things get blocked
+  int amt = 0;
+  if (trance) {
+    amt += (int)(420 * 100 / getSkillDiffModifier(SKILL_TRANCE_OF_BLADES));
+    amt += (int)(80 * 100 / getSkillDiffModifier(SKILL_PARRY_WARRIOR));
+    switch(::number(0,2)){
+    case 0:
+      strcpy(type, "parry");
+      strcpy(type2,"parries");
+      break;
+    case 1:
+      strcpy(type, "block");
+      strcpy(type2,"blocks");
+      break;
+    case 2:
+      strcpy(type, "deflect");
+      strcpy(type2,"deflects");
+      break;
+    }    // Give fast and agile trancers an improved chance
+    // translates to rougly 66% max
+    amt = (int)((float) amt * v->plotStat(STAT_CURRENT, STAT_AGI, 0.80, 1.25, 1.00));
+    amt = (int)((float) amt * v->plotStat(STAT_CURRENT, STAT_SPE, 0.80, 1.25, 1.00));
+  } else {  
+    amt += (int) (40 * 100 / getSkillDiffModifier(SKILL_PARRY_WARRIOR));
+    strcpy(type, "parry");
+    strcpy(type2,"parries");
+  }
+  if (::number(0, 999) >= amt)
+    return FALSE;
+  
+  // check bSuccess after above check, so that we limit how often we
+  // call the learnFrom stuff
+  if (trance) {
+    int val = (int)(((float) v->getSkillValue(SKILL_TRANCE_OF_BLADES) * 0.70) + 30);
+    if (bSuccess(v,val, SKILL_TRANCE_OF_BLADES)) {
+      *dam = 0;
+      // base 30% chance combined with the base 50% chance gives us a 15%-50% block rate
+      // not sure if this is the proper way to do this, but it works. - dash
+      sprintf(buf, "You %s $n's %s with your $o.", type,
+	      attack_hit_text[w_type].singular);
+      act(buf, FALSE, this, vweap, v, TO_VICT, ANSI_CYAN);
+      
+      sprintf(buf, "$N %s your %s with $S $o.", type2,
+	      attack_hit_text[w_type].singular);
+      
+      act(buf, FALSE, this, vweap, v, TO_CHAR, ANSI_CYAN);
+      
+      sprintf(buf, "$N %s $n's %s with $S $o.", type2,
+	      attack_hit_text[w_type].singular);
+      act(buf, TRUE, this, vweap, v, TO_NOTVICT);
+      return TRUE;
+    }
+  } else {
+    if (bSuccess(v, v->getSkillValue(SKILL_PARRY_WARRIOR), SKILL_PARRY_WARRIOR)) {
+      *dam = 0;
+      sprintf(buf, "You %s $n's %s at your %s.", type,
+	      attack_hit_text[w_type].singular,
+	      v->describeBodySlot(part_hit).c_str());
+      act(buf, FALSE, this, 0, v, TO_VICT, ANSI_CYAN);
+      
+      sprintf(buf, "$N %s your %s at $S %s.", type2,
+	      attack_hit_text[w_type].singular,
+	      v->describeBodySlot(part_hit).c_str());                                       
+      act(buf, FALSE, this, 0, v, TO_CHAR, ANSI_CYAN);
+      
+      sprintf(buf, "$N %s $n's %s at $S %s.", type2,
+	      attack_hit_text[w_type].singular,
+	      v->describeBodySlot(part_hit).c_str());
+      act(buf, TRUE, this, 0, v, TO_NOTVICT);
+      return TRUE;
+    }
+  }
+  return FALSE;
+}
+
+#else
+
 int TBeing::parryWarrior(TBeing *v, TThing *weapon, int *dam, int w_type, wearSlotT part_hit)
 {
   char buf[256], type[16];
@@ -239,12 +338,66 @@ int TBeing::parryWarrior(TBeing *v, TThing *weapon, int *dam, int w_type, wearSl
     return TRUE;
   }
   return FALSE;
-}                  
+}    
+#endif
+              
 int TBeing::doParry()
 {
   sendTo("Parry is not yet supported in this fashion.\n\r");
   return 0;
 } 
+
+void TBeing::doTranceOfBlades(const char *newarg) {
+  TThing *obj;
+  if (!hasClass(CLASS_WARRIOR)) {
+    sendTo("Only warriors can enter the defensive trance.\n\r");
+  }
+  
+  if ( !(this->heldInPrimHand()) || 
+       !(obj = dynamic_cast<TBaseWeapon *>(this->heldInPrimHand()))) {
+    sendTo("You'll need to be holding a suitable weapon to enter the defensive trance.\n\r");
+    return;
+  }
+  
+  if (!doesKnowSkill(SKILL_TRANCE_OF_BLADES)) {
+    sendTo("You do not have the knowledge to attempt the defensive trance.\n\r");
+    return;
+  }
+  if (!canUseArm(HAND_PRIMARY)) {
+    sendTo("You can't enter the defensive trance with a useless arm.\n\r");
+    return;
+  }
+  if (isSwimming()) {
+    sendTo("You can't enter the defensive trance while in water.\n\r");
+    return;
+  }
+  if (riding) {
+    sendTo("You can't enter the defensive trance while mounted.\n\r");
+    return;
+  }
+  if (getMove() < 30) {
+    sendTo("You're too tired to enter the trance.\n\r");
+    return;
+  }
+  if (getCombatMode() == ATTACK_BERSERK) {
+    sendTo("You can't enter the defensive trance berserking. Like, duh.\n\r ");
+    return;
+  }
+  if (checkPeaceful("You cannot enter the defensive trance in a peaceful room.\n\r"))
+    return;
+  if (!(getPosition() > POSITION_SITTING)) {
+    sendTo("You can not enter the defensive trance while sitting.\n\r");
+    return;
+  }
+  act("You focus intensely upon your $o.",FALSE, this, obj, NULL, TO_CHAR);
+  act("$n focuses intensely upon $s $o.",FALSE, this, obj, NULL, TO_ROOM);
+  act("Concentrating, you enter the trance, and you feel your defensive reactions quicken.",FALSE, this, obj, NULL, TO_CHAR);
+  act("Concentrating, $n enters into a defensive trance.",FALSE, this, obj, NULL, TO_ROOM);
+  
+  
+  start_task(this, (TObj *) obj, NULL, TASK_TRANCE_OF_BLADES, NULL, 0, (ushort) this->in_room, 0, 0, 0);
+  return;
+}
 
 
 

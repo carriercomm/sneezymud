@@ -579,6 +579,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SKILL_GRAPPLE:
       case SKILL_DUAL_WIELD_WARRIOR:
       case SKILL_DOORBASH:
+      case SKILL_TRANCE_OF_BLADES:
       case SKILL_HIKING:
       case SKILL_FORAGE:
       case SKILL_SEEKWATER:

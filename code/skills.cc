@@ -500,7 +500,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
       return &((CDHTH *) cd)->skRetreat;
     case SKILL_PARRY_WARRIOR:  //            664
       return &((CDHTH *) cd)->skParryWarrior;
-
+    case SKILL_TRANCE_OF_BLADES:
+      return &((CDHTH *) cd)->skTranceOfBlades;
 //disc_brawling
 
     case SKILL_GRAPPLE:

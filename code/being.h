@@ -1335,6 +1335,7 @@ class TBeing : public TThing {
     int doHeadbutt(const char *, TBeing *);
     int doKneestrike(const char *, TBeing *);
     int doDoorbash(const string &);
+    void doTranceOfBlades(const char *);
     void doAttune(const char *);
     void doSharpen(const char *);
     void doAdjust(const char *);

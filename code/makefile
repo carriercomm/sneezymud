@@ -226,6 +226,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	task_smythe.o task_dull.o task_picklock.o task_sharpen.o \
 	task_spell_friends.o task_get.o task_rest.o task_sit.o task_track.o \
 	task_whittle.o task_stavecharge.o thing.o toggle.o trap.o \
+	task_trance_of_blades.o \
 	utility.o weather.o sys_loot.o \
 	wiz_data.o wiz_powers.o
 

@@ -1582,18 +1582,18 @@ static void change_obj_applys(TBeing *ch, TObj *o, const char *arg, editorEnterT
 
       int i;
       for (i = 0; (!done && (i < MAX_OBJ_AFFECT)); i++) {
-        if (att == APPLY_ARMOR && o->affected[i].location == APPLY_ARMOR) {
-          o->affected[i].modifier = number1;
-          o->affected[i].modifier2 = number2;
-          done = TRUE;
-	} else if (num == 2 && !number1) {
+	if (num == 2 && !number1) {
 	  if (o->affected[i].location == att) {
 	    o->affected[i].location = APPLY_NONE;
 	    o->affected[i].modifier = 0;
             o->affected[i].modifier2 = 0;
 	    done = TRUE;
 	  }
-        } else if (!number2 && num == 3) {
+        } else if (att == APPLY_ARMOR && o->affected[i].location == APPLY_ARMOR) {
+	  o->affected[i].modifier = number1;
+	  o->affected[i].modifier2 = number2;
+	  done = TRUE;
+	} else if (!number2 && num == 3) {
 	  if (o->affected[i].location == att) {
 	    o->affected[i].location = APPLY_NONE;
 	    o->affected[i].modifier = 0;

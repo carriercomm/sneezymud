@@ -427,6 +427,8 @@ int mapSpellnumToFile(spellNumT stt)
       return 665;
     case SKILL_KNEESTRIKE:
       return 226;
+    case SKILL_TRANCE_OF_BLADES:
+      return 227;
     case SKILL_SHOVE:
       return 229;
     case SKILL_RETREAT:
@@ -1266,6 +1268,8 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_BODYSLAM;
     case 226:
       return SKILL_KNEESTRIKE;
+    case 227:
+      return SKILL_TRANCE_OF_BLADES;
     case 229:
       return SKILL_SHOVE;
     case 230:

@@ -278,6 +278,7 @@ enum cmdTypeT {
      CMD_SHOW,
      CMD_BODYSLAM,
      CMD_SPIN,
+     CMD_TRANCE_OF_BLADES,
      CMD_INVISIBLE,
      CMD_GAIN,
      CMD_TIMESHIFT,

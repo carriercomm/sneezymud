@@ -1066,6 +1066,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SKILL_RETREAT:
       case SKILL_GRAPPLE:
       case SKILL_DOORBASH:
+      case SKILL_TRANCE_OF_BLADES:
       case SKILL_HIKING:
       case SKILL_FORAGE:
       case SKILL_TRANSFORM_LIMB:

@@ -530,6 +530,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SKILL_SWITCH_OPP:
     case SKILL_RETREAT:
     case SKILL_GRAPPLE:
+    case SKILL_TRANCE_OF_BLADES:
     case SKILL_HIKING:
     case SKILL_FORAGE:
     case SKILL_SEEKWATER:

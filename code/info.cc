@@ -1572,9 +1572,16 @@ void TBeing::doExamine(const char *argument, TThing * specific)
     sendTo("Examine what?\n\r");
 }
 
-void TBeing::describeAffects(TBeing *ch)
+// affect is on ch, this is person looking
+string TBeing::describeAffects(TBeing *ch, showMeT showme)
 {
   affectedData *aff, *af2;
+  char buf[256];
+  string str;
+
+  // limit what others can see.  Magic should reveal truth, but in general
+  // keep some stuff concealed
+  bool show = (ch==this) | showme;
 
   for (aff = ch->affected; aff; aff = af2) {
     af2 = aff->next;
@@ -1582,8 +1589,9 @@ void TBeing::describeAffects(TBeing *ch)
     switch (aff->type) {
       case SKILL_TRACK:
       case SKILL_SEEKWATER:
-        sendTo("Tracking: %s\n\r", (aff->type == SKILL_TRACK ?
+        sprintf(buf,"Tracking: %s\n\r", (aff->type == SKILL_TRACK ?
                ch->specials.hunting->getName() : "seeking water"));
+        str += buf;
         break;
       case SPELL_GUST:
       case SPELL_DUST_STORM:
@@ -1930,18 +1938,19 @@ void TBeing::describeAffects(TBeing *ch)
         if (!aff->shouldGenerateText())
           continue;
         else if (discArray[aff->type]) {
-          if ((ch == this) && strcmp(discArray[aff->type]->name, "sneak")) {
+          if (show && strcmp(discArray[aff->type]->name, "sneak")) {
             if (aff->renew < 0) {
-              sendTo("Affected : '%s'\t: Approx. Duration : %s\n\r",
+              sprintf(buf,"Affected : '%s'\t: Approx. Duration : %s\n\r",
                    discArray[aff->type]->name,
                    describeDuration(this, aff->duration).c_str());
   
             } else {
-              sendTo("Affected : '%s'\t: Time Left : %s %s\n\r",
+              sprintf(buf,"Affected : '%s'\t: Time Left : %s %s\n\r",
                  discArray[aff->type]->name,
                  describeDuration(this, aff->duration).c_str(), 
                  (aff->canBeRenewed() ? "(Renewable)" : "(Not Yet Renewable)"));
             }
+            str += buf;
           }
         } else {
           forceCrash("BOGUS AFFECT (%d) on %s.", aff->type, ch->getName());
@@ -1949,97 +1958,118 @@ void TBeing::describeAffects(TBeing *ch)
         }
         break;
       case AFFECT_DISEASE:
-        if (ch == this)
-          sendTo("Disease: '%s'\n\r",
+        if (show) {
+          sprintf(buf, "Disease: '%s'\n\r",
                   DiseaseInfo[affToDisease(*aff)].name);
+          str += buf;
+        } 
         break;
       case AFFECT_DUMMY:
-        if (this == ch)
-          sendTo("Dummy Affect: \n\r");
-        else
-          sendTo("Affected : '%s'\t: Time Left : %s %s\n\r",
+        if (show) {
+          sprintf(buf, "Affected : '%s'\t: Time Left : %s %s\n\r",
                  "DUMMY",
                  describeDuration(this, aff->duration).c_str(),
                  (aff->canBeRenewed() ? "(Renewable)" : "(Not Yet Renewable)"));
+          str += buf;
+        }
         break;
       case AFFECT_FREE_DEATHS:
-        sendTo("Free deaths remaining: %d\n\r",
+        sprintf(buf, "Free deaths remaining: %d\n\r",
                aff->modifier);
+        str += buf;
         break;
       case AFFECT_HORSEOWNED:
-        sendTo("Horseowned:\t Time Left : %s\n\r",
+        sprintf(buf, "Horseowned:\t Time Left : %s\n\r",
   	     describeDuration(this, aff->duration).c_str());
+        str += buf;
         break;
       case AFFECT_PLAYERKILL:
-        sendTo("Player Killer:\t Time Left : %s\n\r",
+        sprintf(buf, "Player Killer:\t Time Left : %s\n\r",
 	     describeDuration(this, aff->duration).c_str());
+        str += buf;
         break;
       case AFFECT_TEST_FIGHT_MOB:
-        sendTo("Test Fight Mob: %d\n\r",
+        sprintf(buf, "Test Fight Mob: %d\n\r",
                aff->modifier);
+        str += buf;
         break;
       case AFFECT_SKILL_ATTEMPT:
         if (isImmortal()) {
-          sendTo("Skill Attempt:(%d) '%s'\t: Time Left : %s\n\r", aff->modifier, (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
+          sprintf(buf, "Skill Attempt:(%d) '%s'\t: Time Left : %s\n\r", aff->modifier, (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
+          str += buf;
         } else if (aff->modifier != getSkillNum(SKILL_SNEAK)) {
-          sendTo("Skill Attempt: '%s'\t: Time Left : %s\n\r", (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
+          sprintf(buf, "Skill Attempt: '%s'\t: Time Left : %s\n\r", (discArray[aff->modifier] ? discArray[aff->modifier]->name : "Unknown"), describeDuration(this, aff->duration).c_str());
+          str += buf;
         }
         break;
       case AFFECT_NEWBIE:
-        if (this == ch)
-          sendTo("Donation Recipient: \n\r");
+        if (show) {
+          sprintf(buf, "Donation Recipient: \n\r");
+          str += buf;
+        }
         break;
       case AFFECT_DRUNK:
-        if (ch == this)
-          sendTo("Affected: Drunken Slumber: approx. duration : %s\n\r",
+        if (show) {
+          sprintf(buf, "Affected: Drunken Slumber: approx. duration : %s\n\r",
                  describeDuration(this, aff->duration).c_str());
-        else
-          sendTo("Affected: Drunken Slumber: \n\r");
+          str += buf;
+        } else {
+          sprintf(buf, "Affected: Drunken Slumber: \n\r");
+          str += buf;
+        }
         break;
       case AFFECT_DRUG:
         if (!aff->shouldGenerateText())
           continue;
-        if (ch == this)
-          sendTo("Affected: %s: approx. duration : %s\n\r",
+        if (show) {
+          sprintf(buf, "Affected: %s: approx. duration : %s\n\r",
   	       drugTypes[aff->modifier2].name,
 	       describeDuration(this, aff->duration).c_str());
-        else
-          sendTo("Affected: %s: \n\r", drugTypes[aff->modifier2].name);
+          str += buf;
+        } else {
+          sprintf(buf, "Affected: %s: \n\r", drugTypes[aff->modifier2].name);
+          str += buf;
+        }
         break;
       case AFFECT_TRANSFORMED_ARMS:
-        if (ch == this)
-          sendTo("Affected: Transformed Limb: falcon wings: approx. duration : %s\n\r",
+        if (show) {
+          sprintf(buf, "Affected: Transformed Limb: falcon wings: approx. duration : %s\n\r",
                  describeDuration(this, aff->duration).c_str());
-        else
-          sendTo("Affected: Transformed Limb: falcon wings: \n\r");
+        } else {
+          sprintf(buf, "Affected: Transformed Limb: falcon wings: \n\r");
+        }
+        str += buf;
         break;
       case AFFECT_TRANSFORMED_HANDS:
         if (ch == this)
-          sendTo("Affected: Transformed Limb: bear claws: approx. duration : %s\n\r",
+          sprintf(buf, "Affected: Transformed Limb: bear claws: approx. duration : %s\n\r",
                  describeDuration(this, aff->duration).c_str());
         else
-          sendTo("Affected: Transformed Limb: bear claws \n\r");
+          sprintf(buf, "Affected: Transformed Limb: bear claws \n\r");
+        str += buf;
         break;
       case AFFECT_TRANSFORMED_LEGS:
         if (ch == this)
-          sendTo("Affected: Transformed Limb: dolphin tail: approx. duration : %s\n\r",
+          sprintf(buf, "Affected: Transformed Limb: dolphin tail: approx. duration : %s\n\r",
                  describeDuration(this, aff->duration).c_str());
         else
-          sendTo("Affected: Transformed Limb: dolphin tail: \n\r");
+          sprintf(buf, "Affected: Transformed Limb: dolphin tail: \n\r");
+        str += buf;
         break;
       case AFFECT_TRANSFORMED_HEAD:
         if (ch == this)
-          sendTo("Affected: Transformed Limb: eagle's head: approx. duration : %s\n\r",
+          sprintf(buf, "Affected: Transformed Limb: eagle's head: approx. duration : %s\n\r",
                  describeDuration(this, aff->duration).c_str());
         else
-          sendTo("Affected: Transformed Limb: eagle's head: \n\r");
+          sprintf(buf, "Affected: Transformed Limb: eagle's head: \n\r");
         break;
       case AFFECT_TRANSFORMED_NECK:
         if (ch == this)
-          sendTo("Affected: Transformed Limb: fish gills: approx. duration : %s\n\r",
+          sprintf(buf, "Affected: Transformed Limb: fish gills: approx. duration : %s\n\r",
                  describeDuration(this, aff->duration).c_str());
         else
-          sendTo("Affected: Transformed Limb: fish gills: \n\r");
+          sprintf(buf, "Affected: Transformed Limb: fish gills: \n\r");
+        str += buf;
         break;
       case AFFECT_COMBAT:
       case AFFECT_PET:
@@ -2150,6 +2180,7 @@ void TBeing::describeAffects(TBeing *ch)
         break;
     }
   }
+  return str;
 }
 
 void TBeing::describeLimbDamage(const TBeing *ch) const

@@ -3713,6 +3713,7 @@ void TPerson::doAccess(const char *arg)
           fclose(fp);
         } 
         sendTo("Password changed successfully.\n\r");
+        vlogf(LOG_MISC, "%s changed password on %s account", getName(), st.aname);
         return;
       case 5:
         if (sscanf(arg, "%d %d", &lev, &Class) != 2) {

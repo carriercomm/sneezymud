@@ -44,7 +44,7 @@ enum race_t {
   RACE_TROLL,           /*  31 */       RACE_ANGEL,     /*  32 */
   RACE_MFLAYER,         /*  33 */       RACE_PRIMATE,   /*  34 */
   RACE_FAERIE,          /*  35 */       RACE_DROW,      /*  36 */
-  RACE_GOLEM,           /*  37 */       RACE_MYTHIC,    /*  38 */
+  RACE_GOLEM,           /*  37 */       RACE_BANSHEE,   /*  38 */
   RACE_PANTATH,         /*  39 */       RACE_MERMAID,   /*  40 */
   RACE_RODENT,          /*  41 */       RACE_FISHMAN,   /*  42 */
   RACE_TYTAN,           /*  43 */       RACE_WOODELF,   /*  44 */

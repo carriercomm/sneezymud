@@ -349,6 +349,9 @@ int TMonster::rawKill(spellNumT dmg_type)
 // always returns DELETE_THIS
 int TBeing::rawKill(spellNumT dmg_type)
 {
+  // using this to keep an eye on potential problem cropping up. bat - 12/26/99
+  Descriptor * tmpdesc = desc;
+
   if (fight())  {
     followData *f;
     for (f = fight()->followers;f;f = f->next) {
@@ -397,7 +400,11 @@ int TBeing::rawKill(spellNumT dmg_type)
 
   if (isPc()) {
     reformGroup();
+
+    // dead polys possibly have a problem calling removeRent.  Compare
+    // desc to tmpdesc to help pin this problem down.
     removeRent();
+
     removeFollowers();
   }
 

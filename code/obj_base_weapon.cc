@@ -880,7 +880,7 @@ int TBaseWeapon::poisonWeaponWeapon(TBeing *ch)
   }
   if (isObjStat(ITEM_BLESS) ||
       isObjStat(ITEM_MAGIC)) {
-    ch->sendTo("You can't poison that!\n\r");
+    ch->sendTo("The weapon resists the poison!\n\r");
     return FALSE;
   }
   for (i=0;i < MAX_SWING_AFFECT;i++) {
@@ -893,7 +893,7 @@ int TBaseWeapon::poisonWeaponWeapon(TBeing *ch)
       break;
   }
   if (i >= MAX_SWING_AFFECT) {
-    ch->sendTo("You can't poison that!\n\r");
+    ch->sendTo("The weapon resists the poison!\n\r");
     return FALSE;
   }
   if (!(poison = get_thing_char_using(ch, "poison", 0, TRUE, FALSE))) {

@@ -3208,7 +3208,7 @@ int keyInKnife(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
   if (cmd != CMD_PUSH && cmd != CMD_PRESS) 
     return FALSE;
  
-  if (!key = read_object(17211, VIRTUAL)) {
+  if (!(key = read_object(17211, VIRTUAL))) {
     vlogf(LOG_PROC, "Key in Knife -- bad read of object (%s)", ch->getName());
     return FALSE;
   }

@@ -2,70 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: immortal.cc,v $
-// Revision 5.1.1.2  1999/10/24 00:46:32  batopr
-// added drain info to hospital data on info gold
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.15  1999/10/14 03:54:48  batopr
-// removed #if 0 code
-//
-// Revision 1.14  1999/10/14 03:18:51  batopr
-// Modified display of info gold slightly
-//
-// Revision 1.13  1999/10/08 03:32:43  batopr
-// info gold display modification
-//
-// Revision 1.12  1999/10/08 03:06:11  batopr
-// Improved messages for info gold
-//
-// Revision 1.11  1999/10/07 17:14:26  batopr
-// Added display of "factor" for info-gold on shops
-//
-// Revision 1.10  1999/10/07 17:05:26  batopr
-// typo
-//
-// Revision 1.9  1999/10/07 17:04:20  batopr
-// typo fix
-//
-// Revision 1.8  1999/10/07 16:15:43  batopr
-// Switched info gold stuff to using functios to get gold data
-//
-// Revision 1.7  1999/10/07 04:09:29  batopr
-// Added percentage indicator for budget economy in info gold
-//
-// Revision 1.6  1999/10/06 22:02:03  batopr
-// "Use the TIME command at any point to see time until x." now uses
-// shutdown_or_reboot to populate x
-//
-// Revision 1.5  1999/10/05 22:39:37  cosmo
-// crash fix- minor- cos
-//
-// Revision 1.4  1999/10/02 23:40:47  lapsos
-// Removed auto-join/auto-pouch from the starting autos on new chars.
-//
-// Revision 1.3  1999/10/01 16:45:52  batopr
-// *** empty log message ***
-//
-// Revision 1.2  1999/09/16 20:59:29  batopr
-// added drain info to rent economy log
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////// 
-//
-//      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
-//
 //      "immortal.cc" - All commands reserved for wizards
 //  
 //////////////////////////////////////////////////////////////////////////
@@ -5428,7 +5364,7 @@ static bool verifyName(const string tStString)
   All this does at the moment is renames us then performs the command
   then changes us back.  This Really should be setup to replace the
   account information but at the moment this is enough to test/verify
-  it's ability.  We use the Creator check down in doAs() to make
+  its ability.  We use the Creator check down in doAs() to make
   sure it's Only used by trusted people.
  */
 int TBeing::doAsOther(const string tStString)
@@ -5489,9 +5425,11 @@ int TBeing::doAs(const char *arg)
 
   if (!desc || !desc->original || desc->original->GetMaxLevel() <= MAX_MORT) {
     // not connected, not switched, not a god
-    if (desc && isImmortal() && hasWizPower(POWER_WIZARD))
+    if (desc && isImmortal() && hasWizPower(POWER_WIZARD)) {
+      // this is pretty weird, but I guess the LOWS want to be able to
+      // use other imms MED, OED, RED, etc
       return doAsOther(arg);
-    else
+    } else
       incorrectCommand();
 
     return FALSE;

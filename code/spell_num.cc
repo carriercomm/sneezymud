@@ -423,8 +423,6 @@ int mapSpellnumToFile(spellNumT stt)
       return 224;
     case SKILL_BODYSLAM:
       return 225;
-    case SKILL_SPIN:
-      return 665;
     case SKILL_KNEESTRIKE:
       return 226;
     case SKILL_TRANCE_OF_BLADES:
@@ -701,6 +699,12 @@ int mapSpellnumToFile(spellNumT stt)
       return 507;
     case SKILL_SET_TRAP_GREN:
       return 508;
+    case SPELL_AQUALUNG:
+      return 548;
+    case SPELL_AQUATIC_BLAST:
+      return 549;
+    case SPELL_THORNFLESH:
+      return 550;
     case SPELL_ENTHRALL_GHOUL:
       return 551;
     case SPELL_ENTHRALL_GHAST:
@@ -769,8 +773,6 @@ int mapSpellnumToFile(spellNumT stt)
       return 593;
     case SKILL_OFFENSE:
       return 594;
-    case SKILL_WHITTLE:
-      return 663;
     case SKILL_WIZARDRY:
       return 596;
     case SKILL_MEDITATE:
@@ -803,12 +805,16 @@ int mapSpellnumToFile(spellNumT stt)
       return 659;
     case SKILL_BAREHAND_PROF:
       return 660;
-    case SKILL_PARRY_WARRIOR:
-      return 664;
     case SKILL_ATTUNE:
       return 661;
     case SKILL_STAVECHARGE:
       return 662;
+    case SKILL_WHITTLE:
+      return 663;
+    case SKILL_PARRY_WARRIOR:
+      return 664;
+    case SKILL_SPIN:
+      return 665;
     case SKILL_DUAL_WIELD_WARRIOR:
       return 666;
     case SKILL_POWERMOVE:
@@ -1552,6 +1558,12 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_SET_TRAP_MINE;
     case 508:
       return SKILL_SET_TRAP_GREN;
+    case 548:
+      return SPELL_AQUALUNG;
+    case 549:
+      return SPELL_AQUATIC_BLAST;
+    case 550:
+      return SPELL_THORNFLESH;
     case 551:
       return SPELL_ENTHRALL_GHOUL;
     case 552:
@@ -1620,10 +1632,6 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_DEFENSE;
     case 594:
       return SKILL_OFFENSE;
-    case 663:
-      return SKILL_WHITTLE;
-    case 664:
-      return SKILL_PARRY_WARRIOR;
     case 596:
       return SKILL_WIZARDRY;
     case 597:
@@ -1660,6 +1668,10 @@ spellNumT mapFileToSpellnum(int stt)
       return SKILL_ATTUNE;
     case 662:
       return SKILL_STAVECHARGE;
+    case 663:
+      return SKILL_WHITTLE;
+    case 664:
+      return SKILL_PARRY_WARRIOR;
     case 665:
       return SKILL_SPIN;
     case 666:
@@ -1734,3 +1746,7 @@ bool applyTypeShouldBeSpellnum(applyTypeT att)
 {
   return (att == APPLY_SPELL);
 }
+
+
+
+

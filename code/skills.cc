@@ -31,7 +31,6 @@
 #include "disc_fattacks.h"
 #include "disc_plants.h"
 #include "disc_ranger_fight.h"
-#include "disc_shaman_alchemy.h"
 #include "disc_shaman_frog.h"
 #include "disc_shaman_alchemy.h"
 #include "disc_shaman_control.h"
@@ -83,8 +82,8 @@
 #include "disc_warrior.h"
 #include "disc_survival.h"
 #include "disc_animal.h"
+#include "disc_shaman_armadillo.h"
 #include "disc_nature.h"
-#include "disc_armadillo.h"
 
 static bool doesKnow(byte know)
 {
@@ -573,13 +572,13 @@ CSkill *TBeing::getSkill(spellNumT skill) const
 // disc_armadillo
 
     case SPELL_STICKS_TO_SNAKES:  //           361
-      return &((CDShamanArmadillo *) cd)->skSticksToSnakes;
+      return &((CDShamanSpider *) cd)->skSticksToSnakes;
     case SPELL_STORMY_SKIES:  //               362
-      return &((CDShamanArmadillo *) cd)->skStormySkies;
-    case SPELL_TREE_WALK:  //                  363
-      return &((CDShamanArmadillo *) cd)->skTreeWalk;
+      return &((CDShamanFrog *) cd)->skStormySkies;
+    case SPELL_TREE_WALK:
+      return &((CDNature *) cd)->skTreeWalk;
     case SPELL_SHAPESHIFT:  //                 372
-      return &((CDShamanArmadillo *) cd)->skShapeShift;
+      return &((CDShamanFrog *) cd)->skShapeShift;
 
 // disc_animal
 
@@ -871,42 +870,48 @@ CSkill *TBeing::getSkill(spellNumT skill) const
 
 // disc_shaman
 
+    case SPELL_AQUATIC_BLAST: 
+      return &((CDShamanFrog *) cd)->skAquaticBlast;
+    case SPELL_AQUALUNG: 
+      return &((CDShamanArmadillo *) cd)->skAqualung;
     case SPELL_SHIELD_OF_MISTS: 
       return &((CDShaman *) cd)->skShieldOfMists;
     case SPELL_ROOT_CONTROL:  //               340
-      return &((CDShaman *) cd)->skRootControl;
+      return &((CDNature *) cd)->skRootControl;
     case SPELL_LIVING_VINES:  //               348
-      return &((CDShaman *) cd)->skLivingVines;
+      return &((CDNature *) cd)->skLivingVines;
     case SPELL_ENTHRALL_SPECTRE:
       return &((CDShaman *) cd)->skEnthrallSpectre;
     case SPELL_ENTHRALL_GHAST:
       return &((CDShaman *) cd)->skEnthrallGhast;
     case SPELL_ENTHRALL_GHOUL:
-      return &((CDShaman *) cd)->skEnthrallGhoul;
+      return &((CDShamanControl *) cd)->skEnthrallGhoul;
     case SPELL_ENTHRALL_DEMON:
-      return &((CDShaman *) cd)->skEnthrallDemon;
+      return &((CDShamanControl *) cd)->skEnthrallDemon;
     case SPELL_CACAODEMON: // 400
-      return &((CDShaman *) cd)->skCacaodemon;
+      return &((CDShamanControl *) cd)->skCacaodemon;
     case SPELL_DANCING_BONES: // 402
       return &((CDShaman *) cd)->skDancingBones;
     case SPELL_CONTROL_UNDEAD: // 403
-      return &((CDShaman *) cd)->skControlUndead;
+      return &((CDShamanSpider *) cd)->skControlUndead;
     case SPELL_RESURRECTION: // 404
       return &((CDShaman *) cd)->skResurrection;
     case SPELL_VOODOO: // 405
       return &((CDShaman *) cd)->skVoodoo;
+    case SPELL_THORNFLESH:
+      return &((CDShamanArmadillo *) cd)->skThornflesh;
 
 // disc_shaman_frog
 
-    case SKILL_TURN: // 1002
-      return &((CDShamanFrog *) cd)->skTurnSkill;
+      case SKILL_TURN:
+        return &((CDNature *) cd)->skTurnSkill;
 
 
 
 // disc_undead
 
     case SPELL_CREATE_GOLEM: // 401
-      return &((CDShamanSpider *) cd)->skCreateGolem;
+      return &((CDShamanControl *) cd)->skCreateGolem;
 
 // disc_shaman_alchemy
 
@@ -918,10 +923,10 @@ CSkill *TBeing::getSkill(spellNumT skill) const
 // disc_alchemy_shaman
 // disc_draining
 
-    case SPELL_VAMPIRIC_TOUCH: // 480
-      return &((CDShamanControl *) cd)->skVampiricTouch;
-    case SPELL_LIFE_LEECH: // 481
-      return &((CDShamanControl *) cd)->skLifeLeech;
+      case SPELL_VAMPIRIC_TOUCH: // 480
+        return &((CDShaman *) cd)->skVampricTouch;
+      case SPELL_LIFE_LEECH: // 481
+        return &((CDShaman *) cd)->skLifeLeech;
 
 // disc_totemism
 // disc_healing

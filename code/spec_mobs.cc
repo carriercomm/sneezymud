@@ -6503,7 +6503,7 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"Trainer: akodi", CDGenericTrainer},   // 105 
   {FALSE,"Trainer: meditation (monk)", CDGenericTrainer},
   {FALSE,"Trainer: survival", CDGenericTrainer},
-  {FALSE,"Trainer: nature", CDGenericTrainer},
+  {FALSE,"Trainer: armadillo", CDGenericTrainer},
   {FALSE,"Trainer: animal", CDGenericTrainer},
   {FALSE,"Trainer: aegis", CDGenericTrainer},    // 110 
   {FALSE,"Trainer: shaman rites", CDGenericTrainer},
@@ -6531,11 +6531,11 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE,"Trainer: barehand", CDGenericTrainer},
   {FALSE,"Trainer: thief fight", CDGenericTrainer},
   {FALSE,"Trainer: poisons", CDGenericTrainer},    // 135 
-  {FALSE,"Trainer: shaman fight", CDGenericTrainer},
+  {FALSE,"Trainer: frog", CDGenericTrainer},
   {FALSE,"Trainer: shaman alchemy", CDGenericTrainer},
-  {FALSE,"Trainer: shaman healing", CDGenericTrainer},
-  {FALSE,"Trainer: undead", CDGenericTrainer},
-  {FALSE,"Trainer: draining", CDGenericTrainer},       // 140 
+  {FALSE,"Trainer: skunk", CDGenericTrainer},
+  {FALSE,"Trainer: spider", CDGenericTrainer},
+  {FALSE,"Trainer: control", CDGenericTrainer},       // 140 
   {FALSE,"Trainer: totemism", CDGenericTrainer},
   {FALSE,"Trainer: ranger fight", CDGenericTrainer},
   {FALSE, "shaman guildmaster", ShamanGuildMaster},

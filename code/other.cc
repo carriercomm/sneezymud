@@ -37,7 +37,10 @@ extern "C" {
 #include "disc_hand_of_god.h"
 #include "disc_cures.h"
 #include "disc_nature.h"
-#include "disc_armadillo.h"
+#include "disc_shaman_armadillo.h"
+#include "disc_shaman_frog.h"
+#include "disc_shaman_spider.h"
+#include "disc_shaman_control.h"
 
 #include "spelltask.h"
 
@@ -2224,6 +2227,9 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_GUSHER:
       rc = gusher(caster,victim,obj);
       break;
+    case SPELL_AQUATIC_BLAST:
+      rc = aquaticBlast(caster,victim,obj);
+      break;
     case SPELL_ARCTIC_BLAST:
       rc = arcticBlast(caster,obj);
       break;
@@ -2236,8 +2242,14 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_PLASMA_MIRROR:
       // intentionally prohibited - too powerful
       break;
+    case SPELL_THORNFLESH:
+      // intentionally prohibited - too powerful
+      break;
     case SPELL_GILLS_OF_FLESH:
       gillsOfFlesh(caster,victim,obj);
+      break;
+    case SPELL_AQUALUNG:
+      aqualung(caster,victim,obj);
       break;
     case SPELL_MYSTIC_DARTS:
       rc = mysticDarts(caster,victim,obj);

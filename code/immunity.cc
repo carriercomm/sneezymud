@@ -359,6 +359,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_WATERY_GRAVE:
     case DAMAGE_WHIRLPOOL:
     case SPELL_GUSHER:
+    case SPELL_AQUATIC_BLAST:
     case TYPE_WATER:
       bit = IMMUNE_WATER;
       break;
@@ -435,6 +436,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_HASTE:
     case SPELL_FAERIE_FOG:
     case SPELL_GILLS_OF_FLESH:
+    case SPELL_AQUALUNG:
     case SPELL_BREATH_OF_SARAHAGE:
     case SPELL_CREATE_FOOD_DEIKHAN:
     case SPELL_CREATE_WATER_DEIKHAN:
@@ -505,6 +507,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case SPELL_CURE_DISEASE:
     case SPELL_CURE_DISEASE_DEIKHAN:
     case SPELL_PLASMA_MIRROR:
+    case SPELL_THORNFLESH:
     case SPELL_GARMULS_TAIL:
     case SPELL_ETHER_GATE:
     case SPELL_VAMPIRIC_TOUCH:

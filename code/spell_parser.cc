@@ -34,6 +34,10 @@
 //#include "disc_jumando.h"
 #include "disc_ranged.h"
 #include "disc_adventuring.h"
+#include "disc_shaman_frog.h"
+#include "disc_shaman_spider.h"
+#include "disc_shaman_skunk.h"
+#include "disc_shaman_control.h"
 
 int TBeing::useMana(spellNumT spl)
 {
@@ -1663,6 +1667,9 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case SPELL_GUSHER:
       rc = gusher(this, ch);
       break;
+    case SPELL_AQUATIC_BLAST:
+      rc = aquaticBlast(this, ch);
+      break;
     case SPELL_FAERIE_FOG:
       faerieFog(this);
       break;
@@ -1686,6 +1693,9 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       break;
     case SPELL_GILLS_OF_FLESH:
       gillsOfFlesh(this, ch);
+      break;
+    case SPELL_AQUALUNG:
+      aqualung(this, ch);
       break;
     case SPELL_BREATH_OF_SARAHAGE:
       rc = breathOfSarahage(this);
@@ -1838,6 +1848,9 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
       case SPELL_CREATE_GOLEM:
           createGolem(this);
         break;
+      case SPELL_THORNFLESH:
+        rc = thornflesh(this);
+	break;
       case SPELL_SHIELD_OF_MISTS:
         shieldOfMists(this, ch);
         break;

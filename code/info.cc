@@ -879,6 +879,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SPELL_CALL_LIGHTNING:
       case SPELL_LIGHTNING_BREATH:
       case SPELL_GUSHER:
+      case SPELL_AQUATIC_BLAST:
       case SPELL_ICY_GRIP:
       case SPELL_ARCTIC_BLAST:
       case SPELL_ICE_STORM:
@@ -981,6 +982,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SPELL_FEATHERY_DESCENT:
       case SPELL_STEALTH:
       case SPELL_GILLS_OF_FLESH:
+      case SPELL_AQUALUNG:
       case SPELL_TELEPATHY:
       case SPELL_FEAR:
       case SPELL_SLUMBER:
@@ -1023,6 +1025,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SPELL_SILENCE:
       case SPELL_BREATH_OF_SARAHAGE:
       case SPELL_PLASMA_MIRROR:
+      case SPELL_THORNFLESH:
       case SPELL_ETHER_GATE:
       case SPELL_HEAL_LIGHT:
       case SPELL_CREATE_FOOD:

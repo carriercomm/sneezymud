@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spec_mobs.h,v $
+// Revision 5.1.1.3  2001/02/01 22:17:13  jesus
+// shaman stuff
+//
 // Revision 5.1.1.2  1999/10/24 20:10:53  lapsos
 // Added new procs.
 //
@@ -106,7 +109,7 @@ const int SPEC_TRAINER_BRAWLING=104;
 const int SPEC_TRAINER_UNUSED5   =105;
 const int SPEC_TRAINER_MEDITATION_MONK    =106;
 const int SPEC_TRAINER_SURVIVAL=107;
-const int SPEC_TRAINER_NATURE  =108;
+const int SPEC_TRAINER_SHAMAN_ARMADILLO  =108;
 const int SPEC_TRAINER_ANIMAL  =109;
 const int SPEC_TRAINER_AEGIS   =110;
 const int SPEC_TRAINER_SHAMAN  =111;
@@ -132,11 +135,11 @@ const int SPEC_TRAINER_UNUSED8=132;
 const int SPEC_TRAINER_BAREHAND=133;
 const int SPEC_TRAINER_THIEF_FIGHT =134;
 const int SPEC_TRAINER_POISONS =135;
-const int SPEC_TRAINER_SHAMAN_FIGHT =136;
+const int SPEC_TRAINER_SHAMAN_FROG =136;
 const int SPEC_TRAINER_SHAMAN_ALCHEMY=137;
-const int SPEC_TRAINER_SHAMAN_HEALING =138;
-const int SPEC_TRAINER_UNDEAD=139;
-const int SPEC_TRAINER_DRAINING=140;
+const int SPEC_TRAINER_SHAMAN_SKUNK =138;
+const int SPEC_TRAINER_SHAMAN_SPIDER=139;
+const int SPEC_TRAINER_SHAMAN_CONTROL=140;
 const int SPEC_TRAINER_TOTEM=141;
 const int SPEC_TRAINER_RANGER_FIGHT=142;
 const int SPEC_GM_SHAMAN         =143;

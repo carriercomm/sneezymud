@@ -1312,6 +1312,14 @@ static spellNumT get_mage_spell(TMonster &ch, TBeing &vict, bool &on_me)
     }
 
     // just plain damage spells here on
+    spell = SPELL_AQUATIC_BLAST;
+    if (!::number(0, 3) && 
+           (cutoff < discArray[spell]->start) &&
+        ch.doesKnowSkill(spell) ) {
+      act("$n utters the words, 'Gargle This!'",
+               TRUE, &ch, 0, 0, TO_ROOM);
+      return spell;
+    }
     spell = SPELL_STUNNING_ARROW;
     if (!::number(0, 3) &&
            (cutoff < discArray[spell]->start) &&
@@ -3855,6 +3863,15 @@ int TMonster::defendSelf(int)
         found = TRUE;
       }
     }
+    if (!found) {
+      spell = SPELL_THORNFLESH;
+      if (!affectedBySpell(spell) && 
+           doesKnowSkill(spell) && (getSkillValue(spell) > 33)) {
+        act("$n utters the words, 'Big Prick!'",
+                 TRUE, this, 0, 0, TO_ROOM);
+        found = TRUE;
+      }
+    }
   }
   if (hasClass(CLASS_MAGIC_USER)) {
     if (!found) {
@@ -3890,7 +3907,6 @@ int TMonster::defendSelf(int)
         found = TRUE;
       }
     }
-
     if (!found && specials.hunting && Hates(specials.hunting, NULL)) {
       // we're hunting down some bastard!  Let's be real nasty about it
       if (!found) {

@@ -1,4 +1,3 @@
-
 #ifndef __DISC_SHAMAN_FROG_H
 #define __DISC_SHAMAN_FROG_H
 
@@ -6,28 +5,49 @@
 class CDShamanFrog : public CDiscipline
 {
 public:
-    CSkill skTurnSkill;
+    CSkill skStormySkies;
+    CSkill skAquaticBlast;
+    CSkill skShapeShift;
 
     CDShamanFrog() 
-      : CDiscipline(), 
-      skTurnSkill() {
+      : CDiscipline(),
+      skStormySkies(),
+      skAquaticBlast(),
+      skShapeShift() {
     }
     CDShamanFrog(const CDShamanFrog &a) 
-      : CDiscipline(a), 
-      skTurnSkill(a.skTurnSkill) {
+      : CDiscipline(a),
+      skStormySkies(a.skStormySkies),
+      skAquaticBlast(a.skAquaticBlast),
+      skShapeShift(a.skShapeShift) {
     }
-    CDShamanFrog & operator=(const CDShamanFrog &a) {
+    CDShamanFrog & operator=(const CDShamanFrog &a)  {
       if (this == &a) return *this;
       CDiscipline::operator=(a);
-      skTurnSkill = a.skTurnSkill;
+      skStormySkies = a.skStormySkies;
+      skAquaticBlast = a.skAquaticBlast;
+      skShapeShift = a.skShapeShift;
       return *this;
     }
     virtual ~CDShamanFrog() {}
     virtual CDShamanFrog * cloneMe() { return new CDShamanFrog(*this); }
-
 private:
 };
 
+    int stormySkies(TBeing *, TBeing *, int, byte);
+    int stormySkies(TBeing *, TBeing *, TMagicItem *);
+    int stormySkies(TBeing *, TBeing *);
+
+    int aquaticBlast(TBeing *, TBeing *);
+    int castAquaticBlast(TBeing *, TBeing *);
+    int aquaticBlast(TBeing *, TBeing *, TMagicItem *);
+    int aquaticBlast(TBeing *, TBeing *, int, byte, int);
+
+    int shapeShift(TBeing *caster, int level, byte bKnown);
+    int shapeShift(TBeing *caster, const char * buffer);
+    int castShapeShift(TBeing *caster);
+
 
 #endif
+
 

@@ -402,7 +402,9 @@ enum spellNumT {
   
      // end of thief
      // start of shaman
-
+     SPELL_AQUALUNG,
+     SPELL_AQUATIC_BLAST,
+     SPELL_THORNFLESH,
      SPELL_SHIELD_OF_MISTS,
      SPELL_CACAODEMON,
      SPELL_CREATE_GOLEM,

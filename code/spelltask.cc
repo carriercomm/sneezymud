@@ -49,7 +49,12 @@
 #include "spelltask.h"
 #include "disc_air.h"
 #include "disc_alchemy.h"
-#include "disc_armadillo.h"
+#include "disc_shaman_armadillo.h"
+#include "disc_shaman_frog.h"
+#include "disc_shaman_spider.h"
+#include "disc_shaman_skunk.h"
+#include "disc_shaman_control.h"
+#include "disc_nature.h"
 #include "disc_cures.h"
 #include "disc_earth.h"
 #include "disc_fire.h"
@@ -67,7 +72,7 @@
 #include "disc_ranger.h"
 #include "disc_survival.h"
 #include "disc_animal.h"
-#include "disc_nature.h"
+#include "disc_shaman_armadillo.h"
 #include "disc_leverage.h"
 #include "disc_ranged.h"
 #include "combat.h"
@@ -1104,6 +1109,7 @@ int TBeing::checkBadSpellCondition(TBeing *caster, int which)
      return FALSE;
    case SPELL_GILLS_OF_FLESH:
    case SPELL_PLASMA_MIRROR:
+   case SPELL_THORNFLESH:
    case SPELL_FAERIE_FOG:
    case SPELL_PROTECTION_FROM_WATER:
    case SPELL_ARCTIC_BLAST:
@@ -1209,6 +1215,8 @@ Clap or something.", FALSE, caster, NULL, victim, TO_ROOM, ANSI_WHITE);
     case SPELL_ACID_BLAST: 
     case SPELL_ATOMIZE:
     case SPELL_SORCERERS_GLOBE:
+    case SPELL_AQUATIC_BLAST:
+    case SPELL_AQUALUNG:
     case SPELL_SHIELD_OF_MISTS: // shaman
     case SPELL_ANIMATE:
     case SPELL_BIND:
@@ -1738,6 +1746,12 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         } else
           vlogf(LOG_BUG, "SPELL_CONJURE_EARTH called with null obj");
         break;
+      case SPELL_AQUATIC_BLAST:
+	if (!o) {
+	  rc = castAquaticBlast(this, victim);
+	} else
+	  vlogf(LOG_BUG, "SPELL_AQUATIC_BLAST called with NULL obj");
+        break;
     case SPELL_PROTECTION_FROM_EARTH:
         if (!o) {
           rc = castProtectionFromEarth(this, victim);
@@ -1778,9 +1792,6 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
       case SPELL_WATERY_GRAVE:
         rc = castWateryGrave(this, victim);
         break;
-      case SPELL_ARCTIC_BLAST:
-        rc = castArcticBlast(this);
-        break;
       case SPELL_ICE_STORM:
         rc = castIceStorm(this);
         break;
@@ -1793,11 +1804,17 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
     case SPELL_GILLS_OF_FLESH:
         rc = castGillsOfFlesh(this, victim);
         break;
+    case SPELL_AQUALUNG:
+        rc = castAqualung(this, victim);
+        break;
    case SPELL_GARMULS_TAIL:
         rc = castGarmulsTail(this, victim);
         break;
    case SPELL_PLASMA_MIRROR:
         rc = castPlasmaMirror(this);
+        break;
+   case SPELL_THORNFLESH:
+        rc = castThornflesh(this);
         break;
    case SPELL_BREATH_OF_SARAHAGE:
         rc = castBreathOfSarahage(this);
@@ -1807,6 +1824,9 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         break;
    case SPELL_GUSHER:
         rc = castGusher(this, victim);
+        break;
+   case SPELL_ARCTIC_BLAST:
+        rc = castArcticBlast(this);
         break;
 
 // disc_spirit

@@ -589,6 +589,13 @@ static void describeSpellEffects(const TBeing *me, const TBeing *ch, bool verbos
     ++totspell;
   }
 
+  if (me->affectedBySpell(SPELL_THORNFLESH)) {
+    sprintf(bufspell, ".....$n has thorns all over $s body.\n\r");
+    tStSpell += bufspell;
+    tStSpell += displayShowApprox(me, ch, SPELL_THORNFLESH, 2.0);
+    ++totspell;
+  }
+
   strcpy(bufspell, tStSpell.c_str());
   strcpy(bufpray, tStPray.c_str());
 

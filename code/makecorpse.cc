@@ -160,6 +160,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
         sprintf(buf, "The charred and burnt corpse of %s smolders here.",getName());
         break;
       case SPELL_GUSHER:
+      case SPELL_AQUATIC_BLAST:
         sprintf(buf, "The dripping wet corpse of %s is here.",getName());
         break;
       case SPELL_ICY_GRIP:
@@ -493,6 +494,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_FEATHERY_DESCENT:
       case SPELL_STEALTH:
       case SPELL_GILLS_OF_FLESH:
+      case SPELL_AQUALUNG:
       case SPELL_TELEPATHY:
       case SPELL_FEAR:
       case SPELL_SLUMBER:
@@ -535,6 +537,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case SPELL_SILENCE:
       case SPELL_BREATH_OF_SARAHAGE:
       case SPELL_PLASMA_MIRROR:
+      case SPELL_THORNFLESH:
       case SPELL_ETHER_GATE:
       case SPELL_HEAL_LIGHT:
       case SPELL_CREATE_FOOD:

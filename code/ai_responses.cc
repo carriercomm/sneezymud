@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: ai_responses.cc,v $
+// Revision 5.1.1.5  1999/11/05 21:19:27  peel
+// added destination response and fixed up moveto
+//
 // Revision 5.1.1.4  1999/11/05 17:24:56  peel
 // Added checknroom response
 //
@@ -76,6 +79,7 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
   cmdTypeT cmd_val;
   TRoom *tRoom;
   dirTypeT dir=DIR_NONE;
+  RespMemory *tMem, *rMem, *lMem;
 
   if (!awake())
     return TRUE;
@@ -347,19 +351,48 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
 
       break;
     case CMD_RESP_MOVETO:
-       value = atoi(arg);
+      value=0;
+      for (rMem = resps->respMemory; rMem; rMem = rMem->next) {
+	if (rMem->cmd == CMD_RESP_DESTINATION){
+	  value=atoi(rMem->args);
+	  break;
+	}
+      }
+      if(!value) break;
 
-       switch((dir=find_path(in_room, is_target_room_p, 
-				      (void *) value, 5000, 0))){
-	 case -1: // lost or arrived at destination
-	   break;
-	 case 0: case 1: case 2: case 3: case 4: 
-	 case 5: case 6: case 7: case 8: case 9:
-	   rc=goDirection(dir);
-	   break;
-	 default:
-	   break;
-       }
+      switch((dir=find_path(in_room, is_target_room_p, 
+			    (void *) value, 5000, 0))){
+	case -1: // lost or arrived at destination
+	  break;
+	case 0: case 1: case 2: case 3: case 4: 
+	case 5: case 6: case 7: case 8: case 9:
+	  rc=goDirection(dir);
+	  break;
+	default:
+	  break;
+      }
+      break;
+    case CMD_RESP_DESTINATION:
+      // find and delete any other destination thats set
+      for (rMem = resps->respMemory,
+	     lMem = resps->respMemory; rMem; rMem = rMem->next) {
+	if (rMem->cmd == CMD_RESP_DESTINATION){
+	  if (rMem == resps->respMemory)
+	    resps->respMemory = rMem->next;
+	  else
+	    lMem->next = rMem->next;
+	  
+	  delete rMem;
+	  break;
+	}
+	lMem=rMem;
+      }
+      
+      // add the new destination
+      tMem = resps->respMemory;
+      resps->respMemory = new RespMemory(CMD_RESP_DESTINATION, NULL, arg);
+      resps->respMemory->next = tMem;
+
       break;
     default:
       mud_assert(cmd >= 0, "Unhandled special command in modifiedDoCommand array %d", cmd);
@@ -1218,6 +1251,8 @@ resp * TMonster::readCommand( FILE *fp)
       newCmd = new command(CMD_RESP_CHECKZONE, args);
     else if (is_abbrev(buf, "moveto"))
       newCmd = new command(CMD_RESP_MOVETO, args);
+    else if (is_abbrev(buf, "destination"))
+      newCmd = new command(CMD_RESP_DESTINATION, args);
     else {
       if ((cmd=searchForCommandNum( buf)) >= MAX_CMD_LIST) {
         vlogf(9,"Responses::readCommand(): Parse error in %s. Unknown command %s.",

@@ -123,8 +123,9 @@ void TBeing::doWho(const char *argument)
 {
   // New Who Code to handle: who -ol j 20 40
 
+#if 0
   if (gamePort == BETA_GAMEPORT) {
-    // 27 Who Flags upon (10-1-99):
+    // 28 Who Flags upon ( 4-14-00):
     //  i=Idle          l=Levels        q=Quests
     //  h=Hit/Mana/Move z=Seeks-Group   p=Grouped
     //  d=Linkdead      g=Gods/Creators b=Builders/Gods/Creators
@@ -134,7 +135,8 @@ void TBeing::doWho(const char *argument)
     //  7=Ranger        8=Shaman        e=Elf
     //  t=Hobbit        n=Gnome         u=Human
     //  r=Ogre          w=Dwarven       y=Not-Grouped
-    const  char *tPerfMatches = "ilqhzpydgbosf12345678etnurw";
+    //  a=Account Name
+    const  char *tPerfMatches = "ilqhzpydgbosf12345678etnurwa";
     char   tString[256],
            tBuffer[256]  = "\0",
            tOutput[1024] = "\0";
@@ -163,7 +165,12 @@ void TBeing::doWho(const char *argument)
               tSb += "[-] [z]seeks-group [p]groups [y]currently-not-grouped\n\r";
               tSb += "[-] [d]linkdead [g]God [b]Builders [o]Mort [s]stats [f]action\n\r";
               tSb += "[-] [1]Mage[2]Cleric[3]War[4]Thief[5]Deikhan[6]Monk[7]Ranger[8]Shaman\n\r";
-              tSb += "[-] [e]elf [t]hobbit [n]gnome [u]human [r]ogre [w]dwarven\n\r\n\r";
+              tSb += "[-] [e]elf [t]hobbit [n]gnome [u]human [r]ogre [w]dwarven\n\r";
+
+              if (hasWizPower(POWER_WIZARD))
+                tSb += "[-] [a]ccount\n\r";
+
+              tSb += "\n\r";
             } else {
               tSb += "[-] [q]quests [g]god [b]builder [o]mort [f]faction\n\r";
               tSb += "[-] [z]seeks-group [p]groups [y]currently-not-grouped\n\r";
@@ -281,6 +288,16 @@ void TBeing::doWho(const char *argument)
             strcat(tOutput, tString);
           }
 
+          if ((tBits & (1 << 27)) && isImmortal() &&
+              hasWizPower(POWER_WIZARD)) {
+            if (tBeing->desc && tBeing->desc->account)
+              sprintf(tString, " Account[%s]", tBeing->desc->account->name);
+            else
+              sprintf(tString, " Account[Unknown]");
+
+            strcat(tOutput, tString);
+          }
+
           if ((tBits & (1 << 11)) && isImmortal()) {
             sprintf(tString, "\n\r\t[St:%-3d Br:%-3d Co:%-3d De:%-3d Ag:%-3d In:%-3d Wi:%-3d Fo:%-3d Pe:%-3d Ch:%-3d Ka:%-3d Sp:%-3d]",
                     tBeing->curStats.get(STAT_STR),
@@ -303,12 +320,14 @@ void TBeing::doWho(const char *argument)
 
     return;
   }
+#endif
 
   TBeing *k, *p;
   char buf[1024] = "\0\0\0";
   int listed = 0, lcount, l;
   unsigned int count;
   char arg[1024], tempbuf[1024];
+  char tString[256];
   string sb;
   int which1 = 0;
   int which2 = 0;
@@ -400,6 +419,11 @@ void TBeing::doWho(const char *argument)
           sb += "[-] [d]linkdead [g]God [b]Builders [o]Mort [s]stats [f]action\n\r";
           sb += "[-] [1]Mage[2]Cleric[3]War[4]Thief[5]Deikhan[6]Monk[7]Ranger[8]Shaman\n\r";
           sb += "[-] [e]elf [t]hobbit [n]gnome [u]human [r]ogre [w]dwarven\n\r\n\r";
+
+          if (hasWizPower(POWER_WIZARD))
+            sb += "[-] [a]ccount\n\r";
+
+          sb += "\n\r";
         } else {
           sb += "[-] [q]quests [g]god [b]builder [o]mort [f]faction\n\r";
           sb += "[-] [z]seeks-group [p]groups [y]currently-not-grouped\n\r";
@@ -565,6 +589,16 @@ void TBeing::doWho(const char *argument)
                       sprintf(buf + strlen(buf), " (%sGROUP QUEST%s)", blue(), norm());
                   }
                   quest = TRUE;
+                  break;
+                case 'a':
+                  if (isImmortal() && hasWizPower(POWER_WIZARD)) {
+                    if (p->desc && p->desc->account)
+                      sprintf(tString, " Account[%s]", p->desc->account->name);
+                    else
+                      sprintf(tString, " Account[Unknown]");
+
+                    strcat(buf, tString);
+                  }
                   break;
                 default:
                   break;

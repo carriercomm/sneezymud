@@ -312,24 +312,38 @@ int blastOfFury(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_
   if (bSuccess(caster, bKnown, SPELL_BLAST_OF_FURY)) {
     caster->reconcileHurt(victim, discArray[SPELL_BLAST_OF_FURY]->alignMod);
 
-    act("$n unleashes all $s pent up anger and frustration on $N!", 
-            FALSE, caster, NULL, victim, TO_NOTVICT);
-    act("You unleash all your pent up anger and frustration on $N!", 
-            FALSE, caster, NULL, victim, TO_CHAR);
-    act("$n unleashes all $s pent up anger and frustration on you!", 
-            FALSE, caster, NULL, victim, TO_VICT);
     switch (critSuccess(caster, SPELL_BLAST_OF_FURY)) {
       case CRIT_S_KILL:
       case CRIT_S_TRIPLE:
       case CRIT_S_DOUBLE:
         CS(SPELL_BLAST_OF_FURY);
         dam <<= 1;
+        act("$n unleashes all $s PENT UP ANGER AND FRUSTRATION on $N!", 
+                  FALSE, caster, NULL, victim, TO_NOTVICT);
+        act("You unleash all your PENT UP ANGER AND FRUSTRATION on $N!", 
+                  FALSE, caster, NULL, victim, TO_CHAR);
+        act("$n unleashes all $s PENT UP ANGER AND FRUSTRATION on you!", 
+                  FALSE, caster, NULL, victim, TO_VICT);
         break;
       case CRIT_S_NONE:
         if (victim->isLucky(caster->spellLuckModifier(SPELL_BLAST_OF_FURY))) {
           SV(SPELL_BLAST_OF_FURY);
           dam /= 2;
+          act("$n unleashes a small portion of $s pent up anger on $N!", 
+                  FALSE, caster, NULL, victim, TO_NOTVICT);
+          act("You unleash a small portion of your pent up anger on $N!", 
+                  FALSE, caster, NULL, victim, TO_CHAR);
+          act("$n unleashes a small portion of $s pent up anger on you!", 
+                  FALSE, caster, NULL, victim, TO_VICT);
+        } else {
+          act("$n unleashes all $s pent up anger on $N!", 
+                  FALSE, caster, NULL, victim, TO_NOTVICT);
+          act("You unleash all your pent up anger on $N!", 
+                  FALSE, caster, NULL, victim, TO_CHAR);
+          act("$n unleashes all $s pent up anger on you!", 
+                  FALSE, caster, NULL, victim, TO_VICT);
         }
+        break;
     }
     if (caster->reconcileDamage(victim, dam, SPELL_BLAST_OF_FURY) == -1)
       return SPELL_FAIL + VICTIM_DEAD;

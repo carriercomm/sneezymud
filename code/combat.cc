@@ -828,6 +828,15 @@ int TBeing::damageLimb(TBeing *v, wearSlotT part_hit, TThing *weapon, int *dam)
     // bat 11/13/98
     // *dam -= (int) v->getConHpModifier();
 
+    if (*dam) {
+      *dam *= v->plotStat(STAT_CURRENT, STAT_BRA, 125, 80, 100);
+      *dam /= 100;
+    }
+
+    if (isPc() && v->isPc() && (roomp->isRoomFlag(ROOM_ARENA) || (inPkZone() && cutPeelPkDam())))
+      *dam /= 2;   // raising this number will lower damage rates in arena
+
+
     // this changes damage done to limb only, mhit already returned from funct
     // lessens damage based on level
     *dam *= 25 + GetMaxLevel();

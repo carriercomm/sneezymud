@@ -3490,15 +3490,15 @@ int elementalWeapon(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *
     } else if(!strcmp(buf, "evoke")) {  //this is the activation keyword
       if(ch->checkForSkillAttempt(SPELL_CONJURE_AIR)) {
 	act("The $o's power of lightning can only be used once a day!",TRUE,ch,o,NULL,TO_CHAR,NULL);
-	return TRUE;
+        return TRUE;
       } else if(ch->affectedBySpell(SPELL_CONJURE_FIRE)) {
-	act("The $o's power of lightning cannot be used at the same time as the power of fire!",TRUE,ch,o,NULL,TO_CHAR,NULL);
-	return TRUE;
+        act("The $o's power of lightning cannot be used at the same time as the power of fire!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+        return TRUE;
       } else if(ch->affectedBySpell(SPELL_CONJURE_WATER)) {
-	act("The $o's power of lightning cannot be used at the same time as the power of ice!",TRUE,ch,o,NULL,TO_CHAR,NULL);
-	return TRUE;
+        act("The $o's power of lightning cannot be used at the same time as the power of ice!",TRUE,ch,o,NULL,TO_CHAR,NULL);
+        return TRUE;
       } else 
-	aff.type = AFFECT_SKILL_ATTEMPT;
+        aff.type = AFFECT_SKILL_ATTEMPT;
       aff.level = 0;
       aff.location = APPLY_NONE;
       aff.bitvector = 0;
@@ -3531,9 +3531,9 @@ int elementalWeapon(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *
       act("<r>Your <R>$o<1><r> flares up momentarily, releasing a blast of heat.<1>",TRUE,ch,o,NULL,TO_CHAR,NULL);
     } else if(ch->affectedBySpell(SPELL_CONJURE_AIR)) {
       act("<c>$n<c>'s <C>$o<1><c> literally hums with power, releasing a few sparks into the air.<1><1>",
-	  TRUE,ch,o,NULL,TO_ROOM,NULL);
+          TRUE,ch,o,NULL,TO_ROOM,NULL);
       act("<c>Your <C>$o<1><c> literally hums with power, releasing a few sparks into the air.<1>",
-	  TRUE,ch,o,NULL,TO_CHAR,NULL);
+          TRUE,ch,o,NULL,TO_CHAR,NULL);
     } else return FALSE;
     return TRUE;
   }
@@ -3611,11 +3611,11 @@ int stoneSkinAmulet(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *
     one_argument(arg, buf);
     if(!strcmp(buf, "fortify")) {
       if(ch->affectedBySpell(SPELL_FLAMING_FLESH)) {
-	act("The $o's cannot function while you are affected by flaming flesh.",TRUE,ch,o,NULL,TO_CHAR,NULL);
-	return FALSE;
+        act("The $o's cannot function while you are affected by flaming flesh.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+        return FALSE;
       } else if(ch->checkForSkillAttempt(SPELL_STONE_SKIN)) {
-	act("The $o's powers can only be used once per day.",TRUE,ch,o,NULL,TO_CHAR,NULL);
-	return FALSE;
+        act("The $o's powers can only be used once per day.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+        return FALSE;
       }
       affectedData aff1, aff2, aff3;
       
@@ -3664,79 +3664,83 @@ int lifeLeechGlove(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
   TBeing *victim = NULL;
   TObj *corpse = NULL;
   TBaseCorpse *body = NULL;
+
+  if (cmd != CMD_GRAB)
+    return FALSE;
+
   if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
     return FALSE;
-  if (cmd == CMD_GRAB) {
-    arg = one_argument(arg, target);
-    int bits = generic_find(target, FIND_CHAR_ROOM | FIND_OBJ_ROOM, ch, &victim, &corpse);
-    if(!bits)
-      return FALSE;
-    if(victim == ch) 
-      act("Dude... like, no.",TRUE,ch,o,victim,TO_CHAR,NULL);
-    if(victim) {
-      int chance = 0,roll = 0;
-      chance = victim->GetMaxLevel() + 30;
-      roll = ::number(1,50+ch->GetMaxLevel());
-      if (chance > roll && victim->getPosition() > POSITION_SLEEPING) {
-	act("You try to grab $N, but $E dodges out of the way.",TRUE,ch,o,victim,TO_CHAR,NULL);
-	act("$n tries to grab you, but you dodge out of the way.",TRUE,ch,o,victim,TO_VICT,NULL);
-	act("$n tries to grab $N, but $E dodges out of the way.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
-	ch->addToWait(combatRound(3));
-	ch->cantHit += ch->loseRound(2);
-	return TRUE;
-      } else if (victim->isUndead()) {  // heheh trying to drain negative plane monsters is BAD!!
-	act("You deftly grab $N, and your $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_CHAR,NULL);
-	act("<k>You scream in pain as your life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_CHAR,NULL);
-	act("Maybe that wasn't such a good idea....",TRUE,ch,o,victim,TO_CHAR,NULL);
-	act("$n deftly grabs you, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_VICT,NULL);
-	act("<k>$n<k> screams in pain as $s life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_VICT,NULL);
-	act("Heh heh heh. That sucker tried to drain an undead!",TRUE,ch,o,victim,TO_VICT,NULL);
-	act("$n deftly grabs $N, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
-	act("<k>$n<k> screams in pain as $s life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_NOTVICT,NULL);       
-	int dam = victim->GetMaxLevel();
-	int rc = victim->reconcileDamage(ch, dam, DAMAGE_DRAIN);
-	victim->setHit(min((int)(victim->getHit() + victim->GetMaxLevel()),(int)(victim->hitLimit())));
-	if (rc == -1)
-	  delete victim;
-	ch->addToWait(combatRound(3));
-	ch->cantHit += ch->loseRound(2);
-	return TRUE;
-      }
+
+  arg = one_argument(arg, target);
+  int bits = generic_find(target, FIND_CHAR_ROOM | FIND_OBJ_ROOM, ch, &victim, &corpse);
+  if(!bits)
+    return FALSE;
+  if(victim == ch) 
+    act("Dude... like, no.",TRUE,ch,o,victim,TO_CHAR,NULL);
+
+  if(victim) {
+    int chance = 0,roll = 0;
+    chance = victim->GetMaxLevel() + 30;
+    roll = ::number(1,50+ch->GetMaxLevel());
+    if (chance > roll && victim->getPosition() > POSITION_SLEEPING) {
+      act("You try to grab $N, but $E dodges out of the way.",TRUE,ch,o,victim,TO_CHAR,NULL);
+      act("$n tries to grab you, but you dodge out of the way.",TRUE,ch,o,victim,TO_VICT,NULL);
+      act("$n tries to grab $N, but $E dodges out of the way.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
+      ch->addToWait(combatRound(3));
+      ch->cantHit += ch->loseRound(2);
+      return TRUE;
+    } else if (victim->isUndead()) {  // heheh trying to drain negative plane monsters is BAD!!
       act("You deftly grab $N, and your $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_CHAR,NULL);
-      act("<k>$N<k> screams in pain as you leech the life from $S body!<1>",TRUE,ch,o,victim,TO_CHAR,NULL);
+      act("<k>You scream in pain as your life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_CHAR,NULL);
+      act("Maybe that wasn't such a good idea....",TRUE,ch,o,victim,TO_CHAR,NULL);
       act("$n deftly grabs you, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_VICT,NULL);
-      act("<k>You scream in pain as $n<k> leeches the life from your body!<1>",TRUE,ch,o,victim,TO_VICT,NULL);
+      act("<k>$n<k> screams in pain as $s life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_VICT,NULL);
+      act("Heh heh heh. That sucker tried to drain an undead!",TRUE,ch,o,victim,TO_VICT,NULL);
       act("$n deftly grabs $N, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
-      act("<k>$N<k> screams in pain as $n<k> leeches the life from $S body!<1>",TRUE,ch,o,victim,TO_NOTVICT,NULL);       
+      act("<k>$n<k> screams in pain as $s life is sucked backwards through the conduit!<1>",TRUE,ch,o,victim,TO_NOTVICT,NULL);       
       int dam = victim->GetMaxLevel();
-      int rc = ch->reconcileDamage(victim, dam, DAMAGE_DRAIN);
-      ch->setHit(min((int)(ch->getHit() + victim->GetMaxLevel()),(int)(ch->hitLimit())));
+      int rc = victim->reconcileDamage(ch, dam, DAMAGE_DRAIN);
+      victim->setHit(min((int)(victim->getHit() + victim->GetMaxLevel()),(int)(victim->hitLimit())));
       if (rc == -1)
-	delete victim;
+        delete victim;
       ch->addToWait(combatRound(3));
       ch->cantHit += ch->loseRound(2);
       return TRUE;
     }
-    if ((body = dynamic_cast<TBaseCorpse *>(corpse))) {
-      if (corpse->getMaterial() == MAT_POWDER || body->getCorpseLevel() <= 0) {
-	act("There is no life left in $N to leech!",TRUE,ch,o,body,TO_CHAR,NULL);
-	return TRUE;
-      }
-      act("You place your hand over $N, and your $o begins to glow with <r>sickly light<1>.",TRUE,ch,o,body,TO_CHAR,NULL);
-      act("<k>As you leech life, $N<k> visibly withers and begins to decompose rapidly.<1>",TRUE,ch,o,body,TO_CHAR,NULL);
-      
-      act("$n places $s hand over $N, and $s $o begins to glow with <r>sickly light<1>.",TRUE,ch,o,body,TO_ROOM,NULL);
-      act("<k>As $e leechs life, $N<k> visibly withers and begins to decompose rapidly<1>.",TRUE,ch,o,body,TO_ROOM,NULL);
-      
-      body->obj_flags.decay_time = 0;
-      ch->setHit(min((int)(ch->getHit() + body->getCorpseLevel()),(int)(ch->hitLimit())));
-      body->setCorpseLevel(0);
-      
-      ch->addToWait(combatRound(3));
-      ch->cantHit += ch->loseRound(2);
-      
+    act("You deftly grab $N, and your $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_CHAR,NULL);
+    act("<k>$N<k> screams in pain as you leech the life from $S body!<1>",TRUE,ch,o,victim,TO_CHAR,NULL);
+    act("$n deftly grabs you, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_VICT,NULL);
+    act("<k>You scream in pain as $n<k> leeches the life from your body!<1>",TRUE,ch,o,victim,TO_VICT,NULL);
+    act("$n deftly grabs $N, and $s $o begins to glow with a <r>sickly light<1>.",TRUE,ch,o,victim,TO_NOTVICT,NULL);
+    act("<k>$N<k> screams in pain as $n<k> leeches the life from $S body!<1>",TRUE,ch,o,victim,TO_NOTVICT,NULL);       
+    int dam = victim->GetMaxLevel();
+    int rc = ch->reconcileDamage(victim, dam, DAMAGE_DRAIN);
+    ch->setHit(min((int)(ch->getHit() + victim->GetMaxLevel()),(int)(ch->hitLimit())));
+    if (rc == -1)
+      delete victim;
+    ch->addToWait(combatRound(3));
+    ch->cantHit += ch->loseRound(2);
+    return TRUE;
+  }
+  if ((body = dynamic_cast<TBaseCorpse *>(corpse))) {
+    if (corpse->getMaterial() == MAT_POWDER || body->getCorpseLevel() <= 0) {
+      act("There is no life left in $N to leech!",TRUE,ch,o,body,TO_CHAR,NULL);
       return TRUE;
     }
+    act("You place your hand over $N, and your $o begins to glow with <r>sickly light<1>.",TRUE,ch,o,body,TO_CHAR,NULL);
+    act("<k>As you leech life, $N<k> visibly withers and begins to decompose rapidly.<1>",TRUE,ch,o,body,TO_CHAR,NULL);
+    
+    act("$n places $s hand over $N, and $s $o begins to glow with <r>sickly light<1>.",TRUE,ch,o,body,TO_ROOM,NULL);
+    act("<k>As $e leechs life, $N<k> visibly withers and begins to decompose rapidly<1>.",TRUE,ch,o,body,TO_ROOM,NULL);
+    
+    body->obj_flags.decay_time = 0;
+    ch->setHit(min((int)(ch->getHit() + body->getCorpseLevel()),(int)(ch->hitLimit())));
+    body->setCorpseLevel(0);
+    
+    ch->addToWait(combatRound(3));
+    ch->cantHit += ch->loseRound(2);
+    
+    return TRUE;
   }
   return FALSE;
 }
@@ -3756,14 +3760,14 @@ int sunCircleAmulet(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *
       act("You grasp $p and utter the word '<p>whullalo<1>'.",TRUE,ch,o,NULL,TO_CHAR,NULL);
       act("$n grasps $p and utters the word '<p>whullalo<1>'.",TRUE,ch,o,NULL,TO_ROOM,NULL);
       if(ch->inRoom() != 30770) {
-	act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_CHAR,NULL);
-	act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_ROOM,NULL);
-	return TRUE;
+               act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+        act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+        return TRUE;
       } else if (!(portal = read_object(30750, VIRTUAL))) {
-	act("Problem in Sun Circle Amulet, tell a god you saw this.",TRUE,ch,o,NULL,TO_CHAR,NULL);
-	act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_ROOM,NULL);
-	vlogf(LOG_PROC, "Unable to load portal for sunCircleAmulet() proc. DASH!!");
-	return TRUE;
+        act("Problem in Sun Circle Amulet, tell a god you saw this.",TRUE,ch,o,NULL,TO_CHAR,NULL);
+        act("Nothing seems to happen.",TRUE,ch,o,NULL,TO_ROOM,NULL);
+        vlogf(LOG_PROC, "Unable to load portal for sunCircleAmulet() proc. DASH!!");
+        return TRUE;
       }
       act("The runes on the center stone flare in respone to the <Y>$o's power<1>.",TRUE,ch,o,NULL,TO_ROOM,NULL);
       act("A beam of <c>energy<1> erupts from the center stone, ripping a hole in the fabric of reality!",TRUE,ch,o,NULL,TO_ROOM,NULL);
@@ -3842,37 +3846,37 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
     arg = one_argument(arg, arg3);
     if (is_abbrev(arg1, "handbrake") || is_abbrev(arg1, "brake")) {
       if (ch->riding != myself) {
-	act("You must be sitting on $p to operate the handbrake.", TRUE, ch, o, NULL, TO_CHAR);
-	return TRUE;
+        act("You must be sitting on $p to operate the handbrake.", TRUE, ch, o, NULL, TO_CHAR);
+        return TRUE;
       } else {
-	if (job->handbrakeOn) {
-	  job->handbrakeOn = FALSE;
-	  act("You release the handbrake on $p.", TRUE, ch, o, NULL, TO_CHAR);
-	  act("$n releases the handbrake on $p.", TRUE, ch, o, NULL, TO_ROOM);
-	  return TRUE;
-	} else {
-	  job->handbrakeOn = TRUE;
-	  act("You engage the handbrake on $p.", TRUE, ch, o, NULL, TO_CHAR);
-	  act("$n engages the handbrake on $p.", TRUE, ch, o, NULL, TO_ROOM);
-	  return TRUE;
-	}
+        if (job->handbrakeOn) {
+          job->handbrakeOn = FALSE;
+          act("You release the handbrake on $p.", TRUE, ch, o, NULL, TO_CHAR);
+          act("$n releases the handbrake on $p.", TRUE, ch, o, NULL, TO_ROOM);
+          return TRUE;
+        } else {
+          job->handbrakeOn = TRUE;
+          act("You engage the handbrake on $p.", TRUE, ch, o, NULL, TO_CHAR);
+          act("$n engages the handbrake on $p.", TRUE, ch, o, NULL, TO_ROOM);
+          return TRUE;
+        }
       }
     } else if ((is_abbrev(arg1, "cart") || is_abbrev(arg1, "minecart")) && cmd == CMD_PUSH) {
       if (ch->riding == myself) {
-	act("How do you intend to push $p while sitting on it?", TRUE, ch, o, NULL, TO_CHAR);
-	return TRUE;
+        act("How do you intend to push $p while sitting on it?", TRUE, ch, o, NULL, TO_CHAR);
+        return TRUE;
       } else if (job->handbrakeOn) {
-	act("You push and push, but can't seem to move $p.", TRUE, ch, o, NULL, TO_CHAR);
-	act("Oh hey, look at that.  The handbrake is still engaged, doofus.", TRUE, ch, o, NULL, TO_CHAR);
-	act("$n strains with all $s might, but fails to budge $p.", TRUE, ch, o, NULL, TO_ROOM);
-	act("What a loser, the handbrake is still engaged.", TRUE, ch, o, NULL, TO_ROOM);
-	return TRUE;
+        act("You push and push, but can't seem to move $p.", TRUE, ch, o, NULL, TO_CHAR);
+        act("Oh hey, look at that.  The handbrake is still engaged, doofus.", TRUE, ch, o, NULL, TO_CHAR);
+        act("$n strains with all $s might, but fails to budge $p.", TRUE, ch, o, NULL, TO_ROOM);
+        act("What a loser, the handbrake is still engaged.", TRUE, ch, o, NULL, TO_ROOM);
+        return TRUE;
       } else {
-	act("You give $p a mighty shove, and it starts to roll slowly down the tracks.", TRUE, ch, o, NULL, TO_CHAR);
-	act("$n gives $p a mighty shove, and it starts to roll slowly down the tracks.", TRUE, ch, o, NULL, TO_ROOM);
-	job->speed = 1;
-	job->timer = 10;
-	return TRUE;
+        act("You give $p a mighty shove, and it starts to roll slowly down the tracks.", TRUE, ch, o, NULL, TO_CHAR);
+        act("$n gives $p a mighty shove, and it starts to roll slowly down the tracks.", TRUE, ch, o, NULL, TO_ROOM);
+        job->speed = 1;
+        job->timer = 10;
+        return TRUE;
       }
     } else
       return FALSE;
@@ -3881,9 +3885,9 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
     if (job->timer >= job->speed) {
       job->timer--;
       if (job->timer == 10 - ((10 - job->speed)/2 )) {
-	if (where == 18007 || where == 18011 || where == 18020) {
-	  act("$n <W>rattles as it passes over the <k>switchtracks<1>.",FALSE, myself, 0, 0, TO_ROOM);
-	}
+        if (where == 18007 || where == 18011 || where == 18020) {
+          act("$n <W>rattles as it passes over the <k>switchtracks<1>.",FALSE, myself, 0, 0, TO_ROOM);
+        }
       }
       if (job->timer != 0) return FALSE;
     }
@@ -3893,12 +3897,12 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
     } else {
       switch(where) {
       case 18007:
-	status = 1;
-	doswitch = 18016;
-	dontswitch = 18008;
-	break;
+        status = 1;
+        doswitch = 18016;
+        dontswitch = 18008;
+        break;
       case 18011:
-	status = 1;
+        status = 1;
 	doswitch = 18014;
 	dontswitch = 18012;
 	break;

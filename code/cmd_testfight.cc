@@ -395,9 +395,9 @@ static void fastFight()
 #endif
 
     int combat = (pulse % PULSE_COMBAT);
-    int tick_updates = (pulse % PULSE_TICKS);
+    int tick_updates = (pulse % PULSE_MUDHOUR);
     int mobstuff = (pulse % PULSE_MOBACT);
-    int points = (pulse % PULSE_UPDATES);
+    int points = (pulse % PULSE_UPDATE);
 
     if (!combat)
       perform_violence(pulse);

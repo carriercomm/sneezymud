@@ -27,8 +27,7 @@ int thornflesh(TBeing *caster)
   lag_t rounds = discArray[SPELL_THORNFLESH]->lag;
   taskDiffT diff = discArray[SPELL_THORNFLESH]->task;
 
-  start_cast(caster, caster, NULL, caster->roomp, SPELL_THORNFLESH, diff, 1, "", rounds,
-caster->in_room, 0, 0,TRUE, 0);
+  start_cast(caster, caster, NULL, caster->roomp, SPELL_THORNFLESH, diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
 
   return TRUE;
 }
@@ -38,8 +37,7 @@ int castThornflesh(TBeing *caster)
   int ret,level;
 
   if (caster && caster->affectedBySpell(SPELL_THORNFLESH)) {
-    act("You already possess Thorny Flesh.",
-           FALSE, caster, NULL, 0, TO_CHAR);
+    act("You flesh is armored well enough.", FALSE, caster, NULL, 0, TO_CHAR);
     caster->nothingHappens(SILENT_YES);
     return FALSE;
   }
@@ -73,16 +71,12 @@ int thornflesh(TBeing *caster, int level, byte bKnown)
       case CRIT_S_KILL:
         CS(SPELL_THORNFLESH);
         aff.duration *= 2;
-        act("LARGE thorns emerge from your body!",
-            FALSE, caster, 0, 0, TO_CHAR, ANSI_ORANGE);
-        act("LARGE thorns emerge from $n's body!",
-            FALSE, caster, 0, 0, TO_ROOM, ANSI_ORANGE);
+        act("LARGE thorns emerge from your body!", FALSE, caster, 0, 0, TO_CHAR, ANSI_ORANGE);
+        act("LARGE thorns emerge from $n's body!", FALSE, caster, 0, 0, TO_ROOM, ANSI_ORANGE);
         break;
       default:
-        act("Thorns emerge from your body!",
-            FALSE, caster, 0, 0, TO_CHAR, ANSI_ORANGE);
-        act("Thorns emerge from $n's body!",
-            FALSE, caster, 0, 0, TO_ROOM, ANSI_ORANGE);
+        act("Thorns emerge from your body!", FALSE, caster, 0, 0, TO_CHAR, ANSI_ORANGE);
+        act("Thorns emerge from $n's body!", FALSE, caster, 0, 0, TO_ROOM, ANSI_ORANGE);
         break;
     }
     caster->affectTo(&aff, -1);
@@ -103,11 +97,9 @@ static bool canBeLunged(TBeing *caster, TBeing *victim)
       !(victim->affectedBySpell(SPELL_AQUALUNG) ||
        victim->affectedBySpell(SPELL_BREATH_OF_SARAHAGE)))) {
     if (caster != victim)
-      act("$N already has the ability to breathe underwater.",
-          FALSE, caster, NULL, victim, TO_CHAR);
+      act("$N already has the ability to breathe underwater.", FALSE, caster, NULL, victim, TO_CHAR);
     else
-      act("You already have the ability to breathe underwater.",
-          FALSE, caster, NULL, victim, TO_CHAR);
+      act("You already have the ability to breathe underwater.", FALSE, caster, NULL, victim, TO_CHAR);
     caster->nothingHappens(SILENT_YES);
     return true;
   }
@@ -148,13 +140,10 @@ int aqualung(TBeing * caster, TBeing * victim, int level, byte bKnown)
       return SPELL_FALSE;
     }
 
-    act("A transparent globe surrounds your head!", TRUE, victim, NULL, NULL, TO_CHAR,
-ANSI_BLUE);
-    act("A transparent globe surrounds $N's head!", TRUE, caster, NULL, victim, TO_NOTVICT,
-ANSI_BLUE);
+    act("A transparent globe surrounds your head!", TRUE, victim, NULL, NULL, TO_CHAR, ANSI_BLUE);
+    act("A transparent globe surrounds $N's head!", TRUE, caster, NULL, victim, TO_NOTVICT, ANSI_BLUE);
     if (victim != caster)
-      act("You bestow upon $N the ability to breathe water!",
-                TRUE, caster, NULL, victim, TO_CHAR, ANSI_BLUE);
+      act("You bestow upon $N the ability to breathe water!", TRUE, caster, NULL, victim, TO_CHAR, ANSI_BLUE);
     return SPELL_SUCCESS;
   } else {
     caster->nothingHappens();
@@ -180,8 +169,7 @@ int aqualung(TBeing * caster, TBeing * victim)
   lag_t rounds = discArray[SPELL_AQUALUNG]->lag;
   diff = discArray[SPELL_AQUALUNG]->task;
 
-  start_cast(caster, victim, NULL, caster->roomp, SPELL_AQUALUNG, diff, 1,
-"", rounds, caster->in_room, 0, 0,TRUE, 0);
+  start_cast(caster, victim, NULL, caster->roomp, SPELL_AQUALUNG, diff, 1, "", rounds, caster->in_room, 0, 0,TRUE, 0);
     return TRUE;
 }
 

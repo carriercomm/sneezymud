@@ -156,7 +156,6 @@ void bootDb(void)
   bootPulse("Initializing Terrains.");
   assignTerrainInfo();
 
-
   bootPulse("Opening mobile file.");
   if (!(mob_f = fopen(MOB_FILE, "r"))) {
     perror("boot");
@@ -415,23 +414,25 @@ void bootWorld(void)
     rp = real_roomp(virtual_nr);
     rp->loadOne(room_f, true);
 
-    int i;
-    TRoom *temp;
+    //    int i;
+    // TRoom *temp;
     
-    for(i=0;i<WORLD_SIZE;i++){
-      if((temp=real_roomp(i)) &&
-	 (rp->getXCoord() == temp->getXCoord()) &&
-	 (rp->getYCoord() == temp->getYCoord()) &&
-	 (rp->getZCoord() == temp->getZCoord()) &&
-	 !((rp->getXCoord() == 0) &&
-	   (rp->getYCoord() == 0) &&
-	   (rp->getZCoord() == 0)) &&
-	 temp->number != rp->number){
+    //    for(i=0;i<WORLD_SIZE;i++){
+    //  if((temp=real_roomp(i)) &&
+    //	 (rp->getXCoord() == temp->getXCoord()) &&
+    //	 (rp->getYCoord() == temp->getYCoord()) &&
+    //	 (rp->getZCoord() == temp->getZCoord()) &&
+    //	 !((rp->getXCoord() == 0) &&
+    //	   (rp->getYCoord() == 0) &&
+    //	   (rp->getZCoord() == 0)) &&
+    //	 temp->number != rp->number){
+
 	//	vlogf(LOG_LOW, "%s room %d has duplicate coordinates with room %d (%d, %d, %d)",
 	//	      rp->name, rp->number, temp->number, 
 	//	      rp->getXCoord(), rp->getYCoord(), rp->getZCoord());
-      }
-    }
+
+    //      }
+    //    }
 
 
 #if 0
@@ -477,7 +478,6 @@ void bootWorld(void)
       vlogf(LOG_LOW,"%s fall room %d set with limited height",
                 rp->name,rp->number);
 #endif
-
   }
   fclose(room_f);
 }
@@ -994,7 +994,6 @@ void bootZones(void)
       zd.reset_mode = i3;
       zd.enabled = i4;
       zd.age = 0;
-    vlogf(LOG_MISC, "Checked Zone: %s [Top:%d Lifespan:%d Reset:%d Enabled:%d]", zd.name, zd.top, zd.lifespan, zd.reset_mode, zd.enabled);
     } else { 
       vlogf(LOG_LOW, "Bad zone format for zone %d (%s)", zon, check);
       exit(0);
@@ -1108,7 +1107,6 @@ TMonster *read_mobile(int nr, readFileTypeT type)
 
   i = nr;
 
-  vlogf(LOG_FILE, "Checking mob %d", nr);
   if (type == VIRTUAL) {
     nr = real_mobile(nr);
   }
@@ -2397,13 +2395,13 @@ void readStringNoAlloc(FILE *fp)
 
   *buf = 0;
   ptr = buf;
-  while( fgets( ptr, MAX_STRING_LENGTH, fp) ) {
+  while(fgets(ptr, MAX_STRING_LENGTH, fp)) {
     //  Check if we've hit the end of string marker. 
-    if ((marker=strchr( ptr, '~')) != 0) 
+    if ((marker=strchr(ptr, '~')) != 0) 
       break;
     //  Set the pointer to the end of the string. NOTE: This is better then
     // the strlen because we're not starting at the beggining every time. 
-    if ((ptr = strchr( ptr, '\000')) == 0) {
+    if ((ptr = strchr(ptr, '\000')) == 0) {
       vlogf(LOG_FILE, "fread_string(): read error.");
       return;
     }
@@ -2421,15 +2419,14 @@ char *fread_string(FILE *fp)
   *buf = 0;
   ptr = buf;
   unsigned int read_len = MAX_STRING_LENGTH;
-  while( fgets( ptr, read_len, fp) ) {
+  while(fgets(ptr, read_len, fp)) {
     //  Check if we've hit the end of string marker. 
-    if((marker=strchr( ptr, '~')) != 0) {
-    vlogf(LOG_MISC, "End of string marker hit!");
+    if((marker=strchr(ptr, '~')) != 0) {
       break;
     }  
     //  Set the pointer to the end of the string. NOTE: This is better then the
     // strlen because we're not starting at the beggining every time. 
-    if( (ptr = strchr( ptr, '\000')) == 0) {
+    if((ptr = strchr(ptr, '\000')) == 0) {
       vlogf(LOG_FILE, "fread_string(): read error. ack!");
       return mud_str_dup("Empty");
     }
@@ -2445,14 +2442,13 @@ char *fread_string(FILE *fp)
   }
   if (marker)
     *marker = 0;   // Nuke the ~ 
-    vlogf(LOG_MISC, "Tilde nuked!");
     // if ((int) (ptr - buf) == 0) {
       // vlogf(LOG_MISC, "(int) (ptr - buf) == 0");
       // return NULL;
       //    }
-    //  if( *buf == 0)
-    //    return NULL;
-    return mud_str_dup( buf);
+    if (*buf == 0)
+      return NULL;
+    return mud_str_dup(buf);
     vlogf(LOG_MISC, "mud_str_dup called");
 }
 

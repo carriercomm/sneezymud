@@ -904,7 +904,7 @@ CSkill *TBeing::getSkill(spellNumT skill) const
 // disc_shaman_frog
 
       case SKILL_TURN:
-        return &((CDNature *) cd)->skTurnSkill;
+        return &((CDShamanSkunk *) cd)->skTurnSkill;
 
 
 

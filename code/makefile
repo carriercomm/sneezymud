@@ -9,7 +9,7 @@
 ###############################################################################
 NAME = sneezy.2
 VERSION_FILE = lib/txt/version.new
-
+NAME2 = sneezy.insure
 
 ###############################################################################
 #                                Type-Defines                                 #
@@ -57,7 +57,10 @@ ifdef BATOPR
   OBJDIR = bat_objs/
 else
   ifdef USEINSURE
-    CFLAGS +=-O4            # optimize code
+#    CFLAGS +=-O4            # optimize code
+#  with the current .psrc file the O4 flag is ignored
+#  see the Parasoft Manual for details
+
     OBJDIR = insure_objs/
   else
     CFLAGS +=-O4            # optimize code
@@ -108,8 +111,8 @@ LDFLAGS +=-L/usr/lib # specify this directory to look in
 # LDFLAGS +=-Bdynamic -lg++
 # LDFLAGS +=-bstatic -lg++
 # LDFLAGS +=-lg++
-# LDFLAGS +=/usr/pubsw/lib/libg++.a # enable for insight
-# LDFLAGS +=/usr/lib/libg++.a # enable for insight
+# LDFLAGS +=/usr/pubsw/lib/libg++.a # enable for insight -j
+# LDFLAGS +=/usr/lib/libg++.a # enable for insight -j
 LDFLAGS +=-lstdc++
 # LDFLAGS +=/usr/lib/libstdc++.so.2.8
 # LDFLAGS +=-bstatic -lstdc++
@@ -237,8 +240,10 @@ OBJ := $(sort $(addprefix $(OBJDIR), $(OBJ)))
 OBJ2 := $(sort $(addprefix $(OBJDIR), $(OBJ2)))
 
 ifdef USEINSURE
-all: insure.o
-	$(CC) -o jjb insure.o $(LDFLAGS)
+all: $(NAME2)
+#insure.o
+#(CC) -o jjb insure.o $(LDFLAGS)
+
 else
 all: $(NAME)
 endif
@@ -251,6 +256,14 @@ $(NAME) : $(OBJ) $(OBJ2)
 	@rm -f $(VERSION_FILE)
 	@echo "`date`" > $(VERSION_FILE)
 	@echo \*\*\* Make Process Complete
+	@echo "`date`"
+
+$(NAME2) : $(OBJ) $(OBJ2)
+	@echo \*\*\* Making Final Link: $(NAME2)
+	@$(CC) -o $(NAME2) $(OBJ) $(OBJ2) $(LDFLAGS)
+	@rm -f $(VERSION_FILE)
+	@echo "`date`" > $(VERSION_FILE)
+	@echo \*\*\* Insure Compile Process Complete
 	@echo "`date`"
 
 clean:
@@ -342,7 +355,7 @@ $(OBJDIR)craps.o: $(CASINO_HEADS)
 $(OBJDIR)crazyeights.o: $(CASINO_HEADS)
 $(OBJDIR)create_mobs.o: mail.h statistics.h combat.h
 $(OBJDIR)create_engine.o: create_engine.h
-$(OBJDIR)create_objs.o: dirsort.h components.h
+$(OBJDIR)create_objs.o: dirsort.h components.h statistics.h
 $(OBJDIR)create_rooms.o: room.h
 $(OBJDIR)crit_combat.o: combat.h statistics.h
 $(OBJDIR)damage.o: combat.h statistics.h

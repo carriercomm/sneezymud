@@ -111,6 +111,7 @@ enum discNumT {
      DISC_ADVENTURING,
      DISC_THEOLOGY,
      DISC_LORE,
+     DISC_NATURE,
      MAX_DISCS,
      MAX_SAVED_DISCS = 90
 };

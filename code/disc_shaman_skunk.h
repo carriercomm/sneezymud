@@ -7,15 +7,20 @@
 class CDShamanSkunk : public CDiscipline
 {
 public:
+    CSkill skTurnSkill;
+
     CDShamanSkunk()
-      : CDiscipline() {
+      : CDiscipline(),
+      skTurnSkill() {
     }
     CDShamanSkunk(const CDShamanSkunk &a)
-      : CDiscipline(a) {
+      : CDiscipline(a),
+      skTurnSkill(a.skTurnSkill) {
     }
     CDShamanSkunk & operator=(const CDShamanSkunk &a) {
       if (this == &a) return *this;
       CDiscipline::operator=(a);
+      skTurnSkill = a.skTurnSkill;
       return *this;
     }
     virtual ~CDShamanSkunk() {}

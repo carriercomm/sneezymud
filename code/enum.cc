@@ -328,6 +328,8 @@ int mapDiscToFile(discNumT dn)
       return 62;
     case DISC_LORE:
       return 63;
+    case DISC_NATURE:
+      return 64;
     case MAX_DISCS:
     case MAX_SAVED_DISCS:
     case DISC_NONE:
@@ -462,6 +464,8 @@ discNumT mapFileToDisc(int num)
       return DISC_THEOLOGY;
     case 63:
       return DISC_LORE;
+    case 64:
+      return DISC_NATURE;
   }
   forceCrash("Bad value to mapFileToDisc");
   return DISC_NONE;

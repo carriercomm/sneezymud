@@ -35,8 +35,7 @@ int stormySkies(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
   caster->reconcileHurt(victim, discArray[SPELL_STORMY_SKIES]->alignMod);
   
-  int dam = caster->getSkillDam(victim, SPELL_STORMY_SKIES, 
-caster->getSkillLevel(SPELL_STORMY_SKIES), caster->getAdvLearning(SPELL_STORMY_SKIES));
+  int dam = caster->getSkillDam(victim, SPELL_STORMY_SKIES, caster->getSkillLevel(SPELL_STORMY_SKIES), caster->getAdvLearning(SPELL_STORMY_SKIES));
  
   if ((victim->roomp->getWeather() == WEATHER_RAINY) ||
      (victim->roomp->getWeather() == WEATHER_LIGHTNING)) {

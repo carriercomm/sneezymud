@@ -372,6 +372,10 @@ const short int MOB_GNOME_CHILD    =22419;
 const short int MOB_GNOME_FARMHAND =22421;
 const short int MOB_JOHN_RUSTLER   =22427;
 const short int MOB_CALDONIA       =24100;
+const short int THRALL_SPECTRE     =31300;
+const short int THRALL_GHAST       =31301;
+const short int THRALL_GHOUL       =31302;
+const short int THRALL_DEMON       =31303;
 
 
 

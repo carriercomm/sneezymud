@@ -1156,6 +1156,14 @@ void buildComponentArray()
     "$n chews $p and swallows it down.",
     "",
     ""));
+  CompInfo.push_back(compInfo(SPELL_SORCERERS_GLOBE,
+    "You twirl $p in front of $N.",
+    "$n twirls $p in front of $N.",
+    "$n twirls $p in front of you.",                       
+    "You twirl $p in front of yourself.",
+    "$n twirls $p in front of $mself.",
+    "",
+    ""));
   CompInfo.push_back(compInfo(SPELL_BIND,
     "You drape $p over a finger and point at $N.",
     "$n drapes $p over a finger and points at $N.",

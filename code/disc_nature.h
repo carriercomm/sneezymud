@@ -10,7 +10,6 @@ class CDNature : public CDiscipline
 public:
     CSkill skRootControl;
     CSkill skLivingVines;
-    CSkill skTurnSkill;
     CSkill skTreeWalk;
 
 
@@ -18,14 +17,12 @@ public:
       : CDiscipline(),
       skRootControl(),
       skLivingVines(),
-      skTurnSkill(),
       skTreeWalk() {
     }
     CDNature(const CDNature &a) 
       : CDiscipline(a),
       skRootControl(a.skRootControl),
       skLivingVines(a.skLivingVines),
-      skTurnSkill(a.skTurnSkill),
       skTreeWalk(a.skTreeWalk) {
     }
     CDNature & operator=(const CDNature &a)  {
@@ -33,7 +30,6 @@ public:
       CDiscipline::operator=(a);
       skRootControl = a.skRootControl;
       skLivingVines = a.skLivingVines;
-      skTurnSkill = a.skTurnSkill;
       skTreeWalk = a.skTreeWalk;
       return *this;
     }

@@ -67,7 +67,7 @@
 #include "disc_barehand.h"
 #include "disc_survival.h"
 #include "disc_animal.h"
-// #include "disc_nature.h"
+#include "disc_nature.h"
 #include "spelltask.h"
 
 #define DISC_DEBUG  0
@@ -2323,6 +2323,7 @@ void TBeing::assignDisciplinesClass()
     discs->disc[DISC_RANGER_FIGHT] = new CDRangerFight();
     discs->disc[DISC_ANIMAL] = new CDAnimal();
     discs->disc[DISC_PLANTS] = new CDPlants();
+    discs->disc[DISC_NATURE] = new CDNature();
     discs->disc[DISC_SURVIVAL] = new CDSurvival();
 
     discs->disc[DISC_DEIKHAN] = new CDDeikhan();
@@ -2469,10 +2470,12 @@ void TBeing::assignDisciplinesClass()
       discs->disc[DISC_PLANTS] = new CDPlants();
       discs->disc[DISC_SURVIVAL] = new CDSurvival();
       discs->disc[DISC_SLASH] = new CDSlash();
+      discs->disc[DISC_NATURE] = new CDNature();
       discs->disc[DISC_RANGED] = new CDRanged();
       discs->disc[DISC_PIERCE] = new CDPierce();
     }
     getDiscipline(DISC_RANGER)->ok_for_class |= CLASS_RANGER;
+    getDiscipline(DISC_NATURE)->ok_for_class |= CLASS_RANGER;
     getDiscipline(DISC_RANGER_FIGHT)->ok_for_class |= CLASS_RANGER;
     getDiscipline(DISC_ANIMAL)->ok_for_class |= CLASS_RANGER;
     getDiscipline(DISC_PLANTS)->ok_for_class |= CLASS_RANGER;
@@ -3443,6 +3446,9 @@ void TBeing::assignSkillsClass()
         } else if ((cd = getDiscipline(DISC_SLASH)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS && (num <= 3)) {
           raiseDiscOnce(DISC_SLASH);
+        } else if ((cd = getDiscipline(DISC_NATURE)) &&
+                    cd->getLearnedness() < MAX_DISC_LEARNEDNESS && (num <= 3)) {
+          raiseDiscOnce(DISC_NATURE);
         } else if ((cd = getDiscipline(DISC_RANGED)) &&
                     cd->getLearnedness() < MAX_DISC_LEARNEDNESS && (num == 2)) {
           raiseDiscOnce(DISC_RANGED);
@@ -3768,6 +3774,7 @@ int TBeing::isNotPowerful(TBeing *vict, int lev, spellNumT skill, silentTypeT si
     case DISC_ALCHEMY:
     case DISC_SHAMAN_ARMADILLO:
     case DISC_ANIMAL:
+    case DISC_NATURE:
     case DISC_SURVIVAL:
     case DISC_SHAMAN:
     case DISC_TOTEM:
@@ -3855,6 +3862,7 @@ int TBeing::getSkillLevel(spellNumT skill) const
     case DISC_PLANTS:
     case DISC_ANIMAL:
     case DISC_SURVIVAL:
+    case DISC_NATURE:
       lev = getClassLevel(CLASS_RANGER);
       break;
     case DISC_WARRIOR:

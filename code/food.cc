@@ -847,11 +847,13 @@ void TFood::lowCheck()
           getName(), vModified);
     setVolume(vModified);
   }
+#if 0
   if ((vModified = (int) (getFoodFill() / 12)) != getWeight()) {
     vlogf(LOG_LOW, "food (%s) with bad weight.  Should be: %d",
           getName(), vModified);
     setWeight(vModified);
   }
+#endif
   TObj::lowCheck();
 }
 

@@ -1142,13 +1142,13 @@ bool TBeing::tooManyFollowers(const TBeing *pet, newFolTypeT type) const
   max_followers += plotStat(STAT_CURRENT, STAT_CHA, 1, 19, 9);
 
   for(k = followers, count = 0; k; k = k->next) {
-    if (k->follower->isZombie()) {
+    if (k->follower->isPet(PETTYPE_THRALL)) {
       count += 1 + (k->follower->GetMaxLevel() / 10);
       tot_num++;
-    } else if (k->follower->isCharm()) {
+    } else if (k->follower->isPet(PETTYPE_CHARM)) {
       count += 2 + (k->follower->GetMaxLevel() / 10);
       tot_num++;
-    } else if (k->follower->isPet()) {
+    } else if (k->follower->isPet(PETTYPE_PET)) {
       count += 1 + (k->follower->GetMaxLevel() / 7);
       tot_num++;
     }

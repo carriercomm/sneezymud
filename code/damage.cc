@@ -558,35 +558,35 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
           // for sanity, check if the killer mob was a pet, etc
           if (master)
             vlogf(LOG_MISC, "%s killed by %s at %s (%d).  Method: %s -- master was %s", 
-                 v->getName(), getName(), v->roomp->name, v->in_room, buf2, master->getName());
+                 v->getName(), getName(), v->roomp->name, v->inRoom(), buf2, master->getName());
           else if (rider)
             vlogf(LOG_MISC, "%s killed by %s at %s (%d).  Method: %s -- rider was %s", 
-                 v->getName(), getName(), v->roomp->name, v->in_room, buf2, rider->getName());
+                 v->getName(), getName(), v->roomp->name, v->inRoom(), buf2, rider->getName());
           else
             vlogf(LOG_MISC, "%s killed by %s at %s (%d).  Method: %s", 
-                 v->getName(), getName(), v->roomp->name, v->in_room, buf2);
+                 v->getName(), getName(), v->roomp->name, v->inRoom(), buf2);
           
         } else {
 #if 1
           if (v == this && isPc())
-            vlogf(LOG_COMBAT, "%s killed %sself at %2 (%d) Method: %s -- <%sSuicide>",
-                  getName(), hshr(), roomp->name, in_room, buf2,
+            vlogf(LOG_COMBAT, "%s killed %sself at %s (%d) Method: %s -- <%sSuicide>",
+                  getName(), hmhr(), roomp->name, inRoom(), buf2,
                   ((GetMaxLevel() <= 5) ? "NEWBIE " : ""));
           else if (GetMaxLevel() > MAX_MORT && isPc() && v->isPc()) {
             if (v->GetMaxLevel() > MAX_MORT)
               vlogf(LOG_COMBAT, "%s killed by %s at %s (%d) Method: %s -- <God VS God>",
-                    v->getName(), getName(), v->roomp->name, v->in_room, buf2);
+                    v->getName(), getName(), v->roomp->name, v->inRoom(), buf2);
             else
               vlogf(LOG_COMBAT, "%s killed by %s at %s (%d) Method: %s -- <Immortal Kill>",
-                    v->getName(), getName(), v->roomp->name, v->in_room, buf2);
+                    v->getName(), getName(), v->roomp->name, v->inRoom(), buf2);
           } else
             vlogf(LOG_COMBAT, "%s killed by %s at %s (%d) Method: %s -- <%sPlayer kill>",
-                  v->getName(), getName(), v->roomp->name, v->in_room, buf2,
+                  v->getName(), getName(), v->roomp->name, v->inRoom(), buf2,
                   ((v->GetMaxLevel() <= 5) ? "NEWBIE " : ""));
 
 #else
           vlogf(LOG_MISC, "%s killed by %s at %s (%d) Method: %s -- <%sPlayer kill>",
-                v->getName(), getName(), v->roomp->name, v->in_room,
+                v->getName(), getName(), v->roomp->name, v->inRoom(),
                 buf2,
                 ((v->GetMaxLevel() <= 5 && v != this) ? "NEWBIE " : ""));
 #endif

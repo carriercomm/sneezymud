@@ -2,23 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: task_trap.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
-//      SneezyMUD 4.0 - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
 //////////////////////////////////////////////////////////////////////////
@@ -83,7 +66,7 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
     exitp->trap_info = ch->task->status;
 
     // this is number of 8-sided die to use for damage
-    int trapdamage = ch->getDoorTrapDam((trap_t) ch->task->status);
+    int trapdamage = ch->getDoorTrapDam(doorTrapT(ch->task->status));
     exitp->trap_dam = trapdamage;
 
     // and now for other side 
@@ -101,7 +84,7 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
   }
   switch (cmd) {
     case CMD_TASK_CONTINUE:
-      learning = ch->getDoorTrapLearn((trap_t) ch->task->status);
+      learning = ch->getDoorTrapLearn(doorTrapT(ch->task->status));
       ch->task->calcNextUpdate(pulse, 
                  PULSE_MOBACT * (5 + ((100 - learning)/3)));
 
@@ -129,7 +112,7 @@ int task_trap_door(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
           !bSuccess(ch, learning, SKILL_SET_TRAP)) {
         // trigger trap
 
-        rc = ch->goofUpTrap((trap_t) ch->task->status, TRAP_TARG_DOOR);
+        rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_DOOR);
         if (IS_SET_DELETE(rc, DELETE_THIS))
           return DELETE_THIS;
         ch->stopTask();
@@ -209,7 +192,7 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
     cont->setContainerTrapType(ch->task->status);
 
     // this is number of 8-sided die to use for damage
-    int trapdamage = ch->getContainerTrapDam((trap_t) ch->task->status);
+    int trapdamage = ch->getContainerTrapDam(doorTrapT(ch->task->status));
     cont->setContainerTrapDam(trapdamage);
 
     ch->sendTo("The trap has been successfully set!\n\r");
@@ -219,7 +202,7 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
   }
   switch (cmd) {
     case CMD_TASK_CONTINUE:
-      learning = ch->getContainerTrapLearn((trap_t) ch->task->status);
+      learning = ch->getContainerTrapLearn(doorTrapT(ch->task->status));
       ch->task->calcNextUpdate(pulse, 
                  PULSE_MOBACT * (5 + ((100 - learning)/3)));
 
@@ -246,7 +229,7 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
       if (!ch->doesKnowSkill(SKILL_SET_TRAP) ||
           !bSuccess(ch, learning, SKILL_SET_TRAP)) {
         // trigger trap
-        rc = ch->goofUpTrap((trap_t) ch->task->status, TRAP_TARG_CONT);
+        rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_CONT);
         if (IS_SET_DELETE(rc, DELETE_ITEM)) {
           delete cont;
           cont = NULL;
@@ -276,7 +259,7 @@ int task_trap_container(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom
   return TRUE;
 }
 
-void TTrap::makeTrapLand(TBeing *ch, trap_t status, const char *args)
+void TTrap::makeTrapLand(TBeing *ch, doorTrapT status, const char *args)
 {
   // this should be a number between 1-50
   int trapdamage = ch->getMineTrapDam(status);
@@ -357,12 +340,12 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
       return FALSE;
     }
 
-    obj->makeTrapLand(ch, (trap_t) ch->task->status, ch->task->orig_arg);
+    obj->makeTrapLand(ch, doorTrapT(ch->task->status), ch->task->orig_arg);
     return FALSE;
   }
   switch (cmd) {
     case CMD_TASK_CONTINUE:
-      learning = ch->getMineTrapLearn((trap_t) ch->task->status);
+      learning = ch->getMineTrapLearn(doorTrapT(ch->task->status));
       ch->task->calcNextUpdate(pulse, 
                  PULSE_MOBACT * (5 + ((100 - learning)/3)));
 
@@ -389,7 +372,7 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
       if (!ch->doesKnowSkill(SKILL_SET_TRAP) ||
           !bSuccess(ch, learning, SKILL_SET_TRAP)) {
         // trigger trap
-        rc = ch->goofUpTrap((trap_t) ch->task->status, TRAP_TARG_MINE);
+        rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_MINE);
         if (IS_SET_DELETE(rc, DELETE_THIS))
           return DELETE_THIS;
 
@@ -415,7 +398,7 @@ int task_trap_mine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, T
   return TRUE;
 }
 
-void TTrap::makeTrapGrenade(TBeing *ch, trap_t status, const char *args)
+void TTrap::makeTrapGrenade(TBeing *ch, doorTrapT status, const char *args)
 {
   // this should be a number between 1-50
   int trapdamage = ch->getGrenadeTrapDam(status);
@@ -489,13 +472,13 @@ int task_trap_grenade(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
       return FALSE;
     }
 
-    obj->makeTrapGrenade(ch, (trap_t) ch->task->status, ch->task->orig_arg);
+    obj->makeTrapGrenade(ch, doorTrapT(ch->task->status), ch->task->orig_arg);
 
     return FALSE;
   }
   switch (cmd) {
     case CMD_TASK_CONTINUE:
-      learning = ch->getGrenadeTrapLearn((trap_t) ch->task->status);
+      learning = ch->getGrenadeTrapLearn(doorTrapT(ch->task->status));
       ch->task->calcNextUpdate(pulse, 
                  PULSE_MOBACT * (5 + ((100 - learning)/3)));
 
@@ -522,7 +505,7 @@ int task_trap_grenade(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
       if (!ch->doesKnowSkill(SKILL_SET_TRAP) ||
           !bSuccess(ch, learning, SKILL_SET_TRAP)) {
         // trigger trap
-        rc = ch->goofUpTrap((trap_t) ch->task->status, TRAP_TARG_GRENADE);
+        rc = ch->goofUpTrap(doorTrapT(ch->task->status), TRAP_TARG_GRENADE);
         if (IS_SET_DELETE(rc, DELETE_THIS))
           return DELETE_THIS;
 

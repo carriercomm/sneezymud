@@ -740,6 +740,7 @@ void TBeing::makeCorpse(spellNumT dmg_type)
       case AFFECT_DISEASE:
       case AFFECT_COMBAT:
       case AFFECT_PET:
+      case AFFECT_THRALL:
       case AFFECT_PLAYERKILL:
       case AFFECT_HORSEOWNED:
       case LAST_ODDBALL_AFFECT:

@@ -1970,7 +1970,9 @@ affectedData::affectedData(const affectedData &a) :
   else
     next = NULL;
 
-  if ((type == AFFECT_PET) || (type == AFFECT_ORPHAN_PET)) {
+  if ((type == AFFECT_PET) || 
+      (type == AFFECT_THRALL) ||
+      (type == AFFECT_ORPHAN_PET)) {
     // this affect has reinterpreted "be" to be a char *
     // and has allocated memory to it.  Member copying is
     // inappropriate for this cast, so...
@@ -1999,6 +2001,7 @@ affectedData::affectedData(const saveAffectedData &a) :
   // for AFFECT_PET types, TThing * be should get the owner as a string
   // but we didn't save that info, and we lack the info here, we will
   // have to recreate this info elsewhere (pet rentin)
+  // Ditto, AFFECT_ORPHAN_PET and AFFECT_THRALL
 }
 
 affectedData & affectedData::operator=(const affectedData &a)
@@ -2019,7 +2022,9 @@ affectedData & affectedData::operator=(const affectedData &a)
   else
     next = NULL;
 
-  if ((type == AFFECT_PET) || (type == AFFECT_ORPHAN_PET)) {
+  if ((type == AFFECT_PET) || 
+      (type == AFFECT_THRALL) ||
+      (type == AFFECT_ORPHAN_PET)) {
     // this affect has reinterpreted "be" to be a char *
     // and has allocated memory to it.  Member copying is
     // inappropriate for this cast, so...
@@ -2033,7 +2038,9 @@ affectedData::~affectedData()
 {
   // we redefined "TThing * be" to be a "char *" for AFFECT_PET
   // clean up our memory we allocated when we did this
-  if ((type == AFFECT_PET) || (type == AFFECT_ORPHAN_PET)) {
+  if ((type == AFFECT_PET) || 
+      (type == AFFECT_THRALL) ||
+      (type == AFFECT_ORPHAN_PET)) {
     char * tmp = (char *) be;
     be = NULL;
     delete [] tmp;

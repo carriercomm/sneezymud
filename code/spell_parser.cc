@@ -100,10 +100,9 @@ void TBeing::stopFollower(bool remove, stopFollowerT textLimits) // default argu
   if (!master)
     return;
 
-
-
-  if (affectedBySpell(AFFECT_PET)) {
-// make pet retrainable 
+  if (affectedBySpell(AFFECT_PET) ||
+      affectedBySpell(AFFECT_THRALL)) {
+    // make pet retrainable 
     aff.type = AFFECT_ORPHAN_PET;
     aff.level = 0;
     aff.duration  = 80 * UPDATES_PER_MUDHOUR;
@@ -119,7 +118,7 @@ void TBeing::stopFollower(bool remove, stopFollowerT textLimits) // default argu
     } else {
       vlogf(LOG_BUG, "%s having AFFECT_ORPHAN_PET without a roomp  in stop follower, master is %s", getName(), master->getName());
     }
-// take charm off so text is sent
+    // take charm off so text is sent
     REMOVE_BIT(specials.affectedBy, AFF_CHARM | AFF_GROUP);
   }
   if (isAffected(AFF_CHARM)) {
@@ -2220,6 +2219,7 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
     case AFFECT_DISEASE:
     case AFFECT_COMBAT:
     case AFFECT_PET:
+    case AFFECT_THRALL:
     case AFFECT_PLAYERKILL:
     case AFFECT_HORSEOWNED:
     case LAST_ODDBALL_AFFECT:

@@ -159,7 +159,7 @@ OBJ = actions.o ai_commands.o ai_reactions.o ai_responses.o ai_utility.o \
 	cmd_news.o \
 	cmd_quest.o cmd_quivpalm.o cmd_rename.o cmd_rescue.o cmd_save.o \
 	cmd_score.o cmd_sedit.o cmd_set.o cmd_stab.o cmd_stat.o cmd_steal.o \
-	cmd_stomp.o cmd_testcode.o cmd_testfight.o \
+	cmd_stomp.o cmd_testcode.o cmd_testfight.o cmd_trophy.o\
 	cmd_visible.o cmd_who.o \
 	cmd_zonefile.o \
 	cmd_zones.o color.o colorstring.o \

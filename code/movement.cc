@@ -1593,6 +1593,13 @@ int TBeing::doOpen(const char *argument)
     sendTo("You need to be more specific about what you wish to open.\n\r");
     return FALSE;
   } 
+
+  if ((findDoor(type, dir, DOOR_INTENT_OPEN, SILENT_YES) == DIR_NONE) &&
+             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
+    sendTo("%s: Your attempt to open it seems to have no effect.\n\r", type);
+    return FALSE;
+  } 
+
   obj = get_obj_vis_accessible(this, argument);
   if (obj) {
     if ((getPosition() < POSITION_CRAWLING) && obj->parent != this) {
@@ -1609,12 +1616,6 @@ int TBeing::doOpen(const char *argument)
 
     return TRUE;
   } 
-  if ((findDoor(type, dir, DOOR_INTENT_OPEN, SILENT_YES) == DIR_NONE) &&
-             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
-    sendTo("%s: Your attempt to open it seems to have no effect.\n\r", type);
-    return FALSE;
-  } 
-
 
   // it is plausible that a door in the room has the same keyword as an object
   // we own (ex. steel).  Natural reaction is to "open 2.steel".   The best

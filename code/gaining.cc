@@ -525,6 +525,15 @@ void TPerson::setSelectToggles(TBeing *gm, classIndT Class, silentTypeT silent)
 	  gm->doSay("You are now eligible to quest for your red sash.  Say \"red sash\" for more information.");
 	setQuestBit(TOG_MONK_RED_ELIGIBLE);
       }
+      if(hasQuestBit(TOG_HAS_MONK_RED) &&
+	 !hasQuestBit(TOG_MONK_BLACK_STARTED) &&
+	 !hasQuestBit(TOG_MONK_BLACK_FINISHED) &&
+	 !hasQuestBit(TOG_MONK_BLACK_OWNED) &&
+	 getLevel(Class)==50){
+	if(!silent)
+	  gm->doSay("You are now eligible to quest for your black sash.  Say \"black sash\" for more information.");
+	setQuestBit(TOG_MONK_BLACK_ELIGIBLE);
+      }
       break;
 
     case MAGE_LEVEL_IND:

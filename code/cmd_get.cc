@@ -2,15 +2,12 @@
 //
 //    SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-//    "inventory.cc" - Drop, get etc. commands related to inventory
+//    "cmd_get.cc" - the get command
 //
 //////////////////////////////////////////////////////////////////////
 
-extern "C" {
-#include <unistd.h>
-}
-
 #include "stdsneezy.h"
+#include "games.h"
 
 void TPCorpse::getMeFrom(TBeing *ch, TThing *t)
 {

@@ -6,10 +6,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-extern "C" {
-#include <unistd.h>
-}
-
 #include "stdsneezy.h"
 #include "games.h"
 #include "statistics.h"

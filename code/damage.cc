@@ -575,7 +575,8 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 
           affectedData aff;
           aff.type = AFFECT_PLAYERKILL;
-          aff.duration = 10 * ONE_SECOND * SECS_PER_REAL_MIN;
+          aff.duration = 15 * ONE_SECOND * SECS_PER_REAL_MIN;
+	  affectTo(&aff);
         }
 
         // create grave marker

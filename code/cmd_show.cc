@@ -15,6 +15,7 @@
 #include "cmd_dissect.h"
 #include "disc_alchemy.h"
 
+
 unsigned long int showFreeMobObj(int shFrZoneNumber, string *sb,
                                  bool isMobileF, bool shFrLoop=false)
 {

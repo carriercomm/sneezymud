@@ -29,7 +29,9 @@ struct SInnkeeperHate {
 
   // This one is a marker one, add below it but before '_NORACE'
   {0, RACE_HUMAN, true, "Get out, we don't serve your kind here scum!"},
+
   {10615, RACE_ELVEN, false, "We serve those of elven blood only thank you."},
+
   {0, RACE_NORACE, false, "Leave!"} // Add all new entries BEFORE this line.
 };
 
@@ -2667,11 +2669,6 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
       tStString = SIKHates[tCounter].tStMessage;
       autoLikes = true;
 
-      if (!hatesMe[0]) {
-        hatesMe[0] = true;
-        hatesMe[1] = false;
-      }
-
       if (SIKHates[tCounter].tRace == ch->getRace()) {
         tStString = SIKHates[tCounter].tStMessage;
         hatesMe[0] = true;
@@ -2680,16 +2677,15 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
     } else {
       autoHates = true;
 
-      if (!hatesMe[0]) {
-        hatesMe[0] = true;
-        hatesMe[1] = true;
-      }
-
       if (SIKHates[tCounter].tRace == ch->getRace())
         hatesMe[0] = true;
         hatesMe[1] = false;
     }
   }
+
+  vlogf(LOG_LAPSOS, "%d/%d %d/%d",
+        autoHates, autoLikes,
+        hatesMe[0], hatesMe[1]);
 
   if ((hatesMe[0] ? hatesMe[1] : autoHates)) {
     char tString[256];

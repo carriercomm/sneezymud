@@ -1103,6 +1103,9 @@ bool skillSorter::operator() (const skillSorter &x, const skillSorter &y) const
   return false;
 }
 
+extern struct PolyType DisguiseList[];
+static const int MaxDisguiseType = 10; // Non-Race Specific Ones
+
 void TBeing::sendSkillsList(discNumT which)
 {
   char buf[MAX_STRING_LENGTH * 2], buffer[MAX_STRING_LENGTH * 2];
@@ -1209,9 +1212,42 @@ void TBeing::sendSkillsList(discNumT which)
       } else if (wiz_lev >= DEV_LEV_NO_MANTRA) {
         strcpy(how_long, "\tsymbol=any hand or neck; pray silently; no gestures");
       }
+    } else if (i == SKILL_DISGUISE) {
+      int tSL = getDiscipline(getDisciplineNumber(SKILL_DISGUISE, FALSE))->getLearnedness();
+
+      strcpy(how_long, "\n\r\t");
+
+      for (int tCount = 0; tCount < MaxDisguiseType; tCount++) {
+        if (DisguiseList[tCount].learning > tSL ||
+            DisguiseList[tCount].level    > GetMaxLevel())
+          continue;
+
+        if ((signed) DisguiseList[tCount].tRace != RACE_NORACE)
+          continue;
+
+        if ((isname("male", DisguiseList[tCount].name) &&
+             getSex() != SEX_MALE) ||
+            (isname("female", DisguiseList[tCount].name) &&
+             getSex() != SEX_FEMALE))
+          continue;
+
+        string tStArg(DisguiseList[tCount].name),
+               tStRes("");
+
+        one_argument(tStArg, tStRes);
+
+        if (strlen(how_long) != 3)
+          strcat(how_long, ", ");
+
+        strcat(how_long, tStRes.c_str());
+      }
+
+      if (strlen(how_long) == 3)
+        strcpy(how_long, " ");
     } else { 
       strcpy(how_long, " ");
     }
+
     if (!isImmortal()) {
       if (doesKnowSkill(i)) {
         if ((i == SKILL_WIZARDRY) || (i == SKILL_DEVOTION)) {
@@ -1220,19 +1256,19 @@ void TBeing::sendSkillsList(discNumT which)
                    how_good(getSkillValue(i)), how_long);
         } else if (getMaxSkillValue(i) < MAX_SKILL_LEARNEDNESS) {
           if (discArray[i]->startLearnDo > 0) {
-            sprintf(buf, "%s%-25.25s%s   Current: %-12s Potential: %-12s\n\r",
+            sprintf(buf, "%s%-25.25s%s   Current: %-12s Potential: %-12s%s\n\r",
                  cyan(), discArray[i]->name, norm(), 
                  how_good(getSkillValue(i)),
-                 how_good(getMaxSkillValue(i)));
+                 how_good(getMaxSkillValue(i)), how_long);
           } else {
-            sprintf(buf, "%s%-25.25s%s   Current: %-15s\n\r",
+            sprintf(buf, "%s%-25.25s%s   Current: %-15s%s\n\r",
                    cyan(), discArray[i]->name, norm(), 
-                   how_good(getSkillValue(i)));
+                   how_good(getSkillValue(i)), how_long);
           }
         } else {
-          sprintf(buf, "%s%-25.25s%s   Current: %-15s\n\r",
+          sprintf(buf, "%s%-25.25s%s   Current: %-15s%s\n\r",
             cyan(), discArray[i]->name, norm(), 
-            how_good(getSkillValue(i)));
+            how_good(getSkillValue(i)), how_long);
         }
       } else {
         sprintf(buf, "%s%-25.25s%s   %-25s\n\r", cyan(), discArray[i]->name, norm(), how_long);
@@ -1406,6 +1442,7 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
     }
     sendTo(COLOR_BASIC, how_long);
   }
+
   return;
 }
 

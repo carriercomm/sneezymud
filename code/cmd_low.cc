@@ -1048,7 +1048,7 @@ void TPerson::doLow(const char *arg)
 
   arg = one_argument(arg, buf);
   if (!*buf) {
-    sendTo("Syntax: low <mob | race> ...\n\r");
+    sendTo("Syntax: low <mob | race | statbonus> ...\n\r");
     return;
   } else if (is_abbrev(buf, "objs") ||
 	     is_abbrev(buf, "weapons")) {
@@ -1067,6 +1067,64 @@ void TPerson::doLow(const char *arg)
   } else if (is_abbrev(buf, "race")) {
     lowRace(arg);
     return;
+  } else if (is_abbrev(buf, "statbonus")) {
+    int rc;
+    MYSQL_RES *res;
+    MYSQL_ROW row;
+
+    if((rc=dbquery(&res, "sneezy", "low statbonus", "select type, count(*), max(mod1), min(mod1), avg(mod1), sum(mod1) from objaffect group by type"))){
+      if(rc==-1){
+	vlogf(LOG_BUG, "Database error in doLow");
+	return;
+      }
+    }
+    sendTo("%13s %5s %5s %5s %10s %10s\n\r", 
+	   "Bonus       :","Cnt","Max","Min","Avg","Sum");
+
+    while((row=mysql_fetch_row(res))){
+      switch(atoi(row[0])){
+	case APPLY_STR:
+	  sendTo("Strength    : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_BRA:
+	  sendTo("Brawn       : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_CON:
+	  sendTo("Constitution: %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_DEX:
+	  sendTo("Dexterity   : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_AGI:
+	  sendTo("Agility     : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_INT:
+	  sendTo("Intelligence: %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_WIS:
+	  sendTo("Wisdom      : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_FOC:
+	  sendTo("Focus       : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_PER:
+	  sendTo("Perception  : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_CHA:
+	  sendTo("Charisma    : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_KAR:
+	  sendTo("Karma       : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	case APPLY_SPE:
+	  sendTo("Speed       : %5s %5s %5s %10s %10s\n\r", row[1], row[2], row[3], row[4], row[5]);
+	  break;
+	default:
+	  break;
+      }
+    }
+
+    mysql_free_result(res);
   } else {
     sendTo("Syntax: low <mob | obj | weapon> ...\n\r");
     return;

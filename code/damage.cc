@@ -724,7 +724,7 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
     if (rc)
       return FALSE;
 
-    rc = v->die(dmg_type);
+    rc = v->die(dmg_type, this);
     if (!IS_SET_DELETE(rc, DELETE_THIS))
       return FALSE;
 

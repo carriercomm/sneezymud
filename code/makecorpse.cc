@@ -816,7 +816,16 @@ void TBeing::makeCorpse(spellNumT dmg_type)
       gen_corpse->obj_flags.decay_time = MAX_PC_CORPSE_EMPTY_TIME;
   }
 
-  *roomp += *gen_corpse;
+  if (roomp) {
+    *roomp += *gen_corpse;
+    rp = roomp;
+  } else {
+    vlogf(10, "%s had NULL roomp pointer, moved to room %d.",
+          getName(), ROOM_STORAGE);
+
+    rp = real_roomp(ROOM_STORAGE);
+    *rp += *gen_corpse;
+  }
 
   // make sure we don't have any "corpses in a corpse" 
   for (o = gen_corpse->stuff; o; o = next_o) {
@@ -824,7 +833,7 @@ void TBeing::makeCorpse(spellNumT dmg_type)
     TBaseCorpse *tbc = dynamic_cast<TBaseCorpse *>(o);
     if (tbc) {
       --(*tbc);
-      *roomp += *tbc;
+      *rp += *tbc;
       TPCorpse * tmpcorpse = dynamic_cast<TPCorpse *>(o);
       if (tmpcorpse) {
         tmpcorpse->setRoomNum(in_room);

@@ -1071,6 +1071,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_DOORBASH:
           rc = doDoorbash(tmpstring);
           break;
+        case CMD_TRANCE_OF_BLADES:
+	  doTranceOfBlades(newarg);
+	  break;
         case CMD_ATTUNE:
           doAttune(newarg);
           break;
@@ -2333,6 +2336,7 @@ void buildCommandArray(void)
   commandArray[CMD_SHOW] = new commandInfo("show", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_BODYSLAM] =new commandInfo("bodyslam", POSITION_FIGHTING, 0);
   commandArray[CMD_SPIN] =new commandInfo("spin", POSITION_FIGHTING, 0);
+  commandArray[CMD_TRANCE_OF_BLADES] = new commandInfo("trance", POSITION_SITTING, 0);
   commandArray[CMD_INVISIBLE] = new commandInfo("invisible", POSITION_DEAD, 0);
   commandArray[CMD_GAIN] = new commandInfo("gain", POSITION_CRAWLING, 0);
   commandArray[CMD_TIMESHIFT] = new commandInfo("timeshift", POSITION_DEAD, GOD_LEVEL1);

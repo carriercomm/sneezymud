@@ -740,14 +740,18 @@ void buildHelpIndex()
     vlogf(LOG_FILE, "Can't open help directory for indexing!");
     exit(0);
   }
+  // COSMO STRING
+  string str;
   while ((dp = readdir(dfd))) {
     if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, "..") ||
         (strlen(dp->d_name) >= 5 &&
          !strcmp(&dp->d_name[strlen(dp->d_name) - 5], ".ansi")))
       continue;
-    string str = dp->d_name;
+    str = dp->d_name;
     helpIndex.push_back(str);
   }
+// COSMO STRING  
+  delete str;
   closedir(dfd);
 
   // set a reasonable initial size

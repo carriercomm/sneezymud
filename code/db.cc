@@ -994,6 +994,7 @@ void bootZones(void)
       zd.reset_mode = i3;
       zd.enabled = i4;
       zd.age = 0;
+    vlogf(LOG_MISC, "Checked Zone: %s [Top:%d Lifespan:%d Reset:%d Enabled:%d]", zd.name, zd.top, zd.lifespan, zd.reset_mode, zd.enabled);
     } else { 
       vlogf(LOG_LOW, "Bad zone format for zone %d (%s)", zon, check);
       exit(0);
@@ -1107,6 +1108,7 @@ TMonster *read_mobile(int nr, readFileTypeT type)
 
   i = nr;
 
+  vlogf(LOG_FILE, "Checking mob %d", nr);
   if (type == VIRTUAL) {
     nr = real_mobile(nr);
   }
@@ -1198,6 +1200,7 @@ TObj *read_object(int nr, readFileTypeT type)
   char chk[50];
 
   i = nr;
+  vlogf(LOG_FILE, "Checking object %d", nr);
   if (type == VIRTUAL)
     nr = real_object(nr);
 
@@ -2420,18 +2423,20 @@ char *fread_string(FILE *fp)
   unsigned int read_len = MAX_STRING_LENGTH;
   while( fgets( ptr, read_len, fp) ) {
     //  Check if we've hit the end of string marker. 
-    if( (marker=strchr( ptr, '~')) != 0)
+    if((marker=strchr( ptr, '~')) != 0)
+    vlogf(LOG_MISC, "End of string marker hit!");
       break;
     //  Set the pointer to the end of the string. NOTE: This is better then the
     // strlen because we're not starting at the beggining every time. 
     if( (ptr = strchr( ptr, '\000')) == 0) {
-      vlogf(LOG_FILE, "fread_string(): read error.");
+      vlogf(LOG_FILE, "fread_string(): read error. ack!");
       return mud_str_dup("Empty");
     }
     //  Add the return char. 
     *ptr++ = '\r';
 
     if ((int) (ptr - buf) >= (int) sizeof(buf)) {
+    vlogf(LOG_MISC, "SHIT! buf overflow!");
       forceCrash("buf overflow");
     }
 
@@ -2439,9 +2444,12 @@ char *fread_string(FILE *fp)
   }
   if (marker)
     *marker = 0;   // Nuke the ~ 
+    vlogf(LOG_MISC, "Tilde nuked!");
   if( *buf == 0)
     return NULL;
+    vlogf(LOG_MISC, "*buf == 0");
   return mud_str_dup( buf);
+    vlogf(LOG_MISC, "ptr passed check!");
 }
 
 // read contents of a text file, and place in buf 

@@ -584,7 +584,10 @@ Descriptor::~Descriptor()
             character->getExp(), num, character->age_mod, 
             dynamic_cast<TPerson *>(character)->last_rent);
       character->desc = NULL;
-      character->setInvisLevel(GOD_LEVEL1);
+      if(!character->affectedBySpell(AFFECT_PLAYERKILL) ||
+	 character->isImmortal()){
+	character->setInvisLevel(GOD_LEVEL1);
+      }
 
       if (character->riding) 
         character->dismount(POSITION_STANDING);

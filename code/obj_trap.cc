@@ -3698,7 +3698,7 @@ int TBeing::getDoorTrapDam(doorTrapT trap_type)
 {
   // this is number of d8 to use when calculating damage
   // base range: 10 - 35
-  int damage = 10 + getSkillLevel(SKILL_SET_TRAP)/2;
+  int damage = 10 + getSkillLevel(SKILL_SET_TRAP_DOOR)/2;
 
   damage *= getDoorTrapLearn(trap_type);
   damage /= 100;
@@ -3757,7 +3757,7 @@ int TBeing::getContainerTrapDam(doorTrapT trap_type)
 {
   // this is number of d8 to use when calculating damage
   // base range: 20 - 36
-  int damage = 20 + getSkillLevel(SKILL_SET_TRAP)/3;
+  int damage = 20 + getSkillLevel(SKILL_SET_TRAP_CONT)/3;
 
   damage *= getContainerTrapLearn(trap_type);
   damage /= 100;
@@ -3816,7 +3816,7 @@ int TBeing::getMineTrapDam(doorTrapT trap_type)
 {
   // this is number of d8 to use when calculating damage
   // base range: 20 - 45
-  int damage = 20 + getSkillLevel(SKILL_SET_TRAP)/2;
+  int damage = 20 + getSkillLevel(SKILL_SET_TRAP_MINE)/2;
 
   damage *= getMineTrapLearn(trap_type);
   damage /= 100;
@@ -3877,7 +3877,7 @@ int TBeing::getGrenadeTrapDam(doorTrapT trap_type)
   // i kept the damage on them lower then other traps.
   // this is number of d8 to use when calculating damage
   // base range: 5 - 30
-  int damage = 5 + getSkillLevel(SKILL_SET_TRAP)/2;
+  int damage = 5 + getSkillLevel(SKILL_SET_TRAP_GREN)/2;
 
   damage *= getGrenadeTrapLearn(trap_type);
   damage /= 100;
@@ -3936,13 +3936,10 @@ int TBeing::getDoorTrapLearn(doorTrapT)
 {
   int learn;
 
-  if ((learn = getSkillValue(SKILL_SET_TRAP)) <= 0)
+  if ((learn = getSkillValue(SKILL_SET_TRAP_DOOR)) <= 0)
     return 0;
 
-  // learn is (30,3)
-  learn -= 29;
-  learn *= 3;
-  learn = min(max(learn, 0), (int) MAX_SKILL_LEARNEDNESS);
+  learn = min(learn, (int) MAX_SKILL_LEARNEDNESS);
 
   return learn;
 }
@@ -3951,12 +3948,10 @@ int TBeing::getContainerTrapLearn(doorTrapT)
 {
   int learn;
 
-  if ((learn = getSkillValue(SKILL_SET_TRAP)) <= 0)
+  if ((learn = getSkillValue(SKILL_SET_TRAP_CONT)) <= 0)
     return 0;
 
-  // learn is (1,3)
-  learn *= 3;
-  learn = min(max(learn, 0), (int) MAX_SKILL_LEARNEDNESS);
+  learn = min(learn, (int) MAX_SKILL_LEARNEDNESS);
 
   return learn;
 }
@@ -3965,13 +3960,10 @@ int TBeing::getMineTrapLearn(doorTrapT)
 {
   int learn;
 
-  if ((learn = getSkillValue(SKILL_SET_TRAP)) <= 0)
+  if ((learn = getSkillValue(SKILL_SET_TRAP_MINE)) <= 0)
     return 0;
 
-  // learn is (60,3)
-  learn -= 59;
-  learn *= 3;
-  learn = min(max(learn, 0), (int) MAX_SKILL_LEARNEDNESS);
+  learn = min(learn, (int) MAX_SKILL_LEARNEDNESS);
 
   return learn;
 }
@@ -3980,13 +3972,10 @@ int TBeing::getGrenadeTrapLearn(doorTrapT)
 {
   int learn;
 
-  if ((learn = getSkillValue(SKILL_SET_TRAP)) <= 0)
+  if ((learn = getSkillValue(SKILL_SET_TRAP_GREN)) <= 0)
     return 0;
 
-  // learn is (80,5)
-  learn -= 80;
-  learn *= 5;
-  learn = min(max(learn, 0), (int) MAX_SKILL_LEARNEDNESS);
+  learn = min(learn, (int) MAX_SKILL_LEARNEDNESS);
 
   return learn;
 }

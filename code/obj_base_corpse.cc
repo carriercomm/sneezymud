@@ -438,7 +438,7 @@ int TBaseCorpse::chiMe(TBeing *tLunatic)
       getCorpseLevel() > tLunatic->GetMaxLevel()) {
     act("You attempt to nuke $p, but it resists you.",
         FALSE, tLunatic, this, NULL, TO_CHAR);
-    return FALSE;
+    return true;
   }
 
   act("You focus your chi and set $p ablaze!",

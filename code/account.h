@@ -14,6 +14,8 @@ class TAccountStats
     unsigned int account_number;
     unsigned int player_count;
     unsigned int active_player;
+    unsigned int active_account;
+    bool actaccFlag;
     unsigned int player_num;
     unsigned int max_player_since_reboot;
 
@@ -21,6 +23,8 @@ class TAccountStats
       account_number(0),
       player_count(0),
       active_player(0),
+      active_account(0),
+      actaccFlag(false),
       player_num(0),
       max_player_since_reboot(0)
     {}

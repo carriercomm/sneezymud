@@ -424,6 +424,7 @@ int RecCompObjNum(const TObj *o, int obj_num)
 // all here, for easy centralizing.
 void BatoprsResetCharFlags(TBeing *ch)
 {
+#if 0
   // strip off free_deaths from 5.0 for 5.1
   affectedData *aff, *an;
   for (aff = ch->affected; aff; aff = an) {
@@ -446,10 +447,8 @@ void BatoprsResetCharFlags(TBeing *ch)
     ch->setQuestBit(TOG_FACTIONS_ELIGIBLE);
   }
     
-  extern void giveGodsTheirPowers(TBeing *ch);
-  giveGodsTheirPowers(ch);
-
   return;
+#endif
 }
 
 bool TBeing::nomagic(const char *msg_ch, const char *msg_rm) const

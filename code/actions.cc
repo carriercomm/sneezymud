@@ -622,7 +622,7 @@ void TBeing::doPoint(const char *arg)
   // point in a direction
   dirTypeT dir = getDirFromChar(arg);
   if (dir != DIR_NONE) {
-    sendTo("You point %s%s%s%s.", 
+    sendTo("You point %s%s%s%s.\n\r", 
         buf ? "your " : "",
         buf ? buf : "",
         buf ? " " : "",

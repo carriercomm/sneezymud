@@ -535,7 +535,7 @@ class TObj : public TThing {
     wearKeyT getWearKey() const;
     virtual int suggestedPrice() const { return 0; }
     void addGlowEffects();
-    void checkOwnersList(const TPerson *);
+    bool checkOwnersList(const TPerson *, bool = false);
     virtual double objLevel() const;
     virtual void purchaseMe(TBeing *, TMonster *, int, int);
     virtual void sellMeMoney(TBeing *, TMonster *, int, int);

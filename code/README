@@ -1,5 +1,5 @@
 03-12-00 / 03-16-00 / 03-19-00 / 03-21-00 / 03-22-00 - Lapsos
-03-23-00 / 03-25-00 / 03-26-00 - Lapsos
+03-23-00 / 03-25-00 / 03-26-00 / 03-29-00 / 03-30-00 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
@@ -57,6 +57,18 @@
 - Setup the drift code to make a canSwim check for 'fights the current'
   instead of simply shifting them around.
 - Fixed bash so you can bash a flying mob if you are also flying.
+- Fixed up the message code to not messup when <d>'s and such are located
+  in the names.
+- Trimmed the messages in the zonefile save code zonefile output.
+- Fixed up redit delete exits.
+- Setup a new type of check in summon to make it incredibly difficult to
+  summon rare(low max_exist) mobs.
+- Fixed up the leprosy == loss of xp to actualy set xp to 0 if the mob can
+  no longer defend itself physically, meaning both arms unusable.
+- Setup the hover check on 'is floating here' to also negate if the float
+  flag is applied to the object.
+- Added a new spec-obj for Therias.  Jambiya.  Proc 50.
+  Triggers on successful stab/backstab.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

@@ -939,6 +939,7 @@ void TBeing::statBeing(TBeing *k)
       case SPELL_ACID_BREATH:
       case SPELL_ACID_BLAST:
       case SKILL_BODYSLAM:
+      case SKILL_SPIN:
       case SKILL_CHARGE:
       case SKILL_SMITE:
       case SPELL_METEOR_SWARM:

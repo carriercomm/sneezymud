@@ -11,11 +11,14 @@
 
 int search_block(const sstring &, const sstring *, bool);
 int search_block(const sstring &arg, const char * const *, bool);
+int old_search_block(const sstring &, int, unsigned int, const sstring *, bool);
 int old_search_block(const char *, int, int, const char * const *, bool);
 void argument_interpreter(const char *, char *, char *);
 void argument_interpreter(sstring, sstring &, sstring &);
 extern const char *one_argument(const char *argument, char *first_arg);
 extern sstring one_argument(sstring argument, sstring & first_arg);
+extern sstring bisect_arg(const sstring, int *, const sstring *);
+extern void bisect_arg(const char *, int *, char *, const char * const array[]);
 
 class commandInfo {
   public:

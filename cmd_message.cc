@@ -49,7 +49,7 @@ const unsigned short int messageCommandSwitches[][3] =
   {200, (0                             ), POWER_LONGDESC},
 };
 
-const char * messageCommandTypes[] =
+const sstring messageCommandTypes[] =
 {
   "title",         //  1
   "purge",         //  2
@@ -73,10 +73,10 @@ const char * messageCommandTypes[] =
 
 void TBeing::doMessage(const char *tArg)
 {
-  sstring  tStString(tArg),
+  sstring tStString(tArg),
           tStCommand("");
-  char    tString[256],
-         *tMark = NULL;
+  sstring tString;
+  char   *tMark = NULL;
   int     tValue = -1;
 
   tStString = one_argument(tStString, tStCommand);
@@ -100,7 +100,7 @@ void TBeing::doMessage(const char *tArg)
     }
     return;
   } else {
-    bisect_arg(tStCommand.c_str(), &tValue, tString, messageCommandTypes);
+    tString = bisect_arg(tStCommand, &tValue, messageCommandTypes);
 
     if (tValue < 1 || tValue >= MSG_TYPE_MAX)
       sendTo("Incorrect message type.\n\r");

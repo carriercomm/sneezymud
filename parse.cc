@@ -60,6 +60,33 @@ int search_block(const sstring &arg, const char * const *list, bool exact)
   return (-1);
 }
 
+int old_search_block(const sstring &argument, int bgin, unsigned int length, const sstring *list, bool mode)
+{
+  int guess;
+  bool found;
+
+  // If the word contain 0 letters, then a match is already found 
+  found = (length < 1);
+
+  guess = 0;
+
+  if (mode)
+    while (!found && list[guess] != "\n") {
+      found = (length == list[guess].length());
+      for (unsigned int search = 0; (found && search < length); search++)
+        found = (argument[bgin + search] == (list[guess])[search]);
+      guess++;
+  } else {
+    while (!found && list[guess] != "\n") {
+      found = 1;
+      for (unsigned int search = 0; (found && search < length); search++)
+        found = (argument[bgin + search] == (list[guess])[search]);
+      guess++;
+    }
+  }
+  return (found ? guess : -1);
+}
+
 int old_search_block(const char *argument, int bgin, int length, const char * const * list, bool mode)
 {
   int guess, search;
@@ -3136,18 +3163,21 @@ void bisect_arg(const char *arg, int *field, char *sstring, const char * const a
   return;
 }
 
-void bisect_arg(const sstring arg, int *field, sstring str, const sstring *array)
+sstring bisect_arg(const sstring arg, int *field, const sstring *array)
 {
+  sstring str = "";
   sstring my_arg, buf;
+  unsigned int i;
 
   my_arg = one_argument(arg, buf);
-  if (!(*field = old_search_block(buf, 0, strlen(buf), array, 0)))
-    return;
+  if (!(*field = old_search_block(buf, 0, buf.length(), array, 0)))
+    return str;
 
-  for (; isspace(*arg); arg++);
-  for (; (*sstring = *arg); arg++, sstring++);
-
-  return;
+  i = my_arg.find_first_of(" \t");
+  if (i != sstring::npos) {
+    str = my_arg.substr(i, my_arg.length());
+  }
+  return str;
 }
 
 char *fold(char *line)

@@ -50,6 +50,7 @@ bool TBeing::canBash(TBeing *victim, silentTypeT silent)
     case BODY_FOUR_LEG:
     case BODY_PIG:
     case BODY_FROG:
+    case BODY_WYVELIN:
       if (!silent)
         sendTo("You have the wrong form to bash.\n\r");
       return FALSE;

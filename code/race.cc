@@ -42,6 +42,7 @@ const char * RaceNames[MAX_RACIAL_TYPES] = {
   "RACE_SAHUAGIN", "RACE_BAT", "RACE_PYGMY", "RACE_WYVERN", "RACE_KUOTOA",
   "RACE_BAANTA", "RACE_GNOLL", "RACE_HOBGOBLIN", "RACE_MIMIC", "RACE_MEDUSA",
   "RACE_PENGUIN", "RACE_OSTRICH", "RACE_TROG", "RACE_COATL", "RACE_SIMAL",
+  "RACE_WYVELIN",
 };
 
 const char * const Lores[MAX_LORES] =
@@ -500,6 +501,8 @@ void Race::initRace(const char *whichRace)
         bodyType = BODY_LION;
       else if (!strcasecmp(value, "feline"))
         bodyType = BODY_FELINE;
+      else if (!strcasecmp(value, "wyvelin"))
+        bodyType = BODY_WYVELIN;
       else if (!strcasecmp(value, "fourlegs"))
         bodyType = BODY_FOUR_LEG;
       else if (!strcasecmp(value, "reptile"))
@@ -834,6 +837,7 @@ const string Race::getBodyLimbBlunt() const
     case BODY_BIRD:
     case BODY_BAT:
     case BODY_WYVERN:
+    case BODY_WYVELIN:
       return "wing";
     case BODY_SLIME:
     case BODY_PARASITE:
@@ -904,6 +908,7 @@ const string Race::getBodyLimbPierce() const
     case BODY_DEMON:
     case BODY_REPTILE:
       return "claw";
+    case BODY_WYVELIN:
     case BODY_FELINE:
       return "claws";
     case BODY_SPIDER:
@@ -982,6 +987,7 @@ const string Race::getBodyLimbSlash() const
     case BODY_OCTOPUS:
       return "suckers";
     case BODY_FELINE:
+    case BODY_WYVELIN:
       return "claws";
     case BODY_MOSS:
       return "appendage";

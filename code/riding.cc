@@ -19,6 +19,7 @@ spellNumT TBeing::mountSkillType() const
     case RACE_FELINE: case RACE_BASILISK: case RACE_CENTAUR: case RACE_CHIMERA:
     case RACE_FROG:   case RACE_LAMIA:    case RACE_MANTICORE: 
     case RACE_TURTLE: case RACE_LION: case RACE_LEOPARD: case RACE_COUGAR:
+    case RACE_WYVELIN:
       return SKILL_RIDE_EXOTIC;
     default:
       return SKILL_RIDE_EXOTIC;

@@ -566,7 +566,7 @@ int TMonster::aiMobShock(TBeing *doer)
         return FALSE;
         break;
     }
-  } else if (getRace() == RACE_FELINE) {
+  } else if (getRace() == RACE_FELINE || getRace() == RACE_WYVELIN) {
     switch (::number(1,5)) {
       case 1:
         act("The hair on $n's back raises and $e hisses loudly.",
@@ -624,7 +624,7 @@ int TMonster::aiMobHappy(TBeing *doer)
         return FALSE;
         break;
     }
-  } else if (getRace() == RACE_FELINE) {
+  } else if (getRace() == RACE_FELINE || getRace() == RACE_WYVELIN) {
     switch (::number(1,4)) {
       case 1:
         doAction(fname(doer->name),CMD_PURR);

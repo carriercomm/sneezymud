@@ -87,7 +87,9 @@ enum race_t {
   RACE_MIMIC,           /* 117 */       RACE_MEDUSA,    /* 118 */
   RACE_PENGUIN,         /* 119 */       RACE_OSTRICH,   /* 120 */
   RACE_TROG,            /* 121 */       RACE_COATL,     /* 122 */
-  RACE_SIMAL,           /* 123 */  // see remove list in oldrace.cc before adding here
+  RACE_SIMAL,           /* 123 */       RACE_WYVELIN,   /* 124 */
+
+  // see remove list in oldrace.cc before adding here
 
   MAX_RACIAL_TYPES
 };

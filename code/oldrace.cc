@@ -215,6 +215,7 @@ void TBeing::setRacialStuff()
     case RACE_HIPPOPOTAMUS:
     case RACE_ANGEL:
     case RACE_BANSHEE:
+    case RACE_WYVELIN:
     case MAX_RACIAL_TYPES:
       break;
   }
@@ -405,6 +406,7 @@ int TBeing::validEquipSlot(wearSlotT i)
     case BODY_REPTILE:
     case BODY_DINOSAUR:
     case BODY_FOUR_LEG:
+    case BODY_WYVELIN:
 #if 0
       return ((i == WEAR_LEGS_R) || (i == WEAR_LEGS_L) ||
               (i == WEAR_EX_LEG_R) || (i == WEAR_EX_LEG_L) ||
@@ -1829,6 +1831,42 @@ const string TBeing::describeBodySlot2(wearSlotT i) const
         default:
           return default_body_slot(i);
       }
+    case BODY_WYVELIN:
+      switch (i) {
+        case WEAR_EX_LEG_R:
+          return "back, right leg";
+        case WEAR_EX_LEG_L:
+          return "back, left leg";
+        case WEAR_FOOT_R:
+          return "front, right paw";
+        case WEAR_FOOT_L:
+          return "front, left paw";
+        case WEAR_EX_FOOT_R:
+          return "back, right paw";
+        case WEAR_EX_FOOT_L:
+          return "back, left paw";
+        case WEAR_LEGS_R:
+          return "front, right leg";
+        case WEAR_LEGS_L:
+          return "front, left leg";
+        case HOLD_LEFT:
+          return "left paw";
+        case HOLD_RIGHT:
+          return "right paw";
+        case WEAR_WAISTE:
+          return "tail";
+        case WEAR_ARM_R:
+          return "right wing";
+        case WEAR_ARM_L:
+          return "left wing";
+        case WEAR_HEAD:
+        case WEAR_BACK:
+        case WEAR_NECK:
+        case WEAR_BODY:
+          return default_body_slot(i);
+        default:
+          return bogus_slot(i);
+      }
     case MAX_BODY_TYPES:
       break;
   }
@@ -3042,6 +3080,53 @@ const string TBeing::describeEquipmentSlot(wearSlotT i) const
         default:
           return defaultEquipmentSlot(i);
       }
+    case BODY_WYVELIN:
+      switch (i) {
+        case WEAR_EX_LEG_R:
+          if (equipment[i] == equipment[WEAR_LEGS_L])
+            return "Worn on back legs";
+          else
+            return "Worn on back, right leg";
+        case WEAR_EX_LEG_L:
+          if (!(equipment[i] == equipment[WEAR_LEGS_R]))
+            return "Worn on back, left leg";
+          return bogus_slot_worn(i);
+        case WEAR_LEGS_R:
+          if (equipment[i] == equipment[WEAR_LEGS_L])
+            return "Worn on front legs";
+          else
+            return "Worn on front, right leg";
+        case WEAR_LEGS_L:
+          if (!(equipment[i] == equipment[WEAR_LEGS_R]))
+            return "Worn on front, left leg";
+          return bogus_slot_worn(i);
+        case WEAR_FOOT_R:
+          return "Worn on front, right paw";
+        case WEAR_FOOT_L:
+          return "Worn on front, left paw";
+        case WEAR_EX_FOOT_R:
+          return "Worn on back, right paw";
+        case WEAR_EX_FOOT_L:
+          return "Worn on back, left paw";
+        case HOLD_LEFT:
+          return "Held in left paw";
+        case HOLD_RIGHT:
+          return "Held in right paw";
+        case WEAR_BACK:
+          return "Worn on back as saddle";
+        case WEAR_WAISTE:
+          return "Worn on tail";
+        case WEAR_ARM_R:
+          return "Worn on right wing";
+        case WEAR_ARM_L:
+          return "Worn on left wing";
+        case WEAR_HEAD:
+        case WEAR_BODY:
+        case WEAR_NECK:
+          return defaultEquipmentSlot(i);
+        default:
+          return bogus_slot_worn(i);
+      }
     case MAX_BODY_TYPES:
       break;
   }
@@ -3581,6 +3666,36 @@ int TBeing::limbConnections(wearSlotT slot)
              getMyRace()->getSingularName().c_str(), slot);
           return FALSE;
       }
+    case BODY_WYVELIN:
+      switch (slot) {
+        case WEAR_EX_LEG_R:
+        case WEAR_EX_LEG_L:
+        case WEAR_LEGS_R:
+        case WEAR_LEGS_L:
+        case WEAR_NECK:
+        case WEAR_BACK:
+        case WEAR_WAISTE:
+          return limbConnections(WEAR_BODY);
+        case WEAR_HEAD:
+          return limbConnections(WEAR_NECK);
+        case WEAR_FOOT_L:
+        case HOLD_LEFT:
+          return limbConnections(WEAR_LEGS_L);
+        case HOLD_RIGHT:
+        case WEAR_FOOT_R:
+          return limbConnections(WEAR_LEGS_R);
+        case WEAR_EX_FOOT_R:
+          return limbConnections(WEAR_EX_LEG_R);
+        case WEAR_EX_FOOT_L:
+          return limbConnections(WEAR_EX_LEG_L);
+        case WEAR_ARM_R:
+        case WEAR_ARM_L:
+          return limbConnections(WEAR_BACK);
+        default:
+          vlogf(LOG_BUG,"bogus check on %s for slot %d",
+             getMyRace()->getSingularName().c_str(), slot);
+          return FALSE;
+      }
     case MAX_BODY_TYPES:
       break;
   }
@@ -3611,6 +3726,7 @@ spellNumT TBeing::getFormType() const
     case RACE_BAT:
     case RACE_KUOTOA:
     case RACE_BAANTA:
+    case RACE_WYVELIN:
       if (num <= 33)
         return (TYPE_BITE);
       else

@@ -162,7 +162,7 @@ static int doorbash(TBeing * caster, dirTypeT dir)
       if (IS_SET_DELETE(rc, DELETE_THIS)) {
         return DELETE_THIS;
       }
-      caster->sendTo("Aarrggh!  You've triggered some insideous door-trap!\n\r");
+      caster->sendTo("Aarrggh!  You've triggered some insidious door-trap!\n\r");
     }
     exitp->destroyDoor(dir, room);
     if (caster->reconcileDamage(caster, dam, SKILL_DOORBASH) == -1)

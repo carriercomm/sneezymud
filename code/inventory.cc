@@ -170,7 +170,7 @@ int TPortal::openMe(TBeing *ch)
   }
   if (isPortalFlag( EX_TRAPPED) && ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
     if (detectTrapObj(ch, this)) {
-      sprintf(buf, "You start to open $p, but then notice an insideous %s trap...", good_uncap(trap_types[getPortalTrapType()]).c_str());
+      sprintf(buf, "You start to open $p, but then notice an insidious %s trap...", good_uncap(trap_types[getPortalTrapType()]).c_str());
       act(buf, TRUE, ch, this, NULL, TO_CHAR);
       return FALSE;
     }
@@ -221,7 +221,7 @@ int TRealContainer::openMe(TBeing *ch)
              isContainerFlag(CONT_GHOSTTRAP)) {
     if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
       if (detectTrapObj(ch, this) || isContainerFlag(CONT_GHOSTTRAP)) {
-        sprintf(buf, "You start to open $p, but then notice an insideous %s trap...",
+        sprintf(buf, "You start to open $p, but then notice an insidious %s trap...",
               good_uncap(trap_types[getContainerTrapType()]).c_str());
         act(buf, TRUE, ch, this, NULL, TO_CHAR);
 
@@ -232,7 +232,7 @@ int TRealContainer::openMe(TBeing *ch)
         setContainerTrapDam(0);
         addContainerFlag(CONT_GHOSTTRAP);
 
-        sprintf(buf, "You start to open $p, but then notice an insideous %s trap...",
+        sprintf(buf, "You start to open $p, but then notice an insidious %s trap...",
                 good_uncap(trap_types[getContainerTrapType()]).c_str());
         act(buf, TRUE, ch, this, NULL, TO_CHAR);
 

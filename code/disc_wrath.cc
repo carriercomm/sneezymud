@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: disc_wrath.cc,v $
+// Revision 5.1.1.2  1999/10/25 03:54:47  batopr
+// Reduced dam on callLightning critfail
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -776,6 +779,8 @@ int callLightning(TBeing *caster, TBeing *victim, int level, byte bKnown, spellN
       case CRIT_F_HITSELF:
       case CRIT_F_HITOTHER:
         CF(spell);
+        dam /= 3;
+
         act("$n summons lightning from the stormy skies, bringing down a bolt upon $mself!", FALSE, caster, NULL, NULL, TO_ROOM);
         act("You summon lightning from the stormy skies, bringing down a bolt upon yourself!", FALSE, caster, NULL, NULL, TO_CHAR);
         act("That lightning bolt was intended for you!", FALSE, caster, NULL, victim, TO_VICT);

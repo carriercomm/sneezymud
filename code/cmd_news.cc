@@ -18,14 +18,17 @@ class newsFileList {
   public:
     string fileName;
     time_t modTime;
+    string prependStr;
 
-  newsFileList(string a, time_t tim) :
+  newsFileList(string a, time_t tim, string b) :
     fileName(a),
-    modTime(tim)
+    modTime(tim),
+    prependStr(b)
   {}
   newsFileList() :
     fileName(""),
-    modTime(0)
+    modTime(0),
+    prependStr("")
   {}
 };
 
@@ -76,7 +79,7 @@ void TBeing::doNews(const char *argument)
       sprintf(buf, "%s/%s", HELP_PATH, dp->d_name);
       if (!stat(buf, &theStat)) {
         if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-          newsFileList nfl(dp->d_name, theStat.st_mtime);
+          newsFileList nfl(dp->d_name, theStat.st_mtime, "help ");
 
           vecFiles.push_back(nfl);
         }
@@ -97,7 +100,7 @@ void TBeing::doNews(const char *argument)
       sprintf(buf, "%s/%s", SKILL_HELP_PATH, dp->d_name);
       if (!stat(buf, &theStat)) {
         if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-          newsFileList nfl(dp->d_name, theStat.st_mtime);
+          newsFileList nfl(dp->d_name, theStat.st_mtime, "help ");
           vecFiles.push_back(nfl);
         }
       }
@@ -117,7 +120,7 @@ void TBeing::doNews(const char *argument)
       sprintf(buf, "%s/%s", SPELL_HELP_PATH, dp->d_name);
       if (!stat(buf, &theStat)) {
         if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-          newsFileList nfl(dp->d_name, theStat.st_mtime);
+          newsFileList nfl(dp->d_name, theStat.st_mtime, "help ");
           vecFiles.push_back(nfl);
         }
       }
@@ -138,7 +141,7 @@ void TBeing::doNews(const char *argument)
         sprintf(buf, "%s/%s", BUILDER_HELP_PATH, dp->d_name);
         if (!stat(buf, &theStat)) {
           if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-            newsFileList nfl(dp->d_name, theStat.st_mtime);
+            newsFileList nfl(dp->d_name, theStat.st_mtime, "help ");
             vecFiles.push_back(nfl);
           }
         }
@@ -160,12 +163,36 @@ void TBeing::doNews(const char *argument)
         sprintf(buf, "%s/%s", IMMORTAL_HELP_PATH, dp->d_name);
         if (!stat(buf, &theStat)) {
           if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
-            newsFileList nfl(dp->d_name, theStat.st_mtime);
+            newsFileList nfl(dp->d_name, theStat.st_mtime, "help ");
             vecFiles.push_back(nfl);
           }
         }
       }
       closedir(dfd);
+    }
+
+    // motd, and wizmotd
+    if (!stat(MOTD_FILE, &theStat)) {
+      if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
+        newsFileList nfl("motd", theStat.st_mtime, "");
+        vecFiles.push_back(nfl);
+      } else if (isImmortal()) {
+        // slightly bizarre way of doing this, but wizmotd has same cmd as motd
+        if (!stat(WIZMOTD_FILE, &theStat)) {
+          if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
+            newsFileList nfl("motd", theStat.st_mtime, "");
+            vecFiles.push_back(nfl);
+          }
+        }
+      }
+    }
+
+    // credits
+    if (!stat(CREDITS_FILE, &theStat)) {
+      if (now - theStat.st_mtime <= (3 * SECS_PER_REAL_DAY)) {
+        newsFileList nfl("credits", theStat.st_mtime, "");
+        vecFiles.push_back(nfl);
+      }
     }
 
     sort(vecFiles.begin(), vecFiles.end(), newsFileSorter());
@@ -175,7 +202,9 @@ void TBeing::doNews(const char *argument)
       strcpy(timebuf, ctime(&(vecFiles[iter].modTime)));
       timebuf[strlen(timebuf) - 1] = '\0';
   
-      sendTo("%s : %s\n\r", timebuf, vecFiles[iter].fileName.c_str()); 
+      sendTo("%s : %s%s\n\r", timebuf, 
+            vecFiles[iter].prependStr.c_str(),
+            vecFiles[iter].fileName.c_str()); 
     }
     return;
   }

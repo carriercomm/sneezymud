@@ -3971,6 +3971,207 @@ void TBeing::doInfo(const char *arg)
     } else if (is_abbrev(arg1, "gold")) {
       buf.erase();
 
+#if 1
+      float tot_gold = getPosGoldGlobal();
+      float tot_gold_shop = getPosGold(GOLD_SHOP);
+      float tot_gold_income = getPosGold(GOLD_INCOME);
+      float tot_gold_dump = getPosGold(GOLD_DUMP);
+      float tot_gold_comm = getPosGold(GOLD_COMM);
+      float tot_gold_rent = getPosGold(GOLD_RENT);
+      float tot_gold_repair = getPosGold(GOLD_REPAIR);
+      float tot_gold_hospital = getPosGold(GOLD_HOSPITAL);
+      float tot_gold_shop_sym = getPosGold(GOLD_SHOP_SYMBOL);
+      float tot_gold_shop_weap = getPosGold(GOLD_SHOP_WEAPON);
+      float tot_gold_shop_arm = getPosGold(GOLD_SHOP_ARMOR);
+      float tot_gold_shop_pet = getPosGold(GOLD_SHOP_PET);
+      float tot_gold_shop_comp = getPosGold(GOLD_SHOP_COMPONENTS);
+      float tot_gold_shop_food = getPosGold(GOLD_SHOP_FOOD);
+      float tot_gold_shop_resp = getPosGold(GOLD_SHOP_RESPONSES);
+      float tot_gold_gamble = getPosGold(GOLD_GAMBLE);
+      float tot_gold_tithe = getPosGold(GOLD_TITHE);
+      float tot_gold_allshops = getPosGoldShops();
+      float tot_gold_budget = getPosGoldBudget();
+
+      float net_gold = getNetGoldGlobal();
+      float net_gold_shop = getNetGold(GOLD_SHOP);
+      float net_gold_income = getNetGold(GOLD_INCOME);
+      float net_gold_comm = getNetGold(GOLD_COMM);
+      float net_gold_rent = getNetGold(GOLD_RENT);
+      float net_gold_dump = getNetGold(GOLD_DUMP);
+      float net_gold_repair = getNetGold(GOLD_REPAIR);
+      float net_gold_hospital = getNetGold(GOLD_HOSPITAL);
+      float net_gold_shop_sym = getNetGold(GOLD_SHOP_SYMBOL);
+      float net_gold_shop_weap = getNetGold(GOLD_SHOP_WEAPON);
+      float net_gold_shop_arm = getNetGold(GOLD_SHOP_ARMOR);
+      float net_gold_shop_pet = getNetGold(GOLD_SHOP_PET);
+      float net_gold_shop_comp = getNetGold(GOLD_SHOP_COMPONENTS);
+      float net_gold_shop_food = getNetGold(GOLD_SHOP_FOOD);
+      float net_gold_shop_resp = getNetGold(GOLD_SHOP_RESPONSES);
+      float net_gold_gamble = getNetGold(GOLD_GAMBLE);
+      float net_gold_tithe = getNetGold(GOLD_TITHE);
+      float net_gold_allshops = getNetGoldShops();
+      float net_gold_budget = getNetGoldBudget();
+
+      float tot_drain = tot_gold - net_gold;
+
+      sprintf(buf2, "Shop  : modifier: %.2f        (factor  : %.2f%%)\n\r",
+           gold_modifier[GOLD_SHOP],
+           100.0 * (tot_gold_allshops - net_gold_allshops) / tot_gold_allshops);
+      buf += buf2;
+      sprintf(buf2, "Income: modifier: %.2f        (factor  : %.2f%%)\n\r",
+            gold_modifier[GOLD_INCOME],
+            100.0 * net_gold_budget / tot_gold_budget);
+      buf += buf2;
+      sprintf(buf2, "Repair: modifier: %.2f        (factor  : %.2f%%)\n\r",
+            gold_modifier[GOLD_REPAIR],
+            100.0 * (tot_gold_budget - net_gold_budget) / tot_drain);
+      buf += buf2;
+      sprintf(buf2, "Equip: modifier: %.2f        (factor  : %.2f%%)\n\r",
+            stats.equip,
+            100.0 * (tot_gold_shop_weap + tot_gold_shop_arm) / tot_gold);
+      buf += buf2;
+      buf += "\n\r";
+
+      sprintf(buf2, "TOTAL ECONOMY:     pos %.2f, net gold = %.2f, drain=%.2f\n\r", tot_gold, net_gold, tot_drain);
+      buf += buf2;
+      // shops are a little diff from normal
+      // want shops to be a slight drain, so compare drain to source
+      sprintf(buf2, "SHOP ECONOMY:      pos %.2f, net gold = %.2f, drain=%.2f\n\r", tot_gold_allshops, net_gold_allshops, tot_gold_allshops - net_gold_allshops);
+      buf += buf2;
+      sprintf(buf2, "BUDGET ECONOMY:    pos %.2f, net gold = %.2f, drain=%.2f\n\r", tot_gold_budget, net_gold_budget, tot_gold_budget - net_gold_budget);
+      buf += buf2;
+
+      buf += "\n\r";
+
+      sprintf(buf2, "INCOME ECONOMY:    pos %.2f, net gold = %.2f  (drain: %.2f : %.2f%%)\n\r", tot_gold_income, net_gold_income, tot_gold_income - net_gold_income, 100.0 * (tot_gold_income - net_gold_income) / tot_drain);
+      buf += buf2;
+      sprintf(buf2, "SHOPS ECONOMY:     pos %.2f, net gold = %.2f  (drain: %.2f : %.2f%%)\n\r", tot_gold_shop, net_gold_shop, tot_gold_shop - net_gold_shop, 100.0 * (tot_gold_shop - net_gold_shop) / tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "FOOD SHOP ECONOMY: pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_shop_food, net_gold_shop_food, tot_gold_shop_food - net_gold_shop_food, 100.0 * (tot_gold_shop_food - net_gold_shop_food) / tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "COMP SHOP ECONOMY: pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_shop_comp, net_gold_shop_comp, tot_gold_shop_comp - net_gold_shop_comp, 100.0 * (tot_gold_shop_comp - net_gold_shop_comp) / tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "SYMB SHOP ECONOMY: pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_shop_sym, net_gold_shop_sym, tot_gold_shop_sym - net_gold_shop_sym, 100.0 * (tot_gold_shop_sym - net_gold_shop_sym) / tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "WEAP SHOP ECONOMY: pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_shop_weap, net_gold_shop_weap, tot_gold_shop_weap - net_gold_shop_weap, 100.0 * (tot_gold_shop_weap - net_gold_shop_weap) / tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "ARMR SHOP ECONOMY: pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_shop_arm, net_gold_shop_arm, tot_gold_shop_arm - net_gold_shop_arm, 100.0 * (tot_gold_shop_arm - net_gold_shop_arm) / tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "PETS SHOP ECONOMY: pos %.2f, net gold = %.2f (bad drain: %.2f : %.2f%%)\n\r", tot_gold_shop_pet, net_gold_shop_pet, tot_gold_shop_pet - net_gold_shop_pet, 100.0 * (tot_gold_shop_pet - net_gold_shop_pet) / tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "RESP SHOP ECONOMY: pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_shop_resp, net_gold_shop_resp, tot_gold_shop_resp - net_gold_shop_resp, 100.0 * ((int) tot_gold_shop_resp - net_gold_shop_resp) / (int) tot_drain);
+      buf += buf2;
+
+      sprintf(buf2, "COMMODITY ECONOMY: pos %.2f, net gold = %.2f\n\r", tot_gold_comm, net_gold_comm);
+      buf += buf2;
+      sprintf(buf2, "RENT ECONOMY:      pos %.2f, net gold = %.2f (bad drain: %.2f : %.2f%%)\n\r", tot_gold_rent, net_gold_rent, tot_gold_rent - net_gold_rent, 100.0 * ((int) tot_gold_rent - net_gold_rent) / (int) tot_drain);
+      buf += buf2;
+      sprintf(buf2, "REPAIR ECONOMY:    pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_repair, net_gold_repair, tot_gold_repair - net_gold_repair, 100.0 * (tot_gold_repair - net_gold_repair) / tot_drain);
+      buf += buf2;
+      sprintf(buf2, "HOSPITAL ECONOMY:  pos %.2f, net gold = %.2f (drain: %.2f : %.2f%%)\n\r", tot_gold_hospital, net_gold_hospital, tot_gold_hospital - net_gold_hospital, 100.0 * (tot_gold_hospital - net_gold_hospital) / tot_drain);
+      buf += buf2;
+      sprintf(buf2, "GAMBLE ECONOMY:    pos %.2f, net gold = %.2f\n\r", tot_gold_gamble, net_gold_gamble);
+      buf += buf2;
+      sprintf(buf2, "TITHE ECONOMY:     pos %.2f, net gold = %.2f\n\r", tot_gold_tithe, net_gold_tithe);
+      buf += buf2;
+      sprintf(buf2, "DUMP ECONOMY:      pos %.2f, net gold = %.2f\n\r", tot_gold_dump, net_gold_dump);
+      buf += buf2;
+
+      desc->page_string(buf.c_str(), 0);
+#elif 0
+      buf += "\n\rGold Income/Outlay statistics:\n\r\n\r";
+      for (j=0; j < MAX_IMMORT; j++ ) {
+        long amount = gold_statistics[GOLD_INCOME][j] + 
+                 gold_statistics[GOLD_COMM][j] +
+                 gold_statistics[GOLD_GAMBLE][j] +
+                 gold_statistics[GOLD_REPAIR][j] +
+                 gold_statistics[GOLD_SHOP][j] +
+                 gold_statistics[GOLD_DUMP][j] +
+                 gold_statistics[GOLD_SHOP_ARMOR][j] +
+                 gold_statistics[GOLD_SHOP_WEAPON][j] +
+                 gold_statistics[GOLD_SHOP_PET][j] +
+                 gold_statistics[GOLD_SHOP_COMPONENTS][j] +
+                 gold_statistics[GOLD_SHOP_FOOD][j] +
+                 gold_statistics[GOLD_SHOP_RESPONSES][j] +
+                 gold_statistics[GOLD_SHOP_SYMBOL][j] +
+                 gold_statistics[GOLD_RENT][j] +
+                 gold_statistics[GOLD_HOSPITAL][j] +
+                 gold_statistics[GOLD_TITHE][j];
+        unsigned long pos = gold_positive[GOLD_INCOME][j] + 
+                 gold_positive[GOLD_COMM][j] +
+                 gold_positive[GOLD_GAMBLE][j] +
+                 gold_positive[GOLD_REPAIR][j] +
+                 gold_positive[GOLD_SHOP][j] +
+                 gold_positive[GOLD_DUMP][j] +
+                 gold_positive[GOLD_SHOP_SYMBOL][j] +
+                 gold_positive[GOLD_SHOP_ARMOR][j] +
+                 gold_positive[GOLD_SHOP_WEAPON][j] +
+                 gold_positive[GOLD_SHOP_PET][j] +
+                 gold_positive[GOLD_SHOP_RESPONSES][j] +
+                 gold_positive[GOLD_SHOP_COMPONENTS][j] +
+                 gold_positive[GOLD_SHOP_FOOD][j] +
+                 gold_positive[GOLD_RENT][j] +
+                 gold_positive[GOLD_HOSPITAL][j] +
+                 gold_positive[GOLD_TITHE][j];
+        sprintf(buf2, "   %sLevel %2d:%s\n\r",
+          cyan(),j+1, norm());
+        buf += buf2;
+        sprintf(buf2, "         %sPos  : %9ld%s  (%.2f%% of total)\n\r",
+          cyan(), pos, norm(),
+          100.0 * pos / tot_gold);
+        buf += buf2;
+        sprintf(buf2, "         %sNet  : %9ld%s  (%.2f%% of total)\n\r",
+          cyan(), amount, norm(),
+          100.0 * amount / net_gold);
+        buf += buf2;
+        sprintf(buf2, "         %sDrain: %9ld%s  (%.2f%% of total)\n\r",
+          cyan(), pos - amount, norm(),
+          100.0 * (pos - amount) / (tot_gold - net_gold));
+        buf += buf2;
+
+        sprintf(buf2, "      income     : %8ld, comm       : %8ld, gamble     : %8ld\n\r",
+              gold_statistics[GOLD_INCOME][j], 
+              gold_statistics[GOLD_COMM][j], 
+              gold_statistics[GOLD_GAMBLE][j]);
+        buf += buf2;
+
+        sprintf(buf2, "      shop       : %8ld, respon shop: %8ld, repair     : %8ld\n\r",
+              gold_statistics[GOLD_SHOP][j], 
+              gold_statistics[GOLD_SHOP_RESPONSES][j], 
+              gold_statistics[GOLD_REPAIR][j]);
+        buf += buf2;
+
+        sprintf(buf2, "      armor shop : %8ld, weapon shop: %8ld, pet shop   : %8ld\n\r",
+              gold_statistics[GOLD_SHOP_ARMOR][j], 
+              gold_statistics[GOLD_SHOP_WEAPON][j], 
+              gold_statistics[GOLD_SHOP_PET][j]);
+        buf += buf2;
+
+        sprintf(buf2, "      symbol shop: %8ld, compon shop: %8ld, food shop  : %8ld\n\r",
+              gold_statistics[GOLD_SHOP_SYMBOL][j],
+              gold_statistics[GOLD_SHOP_COMPONENTS][j],
+              gold_statistics[GOLD_SHOP_FOOD][j]);
+        buf += buf2;
+
+        sprintf(buf2, "      rent       : %8ld, hospit     : %8ld, tithe      : %8ld\n\r",
+              gold_statistics[GOLD_RENT][j], 
+              gold_statistics[GOLD_HOSPITAL][j], 
+              gold_statistics[GOLD_TITHE][j]);
+        buf += buf2;
+
+        sprintf(buf2, "      dump       : %8ld\n\r",
+              gold_statistics[GOLD_DUMP][j]);
+        buf += buf2;
+      }
+      desc->page_string(buf.c_str(), 0);
+#else
       unsigned int tot_gold = getPosGoldGlobal();
       unsigned int tot_gold_shop = getPosGold(GOLD_SHOP);
       unsigned int tot_gold_income = getPosGold(GOLD_INCOME);
@@ -4168,6 +4369,7 @@ void TBeing::doInfo(const char *arg)
         buf += buf2;
       }
       desc->page_string(buf.c_str(), 0);
+#endif
     } else if (is_abbrev(arg1, "discipline")) {
       if (!hasWizPower(POWER_INFO_TRUSTED)) {
         sendTo("You cannot access that information at your level.\n\r");

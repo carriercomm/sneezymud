@@ -72,6 +72,7 @@ class TRealContainer : public TContainer {
     virtual int sellCommod(TBeing *, TMonster *, int, TThing *);
     virtual int putSomethingInto(TBeing *, TThing *);
     virtual string compareMeAgainst(TBeing *, TObj *);
+    virtual void purchaseMe(TBeing *, TMonster *, int, int);
 
     bool isCloseable() const;
     bool isClosed() const;

@@ -2276,9 +2276,9 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
     act("$n says, 'I don't deal with people I can't see!'", FALSE, recep, 0, 0, TO_ROOM);
     return TRUE;
   }
-  if(ch->affectedBySpell(AFFECT_PLAYERKILL)){
+  if(ch->affectedBySpell(AFFECT_PLAYERKILL) && !ch->isImmortal()){
     act("$n looks at you and says, 'Murderers are not allowed to stay here!'", FALSE, recep, 0, ch, TO_VICT);
-    act("$n looks at $N and says, 'Murderers are not allowed to stay here!'", FALSE, recep, 0, ch, TO_VICT);
+    act("$n looks at $N and says, 'Murderers are not allowed to stay here!'", FALSE, recep, 0, ch, TO_ROOM);
     return TRUE;
   }
 

@@ -219,3 +219,18 @@ void TRealContainer::purchaseMe(TBeing *ch, TMonster *tKeeper, int tCost, int tS
   if (!isContainerFlag(CONT_TRAPPED) && !isContainerFlag(CONT_GHOSTTRAP))
     addContainerFlag(CONT_EMPTYTRAP);
 }
+
+string TRealContainer::showModifier(showModeT tMode, const TBeing *tBeing) const
+{
+  // recurse if necessary
+  string tString = TContainer::showModifier(tMode, tBeing);
+
+  if (isCloseable()) {
+    tString += " (";                                          
+    tString += isClosed() ? "closed" : "opened";
+    tString += ")";                                           
+  }                                                           
+                                                              
+  return tString;                                             
+}                                                             
+

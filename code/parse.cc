@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: parse.cc,v $
+// Revision 5.1.1.8  1999/11/01 07:07:18  lapsos
+// Added doJump.
+//
 // Revision 5.1.1.7  1999/10/29 10:37:44  lapsos
 // Modified hide to be usable by backstab.
 //
@@ -545,7 +548,6 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_GREET:
         case CMD_TIP:
         case CMD_BOP:
-        case CMD_JUMP:
         case CMD_WHIMPER:
         case CMD_SNEER:
         case CMD_MOO:
@@ -574,6 +576,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_PET:
         case CMD_GRIMACE:
           rc = doAction(tmpstring, cmd);
+          break;
+        case CMD_JUMP:
+          rc = doJump(newarg);
           break;
         case CMD_POINT:
           doPoint(newarg);

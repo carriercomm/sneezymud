@@ -2965,23 +2965,28 @@ int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
     return FALSE;
   if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
     return FALSE;       // weapon not equipped (carried or on ground)
-  if (::number(0,19))
+  if (::number(0,5))
     return FALSE;
   if (cmd != CMD_OBJ_HIT)
     return FALSE;
-  dam = (::number( 1, (ch->GetMaxLevel()) / 3 + 4));
+  dam = (::number( 1, (ch->GetMaxLevel()) / 10 + 1));
   which = ::number(1,2);
 
+  act("<k>Three long, thin blades spring from your <1>$o<k>.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k>.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k>.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+
+
   if (which == 1) {
-  act("<k>Three long, thin blades spring from your <1>$o<k> as you swing at $N, slicing $M.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings at $N, slicing $M.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings, slicing you painfully.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  act("<k>You <g>slice<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+  act("<k>$n <1>slices<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  act("<k>$n <r>slices<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   rc = ch->reconcileDamage(vict, dam, TYPE_SLASH);
   }
   else {
-  act("<k>Three long, thin blades spring from your <1>$o<k> as you swing at $N, stabbing $M.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
-  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings at $N, stabbing $M.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
-  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings, stabbing you painfully.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  act("<k>You <g>stab<k> $N with the blades of your $o, which then retract.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+  act("<k>$n <1>stabs<k> $N with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+  act("<k>$n <r>stabs<k> you with the blades of $s $o, which then retract.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
   rc = ch->reconcileDamage(vict, dam, TYPE_PIERCE);
   }
 

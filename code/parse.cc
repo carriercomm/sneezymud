@@ -3070,6 +3070,23 @@ char * mud_str_dup(const char *buf)
   return tmp;
 }
 
+// copy n bytes of src to dest
+// if src is bigger than n, copy as much as possible to dest and null terminate
+// then generate an error log
+char *mud_str_copy(char *dest, const char *src, size_t n)
+{
+  strncpy(dest, src, n);
+
+  if(strlen(src) > n){
+    dest[n-1]='\0';
+    vlogf(LOG_BUG, "mud_str_copy: source string too long.  Truncated to: %s", dest);
+  }
+
+  return dest;
+}
+
+
+
 void trimString(string &arg)
 {
   if (arg.empty())

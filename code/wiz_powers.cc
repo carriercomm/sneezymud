@@ -25,6 +25,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_WIZNET);
     ch->setWizPower(POWER_POWERS);
     ch->setWizPower(POWER_GOTO);
+    ch->setWizPower(POWER_IMMORTAL_HELP);
   } else if (is_abbrev(arg, "rooms")) {
     ch->setWizPower(POWER_REDIT);  
     ch->setWizPower(POWER_RSAVE);
@@ -65,7 +66,6 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
     ch->setWizPower(POWER_STEALTH);
     ch->setWizPower(POWER_WIZLOCK);
     ch->setWizPower(POWER_CUTLINK);
-    ch->setWizPower(POWER_IMMORTAL_HELP);
     ch->setWizPower(POWER_QUEST);
     ch->setWizPower(POWER_SEE_COMMENTARY);  // view bugs, ideas, typos
     ch->setWizPower(POWER_ECHO);
@@ -116,7 +116,7 @@ void setWizPowers(const TBeing *doer, TBeing *ch, const char *arg)
   } else {
     doer->sendTo("Outside of range.\n\r");
     doer->sendTo("Syntax: @set wizpower <person> <power>.\n\r");
-    doer->sendTo("Syntax: @set wizpower <person> <\"basic\" | \"rooms"\ | \"mobiles\" | \"objects\" | \"demigod\" | \"trusted\" | \"allpowers\">\n\r");
+    doer->sendTo("Syntax: @set wizpower <person> <\"basic\" | \"rooms\" | \"mobiles\" | \"objects\" | \"demigod\" | \"trusted\" | \"allpowers\">\n\r");
     return;
   }
   doer->sendTo("Wiz Powers set OK!\n\r");

@@ -792,7 +792,9 @@ int TBeing::rawSummon(TBeing *v)
   act("$n has summoned you!", FALSE, this, NULL, v, TO_VICT);
   v->doLook("", CMD_LOOK);
 
-  if (!v->isPc() && (v->GetMaxLevel() > GetMaxLevel() + 3)) {
+  // too cheap to use summon to get items, etc
+  //  if (!v->isPc() && (v->GetMaxLevel() > GetMaxLevel() + 3)) {
+  if (!v->isPc()) {
     act("$N struggles, and all of $S items are destroyed!", TRUE, this, NULL, v, TO_CHAR);
     for (j = MIN_WEAR; j < MAX_WEAR; j++) {    // remove objects from victim 
       if (v->equipment[j] && 

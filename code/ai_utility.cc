@@ -112,7 +112,7 @@ void TMonster::aiTarget(TBeing *vict)
   }
   if (!targ())
     return;
-  if (!sameRoom(targ())) {
+  if (!sameRoom(&targ())) {
     setTarg(NULL);
     return;
   }

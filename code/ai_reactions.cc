@@ -979,7 +979,7 @@ int TMonster::aiShoveReact(TBeing *doer, bool worked, dirTypeT dir)
   UA(15);
 
   if (canSpeak() && !::number(0,2)) {
-    if (worked && !sameRoom(doer)) {
+    if (worked && !sameRoom(*doer)) {
       act("You shake your head and say, \"Jeez, $N sure is pushy.\"",
               FALSE, this, 0, doer, TO_CHAR);
       act("$n shakes $s head and says, \"Jeez, $N sure is pushy.\"",
@@ -988,7 +988,7 @@ int TMonster::aiShoveReact(TBeing *doer, bool worked, dirTypeT dir)
       return aiInsultDoer(doer);
     }
   }
-  if (isSmartMob(40) && worked && !sameRoom(doer)) {
+  if (isSmartMob(40) && worked && !sameRoom(*doer)) {
     rc = goDirection(rev_dir[dir]);
     if (IS_SET_DELETE(rc, DELETE_THIS)) {
       // we're not checking for death, log an error
@@ -997,7 +997,7 @@ int TMonster::aiShoveReact(TBeing *doer, bool worked, dirTypeT dir)
       return DELETE_THIS;
     }
   }
-  if (sameRoom(doer) && worked) {
+  if (sameRoom(*doer) && worked) {
     if (hasHands() && !bothArmsHurt()) {
       act("$n shoves $N.", TRUE, this, 0, doer, TO_NOTVICT);
       act("$n shoves you.", TRUE, this, 0, doer, TO_VICT);

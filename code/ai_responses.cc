@@ -1427,7 +1427,7 @@ int specificCode(TMonster *mob, TBeing *ch, int which, const resp * respo)
       tAff.bitvector = 0;
 
       for (; FDt; FDt = FDt->next) {
-        if (!mob->sameRoom(FDt->follower))
+        if (!mob->sameRoom(*FDt->follower))
           continue;
 
         // ch is taken care of below because they might be the leader.

@@ -46,11 +46,15 @@ int task_yoginsa(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TOb
           wohlin_learn = ch->getSkillValue(SKILL_WOHLIN);
 	  monk_level = ch->getLevel(MONK_LEVEL_IND);
 
-          if (bSuccess(ch, learn, SKILL_YOGINSA)) {
+          if (bSuccess(ch, learn, SKILL_YOGINSA) && (::number(1,100)<80)) {
+	    // this artifical roll to check for a success is so we can slowly
+	    // phase out the speed of hp recover without causing a ruckus.
+	    // lower the .85 lower down and raise the 80 above, keeping the
+	    // product of the two close to .65 (or whatever stats.damage_modifier is)
             ch->sendTo("%sMeditating refreshes your inner harmonies!%s\n\r",
                      ch->green(), ch->norm());
             ch->setHit(min(ch->getHit() + 
-			   (int)((double)(ch->hitGain())*(stats.damage_modifier * 1.15)), (int) ch->hitLimit()));
+			   (int)(((double)ch->hitGain())*(8.5)), (int) ch->hitLimit()));
             ch->setMove(min(ch->getMove() + ch->moveGain()/2, (int) ch->moveLimit()));
             ch->setMana(min(ch->getMana() + ch->manaGain()/2, (int) ch->manaLimit()));
 

@@ -1,28 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: structs.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/07 02:04:21  batopr
-// *** empty log message ***
-//
-// Revision 1.2  1999/09/28 19:06:03  lapsos
-// Owners will now ignore, totally, creators.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "structs.cc" - Various class destructors, constructors and operators
 //
@@ -619,6 +596,14 @@ TThing& TBeing::operator += (TThing& t)
   t.nextThing = stuff;
   stuff = &t;
   t.parent = this;
+
+  if (!isPc() && isAffected(AFF_CHARM) && master) {
+    TObj *obj = dynamic_cast<TObj *>(&t);
+    TPerson *tP;
+
+    if (obj && (tP = dynamic_cast<TPerson *>(master)))
+      obj->checkOwnersList(tP);
+  }
 
   return *this;
 }

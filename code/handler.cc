@@ -1095,8 +1095,11 @@ void TBeing::equipChar(TThing *obj, wearSlotT pos, silentTypeT silent)
   // every save winds up unequipping/equipping, don't log dozens of times
   // for each combat  (hence, we use "show").
   if (to && !silent) {
-    TPerson *p = dynamic_cast<TPerson *>(this);
-    if (p)
+    TPerson *p;
+
+    if ((p = dynamic_cast<TPerson *>(this)))
+      to->checkOwnersList(p);
+    else if (isAffected(AFF_CHARM) && (p = dynamic_cast<TPerson *>(master)))
       to->checkOwnersList(p);
   }
 }

@@ -38,9 +38,13 @@ void TTool::pickPulse(TBeing *ch)
   }
   skill = 2 * ch->getSkillValue(SKILL_PICK_LOCK);
 
-  skill += ch->task->timeLeft++;   // longer they try, better chance
+  // longer they try, better chance
+  ch->task->timeLeft++;
+  skill += 3 * ch->task->timeLeft;
+
   skill += ch->plotStat(STAT_CURRENT, STAT_FOC, 3, 18, 13);
   skill += ::number(-15,15);
+
   addToToolUses(-1);
   if (getToolUses() <= 0) {
     act("Your $o snap in half!   Oops!",TRUE,ch,this,0,TO_CHAR);
@@ -123,33 +127,27 @@ int task_picklock(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TO
   }
   int pulses_to_wait;
   switch(cmd) {
-  case CMD_TASK_CONTINUE:
-    if (!(pick = ch->heldInPrimHand())) {
+    case CMD_TASK_CONTINUE:
+      if (!(pick = ch->heldInPrimHand())) {
         ch->sendTo("Hey, where'd your lockpick go?!?\n\r");
         ch->stopTask();
         return FALSE;
-    }
-#if 0
-    // this makes it take a LONG time
-      pulses_to_wait = 130 - ch->getSkillValue(SKILL_PICK_LOCK);
-      pulses_to_wait /= 30;
-#else
+      }
       pulses_to_wait = 1;
-#endif
       ch->task->calcNextUpdate(pulse, max(pulses_to_wait, 1) * PULSE_MOBACT);
       pick->pickPulse(ch);
       return FALSE;
-  case CMD_ABORT:
-  case CMD_STOP:
+    case CMD_ABORT:
+    case CMD_STOP:
       act("You stop trying to pick the lock.", FALSE, ch, 0, 0, TO_CHAR);
       act("$n stops fiddling with something.", FALSE, ch, 0, 0, TO_ROOM);
       ch->stopTask();
       break;
-  case CMD_TASK_FIGHTING:
+    case CMD_TASK_FIGHTING:
       ch->sendTo("You are unable to continue lockpicking while under attack!\n\r");
       ch->stopTask();
       break;
-  default:
+    default:
       if (cmd < MAX_CMD_LIST)
         warn_busy(ch);
       break;                    // eat the command

@@ -1818,31 +1818,36 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
   if(cmd == CMD_WHISPER && ch->isImmortal()){
     char buf[256];
     TThing *tt;
-    int count=0, value=0, price=0, discount=100, rc, isleader=0;
+    int count=0, value=0, price=0, discount=100, rc, access=0, owned=0;
     unsigned int i, tmp;
     TObj *o;
     MYSQL_RES *res;
     MYSQL_ROW row;
-    factionTypeT faction;
 
     arg = one_argument(arg, buf);
     if(!is_abbrev(buf, myself->getName()))
       return FALSE;
 
-    if((rc=dbquery(&res, "sneezy", "shop_keeper", "select faction from shopfaction where shop_nr=%i", shop_nr+1))==-1){
+    if((rc=dbquery(&res, "sneezy", "shop_keeper", "select access from shopownedaccess where shop_nr=%i and name='%s'", shop_nr+1, ch->getName()))==-1){
+      vlogf(LOG_BUG, "Database error in shop_keeper");
+      return FALSE;
+    }
+    if(!(row=mysql_fetch_row(res))){
+      return FALSE;
+    }
+    access=atoi(row[0]);
+    if(isImmortal) access=1;
+    mysql_free_result(res);
+
+    if((rc=dbquery(&res, "sneezy", "shop_keeper", "select * from shopownedaccess where shop_nr=%i", shop_nr+1))==-1){
       vlogf(LOG_BUG, "Database error in shop_keeper");
       return FALSE;
     }
     if(!(row=mysql_fetch_row(res)))
-      faction=FACT_UNDEFINED;
-    else 
-      faction=(factionTypeT) atoi(row[0]);
-
+      owned=0;
+    else
+      owned=1;
     mysql_free_result(res);
-
-    if(faction>=0 && 
-       ch->getFactionAuthority(faction,FACT_LEADER_SLOTS - 1)==TRUE)
-      isleader=1;
 
     arg = one_argument(arg, buf);
     
@@ -1859,11 +1864,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
 	      ch->getName(), myself->getMoney()+value);
       myself->doTell(buf);
       
-      if(faction>=0){
-	sprintf(buf, "%s This shop is owned by %s.", ch->getName(), 
-		FactionInfo[faction].faction_name);
-	myself->doTell(buf);
-      } else {
+      if(!owned){
 	sprintf(buf, "%s This shop is for sale.", ch->getName());
 	myself->doTell(buf);
       }
@@ -1884,7 +1885,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
       myself->doTell(buf);
 
     } else if(!strcmp(buf, "set")){
-      if(!isleader){
+      if(!access){
 	return FALSE;
       }
       arg = one_argument(arg, buf);
@@ -1892,7 +1893,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
       if(!strcmp(buf, "profit_buy")){
 	shop_index[shop_nr].profit_buy=atof(arg);
 
-	if((rc=dbquery(&res, "sneezy", "shop_keeper", "update shopfaction set profit_buy=%i where shop_nr=%i", shop_index[shop_nr].profit_buy, shop_nr+1))){
+	if((rc=dbquery(&res, "sneezy", "shop_keeper", "update shopowned set profit_buy=%i where shop_nr=%i", shop_index[shop_nr].profit_buy, shop_nr+1))){
 	  if(rc==-1){
 	    vlogf(LOG_BUG, "Database error in shop_keeper");
 	    return FALSE;
@@ -1905,7 +1906,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
       } else if(!strcmp(buf, "profit_sell")){
 	shop_index[shop_nr].profit_sell=atof(arg);
 
-	if((rc=dbquery(&res, "sneezy", "shop_keeper", "update shopfaction set profit_sell=%i where shop_nr=%i", shop_index[shop_nr].profit_sell, shop_nr+1))){
+	if((rc=dbquery(&res, "sneezy", "shop_keeper", "update shopowned set profit_sell=%i where shop_nr=%i", shop_index[shop_nr].profit_sell, shop_nr+1))){
 	  if(rc==-1){
 	    vlogf(LOG_BUG, "Database error in shop_keeper");
 	    return FALSE;
@@ -1919,60 +1920,8 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
 	sprintf(buf, "%s Sorry, I don't understand.  You can set either my profit_buy or profit_sell values.", ch->getName());
 	myself->doTell(buf);
       }
-    } else if(!strcmp(buf, "add")){
-      if(!isleader){
-	return FALSE;
-      }
-      arg = one_argument(arg, buf);
-
-      for(i=0;i<MAX_OBJ_TYPES;++i){
-	if(ItemInfo[i] && ItemInfo[i]->name &&
-	   is_abbrev(ItemInfo[i]->name, buf)){
-	  break;
-	}
-      }
-      shop_index[shop_nr].type.push_back(i);
-
-      if((rc=dbquery(&res, "sneezy", "shop_keeper", "replace into shopfactiontype (shop_nr, type) values (%i, %i)", shop_nr+1, i))){
-	if(rc==-1){
-	  vlogf(LOG_BUG, "Database error in shop_keeper");
-	  return FALSE;
-	}
-      }
-
-      sprintf(buf, "%s Ok, I now deal in %s.", ch->getName(), 
-	      ItemInfo[i]->name);
-      myself->doTell(buf);
-    } else if(!strcmp(buf, "remove")){
-      if(!isleader){
-	return FALSE;
-      }
-      arg=one_argument(arg, buf);
-
-      for(i=0;i<MAX_OBJ_TYPES;++i){
-	if(ItemInfo[i] && ItemInfo[i]->name &&
-	   is_abbrev(ItemInfo[i]->name, buf)){
-	  break;
-	}
-      }
-
-      vector<unsigned int>::iterator result=
-	find(shop_index[shop_nr].type.begin(),
-	     shop_index[shop_nr].type.end(), i);
-      
-      shop_index[shop_nr].type.erase(result);
-
-      if((rc=dbquery(&res, "sneezy", "shop_keeper", "delete from shopfactiontype where shop_nr=%i and type=%i", shop_nr+1, i))){
-	if(rc){
-	  vlogf(LOG_BUG, "Database error in shop_keeper");
-	  return FALSE;
-	}
-      }
-
-      sprintf(buf, "%s Ok, I will no longer deal in %s.", ch->getName(),
-	      ItemInfo[i]->name);
     } else if(!strcmp(buf, "buy")){
-      if(faction>=0){
+      if(owned){
 	sprintf(buf, "%s Sorry, this shop isn't for sale.", ch->getName());
 	myself->doTell(buf);
 	return TRUE;
@@ -1992,44 +1941,23 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
       ch->setMoney(ch->getMoney()-value);
       
 
-      if((rc=dbquery(&res, "sneezy", "shop_keeper", "insert into shopfaction (shop_nr, faction, profit_buy, profit_sell) values (%i, %i, %f, %f)", shop_nr+1, ch->getFaction(), shop_index[shop_nr].profit_buy, shop_index[shop_nr].profit_sell))){
+      if((rc=dbquery(&res, "sneezy", "shop_keeper", "insert into shopowned (shop_nr, profit_buy, profit_sell) values (%i, %f, %f)", shop_nr+1, shop_index[shop_nr].profit_buy, shop_index[shop_nr].profit_sell))){
 	if(rc==-1)
 	  vlogf(LOG_BUG, "Database error in shop_keeper");
 	return FALSE;
       }
       
-      for(i=0;i<shop_index[shop_nr].type.size();++i){
-	tmp=shop_index[shop_nr].type[i];
-	if((int)tmp != -1){
-	  if((rc=dbquery(&res, "sneezy", "shop_keeper", "insert into shopfactiontype (shop_nr, type) values (%i, %i)", shop_nr+1, tmp))){
-	    if(rc==-1)
-	      vlogf(LOG_BUG, "Database error in shop_keeper");
-	    return FALSE;
-	  }
-	}
-      }
-
-      sprintf(buf, "%s Congratulations, this shop is now owned by %s.",
-	      ch->getName(), FactionInfo[ch->getFaction()].faction_name);
+      sprintf(buf, "%s Congratulations, you now own this shop.",
+	      ch->getName());
       myself->doTell(buf);
     } else if(!strcmp(buf, "sell")){
-      if(!isleader){
-	return FALSE;
-      }
-      if(ch->getFaction() != faction){
+      if(!access){
 	sprintf(buf, "%s Sorry, you don't own this shop.", ch->getName());
 	myself->doTell(buf);
 	return TRUE;
       }
 
-      if((rc=dbquery(&res, "sneezy", "shop_keeper", "delete from shopfaction where shop_nr=%i", shop_nr+1))){
-	if(rc){
-	  vlogf(LOG_BUG, "Database error in shop_keeper");
-	  return FALSE;
-	}
-      }
-
-      if((rc=dbquery(&res, "sneezy", "shop_keeper", "delete from shopfactiontype where shop_nr=%i", shop_nr+1))){
+      if((rc=dbquery(&res, "sneezy", "shop_keeper", "delete from shopowned where shop_nr=%i", shop_nr+1))){
 	if(rc){
 	  vlogf(LOG_BUG, "Database error in shop_keeper");
 	  return FALSE;
@@ -2128,9 +2056,9 @@ void bootTheShops()
 void bootTheShops()
 {
   int shop_nr;
-  MYSQL_RES *res, *producing_res, *type_res, *material_res, *shopfaction_res, *shopfactiontype_res;
-  MYSQL_ROW row, producing_row, type_row, material_row, shopfaction_row, shopfactiontype_row;
-  MYSQL *producing_db, *type_db, *material_db, *shopfaction_db, *shopfactiontype_db;
+  MYSQL_RES *res, *producing_res, *type_res, *material_res, *shopfaction_res;
+  MYSQL_ROW row, producing_row, type_row, material_row, shopfaction_row;
+  MYSQL *producing_db, *type_db, *material_db, *shopfaction_db;
 
   /****** producing ******/
   producing_db=mysql_init(NULL);
@@ -2192,21 +2120,6 @@ void bootTheShops()
   shopfaction_res=mysql_use_result(shopfaction_db);
   shopfaction_row=mysql_fetch_row(shopfaction_res);
 
-  /****** shopfactiontype ******/
-  shopfactiontype_db=mysql_init(NULL);
-  if(!mysql_real_connect(shopfactiontype_db, NULL, "sneezy", NULL, 
-	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
-    vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
-    exit(0);
-  }
-
-  if(mysql_query(shopfactiontype_db, "select shop_nr, type from shopfactiontype order by shop_nr")){
-    vlogf(LOG_BUG, "Database query failed: %s\n", mysql_error(shopfactiontype_db));
-    exit(0);
-  }
-  shopfactiontype_res=mysql_use_result(shopfactiontype_db);
-  shopfactiontype_row=mysql_fetch_row(shopfactiontype_res);
-
 
   if(dbquery(&res, "sneezy", "bootTheShops", "select shop_nr, no_such_item1, no_such_item2, do_not_buy, missing_cash1, missing_cash2, message_buy, message_sell, temper1, temper2, keeper, flags, in_room, open1, close1, open2, close2, profit_buy, profit_sell from shop order by shop_nr")){
     vlogf(LOG_BUG, "Database error: bootTheShops");
@@ -2238,27 +2151,16 @@ void bootTheShops()
       sd.profit_buy=atof(shopfaction_row[2]);
       sd.profit_sell=atof(shopfaction_row[3]);
 
-      while(shopfactiontype_row && atoi(shopfactiontype_row[0])==shop_nr){
-	sd.type.push_back(atoi(shopfactiontype_row[1]));
-	shopfactiontype_row=mysql_fetch_row(shopfactiontype_res);
-      }
-      //      sd.type.push_back(-1);
       shopfaction_row=mysql_fetch_row(shopfaction_res);
       
-      while(type_row && atoi(type_row[0])==shop_nr)
-	type_row=mysql_fetch_row(type_res);
     } else {
       sd.profit_buy=atof(row[17]);
       sd.profit_sell=atof(row[18]);
-    
-      while(type_row && atoi(type_row[0])==shop_nr){
-	sd.type.push_back(atoi(type_row[1]));
-	type_row=mysql_fetch_row(type_res);
-      }
-      //      sd.type.push_back(-1);
+    }
 
-      while(shopfactiontype_row && atoi(shopfactiontype_row[0])==shop_nr)
-	shopfactiontype_row=mysql_fetch_row(shopfactiontype_res);
+    while(type_row && atoi(type_row[0])==shop_nr){
+      sd.type.push_back(atoi(type_row[1]));
+      type_row=mysql_fetch_row(type_res);
     }
     
     while(producing_row && atoi(producing_row[0])==shop_nr){
@@ -2285,8 +2187,6 @@ void bootTheShops()
   mysql_close(material_db);
   mysql_free_result(shopfaction_res);
   mysql_close(shopfaction_db);
-  mysql_free_result(shopfactiontype_res);
-  mysql_close(shopfactiontype_db);
 }
 
 #endif

@@ -857,6 +857,44 @@ void ShowNewNews(TBeing * tBeing)
         fclose(tFile);
       }
 
+  if (tPosted)
+    tBeing->sendTo("\n\r");
+
+  tPosted = false;
+  tCount  = 0;
+
+  // Report for the NEWS.new file (help nexversion)
+  if (!stat("help/nextversion", &tData))
+    if (tTime - tData.st_mtime <= (3 * SECS_PER_REAL_DAY))
+      if ((tFile = fopen("help/nextversion", "r"))) {
+        while (!feof(tFile)) {
+          fgets(tString, 256, tFile);
+
+          if (sscanf(tString, "%d-%d-%d : ", &tMon, &tDay, &tYear) != 3)
+            continue;
+
+          if (!MakeTimeT(tMon, tDay, tYear, tLast))
+            break;
+
+          if (!tPosted) {
+            tPosted = true;
+            tBeing->sendTo("Future NEWS File Changes:\n\r");
+          }
+
+          tBeing->sendTo("%s", tString);
+
+          if (++tCount == 10) {
+            tBeing->sendTo("...And there is more, SEE NEWS to see more.\n\r");
+            break;
+          }
+        }
+
+        fclose(tFile);
+      }
+
+  if (tPosted)
+    tBeing->sendTo("\n\r");
+
   tPosted = false;
   tCount  = 0;
 
@@ -887,6 +925,9 @@ void ShowNewNews(TBeing * tBeing)
 
         fclose(tFile);
       }
+
+  if (tPosted)
+    tBeing->sendTo("\n\r");
 }
 
 // if descriptor is to be deleted, DELETE_THIS

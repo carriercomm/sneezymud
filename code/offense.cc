@@ -1235,6 +1235,8 @@ int TObj::burnObject(TBeing *ch, int perc)
     return FALSE;
   if (::number(1,100) > perc)
     return FALSE;
+  if (dynamic_cast<TSpellBag *>(this))
+    return FALSE;
 
   if (ch && (ch == equippedBy) &&
       material_nums[getMaterial()].conductivity) {
@@ -1254,18 +1256,15 @@ int TObj::burnObject(TBeing *ch, int perc)
     t2 = t->nextThing;
     if (trc) {
       if (trc->isClosed())
-        perc2 = 10 * perc / 100;   // 10% chance if closed
+        perc2 = 5 * perc / 100;   // 5% chance if closed
       else if (trc->isCloseable())
-        perc2 = 8 * perc / 10;     // 80% chance if open and closable
+        perc2 = 6 * perc / 10;     // 60% chance if open and closable
       else
-        perc2 = 6 * perc / 10;     // 60% chance for unclosable containers
+        perc2 = 5 * perc / 10;     // 50% chance for unclosable containers
     } else
-      perc2 = 6 * perc / 10;     // 60% chance for unclosable containers
+      perc2 = 5 * perc / 10;     // 50% chance for unclosable containers
     TObj * tot = dynamic_cast<TObj *>(t);
 
-    // Seems alot of comps are burnable.  Lets make it a little easier on them.
-    if (dynamic_cast<TSpellBag *>(this))
-      perc2 /= 3;
 
     if (tot) {
       rc = tot->burnObject(ch, perc2);

@@ -2,23 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_earth.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/09/27 19:27:33  lapsos
-// added road and city as viable earth elements.
-//
-// Revision 1.2  1999/09/16 04:56:10  peel
-// Conjure earth elemental requires being in an earthy sector to work (!notRangerLandSector())
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -679,8 +662,9 @@ int stoneSkin(TBeing * caster, TBeing * victim, int level, byte bKnown)
     if (caster != victim)
       aff1.modifier /= 5;
 
-    victim->affectTo(&aff1);
-    victim->affectTo(&aff2);
+    victim->affectJoin(caster, &aff1, AVG_DUR_NO, AVG_DUR_YES);
+    victim->affectJoin(caster, &aff2, AVG_DUR_NO, AVG_DUR_YES);
+
     act("$n's skin turns to hard granite.", FALSE, victim, NULL, NULL, TO_ROOM);
     act("Your skin turns to hard granite.", FALSE, victim, NULL, NULL, TO_CHAR);
     return SPELL_SUCCESS;

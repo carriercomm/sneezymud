@@ -985,6 +985,10 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SPELL_FEAR:
       case SPELL_SLUMBER:
       case SPELL_CONJURE_EARTH:
+      case SPELL_ENTHRALL_SPECTRE:
+      case SPELL_ENTHRALL_GHAST:
+      case SPELL_ENTHRALL_GHOUL:
+      case SPELL_ENTHRALL_DEMON:
       case SPELL_CONJURE_AIR:
       case SPELL_CONJURE_FIRE:
       case SPELL_CONJURE_WATER:
@@ -1054,6 +1058,7 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
       case SPELL_HEAL_FULL_SPRAY:
       case SPELL_RESTORE_LIMB:
       case SPELL_KNIT_BONE:
+      case SPELL_SHIELD_OF_MISTS:
       case SKILL_RESCUE:
       case SKILL_SMYTHE:
       case SKILL_DISARM:

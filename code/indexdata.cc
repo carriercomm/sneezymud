@@ -7,7 +7,7 @@
 
 #include "stdsneezy.h"
 #include "statistics.h"
-#include <libpq++.H>
+// #include <libpq++.H>
 
 extern FILE *obj_f;
 extern FILE *mob_f;

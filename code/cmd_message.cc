@@ -1,13 +1,11 @@
-/*****************************************************************************
-
-  SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
-
-  "cmd_message.cc"
-  All functions and routines related to the various message modifiers.
-
-  Created 6/ 1/99 - Lapsos(William A. Perrotto III)
-
-******************************************************************************/
+/////////////////////////////////////////
+//
+//  SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
+//
+//  "cmd_message.cc"
+//  All functions and routines related to the various message modifiers.
+//
+/////////////////////////////////////////
 
 #include <unistd.h>
 #include "stdsneezy.h"
@@ -417,7 +415,8 @@ TMessages & TMessages::operator()(messageTypeT tValue, string tStString)
       tMessages.msgLongDescr = new char[tStString.length() + 1];
       strcpy(tMessages.msgLongDescr, tStString.c_str());
       break;
-    default:
+    case MSG_ERROR:
+    case MSG_MAX:
       vlogf(LOG_BUG, "TMessages::operator()(int, string) got invalid tValue.  [%d]",
             tValue);
   }

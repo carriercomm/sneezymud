@@ -15,6 +15,7 @@
 #include "disease.h"
 #include "mail.h"
 #include "shop.h"
+#include "cmd_trophy.h"
 
 #define DAMAGE_DEBUG 0
 
@@ -4544,11 +4545,17 @@ double TBeing::getExpSharePerc() const
   return ((getExpShare()/totalshares)*100);
 }
 
+
 // FRACT: fraction of true xp gained if I am killing way below my level
 // this only applies if i am 3+ levels over mob
 // will always get 100-95 = 5% of real xp (13+ level diffrence)
 static int FRACT(TBeing *ch, TBeing *v)
 {
+  MYSQL_ROW row;
+  MYSQL_RES *res;
+  int rc;
+  int fract=100;
+
 #if 0
   int diff_levs = ch->GetMaxLevel() - v->GetMaxLevel();
   int level_cut = 3;
@@ -4565,26 +4572,44 @@ static int FRACT(TBeing *ch, TBeing *v)
   else if (ch->hasClass(CLASS_MAGE))
     level_cut = 6;
 
-  if (diff_levs <= level_cut)
-    return 100;
-
-  // scale the diff_levs based on level
-  // what testing revealed was that a 10 lev diff at level 50 (50v40) was
-  // equiv to a 7 level diff at level 20 (20v13)
-  // I'm basically going to allow normalizing by adding (50-lev)/10 to
-  // diff_levs.  (add 5 to do good rounding)
-  diff_levs += (MAX_MORT - ch->GetMaxLevel() + 5)/10;
-
-  diff_levs -= level_cut;
-  diff_levs = max(0, diff_levs);
-
-  return 100 - (min(95, diff_levs * diff_levs));
+  if (diff_levs <= level_cut) {
+    fract=100;
+  } else {
+    // scale the diff_levs based on level
+    // what testing revealed was that a 10 lev diff at level 50 (50v40) was
+    // equiv to a 7 level diff at level 20 (20v13)
+    // I'm basically going to allow normalizing by adding (50-lev)/10 to
+    // diff_levs.  (add 5 to do good rounding)
+    diff_levs += (MAX_MORT - ch->GetMaxLevel() + 5)/10;
+    
+    diff_levs -= level_cut;
+    diff_levs = max(0, diff_levs);
+    
+    fract=( 100 - (min(95, diff_levs * diff_levs)));
+  }
 #else
   // the new exp curve doubles xp based on double the difficulty
   // this should mean that plowing (killing easy mobs for high fraction
   // of xp that mob of same level yields) is no longer possible.
-  return 100;
+  fract=100;
 #endif;
+
+  // modify for trophy now
+  if(ch->isPc() && !v->isPc()){
+    if((rc=dbquery(&res, "sneezy", "consider/trophy", "select mobvnum, count from trophy where name='%s' and mobvnum=%i", ch->getName(), v->mobVnum()))){
+      if(rc!=1){
+	ch->sendTo("Database error!  Talk to a coder ASAP.\n\r");
+	return fract;
+      }
+    } else if((row=mysql_fetch_row(res))){
+#ifdef SNEEZY2000
+      fract=(int)(fract*trophy_exp_mod(atof(row[1])));
+#endif
+    }
+  }
+
+
+  return fract;
 }
 
 

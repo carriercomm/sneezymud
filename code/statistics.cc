@@ -70,16 +70,26 @@ int init_game_stats(void)
   // 1.40 resulted in 16-20 days playtime to L50
   // 1.05 resulted in 25-30 day to L50 (4.1)
   // 0.80 had reasonable rages for 4.5 beta
+#ifdef SNEEZY2000
+  stats.xp_modif = 0.85;   // people had is too easy in 5.0-5.1
+  // 5.2 will be more challenging
+#else
   stats.xp_modif = 0.75;   // this affects xp mobs will have
-
+#endif
   // this affects damage applied.
   // it should be used to slow down or speed up fights
   // i.e. lowering it causes less damage to be applied, so fights take longer
   // c.f. balance notes for complete discussion
   // value of 1.0 makes fair fights take about 30 rounds = 90 seconds
   // a value of 0.75 should make for 120 second fights
+#ifdef SNEEZY2000
+  stats.damage_modifier = 0.68;
+  // 5.0-5.1 was too easy and too fast
+  // people could level to 50 in 2-6 play days
+  // this should be better for 5.2
+#else
   stats.damage_modifier = 0.75;
-
+#endif
   // Enabling this makes game look at player activity to decide
   // if deleting should occur.  This MUST be true for ANY form of
   // deleting to occur

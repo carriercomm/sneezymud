@@ -1266,6 +1266,11 @@ string TBeing::describeAffects(TBeing *ch, showMeT showme) const
 	     describeDuration(this, aff->duration).c_str());
         str += buf;
         break;
+      case AFFECT_PLAYERLOOT:
+        sprintf(buf, "Player Looter:\t Time Left : %s\n\r",
+                describeDuration(this, aff->duration).c_str());
+        str += buf;
+        break;
       case AFFECT_TEST_FIGHT_MOB:
         sprintf(buf, "Test Fight Mob: %ld\n\r",
                aff->modifier);

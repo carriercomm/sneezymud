@@ -595,8 +595,9 @@ Descriptor::~Descriptor()
             character->getExp(), num, character->age_mod, 
             dynamic_cast<TPerson *>(character)->last_rent);
       character->desc = NULL;
-      if(!character->affectedBySpell(AFFECT_PLAYERKILL) ||
-	 character->isImmortal()){
+      if((!character->affectedBySpell(AFFECT_PLAYERKILL) &&
+          !character->affectedBySpell(AFFECT_PLAYERLOOT)) ||
+	  character->isImmortal()){
 	character->setInvisLevel(GOD_LEVEL1);
       }
 

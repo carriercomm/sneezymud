@@ -2574,6 +2574,10 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
     act("$n looks at $N and says, 'Murderers are not allowed to stay here!'", FALSE, recep, 0, ch, TO_NOTVICT);
     return TRUE;
   }
+  if (ch->affectedBySpell(AFFECT_PLAYERLOOT) && !ch->isImmortal()) {
+    act("$n motions at you then whispers, \"Someone is after you for the moment and I can not allow you to stay here...Sorry.\"", FALSE, recep, NULL, ch, TO_VICT);
+    return TRUE;
+  }
 
 #if RENT_RESTRICT_INNS_BY_LEVEL
   // remnant of code that only let high level pc's rent out of grim

@@ -749,6 +749,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller = NULL)
       case AFFECT_CHARM:
       case AFFECT_THRALL:
       case AFFECT_PLAYERKILL:
+      case AFFECT_PLAYERLOOT:
       case AFFECT_HORSEOWNED:
       case LAST_ODDBALL_AFFECT:
         break;

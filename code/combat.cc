@@ -4001,7 +4001,8 @@ void TBeing::catchLostLink(TBeing *vict)
   char *tmstr;
   TRoom *rp;
 
-  if(vict->affectedBySpell(AFFECT_PLAYERKILL)){
+  if (vict->affectedBySpell(AFFECT_PLAYERKILL) ||
+      vict->affectedBySpell(AFFECT_PLAYERLOOT)) {
     return;
   }
 

@@ -669,6 +669,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case AFFECT_CHARM:
     case AFFECT_THRALL:
     case AFFECT_PLAYERKILL:
+    case AFFECT_PLAYERLOOT:
     case AFFECT_HORSEOWNED:
     case LAST_ODDBALL_AFFECT:
       bit = IMMUNE_NONE;

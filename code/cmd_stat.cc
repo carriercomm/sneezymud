@@ -1315,6 +1315,12 @@ void TBeing::statBeing(TBeing *k)
                   "     Expires in %d updates.\n\r",
             aff->duration);
         break;
+      case AFFECT_PLAYERLOOT:
+        sprintf(buf + strlen(buf), "Player-Looter: \n\r");
+        sprintf(buf + strlen(buf),
+                  "     Expires in %d updates.\n\r",
+                aff->duration);
+        break;
       case AFFECT_TEST_FIGHT_MOB:
         sprintf(buf + strlen(buf), "Test Fight Mob: \n\r");
         sprintf(buf + strlen(buf), 

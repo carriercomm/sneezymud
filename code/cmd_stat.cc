@@ -502,46 +502,6 @@ void TBeing::statBeing(TBeing *k)
     sprintf(buf + strlen(buf),"Long description: %s",
     	   (km->player.longDescr ? km->player.longDescr : "None"));
 
-    if (km->resps && km->resps->respList) {
-      sprintf(buf + strlen(buf),"Response(s):\n\r----------\n\r");
-      for (respy = km->resps->respList; respy; respy = respy->next) {
-        if (respy->cmd < MAX_CMD_LIST) {
-          sprintf(buf + strlen(buf),"%s %s\n\r", commandArray[respy->cmd]->name, respy->args);
-        } else if (respy->cmd == CMD_RESP_ROOM_ENTER) {
-          sprintf(buf + strlen(buf),"roomenter\n\r");
-        } else if (respy->cmd == CMD_RESP_PACKAGE) {
-          sprintf(buf + strlen(buf),"dummy %s\n\r", respy->args);
-        } else {
-          sprintf(buf + strlen(buf),"%d %s\n\r", respy->cmd, respy->args);
-        }
-      }
-      sprintf(buf + strlen(buf),"----------\n\r");
-
-      if (km->resps->respMemory) {
-        sprintf(buf + strlen(buf), "Response Memory:\n\r----------\n\r");
-
-        for (RespMemory *rMem = km->resps->respMemory; rMem; rMem = rMem->next)
-          if (rMem->cmd < MAX_CMD_LIST) {
-            sprintf(buf + strlen(buf), "%s %s %s\n\r",
-                    (rMem->name ? rMem->name : "Unknown"),
-                    commandArray[rMem->cmd]->name,
-                    (rMem->args ? rMem->args : ""));
-	  } else if (rMem->cmd == CMD_RESP_ROOM_ENTER) {
-            sprintf(buf + strlen(buf), "%s %s %s\n\r",
-                    (rMem->name ? rMem->name : "Unknown"),
-                    "roomenter",
-                    (rMem->args ? rMem->args : ""));
-          } else {
-            sprintf(buf + strlen(buf), "%s %d %s\n\r",
-                    (rMem->name ? rMem->name : "Unknown"),
-                    rMem->cmd,
-                    (rMem->args ? rMem->args : ""));
-          }
-
-        sprintf(buf + strlen(buf),"----------\n\r");
-      }
-    } else
-      sendTo(buf + strlen(buf),"Response(s): None.\n\r");
   } else {
     Descriptor *d = k->desc;
 
@@ -901,6 +861,49 @@ void TBeing::statBeing(TBeing *k)
                        k->getStuckIn(il)->getName():
                        "None"));
     }
+  }
+
+  if (km) {
+    if (km->resps && km->resps->respList) {
+      sprintf(buf + strlen(buf),"Response(s):\n\r----------\n\r");
+      for (respy = km->resps->respList; respy; respy = respy->next) {
+        if (respy->cmd < MAX_CMD_LIST) {
+          sprintf(buf + strlen(buf),"%s %s\n\r", commandArray[respy->cmd]->name, respy->args);
+        } else if (respy->cmd == CMD_RESP_ROOM_ENTER) {
+          sprintf(buf + strlen(buf),"roomenter\n\r");
+        } else if (respy->cmd == CMD_RESP_PACKAGE) {
+          sprintf(buf + strlen(buf),"package %s\n\r", respy->args);
+        } else {
+          sprintf(buf + strlen(buf),"%d %s\n\r", respy->cmd, respy->args);
+        }
+      }
+      sprintf(buf + strlen(buf),"----------\n\r");
+
+      if (km->resps->respMemory) {
+        sprintf(buf + strlen(buf), "Response Memory:\n\r----------\n\r");
+
+        for (RespMemory *rMem = km->resps->respMemory; rMem; rMem = rMem->next)
+          if (rMem->cmd < MAX_CMD_LIST) {
+            sprintf(buf + strlen(buf), "%s %s %s\n\r",
+                    (rMem->name ? rMem->name : "Unknown"),
+                    commandArray[rMem->cmd]->name,
+                    (rMem->args ? rMem->args : ""));
+	  } else if (rMem->cmd == CMD_RESP_ROOM_ENTER) {
+            sprintf(buf + strlen(buf), "%s %s %s\n\r",
+                    (rMem->name ? rMem->name : "Unknown"),
+                    "roomenter",
+                    (rMem->args ? rMem->args : ""));
+          } else {
+            sprintf(buf + strlen(buf), "%s %d %s\n\r",
+                    (rMem->name ? rMem->name : "Unknown"),
+                    rMem->cmd,
+                    (rMem->args ? rMem->args : ""));
+          }
+
+        sprintf(buf + strlen(buf),"----------\n\r");
+      }
+    } else
+      sendTo(buf + strlen(buf),"Response(s): None.\n\r");
   }
 
   strcat(buf, "\n\rAffecting Spells:\n\r--------------\n\r");

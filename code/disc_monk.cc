@@ -393,9 +393,14 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
   if (tString && *tString)
     only_argument(tString, tTarget);
   else {
-    if (!fight())
+    if (!fight()) {
+#if 1
+      sendTo("Chi what or whom?\n\r");
+      return FALSE;
+#else
       tVictim = this;
-    else
+#endif
+    } else
       tVictim = fight();
   }
 

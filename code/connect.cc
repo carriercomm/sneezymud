@@ -1247,9 +1247,10 @@ int Descriptor::nanny(const char *arg)
             objCost cost;
 
             if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
-              vlogf(LOG_PIO, "%s[*masked*] has reconnected  (account: *masked*).",
-                     character->getName());
-            } else {
+              vlogf(LOG_PIO, "%s[%s] has reconnected  (account: %s).",
+	             character->getName(), host, account->name);
+
+	    } else {
               vlogf(LOG_PIO, "%s[%s] has reconnected  (account: %s).", 
                      character->getName(), host, account->name);
             }

@@ -2829,15 +2829,23 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
 
   if(!strcmp(dbname, "sneezy")){
     if(!sneezydb){
+      if(gamePort == PROD_GAMEPORT){
+	char dbconnectstr[]="sneezy";
+      } else if(gamePort == BUILDER_GAMEPORT){
+	char dbconnectstr[]="sneezybuilder";
+      } else {
+	char dbconnectstr[]="sneezybeta";
+      }
+
       vlogf(LOG_MISC, "%s: Initializing database '%s'.", msg,
-	    (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"));
+	    dbconnectstr);
       sneezydb=mysql_init(NULL);
       
       vlogf(LOG_MISC, "%s: Connecting to database.", msg);
       if(!mysql_real_connect(sneezydb, NULL, "sneezy", NULL, 
-	  (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
+	  dbconnectstr, 0, NULL, 0)){
 	vlogf(LOG_BUG, "Could not connect to database '%s'.",
-	      (gamePort!=PROD_GAMEPORT ? "sneezybeta" : "sneezy"));
+	      dbconnectstr);
 	return -1;
       }
     }    

@@ -3549,24 +3549,8 @@ int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
   TObj *obj=NULL;
 
   if (cmd == CMD_GENERIC_PULSE){
-    if (!::number(0,500) && me->roomp) {
-#if 1
-// builder port uses stripped down database which was causing problems
-// hence this setup instead.
-      int robj = real_object(OBJ_PILE_OFFAL);
-      if (robj < 0 || robj >= (signed int) obj_index.size()) {
-        vlogf(LOG_BUG, "horse(): No object (%d) in database!",
-              OBJ_PILE_OFFAL);
-        return FALSE;
-      }
-
-      //      if (!(note = read_object(robj, REAL))) {
-      //  vlogf(LOG_BUG, "Couldn't make a pile of horse poop!");
-      //  return FALSE;
-      // }
-#else
+    if (!::number(0,500) && me->roomp && gamePort == PROD_GAMEPORT) {
       obj = read_object(OBJ_PILE_OFFAL, VIRTUAL);
-#endif
 
       if (obj) {
         *me->roomp += *obj;

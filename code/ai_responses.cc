@@ -41,12 +41,16 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
   int value;
   TObj *obj = NULL;
   TMonster *tMonster;
+  TThing *tThing;
   char buf[80];
   const char *arg2;
   cmdTypeT cmd_val;
   TRoom *tRoom;
   dirTypeT dir=DIR_NONE;
   RespMemory *tMem, *rMem, *lMem;
+  string tStObj(""),
+         tStSucker(""),
+         tStArgument(arg);
 
   if (!awake())
     return TRUE;
@@ -291,8 +295,26 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
       rc = doCommand(cmd, arg, NULL, FALSE);
       break;
     case CMD_GIVE:
+#if 1
+      tStArgument = two_arg(tStArgument, tStObj, tStSucker);
+      tThing = searchLinkedList(tStObj, stuff, TYPEOBJ);
+
+      if (mob && tThing && canSee(mob))
+        rc = doGiveObj(mob, tThing, GIVE_FLAG_DROP_ON_FAIL);
+      else if (!mob || !tThing)
+        vlogf(LOG_LAPSOS, "Error in doGiveObj:%s%s",
+              (mob ? "" : " !mob"),
+              (tThing ? "" : " !tThing"));
+
+      if (tThing && tThing->parent == this && roomp) {
+        doSay("Well I guess I'll just drop it here...");
+        --(*tThing);
+        *roomp += *tThing;
+      }
+#else
       //    Force the mob to drop if the give fails
       rc = doGive(arg, GIVE_FLAG_DROP_ON_FAIL);
+#endif
       break;
     case CMD_RESP_CHECKROOM:
       value = atoi(arg);

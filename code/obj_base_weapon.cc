@@ -484,6 +484,7 @@ int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
               v->describeBodySlot(part_hit).c_str());
       }
       act(buf, TRUE, v, item, ch, TO_VICT);
+      ch->sendTo(COLOR_OBJECTS, "<R>It is in<1> %s <R>condition.<1>\n\r",equip_condition(-1).c_str());
       addToCurSharp(-1);
     }
     // Check for structural damage
@@ -501,6 +502,7 @@ int TBaseWeapon::damageMe(TBeing *ch, TBeing *v, wearSlotT part_hit)
              ch->red(), ch->norm(), (item ? "$p on " : ""),
                v->describeBodySlot(part_hit).c_str());
           act(buf, FALSE, ch, item, v, TO_CHAR);
+	  ch->sendTo(COLOR_OBJECTS, "<R>It is in<1> %s <R>condition.<1>\n\r",equip_condition(-1).c_str());
         }
       }
     }

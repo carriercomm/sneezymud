@@ -241,7 +241,17 @@ int TBeing::spellWearOff(spellNumT s, safeTypeT safe)
   if (discArray[s]->fadeAwayRoom)
     act(discArray[s]->fadeAwayRoom, TRUE, this, 0, 0, TO_ROOM);
 
-  if (s == SPELL_ENSORCER) {
+  if (s == SPELL_ENSORCER ||
+      s == SPELL_CONJURE_AIR ||
+      s == SPELL_CONJURE_EARTH ||
+      s == SPELL_CONJURE_FIRE ||
+      s == SPELL_CONJURE_WATER ||
+      s == SPELL_CREATE_GOLEM ||
+      s == SPELL_CONTROL_UNDEAD ||
+      s == SPELL_VOODOO ||
+      s == SPELL_CACAODEMON ||
+      s == SPELL_RESURRECTION ||
+      s == SPELL_DANCING_BONES) {
     rc = checkDecharm(FORCE_NO, safe);
     if (IS_SET_DELETE(rc, DELETE_THIS))
       return DELETE_THIS;

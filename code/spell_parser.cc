@@ -61,6 +61,7 @@ int TBeing::useMana(spellNumT spl)
     return arrayMana;
   }
 }
+
  
 double TBeing::usePiety(spellNumT spl)
 {
@@ -320,6 +321,7 @@ void TBeing::saySpell(spellNumT si)
           ++offs;
       }
   }
+
   if (discArray[si]->minMana) {
     sprintf(buf2, "$n utters the incantation, '%s'", buf);
     sprintf(buf, "$n utters the incantation, '%s'", discArray[si]->name);
@@ -354,6 +356,7 @@ static int preflight_mana(TBeing *ch, spellNumT spl)
    
   return((howMuch <= totalAmt));
 }
+
 
 static int preflight_piety(TBeing *ch, spellNumT spl)
 {
@@ -459,6 +462,7 @@ int TBeing::reconcileMana(spellNumT spl, bool checking, int mana)
   }
   return TRUE;
 }
+
 
 char *skip_spaces(char *string)
 {
@@ -2365,4 +2369,5 @@ void buildTerrainDamMap()
     discArray[i]->sectorData[SECT_TEMPERATE_ROAD] = -5;
 
 }
+
 

@@ -1,3 +1,4 @@
+
 #ifndef __DISC_SHAMAN_ARMADILLO_H
 #define __DISC_SHAMAN_ARMADILLO_H
 

@@ -828,6 +828,7 @@ short int TBeing::manaLimit() const
   return 100;
 }
 
+
 double TBeing::pietyLimit() const
 {
   return 100.0;

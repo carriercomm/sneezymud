@@ -1292,6 +1292,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
         case CMD_LIGHT:
           doLight(tmpstring);
           break;
+	case CMD_FISH:
+	  doFish(newarg);
+	  break;
         case CMD_LOW:
           doLow(newarg);
           break;

@@ -543,6 +543,7 @@ enum cmdTypeT {
      CMD_ZONEFILE,
      CMD_LOOT,
      CMD_TROPHY,
+     CMD_FISH,
     MAX_CMD_LIST,  // Keep this as last command in regular list
 
        // a variety of "fake" commands used for a variety of purpsoses follow

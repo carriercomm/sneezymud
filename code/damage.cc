@@ -107,6 +107,28 @@ int TBeing::reconcileDamage(TBeing *v, int dam, spellNumT how)
   return rc;
 }
 
+
+void update_trophy(const char *name, int vnum, double add){
+  int rc;
+  char buf[256];
+  MYSQL_RES *res;
+
+  if(vnum==-1 || !name){ return; }
+  
+  if((rc=dbquery(&res, "sneezy", "update_trophy(1)", "insert ignore into trophy values ('%s', %i, 0)", name, vnum))){
+    if(rc==-1){
+      vlogf(LOG_BUG, "Database error in update_trophy");
+    }
+  }
+  sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", add, name, vnum);
+  if((rc=dbquery(&res, "sneezy", "update_trophy(2)", buf))){
+    if(rc==-1)
+      vlogf(LOG_BUG, "Database error in update_trophy");
+  }
+}
+
+
+
 // returns DELETE_VICT if v died
 int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
 {
@@ -211,6 +233,9 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
 // without a ton of hits
     if (!v->isPc() && (v->getHit() <= -2))
       dam = 11 + v->getHit();
+
+    update_trophy(this->getName(), v->mobVnum(), 
+		  ((double) dam / (double) (v->hitLimit()+11)));
 
     percent = ((double) dam / (double) (v->getHit() + 11));
 
@@ -729,65 +754,6 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
       }
     }
 
-#if 0
-    // disabled in favor of per-hit tracking
-
-  MYSQL_RES *res = NULL;
-
-    
-    // track trophy count
-    if (desc &&!roomp->isRoomFlag(ROOM_ARENA) && !inPkZone() && 
-	dynamic_cast<TMonster *>(v) && v->mobVnum()!=-1 &&
-	GetMaxLevel()>5){
-      
-      if(k && ngroup>1){
-        char querybuf[256];
-        sprintf(querybuf, "insert ignore into trophy values ('%s', %i, 0)",
-            k->desc ? (k->desc->original?k->desc->original->name:k->name) : "NoDesc", v->mobVnum());
-
-	if ((rc=dbquery(&res, "sneezy", "damageEpilog(1)", querybuf))) {
-	  if(rc==-1)
-	    vlogf(LOG_BUG, "Database error in damageEpilog");
-	}
-	sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", (float)((float)1/(float)ngroup), k->desc->original?k->desc->original->name:k->name, v->mobVnum());
-	if((rc=dbquery(&res, "sneezy", "damageEpilog(2)", buf))){
-	  if(rc==-1)
-	    vlogf(LOG_BUG, "Database error in damageEpilog");
-	}
-
-	for (f = k->followers; f; f = f->next) {
-	  if (f->follower->isAffected(AFF_GROUP) && canSee(f->follower) &&
-	      sameRoom(*f->follower) && f->follower->desc) {
-	    if((rc=dbquery(&res, "sneezy", "damageEpilog(3)", "insert ignore into trophy values ('%s', %i, 0)", f->follower->desc->original?f->follower->desc->original->name:f->follower->name, v->mobVnum()))){
-	      if(rc==-1)
-		vlogf(LOG_BUG, "Database error in damageEpilog");
-	    }
-	    sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", (float)((float)1/(float)ngroup), f->follower->desc->original?f->follower->desc->original->name:f->follower->name, v->mobVnum());
-	    if((rc=dbquery(&res, "sneezy", "damageEpilog(4)", buf))){
-	      if(rc==-1)
-		vlogf(LOG_BUG, "Database error in damageEpilog");
-	    }
-	  }
-	}
-      } else {
-	if((rc=dbquery(&res, "sneezy", "damageEpilog(5)", "insert ignore into trophy values ('%s', %i, 0)", desc->original?desc->original->name:name, v->mobVnum()))){
-	  if(rc==-1)
-	    vlogf(LOG_BUG, "Database error in damageEpilog");
-	}
-	sprintf(buf, "update trophy set count=count+%f where name='%s' and mobvnum=%i", (float)((float)1/(float)ngroup), desc->original?desc->original->name:name, v->mobVnum());
-	if((rc=dbquery(&res, "sneezy", "damageEpilog(6)", buf))){
-	  if(rc==-1)
-	    vlogf(LOG_BUG, "Database error in damageEpilog");
-	}
-      }
-    }
-    if(v->isPc() && v->desc){
-      if((rc=dbquery(&res, "sneezy", "damageEpilog(7)", "update trophy set count=(count/4)*3 where name='%s'", v->desc->original?v->desc->original->name:v->name))){
-	if(rc==-1)
-	  vlogf(LOG_BUG, "Database error in damageEpilog");
-      }
-    }
-#endif
 
     strcpy(buf2, v->name);
     add_bars(buf2);

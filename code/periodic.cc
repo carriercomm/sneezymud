@@ -1537,7 +1537,7 @@ void TBeing::checkCharmMana()
       vlogf(LOG_BUG, "Non-Tbeing in followers of %s", getName());
       return;
     }
-    if (!ch->isCharm() && !ch->isZombie())
+    if (!ch->isCharm() && !ch->isThrall())
       continue;
  
     if (!sameRoom(*ch)) {
@@ -1551,7 +1551,8 @@ void TBeing::checkCharmMana()
     mana += plotStat(STAT_CURRENT, STAT_FOC, 16, 1, 8);
     mana += plotStat(STAT_CURRENT, STAT_CHA, 16, 1, 8);
 
-    if (ch->isZombie())
+    // thralls owe lifeforce to master, so don't fight master's will as much
+    if (ch->isThrall())
       mana = 2*mana/3;
 
     if (!hasClass(CLASS_CLERIC) && !hasClass(CLASS_DEIKHAN)) {
@@ -1567,8 +1568,13 @@ void TBeing::checkCharmMana()
         }
         setMana(0);
       } else {
-        act("The effort of keeping $N enthralled weakens you.", 
-             FALSE, this, 0, ch, TO_CHAR);
+        if (ch->isThrall())
+          act("The effort of keeping $N enthralled weakens you.", 
+               FALSE, this, 0, ch, TO_CHAR);
+        else
+          act("The effort of keeping $N charmed weakens you.", 
+               FALSE, this, 0, ch, TO_CHAR);
+
         reconcileMana(TYPE_UNDEFINED, FALSE, mana);
       }
     } else {
@@ -1587,7 +1593,13 @@ void TBeing::checkCharmMana()
         }
         setPiety(0.0);
       } else {
-        act("The effort of keeping $N enthralled weakens you.", FALSE, this, 0, ch, TO_CHAR);
+        if (ch->isThrall())
+          act("The effort of keeping $N enthralled weakens you.", 
+               FALSE, this, 0, ch, TO_CHAR);
+        else
+          act("The effort of keeping $N charmed weakens you.", 
+               FALSE, this, 0, ch, TO_CHAR);
+
         addToPiety(-piety);
       }
     }

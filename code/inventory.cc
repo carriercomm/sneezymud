@@ -231,7 +231,7 @@ int TRealContainer::openMe(TBeing *ch)
         setContainerTrapDam(0);
         addContainerFlag(CONT_GHOSTTRAP);
 
-        sprintf(buf, "You start to open $p, but then you notice an insideous %s trap...",
+        sprintf(buf, "You start to open $p, but then notice an insideous %s trap...",
                 good_uncap(trap_types[getContainerTrapType()]).c_str());
         act(buf, TRUE, ch, this, NULL, TO_CHAR);
 

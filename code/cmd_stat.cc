@@ -467,9 +467,9 @@ void TBeing::statBeing(TBeing *k)
   }
 
   if (tMonster)
-    sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d] Room[%d] ORoom[%d]\n\r",
+    sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d]\n\r     In-Room[%d] Old-Room[%d] Birth-Room[%d]\n\r",
             (dynamic_cast<const TPerson *>(k) ? "PC" : "NPC"),
-            k->name, k->number, k->in_room, tMonster->oldRoom);
+            k->name, k->number, k->in_room, tMonster->oldRoom, tMonster->brtRoom);
   else
     sprintf(buf + strlen(buf), "%s - Name : %s [M-Num: %d] Room[%d]\n\r",
             (dynamic_cast<const TPerson *>(k) ? "PC" : "NPC"),

@@ -152,6 +152,7 @@ TMonster::TMonster() :
   fears(),
   persist(0), 
   oldRoom(ROOM_NOWHERE),
+  brtRoom(ROOM_NOWHERE),
   hatefield(0),
   fearfield(0),
   moneyConst(0),
@@ -171,7 +172,8 @@ TMonster::TMonster(const TMonster &a) :
   hates(a.hates),
   fears(a.fears),
   persist(a.persist), 
-  oldRoom(a.oldRoom), 
+  oldRoom(a.oldRoom),
+  brtRoom(a.brtRoom),
   hatefield(a.hatefield),
   fearfield(a.fearfield),
   moneyConst(a.moneyConst),
@@ -205,6 +207,7 @@ TMonster & TMonster::operator=(const TMonster &a)
   fears = a.fears;
   persist = a.persist;
   oldRoom = a.oldRoom;
+  brtRoom = a.brtRoom;
   hatefield = a.hatefield;
   fearfield = a.fearfield;
   moneyConst = a.moneyConst;

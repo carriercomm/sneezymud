@@ -1213,6 +1213,11 @@ int TPerson::doAt(const char *argument, bool isFarlook)
     strcat(com_buf, tStArgument.c_str());
   }
 
+  if (location == ROOM_STORAGE && !hasWizPower(POWER_GOTO_IMP_POWER)) {
+    sendTo("You are forbidden to do this.  Sorry.\n\r");
+    return FALSE;
+  }
+
   original_loc = in_room;
   --(*this);
   if (riding) {
@@ -1304,6 +1309,11 @@ int TBeing::doGoto(const string & argument)
 
   if (isSpammyRoom(location) && !is_abbrev(tStString.c_str(), "yes")) {
     sendTo("To enter this particular room you must do: goto %d yes\n\r", location);
+    return FALSE;
+  }
+
+  if (location == ROOM_STORAGE && !hasWizPower(POWER_GOTO_IMP_POWER)) {
+    sendTo("You are forbidden to do this.  Sorry.\n\r");
     return FALSE;
   }
 

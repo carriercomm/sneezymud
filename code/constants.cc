@@ -697,7 +697,7 @@ const char * const chest_bits[] =
   "Locked",
   "Trapped",
   "Secret (No-See)",
-  "Detect-Trap/No-Trap",
+  "Detect-Trap/Empty-Trap",
   "Detect-Trap/Ghost-Trap",
 };
 

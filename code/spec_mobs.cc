@@ -3337,7 +3337,7 @@ int cityguard(TBeing *, cmdTypeT cmd, const char *, TMonster *ch, TObj *)
     if (tch->isImmortal() && tch->isPlayerAction(PLR_NOHASSLE))
       continue;
     if (!ch->isUndead() && !ch->isDiabolic()) {
-      if ((tch->isUndead() || tch->isDiabolic()) && !tch->inGrimhaven()) {
+      if ((tch->isUndead() || tch->isDiabolic()) && !tch->inGrimhaven() && !tch->isPc()) {
         if (!ch->checkSoundproof())
           act("$n screams 'Get thee back to the underworld that spawned you!!!!'", FALSE, ch, 0, 0, TO_ROOM);
 

@@ -636,6 +636,7 @@ int TBeing::doCudgel(const char * argument, TBeing *vict)
     sendTo("You know nothing about cudgeling.\n\r");
     return FALSE;
   }
+
   if (checkBusy(NULL)) {
     return FALSE;
   }
@@ -687,6 +688,17 @@ int cudgel(TBeing *thief, TBeing *victim)
       return FALSE;
     }
   }
+
+#ifdef SNEEZY2000
+  if ((getMaxLevel(victim) >= 40) && (getMaxLevel(victim) >= getMaxLevel(thief))) {
+    act("You miss your attempt to knock $N unconscious.", FALSE, thief, obj, victim, TO_CHAR);
+    act("$n misses $s attempt to knock $N unconscious.", FALSE, thief, obj, victim, TO_NOTVICT);
+    act("$n misses $s attempt to knock you unconscious.", FALSE, thief, obj, victim, TO_VICT);   
+    addSkillLag(SKILL_CUDGEL, thief);
+    victim->addHated(thief);
+    return TRUE;
+  }
+#endif
 
   if (thief->riding) {
     thief->sendTo("Not while mounted!\n\r");

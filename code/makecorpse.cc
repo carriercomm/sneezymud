@@ -760,7 +760,17 @@ void TBeing::makeCorpse(spellNumT dmg_type)
   gen_corpse->setWeight(specialCorpse ? 1.0 : getWeight());
   gen_corpse->obj_flags.wear_flags = ITEM_TAKE;
   gen_corpse->setVolume(getVolume());
+
+  // whacky problems from shadowy/glowing EQ and such
+  // No reason to set the cbs based on creature.
+#if 1
+  if (isPc())
+    gen_corpse->canBeSeen = 0;
+  else
+    gen_corpse->canBeSeen = canBeSeen;
+#else
   gen_corpse->canBeSeen = canBeSeen;
+#endif
 
   // generate an empty corpse if in a pk zone
   if(pcorpse && inPkZone()){

@@ -295,6 +295,11 @@ int board_display_msg(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
     ch->sendTo("This board is for the Brotherhood of Galek only.\n\r");
     return TRUE;
   }
+  if (!ch->isImmortal() && me->objVnum()==FACT_BOARD_SERPENT && 
+      ch->getFaction()!=FACT_SNAKE){
+    ch->sendTo("This board is for the Order of Serpents only.\n\r");
+    return TRUE;
+  }
   if (me->getBoardLevel() > ch->GetMaxLevel()) {
     ch->sendTo("Your eyes are too lowly to look at this board.\n\r");
     return TRUE;
@@ -350,6 +355,11 @@ int board_show_board(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
   if (!ch->isImmortal() && me->objVnum()==FACT_BOARD_BROTHER && 
       ch->getFaction()!=FACT_BROTHERHOOD){
     ch->sendTo("This board is for the Brotherhood of Galek only.\n\r");
+    return TRUE;
+  }
+  if (!ch->isImmortal() && me->objVnum()==FACT_BOARD_SERPENT && 
+      ch->getFaction()!=FACT_SNAKE){
+    ch->sendTo("This board is for the Order of Serpents only.\n\r");
     return TRUE;
   }
   if (me->getBoardLevel() > ch->GetMaxLevel()) {

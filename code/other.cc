@@ -2119,7 +2119,7 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
       break;
     case SPELL_DISPEL_MAGIC:
       if (target) 
-        rc = dispelMagic(caster,target,obj);
+        dispelMagic(caster,target,obj);
       else
         rc = dispelMagic(caster,victim,obj);
       break;

@@ -554,8 +554,8 @@ int castHealFull(TBeing *caster, TBeing *victim)
 int healCritSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
 {
   int hp_tmp;
-  bool healed_evil = FALSE;
-  int decrem;
+  //  bool healed_evil = FALSE;
+  //  // int decrem;
   int hp = caster->getSkillDam(NULL, SPELL_HEAL_CRITICAL_SPRAY, level, adv_learn);
   TThing *t;
   TBeing *targ;
@@ -598,24 +598,26 @@ int healCritSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
                 FALSE, targ, NULL, NULL, TO_CHAR);
 
       hp_tmp = hp;
-      hp_tmp /= (caster->isSameFaction(targ) ? 1 : 2);
+      //      hp_tmp /= (caster->isSameFaction(targ) ? 1 : 2);
       targ->addToHit(hp_tmp);
       targ->updatePos();
+#if 0
       if (caster->isOppositeFaction(targ)) {
         decrem = (int) (caster->getMove() / 4);
         caster->addToMove(-decrem);
         healed_evil = TRUE;
       }
+#endif
     }
-    if (healed_evil) {
 #if 0
+    if (healed_evil) {
       caster->sendTo("%s frowns upon the healing of minions of the enemy.\n\r",
             good_cap(caster->yourDeity(SPELL_HEAL_CRITICAL_SPRAY, FIRST_PERSON)).c_str());
       caster->sendTo("You are exhausted from the effort of doing so.\n\r");
       act("$n's chest heaves from exhaustion.", FALSE, caster, NULL, NULL, TO_ROOM);
       caster->updatePos();
-#endif
     }
+#endif
     return SPELL_SUCCESS;
   } else {
     caster->deityIgnore();
@@ -652,8 +654,8 @@ int healSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
 {
   int hp = caster->getSkillDam(NULL, SPELL_HEAL_SPRAY, level, adv_learn);
   int hp_tmp;
-  bool healed_evil= FALSE;
-  int decrem;
+  // bool healed_evil= FALSE;
+  // int decrem;
   TThing *t;
   TBeing *targ = NULL;
 
@@ -692,15 +694,18 @@ int healSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
       act("You revel in the healing bath!\n\rYou feel revived!", FALSE, targ, NULL, NULL, TO_CHAR);
 
       hp_tmp = hp;
-      hp_tmp /= (caster->isSameFaction(targ) ? 1 : 2);
+      //      hp_tmp /= (caster->isSameFaction(targ) ? 1 : 2);
       targ->addToHit(hp_tmp);
       targ->updatePos();
+#if 0
       if (caster->isOppositeFaction(targ)) {
         decrem = (int) (caster->getMove() / 4);
         caster->addToMove(-decrem);
         healed_evil = TRUE;
       }
+#endif
     }
+#if 0
     if (healed_evil) {
       caster->sendTo("%s frowns upon the healing of minions of the enemy.\n\r",
           good_cap(caster->yourDeity(SPELL_HEAL_SPRAY, FIRST_PERSON)).c_str());
@@ -708,6 +713,7 @@ int healSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
       act("$n's chest heaves from exhaustion.", FALSE, caster, NULL, NULL, TO_ROOM);
       caster->updatePos();
     }
+#endif
     return SPELL_SUCCESS;
   } else {
     caster->deityIgnore();
@@ -746,8 +752,8 @@ int healFullSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
 {
   int hp = caster->getSkillDam(NULL, SPELL_HEAL_FULL_SPRAY, level, adv_learn);
   int hp_tmp;
-  bool healed_evil = FALSE;
-  int decrem;
+  // bool healed_evil = FALSE;
+  // int decrem;
   TBeing *targ = NULL;
   TThing *t;
 
@@ -789,15 +795,18 @@ int healFullSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
       act("You revel in the healing colors!\n\rYou feel revived!",
              FALSE, targ, NULL, NULL, TO_CHAR);
       hp_tmp = hp;
-      hp_tmp /= (caster->isSameFaction(targ) ? 1 : 2);
+      //      hp_tmp /= (caster->isSameFaction(targ) ? 1 : 2);
       targ->addToHit(hp_tmp);
       targ->updatePos();
+#if 0
       if (caster->isOppositeFaction(targ)) {
         decrem = (int) (caster->getMove() / 4);
         caster->addToMove(-decrem);
         healed_evil = TRUE;
       }
+#endif
     }
+#if 0
     if (healed_evil) {
       caster->sendTo("%s frowns upon the healing of minions of the enemy.\n\r",
             good_cap(caster->yourDeity(SPELL_HEAL_FULL_SPRAY, FIRST_PERSON)).c_str());
@@ -805,6 +814,7 @@ int healFullSpray(TBeing * caster, int level, byte bKnown, int adv_learn)
       act("$n's chest heaves from exhaustion.", FALSE, caster, NULL, NULL, TO_ROOM);
       caster->updatePos();
     }
+#endif
     return SPELL_SUCCESS;
   } else {
     caster->deityIgnore();

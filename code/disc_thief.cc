@@ -410,13 +410,53 @@ int TBeing::doDisguise(const char *arg)
   return rc;
 }
 
-static const int LAST_DISGUISE_MOB = 4;
+static const int LAST_DISGUISE_MOB = 28;
 struct PolyType DisguiseList[LAST_DISGUISE_MOB] =
 {
-  {"citizen male", 1, 1, 108, DISC_STEALTH},
-  {"citizen female", 1, 1, 109, DISC_STEALTH},
-  {"peasant", 1, 10, 110, DISC_STEALTH},
-  {"cityguard", 25, 50, 101, DISC_STEALTH},
+  /*
+  Use RACE_NORACE when anything can use it.  Race will be subbed
+  later, not name/desc tho, for the thiefs race.
+
+  All grabbed, so far, from zones: 0-4
+
+  If you add any between the first one and up to the Racial Specific,
+  or remove one either, then please address the stuff in gaining.cc
+  also.  Thanks  --Lapsos
+   */
+
+  {"citizen male"       ,  1 , 1, 108, DISC_STEALTH, RACE_NORACE},
+  {"citizen female"     ,  1 , 1, 109, DISC_STEALTH, RACE_NORACE},
+  {"bar-hopper male"    ,  5, 10,  52, DISC_STEALTH, RACE_NORACE},
+  {"bar-hopper female"  ,  5, 10,  53, DISC_STEALTH, RACE_NORACE},
+  {"church male"        , 10, 20,  50, DISC_STEALTH, RACE_NORACE},
+  {"church female"      , 10, 20,  51, DISC_STEALTH, RACE_NORACE},
+  {"old-man male"       , 15, 30, 174, DISC_STEALTH, RACE_NORACE},
+  {"old-woman female"   , 15, 30, 175, DISC_STEALTH, RACE_NORACE},
+  {"patrol male"        , 20, 40, 300, DISC_STEALTH, RACE_NORACE},
+  {"patrol female"      , 20, 40, 301, DISC_STEALTH, RACE_NORACE},
+
+  {"peasant"            , 10, 20, 110, DISC_STEALTH, RACE_NORACE},
+  {"bard"               , 25, 50, 188, DISC_STEALTH, RACE_NORACE},
+  {"pilgrim"            , 30, 60, 186, DISC_STEALTH, RACE_NORACE},
+
+  /** Gender Specific (Meaning not a set) **/
+  {"drunk male"         , 15, 30, 106, DISC_STEALTH, RACE_NORACE},
+  {"evening-lady female", 15, 30, 130, DISC_STEALTH, RACE_NORACE},
+  {"deputy male"        , 20, 40, 121, DISC_STEALTH, RACE_NORACE},
+  {"gypsy male"         , 20, 40, 191, DISC_STEALTH, RACE_NORACE},
+  {"cityguard male"     , 25, 50, 101, DISC_STEALTH, RACE_NORACE},
+
+  /** Race Specfic **/
+  {"merchant dwarf"     , 20, 40, 197, DISC_STEALTH, RACE_DWARF},
+  {"ambassador male"    , 40, 80, 125, DISC_STEALTH, RACE_DWARF},
+  {"young-male gnome"   , 20, 40, 124, DISC_STEALTH, RACE_GNOME},
+  {"missionary male"    , 40, 80, 126, DISC_STEALTH, RACE_GNOME},
+  {"outcast ogre"       , 20, 40, 196, DISC_STEALTH, RACE_OGRE}, 
+  {"vigilante male"     , 40, 80, 127, DISC_STEALTH, RACE_OGRE},
+  {"trader hobbit"      , 20, 40, 198, DISC_STEALTH, RACE_HOBBIT},
+  {"emissary male"      , 40, 80, 128, DISC_STEALTH, RACE_HOBBIT}, //***
+  {"tradeswoman female" , 20, 40, 138, DISC_STEALTH, RACE_ELVEN},
+  {"traveler elf"       , 40, 80, 195, DISC_STEALTH, RACE_ELVEN},
 };
 
 int disguise(TBeing *caster, char * buffer)
@@ -434,14 +474,43 @@ int disguise(TBeing *caster, char * buffer)
     return SPELL_FAIL;
   }
 
+#if 1
+  // Find not only the first match but the first match that
+  // also works out in comparision to the thief.
+  for (i = 0; (i < LAST_DISGUISE_MOB); i++) {
+    if (((isname("male"  , DisguiseList[i].name) &&
+          caster->getSex() != SEX_MALE  ) ||
+         (isname("female", DisguiseList[i].name) &&
+          caster->getSex() != SEX_FEMALE)) && !caster->isImmortal())
+      continue;
+
+    if ((signed) DisguiseList[i].tRace != RACE_NORACE &&
+        !caster->isImmortal() &&
+        caster->getRace() != (signed) DisguiseList[i].tRace)
+      continue;
+
+    if (DisguiseList[i].level > caster->GetMaxLevel())
+      continue;
+
+    if (DisguiseList[i].learning > caster->getSkillValue(SKILL_DISGUISE))
+      continue;
+
+    if (!isname(buffer, DisguiseList[i].name))
+      continue;
+
+    break;
+  }
+#else
   for (i = 0; 
         ((i < LAST_DISGUISE_MOB) && (!is_abbrev(buffer,DisguiseList[i].name)));
         i++);
+#endif
 
   if (i >= LAST_DISGUISE_MOB) {
-    caster->sendTo("You lack the training to don that disguise.\n\r");
+    caster->sendTo("You havn't a clue where to start on that one.\n\r");
     return FALSE;
-  } 
+  }
+
   int level = caster->getSkillLevel(SKILL_DISGUISE);
   int bKnown = caster->getSkillValue(SKILL_DISGUISE);
 
@@ -487,25 +556,28 @@ int disguise(TBeing *caster, char * buffer)
     return TRUE;
   }
 
+  int awesom = TRUE;
 
-  int awesom= FALSE;
+  if ((critFail(caster, SKILL_DISGUISE) != CRIT_F_NONE))
+    awesom = FALSE;
+
   switch (critSuccess(caster, SKILL_DISGUISE)) {
     case CRIT_S_KILL:
       CS(SKILL_DISGUISE);
-      awesom= TRUE;
       duration = 20 * UPDATES_PER_MUDHOUR;
+      break;
     case CRIT_S_TRIPLE:
-      if (caster->getSkillLevel(SKILL_DISGUISE) > 20) {
-        awesom= TRUE;
+      if (caster->getSkillLevel(SKILL_DISGUISE) > 20)
         CS(SKILL_DISGUISE);
-      }
+
       duration = 15 * UPDATES_PER_MUDHOUR;
+      break;
     case CRIT_S_DOUBLE:
-      if (caster->getSkillLevel(SKILL_DISGUISE) > 40) {
-        awesom= TRUE;
+      if (caster->getSkillLevel(SKILL_DISGUISE) > 40)
         CS(SKILL_DISGUISE);
-      }
+
       duration = 15 * UPDATES_PER_MUDHOUR;
+      break;
     default:
       duration = 10 * UPDATES_PER_MUDHOUR;
       break;
@@ -593,7 +665,34 @@ int disguise(TBeing *caster, char * buffer)
       sprintf(buf, "%s is here.", caster->name);
       mob->player.longDescr = mud_str_dup(cap(buf));
     }
+  } else if (caster->name) {
+    // Consider this immortal use.
+
+    string tStNewNameList(mob->name);
+
+    tStNewNameList += " [";
+    tStNewNameList += caster->getNameNOC(caster);
+    tStNewNameList += "]";
+
+    delete [] mob->name;
+    mob->name = mud_str_dup(tStNewNameList.c_str());
   }
+
+  /*
+  It is critical to remember that some diguises are race/sex independent
+  so they Must be set here else it'll not always fit.
+   */
+  mob->setRace(caster->getRace());
+  mob->setSex(caster->getSex());
+  mob->setHeight(caster->getHeight());
+  mob->setWeight(caster->getWeight());
+
+  for (statTypeT tStat = MIN_STAT; tStat < MAX_STATS; tStat++) {
+    mob->setStat(STAT_CHOSEN , tStat, caster->getStat(STAT_CHOSEN , tStat));
+    mob->setStat(STAT_NATURAL, tStat, caster->getStat(STAT_NATURAL, tStat));
+    mob->setStat(STAT_CURRENT, tStat, caster->getStat(STAT_CURRENT, tStat));
+  }
+
   return TRUE;
 }
 

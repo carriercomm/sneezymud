@@ -987,7 +987,9 @@ void do_the_player_stuff(const char *name)
 
     // count active
     if ((time(0) - st.last_logon) <= (7 * SECS_PER_REAL_DAY))
-      accStat.active_player++;
+      accStat.active_player7++;
+    if ((time(0) - st.last_logon) <= (30 * SECS_PER_REAL_DAY))
+      accStat.active_player30++;
     
     if (auto_deletion) {
       time_t ltime = time(0);
@@ -1257,7 +1259,8 @@ void fixup_players(void)
 
   bootPulse(NULL, true);
 
-  vlogf(LOG_FILE, "There are %d active players in %d active accounts.", accStat.active_player, accStat.active_account);
+  vlogf(LOG_FILE, "7-Day:  There are %d active players in %d active accounts.", accStat.active_player7, accStat.active_account7);
+  vlogf(LOG_FILE, "30-Day: There are %d active players in %d active accounts.", accStat.active_player30, accStat.active_account30);
   return;
 }
 

@@ -5023,6 +5023,64 @@ void TBeing::doSysLoglist()
 
 void TBeing::doSysChecklog(const char *arg)
 {
+  char *tMarkerS, // Start
+       *tMarkerE, // End
+        tString[256],
+        tSearch[256],
+        tLog[256];
+  unsigned int tIndex;
+
+  if (!hasWizPower(POWER_CHECKLOG)) {
+    sendTo("You don't have that power.\n\r");
+    return;
+  }
+
+  if (!isImmortal())
+    return;
+
+  for (; isspace(*arg); arg++);
+
+  if (!*arg) {
+    sendTo("Syntax: checklog \"string\" logfile\n\rSee loglist for list of logfiles.\n\r");
+    return;
+  }
+
+  strcpy(tString, arg);
+  cleanCharBuf(tString);
+
+  if (!(tMarkerS = strchr(tString, '"')) ||
+      !(tMarkerE = strchr((tMarkerS + 1), '"'))) {
+    sendTo("Syntax: checklog \"string\" logfile\n\rSee loglist for list of logfiles.\n\r");
+    return;
+  }
+
+  strncpy(tSearch, tMarkerS, (tMarkerE - tMarkerS));
+  tSearch[(tMarkerE - tMarkerS)] = '\0';
+
+  for (tMarkerE++; *tMarkerE == ' '; tMarkerE++);
+
+  strcpy(tLog, tMarkerE);
+
+  if (!tLog[0]) {
+    sendTo("Syntax: checklog \"string\" logfile\n\rSee loglist for list of logfiles.\n\r");
+    return;
+  }
+
+  for (tIndex = 0; tIndex < strlen(tLog); tIndex++)
+    if (tLog[tIndex] == '.' ||
+        tLog[tIndex] == '/') {
+      sendTo("Illegial log specified.  Bad, Bad god!\n\r");
+      return;
+    }
+
+  sprintf(tString, "\\%s\\\" %s", tSearch, tLog);
+  systask->AddTask(this, SYSTEM_CHECKLOG, tString);
+
+  // If we don't trust these people why even have the command?
+  if (!hasWizPower(POWER_WIZARD))
+    vlogf(5, "%s checklogging: '%s'", getName(), tString);
+
+  /*
   char *squote, *equote;
 
   if (!hasWizPower(POWER_CHECKLOG)) {
@@ -5069,6 +5127,7 @@ void TBeing::doSysChecklog(const char *arg)
 
   // this is here to avoid gods checking logs on other gods
   vlogf(5, "%s checklogging: '%s'", getName(), argument);
+  */
 }
 
 void TBeing::doSysViewoutput() 

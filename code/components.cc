@@ -16,6 +16,11 @@ vector<COMPINDEX>CompIndex(0);
 
 void assign_component_placement()
 {
+  if(gamePort==8900){
+    vlogf(LOG_LOW, "Skipping assign_component_placement for builder mud");
+    return;
+  }
+
 // rainbow bridge 1
   component_placement.push_back(compPlace(BRIDGE_ROOM, -1, MOB_NONE, 
      ITEM_RAINBOW_BRIDGE1,

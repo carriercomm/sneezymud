@@ -5304,7 +5304,7 @@ int Descriptor::doAccountMenu(const char *arg)
   }
 #if 1
 // COSMO TEST-fake color setting
-  if (account->term == TERM_ANSI) {
+  if (account && account->term == TERM_ANSI) {
     SET_BIT(plr_act, PLR_COLOR);
   }
 #endif

@@ -573,10 +573,12 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
                 ((v->GetMaxLevel() <= 5 && v != this) ? "NEWBIE " : ""));
           total_player_kills++;
 
-          affectedData aff;
-          aff.type = AFFECT_PLAYERKILL;
-          aff.duration = 15 * ONE_SECOND * SECS_PER_REAL_MIN;
-	  affectTo(&aff);
+	  if(this!=v){
+	    affectedData aff;
+	    aff.type = AFFECT_PLAYERKILL;
+	    aff.duration = 15 * ONE_SECOND * SECS_PER_REAL_MIN;
+	    affectTo(&aff);
+	  }
         }
 
         // create grave marker

@@ -2702,69 +2702,85 @@ void TBeing::doWorld()
   time_t ct, ot, tt;
   char *tmstr, *otmstr;
   int i;
+  string str;
+  char buf[256];
+  
+  if (!desc)
+    return;
 
   ot = Uptime;
-  if (desc && desc->account)
-    tt = ot + 3600 * desc->account->time_adjust;
-  else
-    tt = ot;
+  tt = ot + 3600 * desc->account->time_adjust;
 
   otmstr = asctime(localtime(&tt));
   *(otmstr + strlen(otmstr) - 1) = '\0';
-  sendTo("%sStart time was:                      %s%s\n\r", 
+  sprintf(buf, "%sStart time was:                      %s%s\n\r", 
         blue(),otmstr, norm());
+  str += buf;
 
-  if (desc && desc->account)
-    ct = time(0) + 3600 * desc->account->time_adjust;
-  else
-    ct = time(0);
+  ct = time(0) + 3600 * desc->account->time_adjust;
+
   tmstr = asctime(localtime(&ct));
   *(tmstr + strlen(tmstr) - 1) = '\0';
-  sendTo("%sCurrent time is:                     %s%s\n\r", 
+  sprintf(buf, "%sCurrent time is:                     %s%s\n\r", 
          blue(), tmstr, norm());
+  str += buf;
 
   time_t upt = ct - tt;
-  sendTo("%sUptime is:                           %s%s\n\r", 
+  sprintf(buf, "%sUptime is:                           %s%s\n\r", 
          blue(), secsToString(upt).c_str(), norm());
+  str += buf;
 
-  sendTo("%sMachine Lag: Avg/Cur/High/Low        %d/%d/%d/%d%s\n\r",
+  sprintf(buf, "%sMachine Lag: Avg/Cur/High/Low        %d/%d/%d/%d%s\n\r",
 	 blue(), 
 	 (lag_info.count ? lag_info.total/lag_info.count : 0),
 	 lag_info.current,
 	 lag_info.high,
 	 lag_info.low, norm());
+  str += buf;
 
   if(isImmortal()){
     for(i=0;i<10;++i){
-      if(lag_info.lagcount[i])
-	sendTo("%sLag %i:                              %d/%d%s\n\r",
+      if(lag_info.lagcount[i]) {
+	sprintf(buf, "%sLag %i:                              %d/%d%s\n\r",
 	       blue(), i, lag_info.lagtime[i], lag_info.lagcount[i], norm());
+        str += buf;
+      }
     }
   }
 
 
-  sendTo("Total number of rooms in world:               %d\n\r", 
+  sprintf(buf, "Total number of rooms in world:               %d\n\r", 
         roomCount);
-  sendTo("Total number of zones in world:               %d\n\r", 
+  str += buf;
+  sprintf(buf, "Total number of zones in world:               %d\n\r", 
         zone_table.size());
-  sendTo("Total number of distinct objects in world:%s    %d%s\n\r",
+  str += buf;
+  sprintf(buf, "Total number of distinct objects in world:%s    %d%s\n\r",
         green(), obj_index.size(), norm());
-  sendTo("Total number of objects in game:%s              %d%s\n\r",
+  str += buf;
+  sprintf(buf, "Total number of objects in game:%s              %d%s\n\r",
         green(), objCount, norm());
-  sendTo("Total number of registered accounts:%s          %d%s\n\r", 
+  str += buf;
+  sprintf(buf, "Total number of registered accounts:%s          %d%s\n\r", 
          blue(), accStat.account_number, norm());
-  sendTo("Total number of registered players:%s           %d%s\n\r", 
+  str += buf;
+  sprintf(buf, "Total number of registered players:%s           %d%s\n\r", 
          blue(), accStat.player_count, norm());
+  str += buf;
 
   if (hasWizPower(POWER_WIZARD)) {
-    sendTo("Total number of 7-day active accounts:%s        %d%s\n\r", 
+    sprintf(buf, "Total number of 7-day active accounts:%s        %d%s\n\r", 
            blue(), accStat.active_account7, norm());
-    sendTo("Total number of 7-day active players:%s         %d%s\n\r", 
+    str += buf;
+    sprintf(buf, "Total number of 7-day active players:%s         %d%s\n\r", 
            blue(), accStat.active_player7, norm());
-    sendTo("Total number of 30-day active accounts:%s       %d%s\n\r", 
+    str += buf;
+    sprintf(buf, "Total number of 30-day active accounts:%s       %d%s\n\r", 
            blue(), accStat.active_account30, norm());
-    sendTo("Total number of 30-day active players:%s        %d%s\n\r", 
+    str += buf;
+    sprintf(buf, "Total number of 30-day active players:%s        %d%s\n\r", 
            blue(), accStat.active_player30, norm());
+    str += buf;
   }
 
   char timebuf[256];
@@ -2772,18 +2788,21 @@ void TBeing::doWorld()
   strcpy(timebuf, ctime(&stats.first_login));
   timebuf[strlen(timebuf) - 1] = '\0';
   strcat(timebuf, ":");
-  sendTo("Logins since %-32.32s %s%ld  (%ld per day)%s\n\r",
+  sprintf(buf, "Logins since %-32.32s %s%ld  (%ld per day)%s\n\r",
      timebuf,  blue(), stats.logins, 
      (long) ((double) stats.logins * SECS_PER_REAL_DAY / (time(0) - stats.first_login)),
      norm());
+  str += buf;
 
-  sendTo("Total number of distinct mobiles in world:%s    %d%s\n\r",
+  sprintf(buf, "Total number of distinct mobiles in world:%s    %d%s\n\r",
         red(), mob_index.size(), norm());
+  str += buf;
 
   if (GetMaxLevel() >= GOD_LEVEL1) {
-    sendTo("%sDistinct Mobs by level:%s\n\r",
+    sprintf(buf, "%sDistinct Mobs by level:%s\n\r",
          blue(), norm());
-    sendTo("%sL1-5  [%s%3d%s]  L6-10 [%s%3d%s]  L11-15[%s%3d%s]  L16-20[%s%3d%s]  L21-25 [%s%3d%s] L26-30  [%s%3d%s]%s\n\r", norm(),
+    str += buf;
+    sprintf(buf, "%sL1-5  [%s%3d%s]  L6-10 [%s%3d%s]  L11-15[%s%3d%s]  L16-20[%s%3d%s]  L21-25 [%s%3d%s] L26-30  [%s%3d%s]%s\n\r", norm(),
         purple(), stats.mobs_1_5, norm(),
         purple(), stats.mobs_6_10, norm(),
         purple(), stats.mobs_11_15, norm(),
@@ -2791,7 +2810,8 @@ void TBeing::doWorld()
         purple(), stats.mobs_21_25, norm(),
         purple(), stats.mobs_26_30, norm(),
         norm());
-    sendTo("%sL31-40[%s%3d%s]  L41-50[%s%3d%s]  L51-60[%s%3d%s]  L61-70[%s%3d%s]  L71-100[%s%3d%s] L101-127[%s%3d%s]%s\n\r", norm(),
+    str += buf;
+    sprintf(buf, "%sL31-40[%s%3d%s]  L41-50[%s%3d%s]  L51-60[%s%3d%s]  L61-70[%s%3d%s]  L71-100[%s%3d%s] L101-127[%s%3d%s]%s\n\r", norm(),
         purple(), stats.mobs_31_40, norm(),
         purple(), stats.mobs_41_50, norm(),
         purple(), stats.mobs_51_60, norm(),
@@ -2799,45 +2819,38 @@ void TBeing::doWorld()
         purple(), stats.mobs_71_100, norm(),
         purple(), stats.mobs_101_127, norm(),
         norm());
+    str += buf;
   }
-  sendTo("Total number of monsters in game:%s             %d%s\n\r",
+  sprintf(buf, "Total number of monsters in game:%s             %d%s\n\r",
         red(), mobCount, norm());
-  sendTo("%sActual Mobs by level:%s\n\r",
+  str += buf;
+
+  sprintf(buf, "%sActual Mobs by level:%s\n\r",
         purple(), norm());
-#if 1
-  sendTo("%sL  1-  5  [%s%4u%s]  L  6- 10  [%s%4u%s]  L 11- 15  [%s%4u%s]  L 16- 20  [%s%4u%s]\n\r", norm(),
+  str += buf;
+
+  sprintf(buf, "%sL  1-  5  [%s%4u%s]  L  6- 10  [%s%4u%s]  L 11- 15  [%s%4u%s]  L 16- 20  [%s%4u%s]\n\r", norm(),
          purple(), stats.act_1_5, norm(),
          purple(), stats.act_6_10, norm(),
          purple(), stats.act_11_15, norm(),
          purple(), stats.act_16_20, norm());
-  sendTo("%sL 21- 25  [%s%4u%s]  L 26- 30  [%s%4u%s]  L 31- 40  [%s%4u%s]  L 41- 50  [%s%4u%s]\n\r", norm(),
+  str += buf;
+
+  sprintf(buf, "%sL 21- 25  [%s%4u%s]  L 26- 30  [%s%4u%s]  L 31- 40  [%s%4u%s]  L 41- 50  [%s%4u%s]\n\r", norm(),
          purple(), stats.act_21_25, norm(),
          purple(), stats.act_26_30, norm(),
          purple(), stats.act_31_40, norm(),
          purple(), stats.act_41_50, norm());
-  sendTo("%sL 51- 60  [%s%4u%s]  L 61- 70  [%s%4u%s]  L 71-100  [%s%4u%s]  L101-127  [%s%4u%s]\n\r", norm(),
+  str += buf;
+
+  sprintf(buf, "%sL 51- 60  [%s%4u%s]  L 61- 70  [%s%4u%s]  L 71-100  [%s%4u%s]  L101-127  [%s%4u%s]\n\r", norm(),
          purple(), stats.act_51_60, norm(),
          purple(), stats.act_61_70, norm(),
          purple(), stats.act_71_100, norm(),
          purple(), stats.act_101_127, norm());
-#else
-  sendTo("%sL1-5  [%s%4u%s]  L6-10 [%s%3u%s]  L11-15[%s%3u%s]  L16-20[%s%3u%s]  L21-25 [%s%3u%s] L26-30  [%s%3u%s]%s\n\r", norm(),
-        purple(), stats.act_1_5, norm(),
-        purple(), stats.act_6_10, norm(),
-        purple(), stats.act_11_15, norm(),
-        purple(), stats.act_16_20, norm(),
-        purple(), stats.act_21_25, norm(),
-        purple(), stats.act_26_30, norm(),
-        norm());
-  sendTo("%sL31-40[%s%4u%s]  L41-50[%s%3u%s]  L51-60[%s%3u%s]  L61-70[%s%3u%s]  L71-100[%s%3u%s] L101-127[%s%3u%s]%s\n\r", norm(),
-        purple(), stats.act_31_40, norm(),
-        purple(), stats.act_41_50, norm(),
-        purple(), stats.act_51_60, norm(),
-        purple(), stats.act_61_70, norm(),
-        purple(), stats.act_71_100, norm(),
-        purple(), stats.act_101_127, norm(),
-        norm());
-#endif
+  str += buf;
+
+  desc->page_string(str.c_str());
 }
 
 const char *DescRatio(double f)

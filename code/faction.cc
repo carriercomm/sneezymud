@@ -510,12 +510,12 @@ void TBeing::doSend(const char *arg)
       fnum = fnum2;
       wizSent = true;
       for (;b3 && *b3 && isspace(*b3); b3++);
-      strcpy(buf2, b3);
+      strncpy(buf2, b3, MAX_INPUT_LENGTH);
     }
   }
   if (!wizSent) {
     for (;arg && *arg && isspace(*arg); arg++);
-    strcpy(buf2, arg);
+    strncpy(buf2, arg, MAX_INPUT_LENGTH);
   }
 
 #if 0

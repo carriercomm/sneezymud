@@ -80,8 +80,16 @@ int init_game_stats(void)
   // a value of 0.75 should make for 120 second fights
   stats.damage_modifier = 0.75;
 
-  auto_deletion = FALSE;
+  // Enabling this makes game look at player activity to decide
+  // if deleting should occur.  This MUST be true for ANY form of
+  // deleting to occur
+  auto_deletion = TRUE;
+
+  // This forces the deleting to ONLY be for rent files.  Otherwise,
+  // both the rent file AND the player file will be deleted.  If neither
+  // should be deleted, play with auto_deletion variable (above).
   rent_only_deletion = TRUE;
+
   nuke_inactive_mobs = FALSE;
 
   if (!(fp = fopen(STATS_FILE,"r"))) {

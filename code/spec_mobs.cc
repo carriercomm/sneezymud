@@ -1751,7 +1751,7 @@ int janitor(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
       act("$n picks up some trash.", FALSE, myself, 0, 0, TO_ROOM);
       --(*obj);
       *myself += *obj; 
-      if(obj->objVnum() == 10030)
+      if(obj->objVnum() == OBJ_PILE_OFFAL)
 	delete obj;
     }
     return TRUE;
@@ -3547,12 +3547,31 @@ int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
   int rc;
   TObj *obj=NULL;
 
-  if(cmd == CMD_GENERIC_PULSE){
-    if(!::number(0,500) && me->roomp && 
-       (obj = read_object(10030, VIRTUAL))){
-      *me->roomp += *obj;
-      act("$n defecates on the $g.",
-	  TRUE, me, NULL, NULL, TO_ROOM);
+  if (cmd == CMD_GENERIC_PULSE){
+    if (!::number(0,500) && me->roomp) {
+#if 1
+// builder port uses stripped down database which was causing problems
+// hence this setup instead.
+      int robj = real_object(OBJ_PILE_OFFAL);
+      if (robj < 0 || robj >= (signed int) obj_index.size()) {
+        vlogf(LOG_BUG, "horse(): No object (%d) in database!",
+              OBJ_PILE_OFFAL);
+        return;
+      }
+
+      if (!(note = read_object(robj, REAL))) {
+        vlogf(LOG_BUG, "Couldn't make a pile of horse poop!");
+        return;
+      }
+#else
+      obj = read_object(OBJ_PILE_OFFAL, VIRTUAL);
+#endif
+
+      if (obj) {
+        *me->roomp += *obj;
+        act("$n defecates on the $g.",
+             TRUE, me, NULL, NULL, TO_ROOM);
+      }
     }
   }
 

@@ -308,8 +308,8 @@ void assign_item_info()
      "Damage Precision", 10, 0,
      "Weapon type.  See HELP WEAPON TYPES", TYPE_MAX_HIT - TYPE_MIN_HIT, 1);
   ItemInfo[ITEM_FUEL] = new itemInfo("Fuel","a flammable liquid",
-     "Amount of fuel", 75, 0,
-     "Max Amount of Fuel", 75, 0,
+     "Amount of fuel", 256, 0,
+     "Max Amount of Fuel", 256, 0,
      "", 0, 0,
      "", 0, 0);
   ItemInfo[ITEM_OPAL] = new itemInfo("Opal/Powerstone","an opal",

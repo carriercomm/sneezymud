@@ -54,7 +54,7 @@ int task_yoginsa(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TOb
             ch->sendTo("%sMeditating refreshes your inner harmonies!%s\n\r",
                      ch->green(), ch->norm());
             ch->setHit(min(ch->getHit() + 
-			   (int)(((double)ch->hitGain())*(8.5)), (int) ch->hitLimit()));
+			   (int)(((double)ch->hitGain())*(.85)), (int) ch->hitLimit()));
             ch->setMove(min(ch->getMove() + ch->moveGain()/2, (int) ch->moveLimit()));
             ch->setMana(min(ch->getMana() + ch->manaGain()/2, (int) ch->manaLimit()));
 

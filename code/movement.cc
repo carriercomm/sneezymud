@@ -385,7 +385,8 @@ int TBeing::rawMove(dirTypeT dir)
     }
   }
   if(affectedBySpell(AFFECT_PLAYERKILL) && 
-     to_here && to_here->isRoomFlag(ROOM_PEACEFUL)){
+     to_here && to_here->isRoomFlag(ROOM_PEACEFUL) &&
+     !isImmortal()){
     sendTo("Player killers can't enter peaceful rooms.\n\r");
     return FALSE;
   }

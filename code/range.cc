@@ -1397,12 +1397,14 @@ int TBeing::doShoot(const char *arg)
   if (!desc || (!isPc() && !orig))
     return FALSE;
 
+#if 0
   if (!hasClass(CLASS_THIEF) && !hasClass(CLASS_RANGER) &&
       !hasClass(CLASS_WARRIOR) && !hasClass(CLASS_DEIKHAN) &&
       !isImmortal()) {
     sendTo("You don't possess the correct skills to shoot a bow!\n\r");
     return FALSE;
   }
+#endif
   if (getSkillValue(SKILL_BOW) <= 0) {
     sendTo("You almost shoot yourself in the foot!\n\r");
     sendTo("You realize you don't have any clue what you're doing...get some training.\n\r");

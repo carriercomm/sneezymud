@@ -47,7 +47,7 @@ void TBeing::doNews(const char *argument)
   char arg[MAX_INPUT_LENGTH];
   one_argument(argument, arg);
 
-  if (argument && is_abbrev(argument, "changes")) {
+//  if (argument && is_abbrev(argument, "changes")) {
     // check files mod times and see what has changed recently
     DIR *dfd;
     struct dirent *dp;
@@ -58,9 +58,6 @@ void TBeing::doNews(const char *argument)
     vector<newsFileList>vecFiles(0);
 
     vecFiles.clear();
-
-    sendTo("The following files have changed recently:\n\r");
-    sendTo("------------------------------------------\n\r");
 
     dfd = opendir(HELP_PATH);
     if (!dfd) {
@@ -197,20 +194,35 @@ void TBeing::doNews(const char *argument)
 
     sort(vecFiles.begin(), vecFiles.end(), newsFileSorter());
 
+    string str;
+
+    str += "The following information files have changed recently:\n\r";
+    str += "------------------------------------------------------\n\r";
+
     unsigned int iter;
     for (iter = 0; iter < vecFiles.size(); iter++) {
       strcpy(timebuf, ctime(&(vecFiles[iter].modTime)));
       timebuf[strlen(timebuf) - 1] = '\0';
   
-      sendTo("%s : %s%s\n\r", timebuf, 
+      sprintf(buf, "%s : %s%s\n\r", timebuf, 
             vecFiles[iter].prependStr.c_str(),
             vecFiles[iter].fileName.c_str()); 
+      str += buf;
     }
-    return;
+//    return;
+//  }
+
+#if 1
+  file_to_string(NEWS_FILE, str, true);
+  if (desc) {
+    news_used_num++;
+    desc->page_string(str.c_str(), 0);
   }
 
+#else
   if (desc) {
     news_used_num++;
     desc->start_page_file(NEWS_FILE, "No news is good news!\n\r");
   }
+#endif
 }

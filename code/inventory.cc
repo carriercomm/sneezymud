@@ -483,6 +483,20 @@ int get(TBeing *ch, TThing *ttt, TThing *sub, getTypeT tType, bool isFirst)
   return TRUE;
 }
 
+static bool getAllObjChecks(TBeing *ch)
+{
+  if (ch->getPosition() <= POSITION_SITTING) {
+    ch->sendTo("You need to be standing to do that.\n\r");
+    if (!ch->awake())
+      return true;   // sleeping
+    ch->doStand();
+
+    if (ch->fight())
+      return true;  // don't fall through
+  }
+  return false;
+}
+
 // might return DELETE_THIS (for traps)
 int TBeing::doGet(const char *argument)
 {
@@ -668,16 +682,42 @@ int TBeing::doGet(const char *argument)
       sendTo("You must be joking?!\n\r");
       break;
     case GETALLOBJ:
-      if ((sub = get_obj_vis_accessible(this, arg2))) {
-        if (getPosition() <= POSITION_SITTING) {
-          sendTo("You need to be standing to do that.\n\r");
-          if (!awake())
-            return FALSE;   // sleeping
-          doStand();
- 
-          if (fight())
-            return FALSE;  // don't fall through
+      // handle special case "get all all.corpse"
+      if (is_abbrev(arg2, "all.corpse") && strlen(arg2) > 6) {
+        if (getAllObjChecks(this))
+          return FALSE;
+
+        if (dynamic_cast<TBeing *>(riding)) {
+          act("You can't get things from corpses while mounted!", 
+               FALSE, this, NULL, 0, TO_CHAR);
+          return FALSE;
         }
+
+        TThing *t;
+        for (t = roomp->stuff; t; t = t->nextThing) {
+          TBaseCorpse *tbc = dynamic_cast<TBaseCorpse *>(t);
+          // we do no name check here, since "pile dust" won't hit "corpse"
+          if (tbc) {
+            rc = tbc->getAllFrom(this, argument);
+            if (IS_SET_DELETE(rc, DELETE_VICT))
+              return DELETE_THIS;
+          }
+        }
+
+        break;
+      }
+
+      sub = get_obj_vis_accessible(this, arg2);
+      if (!sub) {
+	if(autoloot==TRUE)
+	  sendTo("You do not see or have the corpse.\n\r");
+	else 
+	  sendTo("You do not see or have the %s.\n\r", arg2);
+        break;
+      } else {
+        if (getAllObjChecks(this))
+          return FALSE;
+
         if (dynamic_cast<TBeing *>(riding) &&
              (sub->inRoom() != ROOM_NOWHERE)) {
           act("You can't get things from $p while mounted!", 
@@ -687,12 +727,6 @@ int TBeing::doGet(const char *argument)
         rc = sub->getAllFrom(this, argument);
         if (IS_SET_DELETE(rc, DELETE_VICT))
           return DELETE_THIS;
-      } else {
-	if(autoloot==TRUE)
-	  sendTo("You do not see or have the corpse.\n\r");
-	else 
-	  sendTo("You do not see or have the %s.\n\r", arg2);
-        break;
       }
       break;
     case GETOBJALL:

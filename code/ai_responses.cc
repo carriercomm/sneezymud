@@ -302,9 +302,10 @@ int TMonster::modifiedDoCommand(cmdTypeT cmd, const char *arg, TBeing *mob, cons
       if (mob && tThing && canSee(mob))
         rc = doGiveObj(mob, tThing, GIVE_FLAG_DROP_ON_FAIL);
       else if (!mob || !tThing)
-        vlogf(LOG_LAPSOS, "Error in doGiveObj:%s%s",
+        vlogf(LOG_LAPSOS, "Error in doGiveObj:%s%s Mob[%s]",
               (mob ? "" : " !mob"),
-              (tThing ? "" : " !tThing"));
+              (tThing ? "" : " !tThing"),
+              getNameNOC(this).c_str());
 
       if (tThing && tThing->parent == this && roomp) {
         doSay("Well I guess I'll just drop it here...");
@@ -1495,6 +1496,25 @@ int specificCode(TMonster *mob, TBeing *ch, int which, const resp * respo)
       act("$n arrives from a puff of smoke.", FALSE, ch, 0, 0, TO_ROOM);
       ch->doLook("", CMD_LOOK);
       break;
+    case 8:
+      if (mob->mobVnum() != 140) {
+        vlogf(LOG_LOW, "Bad mob (%s:%d) calling specificCode(%d)",
+              mob->getName(), mob->mobVnum(), which);
+        return RET_STOP_PARSING;
+      }
+
+      if (!ch)
+        return RET_STOP_PARSING;
+
+      if(ch->getSex() != SEX_NEUTER){
+	mob->doSay("You have no need of this operation.");
+	return RET_STOP_PARSING;
+      }
+      act("$n waves $s hands, utters many magic phrases and re-attaches your rod.", TRUE, mob, NULL, ch, TO_VICT);
+      
+      ch->setSex(SEX_MALE);
+
+      break;
     default:
       vlogf(LOG_MOB_RS, "Undefined response segment: %d", which);
       break;
@@ -1502,3 +1522,5 @@ int specificCode(TMonster *mob, TBeing *ch, int which, const resp * respo)
 
   return FALSE;
 }
+
+

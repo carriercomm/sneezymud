@@ -1735,11 +1735,14 @@ bool is_number(char *str)
   return (1);
 }
 
-const char *one_argument(const char *argument, char *first_arg)
+const char *one_argument(const char *arg, char *first_arg)
 {
+  char * argument = arg;
+  char * temp;
+  string s;
+  string tmp_fa;
   try {
-    string tmp_fa;
-    string s = one_argument(argument, tmp_fa);
+    s = one_argument(argument, tmp_fa);
     strcpy(first_arg, tmp_fa.c_str());
   
     // we should return a pointer into argument equivalent to s.c_str
@@ -1751,30 +1754,36 @@ const char *one_argument(const char *argument, char *first_arg)
       return strstr(argument, s.c_str());
 #else
       // start looking at the spot denoted by "first_arg", for "s"
-      return strstr(strstr(argument, first_arg), s.c_str());
+      temp = strstr(argument, first_arg);
+      return strstr(temp, s.c_str());
+//    return strstr(strstr(argument, first_arg), s.c_str());
+//  COSMO STRING FIX 2/9/01
 #endif
     }
   } catch (...) {
     mud_assert(0, "Bat's expirimental code don't work - exception caught");
     return NULL;
   }
+// COSMO STRING FIX
+  return NULL;
 }
 
 string one_argument(string argument, string & first_arg)
 {
   size_t bgin, look_at;
-
+  string a2;
+  string whitespace = " \n\r";
   bgin = 0;
 
   do {
-    string whitespace = " \n\r";
+ //   string whitespace = " \n\r";
     bgin = argument.find_first_not_of(whitespace);
     look_at = argument.find_first_of(whitespace, bgin);
 
     if (look_at != string::npos) {
       // normal, return the part between
       first_arg = argument.substr(bgin, look_at - bgin);
-      string a2 = argument.substr(look_at);
+      a2 = argument.substr(look_at);
       argument = a2;
     } else if (bgin != string::npos) {
       // string had no terminator
@@ -1786,6 +1795,9 @@ string one_argument(string argument, string & first_arg)
       argument = "";
     }
   } while (fill_word(first_arg.c_str()));
+// COSMO STRING
+//  delete a2;
+//  delete whitespace;
   return argument;
 }
 

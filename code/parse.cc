@@ -151,9 +151,12 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
           tStNewArg.replace(tStNewArg.find("tank"), 4, getName());
       }
     }
-  }
 
-  strcpy(newarg, tStNewArg.c_str());
+    strcpy(newarg, tStNewArg.c_str());
+  } else if (!strcasecmp(argument, "self") || !strcasecmp(argument, "me"))
+    strcpy(newarg, getNameNOC(this).c_str());
+  else
+    strcpy(newarg, argument);
 
   if (typedIn && desc && dynamic_cast<TMonster *>(this)) 
     isPoly = TRUE;
@@ -1361,7 +1364,7 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
 	  doSmoke(newarg);
 	  break;
 	case CMD_STOP:
-	  doStop();
+	  doStop(tmpstring);
 	  break;
 	case CMD_TRIGGER:
 	  doTrigger(newarg);

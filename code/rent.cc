@@ -962,7 +962,10 @@ void TBeing::addObjCost(TBeing *re, TObj *obj, objCost *cost, string &str)
     temp = max(0, obj->rentCost());
 #ifdef SNEEZY2000
     // in sneezy 5.2 we don't want to charge for anything that isn't limited. -dash 01/01
-    if(obj->max.max_exist <= LIMITED_RENT_ITEM) temp = 0;
+    if(obj->max_exist > LIMITED_RENT_ITEM) temp = 0;
+    //    vlogf(LOG_DASH, "%s getting cost on %s, max exist %d, limit %d, cost %d", getName(), obj->getName(),
+    //	  obj->max_exist, LIMITED_RENT_ITEM, temp);
+    
 #endif
     cost->total_cost += temp;
     if (re) {
@@ -1121,13 +1124,15 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
     desc->best_rent_credit = max(credit, desc->best_rent_credit);
     credit = desc->best_rent_credit;
   }
-
+#ifdef SNEEZY2000
+  credit = 0;
+#endif
   actual_cost = cost->total_cost - credit;
   cost->total_cost = (actual_cost < 0) ? 0 : actual_cost;
- 
-  sprintf(buf, "$n tells you 'You have been given a rent credit of %d talens.'", credit);
-  if (recep) 
-    act(buf, FALSE, recep, 0, this, TO_VICT);
+
+  // sprintf(buf, "$n tells you 'You have been given a rent credit of %d talens.'", credit);
+  //if (recep) 
+  //  act(buf, FALSE, recep, 0, this, TO_VICT);
   
   if (!cost->total_cost) {
     if (recep) {
@@ -1142,8 +1147,8 @@ bool TBeing::recepOffer(TBeing *recep, objCost *cost)
 
     if (recep) {
 #if 1
-      sprintf(buf, "$n tells you 'Your stuff is %d talens over your credit.'", daily_cost);
-      act(buf, FALSE, recep, 0, this, TO_VICT);
+      //  sprintf(buf, "$n tells you 'Your stuff is %d talens over your credit.'", daily_cost);
+      //act(buf, FALSE, recep, 0, this, TO_VICT);
       sprintf(buf, "$n tells you 'The current rent multiplier is %.2f.'", gold_modifier[GOLD_RENT].getVal());
       act(buf, FALSE, recep, 0, this, TO_VICT);
 #endif
@@ -2344,6 +2349,9 @@ int TComponent::noteMeForRent(string &tStString, TBeing *ch, TThing *tList, int 
     *tCount = *tCount + 1;
     lCount++;
     tCost = (max(0, rentCost()) * lCount);
+#ifdef SNEEZY2000
+    if(max_exist > LIMITED_RENT_ITEM) tCost = 0;
+#endif
     sprintf(tString, tBuffer, getName(), tCost);
 
     if (lCount == 1)
@@ -2390,6 +2398,9 @@ int TObj::noteMeForRent(string &tStString, TBeing *ch, TThing *, int *tCount)
     strcat(tBuffer, "%5d talens/day\n\r");
     *tCount = *tCount + 1;
     tCost = max(0, rentCost());
+#ifdef SNEEZY2000
+    if(max_exist > LIMITED_RENT_ITEM) tCost = 0;
+#endif
     sprintf(tString, tBuffer, getName(), tCost);
     tStString += tString;
   } else {
@@ -2513,24 +2524,30 @@ void TBeing::makeRentNote(TBeing *recip)
   tStBuffer += buf;
 #endif
   unsigned int credit = rentCredit();
+#ifdef SNEEZY2000
+  credit = 0;
+#endif
   if (desc) {
     if (recip->isImmortal()) {
-      sprintf(buf, "Minimal Rent Credit is : %d\n\rActual ", credit);
-      tStBuffer += buf;
+      //      sprintf(buf, "Minimal Rent Credit is : %d\n\rActual ", credit);
+      //tStBuffer += buf;
     }
     desc->best_rent_credit = max(credit, desc->best_rent_credit);
     credit = desc->best_rent_credit;
   }
+#ifdef SNEEZY2000
+  credit = 0;
+#endif
 
-  sprintf(buf, "Rent Credit is : %d\n\r", credit);
-  tStBuffer += buf;
+  //  sprintf(buf, "Rent Credit is : %d\n\r", credit);
+  //tStBuffer += buf;
   if (credit >= (unsigned int) cost.total_cost) {
     sprintf(buf, "Daily Rent Cost : 0\n\r");
     tStBuffer += buf;
   } else {
-    sprintf(buf, "Equipment Cost : %d\n\r",
-               max((int) (cost.total_cost-credit), 0));
-    tStBuffer += buf;
+    //sprintf(buf, "Equipment Cost : %d\n\r",
+    //           max((int) (cost.total_cost-credit), 0));
+    //tStBuffer += buf;
     sprintf(buf, "Current Rent Factor : %.2f\n\r",
                gold_modifier[GOLD_RENT].getVal());
     tStBuffer += buf;

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_bash.cc,v $
+// Revision 5.1.1.2  1999/10/29 05:19:05  cosmo
+// Recuding lag.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -367,7 +370,7 @@ int TBeing::doBash(const char *argument, TBeing *vict)
   }
 
   if ((rc = bash(this, victim, skill)))
-    addSkillLag(skill);
+    addSkillLag(skill,rc);
 
   if (IS_SET_DELETE(rc, DELETE_VICT)) {
     if (vict)

@@ -1598,7 +1598,7 @@ void buildComponentArray()
     }
   }
 
-  sprintf(buf, "select vnum, val2, val3 from object where type=30");
+  sprintf(buf, "select vnum, val2, val3 from object where type=%d", ITEM_COMPONENT);
   if(mysql_query(db, buf)){
     vlogf(LOG_BUG, "Database query failed: %s", mysql_error(db));
     exit(0);

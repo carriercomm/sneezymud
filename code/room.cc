@@ -413,6 +413,7 @@ void TRoom::operator << (TThing &tThing)
 
   TThing *tList;
 
+  // creates forward-linked list
   for (tList = tBornInsideMe; tList->nextBorn; tList = tList->nextBorn) {
     if (&tThing == tList) {
       vlogf(LOG_BUG, "Mob already in born list being added again. [%s]", tThing.getName());

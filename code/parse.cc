@@ -280,6 +280,9 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
       }
     } else {
       ch = ((desc && desc->original) ? desc->original : this);
+#if 1
+      if (should_be_logged(ch)) {
+#else
       if ((ch->GetMaxLevel() > MAX_MORT && ch->isPc()) &&
         (strcmp(ch->name, "Batopr") &&
          strcmp(ch->name, "Cosmo") &&
@@ -291,7 +294,8 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
          strcmp(ch->name, "Lapsos") &&
          strcmp(ch->name, "Brutius") &&
 	 strcmp(ch->name, "Peel") &&
-	 strcmp(ch->name, "Damescena"))) { 
+	 strcmp(ch->name, "Damescena"))) {
+#endif
 
         TPerson * tPerson = dynamic_cast<TPerson *>(ch);
 
@@ -305,7 +309,7 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
                 commandArray[cmd]->name, newarg);
 
           if (tPerson)
-            tPerson->logf("%s:%s %s", name, desc->original->name,
+            tPerson->logf("%s:%s %s", name,
                            commandArray[cmd]->name, newarg);
         }
       } else if (ch->isPc() && ch->isPlayerAction(PLR_LOGGED))

@@ -3425,13 +3425,15 @@ int TBeing::oneHit(TBeing *vict, primaryTypeT isprimary, TThing *weapon, int mod
             else
               vict->affectJoin(this, &(tow->oneSwing[j]), AVG_DUR_NO, AVG_EFF_NO);
 
-            act("There was something nasty on that $o!",
-                  FALSE, this, tow, vict, TO_VICT, ANSI_RED);
-            act("You inflict something nasty on $N!",
-                  FALSE, this, tow, vict, TO_CHAR, ANSI_RED);
-            act("There was something nasty on that $o!",
-                  FALSE, this, tow, vict, TO_NOTVICT, ANSI_RED);
-  
+            if (tow->oneSwing[j].type == SPELL_POISON) {
+              act("There was something nasty on that $o!",
+                    FALSE, this, tow, vict, TO_VICT, ANSI_RED);
+              act("You inflict something nasty on $N!",
+                    FALSE, this, tow, vict, TO_CHAR, ANSI_RED);
+              act("There was something nasty on that $o!",
+                    FALSE, this, tow, vict, TO_NOTVICT, ANSI_RED);
+            }
+ 
             if (tow->oneSwing[j].type == AFFECT_DISEASE)
               disease_start(vict, &(tow->oneSwing[j]));
   

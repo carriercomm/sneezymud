@@ -962,7 +962,7 @@ void TBeing::addObjCost(TBeing *re, TObj *obj, objCost *cost, string &str)
     temp = max(0, obj->rentCost());
 #ifdef SNEEZY2000
     // in sneezy 5.2 we don't want to charge for anything that isn't limited. -dash 01/01
-    if(obj->max_exist > LIMITED_RENT_ITEM) temp = 0;
+    if(obj->max_exist > LIMITED_RENT_ITEM - 1) temp = 0;
     //    vlogf(LOG_DASH, "%s getting cost on %s, max exist %d, limit %d, cost %d", getName(), obj->getName(),
     //	  obj->max_exist, LIMITED_RENT_ITEM, temp);
     

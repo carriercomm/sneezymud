@@ -4029,20 +4029,20 @@ void Descriptor::sendClassList(int home)
 #ifdef SNEEZY2000
   strcpy(buf, "Please pick one of the following choices for your class.\n\r");
   strcat(buf, "An X in front of the selection means that you can pick this class.\n\r");
-  strcat(buf, "If there is no X, for some reason you can't choose the class(es).\n\r");
+  strcat(buf, "If there is no X, for some reason you can't choose the class.\n\r");
   strcat(buf, "To see why you can't choose a selection, choose it and you will be\n\r");
-  strcat(buf, "given an error message telling you why you cannot select the class(es).\n\r\n\r");
+  strcat(buf, "given an error message telling you why you cannot select the class.\n\r\n\r");
   sprintf(buf + strlen(buf), "[%c] 1. Warrior                  [%c] 2. Cleric\n\r", CCC(this, CLASS_WARRIOR), CCC(this, CLASS_CLERIC));
   sprintf(buf + strlen(buf), "[%c] 3. Mage                     [%c] 4. Thief\n\r", CCC(this, CLASS_MAGIC_USER), CCC(this, CLASS_THIEF));
   sprintf(buf + strlen(buf), "[%c] 5. Deikhan                  [%c] 6. Monk\n\r", CCC(this, CLASS_DEIKHAN), CCC(this, CLASS_MONK));
-  sprintf(buf + strlen(buf), "[%c] 7. Ranger\n\r", CCC(this, CLASS_RANGER)); 
+  sprintf(buf + strlen(buf), "[%c] 7. Ranger\n\r\n\r\n\r", CCC(this, CLASS_RANGER)); 
 
 #else
-  strcpy(buf, "Please pick one of the following combinations for your class.\n\r");
+  strcpy(buf, "Please pick one of the following for your class.\n\r");
   strcat(buf, "An X in front of the selection means that you can pick this class.\n\r");
-  strcat(buf, "If there is no X, for some reason you can't choose the class(es).\n\r");
+  strcat(buf, "If there is no X, for some reason you can't choose the class.\n\r");
   strcat(buf, "To see why you can't choose a selection, choose it and you will be\n\r");
-  strcat(buf, "given an error message telling you why you cannot select the class(es).\n\r\n\r");
+  strcat(buf, "given an error message telling you why you cannot select the class.\n\r\n\r");
   sprintf(buf + strlen(buf), "[%c] 1. Warrior                  [%c] A. Warrior/Thief\n\r", CCC(this, CLASS_WARRIOR), CCC(this, CLASS_WARRIOR | CLASS_THIEF, TRUE));
   sprintf(buf + strlen(buf), "[%c] 2. Cleric                   [%c] B. Warrior/Cleric\n\r", CCC(this, CLASS_CLERIC), CCC(this, CLASS_WARRIOR | CLASS_CLERIC, TRUE));
   sprintf(buf + strlen(buf), "[%c] 3. Mage                     [%c] C. Thief/Mage\n\r", CCC(this, CLASS_MAGIC_USER), CCC(this, CLASS_THIEF | CLASS_MAGIC_USER, TRUE));

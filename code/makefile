@@ -341,7 +341,7 @@ $(OBJDIR)create_objs.o: dirsort.h components.h
 $(OBJDIR)create_rooms.o: room.h
 $(OBJDIR)crit_combat.o: combat.h statistics.h
 $(OBJDIR)damage.o: combat.h statistics.h
-$(OBJDIR)db.o: components.h help.h board.h statistics.h mail.h loadset.h makefile
+$(OBJDIR)db.o: components.h help.h board.h statistics.h mail.h loadset.h
 $(OBJDIR)disc_adventuring.o: disc_adventuring.h combat.h
 $(OBJDIR)disc_aegis.o: disc_aegis.h combat.h
 $(OBJDIR)disc_afflictions.o: disc_afflictions.h combat.h
@@ -396,7 +396,7 @@ $(OBJDIR)hearts.o: $(CASINO_HEADS)
 $(OBJDIR)hospital.o: combat.h
 $(OBJDIR)immortal.o: statistics.h mail.h $(CASINO_HEADS) combat.h
 $(OBJDIR)immortal.o: socket.h systemtask.h disc_nature.h shop.h
-$(OBJDIR)indexdata.o: statistics.h makefile
+$(OBJDIR)indexdata.o: statistics.h
 $(OBJDIR)info.o: statistics.h $(CASINO_HEADS) combat.h components.h
 $(OBJDIR)info.o: skillsort.h
 $(OBJDIR)inventory.o: statistics.h disc_looting.h $(CASINO_HEADS)

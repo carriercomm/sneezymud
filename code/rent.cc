@@ -2588,8 +2588,13 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
     // Toss out idlers
     for (t = recep->roomp->stuff; t; t = t->nextThing) {
       if ((tbt = dynamic_cast<TBeing *>(t)) &&
-	  tbt->getTimer() > 1 &&
+	  tbt->getTimer() > 1 && 
           !tbt->isImmortal()) {
+        if ((tbt->master) && tbt->master->inRoom() == tbt->inRoom()) {
+	  // vlogf(LOG_DASH, "saving %s from loitering code, master is %s, room is (%d == %d)",tbt->getName(),
+	  //	tbt->master->getName(), tbt->inRoom(), tbt->master->inRoom());
+	  continue;
+        }
 	recep->doSay("Hey, no loitering!  Make room for the other customers.");
 	for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
 	  if (exit_ok(exitp = recep->exitDir(dir), NULL)) {

@@ -1704,8 +1704,13 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
 
     // Toss out idlers
     for(t=myself->roomp->stuff;t;t=t->nextThing){
-      if((tbt=dynamic_cast<TBeing *>(t)) &&
+      if((tbt=dynamic_cast<TBeing *>(t)) && 
 	 tbt->getTimer()>1 && !tbt->isImmortal()){
+        if ((tbt->master) && tbt->master->inRoom() == tbt->inRoom()) {
+          //vlogf(LOG_DASH, "saving %s from loitering code, master is %s, room is (%d == %d)",tbt->getName(),
+          //      tbt->master->getName(), tbt->inRoom(), tbt->master->inRoom());
+	  continue;
+	}
 	myself->doSay("Hey, no loitering!  Make room for the other customers.");
 	for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
 	  if (exit_ok(myself->exitDir(dir), NULL)) {

@@ -1,4 +1,5 @@
 03-12-00 / 03-16-00 / 03-19-00 / 03-21-00 / 03-22-00 - Lapsos
+03-23-00 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
@@ -21,6 +22,16 @@
   a good perception.
 - Fixed stab so a missed stab still lags.
 - Added rootControl, beastSoother and blastOfFury to wands.
+- New command, 2 new files and new zonefile directive
+  Command: loot <load/list> <min> <max>
+  Files: sys_loot.h sys_loot.cc
+  ZDir: L <if_flag> <level-min> <level-max> <unused> <mob/obj/room>
+  At boot time a list of 'valid loot objects' is constructed.  With
+  this list it is possible to automate 'loot loads' for general stuff.
+  Right now TStaff/TWand/TPotion/TScroll are all used.  There is code
+  setup to allow specifying 'invalid objects' to keep certain things
+  from the list, but is currently blank.  Requires wizpower-wizard
+  to use the command.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

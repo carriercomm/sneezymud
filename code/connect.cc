@@ -2379,6 +2379,12 @@ int TPerson::genericLoadPC()
       wizFileRead(); // Needed for office
 
       rp = real_roomp((desc ? desc->office : ROOM_IMPERIA));
+
+      if (!IS_SET(desc->account->flags, ACCOUNT_IMMORTAL)) {
+        vlogf(LOG_BUG, "%s is immortal but account isn't set immortal.  Setting now.",
+              getName());
+        SET_BIT(desc->account->flags, ACCOUNT_IMMORTAL);
+      }
       /*
       if (!strcmp(name, "Bump"))
         rp = real_roomp(3);

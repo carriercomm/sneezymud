@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spec_rooms.cc,v $
+// Revision 5.1.1.2  1999/10/16 21:52:04  batopr
+// Prevented flares from nuking in the dump
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -193,16 +196,26 @@ int dump(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
   if (cmd == CMD_GENERIC_PULSE) {
     for (t = rp->stuff; t; t = t2) {
       t2 = t->nextThing;
-      if (!dynamic_cast<TObj *>(t))
-        continue;
-      if (dynamic_cast<TPortal *>(t))
-        continue;
-      sendrpf(rp, "A %s vanishes in a puff of smoke.\n\r", fname(t->name).c_str());
 
-      t->logMe(NULL, "Dump nuking");
+      // Only objs get nuked
+      TObj *obj = dynamic_cast<TObj *>(t);
+      if (!obj)
+        continue;
 
-      delete t;
-      t = NULL;
+      // portals should not be nuked
+      if (dynamic_cast<TPortal *>(obj))
+        continue;
+
+      // nor should flares
+      if (obj->objVnum() == GENERIC_FLARE)
+        continue;
+
+      sendrpf(rp, "A %s vanishes in a puff of smoke.\n\r", fname(obj->name).c_str());
+
+      obj->logMe(NULL, "Dump nuking");
+
+      delete obj;
+      obj = NULL;
     }
     return FALSE;
   } else if (cmd != CMD_DROP)

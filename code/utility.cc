@@ -536,6 +536,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
 {
   char message[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
   char buf[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
+  char name[MAX_NAME_LENGTH];
   Descriptor *i;
   time_t lt;
   struct tm *this_time;
@@ -557,21 +558,32 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
       break;
     case LOG_BATOPR:
       strcpy(buf, "Batopr: ");
+      strncpy(name, buf, strlen(buf)-2);
+      name[strlen(buf)-2]='\0';
       break;
     case LOG_BRUTIUS:
       strcpy(buf, "Brutius: ");
+      strncpy(name, buf, strlen(buf)-2);
+      name[strlen(buf)-2]='\0';
       break;
     case LOG_COSMO:
       strcpy(buf, "Cosmo: ");
+      strncpy(name, buf, strlen(buf)-2);
+      name[strlen(buf)-2]='\0';
       break;
     case LOG_LAPSOS:
       strcpy(buf, "Lapsos: ");
+      strncpy(name, buf, strlen(buf)-2);
+      name[strlen(buf)-2]='\0';
       break;
     case LOG_PEEL:
       strcpy(buf, "Peel: ");
+      strncpy(name, buf, strlen(buf)-2);
+      name[strlen(buf)-2]='\0';
       break;
     default:
       buf[0] = '\0';
+      name[0] = '\0';
       break;
   }
 
@@ -592,7 +604,8 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
       if (tError != LOG_LOW &&
           !i->character->hasWizPower(POWER_SETSEV_IMM))
         continue;
-      if (!IS_SET(i->severity, 1<<tError))
+      if (!IS_SET(i->severity, 1<<tError) && 
+	  (!name[0] || strcmp(name, i->character->name)))
         continue;
       if (i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING))
         continue;

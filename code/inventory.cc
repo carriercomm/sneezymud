@@ -715,7 +715,10 @@ int TBeing::doGet(const char *argument)
       if ((t = searchLinkedListVis(this, arg1, sub->stuff))) {
         if (canGet(t, SILENT_NO)) {
           rc = get(this, t, sub, GETOBJOBJ, found);
-          addToWait(ONE_SECOND);
+
+          // none of the other gets apply wait, so justify this if restored
+          // addToWait(ONE_SECOND);
+
           if (IS_SET_DELETE(rc, DELETE_ITEM)) {
             delete t;
             t = NULL;
@@ -732,7 +735,10 @@ int TBeing::doGet(const char *argument)
       } else if ((t = get_thing_on_list_vis(this, arg1, sub->rider))) {
         if (canGet(t, SILENT_NO)) {
           rc = get(this, t, sub, GETOBJOBJ, found);
-          addToWait(ONE_SECOND);
+
+          // none of the other gets apply wait, so justify this if restored
+          // addToWait(ONE_SECOND);
+
           if (IS_SET_DELETE(rc, DELETE_ITEM)) {
             delete t;
             t = NULL;

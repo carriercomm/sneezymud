@@ -1373,7 +1373,7 @@ TObj *read_object(int nr, readFileTypeT type)
 {
   TObj *obj = NULL;
   int i, rc;
-  char buf[256];
+  char buf[512];
   MYSQL_RES *res;
   MYSQL_ROW row;
 
@@ -1403,7 +1403,7 @@ TObj *read_object(int nr, readFileTypeT type)
     vlogf(LOG_BUG, "Database query failed (1): %s", mysql_error(db));
     exit(0);
   }
-  res=mysql_use_result(db);
+  res=mysql_store_result(db);
   if(!(row=mysql_fetch_row(res))){
     //    vlogf(LOG_BUG, "No such object in read_object: %i", nr);
     return NULL;
@@ -1433,39 +1433,16 @@ TObj *read_object(int nr, readFileTypeT type)
 
   mysql_free_result(res);
 
-  sprintf(buf, "select type, mod1, mod2 from affect where vnum=%i", obj_index[nr].virt);
-  if(mysql_query(db, buf)){
-    vlogf(LOG_BUG, "Database query failed (2): %s\n", mysql_error(db));
-    exit(0);
-  }
-  res=mysql_use_result(db);
-  
-  i=0;
-  while((row=mysql_fetch_row(res))){
-    obj->affected[i].location = mapFileToApply(atoi(row[0]));
+  for(i=0;i<MAX_OBJ_AFFECT;++i){
+    obj->affected[i].location = obj_index[nr].affected[i].location;
+    obj->affected[i].modifier = obj_index[nr].affected[i].modifier;
+    obj->affected[i].modifier2 = obj_index[nr].affected[i].modifier2;
+    obj->affected[i].type = obj_index[nr].affected[i].type;
+    obj->affected[i].level = obj_index[nr].affected[i].level;
+    obj->affected[i].bitvector = obj_index[nr].affected[i].bitvector;
 
-    if (obj->affected[i].location == APPLY_SPELL)
-      obj->affected[i].modifier = mapFileToSpellnum(atoi(row[1]));
-    else
-      obj->affected[i].modifier = atoi(row[1]);
-
-    obj->affected[i].modifier2 = atoi(row[2]);
     if (obj->affected[i].location == APPLY_LIGHT)
       obj->addToLight(obj->affected[i].modifier);
-    obj->affected[i].type = TYPE_UNDEFINED;
-    obj->affected[i].level = 0;
-    obj->affected[i].bitvector = 0;
-    i++;
-  }
-
-  mysql_free_result(res);
-
-  for (; (i < MAX_OBJ_AFFECT); i++) {
-    obj->affected[i].location = APPLY_NONE;
-    obj->affected[i].modifier = 0;
-    obj->affected[i].type = TYPE_UNDEFINED;
-    obj->affected[i].level = 0;
-    obj->affected[i].bitvector = 0;
   }
 
   obj_index[nr].number++;

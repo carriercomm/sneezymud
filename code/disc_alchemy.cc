@@ -1485,6 +1485,8 @@ bool alchemy_create_deny(int numberx)
     return true;
   if (oid.itemtype == ITEM_TRAP)
     return true;
+  if (oid.itemtype == ITEM_CHEST)
+    return true;
   if (!IS_SET(oid.where_worn, ITEM_TAKE))
     return true;
   if (isname("belt monk", oid.name))

@@ -66,7 +66,11 @@ void TBeing::doNews(const char *argument)
     }
     while ((dp = readdir(dfd))) {
       if (!strcmp(dp->d_name, ".") ||
-          !strcmp(dp->d_name, ".."))
+          !strcmp(dp->d_name, "..") ||
+          !strcmp(dp->d_name, "_builder") ||
+          !strcmp(dp->d_name, "_immortal") ||
+          !strcmp(dp->d_name, "_spells") ||
+          !strcmp(dp->d_name, "_skills"))
         continue;
 
       sprintf(buf, "%s/%s", HELP_PATH, dp->d_name);

@@ -21,18 +21,32 @@ extern "C" {
 
 static void update_obj_menu(const TBeing *ch, const TObj *obj)
 {
-  const char *obj_edit_menu = " 1) Name                         2) Short Description\n\r"
-" 3) Item Type                    4) Long Description\n\r"
-" 5) Weight                       6) Volume\n\r"
-" 7) Extra Flags                  8) Take Flags\n\r"
-" 9) Unused                      10) Cost/Value\n\r"
-"11) Four Values                 12) Decay time\n\r"
-"13) Max struct points           14) Struct points\n\r"
-"15) Extra Description           16) Material type\n\r"
-"17) Applys                      18) Can be seen\n\r"
-"19) Delete all extra descs      20) Change Object Special Proc\n\r"
-"21) Set item max_exist\n\r"
-"\n\r";
+  const char *obj_edit_menu_basic =
+ "%s 1)%s Name                        %s 2)%s Short Description\n\r"
+ "%s 3)%s Item Type                   %s 4)%s Long Description\n\r"
+ "%s 5)%s Weight                      %s 6)%s Volume\n\r"
+ "%s 7)%s Extra Flags                 %s 8)%s Take Flags\n\r"
+ "%s 9)%s Unused                      %s10)%s Cost/Value\n\r"
+ "%s11)%s Four Values                 %s12)%s Decay time\n\r"
+ "%s13)%s Max struct points           %s14)%s Struct points\n\r"
+ "%s15)%s Extra Description           %s16)%s Material type\n\r"
+ "%s17)%s Applys                      %s18)%s Can be seen\n\r"
+ "%s19)%s Delete all extra descs      %s20)%s Change Object Special Proc\n\r"
+ "%s21)%s Set item max_exist\n\r"
+ "\n\r";
+  const char *obj_edit_menu_advanced =
+ "%s 1)%s %-20s  %s 2)%s %s\n\r"
+ "%s 3)%s %-20s  %s 4)%s %s\n\r"
+ "%s 5)%s %sWeight%s: %-12s  %s 6)%s %sVolume%s: %s\n\r"
+ "%s 7)%s %sExtra Flags%s           %s 8)%s %sTake Flags%s\n\r"
+ "%s 9)%s %sUnused%s                %s10)%s %sCost%s: %s\n\r"
+ "%s11)%s %sFour Values%s           %s12)%s %sDecay%s: %s\n\r"
+ "%s13)%s %sMax-Str%s: %-11s  %s14)%s %sCur-Str%s: %s\n\r"
+ "%s15)%s %sExtra Description%s     %s16)%s %s\n\r"
+ "%s17)%s %sApplys%s                %s18)%s %sCBS%s: %s\n\r"
+ "%s19)%s %sDelete extra descs%s    %s20)%s %s\n\r"
+ "%s21)%s %sMax-Exist%s: %s\n\r"
+ "\n\r";
 
   ch->sendTo(VT_HOMECLR);
   ch->sendTo(VT_CURSPOS, 1, 1);
@@ -47,7 +61,68 @@ static void update_obj_menu(const TBeing *ch, const TObj *obj)
 
   ch->sendTo(VT_CURSPOS, 6, 1);
   ch->sendTo("Editing Menu:\n\r");
-  ch->sendTo(obj_edit_menu);
+
+  if (IS_SET(ch->desc->autobits, AUTO_TIPS)) {
+    char tStringOut[14][256];
+
+    strcpy(tStringOut[0], (obj->name ? obj->name : "Unknown"));
+    strcpy(tStringOut[1], (obj->shortDescr ? obj->shortDescr : "Unknown"));
+    strcpy(tStringOut[2], ItemInfo[itt]->name);
+    strcpy(tStringOut[3], (obj->descr ? obj->descr : "Unknown"));
+    sprintf(tStringOut[4], "%.0f", obj->getWeight());
+    sprintf(tStringOut[5], "%d", obj->getVolume());
+    sprintf(tStringOut[6], "%d", obj->obj_flags.cost);
+    sprintf(tStringOut[7], "%d", obj->obj_flags.decay_time);
+    sprintf(tStringOut[8], "%d", obj->getMaxStructPoints());
+    sprintf(tStringOut[9], "%d", obj->getStructPoints());
+    strcpy(tStringOut[10], material_nums[obj->getMaterial()].mat_name);
+    sprintf(tStringOut[11], "%d", obj->canBeSeen);
+    strcpy(tStringOut[12], ((obj->spec < NUM_OBJ_SPECIALS) ? (obj->spec <= 0 ? "Proc: none" : objSpecials[GET_OBJ_SPE_INDEX(obj->spec)].name) : "Confused..."));
+    sprintf(tStringOut[13], "%d", obj->max_exist);
+
+    for (int tMsgIndex = 0; tMsgIndex < 14; tMsgIndex++)
+      if (strlen(tStringOut[tMsgIndex]) > 20) {
+        tStringOut[tMsgIndex][16] = '\0';
+        strcat(tStringOut[tMsgIndex], "...");
+      }
+
+    ch->sendTo(obj_edit_menu_advanced,
+               ch->cyan()  , ch->norm(),                           tStringOut[0],
+               ch->purple(), ch->norm(),                           tStringOut[1],
+               ch->cyan()  , ch->norm(),                           tStringOut[2],
+               ch->purple(), ch->norm(),                           tStringOut[3],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(), tStringOut[4],
+               ch->purple(), ch->norm(), ch->cyan()  , ch->norm(), tStringOut[5],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(),
+               ch->purple(), ch->norm(), ch->cyan()  , ch->norm(),
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(),
+               ch->purple(), ch->norm(), ch->cyan()  , ch->norm(), tStringOut[6],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(),
+               ch->purple(), ch->norm(), ch->cyan()  , ch->norm(), tStringOut[7],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(), tStringOut[8],
+               ch->purple(), ch->norm(), ch->cyan()  , ch->norm(), tStringOut[9],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(),
+               ch->purple(), ch->norm(),                           tStringOut[10],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(),
+               ch->purple(), ch->norm(), ch->cyan()  , ch->norm(), tStringOut[11],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(),
+               ch->purple(), ch->norm(),                           tStringOut[12],
+               ch->cyan()  , ch->norm(), ch->purple(), ch->norm(), tStringOut[13]);
+  } else
+    ch->sendTo(obj_edit_menu_basic,
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
+               ch->cyan(), ch->norm());
+
+
   ch->sendTo("--> ");
 }
 
@@ -352,6 +427,9 @@ void TPerson::doOEdit(const char *argument)
   float oFValue;
   TObj *cObj = NULL;
   string tStr;
+  string tStString(""),
+         tStBuffer(""),
+         tStArg("");
   char string[256],
        object[80],
        Buf[256],
@@ -361,10 +439,49 @@ void TPerson::doOEdit(const char *argument)
     sendTo("You do not have the power to edit objects.\n\r");
     return;
   }
+
   bisect_arg(argument, &field, string, editor_types_oedit);
 
   switch (field) {
+    case 21:
+      if (!*string)
+        sendTo("Syntax: oed resave <object>\n\r");
+      else if (!(cObj = dynamic_cast<TObj *>(searchLinkedListVis(this, string, stuff))))
+	sendTo("Unable to find %s...Sorry...\n\r", string);
+      else if (cObj->getSnum() == cObj->objVnum() && !hasWizPower(POWER_OEDIT_IMP_POWER))
+        sendTo("Unknown value on this object.  resave only usable on oed loaded objects...\n\r");
+      else {
+        sprintf(string, "%s %d", string, cObj->getSnum());
+        osave(this, string);
+      }
+      return;
+      break;
     case 1:			// save 
+#if 1
+      tStArg = string;
+      tStArg = two_arg(tStArg, tStString, tStBuffer);
+
+      if (tStString.empty() || tStBuffer.empty())
+        sendTo("Syntax: oed save <object> <vnum>\n\r");
+      else {
+        if (is_abbrev(tStBuffer, "resave")) {
+          if (!hasWizPower(POWER_OEDIT_IMP_POWER))
+            sendTo("Syntax: oed save <object> <vnum>\n\r");
+          else if (!(cObj = dynamic_cast<TObj *>(searchLinkedListVis(this, tStString.c_str(), stuff))))
+            sendTo("Unable to find %s...Sorry...\n\r", tStString.c_str());
+          else if (cObj->getSnum() <= 0)
+            sendTo("That object has a bad snum.  Sorry.  Can not resave.\n\r");
+          else {
+            sprintf(string, "%s %d", tStString.c_str(), cObj->getSnum());
+
+            osave(this, string);
+            doJunk(tStString.c_str(), cObj);
+            doSave(SILENT_YES);
+          }
+        } else
+          osave(this, string);
+      }
+#else
       // zGot, cObj, tString are additions for Mithros for:
       //   load obj 100
       //   **modify obj_100**
@@ -388,6 +505,7 @@ void TPerson::doOEdit(const char *argument)
       if (zGot == 1)
         doJunk(object, cObj);
       doSave(SILENT_YES);
+#endif
       return;
       break;
     case 2:			// load 

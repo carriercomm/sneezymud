@@ -68,10 +68,10 @@ static bool isBadForAffectFlags(int update)
 static void send_mob_menu(const TBeing *ch, const TMonster *tMon)
 {
   const char *mob_edit_menu_basic =
- " %s1)%s Name                         %s2)%s Short Description\n\r"
- " %s3)%s Long Description             %s4)%s Description\n\r"
- " %s5)%s Action flags                 %s6)%s Affect flags\n\r"
- " %s7)%s Faction                      %s8)%s Number of attacks\n\r"
+ " %s1)%s Name                        %s 2)%s Short Description\n\r"
+ " %s3)%s Long Description            %s 4)%s Description\n\r"
+ " %s5)%s Action flags                %s 6)%s Affect flags\n\r"
+ " %s7)%s Faction                     %s 8)%s Number of attacks\n\r"
  " %s9)%s Level                       %s10)%s Hitroll\n\r"
  "%s11)%s Armor Level                 %s12)%s HP Level\n\r"
  "%s13)%s Damage Level                %s14)%s Money constant\n\r"
@@ -135,7 +135,7 @@ static void send_mob_menu(const TBeing *ch, const TMonster *tMon)
         strcat(tStringOut[tMsgIndex], "...");
       }
 
-    ch->sendTo(mob_edit_menu_advanced,
+    ch->sendTo(COLOR_MOBS, mob_edit_menu_advanced,
           ch->cyan()  , ch->norm(),                           tStringOut[0],
           ch->purple(), ch->norm(),                           tStringOut[1],
           ch->cyan()  , ch->norm(),                           tStringOut[2],
@@ -167,7 +167,7 @@ static void send_mob_menu(const TBeing *ch, const TMonster *tMon)
           ch->cyan()  , ch->norm(), ch->purple(), ch->norm(), tStringOut[21],
           ch->purple(), ch->norm(), ch->cyan()  , ch->norm());
   } else
-    ch->sendTo(mob_edit_menu_basic,
+    ch->sendTo(COLOR_MOBS, mob_edit_menu_basic,
           ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
           ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
           ch->cyan(), ch->norm(), ch->purple(), ch->norm(),
@@ -2263,10 +2263,13 @@ void TBeing::doMedit(const char *)
 void TPerson::doMedit(const char *argument)
 {
   const char *tString = NULL;
-  int vnum, field, zGot, oValue, Diff = 0;
+  int vnum, field,/* zGot,*/ oValue, Diff = 0;
   float oFValue;
   TMonster *cMob = NULL;
-  string tStr;
+  string tStr,
+         tStString(""),
+         tStBuffer(""),
+         tStArg("");
   char string[256],
        mobile[80],
        Buf[256],
@@ -2284,7 +2287,45 @@ void TPerson::doMedit(const char *argument)
   bisect_arg(argument, &field, string, editor_types_medit);
 
   switch (field) {
+    case 30:
+      if (!*string)
+        sendTo("Syntax: med resave <mobile>\n\r");
+      else if (!(cMob = dynamic_cast<TMonster *>(searchLinkedListVis(this, string, roomp->stuff))))
+        sendTo("Unable to find %s...Sorry...\n\r", string);
+      else if (cMob->getSnum() == cMob->mobVnum() && !hasWizPower(POWER_MEDIT_IMP_POWER))
+        sendTo("Unknown value on this mobile.  resave only usable on med loaded mobiles...\n\r");
+      else {
+        sprintf(string, "%s %d", string, cMob->getSnum());
+        msave(this, string);
+      }
+      return;
+      break;
     case 1:        // save 
+#if 1
+      tStArg = string;
+      tStArg = two_arg(tStArg, tStString, tStBuffer);
+
+      if (tStString.empty() || tStBuffer.empty())
+        sendTo("Syntax: med save <mobile> <vnum>\n\r");
+      else {
+        if (is_abbrev(tStBuffer, "resave")) {
+          if (!hasWizPower(POWER_MEDIT_IMP_POWER))
+            sendTo("Syntax: med save <mobile> <vnum>\n\r");
+          else if (!(cMob = dynamic_cast<TMonster *>(searchLinkedListVis(this, tStString.c_str(), roomp->stuff))))
+            sendTo("Unable to find %s...Sorry...\n\r", tStString.c_str());
+          else if (cMob->getSnum() <= 0)
+            sendTo("That mobile has a bad snum.  Sorry.  Can not resave.\n\r");
+          else {
+            sprintf(string, "%s %d", tStString.c_str(), cMob->getSnum());
+
+            msave(this, string);
+            doPurge(tStString.c_str());
+          }
+        } else
+          msave(this, string);
+      }
+
+#else
       // zGot, cMob, tString are additions for Mithros for:
       //   load mob 100
       //   **modify mob_100**
@@ -2308,6 +2349,7 @@ void TPerson::doMedit(const char *argument)
       if (zGot == 1)
         doPurge(mobile);
       doSave(SILENT_YES);
+#endif
       return;
       break;
     case 2:        // load 

@@ -1066,6 +1066,7 @@ const char * const editor_types_oedit[] =
   "max_exist",      // 18
   "default_ac_str", // 19
   "replace",        // 20
+  "resave",         // 21
   "\n"
 };
 
@@ -1100,6 +1101,7 @@ const char * const editor_types_medit[] =
   "room_sound",     // 27
   "oroom_sound",    // 28
   "replace",        // 29
+  "resave",         // 30
   "\n"
 };
 

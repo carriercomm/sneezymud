@@ -439,6 +439,9 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
           sprintf(capbuf, colorString(caster, caster->desc, capbuf, NULL, COLOR_OBJECTS, TRUE).c_str());
           if (obj->in_room == ROOM_NOWHERE || !caster->canSee(obj)) {
             act("$p is in use but you can't tell the location.", TRUE, caster, obj,NULL, TO_CHAR);
+          } else if (obj->inImperia() && !caster->isImmortal()) {
+            act("$p is among the gods, you can not look there!",
+                FALSE, caster, obj, NULL, TO_CHAR);
           } else {
             if (IS_SET(caster->desc->plr_color, PLR_COLOR_ROOM_NAME)) {
               if (hasColorStrings(NULL, obj->roomp->getName(), 2)) {
@@ -470,6 +473,9 @@ int eyesOfFertuman(TBeing *caster, const char * tofind, int level, byte bKnown)
         sprintf(capbuf, colorString(caster, caster->desc, capbuf, NULL, COLOR_MOBS, TRUE).c_str());
         if (ch->in_room == ROOM_NOWHERE || !caster->canSee(ch)) {
           act("$N is somewhere but you can't tell the location.", TRUE, caster, NULL, ch, TO_CHAR);
+        } else if (ch->inImperia() && !caster->isImmortal()) {
+          act("$N is among the gods, you can not look there!",
+              FALSE, caster, NULL, ch, TO_CHAR);
         } else {
           if (IS_SET(caster->desc->plr_color, PLR_COLOR_ROOM_NAME)) {
             if (hasColorStrings(NULL, ch->roomp->getName(), 2)) {

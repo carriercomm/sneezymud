@@ -2550,7 +2550,7 @@ void buildCommandArray(void)
   commandArray[CMD_ATTUNE] = new commandInfo("attune", POSITION_RESTING, 0);
   commandArray[CMD_AFK] = new commandInfo("afk", POSITION_DEAD, 0);
   commandArray[CMD_CONTINUE] = new commandInfo("continue", POSITION_DEAD, 0);
-  commandArray[CMD_PEELPK] = new commandInfo("peelpk", POSITION_DEAD, GOD_LEVEL1);
+  commandArray[CMD_PEELPK] = new commandInfo("peelpk", POSITION_DEAD, 0);
   commandArray[CMD_SOOTH] = new commandInfo("sooth", POSITION_STANDING, 0);
   commandArray[CMD_SUMMON] = new commandInfo("summon", POSITION_STANDING, 0);
   commandArray[CMD_CHARM] = new commandInfo("charm", POSITION_STANDING, 0);

@@ -395,7 +395,7 @@ class Descriptor {
     time_t talkCount;
     bool client;
     sh_int bad_login;              // login catches for hackers 
-    byte severity;
+    int severity;
     int office;
     int blockastart;
     int blockaend;

@@ -435,24 +435,6 @@ string TMessages::operator()(messageTypeT tValue,
     tMessage = getDefaultMessage(tValue, tPlayer);
 
   if (sendFiltered) {
-    if (tPlayer)
-      findAndReplace(tMessage, "<n>", (tPlayer->getName() ? tPlayer->getName() : "ERROR"));
-    else
-      findAndReplace(tMessage, "<n>", "Someone");
-
-    findAndReplace(tMessage, "<m>", sexTypes[0][tSexP]);
-    findAndReplace(tMessage, "<e>", sexTypes[1][tSexP]);
-    findAndReplace(tMessage, "<s>", sexTypes[2][tSexP]);
-
-    if (tThing)
-      findAndReplace(tMessage, "<N>", (tThing->getName() ? tThing->getName() : "ERROR"));
-    else
-      findAndReplace(tMessage, "<N>", "Someone");
-
-    findAndReplace(tMessage, "<M>", sexTypes[0][tSexM]);
-    findAndReplace(tMessage, "<E>", sexTypes[1][tSexM]);
-    findAndReplace(tMessage, "<S>", sexTypes[2][tSexM]);
-
     if (tString && *tString) {
       findAndReplace(tMessage, "<d>", tString);
       findAndReplace(tMessage, "<a>", tString);
@@ -460,6 +442,14 @@ string TMessages::operator()(messageTypeT tValue,
       findAndReplace(tMessage, "<d>", "somewhere");
       findAndReplace(tMessage, "<a>", "to do something");
     }
+
+    findAndReplace(tMessage, "<m>", sexTypes[0][tSexP]);
+    findAndReplace(tMessage, "<e>", sexTypes[1][tSexP]);
+    findAndReplace(tMessage, "<s>", sexTypes[2][tSexP]);
+
+    findAndReplace(tMessage, "<M>", sexTypes[0][tSexM]);
+    findAndReplace(tMessage, "<E>", sexTypes[1][tSexM]);
+    findAndReplace(tMessage, "<S>", sexTypes[2][tSexM]);
 
     findAndReplace(tMessage, "~R", "\n\r");
 
@@ -470,6 +460,16 @@ string TMessages::operator()(messageTypeT tValue,
     findAndReplace(tMessage, "<A>", "");
     findAndReplace(tMessage, "<h>", "");
     findAndReplace(tMessage, "<H>", "");
+
+    if (tPlayer)
+      findAndReplace(tMessage, "<n>", (tPlayer->getName() ? tPlayer->getName() : "ERROR"));
+    else
+      findAndReplace(tMessage, "<n>", "Someone");
+
+    if (tThing)
+      findAndReplace(tMessage, "<N>", (tThing->getName() ? tThing->getName() : "ERROR"));
+    else
+      findAndReplace(tMessage, "<N>", "Someone");
   } else {
     findAndReplace(tMessage, "<d>", "<-d>");
     findAndReplace(tMessage, "<a>", "<-a>");

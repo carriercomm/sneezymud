@@ -210,7 +210,7 @@ OBJ2 = gin.o handler.o hearts.o hospital.o immortal.o immunity.o \
 	spell_info.o \
 	spell_num.o spell_parser.o \
 	spellstore.o \
-	spelltask.o o \
+	spelltask.o \
 	statistics.o stats.o structs.o systemtask.o \
 	talk.o task.o task_attune.o task_lightfire.o task_scribe.o \
 	task_skin.o task_trap.o task_brew.o task_meditate.o task_search.o \

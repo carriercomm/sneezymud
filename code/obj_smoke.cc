@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: obj_smoke.cc,v $
+// Revision 5.1.1.2  1999/12/05 10:51:35  lapsos
+// Fixed an odd crash bug.
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -209,16 +212,23 @@ int TThing::dropSmoke(int amt)
 
 void TSmoke::decayMe()
 {
-  int volume=getVolume();
+  int volume = getVolume();
 
-  if(volume<=0)
+  if (!roomp) {
+    vlogf(0, "TSmoke::decayMe() called while TSmoke not in room!");
     setVolume(0);
-  else if(volume<25)
+    return;
+  }
+
+  if (volume <= 0)
+    setVolume(0);
+  else if (volume < 25)
     addToVolume((roomp->isIndoorSector() ? -1 : -3));
   else // large smokes evaporate faster
     addToVolume((roomp->isIndoorSector() ? -(volume/25) : -(volume/15))); 
 
-  if(getVolume()<0) setVolume(0);
+  if (getVolume() < 0)
+    setVolume(0);
 }
 
 string TSmoke::statObjInfo() const

@@ -711,7 +711,9 @@ static struct PolyType PolyList[] =
 
 int polymorph(TBeing *caster, int level, byte bKnown)
 {
-  int i, ret = 0, duration = 0, nameFound = FALSE, found = FALSE;
+  int i, ret = 0;
+  bool nameFound = FALSE;
+  bool found = FALSE;
   TBeing *mob;
   const char * buffer;
   affectedData aff;

@@ -374,6 +374,7 @@ immuneTypeT getTypeImmunity(spellNumT type)
     case -1:
       bit = IMMUNE_SKIN_COND;
       break;
+    case SKILL_POWERMOVE:
     case SKILL_PARRY_WARRIOR:
     case SKILL_QUIV_PALM:
     case SKILL_SPRINGLEAP:

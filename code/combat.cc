@@ -1967,6 +1967,11 @@ int TBeing::hit(TBeing *target, int pulse)
       if(doesKnowSkill(SKILL_CRIT_HIT))
         learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_CRIT_HIT, 20);
     }
+    if (((fx > 0.999) || (fy > 0.999)) && hasClass(CLASS_WARRIOR)){
+      if(doesKnowSkill(SKILL_POWERMOVE))
+	learnFromDoingUnusual(LEARN_UNUSUAL_NORM_LEARN, SKILL_POWERMOVE, 20);
+    }
+
     if (awake() && getPosition() < POSITION_CRAWLING && (fx > 0 || fy > 0)) {
       if (doesKnowSkill(SKILL_GROUNDFIGHTING)) {
         if (bSuccess(this, getSkillValue(SKILL_GROUNDFIGHTING), SKILL_GROUNDFIGHTING))

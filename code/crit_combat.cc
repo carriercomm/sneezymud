@@ -433,6 +433,11 @@ int TBeing::critSuccessChance(TBeing *v, TThing *weapon, wearSlotT *part_hit, sp
   } else 
     dicenum = dice(1, 100000);    // This was 10k under 3.x - Bat
 
+  if(doesKnowSkill(SKILL_POWERMOVE) && isPc()){
+    dicenum = dice(1, (int)(100000-(getSkillValue(SKILL_POWERMOVE)*900)));
+  } else 
+    dicenum = dice(1, 100000);
+
   dexstat = plotStat(STAT_CURRENT, STAT_DEX, 10, 100, 63) - 2*getCond(DRUNK);
 
   if (isImmortal())

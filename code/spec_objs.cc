@@ -2035,7 +2035,11 @@ int youthPotion(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
   act("$n imbibes $p.", TRUE, ch, me, 0, TO_ROOM);
   act("You imbibe $p.", TRUE, ch, me, 0, TO_CHAR);
 
-  ch->age_mod -= 3;
+  // every 2-weeks adds a year just from time
+  // add on deaths.  Folks probably are not getting potions very often
+  // so we can probably have a fairly high number on this
+  ch->age_mod -= 7;
+
   ch->sendTo("You feel much younger.\n\r");
 
   return DELETE_THIS;

@@ -1230,6 +1230,8 @@ lower(account->name).c_str());
 
   accStat.account_number++;
 
+  vlogf(LOG_MISC, "New Client Account: '%s' with email '%s'", account->name, account->email);
+
   return TRUE;
 }
 

@@ -129,6 +129,7 @@ int TBeing::dummyFlu()
     case 2:
       sendTo("Your stomach churns uncomfortably.\n\r");
       doAction("",CMD_PUKE);
+      this->dropPool(10, LIQ_VOMIT);
       if (getPosition() <= POSITION_SLEEPING) {
         sendTo("Puking in your sleep has cause you to gag!\n\r");
         if ((rc = reconcileDamage(this, ::number(1,10) +15, DAMAGE_SUFFOCATION)) == -1)
@@ -781,6 +782,7 @@ int disease_food_poison(TBeing *ch, int message, affectedData *)
           break;
         case 5:
           ch->doAction("",CMD_PUKE);
+	  ch->dropPool(10, LIQ_VOMIT); 
           if (ch->getPosition() <= POSITION_SLEEPING) {
             ch->sendTo("Puking in your sleep has cause you to gag!\n\r");
             if ((rc = ch->reconcileDamage(ch, ::number(1,10) +15, DAMAGE_SUFFOCATION)) == -1)

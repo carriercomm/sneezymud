@@ -105,6 +105,7 @@ static int steal(TBeing * thief, TBeing * victim)
   TMonster *guard = NULL;
   int vict_lev = victim->GetMaxLevel();
   int level = thief->getSkillLevel(SKILL_STEAL);
+  spellNumT skill = thief->getSkillNum(SKILL_SNEAK);
 
   if (victim->getPartMinHeight(ITEM_WEAR_WAISTE) > (thief->getPosHeight() + 5)) {
     // victim riding a tall creature...
@@ -154,6 +155,17 @@ static int steal(TBeing * thief, TBeing * victim)
       thief->sendTo("You couldn't seem to find any talens...\n\r");
   } else {
     act("Oops..", FALSE, thief, 0, 0, TO_CHAR);
+
+  
+    if (thief->affectedBySpell(skill) || 
+	thief->checkForSkillAttempt(skill)) {
+      thief->sendTo("You are no longer sneaking.\n\r");
+      thief->removeSkillAttempt(skill);
+      if (thief->affectedBySpell(skill))
+	thief->affectFrom(skill);
+      return FALSE;
+    }
+  
     act("$n tries to steal money from $N.", TRUE, thief, 0, victim, TO_NOTVICT);
     if (victim->getPosition() == POSITION_SLEEPING && 
         !victim->isAffected(AFF_SLEEP) && victim->isLucky(thief->spellLuckModifier(SKILL_STEAL))) {
@@ -215,7 +227,8 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
   int rc;
   int bKnown = thief->getSkillValue(SKILL_STEAL);
   bool is_imp = thief->hasWizPower(POWER_WIZARD);
-
+  spellNumT skill = thief->getSkillNum(SKILL_SNEAK);
+  
   if (bKnown < 75) {
     thief->sendTo("You don't have the ability to steal equipment. (yet...)\n\r");
     return FALSE;
@@ -338,6 +351,16 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
        thief->sendTo("You can't carry that much volume.\n\r");
   } else {
     act("You are caught in the act of stealing the $o!",FALSE,thief,obj,0,TO_CHAR);
+
+    if (thief->affectedBySpell(skill) ||
+        thief->checkForSkillAttempt(skill)) {
+      thief->sendTo("You are no longer sneaking.\n\r");
+      thief->removeSkillAttempt(skill);
+      if (thief->affectedBySpell(skill))
+        thief->affectFrom(skill);
+      return FALSE;
+    }
+
     act("$n fails to steal $N's $o.",FALSE,thief,obj,victim,TO_NOTVICT);
 
     if (victim->getPosition() == POSITION_SLEEPING && 

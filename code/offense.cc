@@ -1321,6 +1321,13 @@ int TObj::burnObject(TBeing *ch, int perc)
     }
     return TRUE;
   }
+
+  if(material_nums[getMaterial()].flammability){
+    setBurning(ch);
+    sprintf(buf, "Your $o start$Q to burn!");
+    act(buf,TRUE,ch,this,0,TO_CHAR);
+  }
+
   return FALSE;
 }
 

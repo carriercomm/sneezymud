@@ -89,7 +89,7 @@ void bootPulse(const char *str, bool end_str)
 
   if (str) {
     if (strcmp(str, ".")) {
-      sc = MUD_NAME;
+      sc = MUD_NAME_VERS;
       sc += " Boot Process: ";
 
       // Set the last real output.

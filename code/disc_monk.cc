@@ -365,6 +365,72 @@ int TBeing::monkDodge(TBeing *v, TThing *weapon, int *dam, int w_type, wearSlotT
   return FALSE;
 }
 
+int TBeing::doChi(const char *tString, TThing *tSucker)
+{
+  // Require 25 in SKILL_CHI for 'chi self'
+  // Require 50 in SKILL_CHI and 10 in:  -- for 'chi <person>'
+  //   getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 25) {
+  // Require 100 in SKILL_CHI and 50 in <upper> for 'chi all'
+
+  int     tRc = 0;
+  char    tTarget[256];
+  TObj   *tObj;
+  TBeing *tVictim;
+
+  if (checkBusy(NULL))
+    return FALSE;
+
+  if (!doesKnowSkill(SKILL_CHI)) {
+    sendTo("You lack the ability to chi.\n\r");
+    return FALSE;
+  }
+
+  if (getMana() < 0) {
+    sendTo("You lack the chi.\n\r");
+    return FALSE;
+  }
+
+  only_argument(tString, tTarget);
+
+  if (is_abbrev(tTarget, getName())) {
+    tRc = chiMe(this);
+    addSkillLag(SKILL_CHI, tRc);
+  } else if (!strcmp(tTarget, "all")) {
+    tRc = roomp->chiMe(this);
+    addSkillLag(SKILL_CHI, tRc);
+  } else {
+    generic_find(tTarget, FIND_CHAR_ROOM | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, this, &tVictim, &tObj);
+
+    if (tObj)
+      tObj->chiMe(this);
+    else if (tVictim)
+      tVictim->chiMe(this);
+    else {
+      sendTo("Yes, good.  Use chi...on what or whom?\n\r");
+      return FALSE;
+    }
+  }
+
+  if (IS_SET_DELETE(tRc, RET_STOP_PARSING))
+    REM_DELETE(tRc, RET_STOP_PARSING);
+
+  if (IS_SET_DELETE(tRc, DELETE_VICT)) {
+    if (tVictim) {
+      delete tVictim;
+      tVictim = NULL;
+    } else if (tObj) {
+      delete tObj;
+      tObj = NULL;
+    }
+
+    REM_DELETE(tRc, DELETE_VICT);
+  } else if (IS_SET_DELETE(tRc, DELETE_THIS))
+    return DELETE_THIS;
+
+  return tRc;
+}
+
+/*
 int TBeing::doChi(const char *argument, TThing *target)
 {
   int rc = 0, bits = 0;
@@ -379,19 +445,20 @@ int TBeing::doChi(const char *argument, TThing *target)
     sendTo("You know nothing about chi.\n\r");
     return FALSE;
   }
-  if(getMana()<=0){
+  if (getMana() <= 0) {
     sendTo("You lack the chi.\n\r");
     return FALSE;
   }
 
   only_argument(argument, name_buf);
 
-  if(!strcmp(argument, "all")){
-    if(getDiscipline(DISC_MEDITATION_MONK)->getLearnedness()<25){
+  if (!strcmp(argument, "all")) {
+    if (getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 25) {
       sendTo("You lack the ability to project chi on others at your current training.\n\r");
       return FALSE;
     }
-    rc=chi(this, (TBeing *) NULL);
+
+    rc = chiMe(this);
     addSkillLag(SKILL_CHI, rc);
     // DELETE_THIS will fall through
   } else {
@@ -403,27 +470,29 @@ int TBeing::doChi(const char *argument, TThing *target)
 	return FALSE;
       }
       victim = fight();
-      bits=FIND_CHAR_ROOM;
+      bits = FIND_CHAR_ROOM;
     }
 
-    if(this==victim){
-      if(getSkillValue(SKILL_CHI)<25){
+    if (this==victim) {
+      if (getSkillValue(SKILL_CHI) < 25) {
         sendTo("You lack the ability to project chi on yourself at your current training.\n\r");
 	return FALSE;
       }
-      chiMe(this);
+
+      rc = chiMe(this);
       addSkillLag(SKILL_CHI, rc);
       return TRUE;
     }
 
-    switch(bits){
+    switch (bits) {
       case FIND_CHAR_ROOM:
-	if(getSkillValue(SKILL_CHI)<50 ||
-	   getDiscipline(DISC_MEDITATION_MONK)->getLearnedness()<10){
+	if (getSkillValue(SKILL_CHI) < 50 ||
+	    getDiscipline(DISC_MEDITATION_MONK)->getLearnedness() < 10){
           sendTo("You lack the ability to project chi on others at your current training.\n\r");
 	  break;
 	}
-	rc=chi(this, victim);
+
+	rc = victim->chiMe(this);
 	addSkillLag(SKILL_CHI, rc);
 	
 	if (IS_SET_DELETE(rc, DELETE_VICT)) {
@@ -432,10 +501,11 @@ int TBeing::doChi(const char *argument, TThing *target)
 	  REM_DELETE(rc, DELETE_VICT);
 	} else if (IS_SET_DELETE(rc, DELETE_THIS))
           return DELETE_THIS;
+
 	break;
       case FIND_OBJ_ROOM:
       case FIND_OBJ_EQUIP:
-	rc=chi(this, obj);
+	rc = obj->chiMe(this);
 	addSkillLag(SKILL_CHI, rc);
 	break;
 #if 0
@@ -626,4 +696,4 @@ int chi(TBeing *c, TBeing *v)
 
   return TRUE;
 }
-
+*/

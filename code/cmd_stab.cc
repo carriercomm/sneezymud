@@ -229,7 +229,6 @@ static int stab(TBeing *thief, TBeing * victim)
           tSever = 5;
           break;
         case CRIT_S_NONE:
-        default:
           tSever = 0;
           break;
       }
@@ -238,6 +237,8 @@ static int stab(TBeing *thief, TBeing * victim)
 
       if (thief->reconcileDamage(victim, dam, tDamageType) == -1)
         return DELETE_VICT;
+
+      return FALSE;
     } else {
       switch (critFail(thief, SKILL_STABBING)) {
         case CRIT_F_HITSELF:

@@ -283,13 +283,15 @@ void Race::initRace(const char *whichRace)
 
   // Basically we just start looking for keywords and then assign values
   // into the appropriate data member.
+  // COSMO STRING
+  string buf_string;
   while (fgets(buf, 256, raceFile)) {
     const char * buf2 = one_argument(buf, keyword);
     strcpy(buf, buf2);
     if (!keyword || !*keyword || *keyword == '#')
       continue;
 
-    string buf_string = buf;
+    buf_string = buf;
     size_t end_whitespace = buf_string.find_last_of("\n");
     if (end_whitespace != string::npos)
       buf_string.erase(end_whitespace);

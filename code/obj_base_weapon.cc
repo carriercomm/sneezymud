@@ -771,13 +771,13 @@ void TBaseWeapon::changeBaseWeaponValue1(TBeing *ch, const char *arg, editorEnte
   }
   ch->sendTo(VT_HOMECLR);
   if (isSlashWeapon()) {
-    ch->sendTo("1) Max sharpness (Maximum sharpness item can ever be):     Current=%d\n\r", getMaxSharp());
+    ch->sendTo("1) Max sharpness (Maximum sharpness item can ever be):     Max    =%d\n\r", getMaxSharp());
     ch->sendTo("2) Sharpness (sharpness that weapon will start out with):  Current=%d\n\r", getCurSharp());
   } else if (isBluntWeapon()) {
-    ch->sendTo("1) Max Bluntness (Maximum bluntness item can ever be):     Current=%d\n\r", getMaxSharp());
+    ch->sendTo("1) Max Bluntness (Maximum bluntness item can ever be):     Max    =%d\n\r", getMaxSharp());
     ch->sendTo("2) Bluntness (sharpness that weapon will start out with):  Current=%d\n\r", getCurSharp());
   } else {
-    ch->sendTo("1) Max Pointiness (Maximum pointiness item can ever have):   Current=%d\n\r", getMaxSharp());
+    ch->sendTo("1) Max Pointiness (Maximum pointiness item can ever have):   Max    =%d\n\r", getMaxSharp());
     ch->sendTo("2) Pointiness (pointiness that weapon will start out with):  Current=%d\n\r", getCurSharp());
   }
   ch->sendTo(VT_CURSPOS, 10, 1);

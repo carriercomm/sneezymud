@@ -1,4 +1,4 @@
-03-12-00 / 03-16-00 / 03-19-00 - Lapsos
+03-12-00 / 03-16-00 / 03-19-00 / 03-21-99 - Lapsos
 - Modified doSetsev a small bit.  There was a check in place that,
   basically, made it so you Had to have the setsev-imm power to set
   anything But log-low.  Seeing the results of this I can only assume,
@@ -16,6 +16,9 @@
 - Made poison-weapon Verify that the weapon isn't already poisoned.
 - Added a (poisoned) track-on to showModifier, for weapons, if affected
   by the poison-weapon code.
+- Added the ability to use 'attr reset' to reset current session stats.
+- Fixed up the listExits(for look) to show closed exits to mortals with
+  a good perception.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

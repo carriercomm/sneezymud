@@ -2,13 +2,14 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// real_container.cc
+// obj_open_container.cc
 //
 //////////////////////////////////////////////////////////////////////////
 
 
 #include "stdsneezy.h"
 #include "create.h"
+#include "disc_looting.h"
 
 TOpenContainer::TOpenContainer() :
   TBaseContainer(),

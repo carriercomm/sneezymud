@@ -2,7 +2,7 @@
 //
 //      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
 //
-//      "set.cc" - Functions related to the @set command
+//      "cmd_set.cc" - Functions related to the @set command
 //  
 //////////////////////////////////////////////////////////////////////////
 

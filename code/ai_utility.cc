@@ -42,7 +42,7 @@ int TMonster::aggro(void)
   if (GuildProcs(spec))
     return FALSE;
 
-  if(isAffected(AFF_CHARM))
+  if(isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL))
     return FALSE;
 
   if (isAngry() && isMalice()) {

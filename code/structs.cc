@@ -656,7 +656,7 @@ TThing& TBeing::operator += (TThing& t)
   stuff = &t;
   t.parent = this;
 
-  if (!isPc() && isAffected(AFF_CHARM) && master) {
+  if (isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
     TObj *obj = dynamic_cast<TObj *>(&t);
     TPerson *tP;
 

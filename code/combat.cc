@@ -1156,7 +1156,7 @@ void TBeing::setFighting(TThing *vict, int dam, bool inFight)
 // Possibly delete if mobs on furniture seems ok
   if (tbv->getPosition() < POSITION_STANDING) {
     if (dynamic_cast<TMonster *> (tbv) && !tbv->desc) {
-      if (!tbv->isAffected(AFF_CHARM) && ::number(0, 3)) {
+      if (!tbv->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && ::number(0, 3)) {
         dynamic_cast<TMonster *> (tbv)->standUp();
       }
     }
@@ -1761,7 +1761,7 @@ int TBeing::hit(TBeing *target, int pulse)
     }
     if (!isPc()) {
       TMonster *tmons = dynamic_cast<TMonster *>(this);
-      if (!tmons->isAffected(AFF_CHARM)) {
+      if (!tmons->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
         tmons->developHatred(target);
 
         // if we are fighting an NPC pet, develop hatred toward the master
@@ -1769,7 +1769,7 @@ int TBeing::hit(TBeing *target, int pulse)
         // to attack), to avoid guards "get thee back to.." from hating
         // elemental's owner.  Only hate if the pet was the aggressor, or
         // if the pet's owner is also fighting
-        if (!target->isPc() && target->isAffected(AFF_CHARM)) {
+        if (!target->isPc() && target->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
           if (target->master && (target->master->isPc() || target->master->desc)) {
             if (target->isAffected(AFF_AGGRESSOR) ||
                 target->master->fight() == tmons) {
@@ -3477,7 +3477,7 @@ bool TBeing::isHitableAggr(TBeing *v)
       (this != v) &&
       (!(specials.act & ACT_WIMPY) || !v->awake()) &&
       (dynamic_cast<TPerson *>(v) || (v->specials.act & ACT_ANNOYING)) &&
-      (!isAffected(AFF_CHARM) || (master != v)))
+      (!isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) || (master != v)))
     return TRUE;
 
   return FALSE;
@@ -4191,7 +4191,7 @@ bool TBeing::canFight(TBeing *target)
         return FALSE;
       }
     } else if (dynamic_cast<TMonster *> (this) && !desc) {
-      if (fight() && !isAffected(AFF_CHARM) && ::number(0, 1)) {
+      if (fight() && !isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && ::number(0, 1)) {
         dynamic_cast<TMonster *> (this)->standUp();
       }
     }

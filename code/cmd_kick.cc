@@ -76,7 +76,7 @@ bool TBeing::canKick(TBeing *victim, silentTypeT silent)
     return FALSE;
   }
 
-  if (isAffected(AFF_CHARM) && (master == victim)) {
+  if (isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && (master == victim)) {
     act("$N is just such a good friend, you simply can't hit $M.", FALSE, 
         this, 0, victim, TO_CHAR);
     return FALSE;

@@ -18,7 +18,7 @@ int TMonster::mobileGuardian()
   TBeing *tbeTarg = NULL;
   int rc;
 
-  if (((in_room) < 0) || !master || !isAffected(AFF_CHARM)||
+  if (((in_room) < 0) || !master || !isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)||
       !master->fight() || !(tbeTarg = master->findAnAttacker()) ||
       !canSee(tbeTarg) || (getPosition() < POSITION_STANDING))
     return FALSE;
@@ -57,7 +57,7 @@ int TMonster::protectionStuff()
   if(getPosition() <= POSITION_SLEEPING)
     return FALSE;
 
-  if (isAffected(AFF_CHARM) || master) 
+  if (isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) || master) 
     return FALSE;
 
   if (GuildProcs(spec) || UtilProcs(spec))
@@ -166,7 +166,7 @@ int TMonster::charmeeStuff()
 
   if(getPosition() <= POSITION_SLEEPING)
     return FALSE;
-  if (isAffected(AFF_CHARM) && master) {
+  if (isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && master) {
     if (!sameRoom(*master))
       return FALSE;
     if (fight()) {
@@ -716,7 +716,7 @@ int TMonster::senseWimps()
   if (!fight() || !awake())
     return FALSE;
 
-  if (isAffected(AFF_CHARM))
+  if (isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL))
     return FALSE;
 
   // keep horses from starting fights
@@ -2840,14 +2840,14 @@ int TMonster::mobileActivity(int pulse)
       static attune_struct *job;
       job = (struct attune_struct *) act_ptr;
       if (!job || (!(job->hasJob) && !(pulse%(1 * PULSE_MOBACT)))) {
-        if (!isAffected(AFF_CHARM) && ::number(0, 1)) {
+        if (!isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && ::number(0, 1)) {
           rc = standUp();
           if (rc)
             return FALSE;
         }
       }
     } else if (!(pulse%(1 * PULSE_MOBACT))) {
-      if (!isAffected(AFF_CHARM) && ::number(0, 1)) {
+      if (!isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && ::number(0, 1)) {
         rc = standUp(); 
         if (rc)
           return FALSE;
@@ -2861,14 +2861,14 @@ int TMonster::mobileActivity(int pulse)
       static attune_struct *job;
       job = (struct attune_struct *) act_ptr;
       if (!job || (!(job->hasJob) && !(pulse%(1 * PULSE_MOBACT)))) {
-        if (!isAffected(AFF_CHARM) && ::number(0, 1)) {
+        if (!isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && ::number(0, 1)) {
           rc = standUp();/* stand up and fight like a mob */
           if (rc)
             return FALSE;
         }
       }
     } else if (!(pulse%(1 * PULSE_MOBACT))) {
-      if (!isAffected(AFF_CHARM) && ::number(0, 1)) {
+      if (!isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && ::number(0, 1)) {
         rc = standUp();            /* stand up and fight like a mob */
         if (rc)
           return FALSE;
@@ -2885,7 +2885,7 @@ int TMonster::mobileActivity(int pulse)
         !riding &&
         !fight() &&
         (getHit() >= hitLimit()) &&
-        !isAffected(AFF_CHARM)) {
+        !isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL)) {
       // anything more comfortable around?
       for (t = roomp->stuff; t; t = t->nextThing) {
         if (t->mobPulseBed(this))

@@ -3033,7 +3033,7 @@ int TMonster::aiSteal(TBeing *thief)
   US(25);
   UM(22);
   UA(38);
-  if (!pissed() && !isAffected(AFF_CHARM) && canSee(thief, INFRA_YES) && thief->isPc()) {
+  if (!pissed() && !isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL) && canSee(thief, INFRA_YES) && thief->isPc()) {
     if (!hasClass(CLASS_THIEF)) {
       sprintf(buf, "%s is a bloody thief.", thief->getName());
       doShout(buf);

@@ -636,7 +636,7 @@ bool UtilMobProc(TBeing *ch)
 {
   if (ch->isPc() || !ch->spec)
     return FALSE;
-  if (ch->isAffected(AFF_CHARM))
+  if (ch->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL))
     return TRUE;
   if (ch->rider)
     return TRUE;
@@ -648,7 +648,7 @@ bool GuildMobProc(TBeing *ch)
 {
   if (ch->isPc() || !ch->spec)
     return FALSE;
-  if (ch->isAffected(AFF_CHARM))
+  if (ch->isPet(PETTYPE_PET | PETTYPE_CHARM | PETTYPE_THRALL))
     return TRUE;
   if (ch->rider)
     return TRUE;

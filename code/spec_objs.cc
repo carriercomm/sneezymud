@@ -414,6 +414,54 @@ int poisonWhip(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
   return FALSE;
 }
 
+int poisonViperBlade(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  TBeing *ch;
+  affectedData aff, aff2;
+
+  if (!o || !vict)
+    return FALSE;
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;       // weapon not equipped (carried or on ground)
+  if (cmd != CMD_OBJ_HITTING)
+    return FALSE;
+  if (vict->isImmune(IMMUNE_POISON, 20))
+    return FALSE;
+  if (vict->affectedBySpell(SPELL_POISON))
+    return FALSE;
+
+  if (!::number(0,49)) {
+    aff.type = SPELL_POISON;
+    aff.level = 15;
+    aff.duration = (25) * UPDATES_PER_MUDHOUR;
+    aff.modifier = -25;
+    aff.location = APPLY_STR;
+    aff.bitvector = AFF_POISON;
+
+    aff2.type = AFFECT_DISEASE;
+    aff2.level = 0;
+    aff2.duration = aff.duration;
+    aff2.modifier = DISEASE_POISON;
+    aff2.location = APPLY_NONE;
+    aff2.bitvector = AFF_POISON;
+
+    act("<G>A strange green mist eminates from<1> $p.", 0, vict, o, 0, TO_CHAR);
+    act("<G>A strange green mist eminates from<1> $p.", 0, vict, o, 0, TO_ROOM);
+    act("<G>The green mist quickly forms into the shape of a venomous viper!<1>", 0, vict, o, 0, TO_CHAR);
+      act("<G>The green mist quickly forms into the shape of a venomous viper!<1>", 0, vict, o, 0, TO_ROOM);
+	act("<G>The viper quickly strikes $n, and just as quickly disappears!<1>", 0, vict, o, 0, TO_CHAR);
+	act("<G>The viper quickly strikes $n, and just as quickly disappears!<1>", 0, vict, o, 0, TO_ROOM);
+	vict->affectTo(&aff);
+	vict->affectTo(&aff2);
+	disease_start(vict, &aff2);
+
+	return TRUE;
+  }
+  return FALSE;
+} 
+
+
+
 int poisonSap(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -2843,6 +2891,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "Jambiya", weaponJambiyaSpecial}, // 50
   {TRUE, "Sciren's Suffocation", scirenDrown},
   {TRUE, "Energy Beam Weapon", energyBeam},
+  {TRUE, "Viper Weapon (poison)", poisonViperBlade},
 
-  {FALSE, "BOGUS", bogusObjProc},  // 53
+  {FALSE, "BOGUS", bogusObjProc},  // 54
 };

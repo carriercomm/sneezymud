@@ -504,22 +504,25 @@ TThing& TObj::operator += (TThing& t)
   return *this;
 }
 
-void TObj::checkOwnersList(const TPerson *ch)
+// if tPreserve is set true we don't vlogf nor do we add to the 'owners'
+// list.  This is primarly used to catch portal cheaters.
+bool TObj::checkOwnersList(const TPerson *ch, bool tPreserve = false)
 {
 #if 0
   // this is only practical if NO multiplay is allowed ever
   // otherwise it simply triggers way too often.
-  return;
+  return = false;
 #endif
 
   /*
   if (gamePort != PROD_GAMEPORT)
-    return;
+    return false;
   */
 
   const char * tmpbuf = owners;
   char indiv[256];
-  bool iHaveOwned = false;
+  bool iHaveOwned = false,
+       isCheat = false;
 
   if (!ch->hasWizPower(POWER_WIZARD))
     while (tmpbuf && *tmpbuf) {
@@ -539,6 +542,11 @@ void TObj::checkOwnersList(const TPerson *ch)
 
       if (ch->desc && ch->desc->account && !strcmp(ch->desc->account->name, st.aname)) {
         TMoney *tTalens;
+        isCheat = true;
+
+        // Don't nuke these.  Is usually a 'special case' scenario.
+        if (tPreserve)
+          continue;
 
         if ((tTalens = dynamic_cast<TMoney *>(this))) {
           // This is basic 'drop -- talens'|'get -- talens'
@@ -584,7 +592,7 @@ void TObj::checkOwnersList(const TPerson *ch)
       }
     }
 
-  if (!iHaveOwned && !ch->hasWizPower(POWER_WIZARD)) {
+  if (!tPreserve && !iHaveOwned && !ch->hasWizPower(POWER_WIZARD)) {
     string tmp("");
 
     if (owners) {
@@ -602,8 +610,10 @@ void TObj::checkOwnersList(const TPerson *ch)
   for (t = stuff; t; t = t->nextThing) {
     TObj * obj = dynamic_cast<TObj *>(t);
     if (obj)
-      obj->checkOwnersList(ch);
+      obj->checkOwnersList(ch, tPreserve);
   }
+
+  return isCheat;
 }
 
 TThing& TPerson::operator += (TThing& t) 

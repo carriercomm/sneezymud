@@ -2297,7 +2297,6 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
 bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt, int *price)
 {
   int item1 = 0, item2 = 0, item3 = 0, item4 = 0;
-  TThing *com1, *com2, *com3, *com4 = NULL;
 
   if (is_abbrev(type, "fire")) {
     item1 = ST_FLINT;
@@ -2431,6 +2430,8 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt, int *pric
   item2 = real_object(item2);
   item3 = real_object(item3);
 
+  TThing *com4 = NULL;
+
   if (targ == TRAP_TARG_MINE) {
     item4 = ST_CASE_MINE;
     item4 = real_object(item4);
@@ -2441,18 +2442,25 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt, int *pric
     com4 = searchLinkedListVis(this, obj_index[item4].name, stuff);
   }
 
-  com1 = searchLinkedListVis(this, obj_index[item1].name, stuff);
-  com2 = searchLinkedListVis(this, obj_index[item2].name, stuff);
-  com3 = searchLinkedListVis(this, obj_index[item3].name, stuff);
+  TThing * com1 = searchLinkedListVis(this, obj_index[item1].name, stuff);
+  TThing * com2 = searchLinkedListVis(this, obj_index[item2].name, stuff);
+  TThing * com3 = searchLinkedListVis(this, obj_index[item3].name, stuff);
 
   if (price) {
     *price = 0;
-    if (com1)
-      *price += com1->obj_flags.cost;
-    if (com2)
-      *price += com2->obj_flags.cost;
-    if (com3)
-      *price += com3->obj_flags.cost;
+    TObj *obj;
+    if (com1) {
+      obj = dynamic_cast<TObj *>(com1);
+      *price += obj->obj_flags.cost;
+    }
+    if (com2) {
+      obj = dynamic_cast<TObj *>(com2);
+      *price += obj->obj_flags.cost;
+    }
+    if (com3) {
+      obj = dynamic_cast<TObj *>(com3);
+      *price += obj->obj_flags.cost;
+    }
   }
 
   if (amt == -1) {

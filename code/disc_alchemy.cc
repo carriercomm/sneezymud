@@ -304,7 +304,7 @@ int divinationObj(TBeing *caster, const TObj *obj, int, byte bKnown)
         }
       }
     }
-    caster->sendTo(caster->describeMaterial(obj).c_str());
+    caster->sendTo(describeMaterial(obj).c_str());
 
     return SPELL_SUCCESS;
   } else {
@@ -364,7 +364,7 @@ int divinationBeing(TBeing *caster, TBeing * victim, int, byte bKnown)
           str += buf;
         }
       }
-      str += caster->describeMaterial(victim);
+      str += describeMaterial(victim);
 
       caster->desc->page_string(str.c_str(), 0);
     }

@@ -1038,6 +1038,7 @@ mob->getName());
     }
 
     mob->desc->office = parm;
+    sendTo("You set %s's office to %d.", mob->getName(), parm);
   } else if (is_abbrev(field, "blocka")) {
     parm = parm2 = 0;
 
@@ -1062,6 +1063,7 @@ mob->getName());
 
     mob->desc->blockastart = parm;
     mob->desc->blockaend   = parm2;
+    sendTo("You set %s's blocka to %d-%d.", mob->getName(), parm, parm2);
   } else if (is_abbrev(field, "blockb")) {
     parm = parm2 = 0;
 
@@ -1086,6 +1088,7 @@ mob->getName());
 
     mob->desc->blockbstart = parm;
     mob->desc->blockbend   = parm2;
+    sendTo("You set %s's blockb to %d-%d.", mob->getName(), parm, parm2);
   } else {
     sendTo("Wrong option.\n\r");
     return;

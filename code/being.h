@@ -554,7 +554,7 @@ class TBeing : public TThing {
     virtual TThing& operator-- ();
 
     // VIRTUAL FUNCTIONS
-    virtual const char * getLongDesc();
+    virtual const char * getLongDesc() const;
     virtual int chiMe(TBeing *);
     virtual const char *getName() const;
     virtual void remCastingList(TThing *);

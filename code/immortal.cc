@@ -3801,7 +3801,13 @@ void TPerson::doAccess(const char *arg)
       sprintf(buf + strlen(buf), "Account flagged immortal.  Remaining Information Restricted.\n\r");
     } else {
       sprintf(buf + strlen(buf), "Account name: %s%s%s, Account email address : %s%s%s\n\r", cyan(), afp.name, norm(), cyan(), afp.email, norm());
+
       string lStr = "";
+      if (IS_SET(afp.flags, ACCOUNT_BANISHED))
+        lStr += "<R><f>Account is banished<z>\n\r";
+      if (IS_SET(afp.flags, ACCOUNT_EMAIL))
+        lStr += "<R><f>Account is email-banished<z>\n\r";
+
       listAccount(afp.name, lStr);
       strcat(buf, lStr.c_str());
     }
@@ -5739,6 +5745,11 @@ void TBeing::doAccount(const char *arg)
     desc->page_string(str.c_str(), 0);
     return;
   }
+
+  if (IS_SET(afp.flags, ACCOUNT_BANISHED))
+    str += "<R><f>Account is banished<z>\n\r";
+  if (IS_SET(afp.flags, ACCOUNT_EMAIL))
+    str += "<R><f>Account is email-banished<z>\n\r";
 
   listAccount(afp.name, str);
   if (count == 0)

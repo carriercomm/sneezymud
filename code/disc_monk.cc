@@ -423,7 +423,8 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
     }
   }
 
-  addSkillLag(SKILL_CHI, tRc);
+  if (tRc)
+    addSkillLag(SKILL_CHI, tRc);
 
   if (IS_SET_DELETE(tRc, RET_STOP_PARSING))
     REM_DELETE(tRc, RET_STOP_PARSING);
@@ -440,7 +441,8 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
     }
 
     REM_DELETE(tRc, DELETE_VICT);
-  } else if (IS_SET_DELETE(tRc, DELETE_THIS))
+  } 
+  if (IS_SET_DELETE(tRc, DELETE_THIS))
     return DELETE_THIS;
 
   return tRc;
@@ -475,7 +477,9 @@ int TBeing::doChi(const char *argument, TThing *target)
     }
 
     rc = chiMe(this);
-    addSkillLag(SKILL_CHI, rc);
+    if (rc)
+      addSkillLag(SKILL_CHI, rc);
+
     // DELETE_THIS will fall through
   } else {
     bits = generic_find(argument, FIND_CHAR_ROOM | FIND_OBJ_ROOM | FIND_OBJ_EQUIP, this, &victim, &obj);
@@ -496,7 +500,8 @@ int TBeing::doChi(const char *argument, TThing *target)
       }
 
       rc = chiMe(this);
-      addSkillLag(SKILL_CHI, rc);
+      if (rc)
+        addSkillLag(SKILL_CHI, rc);
       return TRUE;
     }
 
@@ -509,7 +514,8 @@ int TBeing::doChi(const char *argument, TThing *target)
 	}
 
 	rc = victim->chiMe(this);
-	addSkillLag(SKILL_CHI, rc);
+        if (rc)
+          addSkillLag(SKILL_CHI, rc);
 	
 	if (IS_SET_DELETE(rc, DELETE_VICT)) {
 	  delete victim;
@@ -522,7 +528,8 @@ int TBeing::doChi(const char *argument, TThing *target)
       case FIND_OBJ_ROOM:
       case FIND_OBJ_EQUIP:
 	rc = obj->chiMe(this);
-	addSkillLag(SKILL_CHI, rc);
+        if (rc)
+          addSkillLag(SKILL_CHI, rc);
 	break;
 #if 0
     // generic_find looks inv first, so if not goingto do anything with it, ignore it
@@ -574,7 +581,7 @@ int chi(TBeing *c, TObj *o)
   return FALSE;
 }
 
-void chiMe(TBeing *c)
+int chiMe(TBeing *c)
 {
   int bKnown=c->getSkillValue(SKILL_CHI);
   int mana=100-::number(1, c->getSkillValue(SKILL_CHI)/2);
@@ -583,7 +590,7 @@ void chiMe(TBeing *c)
 
   if(c->affectedBySpell(SKILL_CHI)){
     c->sendTo("You are already projecting your chi upon yourself.\n\r");
-    return;
+    return false;
   }
 
   if (bSuccess(c, bKnown, SKILL_CHI)) {
@@ -605,6 +612,7 @@ void chiMe(TBeing *c)
     if(c->getMana()>=0)
       c->reconcileMana(TYPE_UNDEFINED, 0, mana/2);
   }
+  return true;
 }
 
 int chi(TBeing *c, TBeing *v)

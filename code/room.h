@@ -221,6 +221,7 @@ class TRoom : public TThing {
     void loadOne(FILE *, bool);
     void colorRoom(int, int);
     string daynightColorRoom() const;
+    virtual int getLight();
     void initLight();
     void initWeather();
     void updateWeather();

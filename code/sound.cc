@@ -452,7 +452,7 @@ void TBeing::playsound(soundNumT sound, const string &type, int vol, int prior, 
   };
 
   if (desc) {
-    if ((IS_SET(desc->account->flags, ACCOUNT_MSP) || desc->client) &&
+    if ((desc->account && IS_SET(desc->account->flags, ACCOUNT_MSP) || desc->client) &&
         sound >= MIN_SOUND_NUM && sound < MAX_SOUND_NUM) {
       // please note, we do NOT send the U= command intentionally.
       // According to Zugg (of zMud), the U is meant to set a default

@@ -392,7 +392,8 @@ void TTrap::armGrenade(TBeing *ch)
 
   // somewhat silly, but here to prevent throwing lots of grenades at
   // a single time.
-  ch->addToWait(combatRound(3));
+  // keep the wait-time < 3 or person can't escape a dropped grenade
+  ch->addToWait(combatRound(1));
 }
 
 int TTrap::throwMe(TBeing *ch, dirTypeT dir, const char *)

@@ -585,7 +585,9 @@ bool TObj::checkOwnersList(const TPerson *ch, bool tPreserve = false)
         } else {
           // transferred betwen 2 chars in same account!
 
-          vlogf(LOG_CHEAT, "CHEATING!  Item (%s:%d) transferred to %s when previously owned by %s.   owners=[%s %s]", getName(), objVnum(), ch->getName(), indiv, owners, ch->getName());
+          // don't spam us with silly "quill transferred!" logs
+          if (objCost() > 0)
+            vlogf(LOG_CHEAT, "CHEATING!  Item (%s:%d) transferred to %s when previously owned by %s.   owners=[%s %s]", getName(), objVnum(), ch->getName(), indiv, owners, ch->getName());
 
           // because of where this gets called (operator+=), deleting would be
           // bad due to requirements to check for it occuring all over the place.

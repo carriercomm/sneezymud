@@ -560,29 +560,29 @@ void do_components(int situ)
     start = component_placement[i].hour1;
     stop = component_placement[i].hour2;
     if (start == HOUR_SUNRISE)
-      start = sunRise();
+      start = sunTime(SUN_TIME_RISE);
     else if (start == HOUR_SUNSET)
-      start = sunSet();
+      start = sunTime(SUN_TIME_SET);
     else if (start == HOUR_MOONRISE)
-      start = moonRise();
+      start = moonTime(MOON_TIME_RISE);
     else if (start == HOUR_MOONSET)
-      start = moonSet();
+      start = moonTime(MOON_TIME_SET);
     else if (start == HOUR_DAY_BEGIN)
-      start = sunRise() + 3;
+      start = sunTime(SUN_TIME_DAY);
     else if (start == HOUR_DAY_END)
-      start = sunSet() - 3;
+      start = sunTime(SUN_TIME_SINK);
     if (stop == HOUR_SUNRISE)
-      stop = sunRise();
+      stop = sunTime(SUN_TIME_RISE);
     else if (stop == HOUR_SUNSET)
-      stop = sunSet();
+      stop = sunTime(SUN_TIME_SET);
     else if (stop == HOUR_MOONRISE)
-      stop = moonRise();
+      stop = moonTime(MOON_TIME_RISE);
     else if (stop == HOUR_MOONSET)
-      stop = moonSet();
+      stop = moonTime(MOON_TIME_SET);
     else if (stop == HOUR_DAY_BEGIN)
-      stop = sunRise() + 3;
+      stop = sunTime(SUN_TIME_DAY);
     else if (stop == HOUR_DAY_END)
-      stop = sunSet() - 3;
+      stop = sunTime(SUN_TIME_SINK);
 
     if (start != -1) {
       if (stop == -1) {

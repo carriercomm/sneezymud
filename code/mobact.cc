@@ -384,6 +384,10 @@ int TMonster::hunt()
   if (fight() || (attackers >= 1))
     return FALSE;
 
+  // keep horses from hunting
+  if (rider)
+    return FALSE;
+
   // let's try to summon or astral to them
   // Don't pick on level 15 or less
   // Peel

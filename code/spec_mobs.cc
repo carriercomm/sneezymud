@@ -1348,7 +1348,7 @@ int paralyzeBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj 
 {
   TBeing *v;
   affectedData aff;
-
+  affectedData aff2;
   if ((cmd != CMD_MOB_COMBAT) || !myself->awake())
     return FALSE;
 
@@ -1377,11 +1377,20 @@ int paralyzeBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj 
     aff.bitvector = AFF_PARALYSIS;
 
     // each update is a combat round long...
+    
     aff.duration = min(10, number(1, aff.level));
 
     aff.modifier = 0;
     
     v->affectTo(&aff);
+    // this should keep paralyze proc mobs from paralyzing the same person right when he wakes up 10-20-00 -dash
+    aff2.type = AFFECT_SKILL_ATTEMPT;
+    aff2.level = myself->GetMaxLevel();
+    aff2.location = APPLY_NONE;
+    aff2.bitvector = 0;
+    aff2.duration = aff.duration + (::number(1,3)); //one round should be enough, might as well randomize it a ittle though
+    aff2.modifier = 0;
+    myself->affectTo(&aff2);
   } else {
     v->sendTo("Good thing you are immortal.\n\r");
   }    
@@ -1393,7 +1402,7 @@ int paralyzeBite(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
 {
   TBeing *v;
   affectedData aff;
-
+  affectedData aff2;
   if ((cmd != CMD_MOB_COMBAT) || !myself->awake())
     return FALSE;
 
@@ -1423,6 +1432,14 @@ int paralyzeBite(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
     aff.modifier = 0;
     
     v->affectTo(&aff);
+    // this should keep paralyze proc mobs from paralyzing the same person right when he wakes up 10-20-00 -dash
+    aff2.type = AFFECT_SKILL_ATTEMPT;
+    aff2.level = myself->GetMaxLevel();
+    aff2.location = APPLY_NONE;
+    aff2.bitvector = 0;
+    aff2.duration = aff.duration + (::number(1,3)); //one round should be enough, might as well randomize it a ittle though
+    aff2.modifier = 0;
+    myself->affectTo(&aff2);
   } else {
     v->sendTo("Good thing you are immortal.\n\r");
   }  

@@ -657,6 +657,25 @@ void TBeing::statBeing(TBeing *k)
       cyan(), norm(), k->getProtection(),
       cyan(), norm(), buf2, cyan(), norm(), buf3);
 
+  if (km) {
+    sprintf(buf + strlen(buf), "Number of attacks : %.1f", km->getMult());
+    sprintf(buf + strlen(buf), "        NPC Damage: %.1f+%d%%.\n\r",
+        km->getDamLevel(), km->getDamPrecision());
+    double bd = km->baseDamage();
+    int chg = (int) (bd * km->getDamPrecision() / 100);
+    sprintf(buf + strlen(buf), "  NPC Damage range: %d-%d.\n\r",
+        max(1, (int) bd-chg), max(1, (int) bd+chg));
+  } else {
+    if (k->hasClass(CLASS_MONK)) {
+      sprintf(buf + strlen(buf), "Number of attacks : %.2f\n\r", k->getMult());
+    }
+
+    float fx, fy;
+    k->blowCount(false, fx, fy);
+    sprintf(buf + strlen(buf), "Prim attacks: %.2f, Off attacks: %.2f\n\r",
+          fx, fy);
+  }
+
   sprintf(buf + strlen(buf), "%sFaction :%s %s,   %sFaction Percent :%s %.4f\n\r",
     cyan(), norm(), FactionInfo[k->getFaction()].faction_name,
     cyan(), norm(), k->getPerc());
@@ -684,20 +703,37 @@ void TBeing::statBeing(TBeing *k)
   sprintf(buf + strlen(buf),"Current:");
   sprintf(buf + strlen(buf),k->curStats.printRawStats(this).c_str());
 
-  sprintf(buf + strlen(buf), "%sCaptive Of:%s %s         %sCaptives :%s ",
-     cyan(), norm(),
-     (k->getCaptiveOf() ? k->getCaptiveOf()->getName() : "NO ONE"),
-     cyan(), norm());
-  if (!k->getCaptive())
-    strcat(buf, "NONE\n\r");
-  else {
-    for (x1 = k->getCaptive(); x1; x1 = x1->getNextCaptive()) {
-      strcat(buf, x1->getName());
-      strcat(buf, " ");
+  // only show captive info when needed
+  if (k->getCaptiveOf() || k->getCaptive()) {
+    sprintf(buf + strlen(buf), "%sCaptive Of:%s %s         %sCaptives :%s ",
+       cyan(), norm(),
+       (k->getCaptiveOf() ? k->getCaptiveOf()->getName() : "NO ONE"),
+       cyan(), norm());
+    if (!k->getCaptive())
+      strcat(buf, "NONE\n\r");
+    else {
+      for (x1 = k->getCaptive(); x1; x1 = x1->getNextCaptive()) {
+        strcat(buf, x1->getName());
+        strcat(buf, " ");
+      }
+      strcat(buf, "\n\r");
     }
-    strcat(buf, "\n\r");
   }
+  sprintf(buf + strlen(buf), "Master is '%s'",
+          ((k->master) ? k->master->getName() : "NOBODY"));
+  strcat(buf, "           Followers are:");
+  for (fol = k->followers; fol; fol = fol->next)
+    strcat(buf, fol->follower->getName());
+  strcat(buf,"\n\r");
+
   if (km) {
+    sprinttype(km->getPosition(), position_types, buf2);
+    sprinttype((km->default_pos), position_types, buf3);
+    sprintf(buf + strlen(buf), "%sPosition:%s %s, %sFighting:%s %s, %sDefault Position :%s %s\n\r",
+          cyan(), norm(), buf2, cyan(), norm(),
+          (km->fight() ? km->fight()->getName() : "Nobody"),
+          cyan(), norm(), buf3);
+
     strcat(buf, "NPC flags: ");
     if (km->specials.act) {
       sprintbit(km->specials.act, action_bits, buf2);
@@ -706,12 +742,6 @@ void TBeing::statBeing(TBeing *k)
     } else {
       strcat(buf, "None\n\r");
     }
-    sprinttype(km->getPosition(), position_types, buf2);
-    sprinttype((km->default_pos), position_types, buf3);
-    sprintf(buf + strlen(buf), "%sPosition:%s %s, %sFighting:%s %s, %sDefault Position :%s %s\n\r",
-          cyan(), norm(), buf2, cyan(), norm(),
-          (km->fight() ? km->fight()->getName() : "Nobody"),
-          cyan(), norm(), buf3);
   } else {
     sprinttype(k->getPosition(), position_types, buf2);
     sprintf(buf + strlen(buf), "%sPosition:%s %s, %sFighting:%s %s\n\r",
@@ -721,38 +751,13 @@ void TBeing::statBeing(TBeing *k)
   if (k->desc) {
     strcat(buf, "\n\rFlags (Specials Act): ");
     sprintbit(k->desc->plr_act, player_bits, buf2);
-  }
-  strcat(buf, buf2);
-  strcat(buf, "\n\r");
-
-  if (km) {
-    sprintf(buf + strlen(buf), "Number of attacks : %.1f", km->getMult());
-    sprintf(buf + strlen(buf), "        NPC Damage: %.1f+%d%%.\n\r",
-        km->getDamLevel(), km->getDamPrecision());
-    double bd = km->baseDamage();
-    int chg = (int) (bd * km->getDamPrecision() / 100);
-    sprintf(buf + strlen(buf), "  NPC Damage range: %d-%d.\n\r",
-        max(1, (int) bd-chg), max(1, (int) bd+chg));
-  } else {
-    if (k->hasClass(CLASS_MONK)) {
-      sprintf(buf + strlen(buf), "Number of attacks : %.2f\n\r", k->getMult());
-    }
-
-    float fx, fy;
-    k->blowCount(false, fx, fy);
-    sprintf(buf + strlen(buf), "Prim attacks: %.2f, Off attacks: %.2f\n\r",
-          fx, fy);
+    strcat(buf, buf2);
+    strcat(buf, "\n\r");
   }
 
   sprintf(buf + strlen(buf), "Carried weight: %.1f   Carried volume: %d\n\r",
           k->getCarriedWeight(), k->getCarriedVolume());
 
-  sprintf(buf + strlen(buf), "Master is '%s'",
-          ((k->master) ? k->master->getName() : "NOBODY"));
-  strcat(buf, "           Followers are:");
-  for (fol = k->followers; fol; fol = fol->next)
-    strcat(buf, fol->follower->getName());
-  strcat(buf,"\n\r");
   immuneTypeT ij;
   for (ij = MIN_IMMUNE;ij < MAX_IMMUNES; ij++) {
     if (k->getImmunity(ij) == 0 || !*immunity_names[ij])

@@ -1117,6 +1117,7 @@ CSkill *TBeing::getSkill(spellNumT skill) const
     case LAST_BREATH_WEAPON:
     case AFFECT_ORPHAN_PET:
     case AFFECT_PLAYERKILL:
+    case AFFECT_HORSEOWNED:
     case LAST_ODDBALL_AFFECT:
       break;
   }

@@ -133,7 +133,7 @@ int castIdentify(TBeing *caster, TObj *obj)
     return TRUE;
 }
 
-static string identifyBeingStuff(const TBeing *caster, const TBeing *victim, showMeT show)
+static string identifyBeingStuff(const TBeing *caster, TBeing *victim, showMeT show)
 {
   string str;
   char buf[256];
@@ -189,7 +189,7 @@ int identify(TBeing *caster, TBeing * victim, int, byte bKnown)
 {
   if (bSuccess(caster, bKnown, SPELL_IDENTIFY)) {
     if (caster->desc) {
-      string str = identifyBeingStuff(caster, victim, DONT_SHOW);
+      string str = identifyBeingStuff(caster, victim, DONT_SHOW_ME);
       str += caster->describeImmunities(victim, bKnown);
 
       caster->desc->page_string(str.c_str());

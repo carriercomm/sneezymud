@@ -5739,10 +5739,6 @@ void TBeing::doAccount(const char *arg)
     desc->page_string(str.c_str(), 0);
     return;
   }
-  if (IS_SET(afp.flags, ACCOUNT_BANISHED))
-    str += "<R><f>Account is banished<z>\n\r";
-  if (IS_SET(afp.flags, ACCOUNT_EMAIL))
-    str += "<R><f>Account is email-banished<z>\n\r";
 
   listAccount(afp.name, str);
   if (count == 0)

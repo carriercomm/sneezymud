@@ -426,9 +426,9 @@ void bootWorld(void)
 	   (rp->getYCoord() == 0) &&
 	   (rp->getZCoord() == 0)) &&
 	 temp->number != rp->number){
-	vlogf(LOG_LOW, "%s room %d has duplicate coordinates with room %d (%d, %d, %d)",
-	      rp->name, rp->number, temp->number, 
-	      rp->getXCoord(), rp->getYCoord(), rp->getZCoord());
+	//	vlogf(LOG_LOW, "%s room %d has duplicate coordinates with room %d (%d, %d, %d)",
+	//	      rp->name, rp->number, temp->number, 
+	//	      rp->getXCoord(), rp->getYCoord(), rp->getZCoord());
       }
     }
 

@@ -63,11 +63,11 @@ int TBeing::doTrigger(const char *argument){
   ch=dynamic_cast<TBeing *>(t);
   o=dynamic_cast<TObj *>(t);
 
-  spelltask=spellstore->spelltask;
+  spelltask=spellstore.spelltask;
 
   rc=doSpellCast(this, ch, o, roomp, which, getSpellType(discArray[which]->typ));
   if(rc)
-    spellstore->spelltask=NULL;
+    spellstore.spelltask=NULL;
 
   return rc;
 }
@@ -76,19 +76,15 @@ int TBeing::doStore(const char *argument)
 {
   int rc;
 
-  if(!spellstore){
-    spellstore=(class spellStoreData *) malloc(sizeof(class spellStoreData));
-  }
-
-  if(spellstore->storing || spelltask){
+  if(spellstore.storing || spelltask){
     sendTo("You are already casting a spell.\n\r");
     return FALSE;
   }
 
-  spellstore->storing=TRUE;
+  spellstore.storing=TRUE;
   rc=doCast(argument);
   if(!rc){
-    spellstore->storing=FALSE;
+    spellstore.storing=FALSE;
   }
   return rc;
 }

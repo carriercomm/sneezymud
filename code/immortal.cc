@@ -4979,6 +4979,12 @@ void TBeing::doTimeshift(const char *arg)
     }
     tmp = deltatime * SECS_PER_REAL_MIN;
 
+#if 0
+// there's no good reason to do this
+// time_info gets recalculated based on real time since a given date at bootup
+// so this is semi-pointless
+// I'll leave it in the hopes that in the future, mud-time will actually
+// be preserved from reboot to reboot and not based on the real world at all
     if (tmp/SECS_PER_MUD_YEAR) {
       time_info.year -= tmp/SECS_PER_MUD_YEAR;
       tmp %= SECS_PER_MUD_YEAR;
@@ -5018,6 +5024,7 @@ void TBeing::doTimeshift(const char *arg)
         time_info.month += 12;
       }
     }
+#endif
     sprintf(buf,"%s has shifted game time back %d real minutes.",getName(),deltatime);
     doSystem(buf);
     sprintf(buf,"Adjusting mud-time, rent charges for PC's rented and talens for PC's online.");

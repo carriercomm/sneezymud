@@ -17,7 +17,7 @@ int silence(TBeing *caster, TBeing *victim, int level, byte bKnown)
 
   if (caster->isNotPowerful(victim, level, SPELL_SILENCE, SILENT_YES) ||
       (victim->isLucky(caster->spellLuckModifier(SPELL_SILENCE)))) {
-    act("Sorry but $N is much too experienced to let you silence $M.",
+    act("$N resists your attempts to silence $M.",
           FALSE, caster, NULL, victim, TO_CHAR);
     act("That dumbass $n just tried to silence you!",
           FALSE, caster, NULL, victim, TO_VICT);
@@ -143,7 +143,7 @@ int slumber(TBeing *caster, TBeing *victim, int level, byte bKnown)
       caster->isNotPowerful(victim, level, SPELL_SLUMBER, SILENT_YES) ||
       (!caster->isImmortal() &&
       (victim->isLucky(caster->spellLuckModifier(SPELL_SLUMBER))))) {
-    act("Sorry but $N is much too experienced to let you sleep $M.",
+    act("$N resists your attempts to sleep $M.",
               FALSE, caster, NULL, victim, TO_CHAR);
     act("That nitwit $n just tried to sleep you!",
               FALSE, caster, NULL, victim, TO_VICT, ANSI_WHITE_BOLD);

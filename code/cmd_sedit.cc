@@ -1078,7 +1078,7 @@ void seditCore(TBeing *ch, char *tArg)
   }
 
   if (ch->desc->showstr_head) {
-    ch->desc->show_string(tArg, TRUE, TRUE);
+    ch->desc->show_string(tArg, SHOWNOW_YES, ALLOWREP_YES);
 
     if (!ch->desc->showstr_head &&
         ch->specials.edit == SEDIT_DISPLAY &&

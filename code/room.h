@@ -290,11 +290,22 @@ class TRoom : public TThing {
       return x;
     }
     int getYCoord() const {
-      return x;
+      return y;
     }
     int getZCoord() const {
-      return x;
+      return z;
     }
+    void setXCoord(int newx) {
+      x=newx;
+    }
+    void setYCoord(int newy) {
+      y=newy;
+    }
+    void setZCoord(int newz) {
+      z=newz;
+    }
+    
+
 
     bool isCitySector() const;
     bool isRoadSector() const;

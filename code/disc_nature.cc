@@ -387,9 +387,9 @@ int barkskin(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
   aff.type = SKILL_BARKSKIN;
   aff.location = APPLY_ARMOR;
-  aff.duration = combatRound(((level / 5) + 2));
+  aff.duration = combatRound(((level / 3) + 2));
   aff.bitvector = 0;
-  aff.modifier = -75;
+  aff.modifier = -90;
 
   if (bSuccess(caster, bKnown, caster->getPerc(), SKILL_BARKSKIN)) {
     if (critSuccess(caster, SKILL_BARKSKIN)) {

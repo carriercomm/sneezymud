@@ -1304,7 +1304,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
         range++;
 
       if (!ch->isImmortal() &&
-            (!(i = ch->specialAttack(tb, SKILL_BOW)) ||
+            (!(i = ch->specialAttack(tb, SKILL_RANGED_PROF)) ||
             i == GUARANTEED_FAILURE)) {
         act("$n dodges out of the way of $p.", FALSE, tb, this, NULL, TO_ROOM);
         tb->sendTo("You dodge out of its way.\n\r");

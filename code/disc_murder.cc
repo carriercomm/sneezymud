@@ -263,7 +263,7 @@ int backstab(TBeing *thief, TBeing * victim)
     return FALSE;
   }
   if (!obj->canBackstab()) {
-    act("You can't use $o to backstab.", false, thief, obj, NULL, TO_CHAR);
+    act("You can't use $p to backstab.", false, thief, obj, NULL, TO_CHAR);
     return FALSE;
   }
 

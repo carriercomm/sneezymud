@@ -5657,8 +5657,10 @@ void TBeing::doAccount(const char *arg)
       fclose(fp);
       return;
     } else if (is_abbrev(buf2, "double")) {
-      if (powerCheck(POWER_FLAG_IMP_POWER))
+      if (powerCheck(POWER_FLAG_IMP_POWER)) {
+        fclose(fp);
         return;
+      }
   
       if (IS_SET(afp.flags, ACCOUNT_ALLOW_DOUBLECLASS)) {
         REMOVE_BIT(afp.flags, ACCOUNT_ALLOW_DOUBLECLASS);
@@ -5673,8 +5675,10 @@ void TBeing::doAccount(const char *arg)
       fclose(fp);
       return;
     } else if (is_abbrev(buf2, "triple")) {
-      if (powerCheck(POWER_FLAG_IMP_POWER))
+      if (powerCheck(POWER_FLAG_IMP_POWER)) {
+        fclose(fp);
         return;
+      }
   
       if (IS_SET(afp.flags, ACCOUNT_ALLOW_TRIPLECLASS)) {
         REMOVE_BIT(afp.flags, ACCOUNT_ALLOW_TRIPLECLASS);
@@ -5689,11 +5693,22 @@ void TBeing::doAccount(const char *arg)
       fclose(fp);
       return;
     } else if (is_abbrev(buf2, "immortal")) {
-      if (powerCheck(POWER_FLAG_IMP_POWER))
-        return;
-  
       // this is not something that should be done (manually) unless a 
       // god has left immortality entirely
+
+      if (powerCheck(POWER_FLAG_IMP_POWER)) {
+        fclose(fp);
+        return;
+      }
+
+      // Given that ACCOUNT_IMMORTAL prevents imms from violating our own
+      // rules, it's a bit too tempting for folks to turn off the automatic
+      // checks.  I'm cynical and don't trust anyone but myself, so sue me.
+      if (strcmp(getName(), "Batopr")) {
+        sendTo("Only Batopr should be doing this.\n\r");
+        return;
+      }
+  
       if (IS_SET(afp.flags, ACCOUNT_IMMORTAL)) {
         REMOVE_BIT(afp.flags, ACCOUNT_IMMORTAL);
         sendTo("You flag the %s account immortal.\n\r", afp.name);

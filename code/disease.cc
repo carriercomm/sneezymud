@@ -331,7 +331,7 @@ int disease_numbed(TBeing *victim, int message, affectedData *af)
         victim->remLimbFlags(slot, PART_PARALYZED); 
                                                                             
       if (victim->getPosition() > POSITION_DEAD) {
-        victim->sendTo("You feel the life some back to your %s!\n\r", victim->describeBodySlot(slot).c_str());
+        victim->sendTo("You feel the life come back to your %s!\n\r", victim->describeBodySlot(slot).c_str());
       }
       break;                                                                    
     default:

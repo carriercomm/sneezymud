@@ -666,16 +666,19 @@ if (version >= 7 ||
 
 static bool shouldRecycle(int robj)
 {
+  return false;
 // old rule vetod by ICon
 //          obj_index[robj].max_exist <= MIN_EXIST_IMMORTAL &&
 
   // nuke only if item is at its max
-  return (obj_index[robj].max_exist &&
-          obj_index[robj].number >= obj_index[robj].max_exist);
+  //  return (obj_index[robj].max_exist &&
+  //      obj_index[robj].number >= obj_index[robj].max_exist);
 }
 
 static bool immortalityNukeCheck(TBeing *ch, TObj * new_obj, bool corpse)
 {
+  return false;
+
   bool immortal = ((ch && ch->desc) ? IS_SET(ch->desc->account->flags, ACCOUNT_IMMORTAL) : FALSE);
 
   if (!corpse && immortal && shouldRecycle(new_obj->getItemIndex())) {

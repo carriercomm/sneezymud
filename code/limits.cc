@@ -714,27 +714,28 @@ void gain_exp(TBeing *ch, double gain, int dam)
           if (ch->getLevel(i)) {
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
-              ch->sendTo("You must gain at a guild or your exp will max 1 short of next level.\n\r");
+              ch->sendTo("<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
               ch->setExp(peak2);
               return;
             } else if (ch->getExp() >= peak) {
               // do nothing..this rules! Tell Brutius Hey, I didnt get any exp? 
             } else if ((ch->getExp() + gain >= peak) &&
                  (ch->GetMaxLevel() < MAX_MORT)) {
-              ch->sendTo(COLOR_BASIC, "<g>You have gained enough to be a Level %d %s.<1>\n\r", 
+              ch->sendTo(COLOR_BASIC, "<G>You have gained enough to be a Level %d %s.<1>\n\r", 
 #if 0
        (startsVowel(ch->getClassTitle(i, ch->getLevel(i) + 1)) ? "an" : "a"), 
         ch->getClassTitle(i, ch->getLevel(i) + 1));
 #else
                    ch->getLevel(i)+1, classNames[i].capName);
 #endif
-              ch->sendTo("You must gain at a guild or your exp will max 1 short of next level.\n\r");
+              ch->sendTo("<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
               if (ch->getExp() + gain >= peak2) {
                 ch->setExp(peak2- 1);
                 return;
               }
 	      // if(gain > ((peak - curr) / gainmod)) {
-	      if (gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) && dam > 0) { // the 100 turns dam into a %
+	      if (gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) && dam > 0) { 
+		// the 100 turns dam into a %
 		newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000);
 		vlogf(LOG_JESUS, "Experience cap reached by %s!", ch->getName());
 		vlogf(LOG_JESUS, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]", 
@@ -742,7 +743,6 @@ void gain_exp(TBeing *ch, double gain, int dam)
                 vlogf(LOG_DASH, "Experience cap reached by %s!", ch->getName());
                 vlogf(LOG_DASH, "[ Level: %d / Gain: %d / Cap: %d / GainMod: %d / Num. Classes: %d ]",
                       ch->getLevel(i), (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
-		
 	      }  
 	  }
 	}
@@ -756,7 +756,8 @@ void gain_exp(TBeing *ch, double gain, int dam)
       double peak = getExpClassLevel(i,ch->getLevel(i) + 1);
       double curr = getExpClassLevel(i,ch->getLevel(i));
       double gainmod = ((ch->getLevel(i) + 1));
-      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000); // the 100 compensates for dam
+      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000); 
+      // the 100 compensates for dam
       gain = min(gain, newgain); 
       gain += (rand()%(gain*.1))-(gain*.05));
     }

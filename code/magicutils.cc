@@ -306,16 +306,16 @@ int TBeing::checkDecharm(forceTypeT force, safeTypeT safe)
     }
     if (!isElemental) {
       if (m) {
-        act("$n looks elated as you release $m into The World.",
+        act("$n looks elated as you release $m into the world.",
             TRUE, this, NULL, m, TO_VICT);
-        act("$n looks elated as $e is released into The World.",
+        act("$n looks elated as $e is released into the world.",
             TRUE, this, NULL, m, TO_NOTVICT);
-        act("You feel free as your master releases you into The World.",
+        act("You feel free as your master releases you into the world.",
             TRUE, this, NULL, m, TO_CHAR);
       } else {
-        act("$n is released into The World.",
+        act("$n is released into the world.",
             TRUE, this, NULL, NULL, TO_ROOM);
-        act("You are released into The World.",
+        act("You are released into the world.",
             TRUE, this, NULL, NULL, TO_CHAR);
       }
       return FALSE;

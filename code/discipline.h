@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: discipline.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #ifndef __DISCIPLINE_H
 #define __DISCIPLINE_H 
 
@@ -59,7 +41,7 @@ const byte LEARNEDNESS_STEP=1;
 const int PRACS_TO_MAX      = 60;
 
 const char *describe_level(int n);
-const char *describe_damage(int n);
+const char *describe_damage(int n, TThing *);
 const char *describe_armor(int n);
 const char *describe_light(int n);
 const char *what_does_it_open(const TKey *o);

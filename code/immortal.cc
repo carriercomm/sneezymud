@@ -3971,7 +3971,7 @@ void TBeing::doInfo(const char *arg)
     } else if (is_abbrev(arg1, "gold")) {
       buf.erase();
 
-#if 1
+#if 0
       float tot_gold = getPosGoldGlobal();
       float tot_gold_shop = getPosGold(GOLD_SHOP);
       float tot_gold_income = getPosGold(GOLD_INCOME);

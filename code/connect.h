@@ -208,6 +208,8 @@ class careerData
     unsigned int crit_eviscerate_suff;
     unsigned int crit_kidney;
     unsigned int crit_kidney_suff;
+    unsigned int crit_genitalia;
+    unsigned int crit_genitalia_suff;
     unsigned int skill_success_attempts;
     unsigned int skill_success_pass;
     unsigned int spell_success_attempts;
@@ -243,6 +245,7 @@ class careerData
       crit_impale = crit_impale_suff = 0;
       crit_eviscerate = crit_eviscerate_suff = 0;
       crit_kidney = crit_kidney_suff = 0;
+      crit_genitalia = crit_genitalia_suff = 0;
       arena_victs = arena_loss = 0;
       skill_success_attempts = 0;
       skill_success_pass = 0;

@@ -40,6 +40,9 @@ bool TBeing::canDisarm(TBeing *victim, silentTypeT silent)
     case BODY_FROG:
     case BODY_MIMIC:
     case BODY_WYVELIN:
+    case BODY_FISH:
+    case BODY_TREE:
+    case BODY_SLIME:
       if (!silent)
         sendTo("You have the wrong bodyform for grappling.\n\r");
       return FALSE;

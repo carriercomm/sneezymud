@@ -800,31 +800,87 @@ int castEnthrallGhast(TBeing * caster)
 
    level = caster->getSkillLevel(SPELL_ENTHRALL_GHAST);
 
-   if
-((ret=enthrallGhast(caster,level,caster->getSkillValue(SPELL_ENTHRALL_GHAST)))
-== SPELL_SUCCESS) {
+   if ((ret=enthrallGhast(caster,level,caster->getSkillValue(SPELL_ENTHRALL_GHAST))) == SPELL_SUCCESS) {
    } else {
-     act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL,
-TO_CHAR);
+     act("You feel the ancestors are not pleased.", FALSE, caster, NULL, NULL, TO_CHAR);
   }
   return TRUE;
 }
 
+void TThing::sacrificeMe(TBeing *ch, const char *arg)
+{
+  TObj *obj;
+  TBaseCorpse *corpse;
+  TBeing *dummy;
 
+  // Check to see if argument passed exists in room
+  if (!generic_find(arg, FIND_OBJ_ROOM, ch, &dummy, &obj)) {
+    ch->sendTo("You do not see a %s here.\n\r", arg);
+    return;
+  }
+  // Check to see if corpse is a corpse
+  
+  if (!(corpse = dynamic_cast<TBaseCorpse *>(obj))) {
+    ch->sendTo(COLOR_OBJECTS, "You cannot sacrifice %s.\n\r", obj->getName());
+    return;
+  }
+  if (corpse->isCorpseFlag(CORPSE_NO_REGEN)) {
+    // a body part or something
+    act("$p: You aren't able to sacrifice that.",
+          FALSE, ch, corpse, 0, TO_CHAR);    return;
+  }
+  ch->sendTo("You start sacrificing a corpse.\n\r");
+  act("$n begins to chant over a corpse.", FALSE, ch, NULL, 0, TO_ROOM);
 
+  start_task(ch, corpse, NULL, TASK_SACRIFICE, "", 999, ch->in_room, 0, 0, 0);
+}
 
+void TTool::sacrificeMe(TBeing *ch, const char *arg)
+{
+  TObj *obj;
+  TBaseCorpse *corpse;
+  TBeing *dummy;
 
+  if (getToolType() != TOOL_TOTEM) {
+    ch->sendTo("You must be holding a totem to perform this ritual.\n\r");
+    return;
+  }
+  // Check to see if argument passed exists in room
+  if (!generic_find(arg, FIND_OBJ_ROOM, ch, &dummy, &obj)) {
+    ch->sendTo("You do not see a %s here.\n\r", arg);
+    return;
+  }
+  // Check to see if corpse is a corpse
+  
+  if (!(corpse = dynamic_cast<TBaseCorpse *>(obj))) {
+    ch->sendTo(COLOR_OBJECTS, "You cannot sacrifice %s.\n\r", obj->getName());
+    return;
+  }
+  if (corpse->isCorpseFlag(CORPSE_NO_REGEN)) {
+    act("$p: You aren't able to sacrifice that.",
+          FALSE, ch, corpse, 0, TO_CHAR);    return;
+  }
+  ch->sendTo("You start the sacrificial ritual.\n\r");
+  act("$n begins to chant over a corpse.", FALSE, ch, NULL, 0, TO_ROOM);
+  start_task(ch, corpse, NULL, TASK_SACRIFICE, "", 999, ch->in_room, 0, 0, 0);
+}
 
+void TBeing::doSacrifice(const char *arg)
+{
+  TThing *tobj;
 
+  for (; isspace(*arg); arg++);
 
+  if (!doesKnowSkill(SKILL_SACRIFICE)) {
+    sendTo("You don't have a clue about sacrificing anything.\n\r");
+    return;
+  }
 
+  tobj = heldInPrimHand();
 
-
-
-
-
-
-
-
-
-
+  if (!tobj) {
+    sendTo("You must be holding a totem to perform the ritual.\n\r");
+    return;
+  }
+  tobj->sacrificeMe(this, arg);
+}

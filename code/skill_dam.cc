@@ -244,8 +244,8 @@ int TBeing::getSkillDam(const TBeing *victim, spellNumT skill, int level, int ad
   // multiplier for spells that need weather condition
   // since these mostly have the outdoor-only too, don't make these obscene
   const double NEED_RAIN_SNOW_LIGHTNING = 1.05;
-  const double NEED_RAIN = 1.10;
-  const double NEED_NORAIN = 1.05;
+  //const double NEED_RAIN = 1.10;
+  //const double NEED_NORAIN = 1.05;
   const double NEED_RAIN_LIGHTNING = 1.075;
 
   switch (skill) {

@@ -482,7 +482,7 @@ charFile::charFile() :
   spellHitroll(0),
   hitroll(0),
   damroll(0),
-  armor(1000)
+  armor(1000),
 // points(),
 // end pointData members
   fatigue(0),

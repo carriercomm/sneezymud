@@ -520,6 +520,7 @@ enum spellNumT {
      AFFECT_COMBAT,
      AFFECT_PET,
      AFFECT_PLAYERKILL,
+     AFFECT_HORSEOWNED,
      LAST_ODDBALL_AFFECT
 };
 const spellNumT MIN_SPELL = spellNumT(TYPE_UNDEFINED+1);

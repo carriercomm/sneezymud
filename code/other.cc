@@ -1158,7 +1158,15 @@ void TBeing::sendSkillsList(discNumT which)
       sprintf(how_long, "(Learned: %s)", 
           skill_diff(discArray[i]->start - tmp_var));
     } else if (discArray[i]->toggle && !hasQuestBit(discArray[i]->toggle)) {
-      strcpy(how_long, "(Learned: When Teacher is Found)");
+      if(i==SKILL_ADVANCED_KICKING){
+	if(hasQuestBit(TOG_ELIGIBLE_ADVANCED_KICKING)){
+	  strcpy(how_long, "(Learned: When Teacher is Found)");
+	} else {
+	  strcpy(how_long, "(Learned: Not Eligible Yet)");
+	}
+      } else {
+	strcpy(how_long, "(Learned: When Teacher is Found)");
+      }
     } else if (i == SKILL_WIZARDRY) {
       wizardryLevelT wiz_lev = getWizardryLevel();
       if (wiz_lev < WIZ_LEV_COMP_PRIM_OTHER_FREE) {

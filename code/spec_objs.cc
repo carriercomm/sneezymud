@@ -2956,6 +2956,30 @@ int portableHole(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *ob2)
   return TRUE;
 }
 
+int razorGlove(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  TBeing *ch;
+  TThing *obj;
+
+  if (!o || !vict)
+    return FALSE;
+  if (!(ch = dynamic_cast<TBeing *>(o->equippedBy)))
+    return FALSE;       // weapon not equipped (carried or on ground)
+  if (::number(0,19))
+    return FALSE;
+  if (cmd != CMD_OBJ_HIT)
+    return FALSE;
+  act("<k>Three long, thin blades spring from your <1>$o<k> as you swing at $N, slicing $M.<1>",TRUE,ch,o,vict,TO_CHAR,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings at $N, slicing $M.<1>",TRUE,ch,o,vict,TO_VICT,NULL);
+  act("<k>Three long, thin blades spring from $n's <1>$o<k> as $e swings, slicing you painfully.<1>",TRUE,ch,o,vict,TO_NOTVICT,NULL);
+
+  if (ch->reconcileDamage(vict,::number(1,(char->MaxLevel()/3)+4), DAMAGE_SLASH) {
+    return DELETE_VICT;
+  }
+
+  return TRUE;
+}
+
 extern int board(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponBlinder(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
 extern int weaponManaDrainer(TBeing *, cmdTypeT, const char *, TObj *, TObj *);
@@ -3022,6 +3046,7 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {TRUE, "Viper Weapon (poison)", poisonViperBlade},
   {FALSE, "trolley", trolley},
   {FALSE, "portable hole", portableHole}, // 55
+  {TRUE, "Razor Glove", razorGlove},
 };
 
 

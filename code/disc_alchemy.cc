@@ -2,20 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: disc_alchemy.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/26 23:06:41  lapsos
-// Enabled divination for 'wizards'(creators).
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -1550,8 +1536,6 @@ int materialize(TBeing *caster, TObj **obj, int, const char * name, byte bKnown)
     bool grabbed = false;
     for (i = 0; i < num; i++) {
       *obj = read_object(numberx, REAL);
-      act("In a flash of light, $p appears.", TRUE, caster, *obj, NULL, TO_ROOM);
-      act("In a flash of light, $p appears.", TRUE, caster, *obj, NULL, TO_CHAR);
 
       (*obj)->remObjStat(ITEM_NEWBIE);
 
@@ -1563,6 +1547,9 @@ int materialize(TBeing *caster, TObj **obj, int, const char * name, byte bKnown)
         (*obj)->setEmpty();
       }
     }
+
+    act("In a flash of light, $p appears.", TRUE, caster, *obj, NULL, TO_ROOM);
+    act("In a flash of light, $p appears.", TRUE, caster, *obj, NULL, TO_CHAR);
 
     if (grabbed)
       act("You grab $p right out of the air.",
@@ -1663,10 +1650,11 @@ int spontaneousGeneration(TBeing *caster, TObj **obj, const char * name, int, by
     act("In a flash of light, $p appears.", TRUE, caster, *obj, NULL, TO_ROOM);
     act("In a flash of light, $p appears.", TRUE, caster, *obj, NULL, TO_CHAR);
 
-    if (dynamic_cast<TObj *>(caster->heldInPrimHand()) &&
-        dynamic_cast<TObj *>(caster->heldInPrimHand())->objVnum() == (*obj)->objVnum())
+    TObj *obj2 = dynamic_cast<TObj *>(caster->heldInPrimHand());
+    if (obj2 && obj2->objVnum() == (*obj)->objVnum()) {
       act("You grab $p right out of the air.",
           TRUE, caster, *obj, NULL, TO_CHAR);
+    }
 
     return SPELL_SUCCESS;
   } else {

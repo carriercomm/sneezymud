@@ -1763,11 +1763,8 @@ void TBeing::doTime(const char *argument)
     desc->saveAccount();
     return;
   }
-  tmp_num = (time_info.hours / 2);
-  sprintf(buf, "It is %d:%s %s, on ",
-          (!(tmp_num % 12) ? 12 : (tmp_num % 12)),
-          (!(time_info.hours % 2) ? "00" : "30"),
-          ((time_info.hours >= 24) ? "PM" : "AM"));
+  sprintf(buf, "It is %s, on ",
+          hmtAsString(hourMinTime()).c_str());
 
   weekday = ((28 * time_info.month) + time_info.day + 1) % 7;        // 28 days in a month 
 

@@ -1633,7 +1633,7 @@ int Descriptor::nanny(const char *arg)
       vlogf(9, "%s [%s] new player.", character->getName(), host);
 
       character->saveChar(ROOM_AUTO_RENT);
-      player_count++;
+      accStat.player_count++;
       character->cls();
       sendMotd(FALSE);
       writeToQ("\n\r\n*** PRESS RETURN: ");

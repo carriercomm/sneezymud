@@ -823,7 +823,7 @@ void TBeing::wipeChar(int)
 
   DeleteHatreds(this, NULL);
 
-  player_count--;
+  accStat.player_count--;
 }
 
 void do_the_player_stuff(const char *name)
@@ -903,7 +903,7 @@ void do_the_player_stuff(const char *name)
     return;
   }
 
-  player_count++;
+  accStat.player_count++;
 
   if (load_char(name, &st)) {
     byte max_level = 0;

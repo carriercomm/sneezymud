@@ -510,7 +510,7 @@ int TBeing::updateAffects()
 int TBeing::updateTickStuff()
 {
   int rc;
-  unsigned int i;
+  unsigned int i, hours_first, hours_last, severity;
 
   if (desc && isPc()) {
     updateCharObjects();
@@ -529,9 +529,27 @@ int TBeing::updateTickStuff()
       if(desc->drugs[i].current_consumed>0){
 	--desc->drugs[i].current_consumed;
 	applyDrugAffects(this, (drugTypeT) i, true);
+	saveDrugStats();
+      }
+      if(desc->drugs[i].total_consumed>0){
+	hours_first=
+	  (((time_info.year - desc->drugs[i].first_use.year) * 12 * 28 * 24) +
+	   ((time_info.month - desc->drugs[i].first_use.month) * 28 * 24) +
+	   ((time_info.day - desc->drugs[i].first_use.day) * 24) +
+	   time_info.hours - desc->drugs[i].first_use.hours);
+	hours_last=
+	  (((time_info.year - desc->drugs[i].last_use.year) * 12 * 28 * 24) +
+	   ((time_info.month - desc->drugs[i].last_use.month) * 28 * 24) +
+	   ((time_info.day - desc->drugs[i].last_use.day) * 24) +
+	   time_info.hours - desc->drugs[i].last_use.hours);
+	severity=(desc->drugs[i].total_consumed / hours_first) * hours_last;
+	if(severity>0)
+	  applyAddictionAffects(this, (drugTypeT) i, severity);
       }
     }
-    
+
+
+
     if (getCond(DRUNK) > 15) {
       rc = passOut();
       if (IS_SET_DELETE(rc, DELETE_THIS)) {

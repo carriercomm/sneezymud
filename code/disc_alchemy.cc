@@ -297,7 +297,7 @@ int divinationObj(TBeing *caster, const TObj *obj, int, byte bKnown)
     }
 
     // seems silly, but the use of "%" in this text makes it necessary
-    caster->sendTo("%s", describeMaterial(obj).c_str());
+    caster->sendTo(COLOR_OBJECTS, "%s", describeMaterial(obj).c_str());
 
     return SPELL_SUCCESS;
   } else {

@@ -148,6 +148,8 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
       case MOB_TREE_SPIRIT:
       case MOB_JOHN_RUSTLER:
       case MOB_ORC_MAGI:
+      case MOB_CLERIC_VOLCANO:
+      case MOB_CLERIC_ARDEN:
         found = TRUE;
         break;
       default:
@@ -184,6 +186,14 @@ int TBeing::applyDamage(TBeing *v, int dam, spellNumT dmg_type)
 		sendTo("<c>You realize you did not follow the guidelines of your quest, so this fight will be for naught.<1>\n\r");
 		tbt->setQuestBit(TOG_FAILED_TO_KILL_MAGI);
 		break;
+       	      case MOB_CLERIC_VOLCANO:
+	        sendTo("<c>You realize you did not follow the guidelines of your quest, so this fight will be for naught.<1>\n\r");
+	        tbt->setQuestBit(TOG_FAILED_CLERIC_V);
+	        break;
+	      case MOB_CLERIC_ARDEN:
+	        sendTo("<c>You realize you did not follow the guidelines of your quest, so this fight will be for naught.<1>\n\r");
+	        tbt->setQuestBit(TOG_FAILED_CLERIC_A);
+	        break;
               default:
                 break;
             }
@@ -415,6 +425,14 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 	    setQuestBit(TOG_KILLED_ORC_MAGI);
 	    remQuestBit(TOG_SEEKING_ORC_MAGI);
 	    break;
+	  case MOB_CLERIC_VOLCANO:
+	    setQuestBit(TOG_KILLED_CLERIC_V);
+	    remQuestBit(TOG_STARTED_RANGER_L21);
+	    break;
+	  case MOB_CLERIC_ARDEN:
+	    setQuestBit(TOG_KILLED_CLERIC_A);
+	    remQuestBit(TOG_SEEKING_CLERIC_A);
+  	    break;
           default:
             break;
         }
@@ -464,6 +482,22 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
 	  setQuestBit(TOG_FAILED_TO_KILL_MAGI);
 	}
 	break;
+      case MOB_CLERIC_VOLCANO:
+        if (hasQuestBit(TOG_STARTED_RANGER_L21) &&
+	    !hasQuestBit(TOG_FAILED_CLERIC_V) &&
+	    !hasQuestBit(TOG_PENANCE_R21_1)){
+	  sendTo("<c>You realize you did not follow the guidelines of your quest, so this fight will be for naught.<1>\n\r");
+  	  setQuestBit(TOG_FAILED_CLERIC_V);
+        }
+        break;
+      case MOB_CLERIC_ARDEN:
+        if (hasQuestBit(TOG_SEEKING_CLERIC_A) &&
+	    !hasQuestBit(TOG_FAILED_CLERIC_A) &&
+	    !hasQuestBit(TOG_PENANCE_R21_2)){
+	  sendTo("<c>You realize you did not follow the guidelines of your quest, so this fight will be for naught.<1>\n\r");
+ 	  setQuestBit(TOG_FAILED_CLERIC_A);
+        }
+        break;
       default:
         break;
     }

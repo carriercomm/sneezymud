@@ -1394,7 +1394,7 @@ int TBeing::terrainSpecial()
     case SECT_DESERT:
       // drain water
       for (t = stuff; t; t = t->nextThing) {
-        evaporate(this);
+        evaporate(this, SILENT_NO);
       }
       return FALSE;
     case SECT_SUBARCTIC:

@@ -176,6 +176,7 @@ void TBeing::loadSetEquipment(int num, char *arg, int tChance)
   const char   *tArg         = NULL;
   loadSetTypeT  tPiece       = LST_ALL;
   string        StString("");
+  int           tCount;
 
   if (num < 0 && (!arg || !*arg) && tChance != 101)
     return;
@@ -445,10 +446,18 @@ void TBeing::loadSetEquipment(int num, char *arg, int tChance)
         }
 
       for (int raceIndex = 0; raceIndex < 6; raceIndex++)
+        if (suitRaces[raceIndex] > 0)
+          tCount += suitRaces[raceIndex];
+
+      for (int raceIndex = 0; raceIndex < 6; raceIndex++)
         if (suitRaces[raceIndex] > 0) {
-          sprintf(tString, " %s[%d]",
-                  good_cap(suitTypeRaces[raceIndex + 1]).c_str(),
-                  suitRaces[raceIndex]);
+          tCount = max(1, tCount);
+          float tUsedPerc = (((float)suitRaces[raceIndex] / (float)tCount) * 100);
+
+          sprintf(tString, " [%3.0f%%][%3d] %s\n\r",
+                  tUsedPerc, suitRaces[raceIndex],
+                  good_cap(suitTypeRaces[raceIndex + 1]).c_str());
+
           StString += tString;
         }
 

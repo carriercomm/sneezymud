@@ -2233,10 +2233,32 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
   objCost cost;
   sh_int save_room;
   char buf[256];
+  dirTypeT dir;
+  roomDirData *exitp;
 
-  if (cmd == CMD_MOB_VIOLENCE_PEACEFUL) {
-    dirTypeT dir;
-    roomDirData *exitp;
+  if (cmd == CMD_GENERIC_PULSE){
+    TThing *t;
+    TBeing *tbt;
+    
+    // Toss out idlers
+    for(t=recep->roomp->stuff;t;t=t->nextThing){
+      if((tbt=dynamic_cast<TBeing *>(t)) &&
+	 tbt->getTimer()>1){
+	recep->doSay("Hey, no loitering!  Make room for the other customers.");
+	for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
+	  if (exit_ok(exitp = recep->exitDir(dir), NULL)) {
+	    act("$n throws you from the inn.",
+		FALSE, recep, 0, tbt, TO_VICT);
+	    act("$n throws $N from the inn.",
+		FALSE, recep, 0, tbt, TO_NOTVICT);
+	    recep->throwChar(tbt, dir, FALSE, SILENT_NO, true);
+	    return TRUE;
+	  }
+	}
+      }
+    }
+    return TRUE;
+  } else if (cmd == CMD_MOB_VIOLENCE_PEACEFUL) {
     TThing *ttt = o;
     TBeing *tbt = dynamic_cast<TBeing *>(ttt);
 

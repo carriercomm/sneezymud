@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: statistics.cc,v $
+// Revision 5.1.1.2  1999/10/18 19:51:27  peel
+// Fixed a bunch of random compile bugs.  Where did these come from?
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -507,7 +510,7 @@ void TBeing::doGamestats(const char *arg)
 int getNetGold(moneyTypeT mtt)
 {
   int net_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     net_gold += gold_statistics[mtt][i];
   return net_gold;
@@ -516,7 +519,7 @@ int getNetGold(moneyTypeT mtt)
 unsigned int getPosGold(moneyTypeT mtt)
 {
   unsigned int pos_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     pos_gold += gold_positive[mtt][i];
   return pos_gold;
@@ -525,7 +528,7 @@ unsigned int getPosGold(moneyTypeT mtt)
 int getNetGoldGlobal()
 {
   int net_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     net_gold += gold_statistics[GOLD_INCOME][i] + 
                 gold_statistics[GOLD_COMM][i] +
@@ -551,7 +554,7 @@ int getNetGoldGlobal()
 unsigned int getPosGoldGlobal()
 {
   unsigned int pos_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     pos_gold += gold_positive[GOLD_INCOME][i] + 
                 gold_positive[GOLD_COMM][i] +
@@ -578,7 +581,7 @@ unsigned int getPosGoldGlobal()
 int getNetGoldShops()
 {
   int net_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     net_gold += gold_statistics[GOLD_SHOP_FOOD][i] +
                 gold_statistics[GOLD_SHOP_COMPONENTS][i] +
@@ -594,7 +597,7 @@ int getNetGoldShops()
 unsigned int getPosGoldShops()
 {
   unsigned int pos_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     pos_gold += gold_positive[GOLD_SHOP_FOOD][i] +
                 gold_positive[GOLD_SHOP_COMPONENTS][i] +
@@ -612,7 +615,7 @@ unsigned int getPosGoldShops()
 int getNetGoldBudget()
 {
   int net_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     net_gold += gold_statistics[GOLD_INCOME][i] + 
                 gold_statistics[GOLD_COMM][i] +
@@ -636,7 +639,7 @@ int getNetGoldBudget()
 unsigned int getPosGoldBudget()
 {
   unsigned int pos_gold = 0;
-  unsigned int i;
+  int i;
   for (i = 0; i < MAX_MORT; i++)
     pos_gold += gold_positive[GOLD_INCOME][i] + 
                 gold_positive[GOLD_COMM][i] +
@@ -663,6 +666,7 @@ void checkGoldStats()
   if (pos_gold < 5000000U)
     return;
 
+#if 0
   int net_gold_shop_comp = getNetGold(GOLD_SHOP_COMPONENTS);
   int net_gold_shop_sym = getNetGold(GOLD_SHOP_SYMBOL);
   int net_gold_shop_arm = getNetGold(GOLD_SHOP_ARMOR);
@@ -673,19 +677,24 @@ void checkGoldStats()
   int net_gold_repair = getNetGold(GOLD_REPAIR);
   int net_gold_shop = getNetGold(GOLD_SHOP);
   int net_gold_income = getNetGold(GOLD_INCOME);
+#endif
   int net_gold = getNetGoldGlobal();
   int net_gold_all_shops = getNetGoldShops();
   int net_gold_budget = getNetGoldBudget();
+#if 0
   unsigned int pos_gold_shop_food = getPosGold(GOLD_SHOP_FOOD);
   unsigned int pos_gold_shop_comp = getPosGold(GOLD_SHOP_COMPONENTS);
   unsigned int pos_gold_shop_sym = getPosGold(GOLD_SHOP_SYMBOL);
+#endif
   unsigned int pos_gold_shop_arm = getPosGold(GOLD_SHOP_ARMOR);
   unsigned int pos_gold_shop_weap = getPosGold(GOLD_SHOP_WEAPON);
+#if 0
   unsigned int pos_gold_shop_pet = getPosGold(GOLD_SHOP_PET);
   unsigned int pos_gold_shop_resp = getPosGold(GOLD_SHOP_RESPONSES);
   unsigned int pos_gold_repair = getPosGold(GOLD_REPAIR);
   unsigned int pos_gold_shop = getPosGold(GOLD_SHOP);
   unsigned int pos_gold_income = getPosGold(GOLD_INCOME);
+#endif
   unsigned int pos_gold_all_shops = getPosGoldShops();
   unsigned int pos_gold_budget = getPosGoldBudget();
 

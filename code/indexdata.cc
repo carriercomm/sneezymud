@@ -260,9 +260,11 @@ void generate_obj_index()
   extra_row=mysql_fetch_row(extra_res);
 
   if(!db){
-    vlogf(LOG_MISC, "Connecting to database.");
+    vlogf(LOG_MISC, "generate_obj_index: initializing database.");
     db=mysql_init(NULL);
-    if(!mysql_real_connect(db, NULL, NULL, NULL, 
+
+    vlogf(LOG_MISC, "generate_obj_index: Connecting to database.");
+    if(!mysql_real_connect(db, NULL, "sneezy", NULL, 
 	  (gamePort==BETA_GAMEPORT ? "sneezybeta" : "sneezy"), 0, NULL, 0)){
       vlogf(LOG_BUG, "Could not connect (1) to database 'sneezy'.");
       exit(0);

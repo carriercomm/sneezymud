@@ -4117,15 +4117,21 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
 
 int switchtrack(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
 {
-  if (cmd != CMD_PUSH && cmd != CMD_PULL && cmd != CMD_OPERATE && cmd != CMD_USE && cmd != CMD_TURN) 
+  if (cmd != CMD_PUSH && 
+      cmd != CMD_PULL && 
+      cmd != CMD_OPERATE && 
+      cmd != CMD_USE && 
+      cmd != CMD_TURN) 
     return FALSE;
   
+  if (!myself->name)
+    return FALSE;
+      
   int where = myself->in_room;
   char arg1[30], arg2[30], buf[256];
   arg = one_argument(arg, arg1);
   arg = one_argument(arg, arg2);
 
-      
   if (is_abbrev(arg1, "switchtracks") || is_abbrev(arg1, "tracks")) {
     switch (where) { 
     case 18007:
@@ -4153,9 +4159,6 @@ int switchtrack(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
       
       break;
     case 18011:
-      if (!myself->name)
-        break;
-
       if(!arg2) 
 	strcpy(arg2,isname("switchtrackdoswitch", myself->name)?"south":"east");
       else if(is_abbrev(arg2, "east") || is_abbrev(arg2, "e")) {

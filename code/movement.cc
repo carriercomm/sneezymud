@@ -499,16 +499,16 @@ int TBeing::rawMove(dirTypeT dir)
       else
         need_movement += 8;
     }
-    if (isLevitating() || isFlying())
-      need_movement /= 4;
-
-    if (isFlying())
-      need_movement = min(1, need_movement);
-
     // old people move harder  (kicks in around age 50 (human))
     if (age()->year - getBaseAge() >= 35)
       need_movement += (age()->year - getBaseAge() - 30)/5;
  
+    if (isFlying())
+      need_movement = min(1, need_movement/4);
+
+    if (isLevitating())
+      need_movement = min(5, need_movement/4);
+
     if (affectedBySpell(SPELL_HASTE) || affectedBySpell(SPELL_ACCELERATE))
       need_movement = max(0, need_movement/2);
 
@@ -710,7 +710,7 @@ int TBeing::rawMove(dirTypeT dir)
       return FALSE;
     } else 
 #endif
-if (from_here->isAirSector()) {
+    if (from_here->isAirSector()) {
     } else if (from_here->isUnderwaterSector()) {
       sendTo("Your head breaks the surface, and you take a big refreshing gulp of air.\n\r");
     } else if (!from_here->isWaterSector()) {
@@ -779,7 +779,7 @@ if (from_here->isAirSector()) {
       return FALSE;
     } else 
 #endif
-if (from_here->isUnderwaterSector()) {
+    if (from_here->isUnderwaterSector()) {
       if (!isAffected(AFF_WATERBREATH)) {
         if ((rc = canSwim(dir)) > 0) {
           sendTo("You swim valiantly under the water.\n\r");

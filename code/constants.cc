@@ -1472,6 +1472,7 @@ const char * const immunity_names[MAX_IMMUNES] =
 // that is "*fuck" blocks "somefuck", "fucksome", and "sfucky"
 const char * const illegalnames[] = 
 {
+  // SWEAR WORDS
   "*fuk",
   "*fuck",
   "*shit",
@@ -1489,15 +1490,8 @@ const char * const illegalnames[] =
   "*penis",
   "*talen",
   "*crap",
-  "*shield",
-  "*some",  // someone, something, etc
   "ass",
-  "himself",
-  "itself",
-  "herself",
-  "the",
-  "an",
-  "and",
+  "jackmeoff",
   "piss",
   "pee",
   "urine",
@@ -1505,6 +1499,16 @@ const char * const illegalnames[] =
   "butt",
   "suck",
   "crotch",
+
+  // IMM NAME SIMILARITY
+  "brutus",
+  "fatopr",
+  "batoper",
+
+  // BASIC OBJECTS
+  "*shield",
+
+  // COLORS
   "gold",
   "silver",
   "bronze",
@@ -1515,20 +1519,47 @@ const char * const illegalnames[] =
   "red",
   "blue",
   "green",
+
+  // SILLY COMMON WORDS
+  "*some",  // someone, something, etc
+  "himself",
+  "itself",
+  "herself",
+  "the",
+  "an",
+  "and",
   "there",
+  "you",
+  "then",
+  "women",
+  "men",
+
+  // BLOCKED AS CAUSES CODE PROBLEMS
   "blob",     // needed for infravision 
   "blobs",    // needed for infravision 
   "link",     // needed for purging links 
   "links",    // needed for purging links 
-  "all",
-  "you",
-  "then",
+  "noone",   // needed for makeleader
+  "comment", // needed for comments
+  "all",      // "group all"
   "unknown",   // Log messages use this sometimes
   "share",   // group needs this
-  "logrus",               // major characters
+
+  // MAJOR CHARACTERS
+  "logrus",
   "galek",
   "anilstathis",
   "theoman",
+  "mezan", // deities
+  "luna", // deities
+  "icon", // deities
+  "elyon", // deities
+  "jevon", // deities
+  "omnon", // deities
+  "amana", // deities
+  "menanon", // deities
+
+  // DIRECTIONS that are abbrevs
   "nor",
   "nort",
   "north",
@@ -1558,21 +1589,8 @@ const char * const illegalnames[] =
   "southwe",
   "southwes",
   "southwest",
-  "women",
-  "men",
   "exit",
   "exits",
-  "brutus",
-  "noone",   // needed for makeleader
-  "comment", // needed for comments
-  "mezan", // deities
-  "luna", // deities
-  "icon", // deities
-  "elyon", // deities
-  "jevon", // deities
-  "omnon", // deities
-  "amana", // deities
-  "menanon", // deities
   "\n"
 };
 

@@ -569,6 +569,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
       strcpy(buf, "Peel: ");
       break;
     default:
+      buf[0] = '\0';
       break;
   }
 
@@ -589,7 +590,7 @@ void vlogf(logTypeT tError, const char *errorMsg,...)
         if (i->client)
           i->clientf("%d|%d|%s", CLIENT_LOG, tError, buf);
         else
-          i->character->sendTo(COLOR_LOGS, "%s\n\r", buf);
+          i->character->sendTo(COLOR_LOGS, "// %s\n\r", buf);
 
 #if 0
   if (severity == LOW_ERROR) {

@@ -186,7 +186,7 @@ static bool enforceGestural(TBeing *ch, spellNumT spell)
 
 
         if (ch->getWizardryLevel() >= WIZ_LEV_NO_GESTURES) {
-          sprintf(msg, "While not absolutely neccessary, you trace a rune with your %s hand to facilitate your spell in forming.", buf);
+          sprintf(msg, "While not absolutely necessary, you trace a rune with your %s hand to facilitate your spell in forming.", buf);
           act(msg, FALSE, ch, NULL, NULL, TO_CHAR, ANSI_PURPLE);
         } else {
           sprintf(msg, "You trace a magical rune in the air with your %s hand.", buf);

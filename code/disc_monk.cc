@@ -424,7 +424,7 @@ int TBeing::doChi(const char *tString, TThing *tSucker)
     REM_DELETE(tRc, RET_STOP_PARSING);
 
   if (IS_SET_DELETE(tRc, DELETE_VICT)) {
-    vlogf(1, "Passive Delete: %s/%s", (tVictim ? "tVictim" : "-"), (tObj ? "tObj" : "-"));
+    //    vlogf(1, "Passive Delete: %s/%s", (tVictim ? "tVictim" : "-"), (tObj ? "tObj" : "-"));
 
     if (tVictim) {
       delete tVictim;

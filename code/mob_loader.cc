@@ -797,7 +797,10 @@ void TMonster::clericSymbolLoader(void)
 
 void TMonster::buffMobLoader()
 {
-  TObj *obj;
+  // no idea whats trying to be done
+  // bat changed down on line 906 so
+  // i commented out this declaration
+  //  TObj *obj;
   int num, vnum;
 
 #if 1

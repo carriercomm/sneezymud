@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: spec_mobs.h,v $
+// Revision 5.1.1.4  2001/04/20 17:31:46  peel
+// added fishtracker proc stuff
+//
 // Revision 5.1.1.3  2001/02/01 22:17:13  jesus
 // shaman stuff
 //
@@ -152,7 +155,8 @@ const int SPEC_TRAINER_THEOLOGY  =149;
 const int SPEC_ATTUNER  =150;
 const int SPEC_DOPPLEGANGER    =152;
 const int SPEC_TUSKGORE        =153;
-const int NUM_MOB_SPECIALS     =154;
+const int SPEC_FISHTRACKER     =154;
+const int NUM_MOB_SPECIALS     =155;
 
 extern const int GET_MOB_SPE_INDEX(int d);
 
@@ -193,6 +197,7 @@ extern int doNewbieEquipLoad(int, int, int);
 extern int doppleganger(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int tunnelerEarthquake(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int tuskGoring(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int fishTracker(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 
 class attune_struct {
   public:

@@ -771,6 +771,7 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
         clientf("%d|Account name already exists! Please try another.", CLIENT_ERROR);
         delete account;
         account = NULL;
+	return;
       } 
       if (strlen(aname) >= 10) {
       }

@@ -632,10 +632,9 @@ void act(const char *str, bool hide, const TThing *t1, const TThing *obj, const 
   const char *codes2 = NULL;
   int hasLast = FALSE;
   int x = 0;
-  char *temp;
-  char tmp[MAX_STRING_LENGTH];
   personTypeT per;
   const TObj *tobj = NULL;
+  string catstr;
 
   if (!str || !*str)
     return;
@@ -935,10 +934,9 @@ void act(const char *str, bool hide, const TThing *t1, const TThing *obj, const 
           // color in the replacement string may reset existing color
           // to get around this, lets tack on any existing color
           if (color) {
-            strcpy(tmp, i);
-            temp = tmp;
-            strcat(temp, to->ansi_color(color).c_str());
-            i = temp;
+            catstr = i;
+            catstr += to->ansi_color(color);
+            i = catstr.c_str();
           }
 	  while ((*point = *(i++)) != 0)
 	    ++point;

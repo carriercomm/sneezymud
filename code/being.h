@@ -469,6 +469,11 @@ class spellStoreData {
 public:
   spellTaskData *spelltask;
   bool storing;
+
+  spellStoreData();
+  spellStoreData(const spellStoreData &a);
+  spellStoreData & operator=(const spellStoreData &a);
+  ~spellStoreData();
 };
 
 class taskData {

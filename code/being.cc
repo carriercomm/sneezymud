@@ -415,6 +415,32 @@ spellTaskData::~spellTaskData()
   orig_arg = NULL;
 }
 
+
+spellStoreData::spellStoreData() :
+  spelltask(NULL),
+  storing(FALSE)
+{
+}
+
+spellStoreData::spellStoreData(const spellStoreData &a) :
+  spelltask(a.spelltask),
+  storing(a.storing)
+{
+}
+
+spellStoreData & spellStoreData::operator=(const spellStoreData &a)
+{
+  if (this == &a) return *this;
+  spelltask=a.spelltask;
+  storing=a.storing;
+  return *this;
+}
+
+spellStoreData::~spellStoreData()
+{
+}
+
+
 charFile::charFile() :
   sex(SEX_MALE),
   race(0),

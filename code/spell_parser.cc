@@ -1269,7 +1269,6 @@ int TBeing::parseTarget(spellNumT which, char *n, TThing **ret)
 
   if(ch) *ret=(TThing *) ch;
   else if (o) *ret=(TThing *) o;
-  else return FALSE;
 
   return TRUE;
 }
@@ -1349,10 +1348,8 @@ int TBeing::doDiscipline(spellNumT which, const char *n)
   if(!parseTarget(which, arg, &t))
     return FALSE;
 
-  if(!(ch=dynamic_cast<TBeing *>(t)) &&
-     !(o=dynamic_cast<TObj *>(t)))
-    // uhh I don't think this should happen
-    return FALSE;
+  ch=dynamic_cast<TBeing *>(t);
+  o=dynamic_cast<TObj *>(t);
 
 #if 0
 // COSMO CASTING MARKER

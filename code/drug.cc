@@ -283,6 +283,7 @@ void applyDrugAffects(TBeing *ch, drugTypeT drug, bool istick){
 	  // first smoke :)
 	  act("Ugh, you're not used to smoking this stuff, it makes you nauseous.", TRUE,ch,0,0,TO_CHAR);
 	  ch->doAction("", CMD_PUKE);
+	  ch->dropPool(10, LIQ_VOMIT);
 	}
 
 	if(ch->desc->drugs[drug].current_consumed>(potency*3)){

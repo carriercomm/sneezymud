@@ -718,7 +718,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
           if (ch->getLevel(i)) {
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
-              ch->sendTo("You must gain at a guild or your exp will max 1 short of next level.\n\r");
+              ch->sendTo(COLOR_BASIC, "<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
               ch->setExp(peak2);
               return;
             } else if (ch->getExp() >= peak) {
@@ -726,7 +726,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
             } else if ((ch->getExp() + gain >= peak) && (ch->GetMaxLevel() < MAX_MORT)) {
               ch->sendTo(COLOR_BASIC, "<G>You have gained enough to be a Level %d %s.<1>\n\r", 
 			 ch->getLevel(i)+1, classNames[i].capName);
-              ch->sendTo("<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
+              ch->sendTo(COLOR_BASIC, "<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
               if (ch->getExp() + gain >= peak2) {
                 ch->setExp(peak2- 1);
                 return;
@@ -789,7 +789,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
     }
   }
   }
-
+  // whats this shit above?
 void TFood::findSomeFood(TFood **last_good, TBaseContainer **last_cont, TBaseContainer *cont) 
 {
   // get item closest to spoiling.

@@ -1137,11 +1137,7 @@ bool TBeing::doesKnowSkill(spellNumT skill) const
   if (!(sk = getSkill(skill)))
     return FALSE;
 
-#if 0
-  return doesKnow(sk->getLearnedness());
-#else
   return doesKnow(getMaxSkillValue(skill));
-#endif
 }
 
 byte TBeing::getRawSkillValue(spellNumT skill) const

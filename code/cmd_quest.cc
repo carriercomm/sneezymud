@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_quest.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/27 14:12:24  lapsos
-// Fixed typo that was preventing execution.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 
 
@@ -38,7 +17,7 @@ void TBeing::remQuestBit(int)
 bool TPerson::hasQuestBit(int value) const
 {
   if (value < 0 || value >= MAX_TOG_INDEX) {
-    vlogf(6, "Bad check of hasQuestBit(%d)", value);
+    vlogf(LOG_BUG, "Bad check of hasQuestBit(%d)", value);
     return FALSE;
   }
 
@@ -48,7 +27,7 @@ bool TPerson::hasQuestBit(int value) const
 void TPerson::setQuestBit(int value)
 {
   if (value < 0 || value >= MAX_TOG_INDEX) {
-    vlogf(6, "Bad check of setQuestBit(%d)", value);
+    vlogf(LOG_BUG, "Bad check of setQuestBit(%d)", value);
     return;
   }
 
@@ -58,7 +37,7 @@ void TPerson::setQuestBit(int value)
 void TPerson::remQuestBit(int value)
 {
   if (value < 0 || value >= MAX_TOG_INDEX) {
-    vlogf(6, "Bad check of remQuestBit(%d)", value);
+    vlogf(LOG_BUG, "Bad check of remQuestBit(%d)", value);
     return;
   }
 

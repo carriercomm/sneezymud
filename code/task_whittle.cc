@@ -1,30 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: task_whittle.cc,v $
-// Revision 5.1.1.4  1999/11/02 17:11:55  lapsos
-// Various additions.
-//
-// Revision 5.1.1.3  1999/11/01 14:10:32  lapsos
-// Fixed up list a little to lenthen the 0 turn build objects.
-//
-// Revision 5.1.1.2  1999/11/01 12:07:21  lapsos
-// Added new entries.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /*****************************************************************************
 
   SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
@@ -231,7 +204,7 @@ void task_whittlePulse(TBeing *ch, TArrow *tArrow, whittlePulseT tWhitLevel)
       tArrow->setWeapDamDev(tTemp);
       break;
     default:
-      vlogf(7, "task_shittlePulse(TArrow) called with invalid tWhitLevel.  [%d]",
+      vlogf(LOG_BUG, "task_shittlePulse(TArrow) called with invalid tWhitLevel.  [%d]",
             tWhitLevel);
       break;
   }
@@ -282,7 +255,7 @@ void task_whittlePulse(TBeing *ch, TBow *tBow, whittlePulseT tWhitLevel)
       tBow->setMaxRange((tValue + tBow->getMaxRange()));
       break;
     default:
-      vlogf(7, "task_shittlePulse(TBow) called with invalid tWhitLevel.  [%d]",
+      vlogf(LOG_BUG, "task_shittlePulse(TBow) called with invalid tWhitLevel.  [%d]",
             tWhitLevel);
       break;
   }
@@ -432,7 +405,7 @@ bool task_whittleCreateNew(TBeing *ch, string tStWood, int tIndex)
 
     if (!(ch->task->obj = read_object(real_object(whittleItems[tIndex].itemVnum), REAL))) {
       ch->sendTo("Something bad happened.  Tell a god.\n\r");
-      vlogf(7, "Player in whittle got to item that doesn't exist!  [%d]",
+      vlogf(LOG_BUG, "Player in whittle got to item that doesn't exist!  [%d]",
             whittleItems[tIndex].itemVnum);
       return false;
     }
@@ -858,7 +831,7 @@ void taskWhittleEntry::operator()(string tString, int newtClass,
     weiSize *= 1.10;
     weaSize = max(400.0, ((volSize + weiSize) / 10));
 
-    vlogf(7, "Adding Whittle: [%.1f %d : %.1f] [%.1f %.1f : %.1f]",
+    vlogf(LOG_MISC, "Adding Whittle: [%.1f %d : %.1f] [%.1f %.1f : %.1f]",
           volSize, tObj->getVolume(), (tObj->getVolume() * 1.10),
           weiSize, tObj->getWeight(), (tObj->getWeight() * 1.10));
 

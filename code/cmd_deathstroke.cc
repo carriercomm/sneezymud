@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_deathstroke.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:23:45  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "combat.h"
 
@@ -186,7 +165,7 @@ static int deathstroke(TBeing *caster, TBeing *victim)
       caster->setVictFighting(victim);
     } else if (cfight && (cfight == vfight)) {
       caster->setVictFighting(victim);
-      vlogf(5, "Should never have gotten here in deathstroke (%s)", caster->getName());
+      vlogf(LOG_BUG, "Should never have gotten here in deathstroke (%s)", caster->getName());
     } else if (cfight && (cfight != victim) && (::number(0,4) < 2)) {
       act("You turn your attention to $N.", TRUE, caster, 0, victim, TO_CHAR);
       act("$n turns $s attention to $N.", TRUE, caster, 0, victim, TO_NOTVICT);

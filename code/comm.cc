@@ -77,16 +77,16 @@ int main(int argc, char *argv[])
 	else if (++pos < argc)
 	  strcpy(dir, argv[pos]);
 	else {
-	  vlogf(10, "Directory arg expected after option -d.");
+	  vlogf(LOG_MISC, "Directory arg expected after option -d.");
 	  exit(0);
 	}
 	break;
       case 's':
 	noSpecials = 1;
-	vlogf(10, "Suppressing assignment of special routines.");
+	vlogf(LOG_MISC, "Suppressing assignment of special routines.");
 	break;
       default:
-	vlogf(10, "Unknown option -% in argument string.", *(argv[pos] + 1));
+	vlogf(LOG_MISC, "Unknown option -% in argument string.", *(argv[pos] + 1));
 	break;
     }
     pos++;
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 
   if (pos < argc) {
     if (!isdigit(*argv[pos])) {
-      vlogf(0, "Usage: %s [-s] [-d pathname] [ port # ]\n", argv[0]);
+      vlogf(LOG_MISC, "Usage: %s [-s] [-d pathname] [ port # ]\n", argv[0]);
       exit(0);
     } else if ((gamePort = atoi(argv[pos])) <= 1024) {
       printf("Illegal port #\n");
@@ -103,24 +103,24 @@ int main(int argc, char *argv[])
   }
   Uptime = time(0);
 
-  vlogf(8, "Running %s on port %d.", MUD_NAME, gamePort);
+  vlogf(LOG_MISC, "Running %s on port %d.", MUD_NAME, gamePort);
 
   if (chdir(dir) < 0) {
     perror("chdir");
     exit(0);
   }
-  vlogf(8, "Using %s as data directory.", dir);
+  vlogf(LOG_MISC, "Using %s as data directory.", dir);
 
   srandom(time(0));
 
   WizLock = false;
 
   if (gamePort == BETA_GAMEPORT) {
-    vlogf(5, "Running on beta test site.  Wizlocking by default.");
+    vlogf(LOG_MISC, "Running on beta test site.  Wizlocking by default.");
     WizLock = TRUE;
   }
 
-  vlogf(0, "Blanking denied hosts.");
+  vlogf(LOG_MISC, "Blanking denied hosts.");
   for (a = 0; a < MAX_BAN_HOSTS; a++) {
     strcpy(hostLogList[a], "");
     strcpy(hostlist[a], "");
@@ -155,22 +155,22 @@ int main(int argc, char *argv[])
 // Init sockets, run game, and cleanup sockets 
 int run_the_game()
 {
-  vlogf(0, "Signal trapping.");
+  vlogf(LOG_MISC, "Signal trapping.");
   signalSetup();
 
-  vlogf(1, "Opening mother connection.");
+  vlogf(LOG_MISC, "Opening mother connection.");
   gSocket = new TSocket(gamePort);
   gSocket->initSocket();
 
   bootDb();
 
-  vlogf(0, "Entering game loop.");
+  vlogf(LOG_MISC, "Entering game loop.");
 
   systask = new SystemTask();
   gSocket->gameLoop();
   gSocket->closeAllSockets();
 
-  vlogf(0, "Normal termination of game.");
+  vlogf(LOG_MISC, "Normal termination of game.");
   delete gSocket;
 
   return FALSE;
@@ -333,7 +333,7 @@ void sendToRoom(colorTypeT color, const char *text, int room)
   TThing *i;
 
   if (!real_roomp(room)) {
-    vlogf(5, "BOGUS room %d in sendToRoom", room);
+    vlogf(LOG_MISC, "BOGUS room %d in sendToRoom", room);
     return;
   }
   if (text) {
@@ -352,7 +352,7 @@ void sendToRoom(const char *text, int room)
   TThing *i;
 
   if (!real_roomp(room)) {
-    vlogf(5, "BOGUS room %d in sendToRoom", room);
+    vlogf(LOG_MISC, "BOGUS room %d in sendToRoom", room);
     return;
   }
   if (text) {
@@ -484,8 +484,8 @@ void colorAct(colorTypeT colorLevel, const char *str, bool hide, const TThing *t
     return;
 
   if (!t1) {
-    vlogf(5, "There is no char in coloract TOCHAR.");
-    vlogf(5, "%s", str);
+    vlogf(LOG_MISC, "There is no char in coloract TOCHAR.");
+    vlogf(LOG_MISC, "%s", str);
     return;
   }
 
@@ -494,13 +494,13 @@ void colorAct(colorTypeT colorLevel, const char *str, bool hide, const TThing *t
 
   if (!t3) {
     if (type == TO_VICT) {
-      vlogf(5, "There is no victim in coloract TOVICT %s is char.", t1->getName());
-      vlogf(5, "%s", str);
+      vlogf(LOG_MISC, "There is no victim in coloract TOVICT %s is char.", t1->getName());
+      vlogf(LOG_MISC, "%s", str);
       return;
     } else if (type == TO_NOTVICT) {
       type = TO_ROOM;
-      vlogf(5, "There is no victim in coloract TONOTVICT %s is char.", t1->getName());
-      vlogf(5, "%s", str);
+      vlogf(LOG_MISC, "There is no victim in coloract TONOTVICT %s is char.", t1->getName());
+      vlogf(LOG_MISC, "%s", str);
     }
   }
 
@@ -585,7 +585,7 @@ void colorAct(colorTypeT colorLevel, const char *str, bool hide, const TThing *t
         }
         break;
       default:
-        vlogf(5,"colorAct with a default COLOR setting");
+        vlogf(LOG_MISC, "colorAct with a default COLOR setting");
         colorize = TRUE;
         break;
     }
@@ -640,8 +640,8 @@ void act(const char *str, bool hide, const TThing *t1, const TThing *obj, const 
     return;
 
   if (!t1) {
-    vlogf(5, "There is no char in act() TOCHAR.");
-    vlogf(5, "%s", str);
+    vlogf(LOG_MISC, "There is no char in act() TOCHAR.");
+    vlogf(LOG_MISC, "%s", str);
     return;
   }
   if (!t1->roomp) 
@@ -649,13 +649,13 @@ void act(const char *str, bool hide, const TThing *t1, const TThing *obj, const 
 
   if (!t3) {
     if (type == TO_VICT) {
-      vlogf(5, "There is no victim in act() TOVICT %s is char.", t1->getName());
-      vlogf(5, "%s", str);
+      vlogf(LOG_MISC, "There is no victim in act() TOVICT %s is char.", t1->getName());
+      vlogf(LOG_MISC, "%s", str);
       return;
     } else if (type == TO_NOTVICT) {
       type = TO_ROOM;
-      vlogf(5, "There is no victim in act() TONOTVICT %s is char.", t1->getName());
-      vlogf(5, "%s", str);
+      vlogf(LOG_MISC, "There is no victim in act() TONOTVICT %s is char.", t1->getName());
+      vlogf(LOG_MISC, "%s", str);
     }
   }
   if (type == TO_VICT) 
@@ -990,7 +990,7 @@ void Descriptor::updateScreenVt100(unsigned int update)
     return;
 
   if (!ch->vt100()) {
-    vlogf(0, "%s in updateScreenVt100 and not vt (%d)",ch->getName(),update);
+    vlogf(LOG_MISC, "%s in updateScreenVt100 and not vt (%d)",ch->getName(),update);
     return;
   }
 
@@ -1107,7 +1107,7 @@ void Descriptor::updateScreenAnsi(unsigned int update)
     return;
 
   if (!ch->ansi()) {
-    vlogf(0, "%s in updateScreenAnsi and not ansi (%d)",ch->getName(), update);
+    vlogf(LOG_MISC, "%s in updateScreenAnsi and not ansi (%d)",ch->getName(), update);
     return;
   }
 

@@ -2446,7 +2446,7 @@ void obj_edit(TBeing *ch, const char *arg)
       change_arrow_value4(ch, dynamic_cast<TArrow *>(ch->desc->obj), arg, ENTER_REENTRANT);
       return;
     default:
-      vlogf(9, "Got to bad spot in obj_edit.  char: %s   case: %d",ch->getName(),ch->specials.edit);
+      vlogf(LOG_EDIT, "Got to bad spot in obj_edit.  char: %s   case: %d",ch->getName(),ch->specials.edit);
       return;
   }
 }
@@ -2566,7 +2566,7 @@ void generic_dirlist(const char *buf, const TBeing *ch)
   DIR *dfd;
 
   if (!(dfd = opendir(buf))) {
-    vlogf(10, "Unable to dirwalk directory %s", buf);
+    vlogf(LOG_FILE, "Unable to dirwalk directory %s", buf);
     return;
   }
   unsigned int totcnt = 0;
@@ -2791,7 +2791,7 @@ void TObj::describeTreasure(const char *arg,int num, int price)
   char buf[160];
 
   if (num == 0) {
-    vlogf(5,"Bogus obj in describeTreasure, %s, %s", arg, getName());
+    vlogf(LOG_EDIT, "Bogus obj in describeTreasure, %s, %s", arg, getName());
     return;  
   } else if (num <= 2) 
     sprintf(type,"bit");
@@ -2846,7 +2846,7 @@ void do_other_obj_stuff(void)
   if (time_info.hours == 23) {
     // create day gates
     if (!(to = read_object(ITEM_DAYGATE, VIRTUAL))) {
-      vlogf(3, "Error loading day gate");
+      vlogf(LOG_LOW, "Error loading day gate");
       return;
     }
     obj = dynamic_cast<TPortal *>(to);
@@ -2856,7 +2856,7 @@ void do_other_obj_stuff(void)
     thing_to_room(obj,1303);
     act("$n appears suddenly!", TRUE, obj, 0, 0, TO_ROOM);
     if (!(to = read_object(ITEM_DAYGATE, VIRTUAL))) {
-      vlogf(3, "Error loading day gate");
+      vlogf(LOG_LOW, "Error loading day gate");
       return;
     }
     obj = dynamic_cast<TPortal *>(to);
@@ -2868,7 +2868,7 @@ void do_other_obj_stuff(void)
   } else if (time_info.hours == 0) {
     // create moon gates
     if (!(to = read_object(ITEM_MOONGATE, VIRTUAL))) {
-      vlogf(3, "Error loading moon gate");
+      vlogf(LOG_LOW, "Error loading moon gate");
       return;
     }
     obj = dynamic_cast<TPortal *>(to);
@@ -2878,7 +2878,7 @@ void do_other_obj_stuff(void)
     thing_to_room(obj,28800);
     act("$n appears suddenly!", TRUE, obj, 0, 0, TO_ROOM);
     if (!(to = read_object(ITEM_MOONGATE, VIRTUAL))) {
-      vlogf(3, "Error loading moon gate");
+      vlogf(LOG_LOW, "Error loading moon gate");
       return;
     }
     obj = dynamic_cast<TPortal *>(to);

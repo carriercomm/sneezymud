@@ -554,6 +554,7 @@ class TBeing : public TThing {
     virtual TThing& operator-- ();
 
     // VIRTUAL FUNCTIONS
+    virtual const char * getLongDesc();
     virtual int chiMe(TBeing *);
     virtual const char *getName() const;
     virtual void remCastingList(TThing *);
@@ -1604,7 +1605,6 @@ class TBeing : public TThing {
     void doReport(const char *);
     virtual void doTitle(const char *);
     int doTithe();
-    int doLongDescr(const char *);
     void doMessage(const char *);
     int getTrainerPracs(const TBeing *, const TMonster *, classIndT, discNumT, int) const;
     int checkTrainDeny(const TBeing *, TMonster *, discNumT, int) const;
@@ -1686,8 +1686,6 @@ class TBeing : public TThing {
     void doInfo(const char *);
     void doLog(const char *);
     void doHostlog(const char *);
-    void doBamfin(const char *);
-    void doBamfout(const char *);
     virtual void doShow(const char *);
     void doChecklog(const char *, int);
     void doDeathcheck(const char *);

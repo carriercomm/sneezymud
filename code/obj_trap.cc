@@ -1263,7 +1263,7 @@ int TBeing::triggerTrap(TTrap *o)
 
       return TRUE;
     default:
-      vlogf(8, "Unknown trap type %d in triggerTrap (%s)", 
+      vlogf(LOG_BUG, "Unknown trap type %d in triggerTrap (%s)", 
          o->getTrapDamType(), o->getName());
       return TRUE;
   }
@@ -2378,7 +2378,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
   } else if (is_abbrev(type, "spike")) {
     if (targ != TRAP_TARG_DOOR &&
         targ != TRAP_TARG_CONT) 
-      vlogf(5, "spike trap being set  with trap targ: %d");
+      vlogf(LOG_MISC, "spike trap being set  with trap targ: %d");
 
     item1 = ST_SPIKE;
     item2 = ST_SPRING;
@@ -2386,7 +2386,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
   } else if (is_abbrev(type, "bolt")) {
     if (targ != TRAP_TARG_MINE && 
         targ != TRAP_TARG_GRENADE) 
-      vlogf(5, "bolt trap being set  with trap targ: %d");
+      vlogf(LOG_MISC, "bolt trap being set  with trap targ: %d");
 
     item1 = ST_TUBING;
     item2 = ST_CGAS;
@@ -2394,7 +2394,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
   } else if (is_abbrev(type, "blade")) {
     if (targ != TRAP_TARG_DOOR &&
         targ != TRAP_TARG_CONT)
-      vlogf(5, "blade trap being set  with trap targ: %d");
+      vlogf(LOG_MISC, "blade trap being set  with trap targ: %d");
 
     item1 = ST_RAZOR_BLADE;
     item2 = ST_SPRING;
@@ -2402,14 +2402,14 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
   } else if (is_abbrev(type, "disk")) {
     if (targ != TRAP_TARG_MINE &&
         targ != TRAP_TARG_GRENADE)
-      vlogf(5, "disk trap being set  with trap targ: %d");
+      vlogf(LOG_MISC, "disk trap being set  with trap targ: %d");
 
     item1 = ST_RAZOR_DISK;
     item2 = ST_SPRING;
     item3 = ST_CANISTER;
   } else if (is_abbrev(type, "hammer")) {
     if (targ != TRAP_TARG_DOOR) 
-      vlogf(5, "hammer trap being set  with trap targ: %d");
+      vlogf(LOG_MISC, "hammer trap being set  with trap targ: %d");
 
     item1 = ST_CONCRETE;
     item2 = ST_WEDGE;
@@ -2418,7 +2418,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
     if (targ != TRAP_TARG_CONT && 
         targ != TRAP_TARG_MINE && 
         targ != TRAP_TARG_GRENADE) 
-      vlogf(5, "pebble trap being set  with trap targ: %d");
+      vlogf(LOG_MISC, "pebble trap being set  with trap targ: %d");
 
     item1 = ST_TUBING;
     item2 = ST_CGAS;
@@ -2452,7 +2452,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
       item3 = ST_ATHANOR;
     }
   } else {
-    vlogf(8, "Bad call to hasTrapComps() : %s", type);
+    vlogf(LOG_MISC, "Bad call to hasTrapComps() : %s", type);
     return FALSE;
   }
   item1 = real_object(item1);
@@ -2476,7 +2476,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
   if (amt == -1) {
     // trap is finished, delete the items
     if (!com1 || !com2 || !com3) {
-      vlogf(9, "Serious error in hasTrapComps");
+      vlogf(LOG_BUG, "Serious error in hasTrapComps");
       return FALSE;
     }
     delete com1;
@@ -2484,7 +2484,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt)
     delete com3;
     if (targ == TRAP_TARG_MINE || targ == TRAP_TARG_GRENADE) {
       if (!com4) {
-        vlogf(9, "Serious error in hasTrapComps (2)");
+        vlogf(LOG_BUG, "Serious error in hasTrapComps (2)");
         return FALSE;
       }
       delete com4;
@@ -3269,7 +3269,7 @@ void TBeing::sendTrapMessage(const char *type, trap_targ_t targ, int num)
     }
   }
 
-  vlogf(10, "Bad trap type (%s, %d, %d) with character %s", 
+  vlogf(LOG_BUG, "Bad trap type (%s, %d, %d) with character %s", 
              type, targ, num, getName());
   return;
 }

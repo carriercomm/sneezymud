@@ -1,23 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: task_picklock.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD 4.0 - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
@@ -65,7 +47,7 @@ void TTool::pickPulse(TBeing *ch)
     act("$n's $o snaps in half.",TRUE,ch,this,0,TO_ROOM);
     ch->stopTask();
     if (this != ch->unequip(ch->getPrimaryHold())) {
-      vlogf(5, "whacked out unequip in task_picklock");
+      vlogf(LOG_BUG, "whacked out unequip in task_picklock");
       return;
     }
     delete this;

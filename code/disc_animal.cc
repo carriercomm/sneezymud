@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_animal.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "combat.h"
@@ -464,7 +446,7 @@ int shapeShift(TBeing *caster, const char * buffer, int level, byte bKnown)
   
   discNumT das = getDisciplineNumber(SPELL_SHAPESHIFT, FALSE);
   if (das == DISC_NONE) {
-    vlogf(5, "bad discipline for shapeshift");
+    vlogf(LOG_BUG, "bad discipline for shapeshift");
     return SPELL_FAIL;
   }
   for (i = 0; (i < LAST_SHAPESHIFT_MOB); i++) {
@@ -494,7 +476,7 @@ int shapeShift(TBeing *caster, const char * buffer, int level, byte bKnown)
   // Check to make sure that there is no snooping going on. 
   if (!caster->desc || caster->desc->snoop.snooping) {
     caster->sendTo("Nothing seems to happen.\n\r");
-    vlogf(5,"PC tried to shapeshift while being snooped");
+    vlogf(LOG_BUG, "PC tried to shapeshift while being snooped");
     delete mob;
     mob = NULL;
     return SPELL_FAIL;

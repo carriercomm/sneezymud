@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: potion.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // potion.cc
 
 #include "stdsneezy.h"
@@ -150,21 +132,21 @@ void TPotion::lowCheck()
           !discArray[curspell]->minMana &&
           !discArray[curspell]->minPiety)) ||
         (getDisciplineNumber(curspell, FALSE) == DISC_NONE)))) {
-      vlogf(LOW_ERROR, "potion (%s:%d) has messed up spell (slot %d: %d)",
+      vlogf(LOG_LOW, "potion (%s:%d) has messed up spell (slot %d: %d)",
            getName(), objVnum(), i+1, curspell);
       if ((curspell < TYPE_UNDEFINED) || (curspell >= MAX_SKILL))
-        vlogf(LOW_ERROR, "bogus range");
+        vlogf(LOG_LOW, "bogus range");
       else if (!discArray[curspell])
-        vlogf(LOW_ERROR, "bogus spell, %d", curspell);
+        vlogf(LOG_LOW, "bogus spell, %d", curspell);
       else if ((!discArray[curspell]->minMana &&
         !discArray[curspell]->minPiety))
-        vlogf(LOW_ERROR, "non-spell");
+        vlogf(LOG_LOW, "non-spell");
       continue;
     }
     if (curspell > TYPE_UNDEFINED &&
         discArray[curspell]->targets & TAR_CHAR_WORLD) {
       // spells that use this setting are not a good choice for obj spells
-      vlogf(LOW_ERROR, "Obj (%s : %d) had spell that shouldn't be on objs (%s : %d)" ,
+      vlogf(LOG_LOW, "Obj (%s : %d) had spell that shouldn't be on objs (%s : %d)" ,
           getName(), objVnum(), discArray[curspell]->name, curspell);
     }
   }

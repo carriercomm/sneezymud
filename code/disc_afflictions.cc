@@ -1,27 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_afflictions.cc,v $
-// Revision 5.1.1.2  1999/12/04 19:26:26  lapsos
-// Fixed wither so it can not be cast unlmited times on same mob.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/30 11:47:00  lapsos
-// Fixed loop bug And unchecked paralyze bug in paralyzeLimb.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "combat.h"
@@ -233,7 +209,7 @@ void poison(TBeing * caster, TObj * obj)
   if (ret == SPELL_SUCCESS) {
     act("You succeed in poisoning $p.", TRUE, caster, obj, 0, TO_CHAR);
     caster->deityIgnore(SILENT_YES);  // intentional  :)
-    vlogf(4, "%s poisoned %s.", caster->getName(), obj->getName());
+    vlogf(LOG_MISC, "%s poisoned %s.", caster->getName(), obj->getName());
   } else {
     caster->deityIgnore();
   }
@@ -247,7 +223,7 @@ int poison(TBeing * caster, TObj * target, TMagicItem *obj, spellNumT spell)
   if (ret == SPELL_SUCCESS) {
     act("You succeed in poisoning $p.", TRUE, caster, obj, 0, TO_CHAR);
     caster->deityIgnore(SILENT_YES);
-    vlogf(4, "%s poisoned %s.", caster->getName(), obj->getName());
+    vlogf(LOG_MISC, "%s poisoned %s.", caster->getName(), obj->getName());
   } else {
     caster->deityIgnore();
   }

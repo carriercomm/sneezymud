@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: drug.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
@@ -174,7 +156,7 @@ void TDrug::getFourValues(int *x1, int *x2, int *x3, int *x4) const
 void TDrug::lowCheck()
 {
   if (getCurFuel() > getMaxFuel())
-    vlogf(LOW_ERROR,"fuel %s had more current fuel than max.", getName());
+    vlogf(LOG_LOW,"fuel %s had more current fuel than max.", getName());
 
   TObj::lowCheck();
 }
@@ -314,7 +296,7 @@ int TBeing::doSmoke(const char *argument)
       //      affectTo(&aff, aff.renew);
 
       if(!affectJoin(this, &aff, AVG_DUR_NO, AVG_EFF_YES))
-	vlogf(0, "affectJoin failed in doSmoke");
+	vlogf(LOG_BUG, "affectJoin failed in doSmoke");
 
       
 #if 0
@@ -323,23 +305,23 @@ int TBeing::doSmoke(const char *argument)
       aff.modifier = (consumed * 5) / potency;
       aff.location = APPLY_MOVE;
       if(!affectJoin(this, &aff, AVG_DUR_NO, AVG_EFF_YES))
-	vlogf(0, "affectJoin failed in doSmoke");
+	vlogf(LOG_BUG, "affectJoin failed in doSmoke");
 
       aff.modifier = -((consumed * 5) / potency);
       aff.location = APPLY_CHA;
       if(!affectJoin(this, &aff, AVG_DUR_NO, AVG_EFF_YES))
-	vlogf(0, "affectJoin failed in doSmoke");
+	vlogf(LOG_BUG, "affectJoin failed in doSmoke");
 
       aff.modifier = -((consumed * 5) / potency);
       aff.location = APPLY_FOC;
       if(!affectJoin(this, &aff, AVG_DUR_NO, AVG_EFF_YES))
-	vlogf(0, "affectJoin failed in doSmoke");
+	vlogf(LOG_BUG, "affectJoin failed in doSmoke");
 #endif     
  
       break;
     case DRUG_OPIUM:
     case DRUG_NONE: default:
-      vlogf(0, "reached default case for drug type in doSmoke");
+      vlogf(LOG_BUG, "reached default case for drug type in doSmoke");
   }
 
 

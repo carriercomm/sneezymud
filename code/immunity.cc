@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: immunity.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // Immunities.cc
 //
 // Class for Immunity Data.
@@ -91,7 +73,7 @@ immuneTypeT Immunities::convert(const string & immunity) const
   if (!immunity.compare("IMMUNE_UNUSED2"))
     return IMMUNE_UNUSED2;
 
-  vlogf(5, "Unknown immunity '%s', in convert()", immunity.c_str());
+  vlogf(LOG_BUG, "Unknown immunity '%s', in convert()", immunity.c_str());
   return IMMUNE_NONE;
 }
 

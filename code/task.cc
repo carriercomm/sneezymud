@@ -1,23 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: task.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
@@ -145,14 +127,14 @@ void TBeing::stopTask()
 int start_task(TBeing *ch, TThing *t, TRoom *rp, taskTypeT task, const char *arg, int timeLeft, ushort wasInRoom, ubyte status, int flags, int nextUpdate)
 {
   if (!ch || (ch->task)) {
-    vlogf(10, "%s got to bad place in start_task (%d).  Tell Brutius or Batopr",
+    vlogf(LOG_BUG, "%s got to bad place in start_task (%d).  Tell Brutius or Batopr",
        (ch ? ch->getName() : "Unknown"), task);
     if (ch)
       ch->sendTo("Problem in task.  Bug Brutius.\n\r");
     return FALSE;
   }
   if (!(ch->task = new taskData)) {
-    vlogf(10, "Couldn't allocate memory in start_task for %s", ch->getName());
+    vlogf(LOG_BUG, "Couldn't allocate memory in start_task for %s", ch->getName());
     return FALSE;
   }
   ch->task->orig_arg = mud_str_dup(arg);
@@ -170,7 +152,7 @@ int start_task(TBeing *ch, TThing *t, TRoom *rp, taskTypeT task, const char *arg
 void warn_busy(TBeing *ch)
 {
   if (!ch || !(ch->task)) {
-    vlogf(10, "%s got to bad place in warn_busy.  Tell Brutius or Batopr",
+    vlogf(LOG_BUG, "%s got to bad place in warn_busy.  Tell Brutius or Batopr",
        (ch ? ch->getName() : "Unknown"));
     return;
   }
@@ -181,7 +163,7 @@ void warn_busy(TBeing *ch)
 int task_bogus(TBeing *ch, cmdTypeT, const char *, int , TRoom *, TObj *)
 {
   ch->sendTo("Um... you hit a buggy spot in the code.  Tell an immort or something.\n\r");
-  vlogf(10, "%s was busy doing a buggy task!  Yikes!", ch->getName());
+  vlogf(LOG_BUG, "%s was busy doing a buggy task!  Yikes!", ch->getName());
   ch->stopTask();
 
   return FALSE;

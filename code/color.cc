@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: color.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/04 18:27:34  lapsos
-// Added no-argument help to the prompt command.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //     SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
@@ -674,7 +653,7 @@ void TPerson::doColor(const char *buf)
   int toggle = TRUE;
 
   if (!desc) {
-    vlogf(5,"Something without a desc (%s) is trying to set a colorLevel", getName());
+    vlogf(LOG_BUG, "Something without a desc (%s) is trying to set a colorLevel", getName());
     return;
   }
   if (!isPc()) {

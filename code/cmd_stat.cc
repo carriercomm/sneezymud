@@ -25,7 +25,7 @@ void TBeing::statZone(const char *zoneNumber)
 
   if (!zoneNumber || !*zoneNumber) {
     if (!roomp) {
-      vlogf(7, "statZone called by being with no current room.");
+      vlogf(LOG_BUG, "statZone called by being with no current room.");
       return;
     }
 
@@ -389,7 +389,7 @@ void TBeing::statObj(const TObj *j)
             j->affected[i].modifier2);
         str += buf;
       } else
-        vlogf(10, "BOGUS AFFECT (%d) on %s", j->affected[i].modifier, 
+        vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", j->affected[i].modifier, 
               j->getName());
     } else if (j->affected[i].location == APPLY_DISCIPLINE) {
      if (discNames[j->affected[i].modifier].disc_num) {
@@ -399,7 +399,7 @@ void TBeing::statObj(const TObj *j)
             j->affected[i].modifier2);
         str += buf;
       } else
-        vlogf(10, "BOGUS AFFECT (%d) on %s", j->affected[i].modifier,
+        vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", j->affected[i].modifier,
               j->getName());
     } else if (j->affected[i].location == APPLY_IMMUNITY) {
       sprintf(buf, "   Affects:  %s: %s by %ld\n\r",apply_types[j->affected[i].location].name,
@@ -857,7 +857,7 @@ void TBeing::statBeing(TBeing *k)
     af2 = aff->next;
     if (aff->type == AFFECT_DISEASE) {
       sprintf(buf + strlen(buf), "Disease: '%s'\n\r",
-                DiseaseInfo[DISEASE_INDEX(aff->modifier)].name);
+              DiseaseInfo[affToDisease(*aff)].name);
       sprintf(buf + strlen(buf), 
                 "     Expires in %d updates.  Status = %d.\n\r",
           aff->duration , aff->level);
@@ -955,11 +955,11 @@ void TBeing::statBeing(TBeing *k)
         strcat(buf, buf2);
 
       } else {
-        vlogf(10, "BOGUS AFFECT (%d) on %s", aff->type, k->getName());
+        vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", aff->type, k->getName());
         k->affectRemove(aff);
       }
     } else {
-      vlogf(10, "BOGUS AFFECT (%d) on %s", aff->type, k->getName());
+      vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", aff->type, k->getName());
       k->affectRemove(aff);
     }
   }

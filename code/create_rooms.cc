@@ -121,6 +121,7 @@ void TPerson::doEdit(const char *arg)
     incorrectCommand();
     return;
   }
+
   if (!isImmortal())
     return;
 
@@ -128,6 +129,13 @@ void TPerson::doEdit(const char *arg)
   // calls to the desc, and if it doesn't exist....*crash*
   if (!desc)
     return;
+
+  if (!in_range(roomp->number, desc->blockastart, desc->blockaend) &&
+      !in_range(roomp->number, desc->blockbstart, desc->blockbend) &&
+      roomp->number != desc->office && !hasWizPower(POWER_REDIT_ENABLED)) {
+    sendTo("This room is not yours...Sorry);
+    return;
+  }
 
   bisect_arg(arg, &field, string, room_fields);
 
@@ -1310,8 +1318,15 @@ void TPerson::doRedit(const char *argument)
     incorrectCommand();
     return;
   }
-  if (!desc || (!isImmortal()))
+  if (!desc || (!isImmortal()) || !roomp)
     return;
+
+  if (!in_range(roomp->number, desc->blockastart, desc->blockaend) &&
+      !in_range(roomp->number, desc->blockbstart, desc->blockbend) &&
+      roomp->number != desc->office && !hasWizPower(POWER_REDIT_ENABLED)) {
+    sendTo("This room is not yours...Sorry);
+    return;
+  }
 
   for (; isspace(*argument); argument++);
   if (*argument) {
@@ -1449,7 +1464,7 @@ static void finishRoom(TRoom *rp, TBeing *ch, dirTypeT dir)
 
   if (!(exitp = rp->dir_option[dir])) {
     ch->sendTo("Blah!\n\r");
-    vlogf(9, "Bad stuff in finishRoom!  No dir_option!");
+    vlogf(LOG_EDIT, "Bad stuff in finishRoom!  No dir_option!");
     return;
   }
   if (!(newrp = real_roomp(exitp->to_room))) {
@@ -1457,7 +1472,7 @@ static void finishRoom(TRoom *rp, TBeing *ch, dirTypeT dir)
     CreateOneRoom(exitp->to_room);
     ch->sendTo("Copying flags, sector type and room height to new room.\n\r");
     if (!(newrp = real_roomp(exitp->to_room))) {
-      vlogf(9, "BOGUSNESS in finishRoom()::medit()");
+      vlogf(LOG_EDIT, "BOGUSNESS in finishRoom()::medit()");
       ch->sendTo("Error occured!!!!\n\r");
       ch->specials.edit = MAIN_MENU;
       update_room_menu(ch);
@@ -1902,7 +1917,7 @@ static void ChangeExitKeyword(TRoom *rp, TBeing *ch, const char *arg, editorEnte
     }
     if (!rp->dir_option[dir]) {
       ChangeExitKeyword(rp, ch, "", ENTER_CHECK);
-      vlogf(5, "Bad event in ChangeExitKeyword");
+      vlogf(LOG_EDIT, "Bad event in ChangeExitKeyword");
       return;
     }
 
@@ -2322,7 +2337,7 @@ static void ChangeExitNumber(TRoom *rp, TBeing *ch, const char *arg, editorEnter
     return;
   }
   if (!rp->dir_option[dir]) {
-    vlogf(10, "Bad news in redit!  no dir where it should be!");
+    vlogf(LOG_EDIT, "Bad news in redit!  no dir where it should be!");
     ch->specials.edit = MAIN_MENU;
     update_room_menu(ch);
   }
@@ -2755,7 +2770,7 @@ void CreateOneRoom(int loc_nr)
     for (z = 0; rp->number > zone_table[z].top && z < zone_table.size(); z++);
 
     if (z >= zone_table.size()) {
-      vlogf(10, "Room %d is outside of any zone.\n", rp->number);
+      vlogf(LOG_EDIT, "Room %d is outside of any zone.\n", rp->number);
       z--;
     }
     rp->setZone(z);
@@ -2792,7 +2807,7 @@ void TRoom::loadOne(FILE *fl, bool tinyfile)
     for (z = 0; number > zone_table[z].top && z < zone_table.size(); z++);
 
     if (z >= zone_table.size()) {
-      vlogf(0, "Room %d is outside of any zone.\n", number);
+      vlogf(LOG_EDIT, "Room %d is outside of any zone.\n", number);
       exit(0);
     }
     zone = z;
@@ -2844,11 +2859,11 @@ void TRoom::loadOne(FILE *fl, bool tinyfile)
         new_descr = new extraDescription();
         new_descr->keyword = fread_string(fl);
         if (!new_descr->keyword || !*new_descr->keyword)
-          vlogf(0, "No keyword in room %d\n", number);
+          vlogf(LOG_EDIT "No keyword in room %d\n", number);
 
         new_descr->description = fread_string(fl);
         if (!new_descr->description || !*new_descr->description)
-          vlogf(LOW_ERROR, "No desc in room %d\n", number);
+          vlogf(LOG_LOW, "No desc in room %d\n", number);
 
         new_descr->next = ex_description;
         ex_description = new_descr;
@@ -2857,7 +2872,7 @@ void TRoom::loadOne(FILE *fl, bool tinyfile)
         roomCount++;
         return;
       default:
-        vlogf(10, "Unknown auxiliary code `%s' in room load of #%d", chk, number);
+        vlogf(LOG_EDIT, "Unknown auxiliary code `%s' in room load of #%d", chk, number);
         break;
     }
   }
@@ -2884,7 +2899,7 @@ void TRoom::initLight()
         found = TRUE;
     }
     if (!found) {
-      vlogf(9, "Room (%s:%d) missing expected window.  Resetting.", name, number);
+      vlogf(LOG_EDIT, "Room (%s:%d) missing expected window.  Resetting.", name, number);
       setHasWindow(FALSE);
     }
     setLight(best);
@@ -3189,7 +3204,7 @@ void room_edit(TBeing *ch, const char *arg)
       ChangeExitSlopedStatus(rp, ch, arg, ENTER_REENTRANT);
       return;
     default:
-      vlogf(9, "Got to bad spot in room_edit (Error: %d)",ch->specials.edit);
+      vlogf(LOG_EDIT, "Got to bad spot in room_edit (Error: %d)",ch->specials.edit);
       return;
   }
 }

@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_help.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/29 02:35:21  lapsos
-// Fixed a typo.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 
 extern "C" {
@@ -176,7 +155,7 @@ void TBeing::doHelp(const char *arg)
         namebuf[j] = UPPER(namebuf[j]);
 
       if (stat(helppath, &timestat)) {
-        vlogf(6,"bad call to help function %s", namebuf);
+        vlogf(LOG_BUG,"bad call to help function %s", namebuf);
         return;
       }
       strcpy(timebuf, ctime(&(timestat.st_mtime)));
@@ -216,7 +195,7 @@ void TBeing::doHelp(const char *arg)
       for (j = 0;namebuf[j] != '\0';j++)
         namebuf[j] = UPPER(namebuf[j]);
       if (stat(helppath, &timestat)) {
-        vlogf(6,"bad call to help function %s", namebuf);
+        vlogf(LOG_BUG,"bad call to help function %s", namebuf);
         return;
       }
       strcpy(timebuf, ctime(&(timestat.st_mtime)));
@@ -263,7 +242,7 @@ void TBeing::doHelp(const char *arg)
     for (j = 0;namebuf[j] != '\0';j++)
       namebuf[j] = UPPER(namebuf[j]);
     if (stat(helppath, &timestat)) {
-      vlogf(6,"bad call to help function %s", namebuf);
+      vlogf(LOG_BUG,"bad call to help function %s", namebuf);
       return;
     }
     strcpy(timebuf, ctime(&(timestat.st_mtime)));
@@ -309,7 +288,7 @@ void TBeing::doHelp(const char *arg)
     for (j = 0;namebuf[j] != '\0';j++)
       namebuf[j] = UPPER(namebuf[j]);
     if (stat(helppath, &timestat)) {
-      vlogf(6,"bad call to help function %s", namebuf);
+      vlogf(LOG_BUG,"bad call to help function %s", namebuf);
       return;
     }
     strcpy(timebuf, ctime(&(timestat.st_mtime)));
@@ -329,12 +308,12 @@ void TBeing::doHelp(const char *arg)
     }
     skill = snt;
     if (skill >= MAX_SKILL) {
-      vlogf(6,"Bogus spell help file: %s", spellIndex[i]);
+      vlogf(LOG_BUG,"Bogus spell help file: %s", spellIndex[i]);
       return;
     }
     skill = getSkillNum(skill);
     if (skill < 0) {
-      vlogf(6,"Bogus spell help file: %s", spellIndex[i]);
+      vlogf(LOG_BUG,"Bogus spell help file: %s", spellIndex[i]);
       return;
     }
     disc_num = getDisciplineNumber(skill, FALSE);
@@ -349,7 +328,7 @@ void TBeing::doHelp(const char *arg)
         str += buf2;
       }
     } else {
-      vlogf(5, "Bad skill %d to getDisciplineNumber in doHelp", skill);
+      vlogf(LOG_BUG, "Bad skill %d to getDisciplineNumber in doHelp", skill);
     }
     str += purple();
     str += "\n\rSpecialization   : ";
@@ -412,7 +391,7 @@ void TBeing::doHelp(const char *arg)
         sprintf(buf2, "\n\r%sSpell Component  :%s %s\n\r",purple(), norm(), cap(capbuf));
         str += buf2;
       } else
-        vlogf(5, "Problem in help file for skill=%d, comp=%d.  (component definition)", skill, comp);
+        vlogf(LOG_BUG, "Problem in help file for skill=%d, comp=%d.  (component definition)", skill, comp);
     } else {
       sprintf(buf2, "\n\r%sSpell Component  :%s NONE\n\r", purple(), norm());
       str += buf2;
@@ -562,7 +541,7 @@ void TBeing::doHelp(const char *arg)
       namebuf[j] = UPPER(namebuf[j]);
 
     if (stat(helppath, &timestat)) {
-      vlogf(6,"bad call to help function %s", namebuf);
+      vlogf(LOG_BUG,"bad call to help function %s", namebuf);
       return;
     }
     strcpy(timebuf, ctime(&(timestat.st_mtime)));
@@ -582,7 +561,7 @@ void TBeing::doHelp(const char *arg)
     }
      skill = snt;
     if (skill >= MAX_SKILL) {
-      vlogf(6,"Bogus skill help file: %s", skillIndex[i]);
+      vlogf(LOG_BUG,"Bogus skill help file: %s", skillIndex[i]);
       return;
     }
     disc_num = getDisciplineNumber(skill, FALSE);
@@ -597,7 +576,7 @@ void TBeing::doHelp(const char *arg)
         str += buf2;
       }
     } else 
-      vlogf(5, "Bad disc for skill %d in doHelp()", skill);
+      vlogf(LOG_BUG, "Bad disc for skill %d in doHelp()", skill);
     
     str += purple();
     str += "\n\rSpecialization   : ";
@@ -675,7 +654,7 @@ void buildHelpIndex()
   // set a reasonable initial size
   immortalIndex.reserve(128);
   if (!(dfd = opendir(IMMORTAL_HELP_PATH))) {
-    vlogf(10, "Can't open immortal help directory for indexing!");
+    vlogf(LOG_FILE, "Can't open immortal help directory for indexing!");
     exit(0);
   }
   while ((dp = readdir(dfd))) {
@@ -692,7 +671,7 @@ void buildHelpIndex()
   // set a reasonable initial size
   builderIndex.reserve(64);
   if (!(dfd = opendir(BUILDER_HELP_PATH))) {
-    vlogf(10, "Can't open builder help directory for indexing!");
+    vlogf(LOG_FILE, "Can't open builder help directory for indexing!");
     exit(0);
   }
   while ((dp = readdir(dfd))) {
@@ -709,7 +688,7 @@ void buildHelpIndex()
   // set a reasonable initial size
   helpIndex.reserve(512);
   if (!(dfd = opendir(HELP_PATH))) {
-    vlogf(10, "Can't open help directory for indexing!");
+    vlogf(LOG_FILE, "Can't open help directory for indexing!");
     exit(0);
   }
   while ((dp = readdir(dfd))) {
@@ -725,7 +704,7 @@ void buildHelpIndex()
   // set a reasonable initial size
   skillIndex.reserve(256);
   if (!(dfd = opendir(SKILL_HELP_PATH))) {
-    vlogf(10, "Can't open skill help directory for indexing!");
+    vlogf(LOG_FILE, "Can't open skill help directory for indexing!");
     exit(0);
   }
   while ((dp = readdir(dfd))) {
@@ -742,7 +721,7 @@ void buildHelpIndex()
   // set a reasonable initial size
   spellIndex.reserve(256);
   if (!(dfd = opendir(SPELL_HELP_PATH))) {
-    vlogf(10, "Can't open spell help directory for indexing!");
+    vlogf(LOG_FILE, "Can't open spell help directory for indexing!");
     exit(0);
   }
   while ((dp = readdir(dfd))) {

@@ -191,17 +191,17 @@ void TRealContainer::describeContains(const TBeing *ch) const
 void TRealContainer::lowCheck()
 {
   if (carryWeightLimit() <= 0.0) {
-    vlogf(LOW_ERROR, "Container (%s) with bad weight limit (%5.2f).",
+    vlogf(LOG_LOW, "Container (%s) with bad weight limit (%5.2f).",
             getName(), carryWeightLimit());
   }
   if (carryVolumeLimit() <= 0) {
-    vlogf(LOW_ERROR, "Container (%s) with bad volume limit (%d).",
+    vlogf(LOG_LOW, "Container (%s) with bad volume limit (%d).",
             getName(), carryVolumeLimit());
   }
 
   if (isContainerFlag(CONT_TRAPPED)) {
     if (getContainerTrapType() == DOOR_TRAP_NONE) {
-      vlogf(LOW_ERROR, "Container (%s:%d) trapped with no trap type.  Removing.",
+      vlogf(LOG_LOW, "Container (%s:%d) trapped with no trap type.  Removing.",
            getName(), objVnum());
       remContainerFlag(CONT_TRAPPED);
     }

@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_hand_of_god.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/06 00:54:43  batopr
-// Added new case statement for astral-walk success
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "spelltask.h"
@@ -37,7 +16,7 @@ int astralWalk(TBeing * caster, TBeing * victim, int level, byte bKnown)
   room = real_roomp(location);
 
   if (!room) {
-    vlogf(7,"Attempt to astral to a NULL room.");
+    vlogf(LOG_BUG, "Attempt to astral to a NULL room.");
     return SPELL_FAIL;
   }
 
@@ -757,7 +736,7 @@ int portal(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
   if (!rp) {
     caster->sendTo("You can't seem to portal to that location.\n\r");
-    vlogf(9,"Attempt to portal to room %d",location);
+    vlogf(LOG_BUG, "Attempt to portal to room %d",location);
     return SPELL_FAIL;
   }
 

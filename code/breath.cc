@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: breath.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -299,7 +281,7 @@ int DragonBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
           rc = spell_chlorine_breath(myself->GetMaxLevel(),myself,tmp, dragons[i].lag);
           break;
         default:
-          vlogf(5,"Bad breath for %s, buy it some Binaca",myself->getName());
+          vlogf(LOG_BUG, "Bad breath for %s, buy it some Binaca",myself->getName());
           break;
       }
       if (IS_SET_DELETE(rc, DELETE_VICT)) {

@@ -1,23 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: task_brew.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD 4.0 - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
@@ -84,7 +66,7 @@ int task_brew(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj *
             obj = read_object(OBJ_GENERIC_POTION, VIRTUAL);
             potion_obj = dynamic_cast<TPotion *>(obj);
             if (!potion_obj) {
-              vlogf(9, "Error creating generic brew potion.");
+              vlogf(LOG_BUG, "Error creating generic brew potion.");
               ch->sendTo("Serious error, tell a god what you did.\n\r");
               return FALSE;
             }

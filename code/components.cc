@@ -550,7 +550,7 @@ void do_components(int situ)
 
   for (i = 0; i < component_placement.size(); i++) {
     if ((value = real_object(component_placement[i].number)) < 0) {
-      vlogf(5, "Bad component (%d, %d)", i, component_placement[i].number);
+      vlogf(LOG_MISC, "Bad component (%d, %d)", i, component_placement[i].number);
       continue;
     }
 
@@ -798,10 +798,10 @@ void do_components(int situ)
           } // else no room
         } // end of for loop
       } else {
-        vlogf(8, "No direction specified on component placement (%d)", i);
+        vlogf(LOG_MISC, "No direction specified on component placement (%d)", i);
       }
     } else {
-      vlogf(8, "No room specified on component placement (%d)", i);
+      vlogf(LOG_MISC, "No room specified on component placement (%d)", i);
     }
   }
 }
@@ -1961,11 +1961,11 @@ bool TComponent::objectRepair(TBeing *ch, TMonster *repair, silentTypeT silent)
 void TComponent::lowCheck()
 {
   if (!isname("component", name)) {
-    vlogf(LOW_ERROR, "Component without COMPONENT in name (%s : %d)", getName(), objVnum());
+    vlogf(LOG_LOW, "Component without COMPONENT in name (%s : %d)", getName(), objVnum());
   }
   int sp = suggestedPrice();
   if (obj_flags.cost != sp) {
-    vlogf(LOW_ERROR, "component (%s:%d) with bad price %d should be %d.",
+    vlogf(LOG_LOW, "component (%s:%d) with bad price %d should be %d.",
           getName(), objVnum(), obj_flags.cost, sp);
     obj_flags.cost = sp;
   }
@@ -2054,7 +2054,7 @@ void TComponent::findSomeComponent(TComponent **comp_gen, TComponent **spell_com
   else if (type == 2)
     dink = COMP_SCRIBE;
   else {
-    vlogf(10, "Unknown type in findSomeComps");
+    vlogf(LOG_MISC, "Unknown type in findSomeComps");
     return;
   }
 
@@ -2424,7 +2424,7 @@ const string TComponent::shopList(const TBeing *ch, const char *tArg,
       break;
 
   if (!tKeeper) {
-    vlogf(10, "TComponent::shopList called by non-existant keeper.");
+    vlogf(LOG_MISC, "TComponent::shopList called by non-existant keeper.");
     return "";
   }
 
@@ -2527,7 +2527,7 @@ void TComponent::buyMe(TBeing *ch, TMonster *tKeeper, int tNum, int tShop)
 
   if (shop_producing(this, tShop)) {
     if (!(tObj = read_object(number, REAL))) {
-      vlogf(7, "Shop producing unlimited of an item not in db!  [%d]", number);
+      vlogf(LOG_MISC, "Shop producing unlimited of an item not in db!  [%d]", number);
       return;
     }
 
@@ -2571,7 +2571,7 @@ void TComponent::buyMe(TBeing *ch, TMonster *tKeeper, int tNum, int tShop)
       --(*tObj);
     } else {
       if (!(tObj = read_object(number, REAL))) {
-        vlogf(7, "Shop with item not in db!  [%d]", number);
+        vlogf(LOG_MISC, "Shop with item not in db!  [%d]", number);
         return;
       }
 

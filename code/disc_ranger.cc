@@ -1,27 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_ranger.cc,v $
-// Revision 5.1.1.2  1999/10/29 05:41:31  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/30 14:03:13  lapsos
-// Fixed a starting bug in track(deduction of moves)
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "combat.h"
@@ -183,7 +159,7 @@ void TBeing::doTrack(const char *argument)
         }
         if (!t) {
           sendTo("Error finding path target!  Tell a god.\n\r");
-          vlogf(8, "Error finding path (doTrack)");
+          vlogf(LOG_BUG, "Error finding path (doTrack)");
           return;
         }
       }
@@ -234,7 +210,7 @@ int TBeing::track(TBeing *vict)
   char buf2[256];
 
   if (!vict && !isSW) {
-    vlogf(5, "Problem in track() %s", getName());
+    vlogf(LOG_BUG, "Problem in track() %s", getName());
     return TRUE;
   }
   if (roomp && !isImmortal() && 
@@ -247,7 +223,7 @@ int TBeing::track(TBeing *vict)
     if (isSW)
       code = find_path(in_room, find_closest_water, NULL, hunt_dist, 0, &targetRm);
     else {
-      vlogf(6, "problem in track()");
+      vlogf(LOG_BUG, "problem in track()");
       stopTask();
       return FALSE;
     }
@@ -378,7 +354,7 @@ dirTypeT TBeing::dirTrack(TBeing *vict)
     }
     if (!t) {
       sendTo("Error finding path target!  Tell a god.\n\r");
-      vlogf(8, "Error finding path (dirTrack)");
+      vlogf(LOG_BUG, "Error finding path (dirTrack)");
     }
     return code;
   }

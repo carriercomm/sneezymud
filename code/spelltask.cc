@@ -104,7 +104,7 @@ void TBeing::stopCast(stopCastT messages)
 
   if (target) {
     if (!(ch = target->getCaster())) {
-      vlogf(5, "%s doesnt have a casterList in stopCast(%s)",target->getName(),getName());
+      vlogf(LOG_BUG, "%s doesnt have a casterList in stopCast(%s)",target->getName(),getName());
     } else {
       if (target->getCaster() == this) {
         // first in list
@@ -128,7 +128,7 @@ void TBeing::stopCast(stopCastT messages)
           }  
         }
         if (!ch)
-          vlogf(5,"%s not found in spelltasking list on %s", target->getName(),getName());
+          vlogf(LOG_BUG,"%s not found in spelltasking list on %s", target->getName(),getName());
       }
     }  
   }
@@ -266,7 +266,7 @@ int start_cast(TBeing *ch, TBeing *victim, TThing *obj, TRoom *rp, spellNumT spe
     return FALSE;
   }
   if (!(ch->spelltask = new spellTaskData())) {
-    vlogf(10, "Couldn't allocate memory in start_cast for %s", ch->getName());
+    vlogf(LOG_BUG, "Couldn't allocate memory in start_cast for %s", ch->getName());
     return FALSE;
   }
   ch->spelltask->orig_arg = mud_str_dup(arg);
@@ -384,7 +384,7 @@ void cast_warn_busy(const TBeing *ch, spellNumT which)
   skillUseTypeT styp;
 
   if (!ch || !(ch->spelltask)) {
-    vlogf(10, "%s got to bad place in cast_warn_busy.  Tell a coder",
+    vlogf(LOG_BUG, "%s got to bad place in cast_warn_busy.  Tell a coder",
        (ch ? ch->getName() : "Unknown"));
     return;
   }
@@ -419,7 +419,7 @@ int TBeing::cast_spell(TBeing *ch, cmdTypeT cmd, int pulse)
   limbs = silence = false;
 
   if (!ch->spelltask) {
-    vlogf(5,"Somehow %s got to cast_spell with no spelltask structure,", ch->getName());
+    vlogf(LOG_BUG,"Somehow %s got to cast_spell with no spelltask structure,", ch->getName());
     act("Something went wrong here in spellcasting. Could you please place a bug or tell a coder the details" , FALSE, ch, NULL, NULL,TO_CHAR);
    return FALSE;
   } 
@@ -546,7 +546,7 @@ int TBeing::cast_spell(TBeing *ch, cmdTypeT cmd, int pulse)
           colorAct(COLOR_SPELLS, "You try to center yourself and continue your prayer.", FALSE, ch, NULL, NULL, TO_CHAR);
       }
 #if SPELLTASK_DEBUG
-      vlogf(5, "%s has a distract of %d in round %d on spell %s",ch->getName(), distract, rounds, discArray[spell]->name);
+      vlogf(LOG_BUG, "%s has a distract of %d in round %d on spell %s",ch->getName(), distract, rounds, discArray[spell]->name);
 #endif
       
       if (distract && (((2 * distract) >= ::number(1,20)) || (distract == -1))) {
@@ -562,7 +562,7 @@ int TBeing::cast_spell(TBeing *ch, cmdTypeT cmd, int pulse)
               TRUE, ch, NULL, NULL, TO_ROOM);
         }
         ch->spelltask->distracted = 0;
-//        vlogf(5,"1. before distracted(%d) distract= %d rounds = %d", ch->spelltask->distracted, distract, ch->spelltask->rounds);
+//        vlogf(LOG_BUG,"1. before distracted(%d) distract= %d rounds = %d", ch->spelltask->distracted, distract, ch->spelltask->rounds);
         ch->stopCast(STOP_CAST_NONE);
         return FALSE;
       } else if (distract && (distract >= ::number(0,(distract + 1)))) {
@@ -621,7 +621,7 @@ int TBeing::cast_spell(TBeing *ch, cmdTypeT cmd, int pulse)
           colorAct(COLOR_SPELLS, "<c>You almost lose your focus but slowly you manage to continue your spell.<z>",
                FALSE, ch, NULL, NULL, TO_CHAR);
 #if SPELLTASK_DEBUG
-          vlogf(5,"Distracted(%d) distract= %d add 1 to rounds = %d", ch->spelltask->distracted, distract, ch->spelltask->rounds);
+          vlogf(LOG_BUG,"Distracted(%d) distract= %d add 1 to rounds = %d", ch->spelltask->distracted, distract, ch->spelltask->rounds);
 #endif
           ch->spelltask->rounds++;
           rounds++;
@@ -629,7 +629,7 @@ int TBeing::cast_spell(TBeing *ch, cmdTypeT cmd, int pulse)
           colorAct(COLOR_SPELLS, "<c>You almost lose your focus but slowly you manage to continue your prayer.<z>",
               FALSE, ch, NULL, NULL, TO_CHAR);
 #if SPELLTASK_DEBUG
-          vlogf(5,"Distracted(%d) distract= %d add 1 to rounds = %d", ch->spelltask->distracted, distract, ch->spelltask->rounds);
+          vlogf(LOG_BUG,"Distracted(%d) distract= %d add 1 to rounds = %d", ch->spelltask->distracted, distract, ch->spelltask->rounds);
 #endif
           ch->spelltask->rounds++;
           rounds++;
@@ -639,7 +639,7 @@ int TBeing::cast_spell(TBeing *ch, cmdTypeT cmd, int pulse)
         if (typ == SPELL_CASTER) {
           colorAct(COLOR_SPELLS, "<c>Your concentration is good and your spell forms faster than usual.<z>", FALSE, ch, NULL, NULL, TO_CHAR);
 #if SPELLTASK_DEBUG
-          vlogf(5,"%s subtract 1 from rounds = %d", ch->getName(), ch->spelltask->rounds);
+          vlogf(LOG_BUG,"%s subtract 1 from rounds = %d", ch->getName(), ch->spelltask->rounds);
 #endif
           ch->spelltask->rounds--;
           rounds--;
@@ -775,7 +775,7 @@ your prayer.", FALSE, ch, NULL, NULL, TO_CHAR);
 
           if ((ch->GetMaxLevel() < GOD_LEVEL1) && ch->desc && (ch->spelltask && !ch->spelltask->component) && IS_SET(discArray[spell]->comp_types, COMP_MATERIAL)) {
             sendTo(COLOR_SPELLS, "<r>You seem to have lost your component while casting.<z>\n\r");
-            vlogf(5, "%s got to end of casting without using component, spell:%s (%d)", ch->getName(), discArray[spell]->name, spell);
+            vlogf(LOG_BUG, "%s got to end of casting without using component, spell:%s (%d)", ch->getName(), discArray[spell]->name, spell);
            ch->stopCast(STOP_CAST_NONE);
             return FALSE;
           }
@@ -793,7 +793,7 @@ your prayer.", FALSE, ch, NULL, NULL, TO_CHAR);
             ADD_DELETE(rc, DELETE_THIS);
           break;
         default:
-          vlogf(5,"Somehow %s got sent to bad counter case in cast_spell",ch->getName());
+          vlogf(LOG_BUG,"Somehow %s got sent to bad counter case in cast_spell",ch->getName());
           break;
       }
       break;
@@ -1178,7 +1178,7 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
   orgArg = caster->spelltask->orig_arg;
 
   if (!discArray[which]) {
-    vlogf(9, "doSpellCast called with null discArray[] (%d) (%s)", which, getName());
+    vlogf(LOG_BUG, "doSpellCast called with null discArray[] (%d) (%s)", which, getName());
     return FALSE;
   }
 
@@ -1209,7 +1209,7 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
 
   if (IS_SET(discArray[which]->targets, TAR_CHAR_ROOM) && spelltask->target == 1) {
     if (!victim) {
-      vlogf(5,"No victim where there should be in doSpellCast");
+      vlogf(LOG_BUG,"No victim where there should be in doSpellCast");
       stopCast(STOP_CAST_GENERIC);
       return FALSE;
     }
@@ -1255,7 +1255,7 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
   }
   if (!ok && (spelltask->target == 1) && (discArray[which]->targets & TAR_CHAR_WORLD)) {
     if (!victim) {
-      vlogf(5,"No victim where there should be in doSpellCast");
+      vlogf(LOG_BUG,"No victim where there should be in doSpellCast");
       stopCast(STOP_CAST_GENERIC);
       return FALSE;
     }
@@ -1451,105 +1451,105 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         if (!o)
           rc = castHealLight(this,victim);
         else
-          vlogf(10,"SPELL_HEAL_LIGHT called with null obj");
+          vlogf(LOG_BUG,"SPELL_HEAL_LIGHT called with null obj");
         break;
       case SPELL_HEAL_SERIOUS:
       case SPELL_HEAL_SERIOUS_DEIKHAN:
         if (!o)
           rc = castHealSerious(this,victim);
         else
-          vlogf(10,"SPELL_HEAL_SERIOUS called with null obj");
+          vlogf(LOG_BUG,"SPELL_HEAL_SERIOUS called with null obj");
         break;
       case SPELL_HEAL_CRITICAL:
       case SPELL_HEAL_CRITICAL_DEIKHAN:
         if (!o)
           rc = castHealCritical(this,victim);
         else
-          vlogf(10,"SPELL_HEAL_CRITICAL called with null obj");
+          vlogf(LOG_BUG,"SPELL_HEAL_CRITICAL called with null obj");
         break;
       case SPELL_HEAL:
         if (!o)
           rc = castHeal(this,victim);
         else
-          vlogf(10,"SPELL_HEAL called with null obj");
+          vlogf(LOG_BUG,"SPELL_HEAL called with null obj");
         break;
       case SPELL_HEAL_FULL:
         if (!o)
           rc = castHealFull(this,victim);
         else
-          vlogf(10,"SPELL_HEAL_FULL called with null obj");
+          vlogf(LOG_BUG,"SPELL_HEAL_FULL called with null obj");
         break;
       case SPELL_GUST:
         if (!o) 
           rc = castGust(this,victim);
         else
-          vlogf(10,"SPELL_GUST called with null obj");
+          vlogf(LOG_BUG,"SPELL_GUST called with null obj");
         break;
       case SPELL_IMMOBILIZE: 
         if (!o) 
           rc = castImmobilize(this,victim);
         else
-          vlogf(10,"SPELL_IMMOBILIZE called with null obj");
+          vlogf(LOG_BUG,"SPELL_IMMOBILIZE called with null obj");
         break;
       case SPELL_SUFFOCATE:
         if (!o) 
           rc = castSuffocate(this,victim);
         else
-          vlogf(10,"SPELL_SUFFOCATE called with null obj");
+          vlogf(LOG_BUG,"SPELL_SUFFOCATE called with null obj");
         break;
       case SPELL_DUST_STORM:
         if (!o) 
           rc = castDustStorm(this);
         else
-          vlogf(10,"SPELL_DUST_STORM called with null obj");
+          vlogf(LOG_BUG, "SPELL_DUST_STORM called with null obj");
         break;
       case SPELL_FEATHERY_DESCENT:
         if (!o) {
           rc = castFeatheryDescent(this, victim);
         } else
-          vlogf(10,"SPELL_FEATHERY_DESCENT called with null obj");
+          vlogf(LOG_BUG, "SPELL_FEATHERY_DESCENT called with null obj");
         break;
       case SPELL_FLY:
         if (!o) {
           rc = castFly(this, victim);
         } else
-          vlogf(10,"SPELL_FLY called with null obj");
+          vlogf(LOG_BUG, "SPELL_FLY called with null obj");
         break;
       case SPELL_LEVITATE:
         if (!o) {
           rc = castLevitate(this,victim);
         } else
-          vlogf(10,"SPELL_LEVITATE called with null obj");
+          vlogf(LOG_BUG, "SPELL_LEVITATE called with null obj");
         break;
       case SPELL_TORNADO:
         if (!o) {
           rc = castTornado(this);
         } else
-          vlogf(10,"SPELL_TORNADO called with null obj");
+          vlogf(LOG_BUG, "SPELL_TORNADO called with null obj");
         break;
       case SPELL_ANTIGRAVITY:
         if (!o) {
           rc = castAntigravity(this);
         } else
-          vlogf(10,"SPELL_ANTIGRAVITY called with null obj");
+          vlogf(LOG_BUG, "SPELL_ANTIGRAVITY called with null obj");
         break;
       case SPELL_FALCON_WINGS:
         if (!o) {
           rc = castFalconWings(this, victim);
         } else
-          vlogf(10,"SPELL_FALCON_WINGS called with null obj");
+          vlogf(LOG_BUG, "SPELL_FALCON_WINGS called with null obj");
         break;
       case SPELL_CONJURE_AIR:
         if (!o) {
           rc = castConjureElemAir(this);
         } else
-          vlogf(10,"SPELL_CONJURE_AIR called with null obj");
+          vlogf(LOG_BUG, "SPELL_CONJURE_AIR called with null obj");
         break;
       case SPELL_PROTECTION_FROM_AIR:
         if (!o) {
           rc = castProtectionFromAir(this, victim);
         } else
-          vlogf(10,"SPELL_PROTECTION_FROM_AIR called with null obj");
+          vlogf(LOG_BUG, "SPELL_PROTECTION_FROM_AIR called with null obj");
         break;
 
 // disc_air
@@ -1557,61 +1557,61 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         if (!o) {
           rc = castSlingShot(this, victim);
         } else
-          vlogf(10,"SPELL_SLING_SHOT called with null obj");
+          vlogf(LOG_BUG, "SPELL_SLING_SHOT called with null obj");
         break;
       case SPELL_GRANITE_FISTS:
         if (!o) {
           rc = castGraniteFists(this, victim);
         } else
-          vlogf(10,"SPELL_GRANITE_FISTS called with null obj");
+          vlogf(LOG_BUG, "SPELL_GRANITE_FISTS called with null obj");
         break;
       case SPELL_PEBBLE_SPRAY:
         if (!o) {
           rc = castPebbleSpray(this);
         } else
-          vlogf(10,"SPELL_PEBBLE_SPRAY called with null obj");
+          vlogf(LOG_BUG, "SPELL_PEBBLE_SPRAY called with null obj");
         break;
       case SPELL_SAND_BLAST:
         if (!o) {
           rc = castSandBlast(this);
         } else
-          vlogf(10,"SPELL_SAND_BLAST called with null obj");
+          vlogf(LOG_BUG, "SPELL_SAND_BLAST called with null obj");
         break;
       case SPELL_LAVA_STREAM:
         if (!o) {
           rc = castLavaStream(this);
         } else
-          vlogf(10,"SPELL_LAVA_STREAM called with null obj");
+          vlogf(LOG_BUG, "SPELL_LAVA_STREAM called with null obj");
         break;
       case SPELL_METEOR_SWARM:
         if (!o) {
           rc = castMeteorSwarm(this, victim);
         } else
-          vlogf(10,"SPELL_LAVA_STREAM called with null obj");
+          vlogf(LOG_BUG, "SPELL_LAVA_STREAM called with null obj");
         break;
       case SPELL_STONE_SKIN:
         if (!o) {
           castStoneSkin(this, victim);
         } else
-          vlogf(10,"SPELL_STONE_SKIN called with null obj");
+          vlogf(LOG_BUG, "SPELL_STONE_SKIN called with null obj");
         break;
       case SPELL_TRAIL_SEEK:
         if (!o) {
           castTrailSeek(this, victim);
         } else
-          vlogf(10,"SPELL_TRAIL_SEEK called with null obj");
+          vlogf(LOG_BUG, "SPELL_TRAIL_SEEK called with null obj");
         break;
       case SPELL_CONJURE_EARTH:
         if (!o) {
           rc = castConjureElemEarth(this);
         } else
-          vlogf(10,"SPELL_CONJURE_EARTH called with null obj");
+          vlogf(LOG_BUG, "SPELL_CONJURE_EARTH called with null obj");
         break;
     case SPELL_PROTECTION_FROM_EARTH:
         if (!o) {
           rc = castProtectionFromEarth(this, victim);
         } else
-          vlogf(10,"SPELL_PROTECTION_FROM_EARTH called with null obj");
+          vlogf(LOG_BUG, "SPELL_PROTECTION_FROM_EARTH called with null obj");
         break;
 
 // disc_water
@@ -1772,73 +1772,73 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         if (!o) 
           rc = castMysticDarts(this, victim);
         else
-          vlogf(10,"SPELL_MYSTIC_DARTS called with null obj");
+          vlogf(LOG_BUG, "SPELL_MYSTIC_DARTS called with null obj");
         break;
       case SPELL_BLAST_OF_FURY:
         if (!o) {
           rc = castBlastOfFury(this, victim);
         } else
-          vlogf(10,"SPELL_BLAST_OF_FURY called with null obj");
+          vlogf(LOG_BUG, "SPELL_BLAST_OF_FURY called with null obj");
         break;
       case SPELL_COLOR_SPRAY:
         if (!o) {
           rc = castColorSpray(this);
         } else
-          vlogf(10,"SPELL_COLOR_SPRAY called with null obj");
+          vlogf(LOG_BUG, "SPELL_COLOR_SPRAY called with null obj");
         break;
       case SPELL_ENERGY_DRAIN:
         if (!o) {
           rc = castEnergyDrain(this, victim);
         } else
-          vlogf(10,"SPELL_ENERGY_DRAIN called with null obj");
+          vlogf(LOG_BUG, "SPELL_ENERGY_DRAIN called with null obj");
         break;
       case SPELL_ACID_BLAST:
         if (!o) {
           rc = castAcidBlast(this);
         } else
-          vlogf(10,"SPELL_ACID_BLAST called with null obj");
+          vlogf(LOG_BUG, "SPELL_ACID_BLAST called with null obj");
         break;
       case SPELL_ATOMIZE:
         if (!o) {
           rc = castAtomize(this, victim);
         } else
-          vlogf(10,"SPELL_ATOMIZE called with null obj");
+          vlogf(LOG_BUG, "SPELL_ATOMIZE called with null obj");
         break;
       case SPELL_SORCERERS_GLOBE:
         if (!o) {
           rc = castSorcerersGlobe(this, victim);
         } else
-          vlogf(10,"SPELL_SORCERERS_GLOBE called with null obj");
+          vlogf(LOG_BUG, "SPELL_SORCERERS_GLOBE called with null obj");
         break;
       case SPELL_ANIMATE:
        if (!o) {
           castAnimate(this);
         } else
-          vlogf(10,"SPELL_ANIMATE called with null obj");
+          vlogf(LOG_BUG, "SPELL_ANIMATE called with null obj");
         break;
       case SPELL_BIND:
         if (!o) {
           rc = castBind(this, victim);
         } else
-          vlogf(10,"SPELL_BIND called with null obj");
+          vlogf(LOG_BUG, "SPELL_BIND called with null obj");
         break;
       case SPELL_TELEPORT:
         if (!o) {
           rc = castTeleport(this, victim);
         } else
-          vlogf(10,"SPELL_TELEPORT called with null obj");
+          vlogf(LOG_BUG, "SPELL_TELEPORT called with null obj");
         break;
       case SPELL_PROTECTION_FROM_ELEMENTS:
         if (!o) 
           rc = castProtectionFromElements(this, victim);
         else
-          vlogf(10,"SPELL_PROTECTION_FROM_ELEMENTS called with null obj");
+          vlogf(LOG_BUG, "SPELL_PROTECTION_FROM_ELEMENTS called with null obj");
         break;
       case SPELL_STUNNING_ARROW:
         if (!o) {
           rc = castStunningArrow(this, victim);
         } else
-          vlogf(10,"SPELL_STUNNING_ARROW called with null obj");
+          vlogf(LOG_BUG, "SPELL_STUNNING_ARROW called with null obj");
         break;
 
 // disc_nature
@@ -1846,13 +1846,13 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         if (!o) 
           rc = castBarkskin(this, victim);
         else
-          vlogf(10,"SKILL_BARKSKIN called with null obj");
+          vlogf(LOG_BUG ,"SKILL_BARKSKIN called with null obj");
         break;
       case SKILL_TRANSFORM_LIMB:
         if (!o) {
           rc = castTransformLimb(this);
         } else
-          vlogf(10,"SKILL_TRANSFORM_LIMB called with null obj");
+          vlogf(LOG_BUG, "SKILL_TRANSFORM_LIMB called with null obj");
         break;
 
 // disc_fire
@@ -1860,67 +1860,67 @@ int TBeing::doSpellCast(TBeing *caster, TBeing*victim, TObj *o, TRoom *room, spe
         if (!o) {
           rc = castHandsOfFlame(this, victim);
         } else
-          vlogf(10,"SPELL_HANDS_OF_FLAME called with null obj");
+          vlogf(LOG_BUG, "SPELL_HANDS_OF_FLAME called with null obj");
         break;
       case SPELL_FAERIE_FIRE:
         if (!o) {
           rc = castFaerieFire(this, victim);
         } else
-          vlogf(10,"SPELL_FAERIE_FIRE called with null obj");
+          vlogf(LOG_BUG, "SPELL_FAERIE_FIRE called with null obj");
         break;
       case SPELL_FLAMING_SWORD:
         if (!o) {
           rc = castFlamingSword(this, victim);
         } else
-          vlogf(10,"SPELL_FLAMING_SWORD called with null obj");
+          vlogf(LOG_BUG, "SPELL_FLAMING_SWORD called with null obj");
         break;
       case SPELL_INFERNO:
 	if (!o) {
 	  rc = castInferno(this, victim);
 	} else
-          vlogf(10,"SPELL_INFERNO called with null obj");
+          vlogf(LOG_BUG, "SPELL_INFERNO called with null obj");
         break;
     case SPELL_HELLFIRE:  
         if (!o) {
           rc = castHellfire(this);
         } else
-          vlogf(10,"SPELL_HELLFIRE called with null obj");
+          vlogf(LOG_BUG, "SPELL_HELLFIRE called with null obj");
         break;
     case SPELL_FIREBALL:
 	if (!o) {
 	  rc = castFireball(this);
 	} else
-	  vlogf(10,"SPELL_FIREBALL called with null obj");
+	  vlogf(LOG_BUG, "SPELL_FIREBALL called with null obj");
 	break;
     case SPELL_FLAMING_FLESH:
         if (!o) {
           rc = castFlamingFlesh(this, victim);
         } else
-          vlogf(10,"SPELL_FLAMING_FLESH called with null obj");
+          vlogf(LOG_BUG, "SPELL_FLAMING_FLESH called with null obj");
         break;
     case SPELL_CONJURE_FIRE:
 	if (!o) {
 	  rc = castConjureElemFire(this);
 	} else
-	  vlogf(10,"SPELL_CONJURE_FIRE called with null obj");
+	  vlogf(LOG_BUG, "SPELL_CONJURE_FIRE called with null obj");
 	break;
     case SPELL_FLARE:
         if (!o) {
           rc = castFlare(this);
         } else
-          vlogf(10,"SPELL_FLARE called with null obj");
+          vlogf(LOG_BUG, "SPELL_FLARE called with null obj");
         break;
     case SPELL_INFRAVISION:
         if (!o) {
           rc = castInfravision(this, victim);
         } else
-          vlogf(10,"SPELL_INFRAVISION called with null obj");
+          vlogf(LOG_BUG, "SPELL_INFRAVISION called with null obj");
         break; 
     case SPELL_PROTECTION_FROM_FIRE:
         if (!o) {
           rc = castProtectionFromFire(this, victim);
         } else
-          vlogf(10,"SPELL_PROTECTION_FROM_FIRE called with null obj");
+          vlogf(LOG_BUG, "SPELL_PROTECTION_FROM_FIRE called with null obj");
         break;
       default:
         sendTo("Spell or discipline not yet implemented (doSpellCast)!\n\r");
@@ -1982,7 +1982,7 @@ int TBeing::applyCompCheck(spellNumT spell, int round, int status)
   else if (IS_SET(discArray[spell]->comp_types, COMP_MATERIAL_ALMOST_END))
     use = 5;
   else 
-    vlogf(5,"Bad case in spell_parser.comp_type(%d)",spell);
+    vlogf(LOG_BUG,"Bad case in spell_parser.comp_type(%d)",spell);
   
 // No component needed
   if (!use)
@@ -2019,7 +2019,7 @@ int TBeing::applyCompCheck(spellNumT spell, int round, int status)
         return TRUE;
       break;
     default:
-      vlogf(5,"Bad case in applyCompCheck (%s)", getName());
+      vlogf(LOG_BUG,"Bad case in applyCompCheck (%s)", getName());
       return FALSE;
   }
 

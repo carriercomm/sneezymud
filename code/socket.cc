@@ -1,23 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: socket.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //   SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 //   "socket.cc" - All methods for TSocket class
@@ -233,7 +215,7 @@ int TSocket::gameLoop()
   while (!Shutdown) {
 #if 0
     if  (!(pulse % PULSE_TICKS)) {
-      vlogf(-1, "tick log");
+      vlogf(LOG_SILENT, "tick log");
     }
 #endif
     if (timeTill  && (timeTill <= time(0))) {
@@ -435,8 +417,8 @@ int TSocket::gameLoop()
 	next_thing = obj->next;
 
         if (!dynamic_cast<TObj *>(obj)) {
-          vlogf(9, "Object_list produced a non-obj().  rm: %d", obj->in_room);
-          vlogf(9, "roomp %s, parent %s", 
+          vlogf(LOG_BUG, "Object_list produced a non-obj().  rm: %d", obj->in_room);
+          vlogf(LOG_BUG, "roomp %s, parent %s", 
                 (obj->roomp ? "true" : "false"),
                 (obj->parent ? "true" : "false"));
           // bogus objects tend to have garbage in obj->next
@@ -511,7 +493,7 @@ int TSocket::gameLoop()
 	temp = tmp_ch->next;  // just for safety
 
         if (tmp_ch->getPosition() == POSITION_DEAD) {
-          vlogf(9, "Error: dead creature (%s at %d) in character_list, removing.",
+          vlogf(LOG_BUG, "Error: dead creature (%s at %d) in character_list, removing.",
                tmp_ch->getName(), tmp_ch->in_room);
           delete tmp_ch;
           tmp_ch = NULL;
@@ -519,9 +501,9 @@ int TSocket::gameLoop()
         }
         if ((tmp_ch->getPosition() < POSITION_STUNNED) &&
             (tmp_ch->getHit() > 0)) {
-          vlogf(10, "Error: creature (%s) with hit > 0 found with position < stunned",
+          vlogf(LOG_BUG, "Error: creature (%s) with hit > 0 found with position < stunned",
                     tmp_ch->getName());
-          vlogf(10, "Setting player to POSITION_STANDING");
+          vlogf(LOG_BUG, "Setting player to POSITION_STANDING");
           tmp_ch->setPosition(POSITION_STANDING);
         }
 #if 0
@@ -697,7 +679,7 @@ int TSocket::gameLoop()
 
     if (pulse >= 2400) {
       if (TestCode1) {
-        vlogf(5, "2400 pulses took %ld seconds.", time(0)-ticktime);
+        vlogf(LOG_MISC, "2400 pulses took %ld seconds.", time(0)-ticktime);
         ticktime = time(0);
       }
       pulse = 0;
@@ -774,7 +756,7 @@ int TSocket::newDescriptor()
     return 0;
 
   if ((maxdesc + 1) >= avail_descs) {
-    vlogf(0, "Descriptor being dumped due to high load - Bug Batopr");
+    vlogf(LOG_MISC, "Descriptor being dumped due to high load - Bug Batopr");
     s->writeToSocket("Sorry.. The game is full...\n\r");
     s->writeToSocket("Please try again later...\n\r");
     close(s->sock);
@@ -810,7 +792,7 @@ int TSocket::newDescriptor()
     strcpy(temphostaddr, IP_String(saiSock).c_str());
 
     if (fin_time - init_time >= 10)
-      vlogf(8, "DEBUG: gethostbyaddr (1) took %d secs to complete for host %s", fin_time-init_time, temphostaddr);
+      vlogf(LOG_BUG, "DEBUG: gethostbyaddr (1) took %d secs to complete for host %s", fin_time-init_time, temphostaddr);
 
     if (numberhosts) {
       for (a = 0; a <= numberhosts - 1; a++) {
@@ -881,7 +863,7 @@ int TSocket::writeToSocket(const char *txt)
 
 void TSocket::closeAllSockets()
 {
-  vlogf(1, "Closing all sockets.");
+  vlogf(LOG_MISC, "Closing all sockets.");
 
   while (descriptor_list)
     delete descriptor_list;
@@ -918,7 +900,7 @@ void TSocket::initSocket()
 #else
   if (!(hp = gethostbyname("localhost"))) {
 #endif
-    vlogf(10, "failed getting hostname structure.  hostname: %s", hostname);
+    vlogf(LOG_BUG, "failed getting hostname structure.  hostname: %s", hostname);
     perror("gethostbyname");
     exit(1);
   }
@@ -944,7 +926,7 @@ void TSocket::initSocket()
   }
   if (bind(sock, (struct sockaddr *) &sa, sizeof(sa)) < 0) {
     perror("bind");
-    vlogf(9, "initSocket: bind: errno=%d", errno);
+    vlogf(LOG_BUG, "initSocket: bind: errno=%d", errno);
     close(sock);
     exit(0);
   }

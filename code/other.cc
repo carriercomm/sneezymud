@@ -451,7 +451,7 @@ void TBeing::doSplit(const char *argument, bool tell)
     }
     sendTo("%d talens divided in %d shares of %d talens.\n\r", amount, no_members, amount / no_members);
     if ((GetMaxLevel() > MAX_MORT) && (no_members > 1))
-      vlogf(9, "%s was kind enough to share %d talens with others...", getName(), amount);
+      vlogf(LOG_MISC, "%s was kind enough to share %d talens with others...", getName(), amount);
   } else {
     int count = 0;
     TThing *obj2;
@@ -473,7 +473,7 @@ void TBeing::doReport(const char *argument)
   TBeing *targ = NULL;
 
   if (!roomp) {
-    vlogf(10, "Person %s in bad room in doReport!", getName());
+    vlogf(LOG_BUG, "Person %s in bad room in doReport!", getName());
     return;
   }
   if (applySoundproof())
@@ -611,7 +611,7 @@ int TPerson::doQuit2()
   }
   if (getPosition() < POSITION_STUNNED) {
     sendTo("You die before your time!\n\r");
-    vlogf(5, "%s killed by quitting while incapacitated at %s (%d)",
+    vlogf(LOG_MISC, "%s killed by quitting while incapacitated at %s (%d)",
           getName(), roomp->getName(), inRoom());
     rc = die(DAMAGE_NORMAL);
     if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -622,7 +622,7 @@ int TPerson::doQuit2()
 
   act("Goodbye, friend.. Come back soon!", FALSE, this, 0, 0, TO_CHAR);
   act("$n has left the game.", TRUE, this, 0, 0, TO_ROOM);
-  vlogf(0, "%s quit the game.", getName());
+  vlogf(LOG_PIO, "%s quit the game.", getName());
 
   if (!isImmortal() && getMoney()) {
     *roomp += *create_money(getMoney());
@@ -796,7 +796,7 @@ void TBeing::doPractice(const char *argument)
       if (!strcmp(disc_names[i], "unused")) 
         continue;
       if (!(cd = getDiscipline(i))) {
-        vlogf(5, "Somehow %s was not assigned a discipline (%d), used prac class (%d).",getName(), i, which);
+        vlogf(LOG_BUG, "Somehow %s was not assigned a discipline (%d), used prac class (%d).",getName(), i, which);
       }
       if ((discNames[i].class_num == 0) || (IS_SET(discNames[i].class_num, which))) {
         if (cd && cd->getLearnedness() >= 0) {
@@ -940,7 +940,7 @@ void TBeing::sendSkillsList(discNumT which)
     i = sortDiscVec[j].theSkill;
     das = getDisciplineNumber(i, FALSE);
     if (das == DISC_NONE) {
-      vlogf(5, "Bad disc for skill %d in doPractice", i);
+      vlogf(LOG_BUG, "Bad disc for skill %d in doPractice", i);
       continue;
     }
     cd = getDiscipline(das);
@@ -1097,7 +1097,7 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
       found = 1;
     }
   } else if (skNum != TYPE_UNDEFINED) {
-    vlogf(5, "Something is sending to doPracSkill with a bad argument.");
+    vlogf(LOG_BUG, "Something is sending to doPracSkill with a bad argument.");
     sendTo("That does not appear to be a valid skill: practice skill <name>\n\r");
     return;
   } else {
@@ -1141,7 +1141,7 @@ void TBeing::doPracSkill(const char *argument, spellNumT skNum)
 
   das = getDisciplineNumber(skNum, FALSE);
   if (das == DISC_NONE) {
-    vlogf(5, "Bad disc for skill %d in doPracSkill", skNum);
+    vlogf(LOG_BUG, "Bad disc for skill %d in doPracSkill", skNum);
     return;
   }
   cd = getDiscipline(das);
@@ -1829,14 +1829,14 @@ int TPotion::quaffMe(TBeing *ch)
     spellNumT spellnum = getSpell(i);
     if (spellnum >= 0) {
       if (!discArray[spellnum]) {
-        vlogf(10,"doQuaff (%s) called spell (%d) that does not exist!", 
+        vlogf(LOG_BUG,"doQuaff (%s) called spell (%d) that does not exist!", 
             getName(), spellnum);
         continue;
       }
       rc = doObjSpell(ch,ch,this,NULL,"", spellnum);
       if (IS_SET_DELETE(rc, DELETE_ITEM)) {
         // uh, not possible right
-        vlogf(5, "whacked out potion return %s", getName());
+        vlogf(LOG_BUG, "whacked out potion return %s", getName());
       }
       if (IS_SET_DELETE(rc, DELETE_THIS) || IS_SET_DELETE(rc, DELETE_VICT)) {
         if (equippedBy)
@@ -2157,7 +2157,7 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
       else if (victim)
         poison(caster,victim,obj, spell);
       else
-        vlogf(5, "doObjSpell:poison had bogus targets");
+        vlogf(LOG_BUG, "doObjSpell:poison had bogus targets");
       break;
     case SPELL_BLINDNESS:
       blindness(caster,victim,obj);
@@ -2273,7 +2273,7 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
       rc = energyDrain(caster,victim,obj);
       break;
     default:
-      vlogf(5,"Object (%s) with uncoded spell (%d)!", obj->getName(), spell);
+      vlogf(LOG_BUG,"Object (%s) with uncoded spell (%d)!", obj->getName(), spell);
       break;
   }
   return rc;
@@ -2352,7 +2352,7 @@ int TScroll::reciteMe(TBeing *ch, const char * argument)
     spellNumT the_spell = getSpell(i);
     if (the_spell >= MIN_SPELL) {
       if (!discArray[the_spell]) {
-        vlogf(10,"doRecite called spell (%d) that doesnt exist! - Don't do that!", the_spell);
+        vlogf(LOG_BUG,"doRecite called spell (%d) that doesnt exist! - Don't do that!", the_spell);
         continue;
       }
       if ((discArray[the_spell]->targets & TAR_VIOLENT) &&
@@ -3423,7 +3423,7 @@ void Descriptor::send_bug(const char *type, const char *msg)
       return;
     }
   } else {
-    vlogf(9, "Bogus type (%s) in send_bug.", type);
+    vlogf(LOG_BUG, "Bogus type (%s) in send_bug.", type);
     return;
   }
   fputs(buf, fp);
@@ -3433,7 +3433,7 @@ void Descriptor::send_bug(const char *type, const char *msg)
 //  ----------
 
   if (!(fp = fopen(BUG_TEMP_FILE, "w"))) {
-    vlogf(8, "Error opening dummy file for bug mailing.");
+    vlogf(LOG_FILE, "Error opening dummy file for bug mailing.");
     return;
   }
   fputs(buf2, fp);

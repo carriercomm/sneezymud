@@ -1059,9 +1059,10 @@ sexTypeT TBeing::getSex() const
 void TBeing::setSexUnsafe(int sex)
 {
   if (sex < SEX_NEUTER || sex > SEX_FEMALE) {
-    vlogf(10, "Bad sex on %s during set (%d)", getName(), sex);
+    vlogf(LOG_LOW, "Bad sex on %s during set (%d)", getName(), sex);
     sex = 0;
   }
+
   setSex(sexTypeT(sex));
 }
 
@@ -1215,6 +1216,18 @@ void TBeing::peeOnMe(const TBeing *ch)
   act("$n has just pissed on your foot!  Yuck!", TRUE, ch, 0, this, TO_VICT);
   act("$n cackles as $e pees on $N's foot!", TRUE, ch, 0, this, TO_NOTVICT);
   act("You relieve yourself on $N's foot.", TRUE, ch, 0, this, TO_CHAR);
+}
+
+const char * TBeing::getLongDesc()
+{
+  if (player.longDescr)
+    return player.longDescr;
+
+  if (msgVariables == MSG_LONGDESCR &&
+      !msgVariables(MSG_LONGDESCR, (TThing *)NULL).empty())
+    return msgVariables(MSG_LONGDESCR, (TThing *)NULL).c_str();
+
+  return NULL;
 }
 
 int TBeing::chiMe(TBeing *tLunatic)

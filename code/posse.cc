@@ -65,7 +65,7 @@ int grimhavenPosse(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TOb
       return FALSE;
 
     if (!(myself->act_ptr = new hunt_struct())) {
-      vlogf(10, "failed memory allocation in mob proc grimhavenPosse.");
+      vlogf(LOG_BUG, "failed memory allocation in mob proc grimhavenPosse.");
       return FALSE;
     }
     job = static_cast<hunt_struct *>(myself->act_ptr);
@@ -86,7 +86,7 @@ int grimhavenPosse(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TOb
     SET_BIT(myself->specials.affectedBy, AFF_GROUP);
     for (i=0;i<3;i++) {
       if (!(mob = read_mobile(MOB_CITYGUARD, VIRTUAL))) {
-        vlogf(5, "Bad load of cityguard.");
+        vlogf(LOG_BUG, "Bad load of cityguard.");
         continue;
       }
       *myself->roomp += *mob;
@@ -98,7 +98,7 @@ int grimhavenPosse(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TOb
   }
 
   if (!(job = static_cast<hunt_struct *>(myself->act_ptr))) {
-    vlogf(10, "grimhavenPosse: error, static_cast");
+    vlogf(LOG_BUG, "grimhavenPosse: error, static_cast");
     return TRUE;
   }
 
@@ -226,7 +226,7 @@ int grimhavenPosse(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TOb
 	    return TRUE;
 	} while (head_guard_path[job->cur_path][job->cur_pos].cur_room != -1);
 	
-        // vlogf(10, "grimhavenPosse: head guard got lost");
+        // vlogf(LOG_BUG, "grimhavenPosse: head guard got lost");
 	act("$n grows weary of searching for criminals.",
 	    0, myself, 0, 0, TO_ROOM);
 	act("$n goes back to his office.",
@@ -311,7 +311,7 @@ int grimhavenPosse(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TOb
 	    return TRUE;
 	} while (lamp_path_pos[job->cur_path][job->cur_pos].cur_room != -1);
 	
-        // vlogf(10, "grimhavenPosse: head guard got lost");
+        // vlogf(LOG_BUG, "grimhavenPosse: head guard got lost");
 
 	act("$n grows weary of searching for criminals.",
 	    0, myself, 0, 0, TO_ROOM);

@@ -1,33 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: repair.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.5  1999/10/09 04:10:16  batopr
-// Removed 0.6 factor from repair_price, handled by gold_mod
-//
-// Revision 1.4  1999/09/30 17:36:49  batopr
-// added statistics.h
-//
-// Revision 1.3  1999/09/30 17:30:46  batopr
-// Made repair price take gold_modifier[GOLD_REPAIR] into account
-//
-// Revision 1.2  1999/09/30 17:27:24  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include <unistd.h>
 #include <sys/stat.h>
 
@@ -127,11 +97,11 @@ static void save_repairman_file(TBeing *repair, TBeing *buyer, TObj *o, int iTim
   unsigned char version;
 
   if (!repair || !buyer) {
-    vlogf(10, "save_repairman_file() called with NULL ch!");
+    vlogf(LOG_BUG, "save_repairman_file() called with NULL ch!");
     return;
   }
   if (!buyer->isPc()) {
-    vlogf(10, "Non-PC got into save_repairman_file() somehow!!! BUG BRUTIUS!!", buyer->getName());
+    vlogf(LOG_BUG, "Non-PC got into save_repairman_file() somehow!!! BUG BRUTIUS!!", buyer->getName());
     return;
   }
   then = (long) iTime;
@@ -141,29 +111,29 @@ static void save_repairman_file(TBeing *repair, TBeing *buyer, TObj *o, int iTim
   if (!(fp = fopen(buf, "w"))) {
     sprintf(buf2, "mobdata/repairs/%d", repair->mobVnum());
     if (mkdir(buf2, 0770)) {
-      vlogf(10, "Unable to create a repair directory for %s.", repair->getName());
+      vlogf(LOG_BUG, "Unable to create a repair directory for %s.", repair->getName());
       return;
     } else
-      vlogf(10, "Created a repair directory for %s", repair->getName());
+      vlogf(LOG_BUG, "Created a repair directory for %s", repair->getName());
 
     if (!(fp = fopen(buf, "w"))) {
-      vlogf(10, "Major problems trying to save %s repair file.", repair->getName());
+      vlogf(LOG_BUG, "Major problems trying to save %s repair file.", repair->getName());
       return;
     }
   }
   if (fwrite(&then, sizeof(then), 1, fp) != 1) {
-    vlogf(10, "Error writing time for repairman_file!");
+    vlogf(LOG_BUG, "Error writing time for repairman_file!");
     fclose(fp);
     return;
   }
   if (fwrite(&cost, sizeof(cost), 1, fp) != 1) {
-    vlogf(10, "Error writing cost for repairman_file!");
+    vlogf(LOG_BUG, "Error writing cost for repairman_file!");
     fclose(fp);
     return;
   }
   version = CURRENT_RENT_VERSION;
   if (fwrite(&version, sizeof(version), 1, fp) != 1) {
-    vlogf(10, "Error writing version for repairman_file!");
+    vlogf(LOG_BUG, "Error writing version for repairman_file!");
     fclose(fp);
     return;
   }
@@ -185,7 +155,7 @@ static int check_time_and_gold(TBeing *repair, TBeing *buyer, int ticket, TNote 
   unsigned char version;
 
   if (!repair || !buyer) {
-    vlogf(10, "check_time called with NULL character! BUG BRUTIUS!");
+    vlogf(LOG_BUG, "check_time called with NULL character! BUG BRUTIUS!");
     return FALSE;
   }
   sprintf(buf, "mobdata/repairs/%d/%d", repair->mobVnum(), ticket);
@@ -195,19 +165,19 @@ static int check_time_and_gold(TBeing *repair, TBeing *buyer, int ticket, TNote 
     return FALSE;
   }
   if (fread(&tmp, sizeof(tmp), 1, fp) != 1) {
-    vlogf(10, "No timer on item number %d for repairman %s", ticket, repair->getName());
+    vlogf(LOG_BUG, "No timer on item number %d for repairman %s", ticket, repair->getName());
     repair->doSay("Something is majorly wrong(Timer). Talk to a god");
     fclose(fp);
     return FALSE;
   }
   if (fread(&tmp_cost, sizeof(tmp_cost), 1, fp) != 1) {
-    vlogf(10, "No cost on item number %d for repairman %s", ticket, repair->getName());
+    vlogf(LOG_BUG, "No cost on item number %d for repairman %s", ticket, repair->getName());
     repair->doSay("Something is majorly wrong(Cost). Talk to a god");
     fclose(fp);
     return FALSE;
   }
   if (fread(&version, sizeof(version), 1, fp) != 1) {
-    vlogf(10, "No version on item number %d for repairman %s", ticket, repair->getName());
+    vlogf(LOG_BUG, "No version on item number %d for repairman %s", ticket, repair->getName());
     repair->doSay("Something is majorly wrong(version). Talk to a god");
     fclose(fp);
     return FALSE;
@@ -257,7 +227,7 @@ static int check_time_and_gold(TBeing *repair, TBeing *buyer, int ticket, TNote 
       return TRUE;
     } else {
       repair->doSay("Whoa, serious problems, tell a god.");
-      vlogf(8, "Bogus load of repair item problem!!!!!!");
+      vlogf(LOG_BUG, "Bogus load of repair item problem!!!!!!");
       fclose(fp);
       return TRUE;
     }
@@ -501,7 +471,7 @@ static TObj *make_ticket(TMonster *repair, TBeing *buyer, TObj *repaired, time_t
 {
   TObj *tmp_obj;
   if (!(tmp_obj = read_object(GENERIC_NOTE, VIRTUAL))) {
-    vlogf(10, "Couldn't read in note for make_ticket. BUG BRUTIUS!!!");
+    vlogf(LOG_BUG, "Couldn't read in note for make_ticket. BUG BRUTIUS!!!");
     return NULL;
   }
   tmp_obj->noteMe(repair, buyer, repaired, when_ready, tick_num);
@@ -781,11 +751,11 @@ void count_repair_items(const char *name)
 
   sprintf(buf, "mobdata/repairs/%d/%s",global_repair, name);
   if (!(fp = fopen(buf, "r"))) {
-    vlogf(10, "Had a bad time opening repair file (%s) for initialization.", name);
+    vlogf(LOG_BUG, "Had a bad time opening repair file (%s) for initialization.", name);
     return;
   }
   if (fread(&tmp, sizeof(tmp), 1, fp) != 1) {
-    vlogf(10, "Couldn't find a timer for repaiman file %s", name);
+    vlogf(LOG_BUG, "Couldn't find a timer for repaiman file %s", name);
     fclose(fp);
     return;
   }
@@ -806,40 +776,40 @@ void processRepairFile(const char *name)
   FILE *fp;
 
   if (!(fp = fopen(name, "r"))) {
-    vlogf(10, "Error reading repairman_file %s for limited item count.  Point 1!", name);
+    vlogf(LOG_BUG, "Error reading repairman_file %s for limited item count.  Point 1!", name);
     return;
   }
   if (fread(&then, sizeof(then), 1, fp) != 1) {
-    vlogf(10, "Error reading repairman_file %s for limited item count.  Point 2!", name);
+    vlogf(LOG_BUG, "Error reading repairman_file %s for limited item count.  Point 2!", name);
     fclose(fp);
     return;
   }
 #if NUKE_REPAIR_ITEMS
   if ((time(0) - then) > 15 * SECS_PER_REAL_DAY) {
     fclose(fp);
-    vlogf(9, "REPAIR: Item %s was in repair %d days", name,
+    vlogf(LOG_MISC, "REPAIR: Item %s was in repair %d days", name,
          (time(0) - then)/SECS_PER_REAL_DAY);
     unlink(name);
     return;
   }
 #endif
   if (fread(&cost, sizeof(cost), 1, fp) != 1) {
-    vlogf(10, "Error reading repairman_file %s for limited item count.  Point 3!", name);
+    vlogf(LOG_BUG, "Error reading repairman_file %s for limited item count.  Point 3!", name);
     fclose(fp);
     return;
   }
   if (fread(&version, sizeof(version), 1, fp) != 1) {
-    vlogf(10, "Error reading repairman_file %s for limited item count.  Point 3b!", name);
+    vlogf(LOG_BUG, "Error reading repairman_file %s for limited item count.  Point 3b!", name);
     fclose(fp);
     return;
   }
   if (fread(&item, sizeof(item), 1, fp) != 1) {
-    vlogf(10, "Error reading repairman_file %s for limited item count.  Point 4!", name);
+    vlogf(LOG_BUG, "Error reading repairman_file %s for limited item count.  Point 4!", name);
     fclose(fp);
     return;
   }
   if ((item.cost > LIM_ITEM_COST_MIN) && (item.item_number >= 0)) {
-    vlogf(10, "     [%d] - %s", item.item_number, name);
+    vlogf(LOG_BUG, "     [%d] - %s", item.item_number, name);
     obj_index[real_object(item.item_number)].number++;
   }
   fclose(fp);

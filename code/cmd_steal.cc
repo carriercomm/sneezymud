@@ -65,7 +65,7 @@ static bool genericCanSteal(TBeing *thief, TBeing *victim)
 
   if (victim->spec == SPEC_SHOPKEEPER && !is_imp) {
     thief->sendTo("Oh, Bad Move.  Bad Move.\n\r");
-    vlogf(10, "%s just tried to steal from a shopkeeper! [%s]",
+    vlogf(LOG_CHEAT, "%s just tried to steal from a shopkeeper! [%s]",
           thief->getName(), victim->getName());
     return FALSE;
   }
@@ -302,7 +302,7 @@ static int steal(TBeing * thief, TBeing * victim, char * obj_name)
         thief->doSave(SILENT_YES);
         victim->doSave(SILENT_YES);
         if (!thief->hasWizPower(POWER_WIZARD))
-          vlogf(0,"%s stole %s from %s.",thief->getName(),
+          vlogf(LOG_CHEAT, "%s stole %s from %s.",thief->getName(),
                 obj->getName(), victim->getName());
       } else
         thief->sendTo("You can't carry that much weight.\n\r");

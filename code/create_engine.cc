@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: create_engine.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "create_engine.h"
 
@@ -231,7 +213,7 @@ void EndCreateEngine(CreateEngineMethods Method, int ceLevel, TBeing *ch, TObj *
     case CEM_APPLIED:
       if (ceLevel < 0 || ceLevel >= MAX_APPLIED_SUBSTANCES) {
         ch->sendTo("Something is wrong, tell a god what you did.\n\r");
-        vlogf(7, "Create-Engine(Applied)-End Called with wrong Level.");
+        vlogf(LOG_LAPSOS, "Create-Engine(Applied)-End Called with wrong Level.");
         return;
       }
 
@@ -246,20 +228,20 @@ void EndCreateEngine(CreateEngineMethods Method, int ceLevel, TBeing *ch, TObj *
         delete static_cast<appliedCreate_struct *>(ch->act_ptr);
         ch->act_ptr = NULL;
       } else {
-        vlogf(7, "Job was lost while closing Create Engine [CEM_APPLIED]");
+        vlogf(LOG_LAPSOS, "Job was lost while closing Create Engine [CEM_APPLIED]");
         ch->sendTo("Tell a god what you did.\n\r");
       }
 
       if (AppliedCreate[ceLevel]->CompReward == -1) {
         ch->sendTo("All your work goes for naught, it seems that someone forget to set the item.\n\r");
-        vlogf(7, "AppliedCreate[%d]->CompReward is -1, fix please.", ceLevel);
+        vlogf(LOG_LAPSOS, "AppliedCreate[%d]->CompReward is -1, fix please.", ceLevel);
         return;
       }
 
       TObj *FinalObject;
       if (!(FinalObject = read_object(AppliedCreate[ceLevel]->CompReward, REAL))) {
         ch->sendTo("Problem loading the final object, tell a god immediatly.\n\r");
-        vlogf(7, "AppliedCreate->CompReward doesn't exist! [%d]", AppliedCreate[ceLevel]->CompReward);
+        vlogf(LOG_LAPSOS, "AppliedCreate->CompReward doesn't exist! [%d]", AppliedCreate[ceLevel]->CompReward);
         return;
       }
 
@@ -270,7 +252,7 @@ void EndCreateEngine(CreateEngineMethods Method, int ceLevel, TBeing *ch, TObj *
     case CEM_ALCHEMIST:
       break;
     default:
-      vlogf(7, "EndCreateEngine called with invalid Method [%d]", Method);
+      vlogf(LOG_LAPSOS, "EndCreateEngine called with invalid Method [%d]", Method);
   }
 }
 
@@ -283,7 +265,7 @@ void StartCreateEngine(CreateEngineMethods Method, int ceLevel, TBeing *ch,
     case CEM_APPLIED:
       if (ceLevel < 0 || ceLevel >= MAX_APPLIED_SUBSTANCES) {
         ch->sendTo("Something is wrong, tell a god what you did.\n\r");
-        vlogf(7, "Create-Engine(Applied) Called with wrong Level.");
+        vlogf(LOG_LAPSOS, "Create-Engine(Applied) Called with wrong Level.");
         return;
       }
       if (ch->act_ptr) {
@@ -330,7 +312,7 @@ void StartCreateEngine(CreateEngineMethods Method, int ceLevel, TBeing *ch,
     case CEM_ALCHEMIST:
       break;
     default:
-      vlogf(7, "StartCreateEngine called with invalid Method [%d]", Method);
+      vlogf(LOG_LAPSOS, "StartCreateEngine called with invalid Method [%d]", Method);
   }
 }
 
@@ -396,7 +378,7 @@ int task_createEngine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
           asJob = static_cast<appliedCreate_struct *>(ch->act_ptr);
 
           if (!asJob) {
-            vlogf(7, "Player in the middle of createEngine task (CEM_APPLIED) Without job.");
+            vlogf(LOG_LAPSOS, "Player in the middle of createEngine task (CEM_APPLIED) Without job.");
             ch->sendTo("Something went terribly wrong, tell a coder what you did.\n\r");
             ch->stopTask();
             return 0;
@@ -484,7 +466,7 @@ int task_createEngine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
               nRc = appliedSubstanceCreateIchor(ch, cmd, pulse, obj);
               break;
             default:
-              vlogf(7, "task_createEngine/CEM_APPLIED with invalid Level [%d]", ch->task->flags);
+              vlogf(LOG_LAPSOS, "task_createEngine/CEM_APPLIED with invalid Level [%d]", ch->task->flags);
               ch->sendTo("Something went wrong, tell a coder what you did.\n\r");
               ch->stopTask();
               if (ch->act_ptr) {
@@ -500,7 +482,7 @@ int task_createEngine(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *
           ch->stopTask();
           break;
         default:
-          vlogf(7, "task_createEngine called with invalid Method [%d]", ch->task->status);
+          vlogf(LOG_LAPSOS, "task_createEngine called with invalid Method [%d]", ch->task->status);
           ch->sendTo("Something went wrong, tell a coder what you did.\n\r");
           if (ch->act_ptr) {
             delete static_cast<appliedCreate_struct *>(ch->act_ptr);

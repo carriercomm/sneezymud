@@ -178,7 +178,7 @@ void readDissectionFile()
 
   fp = fopen(dissect_file, "r");
   if (!fp) {
-    vlogf(9, "Unable to open '%s' for reading", dissect_file);
+    vlogf(LOG_FILE, "Unable to open '%s' for reading", dissect_file);
     return;
   }
 

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: limits.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 extern "C" {
 #include <unistd.h>
 }
@@ -448,7 +430,7 @@ if (!doneCombat || (getDiscipline(DISC_CLERIC)->getLearnedness() < MAX_DISC_LEAR
     case UNUSED2_LEVEL_IND:
     case UNUSED3_LEVEL_IND:
     case MAX_SAVED_CLASSES:
-      vlogf(8, "Bad class in calcNewPracs");
+      vlogf(LOG_BUG, "Bad class in calcNewPracs");
       break;
   } 
   if (preReqs) {
@@ -523,7 +505,7 @@ void TBeing::setPracs(sh_int prac, classIndT Class)
     case UNUSED2_LEVEL_IND:
     case UNUSED3_LEVEL_IND:
     case MAX_SAVED_CLASSES:
-      vlogf(8, "Bad class in setPracs");
+      vlogf(LOG_BUG, "Bad class in setPracs");
   }
 }
 
@@ -976,7 +958,7 @@ int TBeing::checkIdling()
       if (in_room != ROOM_NOWHERE)
         --(*this);
 
-      vlogf(-1, "%s booted from game for inactivity.", getName());
+      vlogf(LOG_SILENT, "%s booted from game for inactivity.", getName());
       thing_to_room(this, ROOM_DUMP);
 
       // this would be done by ~TPerson

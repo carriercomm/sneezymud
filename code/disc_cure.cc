@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_cure.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "combat.h"
@@ -62,8 +44,7 @@ static void adjustHealHp(const TBeing *caster, int &hp, int durat)
   } else if (caster->spelltask) {
     // on other rounds, divy up the other half equally
     if (durat <= 1) {
-      vlogf(5, "Problem with hitpoint/rounds formula in heal spells, caster is
-%s", caster->getName());
+      vlogf(LOG_BUG, "Problem with hitpoint/rounds formula in heal spells, caster is %s", caster->getName());
      durat = 2;
     }
     hp /= (durat-1)*2;

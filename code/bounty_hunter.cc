@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: bounty_hunter.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -294,7 +276,7 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
       }
       job = static_cast<bounty_hunt_struct *>(myself->act_ptr);
       if (!job) {
-        vlogf(10, "Unable to allocate memory for bounty hunter!  This is bad!");
+        vlogf(LOG_PROC, "Unable to allocate memory for bounty hunter!  This is bad!");
         return TRUE;
       }
       if (ch && job->level_command > ch->GetMaxLevel()) {
@@ -420,12 +402,12 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
 
         if (job->hunted_victim != NULL) {
           myself->doAction(job->hunted_victim, CMD_THANK);
-          vlogf(0, "%s apparently repo'd %s (%d) from %s", myself->getName(),
+          vlogf(LOG_PROC, "%s apparently repo'd %s (%d) from %s", myself->getName(),
                 temp_obj->getName(), temp_obj->objVnum(), job->hunted_victim);
           job->hunted_victim = NULL;
         } else {
           act("$n appears pleased.", FALSE, myself, NULL, targ, TO_ROOM);
-          vlogf(0, "Bounty apparently repo'd %s (%d)",
+          vlogf(LOG_PROC, "Bounty apparently repo'd %s (%d)",
                 temp_obj->getName(), temp_obj->objVnum());
         }
         delete temp_obj;
@@ -479,11 +461,11 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
       // item is in a linkdead bag
       // mob will wind up in CS due to teleporter which is sort of bad
       if (temp_obj->parent)
-        vlogf(0, "Bounty getting %s (%d) from %s (storage)",
+        vlogf(LOG_PROC, "Bounty getting %s (%d) from %s (storage)",
              temp_obj->getName(), temp_obj->objVnum(), 
              temp_obj->parent->getName());
       else
-        vlogf(0, "Bounty getting %s (%d) from (storage)",
+        vlogf(LOG_PROC, "Bounty getting %s (%d) from (storage)",
              temp_obj->getName(), temp_obj->objVnum());
       (*temp_obj)--;
       *myself += *temp_obj;
@@ -724,7 +706,7 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
           }  // default case
         }
       } else if (temp_obj->parent) {
-        vlogf(0, "%s repo'd %s %d from %s",
+        vlogf(LOG_PROC, "%s repo'd %s %d from %s",
              myself->getName(), temp_obj->getName(), temp_obj->objVnum(), 
              temp_obj->parent->getName());
         --(*temp_obj);
@@ -734,11 +716,11 @@ int bounty_hunter(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, T
         --(*temp_obj);
         *myself += *temp_obj;
         act("$n picks up something quickly.", FALSE, myself, NULL, 0, TO_ROOM);
-        vlogf(0, "%s repo'd %s %d from room %s",
+        vlogf(LOG_PROC, "%s repo'd %s %d from room %s",
              myself->getName(), temp_obj->getName(), temp_obj->objVnum(), 
              myself->roomp->getName());
       } else {
-        vlogf(10, "Bounty hunter stuck looking for disconnected %s.", job->hunted_item);
+        vlogf(LOG_PROC, "Bounty hunter stuck looking for disconnected %s.", job->hunted_item);
         myself->doSay("Damn am I confused!");
         delete job;
         myself->act_ptr = NULL;
@@ -820,7 +802,7 @@ void repoCheck(TMonster *mob, int rnum)
       strcpy(buf,obj_index[rnum].name);
       add_bars(buf);
       sprintf(buf2,"Hunter, repo %s",buf);
-      vlogf(3,"%s auto-hunting: '%s' : cur:%d, max:%d.",
+      vlogf(LOG_PROC,"%s auto-hunting: '%s' : cur:%d, max:%d.",
                mob->getName(),buf, cur_num, max_num);
       mob->spec = SPEC_BOUNTY_HUNTER;
       bounty_hunter(NULL, CMD_SAY, buf2, mob, NULL);

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: obj_appliedsub.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:29:21  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // organic.cc
 
 #include "stdsneezy.h"
@@ -382,7 +364,7 @@ bool appliedSubstanceFindMatch(TThing **tObjList, int ceLevel, int LsSize, int s
     if (skClassAs == CLASS_RANGER)
       tCompListOrig[Runner] = AppliedCreate[ceLevel]->CompList[Runner];
     else {
-      vlogf(7, "Person got to SubstanceFindMatch with wrong skClassAs value [%d]", skClassAs);
+      vlogf(LOG_BUG, "Person got to SubstanceFindMatch with wrong skClassAs value [%d]", skClassAs);
       return false;
     }
   }

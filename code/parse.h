@@ -1,30 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: parse.h,v $
-// Revision 5.1.1.4  1999/11/05 18:27:32  peel
-// Added CMD_RESP_DESTINATION
-//
-// Revision 5.1.1.3  1999/11/05 17:15:22  peel
-// Added CMD_RESP_CHECKNROOM
-//
-// Revision 5.1.1.2  1999/11/04 20:20:44  peel
-// Added CMD_RESP_MOVETO
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /*************************************************************************
 
       SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -372,8 +345,6 @@ enum cmdTypeT {
      CMD_REPAIR,
      CMD_TERMINAL,
      CMD_PROMPT,
-     CMD_BAMFIN,
-     CMD_BAMFOUT,
      CMD_GLANCE,
      CMD_CHECKLOG,
      CMD_LOGLIST,
@@ -548,7 +519,6 @@ enum cmdTypeT {
      CMD_DIG,
      CMD_COVER,
      CMD_OPERATE,
-     CMD_LONGDESCR,
      CMD_SPELLS,
      CMD_COMPARE,
      CMD_TEST_FIGHT,

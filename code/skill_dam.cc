@@ -443,7 +443,7 @@ int TBeing::getSkillDam(const TBeing *victim, spellNumT skill, int level, int ad
       dam = genericDam(victim, skill, DISC_MONK, level, adv_learn, 0.233, REDUCE_YES, !isPc(), TRIM_NO);
       break;
     default:
-      vlogf(5, "Unknown skill %d in call to getSkillDam", skill);
+      vlogf(LOG_BUG, "Unknown skill %d in call to getSkillDam", skill);
       dam = 0;
   }
 

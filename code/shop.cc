@@ -1,30 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: shop.cc,v $
-// Revision 5.1.1.2  1999/10/18 18:36:49  batopr
-// fixed compiler warning
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/09 04:27:18  batopr
-// Added check for trade_with() to valueMe
-//
-// Revision 1.2  1999/10/08 04:32:32  batopr
-// Made shops throw chars in random direction when entering shop badly
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include <cmath>
 #include <unistd.h>
 
@@ -220,7 +193,7 @@ bool shop_producing(const TObj *item, int shop_nr)
 
     if (shop_index[shop_nr].producing[counter] == item->number) {
       if (!(o = read_object(shop_index[shop_nr].producing[counter], REAL))) {
-        vlogf(10, "Major problems with shopkeeper number %d and item number %d.", shop_nr, item->number);
+        vlogf(LOG_BUG, "Major problems with shopkeeper number %d and item number %d.", shop_nr, item->number);
         return FALSE;
       }
       if (o->getName() && item->getName() && !strcmp(o->getName(), item->getName())) {
@@ -417,11 +390,11 @@ void TObj::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
           t_temp1 = searchLinkedListVis(ch, argm, temp1->nextThing);
           temp1 = dynamic_cast<TObj *>(t_temp1);
           if (!temp1) {
-            vlogf(9, "Error (2) in buyMe()");
+            vlogf(LOG_BUG, "Error (2) in buyMe()");
             break;
           }
         } else {
-          vlogf(9, "Error (1) in buyMe()");
+          vlogf(LOG_BUG, "Error (1) in buyMe()");
           break;
         }
       }
@@ -1585,7 +1558,7 @@ void TMonster::autoCreateShop(int shop_nr)
   if (stuff)  // just can't see the shopkeepers inventory so lists nada?
     return;
 
-  vlogf(3,"Creating a new shopfile for %s (shop #%d)",getName(),shop_nr);
+  vlogf(LOG_MISC,"Creating a new shopfile for %s (shop #%d)",getName(),shop_nr);
   doSay("Whoops, I seem to have run out of everything.");
   doSay("One moment while I go back and get some more stuff.");
   act("$n slips quickly into the storeroom.",0, this, 0, 0, TO_ROOM);
@@ -1728,20 +1701,20 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
   for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != (myself)->number); shop_nr++);
 
   if (shop_nr >= shop_index.size()) {
-    vlogf(10, "Warning... shop # for mobile %d (real nr) not found.", (myself)->number);
+    vlogf(LOG_BUG, "Warning... shop # for mobile %d (real nr) not found.", (myself)->number);
     return FALSE;
   }
 
   if (cmd == CMD_GENERIC_INIT) {
     if (!myself->isUnique()) {
-      vlogf(10, "Warning!  %s attempted to be loaded, when not unique.", myself->getName());
+      vlogf(LOG_BUG, "Warning!  %s attempted to be loaded, when not unique.", myself->getName());
       return TRUE;
     } else
       return FALSE;
   } else if (cmd == CMD_GENERIC_CREATED) {
     // Little kludge I put in to set pawnman is set for rent stuff - Russ 
     if (myself->mobVnum() == MOB_PAWNGUY) {
-      vlogf(0, "Setting Pawn Broker pointer for rent functions!");
+      vlogf(LOG_MISC, "Setting Pawn Broker pointer for rent functions!");
       pawnman = myself;
     }
     load_shop_file(myself, shop_nr);
@@ -1970,13 +1943,13 @@ bool safe_to_save_shop_stuff(TMonster *ch)
 {
 
   if (mob_index[ch->getMobIndex()].number < 1) {
-     vlogf(10, "Shopkeeper #%d got safe_to_save_shop_stuff called when none in world!",
+     vlogf(LOG_BUG, "Shopkeeper #%d got safe_to_save_shop_stuff called when none in world!",
             mob_index[ch->getMobIndex()].virt);
     ch->doSay("I'm not functioning properly.  Tell a god to check the logs, case 1.");
     return FALSE;
   }
   if (mob_index[ch->getMobIndex()].number > 1) {
-    vlogf(10, "More than one shopkeeper #%d in world.  Now the shop won't work!",
+    vlogf(LOG_BUG, "More than one shopkeeper #%d in world.  Now the shop won't work!",
           mob_index[ch->getMobIndex()].virt);
     ch->doSay("I'm not functioning properly.  Tell a god to check the logs, case 2.");
     return FALSE;
@@ -1992,22 +1965,22 @@ void processShopFile(const char *cFname)
   unsigned char ucVersion;
 
   if (!cFname) {
-    vlogf(10, "  processShopFile called with NULL filename!");
+    vlogf(LOG_BUG, "  processShopFile called with NULL filename!");
     return;
   }
   sprintf(fileName, "%s/%s", SHOPFILE_PATH, cFname);
   if (!(fp = fopen(fileName, "r"))) {
-    vlogf(10, "  Error opening the shop file for shop #%s", cFname);
+    vlogf(LOG_BUG, "  Error opening the shop file for shop #%s", cFname);
     return;
   }
   if (fread(&ucVersion, sizeof(ucVersion), 1, fp) != 1) {
-    vlogf(10, "Error reading version from %s.", fileName);
+    vlogf(LOG_BUG, "Error reading version from %s.", fileName);
     fclose(fp);
     return;
   }
 
   if (!noteLimitedItems(fp, fileName, ucVersion, FALSE))
-    vlogf(10, "  Unable to count limited items in file  %s", fileName);
+    vlogf(LOG_BUG, "  Unable to count limited items in file  %s", fileName);
   fclose(fp);
 }
 
@@ -2023,9 +1996,9 @@ void loadShopPrices(void)
   FILE *fp;
 
   if ((fp = fopen( SHOP_PRICING, "r+b")) == NULL) {
-    vlogf(10, "No shop pricing data exists.  creating.");
+    vlogf(LOG_BUG, "No shop pricing data exists.  creating.");
     if ((fp = fopen( SHOP_PRICING, "w+b")) == NULL) {
-      vlogf(10, "Could not create pricing data file");
+      vlogf(LOG_BUG, "Could not create pricing data file");
       exit(0);
     }
     fclose(fp);
@@ -2034,7 +2007,7 @@ void loadShopPrices(void)
 
   unsigned char version;
   if (fread(&version, sizeof(version), 1, fp) != 1) {
-    vlogf(9, "Serious error in shopprice read (version).");
+    vlogf(LOG_BUG, "Serious error in shopprice read (version).");
     // we effectively start dynamic shop prices over
     return;
   }
@@ -2045,7 +2018,7 @@ void loadShopPrices(void)
     if (fread(&sp, sizeof(struct shop_pricing), 1, fp) != 1) {
       if (feof(fp) != 0)
         break;
-      vlogf(10, "Error in fread of loadShopPrices()");
+      vlogf(LOG_BUG, "Error in fread of loadShopPrices()");
       break;
     }
     ShopPriceIndex.push_back(sp);
@@ -2061,7 +2034,7 @@ void saveShopPrices(void)
   FILE *fp;
 
   if ((fp = fopen( SHOP_PRICING, "w+b")) == NULL) {
-    vlogf(10, "Error saving shop pricing data.");
+    vlogf(LOG_BUG, "Error saving shop pricing data.");
     return;
   }
   // write out version
@@ -2071,7 +2044,7 @@ void saveShopPrices(void)
   int i, maxsize = ShopPriceIndex.size();
   for (i = 0; i < maxsize; i++) {
     if (fwrite(&ShopPriceIndex[i], sizeof(struct shop_pricing), 1, fp) != 1) {
-      vlogf(10, "Error in fwrite of saveShopPrices()");
+      vlogf(LOG_BUG, "Error in fwrite of saveShopPrices()");
     }
   }
   fclose(fp);
@@ -2155,12 +2128,12 @@ int TObj::shop_price(int *discount) const
 
 #if FLUX_SHOP_DEBUG
       char *tmstr;
-      vlogf(2, "%s had shop-price: %d, set at: %d", 
+      vlogf(LOG_MISC, "%s had shop-price: %d, set at: %d", 
                 getName(), (int) real_price, base_price);
 
       tmstr = asctime(localtime(&ShopPriceIndex[i].last_touch_buy));
       *(tmstr + strlen(tmstr) - 1) = '\0';
-      vlogf(2, "sold: %d, bought %d, last sale: %s",
+      vlogf(LOG_MISC, "sold: %d, bought %d, last sale: %s",
          ShopPriceIndex[i].num_sold, ShopPriceIndex[i].num_bought, tmstr);
 #endif
       return max(1, (int) real_price);

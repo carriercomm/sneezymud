@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_save.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /*****************************************************************************
 
   SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
@@ -51,7 +33,7 @@ void doSaveZoneFile(TBeing *ch, const char *tArg)
   }
 
   if ((zValue = ch->roomp->getZone()) > zone_table.size()) {
-    vlogf(7, "Immortal in invalid zone [%s]", ch->getName());
+    vlogf(LOG_BUG, "Immortal in invalid zone [%s]", ch->getName());
     ch->sendTo("You are in an invalid zone, how did you get there?!?\n\r");
     return;
   }
@@ -65,7 +47,7 @@ void doSaveZoneFile(TBeing *ch, const char *tArg)
 
   if (!(tFile = fopen(tString, "w"))) {
     ch->sendTo("Something went wrong, tell a coder what you did.\n\r");
-    vlogf(7, "Unable to create file for zonefile writing.  [%s]", tString);
+    vlogf(LOG_FILE, "Unable to create file for zonefile writing.  [%s]", tString);
     return;
   }
 
@@ -293,7 +275,7 @@ void doSaveMOEdit(TBeing *ch, const char *tArg)
   }
 
   if (!ch->roomp) {
-    vlogf(7, "Player doing save without a room!  [%s]", ch->getName());
+    vlogf(LOG_BUG, "Player doing save without a room!  [%s]", ch->getName());
     return;
   }
 
@@ -363,7 +345,7 @@ void TBeing::doSave(silentTypeT silent, const char *tArg = NULL)
     return;
 
   if (!desc) {
-    vlogf(10, "%s tried to doSave while link dead.", getName());
+    vlogf(LOG_BUG, "%s tried to doSave while link dead.", getName());
     return;
   }
 
@@ -387,7 +369,7 @@ void TBeing::doSave(silentTypeT silent, const char *tArg = NULL)
 
   if (dynamic_cast<TMonster *>(this) && IS_SET(specials.act, ACT_POLYSELF)) {
     if (!(tPerson = desc->original)) {
-      vlogf(8, "BAD SAVE OF POLY!");
+      vlogf(LOG_BUG, "BAD SAVE OF POLY!");
       return;
     }
 

@@ -1,28 +1,4 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: magicutils.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.3  1999/10/10 20:48:29  batopr
-// Fixed crash bug in rawSummon
-//
-// Revision 1.2  1999/10/09 04:20:55  batopr
-// rawSummon has disturbMeditation now
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//
+// magicutils.cc
 
 #include "stdsneezy.h"
 #include "disease.h"
@@ -495,13 +471,13 @@ int TBeing::useComponent(TComponent *o, TBeing *vict, checkOnlyT checkOnly)
   for (i=0; (i<CompInfo.size()) && (o->getComponentSpell() != CompInfo[i].spell_num);i++);
 
   if (i>= CompInfo.size()) {
-    vlogf(9,"useComponent had problem finding component for %s",
+    vlogf(LOG_BUG,"useComponent had problem finding component for %s",
         o->getName());
     sendTo("Uh oh, something bogus happened.\n\r");
     return FALSE;
   }
   if (o->isPersonalized() && !isname(getName(), o->name)) {
-    vlogf(10, "Mage %s using component %s that was personalized but not theirs!!! Reprimand at once.", getName(), o->name); 
+    vlogf(LOG_MISC, "Mage %s using component %s that was personalized but not theirs!!! Reprimand at once.", getName(), o->name); 
     sendTo("You can't use a component that is personalized for someone else!");
     return FALSE;
   }
@@ -517,7 +493,7 @@ int TBeing::useComponent(TComponent *o, TBeing *vict, checkOnlyT checkOnly)
       act(CompInfo[i].to_self, TRUE, this, o, 0, TO_CHAR);
       act(CompInfo[i].to_room, TRUE, this, o, 0, TO_ROOM);
     } else {
-      vlogf(10, "Bad component string.  component %d  (1)", i);
+      vlogf(LOG_BUG, "Bad component string.  component %d  (1)", i);
     }
   } else {
     if (*CompInfo[i].to_self && 
@@ -525,7 +501,7 @@ int TBeing::useComponent(TComponent *o, TBeing *vict, checkOnlyT checkOnly)
       act(CompInfo[i].to_self, TRUE, this, o, 0, TO_CHAR);
       act(CompInfo[i].to_room, TRUE, this, o, 0, TO_ROOM);
     } else {
-      vlogf(10, "Bad component string.  component %d  (2)", i);
+      vlogf(LOG_BUG, "Bad component string.  component %d  (2)", i);
     }
   }
 
@@ -573,7 +549,7 @@ int TBeing::useComponentObj(TComponent *o, TObj *targ, checkOnlyT checkOnly)
   for (i=0; (i<CompInfo.size()) && (o->getComponentSpell() != CompInfo[i].spell_num);i++);
 
   if (i>= CompInfo.size()) {
-    vlogf(9,"useComponent had problem finding component for %s",
+    vlogf(LOG_BUG,"useComponent had problem finding component for %s",
         o->shortDescr);
     sendTo("Uh oh, something bogus happened.\n\r");
     return FALSE;
@@ -589,10 +565,10 @@ int TBeing::useComponentObj(TComponent *o, TObj *targ, checkOnlyT checkOnly)
       act(CompInfo[i].to_caster, TRUE, this, o, targ, TO_CHAR);
       act(CompInfo[i].to_other, TRUE, this, o, targ, TO_ROOM);
     } else {
-      vlogf(10, "Bad component string.  component %d  (3)", i);
+      vlogf(LOG_BUG, "Bad component string.  component %d  (3)", i);
     }
   } else {
-    vlogf(10, "Bad component string.  component %d  (4)", i);
+    vlogf(LOG_BUG, "Bad component string.  component %d  (4)", i);
   }
 
   if (o->getComponentCharges() > 1)
@@ -851,7 +827,7 @@ int TBeing::rawSummon(TBeing *v)
 
   // summon newbie to aggro zone far from GH, allow us to check for it
   if (v->isPc())
-    vlogf(-1, "%s summoned %s to %s (%d)",
+    vlogf(LOG_SILENT, "%s summoned %s to %s (%d)",
           getName(), v->getName(), roomp->getName(), inRoom());
 
   if (v->riding) {
@@ -1255,7 +1231,7 @@ void TBeing::spellMessUp(spellNumT spell)
   int type = 0;
 
   if (!discArray[spell] || !*discArray[spell]->name) {
-    vlogf(5,"Bad spell/skill number in spellMessUp %d", spell);
+    vlogf(LOG_BUG,"Bad spell/skill number in spellMessUp %d", spell);
     return;
   }
 
@@ -1288,7 +1264,7 @@ void TBeing::spellMessUp(spellNumT spell)
     case DISC_DEIKHAN:
       type = 1;
     default:
-      vlogf(7, "Undefined spell (%d) in spellMessUp", spell);
+      vlogf(LOG_BUG, "Undefined spell (%d) in spellMessUp", spell);
       return;
   }
 #endif

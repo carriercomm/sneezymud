@@ -50,7 +50,7 @@ void TBeing::doEgoTrip(const char *arg)
       if (rc)
         found = true;
     }
-    vlogf(5, "%s egotripped deities", getName());
+    vlogf(LOG_MISC, "%s egotripped deities", getName());
     if (!found)
       sendTo("No deities in The World.\n\r");
     return;
@@ -61,7 +61,7 @@ void TBeing::doEgoTrip(const char *arg)
       return;
     }
 
-    vlogf(5, "%s egotripped bless", getName());
+    vlogf(LOG_MISC, "%s egotripped bless", getName());
     Descriptor *d;
     for (d = descriptor_list; d; d = d->next) {
       if (d->connected != CON_PLYNG)
@@ -93,7 +93,7 @@ void TBeing::doEgoTrip(const char *arg)
       sendTo("Syntax: egotrip blast <target>\n\r");
       return;
     }
-    vlogf(5, "%s egotrip blasted %s", getName(), ch->getName());
+    vlogf(LOG_MISC, "%s egotrip blasted %s", getName(), ch->getName());
     if (ch->isPc() && ch->isImmortal() &&
         ch->GetMaxLevel() > GetMaxLevel()) {
       sendTo("Shame Shame, you shouldn't do that.\n\r");
@@ -145,7 +145,7 @@ void TBeing::doEgoTrip(const char *arg)
       return;
     }
     
-    vlogf(5, "%s egotrip damned %s", getName(), ch->getName());
+    vlogf(LOG_MISC, "%s egotrip damned %s", getName(), ch->getName());
     if (ch->isPc() && ch->isImmortal() &&
         ch->GetMaxLevel() > GetMaxLevel()) {
       sendTo("Shame Shame, you shouldn't do that.\n\r");
@@ -198,7 +198,7 @@ void TBeing::doEgoTrip(const char *arg)
       return;
     }
 
-    vlogf(5, "%s egotripped cleanse", getName());
+    vlogf(LOG_MISC, "%s egotripped cleanse", getName());
 
     TBeing       *tBeing;
     affectedData *tAff = NULL,
@@ -206,7 +206,7 @@ void TBeing::doEgoTrip(const char *arg)
 
     for (tBeing = character_list; tBeing; tBeing = tBeing->next) {
       if (!tBeing->name) {
-        vlogf(10, "Something with NULL name in world being list.");
+        vlogf(LOG_BUG, "Something with NULL name in world being list.");
         continue;
       }
 

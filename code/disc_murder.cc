@@ -512,7 +512,7 @@ int TTool::garotteMe(TBeing *thief, TBeing *victim)
   int dam = thief->getSkillDam(victim, SKILL_GARROTTE, level, thief->getAdvLearning(SKILL_GARROTTE));
 
   if (this != (thief->unequip(thief->getPrimaryHold()))) {
-    vlogf(5, "Error in garotte");
+    vlogf(LOG_BUG, "Error in garotte");
   }
   if (bSuccess(thief, bKnown, SKILL_GARROTTE) || !victim->awake()) {
     affectedData aff;

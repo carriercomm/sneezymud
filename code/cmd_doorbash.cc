@@ -66,7 +66,7 @@ static int doorbash(TBeing * caster, dirTypeT dir)
   }
   
   if (!(exitp = caster->exitDir(dir))) {
-    vlogf(10, "bad exit in doorbash (2)");
+    vlogf(LOG_BUG, "bad exit in doorbash (2)");
     return FALSE;
   }
 
@@ -227,7 +227,7 @@ TO_CHAR);
   }
   if (!ok || !(exitp = exitDir(dir)))
   {
-    vlogf(10, "Bad exit in doorbash!");
+    vlogf(LOG_BUG, "Bad exit in doorbash!");
     return FALSE;
   }
   rc = doorbash(this, dir);

@@ -1,51 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: parse.cc,v $
-// Revision 5.1.1.11  1999/11/05 18:28:39  peel
-// Added CMD_RESP_DESTINATION
-//
-// Revision 5.1.1.10  1999/11/05 17:16:16  peel
-// Added CMD_RESP_CHECKNROOM
-//
-// Revision 5.1.1.9  1999/11/04 20:20:35  peel
-// Added CMD_RESP_MOVETO
-//
-// Revision 5.1.1.8  1999/11/01 07:07:18  lapsos
-// Added doJump.
-//
-// Revision 5.1.1.7  1999/10/29 10:37:44  lapsos
-// Modified hide to be usable by backstab.
-//
-// Revision 5.1.1.6  1999/10/29 05:16:02  cosmo
-// Taking out junk
-//
-// Revision 5.1.1.5  1999/10/29 04:54:08  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.4  1999/10/29 04:38:21  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.3  1999/10/29 04:35:01  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.2  1999/10/29 04:34:14  cosmo
-// Getting rid of a lot of lag on a pc death.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
@@ -242,16 +194,16 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
 	 strcmp(ch->name, "Peel"))) { 
 
         if (ch == this)
-          vlogf(-1, "%s:%s %s", name, commandArray[cmd]->name, newarg);
+          vlogf(LOG_SILENT, "%s:%s %s", name, commandArray[cmd]->name, newarg);
         else
-          vlogf(-1, "%s (%s):%s %s", name, desc->original->name, 
+          vlogf(LOG_SILENT, "%s (%s):%s %s", name, desc->original->name, 
                 commandArray[cmd]->name, newarg);
       } else if (ch->isPc() && ch->isPlayerAction(PLR_LOGGED))
-        vlogf(-1, "%s %s%s", name, commandArray[cmd]->name, newarg);
+        vlogf(LOG_SILENT, "%s %s%s", name, commandArray[cmd]->name, newarg);
       else if (numberLogHosts && desc) {
         for (int a = 0; a < numberLogHosts; a++) {
           if (strcasestr(desc->host, hostLogList[a]))
-            vlogf(-1, "%s %s%s", name, commandArray[cmd]->name, newarg);
+            vlogf(LOG_SILENT, "%s %s%s", name, commandArray[cmd]->name, newarg);
         }
       }
       rc = triggerSpecial(NULL, cmd, newarg);
@@ -419,9 +371,6 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
           break;
         case CMD_MEND_LIMB:
           rc = doMendLimb(newarg);
-          break;
-        case CMD_LONGDESCR:
-          doLongDescr(newarg);
           break;
         case CMD_TITHE:
           rc = doTithe();
@@ -630,12 +579,6 @@ int TBeing::doCommand(cmdTypeT cmd, const char *argument, TThing *vict, bool typ
           break;
         case CMD_ECHO: 
           doEcho(newarg);
-          break;
-        case CMD_BAMFIN: 
-          doBamfin(newarg);
-          break;
-        case CMD_BAMFOUT: 
-          doBamfout(newarg);
           break;
         case CMD_SHOW:
           doShow(newarg);
@@ -1967,7 +1910,7 @@ int TBeing::triggerSpecial(TThing *ch, cmdTypeT cmd, const char *arg)
     rc = roomp->checkSpec(this, cmd, arg, NULL);
     if (IS_SET_DELETE(rc, DELETE_THIS)) {
       // delete room?
-      vlogf(5, "checkSpec indicated delete room (%d)", in_room);
+      vlogf(LOG_BUG, "checkSpec indicated delete room (%d)", in_room);
     }
     if (IS_SET_ONLY(rc, DELETE_VICT))
       return DELETE_THIS;
@@ -2316,8 +2259,6 @@ void buildCommandArray(void)
   commandArray[CMD_REPAIR] = new commandInfo("repair", POSITION_CRAWLING, GOD_LEVEL1);
   commandArray[CMD_TERMINAL] = new commandInfo("terminal", POSITION_DEAD, 0);
   commandArray[CMD_PROMPT] = new commandInfo("prompt", POSITION_DEAD, 0);
-  commandArray[CMD_BAMFIN]=new commandInfo("bamfin", POSITION_DEAD, GOD_LEVEL1);
-  commandArray[CMD_BAMFOUT]=new commandInfo("bamfout",POSITION_DEAD,GOD_LEVEL1);
   commandArray[CMD_GLANCE] = new commandInfo("glance", POSITION_RESTING, 0);
   commandArray[CMD_CHECKLOG] = new commandInfo("checklog", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_LOGLIST]=new commandInfo("loglist",POSITION_DEAD,GOD_LEVEL1);
@@ -2490,7 +2431,6 @@ void buildCommandArray(void)
   commandArray[CMD_DIG] = new commandInfo("dig", POSITION_STANDING, 0);
   commandArray[CMD_COVER] = new commandInfo("cover", POSITION_STANDING, 0);
   commandArray[CMD_OPERATE] = new commandInfo("operate", POSITION_STANDING, 0);
-  commandArray[CMD_LONGDESCR] = new commandInfo("longdescr", POSITION_DEAD, GOD_LEVEL1);
   commandArray[CMD_SPELLS] = new commandInfo("spells", POSITION_DEAD, 0);
   commandArray[CMD_COMPARE] = new commandInfo("compare", POSITION_DEAD, 0);
   commandArray[CMD_TEST_FIGHT] = new commandInfo("testfight", POSITION_DEAD, GOD_LEVEL1);

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_testfight.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #if 0
 extern "C" {
 #include <unistd.h>
@@ -66,11 +48,11 @@ static void test_fight_start(bool same_time)
   tot2 = 0;
   iter2 = 0;
 
-  vlogf(3, "Testing mob %d vs %d.   %s", mob1_num, mob2_num,
+  vlogf(LOG_MISC, "Testing mob %d vs %d.   %s", mob1_num, mob2_num,
       same_time ? "Same time fight" : "mob1 hitting");
 
   if (changed_class)
-    vlogf(3, "Creating mob %d as class %d", mob1_num, changed_class);
+    vlogf(LOG_MISC, "Creating mob %d as class %d", mob1_num, changed_class);
 
   int vnum;
   for (vnum = 0; vnum < WORLD_SIZE; vnum++) {
@@ -91,7 +73,7 @@ static void test_fight_start(bool same_time)
     }
 
     if (!mob1 || !mob2) {
-      vlogf(5, "Failed testfight mob load");
+      vlogf(LOG_MISC, "Failed testfight mob load");
       delete mob1;
       delete mob2;
       return;
@@ -99,7 +81,7 @@ static void test_fight_start(bool same_time)
 
     TRoom *rp = new TRoom(vnum);
     if (!rp) {
-      vlogf(5, "Failed testfight room load");
+      vlogf(LOG_MISC, "Failed testfight room load");
       delete mob1;
       delete mob2;
       return;
@@ -167,7 +149,7 @@ static void repTheStats()
   float perc1 = (float) left1 * 100.0 * iTot / (float) tot1 / (float) iter1;
   float perc2 = (float) left2 * 100.0 * iTot / (float) tot2 / (float) iter2;
 
-  vlogf(3, "m1(%d): %lu/%lu (%.4f%%)(%d) : m2(%d): %lu/%lu (%.4f%%)(%d)",
+  vlogf(LOG_MISC, "m1(%d): %lu/%lu (%.4f%%)(%d) : m2(%d): %lu/%lu (%.4f%%)(%d)",
         mob1_num, left1, tot1,
         perc1, iter1,
         mob2_num, left2, tot2,
@@ -214,7 +196,7 @@ static void repTheStats()
 
         if (mob2_num < 1701 || mob2_num > 1750) {
           automated = false;
-          vlogf(5, "Testing stopped.");
+          vlogf(LOG_MISC, "Testing stopped.");
           return;
         }
       }
@@ -244,13 +226,13 @@ void test_fight_death(TBeing *ch, TBeing *v, int mod)
   num_fighting--;
   
 #if 0
-  vlogf(3, "Test fight in room %d: %s beat %s by %.2f%% (%d)",
+  vlogf(LOG_MISC, "Test fight in room %d: %s beat %s by %.2f%% (%d)",
      ch->in_room, v->getName(), ch->getName(), v->getPercHit(), num_fighting);
 #else
   if (!(num_fighting%100) ||
       (!(num_fighting/100) && !(num_fighting%10)) ||
       (!(num_fighting/10))) {
-      vlogf(3, "There are %d fights remaining (%d to %d).", num_fighting, iter1, iter2);
+      vlogf(LOG_MISC, "There are %d fights remaining (%d to %d).", num_fighting, iter1, iter2);
   }
 #endif
 

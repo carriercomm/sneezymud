@@ -1,37 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: discipline.cc,v $
-// Revision 5.1.1.6  1999/10/29 19:52:52  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.5  1999/10/29 11:31:34  cosmo
-// *** empty log message ***
-//
-// Revision 5.1.1.4  1999/10/29 11:21:15  lapsos
-// Fixed typo.
-//
-// Revision 5.1.1.3  1999/10/29 05:49:13  cosmo
-// Making addSkillLag check results of skill. If victim dies,
-// the most the code will add is one combat round of lag rather than all.
-//
-// Revision 5.1.1.2  1999/10/29 05:17:28  cosmo
-// Reducing lag on mob death.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // discipline.cc
 
 #include <cmath>
@@ -477,7 +443,7 @@ spellNumT TBeing::getSkillNum(spellNumT spell_num) const
   int num2 = 0;
 
   if ((spell_num < MIN_SPELL) || (spell_num >= MAX_SKILL)) {
-    vlogf(5, "Something is passing a bad skill number (%d) to getSkillNum for %s", spell_num, getName());
+    vlogf(LOG_BUG, "Something is passing a bad skill number (%d) to getSkillNum for %s", spell_num, getName());
     return TYPE_UNDEFINED;
   }
 
@@ -1656,7 +1622,7 @@ static void logSkillSuccess(const TBeing *caster, spellNumT spell, skillSuccessT
   // however, it can be called directly if appropriate
 
   if (!caster) {
-    vlogf(5,"Something went into logSkillSuccess with no caster");
+    vlogf(LOG_BUG, "Something went into logSkillSuccess with no caster");
     return;
   }
 
@@ -1707,12 +1673,12 @@ static void logSkillFail(const TBeing *caster, spellNumT spell, logSkillFailT ty
   // however, it can be called directly if appropriate
 
   if (!caster) {
-    vlogf(5,"Something went into logSkillFail with no caster");
+    vlogf(LOG_BUG,"Something went into logSkillFail with no caster");
     return;
   }
 
 #if DISC_DEBUG
-  vlogf(2, "%s Fail Spell %s (%d) ubComp < 0", caster->getName(), discArray[spell]->name, spell);
+  vlogf(LOG_BUG, "%s Fail Spell %s (%d) ubComp < 0", caster->getName(), discArray[spell]->name, spell);
 #endif
 
   if ((caster->GetMaxLevel() > MAX_MORT) && caster->desc) {
@@ -1767,7 +1733,7 @@ static bool bSucCounter(TBeing *caster, skillUseClassT skillType, spellNumT spel
           logSkillFail(caster, spell, FAIL_ENGAGE);
 #if DISC_DEBUG
           if (caster->desc && caster->isPc()) {
-            vlogf(2, "%s Fail Spell %s (%d) EngFail: boost (%d) num (%d) , roll (%d) ubComp (%d)", caster->getName(), discArray[spell]->name, spell, boost, num, roll, ubCompetence);
+            vlogf(LOG_BUG, "%s Fail Spell %s (%d) EngFail: boost (%d) num (%d) , roll (%d) ubComp (%d)", caster->getName(), discArray[spell]->name, spell, boost, num, roll, ubCompetence);
           }
 #endif
           switch (getSpellType(discArray[spell]->typ)) {
@@ -1778,7 +1744,7 @@ static bool bSucCounter(TBeing *caster, skillUseClassT skillType, spellNumT spel
               caster->sendTo(COLOR_SPELLS, "<c>Your fighting distracts you from your prayer.<1>\n\r");
               break;
             default:
-              vlogf(9, "bad spot in distract (1).");
+              vlogf(LOG_BUG, "bad spot in distract (1).");
               break;
           }
           return FALSE;
@@ -1860,7 +1826,7 @@ static void logLearnFail(TBeing *caster, spellNumT spell, int type)
   // learnFromDoing and learnFromDoingUnusual
 
   if (!caster) {
-    vlogf(5,"Something went into logLearnFail with no caster (%d)", spell);
+    vlogf(LOG_BUG,"Something went into logLearnFail with no caster (%d)", spell);
     return;
   }
 
@@ -1869,12 +1835,12 @@ static void logLearnFail(TBeing *caster, spellNumT spell, int type)
   } 
 
   if (!caster->desc) {
-    vlogf(5,"Something went into logLearnFail with no desc (%d)", spell);
+    vlogf(LOG_BUG,"Something went into logLearnFail with no desc (%d)", spell);
     return;
   }
 
 #if DISC_DEBUG
-  vlogf(2, "%s Fail Spell %s (%d) ubComp < 0", caster->getName(), discArray[spell]->name, spell); 
+  vlogf(LOG_BUG, "%s Fail Spell %s (%d) ubComp < 0", caster->getName(), discArray[spell]->name, spell); 
 #endif
 
   if (type) {
@@ -1917,7 +1883,7 @@ bool bSuccess(TBeing * caster, int ubCompetence, spellNumT spell)
     logSkillFail(caster, spell, FAIL_GENERAL);
 #if DISC_DEBUG
     if (caster->desc && caster->isPc()) {
-      vlogf(2, "%s Fail Spell %s (%d) ubComp < 0", caster->getName(), discArray[spell]->name, spell);
+      vlogf(LOG_BUG, "%s Fail Spell %s (%d) ubComp < 0", caster->getName(), discArray[spell]->name, spell);
     }
 #endif
     return FALSE;
@@ -1981,7 +1947,7 @@ bool bSuccess(TBeing * caster, int ubCompetence, spellNumT spell)
     logSkillFail(caster, spell, FAIL_GENERAL);
 #if DISC_DEBUG
     if (caster->desc && caster->isPc()) {
-      vlogf(2, "%s Fail Spell %s (%d) roll > 98.", caster->getName(), discArray[spell]->name, spell);
+      vlogf(LOG_BUG, "%s Fail Spell %s (%d) roll > 98.", caster->getName(), discArray[spell]->name, spell);
     }
 #endif
     return FALSE;
@@ -2036,7 +2002,7 @@ bool bSuccess(TBeing * caster, int ubCompetence, spellNumT spell)
     logSkillFail(caster, spell, FAIL_GENERAL);
 #if DISC_DEBUG
     if (caster->desc && caster->isPc()) {
-      vlogf(2, "%s Fail Spell %s (%d) GenFail: roll (%d) ubComp (%d)", caster->getName(), discArray[spell]->name, spell, roll, ubCompetence);
+      vlogf(LOG_BUG, "%s Fail Spell %s (%d) GenFail: roll (%d) ubComp (%d)", caster->getName(), discArray[spell]->name, spell, roll, ubCompetence);
     }
 #endif
     return FALSE;
@@ -2063,7 +2029,7 @@ bool bSuccess(TBeing * caster, int ubCompetence, spellNumT spell)
       logSkillFail(caster, spell, FAIL_FOCUS);
 #if DISC_DEBUG
       if (caster->desc && caster->isPc()) {
-        vlogf(2, "%s Fail Spell %s (%d) focFail: boost (%d) num (%d) , roll (%d)ubComp (%d)", caster->getName(), discArray[spell]->name, spell, boost, num, roll, ubCompetence);
+        vlogf(LOG_BUG, "%s Fail Spell %s (%d) focFail: boost (%d) num (%d) , roll (%d)ubComp (%d)", caster->getName(), discArray[spell]->name, spell, boost, num, roll, ubCompetence);
       }
 #endif
       return FALSE;
@@ -2091,7 +2057,7 @@ critSuccT critSuccess(TBeing *caster, spellNumT spell)
   CDiscipline *cd;
 
   if (das == DISC_NONE) {
-    vlogf(5, "bad disc for skill %d", spell);
+    vlogf(LOG_BUG, "bad disc for skill %d", spell);
     return CRIT_S_NONE;
   }
   if (!(cd = caster->getDiscipline(das)))
@@ -2167,7 +2133,7 @@ critFailT critFail(TBeing *caster, spellNumT spell)
   }
   discNumT das = getDisciplineNumber(spell, FALSE);
   if (das == DISC_NONE) {
-    vlogf(5, "bad disc for spell %d", spell);
+    vlogf(LOG_BUG, "bad disc for spell %d", spell);
     return CRIT_F_NONE; 
   } 
 // adjust for learnedness of caster
@@ -2516,7 +2482,7 @@ void TBeing::assignDisciplinesClass()
 
 
   if (!player.Class) {
-    vlogf(10,"call to assignDisciplinesClass without a valid Class (%s)", getName());
+    vlogf(LOG_BUG,"call to assignDisciplinesClass without a valid Class (%s)", getName());
     return;
   }
 
@@ -2907,7 +2873,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all mage disciplines (assignDisc", getName());
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all mage disciplines (assignDisc", getName());
           break;
         }
       }
@@ -3025,7 +2991,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all cleric disciplines (assignDisc", getName());
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all cleric disciplines (assignDisc", getName());
           break;
         }
       }
@@ -3151,7 +3117,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all warrior disciplines (assignDisc", getName()); 
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all warrior disciplines (assignDisc", getName()); 
           break;
         }
       }
@@ -3264,7 +3230,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all thief disciplines (assignDisc", getName());
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all thief disciplines (assignDisc", getName());
           break;
         }
       }
@@ -3387,7 +3353,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all deikhan disciplines (assignDisc", getName());
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all deikhan disciplines (assignDisc", getName());
           break;
         }
       }
@@ -3494,7 +3460,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all monk disciplines (assignDisc", getName());
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all monk disciplines (assignDisc", getName());
           break;
         }
       }
@@ -3608,7 +3574,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all ranger disciplines (assignDisc", getName());
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all ranger disciplines (assignDisc", getName());
           break;
         }
       }
@@ -3745,7 +3711,7 @@ void TBeing::assignSkillsClass()
         } else {
         // what disc is left?
 // this logs a lot for high level mobs
-//          vlogf(5, "Mob (%s) has maxxed all shaman disciplines (assignDisc", getName());
+//          vlogf(LOG_BUG, "Mob (%s) has maxxed all shaman disciplines (assignDisc", getName());
           break;
         }
       }
@@ -4060,7 +4026,7 @@ int TBeing::getSkillLevel(spellNumT skill) const
     case MAX_DISCS:
     case DISC_NONE:
     case MAX_SAVED_DISCS:
-      vlogf(5, "bad disc (%d, %d) in getSkillLevel (%s).",
+      vlogf(LOG_BUG, "bad disc (%d, %d) in getSkillLevel (%s).",
                disc_num, skill, getName());
       lev = 0;
       break;
@@ -4073,7 +4039,7 @@ byte TBeing::getMaxSkillValue(spellNumT skill) const
   int tmp2;
   discNumT dn = getDisciplineNumber(skill, FALSE);
   if (dn == DISC_NONE) {
-    vlogf(5, "bad disc for skill %d", skill);
+    vlogf(LOG_BUG, "bad disc for skill %d", skill);
     return SKILL_MIN;
   }
   CDiscipline * cdisc = getDiscipline(dn);
@@ -4237,7 +4203,7 @@ static void logLearnSuccess(TBeing *caster, spellNumT spell, logLearnSuccessT ty
   // learnFromDoing and learnFromDoingUnusual
 
   if (!caster) {
-    vlogf(5,"Something went into logLearnSuccess with no caster (%d)", spell);
+    vlogf(LOG_BUG,"Something went into logLearnSuccess with no caster (%d)", spell);
     return;
   }
 
@@ -4246,7 +4212,7 @@ static void logLearnSuccess(TBeing *caster, spellNumT spell, logLearnSuccessT ty
   }
 
   if (!caster->desc) {
-    vlogf(5,"Something went into logLearnSuccess with no desc (%d)", spell);
+    vlogf(LOG_BUG,"Something went into logLearnSuccess with no desc (%d)", spell);
     return;
   }
 
@@ -4297,7 +4263,7 @@ int TPerson::learnFromDoingUnusual(learnUnusualTypeT type, spellNumT spell, int 
         spell = SKILL_PIERCE_PROF;
         spell2 = SKILL_PIERCE_SPEC;
       } else {
-        vlogf(5, "Wierd case in learnFromDoingUnusual %s, %d", getName(), w_type);
+        vlogf(LOG_BUG, "Wierd case in learnFromDoingUnusual %s, %d", getName(), w_type);
         return FALSE;
       }
       if (amt && ::number(0,amt)) {
@@ -4362,7 +4328,7 @@ int TPerson::learnFromDoingUnusual(learnUnusualTypeT type, spellNumT spell, int 
       }
       break;
     case LEARN_UNUSUAL_NONE:
-      vlogf(5, "Wierd case in learnFromDoingUnusual %s, type %d spell %d", getName(), type, spell);
+      vlogf(LOG_BUG, "Wierd case in learnFromDoingUnusual %s, type %d spell %d", getName(), type, spell);
       return FALSE;
   }
   return FALSE;
@@ -4457,7 +4423,7 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
   //   do skill's disc learning here COSMO MARKER
     if (!(discipline = getDiscipline(discArray[sknum]->disc))) {
 #if DISC_DEBUG
-      vlogf(-1, "(%s) has a skill (%d) but doesnt have the discipline", getName(), sknum);
+      vlogf(LOG_SILENT, "(%s) has a skill (%d) but doesnt have the discipline", getName(), sknum);
 #endif
       return FALSE;
     } 
@@ -4467,14 +4433,14 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
     if (discLearn < 100) {
       discipline->setDoLearnedness(discLearn);
 #if DISC_DEBUG
-      vlogf(-1, "%s just learned something in %s, Learn = %d.", getName(), disc_names[(discArray[sknum]->assDisc)], discLearn); 
+      vlogf(LOG_SILENT, "%s just learned something in %s, Learn = %d.", getName(), disc_names[(discArray[sknum]->assDisc)], discLearn); 
 #endif
     }
   }
   if (!chanceAss) {
     if (!(assDiscipline = getDiscipline(discArray[sknum]->assDisc))) {
 #if DISC_DEBUG
-      vlogf(-1, "(%s) has a skill (%d) but doesnt have the assDisc", getName(), sknum);
+      vlogf(LOG_SILENT, "(%s) has a skill (%d) but doesnt have the assDisc", getName(), sknum);
 #endif
       return FALSE;
     }
@@ -4484,7 +4450,7 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
     if (discLearn < 100) {
       assDiscipline->setDoLearnedness(discLearn);
 #if DISC_DEBUG
-      vlogf(-1, "%s just learned something in %s, Learn = %d.", getName(), disc_names[(discArray[sknum]->assDisc)], discLearn); 
+      vlogf(LOG_SILENT, "%s just learned something in %s, Learn = %d.", getName(), disc_names[(discArray[sknum]->assDisc)], discLearn); 
 #endif
     }
   }
@@ -4501,7 +4467,7 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
     const int max_amt = MAX_SKILL_LEARNEDNESS;
     float amount = ((float) max_amt - (float) actual) / ((float) max_amt);
 #if DISC_DEBUG
-    vlogf(-1, "learnFromDoing (%s) amt(%f) max(%d) actual(%d)", discArray[sknum]->name, amount, max_amt, actual);
+    vlogf(LOG_SILENT, "learnFromDoing (%s) amt(%f) max(%d) actual(%d)", discArray[sknum]->name, amount, max_amt, actual);
 #endif
 
   // some basic background on how this was formulated.
@@ -4562,7 +4528,7 @@ int TPerson::learnFromDoing(spellNumT sknum, silentTypeT silent, unsigned int fl
       boost = 90 - actual;
   }
 #if DISC_DEBUG
-  vlogf(-1, "learnFromDoing (%s)(%d): actual (%d), boost (%d)", discArray[sknum]->name, sknum, actual, boost);
+  vlogf(LOG_SILENT, "learnFromDoing (%s)(%d): actual (%d), boost (%d)", discArray[sknum]->name, sknum, actual, boost);
 #endif
   setSkillValue(sknum, getSkillValue(sknum) + boost);
   setNatSkillValue(sknum, actual + boost);

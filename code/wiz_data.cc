@@ -1,23 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: wiz_data.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //    SneezyMUD 4.1 - All rights reserved, SneezyMUD Coding Team
 //    wiz_data.cc : load/save immortal information
 //
@@ -28,24 +10,28 @@ extern "C" {
 #include <sys/stat.h>
 }
 
-
 #include "stdsneezy.h"
 
 class wizSaveData {
   public:
-    char poofin[1024];
-    char poofout[1024];
-    char longDescr[1024];
-    int setsev;
+    int setsev,
+        office,
+        blockastart,
+        blockaend,
+        blockbstart,
+        blockbend;
 
     wizSaveData();
 };
 
 wizSaveData::wizSaveData() :
-  setsev(0)
-{
-  *poofin = *poofout = *longDescr = '\0';
-}
+  setsev(0),
+  office(0),
+  blockastart(0),
+  blockaend(0),
+  blockbstart(a),
+  blockbend(0)
+{}
 
 void TBeing::wizFileRead()
 {
@@ -66,7 +52,7 @@ void TBeing::wizFileRead()
     if (!fp) {	// no immort directory 
       if (mkdir(buf2, 0770)) {
 	sendTo("Unable to create a wizard directory for you.\n\r");
-	vlogf(10, "Unable to create a wizard directory for %s.", getName());
+	vlogf(LOG_FILE, "Unable to create a wizard directory for %s.", getName());
       } else
 	sendTo("Wizard directory created...\n\r");
     } else
@@ -75,28 +61,21 @@ void TBeing::wizFileRead()
     return;
   }
   if (fread(&saveData, sizeof(saveData), 1, fp) != 1) {
-    vlogf(10, "Corrupt wiz save file for %s", getName());
+    vlogf(LOG_BUG, "Corrupt wiz save file for %s", getName());
     fclose(fp);
     return;
   } 
   fclose(fp);
 
-  d->severity = saveData.setsev;
-
-  delete [] d->poof.poofin;
-  d->poof.poofin = dsearch(saveData.poofin);
-
-  delete [] d->poof.poofout;
-  d->poof.poofout = dsearch(saveData.poofout);
-
-  delete [] player.longDescr;
-  if (*(saveData.longDescr))
-    player.longDescr = mud_str_dup(saveData.longDescr);
-  else
-    player.longDescr = NULL;
+  d->severity    = saveData.setsev;
+  d->office      = saveData.office;
+  d->blockastart = saveData.blockastart;
+  d->blockaend   = saveData.blockaend;
+  d->blockbstart = saveData.blockbstart;
+  d->blockbend   = saveData.blockbend;
 
   if (should_be_logged(this))
-    vlogf(0, "Loaded %s's wizard file.", getName());
+    vlogf(LOG_IIO, "Loaded %s's wizard file.", getName());
 }
 
 void TMonster::wizFileSave()
@@ -131,16 +110,12 @@ void TPerson::wizFileSave()
     return;
   }
 
-  if (player.longDescr)
-     strcpy(saveData.longDescr, player.longDescr);
- 
-  if (d->poof.poofin)
-    strcpy(saveData.poofin, d->poof.poofin);
-
-  if (d->poof.poofout)
-    strcpy(saveData.poofout, d->poof.poofout);
-
-  saveData.setsev = d->severity;
+  saveData.setsev      = d->severity;
+  saveData.office      = d->office;
+  saveData.blockastart = d->blockastart;
+  saveData.blockaend   = d->blockaend;
+  saveData.blockbstart = d->blockbstart;
+  saveData.blockbend   = d->blockbend;
 
   fwrite(&saveData, sizeof(wizSaveData), 1, fp);   
   fclose(fp);

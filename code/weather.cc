@@ -384,7 +384,7 @@ static void sendWeatherMessage(weatherMessT num)
             }
             break;
           default:
-            vlogf(5, "Bad num %d sent to sendWeatherMessage", num);
+            vlogf(LOG_BUG, "Bad num %d sent to sendWeatherMessage", num);
             break;
         }
 
@@ -695,7 +695,7 @@ void sunriseAndSunset(void)
 void TBeing::checkWeatherConditions()
 {
   if (!roomp) {
-    vlogf(7,"Error: NULL roomp for %s.  was in room %d",getName(),in_room);
+    vlogf(LOG_BUG,"Error: NULL roomp for %s.  was in room %d",getName(),in_room);
     char_to_room(this,0);
     return;
   }

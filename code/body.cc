@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: body.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // body.cc
 //
 //  Lets see if I can make some magic.
@@ -88,7 +70,7 @@ Body::Body()
 
 Body::~Body() {
 
-  vlogf(5,"Destroying the Body.");
+  vlogf(LOG_MISC, "Destroying the Body.");
   attack = NULL;
 
   for(int mainLimb=LIMB_HEAD; mainLimb < MAX_MAIN_LIMBS; mainLimb++) {
@@ -177,8 +159,8 @@ Limb *Body::search(int target, int status)
 int Body::join(Limb *newLimb) {
   Limb **joinTo;
 
-  if(newLimb->limbType == LIMB_NONE) {
-    vlogf(5,"LOW error: this limb not initialized properly.");
+  if (newLimb->limbType == LIMB_NONE) {
+    vlogf(LOG_LOW, " this limb not initialized properly.");
     return 0;
   }
 

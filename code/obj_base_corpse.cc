@@ -179,14 +179,14 @@ int TBaseCorpse::dissectMe(TBeing *caster)
     for (tDissect = tDissections; tDissect; tDissect = tDissect->tNext)
       tWhich++;
 
-    vlogf(1, "dissectMe: tWhich(%d)", tWhich);
+    vlogf(LOG_LAPSOS, "dissectMe: tWhich(%d)", tWhich);
 
     tWhich = ::number(0, tWhich);
 
     for (tDissect = tDissections; (tDissect && tWhich--); tDissect = tDissect->tNext);
 
     if (!tDissect && !(tDissect = tDissections)) {
-      vlogf(1, "dissectMe Error.  tDissect ended up NULL.");
+      vlogf(LOG_LAPSOS, "dissectMe Error.  tDissect ended up NULL.");
       return FALSE;
     }
 
@@ -208,7 +208,7 @@ int TBaseCorpse::dissectMe(TBeing *caster)
 
     if (!(tObj = read_object(tValue, REAL))) {
       caster->sendTo("Serious problem in dissect.\n\r");
-      vlogf(8, "Bad call to read_object in dissect, num %d", tValue);
+      vlogf(LOG_OBJ, "Bad call to read_object in dissect, num %d", tValue);
       return FALSE;
     }
 
@@ -298,7 +298,7 @@ int TBaseCorpse::dissectMe(TBeing *caster)
     }
     if (!(obj = read_object(num, VIRTUAL))) {
       caster->sendTo("Serious problem in dissect.\n\r");
-      vlogf(8, "Bad call to read_object in dissect, num %d", num);
+      vlogf(LOG_OBJ, "Bad call to read_object in dissect, num %d", num);
       return FALSE;
     }
     int bKnown = caster->getSkillValue(SKILL_DISSECT);

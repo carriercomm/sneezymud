@@ -447,7 +447,7 @@ int disguise(TBeing *caster, char * buffer)
 
   discNumT das = getDisciplineNumber(SKILL_DISGUISE, FALSE);
   if (das == DISC_NONE) {
-    vlogf(5, "bad disc for SKILL_DISGUISE");
+    vlogf(LOG_BUG, "bad disc for SKILL_DISGUISE");
     return FALSE;
   }
   if ((caster->getDiscipline(das)->getLearnedness() < DisguiseList[i].learning) && (level < DisguiseList[i].level)) {
@@ -587,8 +587,8 @@ int disguise(TBeing *caster, char * buffer)
     }
 
     delete [] mob->player.longDescr;
-    if (caster->player.longDescr) {
-      mob->player.longDescr = mud_str_dup(caster->player.longDescr);
+    if (caster->player.getLongDesc()) {
+      mob->player.longDescr = mud_str_dup(caster->player.getLongDesc());
     } else {
       // always true for caster = PC
       sprintf(buf, "%s is here.", caster->name);

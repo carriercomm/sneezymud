@@ -911,11 +911,6 @@ int TMonster::aiWimpSwitch(TBeing *vict)
     // Level 50: 100/100 rescue/switch
     //   100, 200, -10, (190, 210), (95, 105)
 
-    // Monster [Arch Vampire:Lapsos] attempting switch: S:blocked M:101(127) T:204(58)
-    vlogf(0, "Monster [%s:%s] attempting switch: S:%s M:%d(%d) T:%d(%d)",
-          getName(), tank->getName(), (tSkill > mSkill ? "blocked" : "switched"),
-          mSkill, GetMaxLevel(), tSkill, tank->GetMaxLevel());
-
     // Just check to see if tank got a higher score, if so he blocked it.
     // Random was added Earlier so we just want to check ending values here.
     if (tSkill > mSkill) {
@@ -997,7 +992,7 @@ int TMonster::aiShoveReact(TBeing *doer, bool worked, dirTypeT dir)
     rc = goDirection(rev_dir[dir]);
     if (IS_SET_DELETE(rc, DELETE_THIS)) {
       // we're not checking for death, log an error
-      vlogf(10, "error in shove react (%s shoving %d)",  
+      vlogf(LOG_MOB_AI, "error in shove react (%s shoving %d)",  
           doer->getName(), dir);
       return DELETE_THIS;
     }

@@ -168,7 +168,7 @@ void TOrganic::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
   nCost   = (int) obj_flags.cost;
 
   if (parent != keeper) {
-    vlogf(8, "Error: buyMe():organic.cc  obj not on keeper");
+    vlogf(LOG_BUG, "Error: buyMe():organic.cc  obj not on keeper");
     return;
   }
   // Make sure it's an item we buy.
@@ -262,7 +262,7 @@ void TOrganic::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
       keeper->addToMoney(price, GOLD_COMM);
   } else {
     // this happens with sub zero weight components
-    vlogf(5, "Bogus num %d in buyMe component at %d.  wgt=%.2f", num, ch->in_room, getWeight());
+    vlogf(LOG_BUG, "Bogus num %d in buyMe component at %d.  wgt=%.2f", num, ch->in_room, getWeight());
   }
 
   sprintf(Buf[0], "%s/%d", SHOPFILE_PATH, shop_nr);

@@ -109,7 +109,7 @@ char *fread_action(FILE *fl) return rslt(NULL)
     fgets(buf, MAX_STRING_LENGTH, fl);
 
     if (feof(fl)) {
-      vlogf(10, "Fread_action - unexpected EOF.");
+      vlogf(LOG_FILE, "Fread_action - unexpected EOF.");
       exit(0);
     }
 

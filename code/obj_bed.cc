@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: obj_bed.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // bed.cc
 
 #include "stdsneezy.h"
@@ -542,12 +524,12 @@ void TBed::lowCheck()
 {
   if (canWear(ITEM_TAKE) && getVolume() <= 3000 && getWeight() <= 10 &&
       getRegen() >= 3)
-    vlogf(LOW_ERROR, "Portable bed (%s) with excessive regen rates!",
+    vlogf(LOG_LOW, "Portable bed (%s) with excessive regen rates!",
              getName());
 
 #if 0
   if (canWear(ITEM_TAKE)) {
-    vlogf(LOW_ERROR, "Bed (%s) set to be portable.",
+    vlogf(LOG_LOW, "Bed (%s) set to be portable.",
                 getName());
   }
 #endif

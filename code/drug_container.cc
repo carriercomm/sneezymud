@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: drug_container.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD++ 4.5 - All rights reserved, SneezyMUD Coding Team
@@ -211,7 +193,7 @@ void TDrugContainer::lowCheck()
   for (i=0; i<MAX_OBJ_AFFECT;i++) {
     if (affected[i].location == APPLY_LIGHT) {
       if (!getLit())
-        vlogf(LOW_ERROR,"item %s was defined apply-light.",getName());
+        vlogf(LOG_LOW,"item %s was defined apply-light.",getName());
     }
   }
 }

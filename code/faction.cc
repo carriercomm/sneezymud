@@ -30,12 +30,12 @@ int load_factions()
   float num1, num2;
 
   if (!(fp = fopen(FACTION_FILE, "r"))) {
-    vlogf(10, "Couldn't open factionlist file in function load_factions()!");
+    vlogf(LOG_FILE, "Couldn't open factionlist file in function load_factions()!");
     return FALSE;
   }
   for (factionTypeT i = MIN_FACTION;i < MAX_FACTIONS;i++) {
     if (fgets(buf,256,fp) == NULL) {
-      vlogf(5,"ERROR: bogus line in FACTION_FILE");
+      vlogf(LOG_FILE,"ERROR: bogus line in FACTION_FILE");
       fclose(fp);
       return FALSE;
     }
@@ -43,12 +43,12 @@ int load_factions()
       break;
     if (sscanf(buf,"#%d\n\r",&num) == 1) {   //   new faction
       if (fgets(buf,256,fp) == NULL) {
-        vlogf(5,"ERROR: bogus line in FACTION_FILE: faction %d",num);
+        vlogf(LOG_FILE,"ERROR: bogus line in FACTION_FILE: faction %d",num);
         fclose(fp);
         return FALSE;
       }
       if (!strcmp(buf, "")) {
-        vlogf(5, "ERROR: Null faction name.");
+        vlogf(LOG_FILE, "ERROR: Null faction name.");
         fclose(fp);
         return FALSE;
       }
@@ -59,7 +59,7 @@ int load_factions()
 
       for (j = 0; j < FACT_LEADER_SLOTS;j++) {
         if (fgets(buf,256,fp) == NULL) {
-          vlogf(5,"ERROR: bogus line in FACTION_FILE: faction %d",num);
+          vlogf(LOG_FILE,"ERROR: bogus line in FACTION_FILE: faction %d",num);
           fclose(fp);
           return FALSE;
         }
@@ -69,7 +69,7 @@ int load_factions()
         strcpy(FactionInfo[i].leader[j],buf);
       }
       if (fgets(buf,256,fp) == NULL) {
-        vlogf(5,"ERROR: bogus line in FACTION_FILE: faction %d",num);
+        vlogf(LOG_FILE,"ERROR: bogus line in FACTION_FILE: faction %d",num);
         fclose(fp);
         return FALSE;
       }
@@ -81,7 +81,7 @@ int load_factions()
       factionTypeT ij;
       for (ij = MIN_FACTION; ij < MAX_FACTIONS; ij++) {
         if (fscanf(fp, "%f %f\n", &num1, &num2) != 2) {
-          vlogf(5, "ERROR: bogus faction array faction (%d) (j=%2)",i,ij);
+          vlogf(LOG_FILE, "ERROR: bogus faction array faction (%d) (j=%2)",i,ij);
           fclose(fp);
           return FALSE;
         }
@@ -89,13 +89,13 @@ int load_factions()
         FactionInfo[i].faction_array[ij][1] = (double) num2;
       }
       if (fscanf(fp, "%f\n", &num1) != 1) {
-        vlogf(5, "ERROR: bogus setting of faction power for faction(%d)",i);
+        vlogf(LOG_FILE, "ERROR: bogus setting of faction power for faction(%d)",i);
         fclose(fp);
         return FALSE;
       }
       FactionInfo[i].faction_power = (double) num1;
       if (fscanf(fp, "%ld %f\n", &ln, &num1) != 2) {
-        vlogf(5, "ERROR: bogus setting of faction wealth/tithe for faction(%d)",i);
+        vlogf(LOG_FILE, "ERROR: bogus setting of faction wealth/tithe for faction(%d)",i);
         fclose(fp);
         return FALSE;
       }
@@ -103,7 +103,7 @@ int load_factions()
       FactionInfo[i].faction_tithe = (double) num1;
 
       if (fscanf(fp, "%d %d %d %d\n", &inum1, &inum2, &inum3, &inum4) != 4) {
-        vlogf(5, "ERROR: bogus setting of faction caravan info 1 for faction(%d)",i);
+        vlogf(LOG_FILE, "ERROR: bogus setting of faction caravan info 1 for faction(%d)",i);
         fclose(fp);
         return FALSE;
       }
@@ -113,7 +113,7 @@ int load_factions()
       FactionInfo[i].caravan_defense = inum4;
 
       if (fscanf(fp, "%d %d %u\n", &inum1, &inum2, &uinum) != 3) {
-        vlogf(5, "ERROR: bogus setting of faction caravan info 2 for faction(%d)",i);
+        vlogf(LOG_FILE, "ERROR: bogus setting of faction caravan info 2 for faction(%d)",i);
         fclose(fp);
         return FALSE;
       }
@@ -137,7 +137,7 @@ void save_factions()
   int j;
 
   if (!(fp = fopen(FACTION_FILE, "w+"))) {
-    vlogf(10, "Couldn't open factionlist file in function load_factions()!");
+    vlogf(LOG_FILE, "Couldn't open factionlist file in function load_factions()!");
     return;
   }
   for (factionTypeT i = MIN_FACTION;i < MAX_FACTIONS;i++) {
@@ -299,9 +299,9 @@ void TBeing::doMakeLeader(const char *arg)
     sendTo("Syntax: makeleader <name> <leader slot>\n\r");
     return;
   } else {
-    vlogf(6,"Leader slot %d for faction %s changed.",which,
+    vlogf(LOG_FACT,"Leader slot %d for faction %s changed.",which,
            FactionInfo[fnum].faction_name);
-    vlogf(6,"Changed from %s to %s.",FactionInfo[fnum].leader[which],
+    vlogf(LOG_FACT,"Changed from %s to %s.",FactionInfo[fnum].leader[which],
            namebuf);
     sendTo("You have set %s's leader %d to %s.\n\r", 
            FactionInfo[fnum].faction_name, which, namebuf);
@@ -375,7 +375,7 @@ void TBeing::doNewMember(const char *arg)
         FactionInfo[fnum].faction_name);
   sendTo(COLOR_MOBS, "You have added %s to the %s.\n\r", vict->getName(),
         FactionInfo[fnum].faction_name);
-  vlogf(0, "Newmember: %s adding %s to %s.",getName(),vict->getName(),
+  vlogf(LOG_FACT, "Newmember: %s adding %s to %s.",getName(),vict->getName(),
         FactionInfo[fnum].faction_name); 
 }
 
@@ -434,7 +434,7 @@ void TBeing::doRMember(const char *arg)
         FactionInfo[fnum].faction_name);
   sendTo(COLOR_MOBS, "You have removed %s from the %s.\n\r", vict->getName(),
         FactionInfo[fnum].faction_name);
-  vlogf(0, "RMember: %s removing %s from %s.",getName(),vict->getName(),
+  vlogf(LOG_FACT, "RMember: %s removing %s from %s.",getName(),vict->getName(),
         FactionInfo[fnum].faction_name);
 }
   
@@ -459,7 +459,7 @@ void TBeing::doDisband()
     }
   }
   sendTo("You have disbanded from %s.\n\r",FactionInfo[fnum].faction_name);
-  vlogf(0,"Disband: %s left %s.",getName(),FactionInfo[fnum].faction_name);
+  vlogf(LOG_FACT,"Disband: %s left %s.",getName(),FactionInfo[fnum].faction_name);
   setFaction(FACT_NONE);
 #if FACTIONS_IN_USE
   setPerc(0.0);
@@ -795,7 +795,7 @@ void TBeing::doFactions(const char *arg)
     if ((getFactionAuthority(which,FACT_LEADER_SLOTS - 1) > 0) ||
         isImmortal()) {
       if (stat(fileBuf, &timestat)) {
-        vlogf(0,"bad call to list faction function %s", fileBuf);
+        vlogf(LOG_BUG,"bad call to list faction function %s", fileBuf);
         return;
       }
       strcpy(timebuf, ctime(&(timestat.st_mtime)));
@@ -869,7 +869,7 @@ void TBeing::doAdjust(const char *arg)
       sendTo("Please specify a new faction name.\n\r");
       return;
     }
-    vlogf(5, "Faction name changed from %s to %s.\n\r",
+    vlogf(LOG_FACT, "Faction name changed from %s to %s.\n\r",
           oldname, arg);
     sendTo("You change the name of the faction from %s to %s.\n\r",
           oldname, arg);
@@ -1417,7 +1417,7 @@ void TPerson::reconcileHelp(TBeing *victim, double amp)
   abso = value * amp;
 
 #ifdef ALIGN_STUFF 
-  vlogf(3, "align thing: value %2.6f, amp %2.6f abso  %2.6f, %10.10s (%d) vs %10.10s (%d)",
+  vlogf(LOG_MISC, "align thing: value %2.6f, amp %2.6f abso  %2.6f, %10.10s (%d) vs %10.10s (%d)",
        value, amp, abso, getName(), getFaction(), victim->getName(),
        victim->getFaction());
 #endif
@@ -1439,8 +1439,8 @@ void TPerson::reconcileHelp(TBeing *victim, double amp)
 
   setPerc(avg - (0.33*sigma));
 #ifdef ALIGN_STUFF
-  vlogf(3, "avg %2.6f    sigma %2.6f", avg, sigma);
-  vlogf(3,"real %2.6f    0: %2.6f    1: %2.6f    2: %2.6f    3: %2.6f",
+  vlogf(LOG_MISC, "avg %2.6f    sigma %2.6f", avg, sigma);
+  vlogf(LOG_MISC,"real %2.6f    0: %2.6f    1: %2.6f    2: %2.6f    3: %2.6f",
      getPerc(), getPercX(FACT_NONE), getPercX(FACT_BROTHERHOOD), getPercX(FACT_CULT), getPercX(FACT_SNAKE)); 
 #endif
 
@@ -1521,7 +1521,7 @@ const char * CaravanDestination(int which)
     case CARAVAN_CUR_DEST_AMBER:
       return "Amber";
     default:
-      vlogf(9, "CaravanDestination had an i of %d (which %d)", i, which);
+      vlogf(LOG_BUG, "CaravanDestination had an i of %d (which %d)", i, which);
       forceCrash("bad carvan");
       return "unknown";
   }
@@ -1557,7 +1557,7 @@ void launch_caravans()
     // launch a caravan
     FactionInfo[i].caravan_counter = 0;
     if (!(mob = read_mobile(MOB_CARAVAN_MASTER, VIRTUAL))) {
-      vlogf(10, "No caravan master read in load_caravan");
+      vlogf(LOG_BUG, "No caravan master read in load_caravan");
       return;
     }
     mob->setFaction(i);

@@ -22,7 +22,7 @@ extern "C" {
 
 void TThing::logMe(const TBeing *ch, const char *cmdbuf) const
 {
-  vlogf(-1, "%s%s%s %s.", 
+  vlogf(LOG_SILENT, "%s%s%s %s.", 
     (ch ? ch->getName() : ""),
     (ch ? " " : ""),
     cmdbuf, getName());
@@ -30,7 +30,7 @@ void TThing::logMe(const TBeing *ch, const char *cmdbuf) const
 
 void TObj::logMe(const TBeing *ch, const char *cmdbuf) const
 {
-  vlogf(-1, "%s%s%s %s. (max: %d, cur: %d)", 
+  vlogf(LOG_SILENT, "%s%s%s %s. (max: %d, cur: %d)", 
            (ch ? ch->getName() : ""),
            (ch ? " " : ""),
            cmdbuf, getName(),
@@ -50,12 +50,12 @@ void TContainer::logMe(const TBeing *ch, const char *cmdbuf) const
   for (t = stuff; t; t = t->nextThing, ++runcount) {
     if(!t->nextThing || strcmp(last, t->nextThing->getName())){
       if(runcount>1){
-	vlogf(-1, "%s%s%s %s containing %s [%i].", 
+	vlogf(LOG_SILENT, "%s%s%s %s containing %s [%i].", 
               (ch ? ch->getName() : ""),
               (ch ? " " : ""),
 	      cmdbuf, getName(), t->getName(), runcount);
       } else 
-	vlogf(-1, "%s%s%s %s containing %s.", 
+	vlogf(LOG_SILENT, "%s%s%s %s containing %s.", 
           (ch ? ch->getName() : ""),
           (ch ? " " : ""),
 	  cmdbuf, getName(), t->getName());
@@ -276,7 +276,7 @@ void TThing::getMeFrom(TBeing *ch, TThing *t)
 void TPCorpse::getMeFrom(TBeing *ch, TThing *t)
 {
   if (!checkOnLists()) {
-//    vlogf(5, "Something wrong with get from a corpse, corpse not set right %s (%s).", ch->getName(), getName());
+//    vlogf(LOG_BUG, "Something wrong with get from a corpse, corpse not set right %s (%s).", ch->getName(), getName());
   } else {
     if (stuff)
       saveCorpseToFile();
@@ -383,7 +383,7 @@ int get(TBeing *ch, TThing *ttt, TThing *sub, getTypeT tType, bool isFirst)
   else {
     if (ttt->parent && ttt->parent != sub) {
       // very bad
-      vlogf(10, "get(): obj (%s) gotten with parent (%s) and sub (%s)",
+      vlogf(LOG_BUG, "get(): obj (%s) gotten with parent (%s) and sub (%s)",
           ttt->getName(), ttt->parent->getName(), sub->getName());
     }
   }
@@ -881,7 +881,7 @@ int TBeing::doDrop(const char *argument, TThing *tng, bool forcedDrop)
 
     act("$n drops some money.", FALSE, this, 0, 0, TO_ROOM);
     if (!(money = create_money(amount))) {
-      vlogf(9, "Problem creating money");
+      vlogf(LOG_BUG, "Problem creating money");
       return FALSE;
     }
     TPerson *tP;
@@ -1100,7 +1100,7 @@ int put(TBeing *ch, TThing *obj, TThing *sub)
       
   } else {
     // no sub specified
-    vlogf(10, "put() called with no target.");
+    vlogf(LOG_BUG, "put() called with no target.");
     return 2;
   }
 }
@@ -1274,11 +1274,11 @@ int TBeing::doGiveObj(TBeing *victim, TThing *obj, giveTypeT flags)
   char arg[256]; 
  
   if (!victim || !obj) {
-    vlogf(5, "Bad give in doGiveObj");
+    vlogf(LOG_BUG, "Bad give in doGiveObj");
     return FALSE;
   }
   if (!*victim->name) {
-    vlogf(5, "Bad give names in doGiveObj");
+    vlogf(LOG_BUG, "Bad give names in doGiveObj");
     return FALSE;
   }
 
@@ -1394,7 +1394,7 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
     saveChar(ROOM_AUTO_RENT);
     vict->saveChar(ROOM_AUTO_RENT);
     if ((vict->getMoney() > 500000) && (amount > 100000))
-      vlogf(10,"%s gave %d talens to %s.", getName(), amount, vict->getName());
+      vlogf(LOG_MISC,"%s gave %d talens to %s.", getName(), amount, vict->getName());
 
     if (!vict->isPc()) {
       sprintf(buf, "%d", amount);
@@ -1584,7 +1584,7 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
               return DELETE_THIS;
           }
         } else 
-          vlogf(5, "Bad flags in doGive (%s)", getName());
+          vlogf(LOG_BUG, "Bad flags in doGive (%s)", getName());
         
         doSave(SILENT_YES);
         if (vict)
@@ -1595,10 +1595,10 @@ int TBeing::doGive(const char *argument, giveTypeT flags)
         if (obj->obj_flags.cost >= 100) {
           switch (CheckStorageChar(this, vict)) {
             case 1:
-              vlogf(3, "Storage Character %s giving %s to %s",getName(),obj->getName(),vict->getName());
+              vlogf(LOG_MISC, "Storage Character %s giving %s to %s",getName(),obj->getName(),vict->getName());
               break;
             case 2:
-              vlogf(3, "Storage Character %s w/low KAR giving %s to %s w/high KAR",getName(), obj->getName(),vict->getName());
+              vlogf(LOG_MISC, "Storage Character %s w/low KAR giving %s to %s w/high KAR",getName(), obj->getName(),vict->getName());
               break;
             case 0:
             default:

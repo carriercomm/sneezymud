@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: obj.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/10/04 03:00:04  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "shop.h"
 
@@ -386,13 +365,13 @@ void TObj::lowCheck()
   int i;
 
   if (!getVolume() && canWear(ITEM_TAKE))
-    vlogf(LOW_ERROR,"item (%s:%d) had 0 volume.",getName(), objVnum());
+    vlogf(LOG_LOW,"item (%s:%d) had 0 volume.",getName(), objVnum());
 
   // not sure logically, but would a canWear(ITEM_TAKE) check be appropriate here?
   // allow APPLY_LIGHT on untakeable things?
   for (i=0; i<MAX_OBJ_AFFECT;i++) {
     if (affected[i].location == APPLY_LIGHT) {
-      vlogf(LOW_ERROR,"item %s was defined apply-light.",getName());
+      vlogf(LOG_LOW,"item %s was defined apply-light.",getName());
     }
   }
 }
@@ -410,7 +389,7 @@ bool TObj::lowCheckSlots(silentTypeT silent)
     if (IS_SET(value, (unsigned) (1<<ui)))
       if (value != (unsigned) (1<<ui)) {
         if (!silent)
-          vlogf(LOW_ERROR, "item (%s) with multiple wear slots: %s",
+          vlogf(LOG_LOW, "item (%s) with multiple wear slots: %s",
                getName(), wear_bits[ui]);
         return true;
       }
@@ -439,10 +418,10 @@ void TObj::addGlowEffects()
       affected[i].modifier = (1 + getVolume()/6000);
       addToLight(affected[i].modifier);
       if (affected[i].modifier > 5 && canWear(ITEM_TAKE))
-        vlogf(LOW_ERROR,"Mega light on %s",getName());
+        vlogf(LOG_LOW,"Mega light on %s",getName());
       break;
     } else if (i==(MAX_OBJ_AFFECT-1))
-      vlogf(LOW_ERROR,"obj %s has too many affects to set glow on it.",
+      vlogf(LOG_LOW,"obj %s has too many affects to set glow on it.",
              getName());
   }
 }

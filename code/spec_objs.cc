@@ -90,11 +90,11 @@ void obj_act(const char *message, const TThing *ch, const TObj *o, const TBeing 
   char buffer[256];
 
   if (!ch) {
-    vlogf(5,"NULL ch in obj_act");
+    vlogf(LOG_PROC,"NULL ch in obj_act");
     return;
   }
   if (!o) {
-    vlogf(5,"NULL obj in obj_act");
+    vlogf(LOG_PROC,"NULL obj in obj_act");
     return;
   }
   sprintf(buffer, "$n's $o %s", message);
@@ -794,7 +794,7 @@ int weatherArmor(TBeing *, cmdTypeT cmd, const char *, TObj *o, TObj *)
 
 int TObj::foodItemUsed(TBeing *ch, const char *)
 {
-  vlogf(LOW_ERROR, "Undefined item (%s) with special proc: foodItem", getName());
+  vlogf(LOG_LOW, "Undefined item (%s) with special proc: foodItem", getName());
   act("Oily black smoke pours from $p as something goes wrong.",
              TRUE, ch, this, 0, TO_CHAR);
   act("Oily black smoke pours from $p as something goes wrong.",
@@ -1424,7 +1424,7 @@ void explode(TObj *obj, int room, int dam)
   TBeing *v = NULL;
 
   if (!(rm = real_roomp(room))) {
-    vlogf(10, "Explosion in room : ROOM_NOWHERE. (explode() spec_objs.c)");
+    vlogf(LOG_PROC, "Explosion in room : ROOM_NOWHERE. (explode() spec_objs.c)");
     return;
   }
 
@@ -1459,7 +1459,7 @@ int vending_machine(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *ob2)
         token = 9995;
         break;
       default:
-        vlogf(10, "Unknown vending machine.  Yikes");
+        vlogf(LOG_PROC, "Unknown vending machine.  Yikes");
         return TRUE;
     }
     if (obj_index[ob2->getItemIndex()].virt == token) {
@@ -1468,7 +1468,7 @@ int vending_machine(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *ob2)
       act("$p begins to beep and shake.", TRUE, ch, o, NULL, TO_CHAR);
       act("$p begins to beep and shake.", TRUE, ch, o, NULL, TO_ROOM);
       if (!(dew = read_object(result, VIRTUAL))) {
-        vlogf(10, "Damn vending machine couldn't read a Dew.  Stargazer!");
+        vlogf(LOG_PROC, "Damn vending machine couldn't read a Dew.  Stargazer!");
         return TRUE;
       }
       act("$p appears in the can receptical.", TRUE, ch, dew, NULL, TO_CHAR);
@@ -1490,7 +1490,7 @@ int dagger_of_death(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *)
 
   if (cmd == CMD_OBJ_STUCK_IN) {
     if (o->eq_stuck == WEAR_HEAD) {
-      vlogf(5, "%s killed by ITEM:dagger-of-death at %s (%d)",
+      vlogf(LOG_PROC, "%s killed by ITEM:dagger-of-death at %s (%d)",
             ch->getName(), ch->roomp->getName(), ch->inRoom());
 
       rc = ch->die(DAMAGE_NORMAL);
@@ -1518,7 +1518,7 @@ int dispenser(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
       act("You get a note from $p.", FALSE, ch, o, 0, TO_CHAR);
       act("$n gets a note from $p.", FALSE, ch, o, 0, TO_ROOM);
       if (!(note = read_object(GENERIC_NOTE, VIRTUAL))) {
-        vlogf(10, "Bad note dispenser! NO note can be loaded!");
+        vlogf(LOG_PROC, "Bad note dispenser! NO note can be loaded!");
         return FALSE;
       }
       *ch += *note;
@@ -1529,7 +1529,7 @@ int dispenser(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
       act("You get a quill from $p.", FALSE, ch, o, 0, TO_CHAR);
       act("$n gets a quill from $p.", FALSE, ch, o, 0, TO_ROOM);
       if (!(quill = read_object(GENERIC_PEN, VIRTUAL))) {
-        vlogf(10, "Bad quill dispenser! NO quill can be loaded!");
+        vlogf(LOG_PROC, "Bad quill dispenser! NO quill can be loaded!");
         return FALSE;
       }
       *ch += *quill;
@@ -1572,7 +1572,7 @@ int pager(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *ob2)
   if (!ch)
     return FALSE;
   if (!(job = static_cast<pager_struct *>(o->act_ptr))) {
-    vlogf(8, "Pager lost its memory.");
+    vlogf(LOG_PROC, "Pager lost its memory.");
     return FALSE;
   }
 
@@ -1954,7 +1954,7 @@ int caravan_wagon(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
 
     car = new wagon_struct();
     if (!car) {
-      vlogf(10, "Bad alloc (1) of caravan wagon");
+      vlogf(LOG_PROC, "Bad alloc (1) of caravan wagon");
       return FALSE;
     }
     me->act_ptr = car;
@@ -1964,7 +1964,7 @@ int caravan_wagon(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
     return FALSE;
   } else if (cmd == CMD_OBJ_WAGON_UNINIT) {
     if (!(car = (wagon_struct *) me->act_ptr)) {
-      vlogf(10, "Bad alloc (3) of caravan wagon");
+      vlogf(LOG_PROC, "Bad alloc (3) of caravan wagon");
       return FALSE;
     }
     if (me->act_ptr)
@@ -1973,7 +1973,7 @@ int caravan_wagon(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
     return FALSE;
   } else if (cmd == CMD_OBJ_MOVEMENT) {
     if (!(car = (wagon_struct *) me->act_ptr)) {
-      vlogf(10, "Bad alloc (2) of caravan wagon");
+      vlogf(LOG_PROC, "Bad alloc (2) of caravan wagon");
       return FALSE;
     }
     if (ch != car->driver)
@@ -1983,7 +1983,7 @@ int caravan_wagon(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
     dir = dirTypeT(dum);
 
     if (dir < MIN_DIR || dir >= MAX_DIR) {
-      vlogf(5, "Problematic direction in CMD_OBJ_MOVEMENT");
+      vlogf(LOG_PROC, "Problematic direction in CMD_OBJ_MOVEMENT");
       return FALSE;
     }
     sprintf(buf, "$n rolls %s.", dirs[dir]);
@@ -2108,10 +2108,10 @@ int statPotion(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
 int bogusObjProc(TBeing *, cmdTypeT, const char *, TObj *me, TObj *)
 {
   if (me)
-    vlogf(9, "WARNING:  %s is running around with a bogus spec_proc #%d",
+    vlogf(LOG_PROC, "WARNING:  %s is running around with a bogus spec_proc #%d",
        me->name, me->spec);
   else
-    vlogf(9, "WARNING: indeterminate obj has bogus spec_proc");
+    vlogf(LOG_PROC, "WARNING: indeterminate obj has bogus spec_proc");
   return FALSE;
 }
 

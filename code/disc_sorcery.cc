@@ -590,7 +590,7 @@ int energyDrain(TBeing *caster, TBeing *victim, int level, byte bKnown, int adv_
         if (pers && !save) {
           pers->dropLevel(pers->bestClass());
           pers->setTitle(false);
-          vlogf(10, "%s just lost a level from energy drain! :-)", pers->getName());
+          vlogf(LOG_MISC, "%s just lost a level from energy drain! :-)", pers->getName());
         }
         break;
       case CRIT_S_NONE:
@@ -1025,7 +1025,7 @@ int animate(TBeing *caster, int level, byte bKnown)
     if (count > 10) {
       act("Smells like an error to me!", FALSE, caster, NULL, NULL, TO_CHAR);
       caster->nothingHappens(SILENT_YES);
-      vlogf(10, "greater than 10 eq pieces counted for monster creation!!");
+      vlogf(LOG_BUG, "greater than 10 eq pieces counted for monster creation!!");
       return SPELL_FAIL;
     }
     if (!l_boot || !r_boot ||
@@ -1039,7 +1039,7 @@ int animate(TBeing *caster, int level, byte bKnown)
     }
     gol = read_mobile(MOB_ANIMATION, VIRTUAL);
     if (!gol) {
-      vlogf(10, "ERROR! spell 'animate' (in code as create_monster) tried to load mob vnum #%d -- doesn't exist!", MOB_ANIMATION);
+      vlogf(LOG_BUG, "ERROR! spell 'animate' (in code as create_monster) tried to load mob vnum #%d -- doesn't exist!", MOB_ANIMATION);
       caster->sendTo("Oops. Buggy spell. Error logged. Sorry.\n\r");
       caster->nothingHappens(SILENT_YES);
       return SPELL_FAIL;

@@ -1,26 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: task_track.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/30 14:09:09  lapsos
-// Cleaned up some of the pre-emptive checks.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD 4.0 - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
@@ -196,7 +175,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
         if (ch->task->flags == 100)
           ch->task->flags = 0;
         if (!ch->specials.hunting && !isSW) {
-          vlogf(6, "problem in task_track()");
+          vlogf(LOG_BUG, "problem in task_track()");
           stop_tracking(ch);
           return TRUE;
         }
@@ -205,7 +184,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
           if (isSW)
             code = find_path(ch->in_room, find_closest_water, NULL, ch->hunt_dist, 0, &targetRm);
           else {
-            vlogf(6, "problem in task_track()");
+            vlogf(LOG_BUG, "problem in task_track()");
             stop_tracking(ch);
             return TRUE;
           }
@@ -279,7 +258,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
             // Bad, our special exit is Gone...even tho it was there a second ago.
             if (!t) {
               ch->sendTo("Error finding path target!  Tell a god.\n\r");
-              vlogf(8, "Error finding path (task_tracking).");
+              vlogf(LOG_BUG, "Error finding path (task_tracking).");
               stop_tracking(ch);
               return TRUE;
             }

@@ -3,6 +3,9 @@
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
 // $Log: cmd_message.h,v $
+// Revision 5.1.1.2  1999/12/09 18:40:40  lapsos
+// Massive revision of setsev/wizfiles
+//
 // Revision 5.1.1.1  1999/10/16 04:32:20  batopr
 // new branch
 //
@@ -37,6 +40,9 @@ enum messageTypeT
   MSG_SLAY,
   MSG_SLAY_TARG,
   MSG_FORCE,
+  MSG_BAMFIN,
+  MSG_BAMFOUT,
+  MSG_LONGDESCR,
   MSG_MAX
 };
 
@@ -61,7 +67,10 @@ struct messageBuffer
        *msgMoveOut,
        *msgSlay,
        *msgSlayTarg,
-       *msgForce;
+       *msgForce,
+       *msgBamfin,
+       *msgBamfout,
+       *msgLongDescr;
 };
 
 class TMessages

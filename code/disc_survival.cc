@@ -60,7 +60,7 @@ int forage(TBeing *caster, byte bKnown)
 
     if (!obj) {
       caster->sendTo("Something went wrong, bug Cosmo.\n\r");
-      vlogf(5,"Forage tried to load a NULL object");
+      vlogf(LOG_BUG,"Forage tried to load a NULL object");
       return SPELL_FAIL;
     }
 
@@ -695,7 +695,7 @@ void TBeing::doSeekwater()
         }
         if (!t) {
           sendTo("Error finding path target!  Tell a god.\n\r");
-          vlogf(8, "Error finding path (doSeekwater)");
+          vlogf(LOG_BUG, "Error finding path (doSeekwater)");
           return;
         }
       }
@@ -783,7 +783,7 @@ int TBeing::doEncamp()
 int encamp(TBeing * caster)
 {
   if (!caster || !caster->isPc()) {
-    vlogf(1, "Non-PC in encamp() call.  %s", caster->getName());
+    vlogf(LOG_BUG, "Non-PC in encamp() call.  %s", caster->getName());
     return FALSE;
   }
 

@@ -64,18 +64,18 @@ int init_game_stats(void)
   nuke_inactive_mobs = FALSE;
 
   if (!(fp = fopen(STATS_FILE,"r"))) {
-    vlogf(10, "Unable to open txt/stat file");
+    vlogf(LOG_BUG, "Unable to open txt/stat file");
     return FALSE;
   } else {
     if (fscanf(fp, "%ld\n", &stats.logins) != 1) {
-      vlogf(5, "bad stats.logins");
+      vlogf(LOG_BUG, "bad stats.logins");
     }
 
     if (fscanf(fp, "%d %d\n", &repair_number, &total_help_number) != 2) {
       repair_number = 0;
       total_help_number = 0;
-      vlogf(5, "bad repair_number");
-      vlogf(5, "bad help_number");
+      vlogf(LOG_BUG, "bad repair_number");
+      vlogf(LOG_BUG, "bad help_number");
     }
 
     for (i= 0; i < MAX_IMMORT; i++) {
@@ -96,7 +96,7 @@ int init_game_stats(void)
              &gold_statistics[GOLD_SHOP_PET][i],
              &gold_statistics[GOLD_SHOP_RESPONSES][i],
              &gold_statistics[GOLD_DUMP][i]) != 16) {
-        vlogf(5, "bad gold info, resetting %d", i);
+        vlogf(LOG_BUG, "bad gold info, resetting %d", i);
         int j;
         for (j = 0; j < MAX_MONEY_TYPE; j++)
           gold_statistics[j][i] = 0;
@@ -118,7 +118,7 @@ int init_game_stats(void)
              &gold_positive[GOLD_SHOP_PET][i],
              &gold_positive[GOLD_SHOP_RESPONSES][i],
              &gold_positive[GOLD_DUMP][i]) != 16) {
-        vlogf(5, "bad gold info, resetting %d", i);
+        vlogf(LOG_BUG, "bad gold info, resetting %d", i);
         int j;
         for (j = 0; j < MAX_MONEY_TYPE; j++)
           gold_positive[j][i] = 0;
@@ -141,27 +141,27 @@ int init_game_stats(void)
              &gold_modifier[GOLD_SHOP_PET],
              &gold_modifier[GOLD_SHOP_RESPONSES],
              &gold_modifier[GOLD_DUMP]) != 16) {
-        vlogf(5, "bad gold modifier info, resetting %d", i);
+        vlogf(LOG_BUG, "bad gold modifier info, resetting %d", i);
         int j;
         for (j = 0; j < MAX_MONEY_TYPE; j++)
           gold_modifier[j] = 1.0;
     }
 
     if (fscanf(fp, "%f\n", &stats.equip) != 1) {
-      vlogf(5, "bad value for equipment load rate");
+      vlogf(LOG_BUG, "bad value for equipment load rate");
     }
 
     for (i = 0; i < 50; i++) {
       for (j = 0; j < MAX_CLASSES; j++) {
         if (fscanf(fp, "%d %ld ", 
                &stats.levels[j][i], &stats.time_levels[j][i]) != 2) {
-          vlogf(5, "Bad level info, class %d, lev %d", j, i+1);
+          vlogf(LOG_BUG, "Bad level info, class %d, lev %d", j, i+1);
         }
       }
     }
 
     if (fscanf(fp, "%ld\n", &stats.first_login) != 1) {
-      vlogf(5, "Bad first_login info, resetting.");
+      vlogf(LOG_BUG, "Bad first_login info, resetting.");
       time_t tnow;
       time(&tnow);
       stats.first_login = tnow;
@@ -252,7 +252,7 @@ void save_game_stats(void)
  
     fclose(fp);
   } else {
-    vlogf(9, "Error writing %s", STATS_FILE);
+    vlogf(LOG_BUG, "Error writing %s", STATS_FILE);
   }
 }
 
@@ -881,12 +881,12 @@ void checkGoldStats()
   if (net_gold_all_shops > 0) {
     // shops are giving out too much money
     gold_modifier[GOLD_SHOP] -= 0.01;
-//    vlogf(5, "ECONOMY: shop modifier lowered. %d %u %.2f", net_gold_all_shops, pos_gold_all_shops, gold_modifier[GOLD_SHOP]);
+//    vlogf(LOG_BUG, "ECONOMY: shop modifier lowered. %d %u %.2f", net_gold_all_shops, pos_gold_all_shops, gold_modifier[GOLD_SHOP]);
     should_reset = true;
   } else if ((unsigned int) -net_gold_all_shops > pos_gold_all_shops/10) {
     // shops are making too much money
     gold_modifier[GOLD_SHOP] += 0.01;
-//    vlogf(5, "ECONOMY: shop modifier raised. %d %u %.2f", net_gold_all_shops, pos_gold_all_shops, gold_modifier[GOLD_SHOP]);
+//    vlogf(LOG_BUG, "ECONOMY: shop modifier raised. %d %u %.2f", net_gold_all_shops, pos_gold_all_shops, gold_modifier[GOLD_SHOP]);
     should_reset = true;
   }
 
@@ -895,12 +895,12 @@ void checkGoldStats()
   if ((unsigned int) net_gold_budget < ((target_income - 0.03) * pos_gold_budget)) {
     // players losing money
     gold_modifier[GOLD_INCOME] += 0.01;
-//    vlogf(5, "ECONOMY: income modifier raised. %d %u %.2f", net_gold_budget, pos_gold_budget, gold_modifier[GOLD_INCOME]);
+//    vlogf(LOG_BUG, "ECONOMY: income modifier raised. %d %u %.2f", net_gold_budget, pos_gold_budget, gold_modifier[GOLD_INCOME]);
     should_reset = true;
   } else if ((unsigned int) net_gold_budget > ((target_income + 0.03) * pos_gold_budget)) {
     // players making too much
     gold_modifier[GOLD_INCOME] -= 0.01;
-//    vlogf(5, "ECONOMY: income modifier lowered. %d %u %.2f", net_gold_budget, pos_gold_budget, gold_modifier[GOLD_INCOME]);
+//    vlogf(LOG_BUG, "ECONOMY: income modifier lowered. %d %u %.2f", net_gold_budget, pos_gold_budget, gold_modifier[GOLD_INCOME]);
     should_reset = true;
   }
   
@@ -931,12 +931,12 @@ void checkGoldStats()
   if (good_drain < (int) ((target_drain - .05) * total_drain)) {
     // repair is too small a drain
     gold_modifier[GOLD_REPAIR] += 0.01;
-//    vlogf(5, "ECONOMY: repair modifier raised. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_REPAIR]);
+//    vlogf(LOG_BUG, "ECONOMY: repair modifier raised. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_REPAIR]);
     should_reset = true;
   } else if (good_drain > (int) ((target_drain + .05) * total_drain)) {
     // repair is too large a drain
     gold_modifier[GOLD_REPAIR] -= 0.01;
-//    vlogf(5, "ECONOMY: repair modifier lowered. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_REPAIR]);
+//    vlogf(LOG_BUG, "ECONOMY: repair modifier lowered. %d %d %.2f", good_drain, total_drain, gold_modifier[GOLD_REPAIR]);
     should_reset = true;
   }
 

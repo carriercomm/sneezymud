@@ -426,7 +426,7 @@ TPortal * TPortal::findMatchingPortal() const
   TRoom *rp;
 
   if (!(rp = real_roomp(getTarget()))) {
-    vlogf(7, "Bad portal (%s) with destination to NULL room! %d",
+    vlogf(LOG_BUG, "Bad portal (%s) with destination to NULL room! %d",
           getName(), getTarget());
     return NULL;
   }

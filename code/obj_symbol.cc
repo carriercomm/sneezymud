@@ -47,7 +47,7 @@ void TSymbol::assignFourValues(int x1, int x2, int x3, int x4)
 
   // allow undefined, rather than MIN_FACTION since undefined = unattnued
   if (x3 < FACT_UNDEFINED || x3 >= MAX_FACTIONS) {
-     vlogf(5,"LOW error: symbol with bad faction (%s).", getName());
+     vlogf(LOG_LOW,"symbol with bad faction (%s).", getName());
     x3 = FACT_UNDEFINED;
   }
   mud_assert(x3 >= FACT_UNDEFINED && x3 < MAX_FACTIONS, "bad val");
@@ -166,18 +166,18 @@ void TSymbol::lowCheck()
   int i;
 
   if (getSymbolMaxStrength() < getSymbolCurStrength())
-    vlogf(LOW_ERROR, "symbol (%s) has lower max strength then current.",
+    vlogf(LOG_LOW, "symbol (%s) has lower max strength then current.",
              getName());
   for (i=0; i<MAX_OBJ_AFFECT;i++) {
     if (affected[i].location == APPLY_ARMOR) {
-      vlogf(LOW_ERROR, "symbol (%s) had armor, bad!",
+      vlogf(LOG_LOW, "symbol (%s) had armor, bad!",
          getName());
     }
   }
   int ap = suggestedPrice();
   if (ap != obj_flags.cost && obj_flags.cost >= 0 && ap) {
     // ignore newbie symbol with cost = -1
-    vlogf(LOW_ERROR, "symbol (%s:%d) has a bad price (%d).  should be (%d)",
+    vlogf(LOG_LOW, "symbol (%s:%d) has a bad price (%d).  should be (%d)",
          getName(), objVnum(), obj_flags.cost, ap);
     obj_flags.cost = ap;
   }
@@ -210,7 +210,7 @@ bool TSymbol::lowCheckSlots(silentTypeT silent)
 
   if (value != 0) {
     if (!silent)
-      vlogf(LOW_ERROR, "symbol (%s) with bad wear slots: %d",
+      vlogf(LOG_LOW, "symbol (%s) with bad wear slots: %d",
                  getName(), value);
     return true;
   }

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: equip.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 //////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -238,7 +220,7 @@ int TObj::personalizedCheck(TBeing *ch)
   if (action_description) {
     strcpy(capbuf, action_description);
     if ((sscanf(capbuf, "This is the personalized object of %s.", namebuf)) != 1) {
-      vlogf(10, "Bad personalized item (on %s) with bad action description...extracting from world.", ch->getName());
+      vlogf(LOG_BUG, "Bad personalized item (on %s) with bad action description...extracting from world.", ch->getName());
       return DELETE_THIS;
     } else if (strcmp(namebuf, ch->getName()) && (!ch->isPc() || dynamic_cast<TPerson *>(ch))) {
       // skips for polys
@@ -247,7 +229,7 @@ int TObj::personalizedCheck(TBeing *ch)
       act("The gods have taken away $p!", FALSE, ch, this, NULL, TO_CHAR);
       act("$n is zapped by $p!",TRUE,ch,this,0,TO_ROOM);
 
-      vlogf(2, "We got an illegal personalized item (%s) off of %s (was %s's item).", getName(), ch->getName(), namebuf);
+      vlogf(LOG_MISC, "We got an illegal personalized item (%s) off of %s (was %s's item).", getName(), ch->getName(), namebuf);
 
       t = ch->roomp->stuff;
       while (t) {
@@ -279,9 +261,9 @@ int TObj::personalizedCheck(TBeing *ch)
           --(*this);
           *ch->roomp += *this;
         }
-        vlogf(2, "Found original owner(%s), causing item to zap.", orig->getName());
+        vlogf(LOG_MISC, "Found original owner(%s), causing item to zap.", orig->getName());
       } else {
-        vlogf(2, "Couldn't find original owner, so extracting object.");
+        vlogf(LOG_MISC, "Couldn't find original owner, so extracting object.");
         return DELETE_THIS;
       }
     }
@@ -1542,7 +1524,7 @@ int TBeing::remove(TThing *obj, TBeing *ch)
 
     return FALSE;
   } else {
-    vlogf(5, "Bad call to remove(TObj *, TBeing *)");
+    vlogf(LOG_BUG, "Bad call to remove(TObj *, TBeing *)");
     return FALSE;
   }
 }

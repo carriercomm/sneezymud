@@ -226,7 +226,7 @@ void generate_obj_index()
         tmpi->ex_description = new_descr;
       }
     } else {
-      vlogf(0, "generate indices (last bc: %d)", bc);
+      vlogf(LOG_BUG, "generate indices (last bc: %d)", bc);
       exit(0);
     }
   }
@@ -247,12 +247,12 @@ void generate_obj_index()
 
   PgDatabase data("dbname=objects");
   if(data.ConnectionBad()) {
-    vlogf(0, "Could not connect to database 'objects'.\n");
+    vlogf(LOG_BUG, "Could not connect to database 'objects'.\n");
     exit(0);
   }
 
   if(data.Exec("select o.vnum, o.name, o.short_desc, o.long_desc, e.name, e.description from object o, extra e where o.vnum=e.vnum") != PGRES_TUPLES_OK){
-    vlogf(0, "Database query failed: %s\n", data.ErrorMessage());
+    vlogf(LOG_BUG, "Database query failed: %s\n", data.ErrorMessage());
     exit(0);
   }
     
@@ -341,7 +341,7 @@ void generate_mob_index()
       rc = fscanf(mob_f, "%ld %ld %ld %f %c %f\n",
          &spac, &spaf, &fac, &facp, &let, &mult);
       if (rc != 6) {
-        vlogf(9, "Error during mobIndexSetup(1) %d", bc);
+        vlogf(LOG_BUG, "Error during mobIndexSetup(1) %d", bc);
         exit(0);
       }
 
@@ -357,7 +357,7 @@ void generate_mob_index()
       rc = fscanf(mob_f, "%ld %ld %ld %f %f %f+%d \n",
           &Class, &lev, &hitr, &arm, &hp, &daml, &damp);
       if (rc != 7) {
-        vlogf(9, "Error during mobIndexSetup(2) %d (rc=%d)", bc, rc);
+        vlogf(LOG_BUG, "Error during mobIndexSetup(2) %d (rc=%d)", bc, rc);
         exit(0);
       }
 
@@ -371,7 +371,7 @@ void generate_mob_index()
       rc = fscanf(mob_f, "%ld %ld %ld %ld \n",
           &mon, &race, &wgt, &hgt);
       if (rc != 4) {
-        vlogf(9, "Error during mobIndexSetup(3) %d", bc);
+        vlogf(LOG_BUG, "Error during mobIndexSetup(3) %d", bc);
         exit(0);
       }
 
@@ -390,7 +390,7 @@ void generate_mob_index()
       rc = fscanf(mob_f, "%ld %ld %ld %ld \n",
           &mpos, &dpos, &sex, &spec);
       if (rc != 4) {
-        vlogf(9, "Error during mobIndexSetup(4) %d", bc);
+        vlogf(LOG_BUG, "Error during mobIndexSetup(4) %d", bc);
         exit(0);
       }
 
@@ -408,7 +408,7 @@ void generate_mob_index()
       rc = fscanf(mob_f, "%ld %ld %ld %ld \n",
           &mat, &cbs, &vis, &maxe);
       if (rc != 4) {
-        vlogf(9, "Error during mobIndexSetup(5) %d", bc);
+        vlogf(LOG_BUG, "Error during mobIndexSetup(5) %d", bc);
         exit(0);
       }
 
@@ -453,7 +453,7 @@ void generate_mob_index()
 
       // setup for next critter
     if (fgets(buf, sizeof(buf)-1, mob_f) == NULL) {
-      vlogf(9, "Error during mobIndexSetup(6) %d", bc);
+      vlogf(LOG_BUG, "Error during mobIndexSetup(6) %d", bc);
       exit(0);
     }
   }

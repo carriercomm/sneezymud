@@ -117,7 +117,7 @@ void TMonster::aiTarget(TBeing *vict)
     return;
   }
   if (!targ()->isPc()) {
-    vlogf(5,"Bug in aiTarget()");
+    vlogf(LOG_MOB_AI, "Bug in aiTarget()");
     setTarg(NULL);
   }
 }
@@ -383,7 +383,7 @@ void TMonster::mobAI()
   // turn off targets if set by mistake 
   if (targ()) 
     if (!targ()->isPc()) {
-      vlogf(3, "Ooops, target for %s got set to a mob: %s.",getName(), targ()->getName());
+      vlogf(LOG_MOB_AI, "Ooops, target for %s got set to a mob: %s.",getName(), targ()->getName());
       setTarg(NULL);
     }
   
@@ -984,7 +984,7 @@ int TMonster::aiSocialSwitch (TBeing *doer,TBeing *other, cmdTypeT cmd, aiTarg c
       rc = aiGrimace(doer,other,cond);
       break;
     default:
-      vlogf(8,"doAction mob_AI loop called with cmd of %d and type %d",cmd,cond);
+      vlogf(LOG_MOB_AI, "doAction mob_AI loop called with cmd of %d and type %d",cmd,cond);
       US(1);
       aiStrangeThings(doer);
       break;

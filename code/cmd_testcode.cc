@@ -1,36 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_testcode.cc,v $
-// Revision 5.1.1.2  1999/10/18 17:49:14  batopr
-// *** empty log message ***
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.5  1999/10/08 19:27:55  batopr
-// *** empty log message ***
-//
-// Revision 1.4  1999/10/08 19:26:54  batopr
-// Added stuff for calculating money equilibrium
-//
-// Revision 1.3  1999/09/14 02:24:58  batopr
-// *** empty log message ***
-//
-// Revision 1.2  1999/09/13 14:27:25  batopr
-// *** empty log message ***
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "statistics.h"
 
@@ -201,7 +168,7 @@ void TBeing::doTestCode(const char *arg)
         (i == CMD_PENANCE) || (i == CMD_IMMORTAL) || (i == CMD_TRACEROUTE) ||
         (i == CMD_MID) || (i == CMD_LOGLIST) || (i == CMD_BRUTTEST))
       continue;
-    vlogf(-1, "%s : con %d", commandArray[i]->name, desc->connected);
+    vlogf(LOG_MISC, "%s : con %d", commandArray[i]->name, desc->connected);
     doCommand(i, "", NULL, FALSE);
     if (note) {
       char *tmp = note->action_description;

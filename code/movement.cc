@@ -31,7 +31,7 @@ void TBeing::goThroughPortalMsg(const TPortal *o) const
 
   type = o->getPortalType();
   if (type > MAX_PORTAL_TYPE) {
-    vlogf(9, "%s has illegal portal type of %d.", o->shortDescr, type);
+    vlogf(LOG_BUG, "%s has illegal portal type of %d.", o->shortDescr, type);
     type = 0;
   }
   if (riding) {
@@ -61,7 +61,7 @@ void TBeing::exitFromPortalMsg(const TPortal *o) const
   }
   type = o2->getPortalType();
   if (type > MAX_PORTAL_TYPE) {
-    vlogf(9, "%s has illegal portal type of %d.", o2->shortDescr, type);
+    vlogf(LOG_BUG, "%s has illegal portal type of %d.", o2->shortDescr, type);
     type = 0;
   }
   if (riding) {
@@ -141,12 +141,12 @@ bool TBeing::validMove(dirTypeT cmd)
       return FALSE;
     }
     if (!sameRoom(riding) && (riding->horseMaster() == this)) {
-      vlogf(5, "mount/rider in different rooms: (%s, %s) %d %d", 
+      vlogf(LOG_BUG, "mount/rider in different rooms: (%s, %s) %d %d", 
             getName(), riding->getName(), inRoom(), riding->inRoom());
       dismount(POSITION_STANDING);
     }
     if (tbt && !tbt->master) {
-      vlogf(5, "Bogus riding situation (no master for %s).  setting to %s",
+      vlogf(LOG_BUG, "Bogus riding situation (no master for %s).  setting to %s",
           tbt->getName(), getName());
       tbt->master = this;
     }
@@ -186,7 +186,7 @@ bool TBeing::validMove(dirTypeT cmd)
         return FALSE;
       }
     } else {
-      vlogf(LOW_ERROR, "Problematic door: rm %d dir %d (closed with no-name?)",
+      vlogf(LOG_LOW, "Problematic door: rm %d dir %d (closed with no-name?)",
             inRoom(), cmd);
       notLegalMove();
       return FALSE;
@@ -275,7 +275,7 @@ int TBeing::checkPassWard(dirTypeT cmd) const
   rp = in_room;
 
    if (!rp || !(in_room == rp)) {
-     vlogf(5,"Bad room in checkPassWard: %s in %d", getName(), rp);
+     vlogf(LOG_BUG,"Bad room in checkPassWard: %s in %d", getName(), rp);
      sendTo("Please bug what you just tried to do.\n\r");
      return FALSE;
    }
@@ -1003,7 +1003,7 @@ int TBeing::moveGroup(dirTypeT dir)
         // bat - 11/19/99
         if (tft->master != this) {
           // this happens, but I guess it's safe to just ignore
-          vlogf(10, "ERROR: Bad critter looping through moveGroup()! (this=[%s], badguy=[%s], master=[%s])", getName(), tft->getName() ? tft->getName() : "NoName", tft->master ? tft->master->getName() : "NoMaster");
+          vlogf(LOG_BUG, "ERROR: Bad critter looping through moveGroup()! (this=[%s], badguy=[%s], master=[%s])", getName(), tft->getName() ? tft->getName() : "NoName", tft->master ? tft->master->getName() : "NoMaster");
           continue;
         }
 
@@ -1237,10 +1237,10 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
 
   if (!rp1 || !rp2) {
     if (!getName()) {
-      vlogf(10, "NULL getName in NULL rp in displayMove()");
+      vlogf(LOG_BUG, "NULL getName in NULL rp in displayMove()");
       return FALSE;
     }
-    vlogf(9, "NULL rp in displayMove!  (%s)(%d)", getName(), was_in);
+    vlogf(LOG_BUG, "NULL rp in displayMove!  (%s)(%d)", getName(), was_in);
     return FALSE;
   }
   strcpy(how, movementType(FALSE));
@@ -1431,7 +1431,7 @@ int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in)
     }
   }    
   if (rp->isRoomFlag(ROOM_DEATH) && !isImmortal()) {
-    vlogf(5, "%s killed by DEATHTRAP at %s (%d)",
+    vlogf(LOG_MISC, "%s killed by DEATHTRAP at %s (%d)",
           getName(), roomp->getName(), inRoom());
     die(DAMAGE_NORMAL);
     return DELETE_THIS;
@@ -1496,7 +1496,7 @@ int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in)
       return TRUE;
     }
     if (!(mob = read_mobile(MOB_TROLL_GIANT, VIRTUAL))) {
-      vlogf(5, "Problem loading mob for quest.");
+      vlogf(LOG_BUG, "Problem loading mob for quest.");
       return TRUE;
     }
     *rp += *mob;
@@ -1512,7 +1512,7 @@ int TBeing::genericMovedIntoRoom(TRoom *rp, sh_int was_in)
       return TRUE;
     }
     if (!(mob = read_mobile(MOB_TREE_SPIRIT, VIRTUAL))) {
-      vlogf(5, "Problem loading mob for quest.");
+      vlogf(LOG_BUG, "Problem loading mob for quest.");
       return TRUE;
     }
     *rp += *mob;
@@ -2947,7 +2947,7 @@ int TBeing::goDirection(dirTypeT dir)
     }
     if (!t) {
       sendTo("Error finding path target!  Tell a god.\n\r");
-      vlogf(8, "Error finding path (goDirection)");
+      vlogf(LOG_BUG, "Error finding path (goDirection)");
       return FALSE;
     }
   }
@@ -3370,7 +3370,7 @@ int TBeing::doMortalGoto(const string & argument)
   } else {
     int rn = real_mobile(targ_ch);
     if (rn < 0) {
-      vlogf(9, "Error in goto for mob %s", arg.c_str());
+      vlogf(LOG_BUG, "Error in goto for mob %s", arg.c_str());
       return FALSE;
     }
     ch = get_char_num(rn);

@@ -109,7 +109,7 @@ int dice(int number, int size)
   int sum = 0;
 
   if (size < 0) {
-    vlogf(10, "Dice called with negative size!");
+    vlogf(LOG_BUG, "Dice called with negative size!");
     return 0;
   }
   if (!size)
@@ -525,12 +525,12 @@ int TBeing::numClasses() const
   return x;
 }
 
-void vlogf(int severity, string errorMsg,...)
+void vlogf(const char * errorMsg, ...)
 {
-  vlogf(severity, errorMsg.c_str());
+  vlogf(LOG_MISC, errorMsg);
 }
 
-void vlogf(int severity, const char *errorMsg,...)
+void vlogf(logTypeT tError, const char *errorMsg,...)
 {
   char message[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
   char buf[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
@@ -545,6 +545,8 @@ void vlogf(int severity, const char *errorMsg,...)
 
   lt = time(0);
   this_time = localtime(&lt);
+
+  /*
   if (severity == LOW_ERROR) {
     sprintf(buf, "// L.O.W. Error:   %s \n\r", message); 
     severity = 5;
@@ -559,12 +561,13 @@ void vlogf(int severity, const char *errorMsg,...)
          this_time->tm_year, this_time->tm_mon + 1, this_time->tm_mday,
          this_time->tm_hour, this_time->tm_min, this_time->tm_sec, message);
   }
+  */
   for (i = descriptor_list; i; i = i->next) {
     if (!i->connected && i->character &&
         ((i->character->hasWizPower(POWER_WIZNET_ALWAYS)) ||
             ((i->character->GetMaxLevel() >= GOD_LEVEL1) && 
             i->character->hasQuestBit(TOG_IMMORTAL_LOGS))) &&
-	(i->severity <= severity) && 
+        (i->severity & (1 << tError)) &&
         !(i->character->isPlayerAction(PLR_MAILING | PLR_BUGGING))) {
 
       if (i->client) 
@@ -581,7 +584,7 @@ void dirwalk(const char *dir, void (*fcn) (const char *))
   DIR *dfd;
 
   if (!dir || !(dfd = opendir(dir))) {
-    vlogf(10, "Unable to dirwalk directory %s", dir);
+    vlogf(LOG_BUG, "Unable to dirwalk directory %s", dir);
     return;
   }
   while ((dp = readdir(dfd))) {
@@ -599,7 +602,7 @@ void dirwalk_fullname(const char *dir, void (*fcn) (const char *))
   DIR *dfd;
 
   if (!dir || !(dfd = opendir(dir))) {
-    vlogf(10, "Unable to dirwalk directory %s", dir);
+    vlogf(LOG_BUG, "Unable to dirwalk directory %s", dir);
     return;
   }
   while ((dp = readdir(dfd))) {
@@ -619,7 +622,7 @@ void dirwalk_subs_fullname(const char *dir, void (*fcn) (const char *))
   DIR *dfd;
 
   if (!dir || !(dfd = opendir(dir))) {
-    vlogf(10, "Unable to dirwalk_subs directory %s", dir);
+    vlogf(LOG_BUG, "Unable to dirwalk_subs directory %s", dir);
     return;
   }
   while ((dp = readdir(dfd))) {
@@ -879,7 +882,7 @@ int vsystem(char *buf)
 #endif
 
   if (!buf) {
-    vlogf(10, "vsystem called with NULL parameter.");
+    vlogf(LOG_BUG, "vsystem called with NULL parameter.");
     return FALSE;
   }
   strcpy(sh, "/bin/sh");
@@ -896,7 +899,7 @@ int vsystem(char *buf)
     _exit(-1);
   }
   if (pid < 0) {
-    vlogf(10, "Error in vsystem.  Fork failed.");
+    vlogf(LOG_BUG, "Error in vsystem.  Fork failed.");
     return FALSE;
   }
 #ifndef SUN
@@ -968,7 +971,7 @@ bool thingsInRoomVis(TThing *ch, TRoom *rp)
   TThing *o;
 
   if (!ch || !rp) {
-    vlogf(10, "thingsInRoomVis() called with NULL ch, or room!");
+    vlogf(LOG_BUG, "thingsInRoomVis() called with NULL ch, or room!");
     return FALSE;
   }
   for (o = rp->stuff; o; o = o->nextThing) {

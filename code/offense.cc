@@ -195,7 +195,7 @@ int TBeing::doEngagedHit(const char *argument, TBeing *vict)
   spellNumT skill = getSkillNum(SKILL_SWITCH_OPP);
 
   if (!fight()) {
-    vlogf(5,"DoEngagedHit called without pc (%s) fighting", getName());
+    vlogf(LOG_BUG,"DoEngagedHit called without pc (%s) fighting", getName());
     return FALSE;
   }
 
@@ -485,7 +485,7 @@ static int applyOrder(TBeing *ch, TBeing *vict, const char * message, silentType
     ch->sendTo("OK.\n\r");
 
   if (vict->getWait() <= 1) {
-    vlogf(-1, "%s ordering %s to '%s' at %d",
+    vlogf(LOG_SILENT, "%s ordering %s to '%s' at %d",
           ch->getName(), vict->getName(), message, ch->inRoom());
     if (!strncmp(message, "ret", 3)) {
       rc = vict->checkDecharm(FORCE_YES);
@@ -1120,7 +1120,7 @@ int TBeing::doAssist(const char *argument, TBeing *vict, bool flags)
 #if 0
   // trap a problem report
   if (!fight())
-    vlogf(5, "%s not fighting after assist %s", getName(), v->getName());
+    vlogf(LOG_BUG, "%s not fighting after assist %s", getName(), v->getName());
 #endif
 
   return rc;
@@ -1243,7 +1243,7 @@ int TObj::burnObject(TBeing *ch, int perc)
         else if (roomp)
           *roomp += *t;
         else
-          vlogf(5, "Bad struct on burnObj %s", t->name);
+          vlogf(LOG_BUG, "Bad struct on burnObj %s", t->name);
         TObj * tot = dynamic_cast<TObj *>(t);
         if (tot) {
           rc = tot->burnObject(ch, 100);

@@ -1664,7 +1664,7 @@ int TMonster::mageMove(TBeing *vict)
     return FALSE;
 
   if (getPosition() < POSITION_STANDING) {
-    vlogf(5, "%s was not standing in mageMove vs %s.", getName(), vict->getName());
+    vlogf(LOG_BUG, "%s was not standing in mageMove vs %s.", getName(), vict->getName());
     return FALSE;
   }
 
@@ -1680,7 +1680,7 @@ int TMonster::mageMove(TBeing *vict)
     return FALSE;
 
   if (spell >= MAX_SKILL) {
-    vlogf(5, "Something returned bad spell number in mageMove");
+    vlogf(LOG_BUG, "Something returned bad spell number in mageMove");
     return FALSE;
   }
 // COSMO MAGE MARKER - check for tasking
@@ -1700,7 +1700,7 @@ int TMonster::mageMove(TBeing *vict)
     if (IS_SET(discArray[spell]->targets, TAR_SELF_ONLY | TAR_IGNORE | TAR_FIGHT_SELF)) {
       return doDiscipline(spell, "");
     }
-vlogf(4, "Mob casting (1) spell %d on self with possibly bad target flags for spell", spell);
+    vlogf(LOG_BUG, "Mob casting (1) spell %d on self with possibly bad target flags for spell", spell);
     return doDiscipline(spell, name);
   } else {
     return doDiscipline(spell, vict->name);
@@ -2385,7 +2385,7 @@ int TMonster::clerMove(TBeing *vict)
     }
     
     if (spell != TYPE_UNDEFINED && t) {
-      //      vlogf(0, "%s HEALING %s, spell %i", name, t->name, spell);
+      //      vlogf(LOG_MISC, "%s HEALING %s, spell %i", name, t->name, spell);
       return doDiscipline(spell, t->name);
     }
   }
@@ -2400,7 +2400,7 @@ int TMonster::clerMove(TBeing *vict)
     if (IS_SET(discArray[spell]->targets, TAR_SELF_ONLY | TAR_IGNORE | TAR_FIGHT_SELF)) {
       return doDiscipline(spell, "");
     }
-vlogf(4, "Mob invoking (1) prayer %d on self with possibly bad target flags for spell", spell);
+    vlogf(LOG_BUG, "Mob invoking (1) prayer %d on self with possibly bad target flags for spell", spell);
     return doDiscipline(spell, name);
   } else {
     return doDiscipline(spell, vict->name);
@@ -2437,7 +2437,7 @@ int TMonster::takeFirstHit(TBeing *vict)
 
             if (IS_SET_DELETE(rc, DELETE_VICT)) {
               if (vict->riding) {
-                vlogf(5, "is this called (ping)?");
+                vlogf(LOG_MISC, "is this called (ping)?");
                 vict->dismount(POSITION_SITTING);
               }
               delete v2;
@@ -2740,7 +2740,7 @@ int TMonster::mobileActivity(int pulse)
   if (isAquatic() && (specials.zone != 1) && (mobVnum() >= 0) &&
      !(roomp->isWaterSector() || roomp->isUnderwaterSector()) &&
      !inImperia()) {
-    vlogf(9, "Fish (%s), found out of water in %s (%d)! Destroying!", 
+    vlogf(LOG_MISC, "Fish (%s), found out of water in %s (%d)! Destroying!", 
            getName(), roomp->getName(), in_room);
     return DELETE_THIS;
   }
@@ -3361,7 +3361,7 @@ int TMonster::findABetterWeapon()
         // skip training gear
         if (tobj && tobj->objVnum() == WEAPON_T_DAGGER)
           return FALSE;
-        vlogf(LOW_ERROR,"%s (%d) removed %s (%d : base=%.2f) as hands are better.",
+        vlogf(LOG_LOW,"%s (%d) removed %s (%d : base=%.2f) as hands are better.",
                   getName(), mobVnum(), tobj->getName(), tobj->objVnum(), tobj->baseDamage());
 
         return TRUE;
@@ -3454,7 +3454,7 @@ int TMonster::defendOther(TBeing *targ)
       if (IS_SET(discArray[spell]->targets, TAR_CHAR_ROOM)) {
         rc = doDiscipline(spell, targ->name);
       } else {
-vlogf(4, "Mob casting (2) spell %d on other with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob casting (2) spell %d on other with possibly bad target flags for spell", spell);
         rc = doDiscipline(spell, "");
       }
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3497,7 +3497,7 @@ vlogf(4, "Mob casting (2) spell %d on other with possibly bad target flags for s
       if (IS_SET(discArray[spell]->targets, TAR_CHAR_ROOM)) {
         rc = doDiscipline(spell, targ->name);
       } else {
-vlogf(4, "Mob invoking (2) prayer %d on other with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob invoking (2) prayer %d on other with possibly bad target flags for spell", spell);
         rc = doDiscipline(spell, "");
       }
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3528,7 +3528,7 @@ vlogf(4, "Mob invoking (2) prayer %d on other with possibly bad target flags for
       if (IS_SET(discArray[spell]->targets, TAR_CHAR_ROOM)) {
         rc = doDiscipline(spell, targ->name);
       } else {
-vlogf(4, "Mob invoking (3) prayer %d on other with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob invoking (3) prayer %d on other with possibly bad target flags for spell", spell);
         rc = doDiscipline(spell, "");
       }
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3553,7 +3553,7 @@ vlogf(4, "Mob invoking (3) prayer %d on other with possibly bad target flags for
         else
           rc = doDiscipline(spell, targ->name);
       } else {
-vlogf(4, "Mob casting (3) spell %d on other with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob casting (3) spell %d on other with possibly bad target flags for spell", spell);
         if (spell == SKILL_BARKSKIN)
           rc = doBarkskin(targ->name);
         else
@@ -3668,7 +3668,7 @@ int TMonster::defendSelf(int)
 	for (k = followers;k; k = k2) {
 	  k2 = k->next;
 	  if (!(ch = k->follower) || !dynamic_cast<TBeing *>(ch)) {
-	    vlogf(10, "Non-TBeing in followers of %s", getName());
+	    vlogf(LOG_BUG, "Non-TBeing in followers of %s", getName());
 	    break;
 	  }
 	  if (ch->isCharm() && sameRoom(ch)){
@@ -3708,7 +3708,7 @@ int TMonster::defendSelf(int)
       if (IS_SET(discArray[spell]->targets, TAR_SELF_ONLY | TAR_IGNORE | TAR_FIGHT_SELF)) {
         rc = doDiscipline(spell, "");
       } else {
-vlogf(4, "Mob casting (4) spell %d on self with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob casting (4) spell %d on self with possibly bad target flags for spell", spell);
         rc = doDiscipline(spell, name);
       }
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3768,7 +3768,7 @@ vlogf(4, "Mob casting (4) spell %d on self with possibly bad target flags for sp
       if (IS_SET(discArray[spell]->targets, TAR_SELF_ONLY | TAR_IGNORE | TAR_FIGHT_SELF)) {
         rc = doDiscipline(spell, "");
       } else {
-vlogf(4, "Mob invoking (4) prayer %d on self with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob invoking (4) prayer %d on self with possibly bad target flags for spell", spell);
         rc = doDiscipline(spell, name);
       }
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3799,7 +3799,7 @@ vlogf(4, "Mob invoking (4) prayer %d on self with possibly bad target flags for 
       if (IS_SET(discArray[spell]->targets, TAR_SELF_ONLY | TAR_IGNORE | TAR_FIGHT_SELF)) {
         rc = doDiscipline(spell, "");
       } else {
-vlogf(4, "Mob invoking (5) prayer %d on self with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob invoking (5) prayer %d on self with possibly bad target flags for spell", spell);
         rc = doDiscipline(spell, name);
       }
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -3842,7 +3842,7 @@ vlogf(4, "Mob invoking (5) prayer %d on self with possibly bad target flags for 
 	else
           rc = doDiscipline(spell, "");
       } else {
-vlogf(4, "Mob casting (5) spell %d on self with possibly bad target flags for spell", spell);
+vlogf(LOG_BUG, "Mob casting (5) spell %d on self with possibly bad target flags for spell", spell);
         if (spell == SKILL_BARKSKIN)
           rc = doBarkskin(name);
 	else if(spell == SKILL_TRANSFORM_LIMB)
@@ -3949,13 +3949,13 @@ void TMonster::quickieDefend()
   while (iter--) {
     int rc = defendSelf(0);
     if (IS_SET_DELETE(rc, DELETE_THIS))
-      vlogf(3, "Error: uncaught DELETE (1) in quickieDefend");
+      vlogf(LOG_BUG, "Error: uncaught DELETE (1) in quickieDefend");
     unsigned int rnds = 7;
     while (rnds--) {
       if (spelltask) {
         rc = cast_spell(this, CMD_TASK_CONTINUE, 0);
         if (IS_SET_DELETE(rc, DELETE_THIS | DELETE_VICT))
-          vlogf(3, "Error: uncaught DELETE (2) in quickieDefend");
+          vlogf(LOG_BUG, "Error: uncaught DELETE (2) in quickieDefend");
       }
     }
   }

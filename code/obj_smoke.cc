@@ -1,26 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: obj_smoke.cc,v $
-// Revision 5.1.1.2  1999/12/05 10:51:35  lapsos
-// Fixed an odd crash bug.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.2  1999/09/19 20:33:48  peel
-// Many changes.  Smoke actually works now.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
 #include "stdsneezy.h"
 
 /* todo
@@ -186,11 +163,11 @@ int TThing::dropSmoke(int amt)
   if (!smoke) {
     // create new smoke
     if (!(obj = read_object(GENERIC_SMOKE, VIRTUAL))) {
-      vlogf(LOW_ERROR, "Error, No GENERIC_SMOKE  (%d)", GENERIC_SMOKE);
+      vlogf(LOG_LOW, "Error, No GENERIC_SMOKE  (%d)", GENERIC_SMOKE);
       return FALSE;
     }
     if (!(smoke = dynamic_cast<TSmoke *>(obj))) {
-      vlogf(5, "Error, unable to cast object to smoke: smoke.cc:TThing::dropSmoke");
+      vlogf(LOG_BUG, "Error, unable to cast object to smoke: smoke.cc:TThing::dropSmoke");
       return FALSE;
     }
     smoke->swapToStrung();
@@ -215,7 +192,7 @@ void TSmoke::decayMe()
   int volume = getVolume();
 
   if (!roomp) {
-    vlogf(0, "TSmoke::decayMe() called while TSmoke not in room!");
+    vlogf(LOG_BUG, "TSmoke::decayMe() called while TSmoke not in room!");
     setVolume(0);
     return;
   }

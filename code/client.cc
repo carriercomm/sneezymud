@@ -2,7 +2,7 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-//      "client.cc" - All functions and routines related toclient/server 
+//      "client.cc" - All functions and routines related to client/server 
 //
 //      The client/server protocol coded by Russ Russell, Februrary 1994,
 //      Changed to c++ October 1994
@@ -217,7 +217,7 @@ int Descriptor::read_client(char *str2)
 
   strcpy(buf, nextToken('|', 255, str2).c_str());
   if (sscanf(buf, "%d", &type) != 1) {
-    vlogf(9, "Incorrect type (%s) in read_client", buf);
+    vlogf(LOG_CLIENT, "Incorrect type (%s) in read_client", buf);
     return FALSE;
   }
   switch (type) {
@@ -254,9 +254,9 @@ int Descriptor::read_client(char *str2)
       while ((&output)->takeFromQ(dummy));
       if (account) {
         if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) 
-          vlogf(0, "Client Connection from *****Masked*****");
+          vlogf(LOG_PIO, "Client Connection from *****Masked*****");
         else 
-          vlogf(0, "Client Connection from %s", host);
+          vlogf(LOG_PIO, "Client Connection from %s", host);
       }
       break;
     case CLIENT_ROOM: {
@@ -558,9 +558,9 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
             objCost cost;
 
             if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) 
-              vlogf(0, "%s[*masked*] has reconnected (client)  (account: *masked*).", ch->getName());
+              vlogf(LOG_PIO, "%s[*masked*] has reconnected (client)  (account: *masked*).", ch->getName());
             else 
-              vlogf(0, "%s[%s] has reconnected (client)  (account: %s).", ch->getName(), host, account->name);
+              vlogf(LOG_PIO, "%s[%s] has reconnected (client)  (account: %s).", ch->getName(), host, account->name);
 
             ch->recepOffer(NULL, &cost);
             dynamic_cast<TPerson *>(ch)->saveRent(&cost, FALSE, 1);
@@ -723,7 +723,7 @@ the client because the server double checks everything. Thanks. Brutius.\n\r");
       break;
     }
     default:
-      vlogf(9, "Bad type in read_client (%d)", type);
+      vlogf(LOG_CLIENT, "Bad type in read_client (%d)", type);
       break;
   }
   return TRUE;
@@ -979,10 +979,10 @@ new account.|%d", CLIENT_ERROR, account->name, ERR_BAD_NAME);
         objCost cost;
 
         if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
-          vlogf(0, "%s[*masked*] has reconnected (client 2)  (account: *masked*).",
+          vlogf(LOG_PIO, "%s[*masked*] has reconnected (client 2)  (account: *masked*).",
                 character->getName());
         } else {
-          vlogf(0, "%s[%s] has reconnected (client 2)  (account: %s).",
+          vlogf(LOG_PIO, "%s[%s] has reconnected (client 2)  (account: %s).",
                      character->getName(), host, account->name);
         }
 
@@ -1015,10 +1015,10 @@ new account.|%d", CLIENT_ERROR, account->name, ERR_BAD_NAME);
   }
   if (should_be_logged(character)) {
     if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
-      vlogf(0, "%s[*masked*] has connected (client)  (account: *masked*).",
+      vlogf(LOG_PIO, "%s[*masked*] has connected (client)  (account: *masked*).",
             character->getName());
     } else {
-      vlogf(0, "%s[%s] has connected (client)  (account: %s).",
+      vlogf(LOG_PIO, "%s[%s] has connected (client)  (account: %s).",
                  character->getName(), host, account->name);
     }
   }
@@ -1161,12 +1161,12 @@ lower(account->name).c_str());
     sprintf(buf2, "account/%c/%s", LOWER(account->name[0]),
 lower(account->name).c_str());
     if (mkdir(buf2, 0770)) {
-      vlogf(10, "Can't make directory for saveAccount (%s)",
+      vlogf(LOG_CLIENT, "Can't make directory for saveAccount (%s)",
 lower(account->name).c_str());
       return FALSE;
     }
     if (!(fp = fopen(buf, "w"))) {
-      vlogf(10, "Big problems in saveAccount (s)",
+      vlogf(LOG_CLIENT, "Big problems in saveAccount (s)",
 lower(account->name).c_str());
       return FALSE;
     }
@@ -1415,7 +1415,7 @@ int Descriptor::clientCreateChar(char *arg)
 
   ch->convertAbilities();
   ch->affectTotal();
-  vlogf(9, "%s [%s] new player.", ch->getName(), host);
+  vlogf(LOG_PIO, "%s [%s] new player.", ch->getName(), host);
   clientf("%d", CLIENT_NEWCHAR);
 
   enum connectStateT oldconnected = connected;

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: structs.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #ifndef __STRUCTS_H
 #define __STRUCTS_H
 
@@ -76,7 +58,8 @@ typedef short int sh_int;
 typedef unsigned short int ush_int;
 typedef signed char byte;
 
-extern void vlogf(int severity, const char *errorMsg,...);
+extern void vlogf(const char *, ...);
+extern void vlogf(logTypeT, const char *, ...);
 extern char * mud_str_dup(const char *buf);
 
 class time_info_data
@@ -189,8 +172,6 @@ class drinkInfo {
   drinkInfo();  // deny usage in this format
 };
 
-const int LOW_ERROR   = -12;
-
 class snoopData {
   public:
     TBeing *snooping;  // Who am I snooping
@@ -264,18 +245,6 @@ class lastChangeData {
     lastChangeData();
     lastChangeData(const lastChangeData &a);
     ~lastChangeData();
-};
-
-class poofinData {
-  public:
-    char *poofin;
-    char *poofout;
-    char *ldesc;
-    int pmask;
-    poofinData();
-    poofinData(const poofinData &a);
-    poofinData & operator=(const poofinData &a);
-    ~poofinData();
 };
 
 class objAffData {

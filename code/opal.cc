@@ -1,10 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ///////////////////////////////////////////////////////////////////////////
 //
 //      SneezyMUD++ 4.5 - All rights reserved, SneezyMUD Coding Team
@@ -212,7 +205,7 @@ void TOpal::lowCheck()
 {
   int ap = suggestedPrice();
   if (ap != obj_flags.cost && ap) {
-    vlogf(LOW_ERROR, "Opal (%s:%d) has a bad price (%d).  should be (%d)",
+    vlogf(LOG_LOW, "Opal (%s:%d) has a bad price (%d).  should be (%d)",
          getName(), objVnum(), obj_flags.cost, ap);
     obj_flags.cost = ap;
   }

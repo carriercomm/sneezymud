@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_shaman.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "combat.h"
@@ -28,7 +10,7 @@ int createGolem(TBeing * caster, int target, int power, int level, byte bKnown)
   int rc;
 
   if (!(golem = read_mobile(target, VIRTUAL))) {
-    vlogf(10, "Spell 'create golem' unable to load golem [bad!]...");
+    vlogf(LOG_BUG, "Spell 'create golem' unable to load golem [bad!]...");
     caster->sendTo("Unable to create the golem.  Please report this.\n\r.");
     return SPELL_FAIL;
   }
@@ -310,7 +292,7 @@ int voodoo(TBeing * caster, TObj * obj, int level, byte bKnown)
     return SPELL_FAIL;
   }
   if (!(mob = read_mobile(corpse->getCorpseVnum(), VIRTUAL))) {
-    vlogf(9, "FAILED Load!!  No mob (%d)", corpse->getCorpseVnum());
+    vlogf(LOG_BUG, "FAILED Load!!  No mob (%d)", corpse->getCorpseVnum());
     caster->sendTo("Something screwed up.  Tell a god.\n\r");
     act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
     return SPELL_FAIL;
@@ -772,7 +754,7 @@ int dancingBones(TBeing * caster, TObj * obj, int level, byte bKnown)
     return SPELL_FAIL;
   }
   if (!(mob = read_mobile(corpse->getCorpseVnum(), VIRTUAL))) {
-    vlogf(9, "FAILED Load!!  No mob (%d)", corpse->getCorpseVnum());
+    vlogf(LOG_BUG, "FAILED Load!!  No mob (%d)", corpse->getCorpseVnum());
     caster->sendTo("Something screwed up.  Tell a god.\n\r");
     act("Nothing seems to happen.", FALSE, caster, 0, 0, TO_ROOM);
     return SPELL_FAIL;

@@ -255,7 +255,7 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
     act("$p isn't loaded with an arrow!", FALSE, ch, this, 0, TO_CHAR);
 
     if (stuff && !dynamic_cast<TArrow *>(stuff)) {
-      vlogf(7, "Bow loaded with something not an arrow. [%s]", ch->getName());
+      vlogf(LOG_BUG, "Bow loaded with something not an arrow. [%s]", ch->getName());
       TThing *tThing = stuff;
       --(*tThing);
       delete tThing;

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: physics.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /*************************************************************************
   
       SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -104,7 +86,7 @@ bool TBeing::canClimb()
           IS_SET(roomp->dir_option[DIR_DOWN]->condition, EX_CLOSED)) {
         return TRUE;
       } else {
-        vlogf(4,"%s falling from room %d with no down dir.",getName(), in_room);
+        vlogf(LOG_BUG,"%s falling from room %d with no down dir.",getName(), in_room);
         return TRUE;
       }
     } else if (!riding) {
@@ -159,7 +141,7 @@ bool TBeing::canSwim(dirTypeT dir)
     return 0;
 
   if (!(rp->isWaterSector() || rp->isUnderwaterSector())) {
-    vlogf(5,"can swim called in non-water room.");
+    vlogf(LOG_BUG,"can swim called in non-water room.");
     return 0;
   }
 
@@ -259,7 +241,7 @@ int check_sinking_obj(TObj *obj, int room)
       return FALSE;
     sendrpf(rp, "%s floats silently upward.\n\r", good_cap(obj->shortDescr).c_str());
     if (!(rp = real_roomp(obj->roomp->dir_option[DIR_UP]->to_room))) {
-      vlogf(10, "Serious bug in floating objects!");
+      vlogf(LOG_BUG, "Serious bug in floating objects!");
       return FALSE;
     }
     --(*obj);
@@ -273,7 +255,7 @@ int check_sinking_obj(TObj *obj, int room)
       return FALSE;
     sendrpf(rp, "%s sinks downward into the water.\n\r", good_cap(obj->shortDescr).c_str());
     if (!(rp = real_roomp(obj->roomp->dir_option[DIR_DOWN]->to_room))) {
-      vlogf(10, "Serious bug in sinking objects!");
+      vlogf(LOG_BUG, "Serious bug in sinking objects!");
       return FALSE;
     }
     --(*obj);
@@ -502,7 +484,7 @@ int TObj::checkFalling()
     }
   }
   if (count >= 100) {
-    vlogf(10, "Air room %d is screwed.  Tell Brutius.", in_room);
+    vlogf(LOG_BUG, "Air room %d is screwed.  Tell Brutius.", in_room);
     return FALSE;
   }
   return TRUE;
@@ -624,7 +606,7 @@ int TBeing::checkFalling()
     --(*this);
   
     if (!(rp = real_roomp(new_room = rp->dir_option[DIR_DOWN]->to_room))) {
-      vlogf(10, "illegal room number for falling - %d", rp->dir_option[DIR_DOWN]->to_room);
+      vlogf(LOG_BUG, "illegal room number for falling - %d", rp->dir_option[DIR_DOWN]->to_room);
       thing_to_room(this, ROOM_VOID);
       return FALSE;
     }
@@ -746,7 +728,7 @@ rp->isFlyingSector())) {
     }
   }
   if (count >= 100) {
-    vlogf(10, "Air room %d is screwed.  Tell Brutius.", in_room);
+    vlogf(LOG_BUG, "Air room %d is screwed.  Tell Brutius.", in_room);
     if (!isImmortal()) {
       fallKill();
       return DELETE_THIS;
@@ -782,7 +764,7 @@ int TBeing::checkDrowning()
     }
     updatePos();
     if (getHit() < -10) {
-      vlogf(5, "%s killed by drowning at %s (%d)",
+      vlogf(LOG_MISC, "%s killed by drowning at %s (%d)",
           getName(), roomp->getName(), inRoom());
 
       if (!desc)

@@ -155,110 +155,6 @@ char * dsearch(const char *string)
   }
 }
 
-void TBeing::doBamfin(const char *arg)
-{
-  int len;
-  Descriptor *d;
-
-  if (!(d = desc))
-    return;
-
-  for (; *arg == ' '; arg++);    // pass all those spaces 
-
-  if (!*arg) {
-    sendTo("Bamfin <bamf definition>\n\r");
-    sendTo(" Additional arguments can include ~N for where you want your name (if you want\n\r");
-    sendTo(" your name) to appear.  ~H will be replaced with \"his\" or \"her\" as appropriate.\n\r");
-    sendTo(" ~R will become a newline sequence. If you use the keyword \"def\" for your bamf,\n\r");
-    sendTo(" it turns on the default bamf. Use the keyword \"?\" to see your bamfin.\n\r\n\r");
-  }
-  if (!*arg || !strcmp(arg, "?")) {
-    sendTo("Your current bamfin is : \n\r\n\r");
-    if (!(d->poof.poofin)) {
-      sendTo("Default.\n\r");
-      return;
-    } else {
-      sendTo("%s\n\r", nameColorString(this, d, d->poof.poofin, NULL, COLOR_BASIC, FALSE).c_str());
-      return;
-    }
-  }
-  if (!strcmp(arg, "def")) {
-    delete [] d->poof.poofin;
-    d->poof.poofin = NULL;
-    sendTo("Ok.\n\r");
-    return;
-  }
-  len = (int) strlen(arg);
-
-  char tmpbuf[256];
-  if (len > 150) {
-    sendTo("String too long.  Truncated to:\n\r");
-    strncpy(tmpbuf, arg, 149);
-    tmpbuf[150] = '\0';
-    sendTo("%s\n\r", tmpbuf);
-    len = 150;
-  } else
-    strcpy(tmpbuf, arg);
-
-  delete [] d->poof.poofin;
-  d->poof.poofin = dsearch(tmpbuf);
-
-  sendTo("Ok.\n\r");
-  return;
-}
-
-void TBeing::doBamfout(const char *arg)
-{
-  int len;
-  Descriptor *d;
-
-  if (!(d = desc))
-    return;
-
-  for (; isspace(*arg); arg++);    // pass all those spaces 
-
-  if (!*arg) {
-    sendTo("Bamfout <bamf definition>\n\r");
-    sendTo(" Additional arguments can include ~N for where you want your name (if you want\n\r");
-    sendTo(" your name) to appear.  ~H will be replaced with \"his\" or \"her\" as appropriate.\n\r");
-    sendTo(" ~R will become a newline sequence. If you use the keyword \"def\" for your bamf,\n\r");
-    sendTo(" it turns on the default bamf. Use the keyword \"?\" to see your bamfout.\n\r\n\r");
-  }
-  if (!*arg || !strcmp(arg, "?")) {
-    sendTo("Your current bamfout is : \n\r\n\r");
-    if (!(d->poof.poofout)) {
-      sendTo("Default.\n\r");
-      return;
-    } else {
-      sendTo("%s\n\r", nameColorString(this, d, d->poof.poofout, NULL, COLOR_BASIC, FALSE).c_str());
-      return;
-    }
-  }
-  if (!strcmp(arg, "def")) {
-    delete [] d->poof.poofout;
-    d->poof.poofout = NULL;
-    sendTo("Ok.\n\r");
-    return;
-  }
-  len = (int) strlen(arg);
-
-  char tmpbuf[256];
-  if (len > 150) {
-    sendTo("String too long.  Truncated to:\n\r");
-    strncpy(tmpbuf, arg, 149);
-    tmpbuf[150] = '\0';
-    sendTo("%s\n\r", tmpbuf);
-    len = 150;
-  } else
-    strcpy(tmpbuf, arg);
-
-  delete [] d->poof.poofout;
-  d->poof.poofout = dsearch(tmpbuf);
-
-  sendTo("Ok.\n\r");
-  return;
-}
-
 void TBeing::doHighfive(const char *argument)
 {
   char buf[80];
@@ -333,27 +229,27 @@ void TPerson::doToggle(const char *arg)
   } else if (is_abbrev(arg, "silence")) {
     Silence = !Silence;
     sendTo("You have now %s shouting.\n\r", Silence ? "disallowed" : "allowed");
-    vlogf(10, "%s has turned player shouting %s.", getName(), Silence ? "off" : "on");
+    vlogf(LOG_MISC, "%s has turned player shouting %s.", getName(), Silence ? "off" : "on");
   } else if (is_abbrev(arg, "gravity")) {
     Gravity = !Gravity;
     sendTo("You have now turned gravity %s.\n\r", !Gravity ? "off" : "on");
-    vlogf(10, "%s has turned gravity %s.", getName(), !Gravity ? "off" : "on");
+    vlogf(LOG_MISC, "%s has turned gravity %s.", getName(), !Gravity ? "off" : "on");
   } else if (is_abbrev(arg, "sleep")) {
     Sleep = !Sleep;
     sendTo("You have now turned offensive sleep %s.\n\r", !Sleep ? "off": "on");
-    vlogf(10, "%s has turned offensive sleep %s.", getName(), !Sleep ? "off"   : "on");
+    vlogf(LOG_MISC, "%s has turned offensive sleep %s.", getName(), !Sleep ? "off"   : "on");
   } else if (is_abbrev(arg, "wiznet")) {
     WizBuild = ! WizBuild;
     sendTo("Builders can now %s the wiznet.\n\r", WizBuild ? "hear" : "not hear");
-    vlogf(5,"%s has turned wiznet %s for builders.",getName(),WizBuild ? "on" : "off");
+    vlogf(LOG_MISC,"%s has turned wiznet %s for builders.",getName(),WizBuild ? "on" : "off");
   } else if (is_abbrev(arg, "wizgoto")) {
     WizGoto = ! WizGoto;
     sendTo("Immortals can now %s the enabled zones.\n\r", WizGoto ? "goto" : "not goto");
-    vlogf(5,"%s has turned goto %s for immortals.",getName(),WizGoto ? "on" : "off");
+    vlogf(LOG_MISC,"%s has turned goto %s for immortals.",getName(),WizGoto ? "on" : "off");
   } else if (is_abbrev(arg, "wizshout")) {
     WizShout = ! WizShout;
     sendTo("Immortals can now %s.\n\r", WizShout ? "shout" : "not shout");
-    vlogf(5,"%s has turned shout %s for immortals.",getName(),WizShout ? "on" : "off");
+    vlogf(LOG_MISC,"%s has turned shout %s for immortals.",getName(),WizShout ? "on" : "off");
   } else if (is_abbrev(arg, "invis")) {
     if (!isImmortal() || !hasWizPower(POWER_TOGGLE_INVISIBILITY)) {
       sendTo("Invisibility use has been restricted due to overuse.\n\r");
@@ -361,13 +257,13 @@ void TPerson::doToggle(const char *arg)
     }
     WizInvis = ! WizInvis;
     sendTo("Immortals can now %s invisible.\n\r", WizInvis ? "go" : "not go");
-    vlogf(5,"%s has turned invisibility %s.",getName(),WizInvis? "on" : "off");
+    vlogf(LOG_MISC,"%s has turned invisibility %s.",getName(),WizInvis? "on" : "off");
     } else if (is_abbrev(arg, "newbiePK") || is_abbrev(arg, "newbiepk")) {
       NewbiePK = ! NewbiePK;
       sendTo("Newbie Pk toggle is now %s.\n\r", NewbiePK ? "in use" : "off");
-      vlogf(10,"%s has now %s newbie pk.",getName(),NewbiePK ? "enabled" : "disabled");
+      vlogf(LOG_MISC,"%s has now %s newbie pk.",getName(),NewbiePK ? "enabled" : "disabled");
       if (NewbiePK)
-        vlogf(10,"Newbies can now be killed by anyone.");
+        vlogf(LOG_MISC,"Newbies can now be killed by anyone.");
   } else if (is_abbrev(arg, "testcode1")) {
 #if 0
     // if you are using testcode, change this so we don't collide usages
@@ -378,7 +274,7 @@ void TPerson::doToggle(const char *arg)
 #endif
     TestCode1 = ! TestCode1;
     sendTo("TestCode #1 is now %s.\n\r", TestCode1 ? "in use" : "off");
-    vlogf(10,"%s has %s TestCode #1.",getName(),TestCode1 ? "enabled" : "disabled");
+    vlogf(LOG_MISC,"%s has %s TestCode #1.",getName(),TestCode1 ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "testcode2")) {
 #if 0
     // if you are using testcode, change this so we don't collide usages
@@ -389,7 +285,7 @@ void TPerson::doToggle(const char *arg)
 #endif
     TestCode2 = ! TestCode2;
     sendTo("TestCode #2 is now %s.\n\r", TestCode2 ? "in use" : "off");
-    vlogf(10,"%s has %s TestCode #2.",getName(),TestCode2 ? "enabled" : "disabled");
+    vlogf(LOG_MISC,"%s has %s TestCode #2.",getName(),TestCode2 ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "testcode3")) {
 #if 0
     // if you are using testcode, change this so we don't collide usages
@@ -400,7 +296,7 @@ void TPerson::doToggle(const char *arg)
 #endif
     TestCode3 = ! TestCode3;
     sendTo("TestCode #3 is now %s.\n\r", TestCode3 ? "in use" : "off");
-    vlogf(10,"%s has %s TestCode #3.",getName(),TestCode3 ? "enabled" : "disabled");
+    vlogf(LOG_MISC,"%s has %s TestCode #3.",getName(),TestCode3 ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "testcode4")) {
 #if 0
     // if you are using testcode, change this so we don't collide usages
@@ -411,25 +307,25 @@ void TPerson::doToggle(const char *arg)
 #endif
     TestCode4 = ! TestCode4;
     sendTo("TestCode #4 is now %s.\n\r", TestCode4 ? "in use" : "off");
-    vlogf(10,"%s has %s TestCode #4.",getName(),TestCode4 ? "enabled" : "disabled");
+    vlogf(LOG_MISC,"%s has %s TestCode #4.",getName(),TestCode4 ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "questcode")) {
     QuestCode = !QuestCode;
     sendTo("Questcode is now %s.\n\r", QuestCode ? "in use" : "off");
-    vlogf(10,"%s has %s questcode.",getName(),QuestCode ? "enabled" : "disabled");
+    vlogf(LOG_MISC,"%s has %s questcode.",getName(),QuestCode ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "questcode2") || is_abbrev(arg, "quest2")) {
     QuestCode2 = !QuestCode2;
     sendTo("Questcode 2 is now %s.\n\r", QuestCode2 ? "in use" : "off");
-    vlogf(10,"%s has %s questcode 2.",getName(),QuestCode2 ? "enabled" : "disabled");
+    vlogf(LOG_MISC,"%s has %s questcode 2.",getName(),QuestCode2 ? "enabled" : "disabled");
   } else if (is_abbrev(arg, "pcmobs")) {
     AllowPcMobs = !AllowPcMobs;
     sendTo("You have now %s mob-named pcs.\n\r",
               AllowPcMobs ? "allowed" : "disallowed");
-    vlogf(10, "%s has turned mob/pcs mode %s.", getName(), 
+    vlogf(LOG_MISC, "%s has turned mob/pcs mode %s.", getName(), 
               AllowPcMobs ? "on" : "off");
   } else if (is_abbrev(arg, "clients")) {
     Clients = !Clients;
     sendTo("You have now %s clients.\n\r", Clients ? "allowed" : "disallowed");
-    vlogf(10, "%s has turned client mode %s.", getName(), Clients ? "on" : "off");
+    vlogf(LOG_MISC, "%s has turned client mode %s.", getName(), Clients ? "on" : "off");
 
     if (!Clients) {
       sendTo("Severing current client connections.\n\r");
@@ -448,7 +344,7 @@ void TPerson::doToggle(const char *arg)
     nuke_inactive_mobs = !nuke_inactive_mobs;
     sendTo("Mobs in inactive zones are now %s.\n\r", 
            nuke_inactive_mobs ? "nuked" : "preserved");
-    vlogf(10, "%s has turned nuke mode %s.", getName(),
+    vlogf(LOG_MISC, "%s has turned nuke mode %s.", getName(),
              nuke_inactive_mobs ? "on" : "off");
     unsigned int zone;
     for (zone = 1; zone < zone_table.size(); zone++) {
@@ -463,7 +359,7 @@ void TPerson::doToggle(const char *arg)
 
     TurboMode = !TurboMode;
     sendTo("You have now %s turbo mode.\n\r", TurboMode ? "activated" : "deactivated");
-    vlogf(10, "%s has turned turbomode mode %s.", getName(), TurboMode ? "on" : "off");
+    vlogf(LOG_MISC, "%s has turned turbomode mode %s.", getName(), TurboMode ? "on" : "off");
   } else {
     sendTo("Syntax : toggle <silence | sleep | testcode | wiznet | pcmobs | client>\n\r");
     sendTo("Syntax : toggle <questcode | questcode2 | turbomode | nuke |
@@ -499,7 +395,7 @@ void TBeing::doWizlock(const char *argument)
       sendTo("It's already on!\n\r");
     else {
       sendTo("WizLock is now on.\n\r");
-      vlogf(10, "WizLock was turned on by %s.", getName());
+      vlogf(LOG_MISC, "WizLock was turned on by %s.", getName());
       WizLock = TRUE;
     }
   } else if (!strcmp(buf, "off")) {
@@ -507,7 +403,7 @@ void TBeing::doWizlock(const char *argument)
       sendTo("It's already off!\n\r");
     else {
       sendTo("WizLock is now off.\n\r");
-      vlogf(10, "WizLock was turned off by %s.", getName());
+      vlogf(LOG_MISC, "WizLock was turned off by %s.", getName());
       WizLock = FALSE;
     }
   } else if (!strcmp(buf, "add")) {
@@ -528,7 +424,7 @@ void TBeing::doWizlock(const char *argument)
       }
     }
     strcpy(hostlist[numberhosts], buf);
-    vlogf(10, "%s has added host %s to the access denied list.", getName(), hostlist[numberhosts]);
+    vlogf(LOG_MISC, "%s has added host %s to the access denied list.", getName(), hostlist[numberhosts]);
     numberhosts++;
     return;
   } else if (!strcmp(buf, "rem")) {
@@ -551,7 +447,7 @@ void TBeing::doWizlock(const char *argument)
       if (!strncmp(hostlist[a], buf, length)) {
     for (b = a; b <= numberhosts; b++)
       strcpy(hostlist[b], hostlist[b + 1]);
-    vlogf(10, "%s has removed host %s from the access denied list.", getName(), buf);
+    vlogf(LOG_MISC, "%s has removed host %s from the access denied list.", getName(), buf);
     numberhosts--;
     return;
       }
@@ -577,7 +473,7 @@ void TBeing::doWizlock(const char *argument)
         return;
       } else {
         lockmess = note->action_description;
-        vlogf(9, "%s added a wizlock message.", getName());
+        vlogf(LOG_MISC, "%s added a wizlock message.", getName());
         sendTo("The wizlock message is now:\n\r");
         sendTo(lockmess.c_str());
         return;
@@ -757,11 +653,11 @@ TO_CHAR);
     if (victim->isPlayerAction(PLR_BANISHED)) {
       victim->remPlayerAction(PLR_BANISHED);
       act("You just removed $N's banished flag", FALSE, this, 0, victim, TO_CHAR);
-      vlogf(5, "%s removed %s's banish flag.", getName(), victim->getName());
+      vlogf(LOG_MISC, "%s removed %s's banish flag.", getName(), victim->getName());
     } else {
       victim->addPlayerAction(PLR_BANISHED);
       act("You just set $N's banished flag.", FALSE, this, 0, victim, TO_CHAR);
-      vlogf(5, "%s banished %s.", getName(), victim->getName());
+      vlogf(LOG_MISC, "%s banished %s.", getName(), victim->getName());
     }
   } else if (is_abbrev(buf2, "solo")) {
     // check for quest stuff first
@@ -1247,14 +1143,14 @@ int TBeing::doGoto(const string & argument)
 {
   followData *k, *n;
   int loc_nr, was_in = inRoom(), location, i;
-  TBeing *target_mob, *v = NULL;
+  TBeing *target_mob;//, *v = NULL;
   TThing *t;
   TObj *target_obj;
   TRoom *rp2;
   int rc;
 
   if (!roomp) {
-    vlogf(10, "Character in invalid room in doGoto!");
+    vlogf(LOG_MISC, "Character in invalid room in doGoto!");
     return FALSE;
   }
 
@@ -1269,9 +1165,28 @@ int TBeing::doGoto(const string & argument)
   two_arg(argument, buf, tStString);
 
   if (buf.empty()) {
-    sendTo("You must supply a room number or a name.\n\r");
+    char tString[10];
+
+    sprintf(tString, "%d", (desc ? desc->office : ROOM_IMPERIA));
+  } else if (buf == "help" && desc) {
+    sendTo("Useful rooms:\n\r____________________\n\r");
+    sendTo("         %6d: Your Office\n\r", desc->office);
+
+    if (desc->blockastart)
+      sendTo("%6d - %6d: Your Primary Room Block\n\r", desc->blockastart, desc->blockaend);
+
+    if (desc->blockbstart)
+      sendTo("%6d - %6d: Your Secondary Room Block\n\r", desc->blockbstart, desc->blockbend);
+
+    sendTo("         %6d: Wizard Board\n\r", ROOM_IMPERIA);
+    sendTo("              9: Lab\n\r");
+    sendTo("              2: Builder's Lounge/Board\n\r");
+    sendTo("              8: Reimbursement/Enforcement Board\n\r");
+    sendTo("         %6d: Center Square\n\r", ROOM_CS);
+
     return FALSE;
   }
+
   if (isdigit(*buf.c_str()) && buf.find('.') == string::npos) {
     loc_nr = atoi(buf);
     if (NULL == real_roomp(loc_nr)) {
@@ -1319,7 +1234,7 @@ int TBeing::doGoto(const string & argument)
   }
 
   if (!(rp2 = real_roomp(location))) {
-    vlogf(10, "Invalid room in doGoto!");
+    vlogf(LOG_MISC, "Invalid room in doGoto!");
     return FALSE;
   }
   if (!hasWizPower(POWER_GOTO_IMP_POWER) &&
@@ -1336,6 +1251,19 @@ int TBeing::doGoto(const string & argument)
 
   bool hasStealth = (desc ? isPlayerAction(PLR_STEALTH) : false);
 
+  if (msgVariables(MSG_BAMFOUT)[0] != '!') {
+    for (t = roomp->stuff; t; t = t->nextThing) {
+      TBeing *tbt = dynamic_cast<TBeing *>(t);
+
+      if (tbt && this != tbt && (!hasStealth || tbt->GetMaxLevel() > MAX_MORT)) {
+        string s = nameColorString(tbt, tbt->desc, msgVariables[MSG_BAMFOUT].c_str(), NULL, COLOR_BASIC, TRUE);
+        act(s.c_str(), TRUE, this, 0, tbt, TO_VICT);
+      }
+    }
+  } else if ((rc = parseCommand((msgVariables(MSG_BAMFOUT).c_str()) + 1, FALSE)) == DELETE_THIS)
+    return DELETE_THIS;
+
+#if 0
   if (!desc || !desc->poof.poofout)
     act("$n disappears in a cloud of mushrooms.",
         TRUE, this, NULL, NULL, TO_ROOM, NULL,  (hasStealth ? MAX_MORT : 0));
@@ -1352,6 +1280,7 @@ int TBeing::doGoto(const string & argument)
     if ((rc = parseCommand((desc->poof.poofout + 1), FALSE)) == DELETE_THIS)
       return DELETE_THIS;
   }
+#endif
 
   if (fight())
     stopFighting();
@@ -1372,6 +1301,19 @@ int TBeing::doGoto(const string & argument)
 
   hasStealth = (desc ? isPlayerAction(PLR_STEALTH) : false);
 
+  if (msgVariables(MSG_BAMFIN)[0] != '!') {
+    for (t = roomp->stuff; t; t = t->nextThing) {
+      TBeing *tbt = dynamic_cast<TBeing *>(t);
+
+      if (tbt && this != tbt && (!hasStealth || tbt->GetMaxLevel() > MAX_MORT)) {
+        string s = nameColorString(tbt, tbt->desc, msgVariables[MSG_BAMFIN].c_str(), NULL, COLOR_BASIC, TRUE);
+        act(s.c_str(), TRUE, this, 0, tbt, TO_VICT);
+      }
+    }
+  } else if ((rc = parseCommand((msgVariables(MSG_BAMFIN).c_str()) + 1, FALSE)) == DELETE_THIS)
+    return DELETE_THIS;
+
+#if 0
   if (!desc || !desc->poof.poofin) {
     act("$n appears with an explosion of rose-petals.",
         TRUE, this, 0, v, TO_ROOM, NULL, (hasStealth ? MAX_MORT : 0));
@@ -1389,6 +1331,8 @@ int TBeing::doGoto(const string & argument)
     if ((rc = parseCommand((desc->poof.poofin + 1), FALSE)) == DELETE_THIS)
       return DELETE_THIS;
   }
+#endif
+
   doLook("", CMD_LOOK);
   if (riding) {
     rc = riding->genericMovedIntoRoom(rp2, was_in);
@@ -1543,7 +1487,7 @@ void TPerson::doSnoop(const char *argument)
       if (desc->snoop.snooping->desc)
     desc->snoop.snooping->desc->snoop.snoop_by = 0;
       else
-    vlogf(10, "Caught %s snooping %s who didn't have a descriptor!", name, desc->snoop.snooping->name);
+    vlogf(LOG_MISC, "Caught %s snooping %s who didn't have a descriptor!", name, desc->snoop.snooping->name);
 
       desc->snoop.snooping = 0;
     }
@@ -1778,12 +1722,12 @@ void TBeing::makeLimbTransformed(TBeing * victim, wearSlotT limb, bool paired)
         return;
       default:
         sendTo("That limb is currently not supported for paired transformation.\n\r");
-        vlogf(10, "doTransformLimb called with bad case");
+        vlogf(LOG_MISC, "doTransformLimb called with bad case");
         return;
     }
   } else {
         sendTo("Single limb transformations are not currently supported.\n\r");
-        vlogf(10, "doTransformLimb called a single limb transformation");
+        vlogf(LOG_MISC, "doTransformLimb called a single limb transformation");
         return;
   }
 }
@@ -1880,12 +1824,12 @@ void TBeing::transformLimbsBack(const char * buffer, wearSlotT limb, bool cmd)
 
   if (!hasTransformedLimb() && affectedBySpell(spell)) {
     sendTo("Please bug what you just did.\n\r");
-    vlogf(10,"Somehow transformlimbback got sent a null limb");
+    vlogf(LOG_MISC,"Somehow transformlimbback got sent a null limb");
   }
 
   if (!limb) {
     sendTo("Please bug what you just did.\n\r");
-    vlogf(10,"Somehow transformlimbback got sent a null limb");
+    vlogf(LOG_MISC,"Somehow transformlimbback got sent a null limb");
     return;
   } else if (limb == MAX_WEAR) {
     if (!hasTransformedLimb() &&
@@ -2027,7 +1971,7 @@ void TBeing::transformLimbsBack(const char * buffer, wearSlotT limb, bool cmd)
         if (isLimbFlags(slot, PART_TRANSFORMED)) {
           found = TRUE;
           if (isLimbFlags(slot, PART_MISSING))
-           vlogf(5, "%s has both a missing and a transformed limb", getName());
+           vlogf(LOG_MISC, "%s has both a missing and a transformed limb", getName());
         remLimbFlags(slot, PART_TRANSFORMED);
         }
       }
@@ -2063,7 +2007,7 @@ void TBeing::transformLimbsBack(const char * buffer, wearSlotT limb, bool cmd)
       }
       break;
     default:
-      vlogf (10,"Bad limb number sent to transformLimbsBack");
+      vlogf(LOG_BUG,"Bad limb number sent to transformLimbsBack");
       sendTo("Please bug what you just did or tell a god.\n\r");
       return;
   }
@@ -2204,7 +2148,7 @@ void TPerson::doForce(const char *argument)
     }
   } else if (!strcmp("all", name_buf)) {
     // force all 
-    vlogf(5, "%s just forced all to '%s'", getName(), to_force);
+    vlogf(LOG_MISC, "%s just forced all to '%s'", getName(), to_force);
     for (i = descriptor_list; i; i = i->next) {
       if ((vict = i->character) && (i->character != this) && !i->connected) {
         if ((GetMaxLevel() <= vict->GetMaxLevel()) && dynamic_cast<TPerson *>(vict))
@@ -2370,7 +2314,7 @@ void TPerson::doLoad(const char *argument)
 	return;
       }
       if (!(obj = read_object(numx, REAL))) {
-	vlogf(3, "Error finding object.");
+	vlogf(LOG_BUG, "Error finding object.");
 	return;
       }
       if (obj_index[numx].number > obj_index[numx].max_exist) {
@@ -2707,7 +2651,7 @@ void TPerson::doPurge(const char *argument)
     if ((vict = get_char_room_vis(this, name_buf))) {
       if (vict->spec == SPEC_SHOPKEEPER) {    // shopkeeper 
         sendTo("Be glad Brutius put this catch in for shopkeepers.\n\r");
-        vlogf(10, "%s just tried to purge a shopkeeper.", getName());
+        vlogf(LOG_MISC, "%s just tried to purge a shopkeeper.", getName());
         return;
       }
       if (vict->isPc() && 
@@ -3173,7 +3117,7 @@ void TBeing::doRestore(const char *argument)
 #if 0
     int pracs = 0;
       sendTo("Bug that restore practices formula isn't fixed-tell Cosmo.\n\r");
-      vlogf(5,"Tell Cosmo that the restore Practices formula isn't fixed");
+      vlogf(LOG_MISC,"Tell Cosmo that the restore Practices formula isn't fixed");
       return;
     if (!victim->isSingleClass()) {
       sendTo("Restoring practices on multi-class characters is not supported.\n\r");
@@ -3304,12 +3248,12 @@ void TBeing::doNoshout(const char *argument)
       vict->sendTo("You can shout again.\n\r");
       sendTo("NOSHOUT removed.\n\r");
       vict->remPlayerAction(PLR_GODNOSHOUT);
-      vlogf(4,"%s had noshout removed by %s",vict->getName(), getName());
+      vlogf(LOG_MISC,"%s had noshout removed by %s",vict->getName(), getName());
     } else if (hasWizPower(POWER_NOSHOUT)) {
       vict->sendTo("The gods take away your ability to shout!\n\r");
       sendTo("NOSHOUT set.\n\r");
       vict->addPlayerAction(PLR_GODNOSHOUT);
-      vlogf(4,"%s had noshout set by %s",vict->getName(), getName());
+      vlogf(LOG_MISC,"%s had noshout set by %s",vict->getName(), getName());
     } else
       sendTo("Sorry, you can't do that.\n\r");
   } else {
@@ -3622,7 +3566,7 @@ void TBeing::doWipe(const char *argument)
          LOWER(st.aname[0]), lower(st.aname).c_str(), lower(namebuf).c_str());
 
   if (unlink(buf) != 0)
-    vlogf(9, "error in unlink (7) (%s) %d", buf, errno);
+    vlogf(LOG_FILE, "error in unlink (7) (%s) %d", buf, errno);
 
   sendTo("Removing: %s\n\r", buf);
 }
@@ -3716,7 +3660,7 @@ void TPerson::doAccess(const char *arg)
         strcpy(st.pwd, pass);
       
         if (!raw_save_char(lower(arg1).c_str(), &st)) {
-          vlogf(10, "Ran into problems (#1) saving file in doAccess()");
+          vlogf(LOG_MISC, "Ran into problems (#1) saving file in doAccess()");
           return;
         }
         sprintf(arg1, "account/%c/%s", LOWER(st.aname[0]), lower(st.aname).c_str());
@@ -3749,7 +3693,7 @@ void TPerson::doAccess(const char *arg)
           return;
         }
         if (!raw_save_char(lower(arg1).c_str(), &st)) {
-          vlogf(10, "Ran into problems (#2) saving file in doAccess()");
+          vlogf(LOG_MISC, "Ran into problems (#2) saving file in doAccess()");
           return;
         }
         return;
@@ -3915,14 +3859,109 @@ void TBeing::doReplace(const char *argument)
 
 void TBeing::doSetsev(const char *arg)
 {
-  int sev;
+  int  tMatch;
+  char tString[512];
   Descriptor *d;
+  const char *tFields[] =
+  {
+    "miscellaneous", "low"     , "file"  , "bug"    , "procedure",
+    "player"       , "immortal", "client", "combat" , "cheat",
+    "faction"      , "mobile"  , "mobai" , "mobresp", "object",
+    "editor"       , "\n"
+  };
+  const char *tHelp[] =
+  {
+    "Anything not found in the others",
+    "L.O.W Errors",
+    "File I/O Errors",
+    "Generic Bugs",
+    "Mobile/Object/Room Procedures",
+    "Player Login/Logouts",
+    "Immortal Info",
+    "Client Bugs/Info",
+    "Combat Bugs",
+    "Cheat Reports/Notifications",
+    "Faction Bugs",
+    "Generic Mobile Bugs",
+    "Mobile AI Bugs",
+    "Mobile Response Script Bugs",
+    "Generic Object Bugs",
+    "Editor Bugs"
+  };
 
   if (!(d = desc))
     return;
 
   for (; isspace(*arg); arg++);
 
+  bisect_arg(arg, &tMatch, tString, tFields);
+
+  if (!tMatch) {
+    sendTo("Leg Severity Options:\n\r______________________________\n\r");
+
+    for (tMatch = 0; tFields[tMatch][0] != '\n'; tMatch++)
+      sendTo("%s: %-15s: %s\n\r",
+             ((d->severity & (1 << tMatch)) ? "On " : "Off"),
+             tFields[tMatch], tHelp[tMatch]);
+
+    return;
+  }
+
+  if (tMatch < 1 || tMatch > LOG_MAX) {
+    if (is_abbrev(arg, "batopr") && !strcmp(getName(), "Batopr")) {
+      if ((d->severity & (1 << LOG_BATOPR)))
+        d->severity &= ~(1 << LOG_BATOPR);
+      else
+        d->severity |= (1 << LOG_BATOPR);
+
+      sendTo("Your Personal Log Messages are now %s",
+             ((d->severity & (1 << LOG_BATOPR)) ? "On" : "Off"));
+    } else if (is_abbrev(arg, "brutius") && !strcmp(getName(), "Brutius")) {
+      if ((d->severity & (1 << LOG_BRUTIUS)))
+        d->severity &= ~(1 << LOG_BRUTIUS);
+      else
+        d->severity |= (1 << LOG_BRUTIUS);
+
+      sendTo("Your Personal Log Messages are now %s",
+             ((d->severity & (1 << LOG_BRUTIUS)) ? "On" : "Off"));
+    } else if (is_abbrev(arg, "cosmo") && !strcmp(getName(), "Cosmo")) {
+      if ((d->severity & (1 << LOG_COSMO)))
+        d->severity &= ~(1 << LOG_COSMO);
+      else
+        d->severity |= (1 << LOG_COSMO);
+
+      sendTo("Your Personal Log Messages are now %s",
+             ((d->severity & (1 << LOG_COSMO)) ? "On" : "Off"));
+    } else if (is_abbrev(arg, "lapsos") && !strcmp(getName(), "Lapsos")) {
+      if ((d->severity & (1 << LOG_LAPSOS)))
+        d->severity &= ~(1 << LOG_LAPSOS);
+      else
+        d->severity |= (1 << LOG_LAPSOS);
+
+      sendTo("Your Personal Log Messages are now %s",
+             ((d->severity & (1 << LOG_LAPSOS)) ? "On" : "Off"));
+    } else if (is_abbrev(arg, "peel") && !strcmp(getName(), "Peel")) {
+      if ((d->severity & (1 << LOG_PEEL)))
+        d->severity &= ~(1 << LOG_PEEL);
+      else
+        d->severity |= (1 << LOG_PEEL);
+
+      sendTo("Your Personal Log Messages are now %s",
+             ((d->severity & (1 << LOG_PEEL)) ? "On" : "Off"));
+    } else
+      sendTo("Incorrect Log Type.\n\r");
+  } else {
+    if ((d->severity & (1 << (tMatch - 1))))
+      d->severity &= ~(1 << (tMatch - 1));
+    else
+      d->severity |= (1 << (tMatch - 1));
+
+    sendTo("Log Type %s toggled %s.\n\r",
+           tFields[(tMatch - 1)],
+           ((d->severity & (1 << (tMatch - 1))) ? "On" : "Off"));
+  }
+
+#if 0
   if (!*arg || !arg || !strcmp(arg, "?")) {
     sendTo("Your current log severity is set to %d.\n\r", d->severity);
     return;
@@ -3936,6 +3975,7 @@ void TBeing::doSetsev(const char *arg)
   sendTo("Setting log severity level to %d.\n\r", sev);
   d->severity = sev;
   doSave(SILENT_YES);
+#endif
 }
 
 moneyTypeT & operator++(moneyTypeT &c, int)
@@ -4812,12 +4852,12 @@ static void TimeTravel(const char *ch)
     return;
 
   if (!(fp = fopen(fileName, "r+b"))) {
-    vlogf(10, "Error updating %s's rent file!", ch);
+    vlogf(LOG_MISC, "Error updating %s's rent file!", ch);
     return;
   }
 
   if (fread(&h, sizeof(h), 1, fp) != 1) {
-    vlogf(10, "  Cannot read rent file header for %s", ch);
+    vlogf(LOG_MISC, "  Cannot read rent file header for %s", ch);
     fclose(fp);
     return;
   }
@@ -4831,15 +4871,15 @@ static void TimeTravel(const char *ch)
     h.last_update = time(0);
     unsigned int amt = h.total_cost * delta / SECS_PER_REAL_DAY;
     h.gold_left += amt;
-    vlogf(-1, "Crediting %s with %u gold for downtime. (left=%d)",
+    vlogf(LOG_SILENT, "Crediting %s with %u gold for downtime. (left=%d)",
         ch, amt, h.gold_left);
   } else
-    vlogf(-1, "TimeTravel for %s done as update-advance only. (left=%d)",
+    vlogf(LOG_SILENT, "TimeTravel for %s done as update-advance only. (left=%d)",
         ch, h.gold_left);
 
   rewind(fp);
   if (fwrite(&h, sizeof(h), 1, fp) != 1) {
-    vlogf(10, "Cannot write updated rent file header for %s", h.owner);
+    vlogf(LOG_MISC, "Cannot write updated rent file header for %s", h.owner);
     fclose(fp);
     return;
   }
@@ -4869,7 +4909,7 @@ void TBeing::doTimeshift(const char *arg)
       return;
     }
 #endif
-    vlogf(5,"%s moving time back %d minutes.",getName(),deltatime);
+    vlogf(LOG_MISC,"%s moving time back %d minutes.",getName(),deltatime);
     dirwalk("rent/a",TimeTravel);
     dirwalk("rent/b",TimeTravel);
     dirwalk("rent/c",TimeTravel);
@@ -5038,7 +5078,7 @@ void TBeing::doHostlog(const char *argument)
       }
     }
     strcpy(hostLogList[numberLogHosts], buf);
-    vlogf(10, "%s has added host %s to the hostlog list.", getName(), hostLogList[numberLogHosts]);
+    vlogf(LOG_MISC, "%s has added host %s to the hostlog list.", getName(), hostLogList[numberLogHosts]);
     numberLogHosts++;
     return;
   } else if (!strcmp(buf, "rem")) {
@@ -5061,7 +5101,7 @@ void TBeing::doHostlog(const char *argument)
       if (!strncmp(hostLogList[a], buf, length)) {
         for (b = a; b <= numberLogHosts; b++)
           strcpy(hostLogList[b], hostLogList[b + 1]);
-        vlogf(10, "%s has removed host %s from the hostlog list.", getName(), buf);
+        vlogf(LOG_MISC, "%s has removed host %s from the hostlog list.", getName(), buf);
         numberLogHosts--;
         return;
       }
@@ -5256,7 +5296,7 @@ void TBeing::doSysChecklog(const char *arg)
 
   // If we don't trust these people why even have the command?
   if (!hasWizPower(POWER_WIZARD))
-    vlogf(5, "%s checklogging: '%s'", getName(), tString);
+    vlogf(LOG_MISC, "%s checklogging: '%s'", getName(), tString);
 
   /*
   char *squote, *equote;
@@ -5304,7 +5344,7 @@ void TBeing::doSysChecklog(const char *arg)
   systask->AddTask(this, SYSTEM_CHECKLOG, argument);
 
   // this is here to avoid gods checking logs on other gods
-  vlogf(5, "%s checklogging: '%s'", getName(), argument);
+  vlogf(LOG_MISC, "%s checklogging: '%s'", getName(), argument);
   */
 }
 
@@ -5904,7 +5944,7 @@ int TBeing::doAs(const char *arg)
   // this is event where rc == DELETE_THIS
   // handle this by forcing a return
   if (IS_SET_DELETE(rc, DELETE_THIS)) {
-    vlogf(9, "doAs(): %s somehow killed self: %s",
+    vlogf(LOG_BUG, "doAs(): %s somehow killed self: %s",
             desc->original->getName(), arg);
     sendTo("Please don't do things that will cause your original character to be destroyed.\n\r");
     doReturn("", WEAR_NOWHERE, CMD_RETURN);
@@ -5971,50 +6011,4 @@ immortalTypeT TPerson::isImmortal(int lev) const
 bool TBeing::inQuest() const
 {
   return (isPlayerAction(PLR_SOLOQUEST) || isPlayerAction(PLR_GRPQUEST));
-}
-
-int TBeing::doLongDescr(const char *arg)
-{
-  Descriptor *d;
-
-  if (powerCheck(POWER_LONGDESC))
-    return FALSE;
-
-  if (!(d = desc))
-    return FALSE;
-
-  for (; isspace(*arg); arg++);
-
-  if (!*arg || !strcmp(arg, "?")) {
-    sendTo("Your current long description is : \n\r\n\r");
-    if (!(player.longDescr)) {
-      sendTo("Default.\n\r");
-      return FALSE;
-    } else {
-      sendTo("%s\n\r", nameColorString(this, d, player.longDescr, NULL, COLOR_BASIC, FALSE).c_str());
-      return FALSE;
-    }
-  }
-  if (!strcmp(arg, "def")) {
-    delete [] player.longDescr;
-    player.longDescr = NULL;
-    sendTo("Ok, long description is now the PC default.\n\r");
-    return TRUE;
-  }
-  int len = (int) strlen(arg);
-
-  char tmpbuf[256];
-  if (len > 100) {
-    sendTo("String too long.  Truncated to:\n\r");
-    strncpy(tmpbuf, arg, 149);
-    tmpbuf[100] = '\0';
-    sendTo("%s\n\r", tmpbuf);
-    len = 100;
-  } else
-    strcpy(tmpbuf, arg);
-
-  delete [] player.longDescr;
-  player.longDescr = dsearch(tmpbuf);
-  sendTo("Ok, long description is now:\n\r%s\n\r", player.longDescr);
-  return TRUE;
 }

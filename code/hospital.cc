@@ -65,7 +65,7 @@ int limb_expel_price(TBeing *ch, wearSlotT pos)
   TThing *stuck;
 
   if (!(stuck = ch->getStuckIn(pos))) {
-    vlogf(10, "VERY BAD! limb_expel_price called with pos(%d) char(%s) with no item stuck in!", pos, ch->getName());
+    vlogf(LOG_BUG, "VERY BAD! limb_expel_price called with pos(%d) char(%s) with no item stuck in!", pos, ch->getName());
     return (-1);
   }
   return stuck->expelPrice(ch, pos);
@@ -73,7 +73,7 @@ int limb_expel_price(TBeing *ch, wearSlotT pos)
 
 int TThing::expelPrice(const TBeing *ch, int pos) const
 {
-  vlogf(10, "Somehow %s got something besides a weapon/arrow stuck in them pos(%d)", ch->getName(), pos);
+  vlogf(LOG_BUG, "Somehow %s got something besides a weapon/arrow stuck in them pos(%d)", ch->getName(), pos);
   return (1000000);
 }
 
@@ -129,7 +129,7 @@ int limb_wound_price(TBeing *ch, int pos, unsigned short int wound)
     case WEAR_WAISTE:
       return (price * 4);
     default:
-      vlogf(10, "Bad pos (%d) in limb_wound_price!", pos);
+      vlogf(LOG_BUG, "Bad pos (%d) in limb_wound_price!", pos);
       return (1000000);
   }
 }
@@ -165,7 +165,7 @@ int limb_regen_price(TBeing *ch, int pos)
     case WEAR_WAISTE:
       return (price * 4);
     default:
-      vlogf(10, "Bad pos (%d) in limb_regen_price!", pos);
+      vlogf(LOG_BUG, "Bad pos (%d) in limb_regen_price!", pos);
       return (1000000);
   }
 }

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_sedit.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /*****************************************************************************
 
   SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
@@ -916,7 +898,7 @@ void sedit(TBeing *ch, TMonster *tMonster)
     if (beingIndex)
       beingIndex->next = tMonster->next;
     else {
-      vlogf(10, "Trying to remove ?? from character_list.");
+      vlogf(LOG_EDIT, "Trying to remove ?? from character_list.");
       abort();
     }
   }
@@ -1016,7 +998,7 @@ void seditList(TBeing *ch)
   sprintf(tString, "immortals/%s/mobs/scripts", ch->getNameNOC(ch).c_str());
 
   if (!(tDirInfo = opendir(tString))) {
-    vlogf(10, "Unable to dirwalk directory %s", tString);
+    vlogf(LOG_EDIT, "Unable to dirwalk directory %s", tString);
     return;
   }
 
@@ -1070,7 +1052,7 @@ void seditPurge(TBeing *ch)
   sprintf(tString, "immortals/%s/mobs/scripts", ch->getNameNOC(ch).c_str());
 
   if (!(tDirInfo = opendir(tString))) {
-    vlogf(10, "Unable to dirwalk directory %s", tString);
+    vlogf(LOG_EDIT, "Unable to dirwalk directory %s", tString);
     return;
   }
 
@@ -1151,7 +1133,7 @@ void seditCore(TBeing *ch, char *tArg)
               *ch->roomp += *ch->desc->mob;
               ch->desc->mob = NULL;
             } else
-              vlogf(1, "seditCore returning to main game with no mobile in queue.");
+              vlogf(LOG_EDIT, "seditCore returning to main game with no mobile in queue.");
 
             if (ch->vt100() || ch->ansi())
               ch->doCls(false);
@@ -1176,7 +1158,7 @@ void seditCore(TBeing *ch, char *tArg)
       seditDisplayMenu(ch, ch->desc->mob, tArg, 0);
       break;
     default:
-      vlogf(9, "Got to bad place in seditCore() [%d]", ch->specials.edit);
+      vlogf(LOG_EDIT, "Got to bad place in seditCore() [%d]", ch->specials.edit);
       break;
   }
 }

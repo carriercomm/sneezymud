@@ -244,7 +244,7 @@ int divinationObj(TBeing *caster, const TObj *obj, int, byte bKnown)
                 discArray[obj->affected[i].modifier]->name,
                 obj->affected[i].modifier2);
           else
-            vlogf(10, "BOGUS AFFECT (%d) on %s", obj->affected[i].modifier,
+            vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", obj->affected[i].modifier,
                   obj->getName());
         } else if (obj->affected[i].location == APPLY_DISCIPLINE) {
           if (discNames[obj->affected[i].modifier].practice)
@@ -253,7 +253,7 @@ int divinationObj(TBeing *caster, const TObj *obj, int, byte bKnown)
                 discNames[obj->affected[i].modifier].practice,
                 obj->affected[i].modifier2);
           else
-            vlogf(10, "BOGUS AFFECT (%d) on %s", obj->affected[i].modifier,
+            vlogf(LOG_BUG, "BOGUS AFFECT (%d) on %s", obj->affected[i].modifier,
                   obj->getName());
 
         } else if (obj->affected[i].location == APPLY_IMMUNITY) {
@@ -293,7 +293,7 @@ int castDivinationObj(TBeing *caster, const TObj *obj)
 {
   if (caster->GetMaxLevel() > MAX_MORT && !caster->hasWizPower(POWER_WIZARD)) {
     caster->sendTo("Shame, Shame.  You shouldn't do this...\n\r");
-    vlogf(9, "%s used Divination Object on: %s",
+    vlogf(LOG_CHEAT, "%s used Divination Object on: %s",
           caster->getName(), obj->getName());
     return FALSE;
   }
@@ -348,7 +348,7 @@ int castDivinationBeing(TBeing *caster, TBeing * victim)
 {
   if (caster->GetMaxLevel() > MAX_MORT) {
     caster->sendTo("Shame, Shame.  You shouldn't do this...\n\r");
-    vlogf(9, "%s used Divination Being on: %s",
+    vlogf(LOG_CHEAT, "%s used Divination Being on: %s",
           caster->getName(), victim->getName());
     return FALSE;
   }
@@ -533,7 +533,7 @@ int eyesOfFertuman(TBeing *caster, const char * tofind)
   if (caster->GetMaxLevel() > MAX_MORT &&
       caster->GetMaxLevel() < commandArray[CMD_WHERE]->minLevel) {
     caster->sendTo("You are unable to locate things at your level.\n\r");
-    vlogf(5, "%s using %s to locate '%s'", caster->getName(), discArray[SPELL_EYES_OF_FERTUMAN]->name, tofind);
+    vlogf(LOG_CHEAT, "%s using %s to locate '%s'", caster->getName(), discArray[SPELL_EYES_OF_FERTUMAN]->name, tofind);
     return FALSE;
   }
 
@@ -552,7 +552,7 @@ int castEyesOfFertuman(TBeing *caster, const char * tofind)
   int ret = 0,level;
 
   if (!tofind) {
-    vlogf(5, "Somehow someone lost the argument in eyes of fert");
+    vlogf(LOG_BUG, "Somehow someone lost the argument in eyes of fert");
     return FALSE;
   }
 
@@ -1937,21 +1937,21 @@ void TBeing::doBrew(const char *arg)
     return;
   }
 #if BREW_DEBUG
-  vlogf(4, "Generic comp: %s", comp_gen->getName());
+  vlogf(LOG_MISC, "Generic comp: %s", comp_gen->getName());
 #endif
   if (!comp_spell) {
     sendTo("You seem to be lacking the spell component.\n\r");
     return;
   }
 #if BREW_DEBUG
-  vlogf(4, "spell comp: %s", comp_spell->getName());
+  vlogf(LOG_MISC, "spell comp: %s", comp_spell->getName());
 #endif
   if (!comp_brew) {
     sendTo("You seem to be lacking the brew component.\n\r");
     return;
   }
 #if BREW_DEBUG
-  vlogf(4, "brew comp: %s", comp_brew->getName());
+  vlogf(LOG_MISC, "brew comp: %s", comp_brew->getName());
 #endif
 
   if (!doesKnowSkill(SKILL_BREW)) {
@@ -2045,21 +2045,21 @@ void TBeing::doScribe(const char *arg)
     return;
   }
 #if SCRIBE_DEBUG
-  vlogf(4, "Generic comp: %s", comp_gen->getName());
+  vlogf(LOG_MISC, "Generic comp: %s", comp_gen->getName());
 #endif
   if (!comp_spell) {
     sendTo("You seem to be lacking the spell component.\n\r");
     return;
   }
 #if SCRIBE_DEBUG
-  vlogf(4, "spell comp: %s", comp_spell->getName());
+  vlogf(LOG_MISC, "spell comp: %s", comp_spell->getName());
 #endif
   if (!comp_scribe) {
     sendTo("You seem to be lacking the scribe component.\n\r");
     return;
   }
 #if SCRIBE_DEBUG
-  vlogf(4, "scribe comp: %s", comp_scribe->getName());
+  vlogf(LOG_MISC, "scribe comp: %s", comp_scribe->getName());
 #endif
 
   if (!doesKnowSkill(SKILL_SCRIBE)) {

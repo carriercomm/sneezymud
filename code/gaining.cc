@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: gaining.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include <cmath>
 
 #include "stdsneezy.h"
@@ -1010,7 +992,7 @@ int CDGenericTrainer(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TO
       break;
     }
     if (TrainerInfo[offset].spec == -1) {
-      vlogf(9, "TrainerMob lacked setup in TrainerInfo array (%s)", 
+      vlogf(LOG_BUG, "TrainerMob lacked setup in TrainerInfo array (%s)", 
              me->getName());
       return FALSE;
     }
@@ -1206,7 +1188,7 @@ int TBeing::checkDoneBasic(TBeing *ch, classIndT accclass, int guild, int amount
       bas = ch->getDiscipline(DISC_THIEF)->getNatLearnedness();
       break;
     default:
-      vlogf(5,"Wierd case in checkDoneBasic %d", accclass);
+      vlogf(LOG_BUG,"Wierd case in checkDoneBasic %d", accclass);
   }
 
   if (amountCheck) {
@@ -1512,7 +1494,7 @@ int TBeing::checkForPreReqs(const TBeing *ch, TMonster *me, discNumT discipline,
         }
         break;
       default:
-        vlogf(5, "Bad case in gaining pre requisiites (%d) (%s)", accclass, ch->getName());
+        vlogf(LOG_BUG, "Bad case in gaining pre requisiites (%d) (%s)", accclass, ch->getName());
         ch->sendTo("Bug that you got this at the gain trainer.");
         return TRUE;
     }
@@ -1556,7 +1538,7 @@ int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset,
 
 
   if (pracs <= 0) {
-    vlogf(3, "Bogus pracs used %s (%d)", ch->getName(), ch->in_room);
+    vlogf(LOG_BUG, "Bogus pracs used %s (%d)", ch->getName(), ch->in_room);
     return TRUE;
   }
 
@@ -1654,7 +1636,7 @@ int TBeing::doTraining(TBeing *ch, TMonster *me, classIndT accclass, int offset,
         }
       } else if (ch->doesKnowSkill(i)) {
         if ((discArray[i]->start <=final) && (ch->getRawSkillValue(i) < 0)) {
-          vlogf(5, "%s: ch->doesKnowSkill %s (%d) with no actual learning..could be array change or bug", ch->getName(), discArray[i]->name, i);
+          vlogf(LOG_BUG, "%s: ch->doesKnowSkill %s (%d) with no actual learning..could be array change or bug", ch->getName(), discArray[i]->name, i);
           ch->setNatSkillValue(i, 1);
           ch->setSkillValue(i, 1);
         }
@@ -2180,7 +2162,7 @@ void TBeing::pracPath(TMonster *gm, classIndT Class, ubyte pracs)
       sprintf(buf, "You need to use these practices at your basic %s trainer or you could pursue a weapon specialization.", gm->getProfName());
     }
   } else {
-    vlogf(5, "Bad case in pracPath for %s", getName());
+    vlogf(LOG_BUG, "Bad case in pracPath for %s", getName());
     sendTo("Please bug that there is a bad place in guildmaster instructions.");
     return;
   }

@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_wrath.cc,v $
-// Revision 5.1.1.2  1999/10/25 03:54:47  batopr
-// Reduced dam on callLightning critfail
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // DISC_WRATH.cc
 // Part of SneezyMUD
 
@@ -56,7 +35,7 @@ int plagueOfLocusts(TBeing *caster, TBeing *victim, int level, byte bKnown)
     swarm = MOB_LOCUSTS50;
 
   if (!(locusts = read_mobile(swarm, VIRTUAL))) {
-    vlogf(10, "Spell PLAGUE_LOCUSTS unable to load mob...");
+    vlogf(LOG_BUG, "Spell PLAGUE_LOCUSTS unable to load mob...");
     caster->sendTo("Unable to create the locusts, please report this.\n\r");
     act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
     return SPELL_FAIL;

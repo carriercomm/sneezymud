@@ -263,7 +263,7 @@ void TBeing::remWizPower(wizPowerT)
 bool TPerson::hasWizPower(wizPowerT value) const
 {
   if (value >= MAX_POWER_INDEX) {
-    vlogf(6, "Bad check of hasWizPower(%d)", value);
+    vlogf(LOG_BUG, "Bad check of hasWizPower(%d)", value);
     return FALSE;
   }
 
@@ -273,7 +273,7 @@ bool TPerson::hasWizPower(wizPowerT value) const
 void TPerson::setWizPower(wizPowerT value)
 {
   if (value >= MAX_POWER_INDEX) {
-    vlogf(6, "Bad check of setWizPower(%d)", value);
+    vlogf(LOG_BUG, "Bad check of setWizPower(%d)", value);
     return;
   }
 
@@ -283,7 +283,7 @@ void TPerson::setWizPower(wizPowerT value)
 void TPerson::remWizPower(wizPowerT value)
 {
   if (value >= MAX_POWER_INDEX) {
-    vlogf(6, "Bad check of remWizPower(%d)", value);
+    vlogf(LOG_BUG, "Bad check of remWizPower(%d)", value);
     return;
   }
 

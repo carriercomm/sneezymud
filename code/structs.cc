@@ -81,7 +81,7 @@ TBeing::~TBeing()
       if (eq_stuck > WEAR_NOWHERE) {
         stuckIn->setStuckIn(eq_stuck, NULL);
       } else {
-        vlogf(10, "Extract on stuck in items %s in slot -1 on %s", name, 
+        vlogf(LOG_BUG, "Extract on stuck in items %s in slot -1 on %s", name, 
                stuckIn->name);
         return;
       }
@@ -89,7 +89,7 @@ TBeing::~TBeing()
       if (eq_pos > WEAR_NOWHERE) {
         dynamic_cast<TBeing *>(equippedBy)->unequip(eq_pos);
       } else {
-        vlogf(10, "Extract on equipped item %s in slot -1 on %s", name, 
+        vlogf(LOG_BUG, "Extract on equipped item %s in slot -1 on %s", name, 
                 equippedBy->name);
         return;
       }
@@ -259,7 +259,7 @@ TBeing::~TBeing()
   } else { // has to have both a desc and a desc->connected
     for (k = character_list; (k); k = k->next) {
       if (k == this)
-        vlogf(5, "%s (being) deleted without removal from character_list connected = (%d)", getName(), desc->connected);
+        vlogf(LOG_BUG, "%s (being) deleted without removal from character_list connected = (%d)", getName(), desc->connected);
     }
   }
   setArmor(1000);
@@ -287,7 +287,7 @@ TBeing::~TBeing()
   if (rp)
     rp->initLight();
   else
-    vlogf(10, "NULL rp in TBeing destructor at initLight call.");
+    vlogf(LOG_BUG, "NULL rp in TBeing destructor at initLight call.");
 
   // get rid of discipline stuff
   delete discs;
@@ -355,7 +355,7 @@ TObj::~TObj()
     if (eq_stuck > WEAR_NOWHERE) {
       stuckIn->setStuckIn(eq_stuck, NULL);
     } else {
-      vlogf(10, "Extract on stuck in items %s in slot -1 on %s", name, 
+      vlogf(LOG_BUG, "Extract on stuck in items %s in slot -1 on %s", name, 
              stuckIn->name);
       return;
     }
@@ -363,7 +363,7 @@ TObj::~TObj()
     if (eq_pos > WEAR_NOWHERE) {
       dynamic_cast<TBeing *>(equippedBy)->unequip(eq_pos);
     } else {
-      vlogf(10, "Extract on equipped item %s in slot -1 on %s", name, 
+      vlogf(LOG_BUG, "Extract on equipped item %s in slot -1 on %s", name, 
               equippedBy->name);
       return;
     }
@@ -391,8 +391,8 @@ TObj::~TObj()
     if (temp1)
       temp1->next = next;
     else {
-      vlogf(10, "Couldn't find object in object list.");
-      vlogf(10, "Object name : %s", getName());
+      vlogf(LOG_BUG, "Couldn't find object in object list.");
+      vlogf(LOG_BUG, "Object name : %s", getName());
     }
   }
 
@@ -455,7 +455,7 @@ TRoom::~TRoom()
   for (t = stuff; t; t = t2) {
     t2 = t->nextThing;
     if (t->isPc()) {
-      vlogf(10, "~TRoom() with room occupied by PC()");
+      vlogf(LOG_BUG, "~TRoom() with room occupied by PC()");
       continue;
     }
     delete t;
@@ -566,14 +566,14 @@ void TObj::checkOwnersList(const TPerson *ch)
             tLost += tHave;
           }
 
-          vlogf(2, "CHEATING!  Money (%d) being picked up by %s when dropped by %s.  Lost:%d",
+          vlogf(LOG_CHEAT, "CHEATING!  Money (%d) being picked up by %s when dropped by %s.  Lost:%d",
                 tTalens->getMoney(), ch->getName(), indiv, tLost);
 
           tTalens->setMoney(0);
         } else {
           // transferred betwen 2 chars in same account!
 
-          vlogf(2, "CHEATING!  Item (%s:%d) transferred to %s when previously owned by %s.   owners=[%s %s]", getName(), objVnum(), ch->getName(), indiv, owners, ch->getName());
+          vlogf(LOG_CHEAT, "CHEATING!  Item (%s:%d) transferred to %s when previously owned by %s.   owners=[%s %s]", getName(), objVnum(), ch->getName(), indiv, owners, ch->getName());
 
           // because of where this gets called (operator+=), deleting would be
           // bad due to requirements to check for it occuring all over the place.
@@ -627,7 +627,7 @@ TThing& TBeing::operator += (TThing& t)
   // Thing being put into is a TBeing
   if (dynamic_cast<TBeing *>(&t)) {
     // Thing being put in is a TBeing - Russ 07/01/96
-    vlogf(10, "warning, Being put into Being :%s into %s.", t.getName(), getName());
+    vlogf(LOG_BUG, "warning, Being put into Being :%s into %s.", t.getName(), getName());
   }
 #endif
 
@@ -1010,7 +1010,7 @@ TThing::~TThing()
     shortDescr = NULL;
   }
   if (descr) {
-    //vlogf(-1, "Deleting descr : %s", descr);
+    //vlogf(LOG_SILENT, "Deleting descr : %s", descr);
     delete [] descr;
     // as silly as this may seem, we sometimes crash in the below line
     // I think this is a compiler/linker thing, as there is no good reason
@@ -1157,7 +1157,7 @@ specialData::~specialData()
 void TThing::mount(TThing *ch)
 {
   if (riding) {
-    vlogf(8, "%s already riding in call to mount()", getName());
+    vlogf(LOG_BUG, "%s already riding in call to mount()", getName());
     return;
   }
   // update linked list info
@@ -1259,7 +1259,7 @@ TBeing::TBeing(const TBeing &a) :
   if (IS_SET(a.specials.act,ACT_STRINGS_CHANGED)) {
     name = mud_str_dup(a.name);
     shortDescr = mud_str_dup(a.shortDescr);
-    player.longDescr = mud_str_dup(a.player.longDescr);
+    player.longDescr = mud_str_dup(a.player.getLongDesc());
     setDescr(mud_str_dup(a.getDescr()));
 
     if (ex_description)
@@ -1766,40 +1766,6 @@ lastChangeData::lastChangeData(const lastChangeData &a)
 
 lastChangeData::~lastChangeData()
 {
-}
-
-poofinData::poofinData()
-  : poofin(NULL), poofout(NULL), 
-    ldesc(NULL), pmask(0)
-{
-}
-
-poofinData::poofinData(const poofinData &a)
-  : pmask(a.pmask)
-{
-  poofin = mud_str_dup(a.poofin);
-  poofout = mud_str_dup(a.poofout);
-  ldesc = mud_str_dup(a.ldesc);
-}
-
-poofinData & poofinData::operator=(const poofinData &a)
-{
-  if (this == &a) return *this;
-  delete [] poofin;
-  poofin = mud_str_dup(a.poofin);
-  delete [] poofout;
-  poofout = mud_str_dup(a.poofout);
-  delete [] ldesc;
-  ldesc = mud_str_dup(a.ldesc);
-  pmask = a.pmask;
-  return *this;
-}
-
-poofinData::~poofinData()
-{
-  delete [] poofin;
-  delete [] poofout;
-  delete [] ldesc;
 }
 
 objAffData::objAffData() : 

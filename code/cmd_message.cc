@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_message.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 /*****************************************************************************
 
   SneezyMUD++ - All rights reserved, SneezyMUD Coding Team.
@@ -56,6 +38,9 @@ const char * messageCommandFormat =
 \r\t         slay -nN- When you slay a creature. (what others see)
 \r\t  slay-target -n - When you slay a creature. (what They see)
 \r\t        force -na- What a person sees when you force them to do something.
+\r\t       bamfin -  - What people see when you goto their room.
+\r\t      bamfout -  - What people see when you leave their room with goto.
+\r\t    longdescr -  - What people see when they 'look' in a room you are in.
 \r\tmessage <field> <default>   -   will reset the type to the standard.
 \r\tmessage <field>  -  will display that fields current setting.
 \r\t---------------^^- Required Items:
@@ -90,6 +75,9 @@ const unsigned short int messageCommandSwitches[][3] =
   {200, (MSG_REQ_GNAME | MSG_REQ_ONAME ), POWER_WIZARD},
   {200, (MSG_REQ_GNAME                 ), POWER_WIZARD},
   {200, (MSG_REQ_GNAME | MSG_REQ_STRING), POWER_FORCE},
+  {200, (0                             ), POWER_GOTO},
+  {200, (0                             ), POWER_GOTO},
+  {200, (0                             ), POWER_LONGDESC},
 };
 
 const char * messageCommandTypes[] =
@@ -108,6 +96,9 @@ const char * messageCommandTypes[] =
   "slay",          // 12
   "slay-target",   // 13
   "force",         // 14
+  "bamfin",        // 15
+  "bamfout",       // 16
+  "longdescr",     // 17
   "\n"
 };
 
@@ -295,6 +286,15 @@ string TMessages::getDefaultMessage(messageTypeT tValue, TBeing *tChar)
     case MSG_FORCE: // Force
       return "<n> has forced you to '<a>'.";
       break;
+    case MSG_BAMFIN: // goto <room>
+      return "<n> appears with an exposion of rose-petals";
+      break;
+    case MSG_BAMOUT: // goto <room> when leaving a room
+      return "<n> disappears in a cloud of mushrooms."
+      break;
+    case MSG_LONGDESCR: // Long Description
+      return "<n> is here, as they always are...";
+      break;
     default:
       return "ERROR";
       break;
@@ -399,8 +399,26 @@ TMessages & TMessages::operator()(messageTypeT tValue, string tStString)
       tMessages.msgForce = new char[tStString.length() + 1];
       strcpy(tMessages.msgForce, tStString.c_str());
       break;
+    case MSG_BAMFIN: // bamfin
+      delete [] tMessages.msgBamfin;
+      tMessages.msgBamfin = NULL;
+      tMessages.msgBamfin = new char[tStString.length() + 1];
+      strcpy(tMessages.msgBamfin, tStString.c_str());
+      break;
+    case MSG_BAFMOUT: // bamfout
+      delete [] tMessages.msgBamfout;
+      tMessages.msgBamfout = NULL;
+      tMessages.msgBamfout = new char[tStString.length() + 1];
+      strcpy(tMessages.msgBamfout, tStString.c_str());
+      break;
+    case MSG_LONGDESCR: // Long Description
+      delete [] tMessages.msgLongDescr;
+      tMessages.msgLongDescr = NULL;
+      tMessages.msgLongDescr = new char[tStString.length() + 1];
+      strcpy(tMessages.msgLongDescr, tStString.c_str());
+      break;
     default:
-      vlogf(7, "TMessages::operator()(int, string) got invalid tValue.  [%d]",
+      vlogf(LOG_BUG, "TMessages::operator()(int, string) got invalid tValue.  [%d]",
             tValue);
   }
 }
@@ -527,8 +545,17 @@ string TMessages::operator[](messageTypeT tValue) const
     case MSG_FORCE: // force
       return tMessages.msgForce;
       break;
+    case MSG_BAMFIN: // bamfin
+      return tMessages.msgBamfin;
+      break;
+    case MSG_BAMFOUT: // bamfout
+      return tMessages.msgBamfout;
+      break;
+    case MSG_LONGDESCR: // Long Description
+      return tMessages.msgLongDescr;
+      break;
     default:
-      vlogf(7, "TMessages::operator[](int) got invalid tValue.  [%d]",
+      vlogf(LOG_BUG, "TMessages::operator[](int) got invalid tValue.  [%d]",
             tValue);
   }
 
@@ -564,7 +591,7 @@ string fread_tilTilde(FILE *tFile)
 void TMessages::initialize()
 {
   if (!tPlayer || !tPlayer->name) {
-    vlogf(7, "TMessages::initialize() called by Invalid player.");
+    vlogf(LOG_BUG, "TMessages::initialize() called by Invalid player.");
     return;
   }
 
@@ -607,7 +634,7 @@ void TMessages::savedown()
     return;
 
   if (!tPlayer->name) {
-    vlogf(7, "TMessages::savedown() called by Invalid player.");
+    vlogf(LOG_BUG, "TMessages::savedown() called by Invalid player.");
     return;
   }
 

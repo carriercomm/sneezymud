@@ -331,7 +331,7 @@ int TBaseWeapon::sharpenerGiveMe(TBeing *ch, TMonster *me)
     return TRUE;
   } else {
     if (!job->char_name)
-      vlogf(5, "somehow sharpener %s didnt have a name on existing job", me->getName());
+      vlogf(LOG_PROC, "somehow sharpener %s didnt have a name on existing job", me->getName());
     sprintf(buf, "Sorry, %s, but you'll have to wait while I re-edge %s's weapon.", ch->getName(), job->char_name);
     me->doSay(buf);
     strcpy(buf, name);
@@ -590,7 +590,7 @@ int TBaseWeapon::enhanceMe(TBeing *caster, int level, byte bKnown)
         CS(SPELL_ENHANCE_WEAPON);
         affected[0].modifier += 1;
 //        affected[1].modifier += 1;
-//        vlogf(10,"Somehow, %s just got a critical success on enchant weapon", caster->getName());
+//        vlogf(LOG_MISC, "Somehow, %s just got a critical success on enchant weapon", caster->getName());
         break;
       case CRIT_S_TRIPLE:
       case CRIT_S_DOUBLE:
@@ -916,7 +916,7 @@ int TBaseWeapon::wieldMe(TBeing *ch, char *arg2)
     if (isname(name, "[paired]"))
       canSingleWieldPrim = canSingleWieldSecd = false;
 
-    vlogf(7, "Dynamic Paired Code Active: %s %d %d",
+    vlogf(LOG_LAPSOS, "Dynamic Paired Code Active: %s %d %d",
           arg2, canSingleWieldPrim, canSingleWieldSecd);
 
     if (!*arg2) {
@@ -1364,7 +1364,7 @@ int TBaseWeapon::catchSmack(TBeing *ch, TBeing **targ, TRoom *rp, int cdist, int
           }
         }
 #if RANGE_DEBUG
-        vlogf(5, "Range debug: (1) %s damaging %s with %s for %d dam",
+        vlogf(LOG_MISC, "Range debug: (1) %s damaging %s with %s for %d dam",
                  ch->getName(), tb->getName(), getName(), d);
 #endif
         rc = ch->applyDamage(tb, d, damtype);
@@ -1420,14 +1420,14 @@ void TBaseWeapon::lowCheck()
 #else
   if (ap != obj_flags.cost) {
 #endif
-    vlogf(LOW_ERROR, "base_weapon %s has a bad price (%d).  should be (%d)",
+    vlogf(LOG_LOW, "base_weapon %s has a bad price (%d).  should be (%d)",
          getName(), obj_flags.cost, ap);
     obj_flags.cost = ap;
   }
   if (canWear(ITEM_HOLD)) {
     int amt = -itemAC();
     if (amt)
-      vlogf(LOW_ERROR, "Holdable weapon (%s:%d) with AC.  (bad!)",
+      vlogf(LOG_LOW, "Holdable weapon (%s:%d) with AC.  (bad!)",
           getName(), objVnum());
   }
 }

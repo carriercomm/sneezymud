@@ -1,24 +1,5 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: stats.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // stats.cc
-//
-//
+
 #include "stdsneezy.h"
 #include "stats.h"
 
@@ -909,7 +890,7 @@ int TBeing::setStat(statSetT whichSet, statTypeT whichStat, int value)
     case(STAT_CHOSEN):
       return chosenStats.set(whichStat,value);
     case(STAT_NATURAL):
-      vlogf(6, "some piece of code was trying to set a person's natural stats");
+      vlogf(LOG_BUG, "some piece of code was trying to set a person's natural stats");
       return 0;
     case(STAT_CURRENT):
       return curStats.set(whichStat,value);
@@ -923,7 +904,7 @@ int TBeing::addToStat(statSetT whichSet, statTypeT whichStat, int modifier)
   case(STAT_CHOSEN):
     return chosenStats.add(whichStat,modifier);
   case(STAT_NATURAL):
-    vlogf(5,"You should not attempt to modify Natural Stats.");
+    vlogf(LOG_BUG,"You should not attempt to modify Natural Stats.");
     return 0;
   case(STAT_CURRENT):
     return curStats.add(whichStat,modifier);

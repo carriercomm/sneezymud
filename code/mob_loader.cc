@@ -347,7 +347,7 @@ void TMonster::mageComponentLoader(void)
       iters++;
     
       if (spell < TYPE_UNDEFINED || spell >= MAX_SKILL) {
-        vlogf(5, "Component (%d) defined with bad spell (%d).  num=%d", comp, spell, num);
+        vlogf(LOG_BUG, "Component (%d) defined with bad spell (%d).  num=%d", comp, spell, num);
         continue;
       }
       if (spell != TYPE_UNDEFINED && hideThisSpell(spell)) {
@@ -434,7 +434,7 @@ void TMonster::mageComponentLoader(void)
         continue;
 
       if (comp == -1) {
-        vlogf(5, "Bogus component on spell %d (%s)",
+        vlogf(LOG_BUG, "Bogus component on spell %d (%s)",
                  spell, discArray[spell]->name);
         continue;
       }
@@ -540,7 +540,7 @@ void TMonster::rangerComponentLoader(void)
         continue;
 
       if (comp == -1) {
-        vlogf(5, "Bogus component on spell %d (%s)",
+        vlogf(LOG_BUG, "Bogus component on spell %d (%s)",
                  spell, discArray[spell]->name);
         continue;
       }
@@ -621,7 +621,7 @@ void TMonster::shamanComponentLoader(void)
     
       // no ranger spell components
       if (spell < -1 || spell >= MAX_SKILL) {
-        vlogf(5, "Component (%d) defined with bad spell (%d).  num=%d", comp, spell, num);
+        vlogf(LOG_BUG, "Component (%d) defined with bad spell (%d).  num=%d", comp, spell, num);
         continue;
       }
       if(spell != -1 && discArray[spell] && 
@@ -644,7 +644,7 @@ void TMonster::shamanComponentLoader(void)
         continue;
 
       if (comp == -1) {
-        vlogf(5, "Bogus component on spell %d (%s)",
+        vlogf(LOG_BUG, "Bogus component on spell %d (%s)",
                  spell, discArray[spell]->name);
         continue;
       }
@@ -699,7 +699,7 @@ void TMonster::clericHolyWaterLoader(void)
       num = 163;  // small
 
     if (!(obj = read_object(num, VIRTUAL))) {
-      vlogf(5, "Error in cleric Holy Water Loader");
+      vlogf(LOG_BUG, "Error in cleric Holy Water Loader");
       return;
     }
     int value = obj->obj_flags.cost / 10;
@@ -776,7 +776,7 @@ void TMonster::clericSymbolLoader(void)
   } 
 
   if (!(obj = read_object(num, VIRTUAL))) {
-    vlogf(5, "Error in cleric Component Loader");
+    vlogf(LOG_BUG, "Error in cleric Component Loader");
     return;
   }
   value = obj->obj_flags.cost / div;
@@ -886,7 +886,7 @@ void TMonster::buffMobLoader()
   }
 
   if (!(obj = read_object(vnum, VIRTUAL))) {
-    vlogf(5, "Error in buffMobLoader (%d)", vnum);
+    vlogf(LOG_BUG, "Error in buffMobLoader (%d)", vnum);
     return;
   }
 

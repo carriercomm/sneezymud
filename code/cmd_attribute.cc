@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_attribute.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //    SneezyMUD++ - All rights reserved, SneezyMUD Coding Team      //
@@ -505,12 +487,12 @@ void TBeing::doAttribute(const char *arg)
 #endif
 
 #if SPEEF_MAKE_BODY
-    vlogf(5,"Attribute argument: %s",cmdbuf);
+    vlogf(LOG_MISC, "Attribute argument: %s",cmdbuf);
     if(body)
       body->showBody(this);
     else
       sendTo("You have no Body!\n\r");
-    vlogf(5,"I tried to show a body.");
+    vlogf(LOG_MISC, "I tried to show a body.");
 #endif
  
     return;

@@ -1,24 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: disc_aegis.cc,v $
-// Revision 5.1.1.2  1999/12/09 15:13:00  batopr
-// changes to support disease changed to enum
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #include "stdsneezy.h"
 #include "disease.h"
 #include "combat.h"
@@ -829,7 +808,7 @@ int armor(TBeing *c, TBeing * victim, int level, byte learn, spellNumT spell)
   else if (spell == SPELL_ARMOR_DEIKHAN)
     aff.modifier = -75;
   else {
-    vlogf(5, "Unknown spell %d in armor()", spell);
+    vlogf(LOG_BUG, "Unknown spell %d in armor()", spell);
     aff.modifier = 0;
   }
   

@@ -1,23 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: task_attune.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "task.cc" - All functions related to tasks that keep mobs/PCs busy
 //
@@ -167,7 +149,7 @@ int task_attuning(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TO
     return FALSE;  // returning FALSE lets command be interpreted
   }
   if (!ch->task) {
-    vlogf(10, "Got to bad spot in attune, tell Cosmo");
+    vlogf(LOG_BUG, "Got to bad spot in attune, tell Cosmo");
     ch->stopTask();
     return FALSE;
   }

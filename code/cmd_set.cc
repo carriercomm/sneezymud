@@ -1,30 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: cmd_set.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.4  1999/10/12 04:05:53  lapsos
-// gagged the granted/revoked lines on set wizpower.  Was something of a bitch point for some.
-//
-// Revision 1.3  1999/10/07 21:11:07  batopr
-// added statistics.h
-//
-// Revision 1.2  1999/10/07 21:08:23  batopr
-// Added @set gold_modifier
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 ////////////////////////////////////////////////////////////////////////// 
 //
 //      SneezyMUD++ - All rights reserved, SneezyMUD Coding Team
@@ -246,7 +219,7 @@ void TPerson::doSet(const char *argument)
 #if 0
         mob->sendTo("You have been granted the following Wiz-Power: %s\n\r",
                 getWizPowerName(wpt).c_str());
-        vlogf(3, "%s given %s by %s", mob->getName(), getWizPowerName(wpt).c_str(), getName());
+        vlogf(LOG_MISC, "%s given %s by %s", mob->getName(), getWizPowerName(wpt).c_str(), getName());
 #endif
         mob->doSave(SILENT_NO);
       } else {
@@ -255,7 +228,7 @@ void TPerson::doSet(const char *argument)
 #if 0
         mob->sendTo("The following Wiz-Power has been revoked: %s\n\r",
                 getWizPowerName(wpt).c_str());
-        vlogf(3, "%s had %s revoked by %s", mob->getName(), getWizPowerName(wpt).c_str(), getName());
+        vlogf(LOG_MISC, "%s had %s revoked by %s", mob->getName(), getWizPowerName(wpt).c_str(), getName());
 #endif
       }
     } else {
@@ -320,9 +293,9 @@ void TPerson::doSet(const char *argument)
       return;
     }
 
-    vlogf(6,"Leader slot %d for faction %s changed.", parm,
+    vlogf(LOG_FACT, "Leader slot %d for faction %s changed.", parm,
            FactionInfo[faction_num].faction_name);
-    vlogf(6,"Changed from %s to %s.",FactionInfo[faction_num].leader[parm],
+    vlogf(LOG_FACT, "Changed from %s to %s.",FactionInfo[faction_num].leader[parm],
            namebuf);
     sendTo("You have set %s's leader %d to %s.\n\r",
            FactionInfo[faction_num].faction_name, parm, namebuf);
@@ -508,12 +481,12 @@ void TPerson::doSet(const char *argument)
     }
 #endif
 
-//    vlogf(5,"parmstr is %s, argument is %s", parmstr, argument);
+//    vlogf(LOG_MISC, "parmstr is %s, argument is %s", parmstr, argument);
     while (sscanf(argument, "%d", &parm2) != 1) {
       argument = one_argument(argument, buf);
       sprintf(buf2," %s",buf);
       strcat(parmstr,buf2);
- //     vlogf(5,"parmstr is %s, argument is %s, buf is %s, parm2 is %s, buf2 is %s", parmstr, argument, buf, parm2, buf2);
+ //     vlogf(LOG_MISC,"parmstr is %s, argument is %s, buf is %s, parm2 is %s, buf2 is %s", parmstr, argument, buf, parm2, buf2);
       if (!argument || !strcmp(argument,"")) {
         sendTo("Syntax: @set skill <char name> <skill> <value>\n\r");
         return;
@@ -592,7 +565,7 @@ mob->getName());
     }
     if ((parm > 100) && !hasWizPower(POWER_SET_IMP_POWER)) {
       sendTo("Over 100 practices?!?!?! Woah!\n\r");
-      vlogf(10, "%s just tried to set %s's practices to a number > 100!", getName(), mob->getName());
+      vlogf(LOG_MISC, "%s just tried to set %s's practices to a number > 100!", getName(), mob->getName());
       return;
     }
     switch (parm2) {
@@ -1051,6 +1024,54 @@ mob->getName());
     mob->setLimbFlags(slot, parm2);
     sprintbit(parm2, body_flags, buf);
     sendTo(COLOR_MOBS, "You just set the following flags on %s's %s: %s\n\r", mob->getName(), mob->describeBodySlot(slot).c_str(), buf);
+  } else if (is_abbrev(field, "office")) {
+    if (sscanf(parmstr, "%d", &parm) != 1) {
+      sendTo("Syntax: @set office <char name> <office number>\n\r");
+      return;
+    }
+
+    if ((!mob->desc || mob->GetMaxLevel() <= MAX_MORT ||
+         mob->hasWizPower(POWER_WIZARD) ||
+         !hasWizPower(POWER_SET_IMP)) && mob != this) {
+      sendTo("You can not do this!\n\r");
+      return;
+    }
+
+    mob->desc->office = parm;
+  } else if (is_abbrev(field, "blocka")) {
+    parm = parm2 = 0;
+
+    if (sscanf(parmstr, "%d %d", &parm, &parm2) < 1) {
+      sendTo("Syntax: @set blocka <char name> <start-room:0 to remove> <end-room>\n\r");
+      return;
+    }
+
+    if ((!mob->desc || mob->GetMaxLevel() <= MAX_MORT ||
+         mob->hasWizPower(POWER_WIZARD) ||
+         !hasWizPower(POWER_SET_IMP)) && mob != this) {
+      sendTo("You can not do this!\n\r");
+      return;
+    }
+
+    mob->desc->blockastart = parm;
+    mob->desc->blockaend   = parm2;
+  } else if (is_abbrev(field, "blockb")) {
+    parm = parm2 = 0;
+
+    if (sscanf(parmstr, "%d %d", &parm, &parm2) < 1) {
+      sendTo("Syntax: @set blockb <char name> <start-room:0 to remove> <end-room>\n\r");
+      return;
+    }
+
+    if ((!mob->desc || mob->GetMaxLevel() <= MAX_MORT ||
+         mob->hasWizPower(POWER_WIZARD) ||
+         !hasWizPower(POWER_SET_IMP)) && mob != this) {
+      sendTo("You can not do this!\n\r");
+      return;
+    }
+
+    mob->desc->blockbstart = parm;
+    mob->desc->blockbend   = parm2;
   } else {
     sendTo("Wrong option.\n\r");
     return;

@@ -299,7 +299,7 @@ byte TRoom::getRiverSpeed() const
 
 void TRoom::setDescr(char *tDescription)
 {
-  vlogf(7, "Defunct call to old Room setDescr.");
+  vlogf(LOG_BUG, "Defunct call to old Room setDescr.");
   setDescr(-1, tDescription);
 }
 
@@ -322,17 +322,17 @@ const char * TRoom::getDescr()
   if (descr || descPos == -1 || gamePort == PROD_GAMEPORT || gamePort == ALPHA_GAMEPORT)
     return descr;
 
-  //  vlogf(7, "Reading Room Description from World File.");
+  //  vlogf(LOG_LAPSOS, "Reading Room Description from World File.");
 
   FILE *tFileRoomDB;
 
   if (!(tFileRoomDB = fopen(FPOS_WORLD_FILE, "r"))) {
-    vlogf(0, "World file not found.");
+    vlogf(LOG_FILE, "World file not found.");
     return ("Really Big Error Occured.\n\r");
   }
 
   if (fseek(tFileRoomDB, descPos, SEEK_SET) == -1) {
-    vlogf(0, "Error seeking location in World file to get description.");
+    vlogf(LOG_FILE, "Error seeking location in World file to get description.");
     fclose(tFileRoomDB);
     return ("Really Big Error Occured.\n\r");
   }

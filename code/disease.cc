@@ -61,7 +61,7 @@ int TBeing::diseaseStop(affectedData *af)
 
 int disease_null(TBeing *victim, int, affectedData *)
 {
-  vlogf(9, "WARNING:  %s has a bogus disease #%d affect.",
+  vlogf(LOG_BUG, "WARNING:  %s has a bogus disease #%d affect.",
 	((victim) ? victim->getName() : "A null pointer"));
   return FALSE;
 }
@@ -98,7 +98,7 @@ void spread_affect(TBeing *ch, int chance_to_spread, bool race, bool not_race, a
         (af->type == AFFECT_DISEASE && !v->hasDisease(affToDisease(*af)))) {
 
 #if 0
-      vlogf(0, "%s (%s:%d) spreading from %s to %s at %d",
+      vlogf(LOG_MISC, "%s (%s:%d) spreading from %s to %s at %d",
              af->type == AFFECT_DISEASE ? "Disease" : "Spell",
              af->type == AFFECT_DISEASE ? 
                  DiseaseInfo[af->modifier].name : 

@@ -1,35 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 //
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: doors.cc,v $
-// Revision 5.1.1.3  1999/10/25 19:42:11  mithros
-// Fixing my mistakes hopefully :)
-//
-// Revision 5.1.1.2  1999/10/25 19:24:27  mithros
-// Added unique doors for 774, 9050, & 9064.
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.4  1999/10/06 00:42:36  batopr
-// rawOpenDoor denies mounts
-//
-// Revision 1.3  1999/09/29 01:37:15  lapsos
-// Modified to allow for mounted opening of doors.
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////////
-//
 //      SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //      "doors.cc" - All functions specific to doors
 //
@@ -50,7 +20,7 @@ void TBeing::rawUnlockDoor(roomDirData * exitp, dirTypeT door)
       back->to_room == in_room) {
     REMOVE_BIT(back->condition, EX_LOCKED);
   } else
-    vlogf(9, "Inconsistent door locks in rooms %d->%d", in_room, exitp->to_room);
+    vlogf(LOG_LOW, "Inconsistent door locks in rooms %d->%d", in_room, exitp->to_room);
 }
 
 // returns direction of door
@@ -173,7 +143,7 @@ void TBeing::rawOpenDoor(dirTypeT dir)
   soundNumT snd = SOUND_OFF;
 
   if (!(rp = roomp))
-    vlogf(9, "NULL rp in rawOpenDoor() for %s.", getName());
+    vlogf(LOG_BUG, "NULL rp in rawOpenDoor() for %s.", getName());
 
   exitp = rp->dir_option[dir];
   if (exitp->condition & EX_DESTROYED) {
@@ -423,7 +393,7 @@ void TBeing::rawCloseDoor(dirTypeT dir)
   soundNumT snd = SOUND_OFF;
  
   if (!(rp = roomp))
-    vlogf(9, "NULL rp in rawCloseDoor() for %s.", getName());
+    vlogf(LOG_BUG, "NULL rp in rawCloseDoor() for %s.", getName());
  
   exitp = rp->dir_option[dir];
   if (IS_SET(exitp->condition, EX_DESTROYED)) {
@@ -702,12 +672,12 @@ void TBeing::openUniqueDoor(dirTypeT dir, doorUniqueT intent,
   successResT open = SUCCESS_OPEN;
  
   if (!(rp = roomp)) {
-    vlogf(9, "NULL rp in openUniqueDoor() for %s.", getName());
+    vlogf(LOG_BUG, "NULL rp in openUniqueDoor() for %s.", getName());
     return;
   }
 
   if (!(exitp = rp->dir_option[dir])) {
-    vlogf(9, "Bogus exit in openUniqueDoor() for %s (%d).", getName(), dir);
+    vlogf(LOG_BUG, "Bogus exit in openUniqueDoor() for %s (%d).", getName(), dir);
     return;
   }
 
@@ -894,7 +864,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
     return FALSE;
 
   if (rp->number != ch->in_room) {
-    vlogf(5,"char %s not in proper room (SecretDoors)",ch->getName());
+    vlogf(LOG_BUG,"char %s not in proper room (SecretDoors)",ch->getName());
     return FALSE;
   }
   one_argument(arg,buf);
@@ -2027,7 +1997,7 @@ int SecretDoors(TBeing *ch, cmdTypeT cmd, const char *arg, TRoom *rp)
       }
       break;
     default:
-      vlogf(LOW_ERROR, "Unsupported room (%d) in secretDoors", rp->number);
+      vlogf(LOG_LOW, "Unsupported room (%d) in secretDoors", rp->number);
       return FALSE;
   }
   return FALSE;

@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: connect.h,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 #ifndef __CONNECT_H
 #define __CONNECT_H
 
@@ -414,8 +396,12 @@ class Descriptor {
     bool client;
     sh_int bad_login;              // login catches for hackers 
     byte severity;
+    int office;
+    int blockastart;
+    int blockaend;
+    int blockbstart;
+    int blockbend;
     lastChangeData last;
-    poofinData poof;
     ubyte deckSize;
     char delname[20];
     promptData prompt_d;

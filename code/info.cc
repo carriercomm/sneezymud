@@ -433,7 +433,7 @@ const string colorString(const TBeing *me, const Descriptor *ch, const char *arg
       
       break;
     default:
-      vlogf(5,"Colorstring with a default COLOR setting");
+      vlogf(LOG_BUG,"Colorstring with a default COLOR setting");
       colorize = TRUE;
       break;
   }
@@ -1627,7 +1627,7 @@ void TBeing::listExits(const TRoom *rp) const
       }
       if (IS_SET(exitdata->condition, EX_DESTROYED)) {
         if (!exitdata->keyword) {
-          vlogf(LOW_ERROR,"Destroyed door with no name!  Room %d", in_room);
+          vlogf(LOG_LOW,"Destroyed door with no name!  Room %d", in_room);
         } else if (door == 4) 
           sendTo("%sThe %s in the ceiling has been destroyed.%s\n\r",
               blue(), fname(exitdata->keyword).c_str(), norm());
@@ -1718,7 +1718,7 @@ void TBeing::listExits(const TRoom *rp) const
                 (count == 1 || door == num ? ".\n\r" : ", "));
             }
           } else
-            vlogf(LOW_ERROR, "Problem with door in room %d", inRoom());
+            vlogf(LOG_LOW, "Problem with door in room %d", inRoom());
         }
       }
     }
@@ -1845,7 +1845,7 @@ void TRealContainer::lookObj(TBeing *ch, int bits) const
       min(100, getCarriedVolume() * 100 / carryVolumeLimit()),
       min(100, (int) (getCarriedWeight() * 100.0 / carryWeightLimit())));
   } else {
-    vlogf(8, "Problem in look in for object: (%s:%d), check vol/weight limit", getName(), objVnum());
+    vlogf(LOG_BUG, "Problem in look in for object: (%s:%d), check vol/weight limit", getName(), objVnum());
   }
   list_in_heap(stuff, ch, 0, 100);
 
@@ -2001,7 +2001,7 @@ void TBeing::doLook(const char *argument, cmdTypeT cmd, TThing *specific)
                 }
               } else {
                 sendTo("You see nothing special.\n\r");
-                vlogf(9, "Bad room exit in room %d", in_room);
+                vlogf(LOG_BUG, "Bad room exit in room %d", in_room);
               }
             }
 
@@ -2546,7 +2546,7 @@ string TBeing::dynColorRoom(TRoom * rp, int title, bool) const
         strcpy(buf2, addColorRoom(rp, 1).c_str());
       }
     } else {
-      vlogf(5, "%s is in a room with no descr", getName());
+      vlogf(LOG_BUG, "%s is in a room with no descr", getName());
       return "Bogus Name";
     }
   } else if (title == 2) {
@@ -2567,11 +2567,11 @@ string TBeing::dynColorRoom(TRoom * rp, int title, bool) const
         strcpy(buf2, addColorRoom(rp, 2).c_str());
       }
     } else {
-      vlogf(5, "%s is in a room with no descr", getName());
+      vlogf(LOG_BUG, "%s is in a room with no descr", getName());
       return "Bogus Name";
     }
   } else {
-    vlogf(5, "%s called a function with a bad dynColorRoom argument", getName());
+    vlogf(LOG_BUG, "%s called a function with a bad dynColorRoom argument", getName());
     return "Something Bogus, tell a god";
   }
 // Found had to initialize with this logic and too tired to figure out why
@@ -2877,18 +2877,18 @@ const string TBeing::addColorRoom(TRoom * rp, int title) const
     if (rp->getName()) {
       return buf2;
     } else {
-      vlogf(5, "room without a name for dynamic coloring");
+      vlogf(LOG_BUG, "room without a name for dynamic coloring");
       return "";
     }
   } else if (title == 2) {
     if (rp->getDescr()) 
       return buf3;
     else {
-      vlogf(5, "room without a descr for dynamic coloring, %s", roomp->getName());
+      vlogf(LOG_BUG, "room without a descr for dynamic coloring, %s", roomp->getName());
       return "";
     }
   } else {
-    vlogf(5, "addColorRoom without a correct title variable");
+    vlogf(LOG_BUG, "addColorRoom without a correct title variable");
     return "";
   }
 }
@@ -3271,7 +3271,7 @@ down");
       describeRoomLight();
       return;
     } else {
-      vlogf(5,"Error in getWeather for %s.",getName());
+      vlogf(LOG_BUG,"Error in getWeather for %s.",getName());
       return;
     }
     sendTo(COLOR_BASIC, "%s and %s.\n\r", buf,
@@ -3495,9 +3495,6 @@ wizPowerT wizPowerFromCmd(cmdTypeT cmd)
       break;
     case CMD_EGOTRIP:
       return POWER_EGOTRIP;
-      break;
-    case CMD_LONGDESCR:
-      return POWER_LONGDESC;
       break;
     case CMD_POWERS:
       return POWER_POWERS;
@@ -4132,7 +4129,7 @@ void TBeing::doWhere(const char *argument)
   unsigned int tot_found = 0;
   for (i = character_list; i; i = i->next) {
     if (!i->name) {
-      vlogf(5, "Being without a name in character_list (doWhere) looking for %s", namebuf);
+      vlogf(LOG_BUG, "Being without a name in character_list (doWhere) looking for %s", namebuf);
       continue;
     }
     if (isname(namebuf, i->name) && canSeeWho(i) && canSee(i)) {
@@ -4160,7 +4157,7 @@ void TBeing::doWhere(const char *argument)
   if (GetMaxLevel() > MAX_MORT) {
     for (k = object_list; k; k = k->next) {
       if (!k->name) {
-        vlogf(5, "Item without a name in object_list (doWhere) looking for %s", namebuf);
+        vlogf(LOG_BUG, "Item without a name in object_list (doWhere) looking for %s", namebuf);
         continue;
       }
       if (isname(namebuf, k->name) && canSee(k)) {
@@ -5266,7 +5263,7 @@ void TBeing::doEvaluate(const char *argument)
 
     if (!roomp) {
       sendTo("You have no idea where you are do you...\n\r");
-      vlogf(7, "Player without room called evaluate room.  [%s]", getName());
+      vlogf(LOG_BUG, "Player without room called evaluate room.  [%s]", getName());
     } else if (roomp->isCitySector())
       sendTo("You assume you are in a city by the way things look.\n\r");
     else if (roomp->isRoadSector())
@@ -6618,7 +6615,7 @@ void TBeing::doSpells(const char *argument)
       i = skillSortVec[j].theSkill;
       das = getDisciplineNumber(i, FALSE);
       if (das == DISC_NONE) {
-        vlogf(5, "Bad disc for skill %d in doSpells", i);
+        vlogf(LOG_BUG, "Bad disc for skill %d in doSpells", i);
         continue;
       }
       cd = getDiscipline(das);
@@ -6835,7 +6832,7 @@ void TBeing::doPrayers(const char *argument)
       i = skillSortVec[j].theSkill;
       das = getDisciplineNumber(i, FALSE);
       if (das == DISC_NONE) {
-        vlogf(5, "Bad disc for skill %d in doPrayers", i);
+        vlogf(LOG_BUG, "Bad disc for skill %d in doPrayers", i);
           continue;
       }
       cd = getDiscipline(das);

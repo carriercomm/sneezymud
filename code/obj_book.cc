@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: obj_book.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // book.cc
 
 #include "stdsneezy.h"
@@ -140,7 +122,7 @@ void TBook::lookAtObj(TBeing *ch, const char *arg, showModeT) const
       return;
     }
     sprintf(buf + strlen(buf), "Apparently, %s is blank.\n\r", getName());
-    vlogf(9, "Object %d has no book file!", vnum);
+    vlogf(LOG_FILE, "Object %d has no book file!", vnum);
     ch->desc->page_string(buf, 0);
     return;
   }

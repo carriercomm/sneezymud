@@ -135,7 +135,7 @@ int transformLimb(TBeing * caster, const char * buffer, int level, byte bKnown)
       aff.modifier2 = 50;
       break;
     default:
-      vlogf(10, "Bad limb case in TRANSFORM_LIMB");
+      vlogf(LOG_BUG, "Bad limb case in TRANSFORM_LIMB");
       caster->sendTo("Bug in your limbs, tell a god and put in bug file.\n\r");
       return FALSE;
   }
@@ -535,7 +535,7 @@ int sticksToSnakes(TBeing * caster, TBeing * victim, int level, byte bKnown)
 
 
   if(!(snake = read_mobile(mobile, VIRTUAL))) {
-    vlogf(10, "Spell STICKS_TO_SNAKES unable to load mob...");
+    vlogf(LOG_BUG, "Spell STICKS_TO_SNAKES unable to load mob...");
     caster->sendTo("Unable to create the snake, please report this.\n\r");
     act("Nothing seems to happen.", FALSE, caster, NULL, NULL, TO_ROOM);
     return SPELL_FAIL;

@@ -322,7 +322,7 @@ void Race::initRace(const char *whichRace)
       else if (!strcasecmp(value, "other"))
 	Kingdom = LORE_OTHER;
       else {
-        vlogf(LOW_ERROR, "Bad lore %s, defined for %s", value, whichRace);
+        vlogf(LOG_LOW, "Bad lore %s, defined for %s", value, whichRace);
         Kingdom = LORE_PEOPLE;
       }
     }
@@ -338,36 +338,36 @@ void Race::initRace(const char *whichRace)
     else if (!strcasecmp(keyword,  "age")) {
       if (sscanf(buf, " %d+%dd%d",
          &baseAge, &ageNumDice, &ageDieSize) != 3) {
-        vlogf(LOW_ERROR, "Bad format for age on %s", whichRace);
+        vlogf(LOG_LOW, "Bad format for age on %s", whichRace);
       }
     }
     else if (!strcasecmp(keyword,  "maleht")) {
       if (sscanf(buf, " %d+%dd%d",
          &baseMaleHeight, &maleHtNumDice, &maleHtDieSize) != 3) {
-        vlogf(LOW_ERROR, "Bad format for male height on %s", whichRace);
+        vlogf(LOG_LOW, "Bad format for male height on %s", whichRace);
       }
     }
     else if (!strcasecmp(keyword,  "femaleht")) {
       if (sscanf(buf, " %d+%dd%d",
          &baseFemaleHeight, &femaleHtNumDice, &femaleHtDieSize) != 3) {
-        vlogf(LOW_ERROR, "Bad format for female height on %s", whichRace);
+        vlogf(LOG_LOW, "Bad format for female height on %s", whichRace);
       }
     }
     else if (!strcasecmp(keyword,  "malewt")) {
       if (sscanf(buf, " %d+%dd%d",
          &baseMaleWeight, &maleWtNumDice, &maleWtDieSize) != 3) {
-        vlogf(LOW_ERROR, "Bad format for male weight on %s", whichRace);
+        vlogf(LOG_LOW, "Bad format for male weight on %s", whichRace);
       }
     }
     else if (!strcasecmp(keyword,  "femalewt")) {
       if (sscanf(buf, " %d+%dd%d",
          &baseFemaleWeight, &femaleWtNumDice, &femaleWtDieSize) != 3) {
-        vlogf(LOW_ERROR, "Bad format for male weight on %s", whichRace);
+        vlogf(LOG_LOW, "Bad format for male weight on %s", whichRace);
       }
     }
     else if (!strcasecmp(keyword,  "corpse")) {
       if (sscanf(buf, " %f", &corpse_const) != 1) {
-        vlogf(LOW_ERROR, "Bad format for corpse const on %s", whichRace);
+        vlogf(LOG_LOW, "Bad format for corpse const on %s", whichRace);
       }
     }
 
@@ -535,7 +535,7 @@ void Race::initRace(const char *whichRace)
       else if (!strcasecmp(value, "ant"))
         bodyType = BODY_ANT;
       else {
-        vlogf(LOW_ERROR, "Unknown body on %s", whichRace);
+        vlogf(LOG_LOW, "Unknown body on %s", whichRace);
         bodyType = BODY_HUMANOID;
       }
     }
@@ -778,7 +778,7 @@ TPCorpse *Race::makePCorpse() const
 #endif
   } else {
     corpse = NULL;
-    vlogf(5,"Problem in making corpses in makePCorpse");
+    vlogf(LOG_BUG,"Problem in making corpses in makePCorpse");
   }
   return corpse;
 }

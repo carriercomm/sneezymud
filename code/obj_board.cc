@@ -76,7 +76,7 @@ void OpenBoardFile(boardStruct *b)
   }
   if (!b->file) {
     perror("OpenBoardFile(fopen)");
-    vlogf(10, "Fatal, since could not open \"%s\"", b->filename);
+    vlogf(LOG_FILE, "Fatal, since could not open \"%s\"", b->filename);
     exit(0);
   }
 }
@@ -139,7 +139,7 @@ void board_load_board(boardStruct *b)
   b->num_loaded++;
 
   if (b->msg_num < 1 || b->msg_num > MAX_MSGS) {
-    vlogf(10, "Board-message file corrupt or nonexistent.");
+    vlogf(LOG_FILE, "Board-message file corrupt or nonexistent.");
     fclose(b->file);
     return;
   }
@@ -148,7 +148,7 @@ void board_load_board(boardStruct *b)
     fread(buf, sizeof(char), len, b->file);
     b->head[ind] = mud_str_dup(buf);
     if (!b->head[ind]) {
-      vlogf(10, "new for board header failed.\n\r");
+      vlogf(LOG_FILE, "new for board header failed.\n\r");
       board_reset_board(b);
       fclose(b->file);
       return;
@@ -157,7 +157,7 @@ void board_load_board(boardStruct *b)
     fread(buf, sizeof(char), len, b->file);
     b->writer[ind] = mud_str_dup(buf);
     if (!b->writer[ind]) {
-      vlogf(10, "new for board writer failed.\n\r");
+      vlogf(LOG_FILE, "new for board writer failed.\n\r");
       board_reset_board(b);
       fclose(b->file);
       return;
@@ -166,7 +166,7 @@ void board_load_board(boardStruct *b)
     fread(buf, sizeof(char), len, b->file);
     b->msgs[ind] = mud_str_dup(buf);
     if (!b->msgs[ind]) {
-      vlogf(10, "new for board msg failed..\n\r");
+      vlogf(LOG_FILE, "new for board msg failed..\n\r");
       board_reset_board(b);
       fclose(b->file);
       return;
@@ -209,7 +209,7 @@ boardStruct *FindBoardInRoom(int room)
         if (nb->Rnum == o->number)
           return (nb);
       }
-      vlogf(8, "Uh oh! Board with proc, but not in board list in room %d", room);
+      vlogf(LOG_PROC, "Uh oh! Board with proc, but not in board list in room %d", room);
       return NULL;
     }
   }
@@ -224,7 +224,7 @@ int board(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
 int TObj::boardHandler(TBeing *, cmdTypeT cmd, const char *)
 {
   if (cmd != CMD_GENERIC_DESTROYED) {
-    vlogf(10, "board handler with non-board (%s) cmd=%d", getName(), cmd);
+    vlogf(LOG_PROC, "board handler with non-board (%s) cmd=%d", getName(), cmd);
   } else {
     // this msg comes in ~TObj() so we will never be a TBoard when we get it.
     DeleteABoard(this);
@@ -370,7 +370,7 @@ int board_show_board(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
       strcpy(date_string, b->head[i]);
       char *tmp = strchr(date_string, ']');
       if (!tmp) {
-        vlogf(9, "Serious error in show_board (1).");
+        vlogf(LOG_PROC, "Serious error in show_board (1).");
         b->msg_num = i;
         continue;
       }
@@ -379,7 +379,7 @@ int board_show_board(TBeing *ch, const char *arg, TBoard *me, boardStruct *b)
       strcpy(head_string, &tmp[2]);
       tmp = strrchr(head_string, '(');
       if (!tmp) {
-        vlogf(9, "Serious error in show_board (2).");
+        vlogf(LOG_PROC, "Serious error in show_board (2).");
         b->msg_num = i;
         continue;
       }
@@ -494,7 +494,7 @@ void TNote::postMe(TBeing *ch, const char *arg2, boardStruct *b)
 #if !POST_IN_REVERSE
   b->head[b->msg_num] = mud_str_dup(arg3);
   if (!b->head[b->msg_num]) {
-    vlogf(10, "new for board header failed.\n\r");
+    vlogf(LOG_PROC, "new for board header failed.\n\r");
     ch->sendTo("The board is screwed up sorry.\n\r");
     return;
   }
@@ -507,7 +507,7 @@ void TNote::postMe(TBeing *ch, const char *arg2, boardStruct *b)
 #else
   b->head[0] = mud_str_dup(arg3);
   if (!b->head[0]) {
-    vlogf(10, "new for board header failed.\n\r");
+    vlogf(LOG_PROC, "new for board header failed.\n\r");
     ch->sendTo("The board is screwed up sorry.\n\r");
     return;
   }
@@ -577,7 +577,7 @@ int get_note_from_board(TBeing *ch, const char *arg, boardStruct *b)
   // and give that note to the player who removed the note - Russ 
 
   if (!(note = read_object(GENERIC_NOTE, VIRTUAL))) {
-    vlogf(10, "Couldn't make a note removed from board!");
+    vlogf(LOG_PROC, "Couldn't make a note removed from board!");
     return TRUE;
   }
   note->swapToStrung();

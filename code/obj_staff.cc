@@ -1,21 +1,3 @@
-//////////////////////////////////////////////////////////////////////////
-//
-// SneezyMUD - All rights reserved, SneezyMUD Coding Team
-//
-// $Log: obj_staff.cc,v $
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
-//////////////////////////////////////////////////////////////////////////
-
-
 // staff.cc
 
 #include "stdsneezy.h"
@@ -168,20 +150,20 @@ void TStaff::lowCheck()
         !discArray[curspell]->minMana &&
       !discArray[curspell]->minPiety)) ||
       (getDisciplineNumber(curspell, FALSE) == DISC_NONE)))) {
-    vlogf(LOW_ERROR, "staff (%s:%d) has messed up spell(%d)",
+    vlogf(LOG_LOW, "staff (%s:%d) has messed up spell(%d)",
          getName(), objVnum(), curspell);
     if ((curspell < TYPE_UNDEFINED) || (curspell >= MAX_SKILL))
-      vlogf(LOW_ERROR, "bogus range");
+      vlogf(LOG_LOW, "bogus range");
     else if (!discArray[curspell])
-      vlogf(LOW_ERROR, "bogus spell, %d", curspell);
+      vlogf(LOG_LOW, "bogus spell, %d", curspell);
     else if ((!discArray[curspell]->minMana &&
       !discArray[curspell]->minPiety))
-      vlogf(LOW_ERROR, "non-spell");
+      vlogf(LOG_LOW, "non-spell");
   }
   if (curspell > TYPE_UNDEFINED &&
       discArray[curspell]->targets & TAR_CHAR_WORLD) {
     // spells that use this setting are not a good choice for obj spells
-    vlogf(LOW_ERROR, "Obj (%s : %d) had spell that shouldn't be on objs (%s : %d)" ,
+    vlogf(LOG_LOW, "Obj (%s : %d) had spell that shouldn't be on objs (%s : %d)" ,
         getName(), objVnum(), discArray[curspell]->name, curspell);
   }
   if (curspell > TYPE_UNDEFINED &&
@@ -191,7 +173,7 @@ void TStaff::lowCheck()
     // go area effect to begin with
 // Fixed the code so it doesnt loop if its an area..used TAR_AREA for areas
 
-//    vlogf(LOW_ERROR, "Staff (%s : %d) had possible-area-spell that shouldn't be on objs (%s : %d)" , getName(), objVnum(), discArray[curspell]->name, curspell);
+//    vlogf(LOG_LOW, "Staff (%s : %d) had possible-area-spell that shouldn't be on objs (%s : %d)" , getName(), objVnum(), discArray[curspell]->name, curspell);
   }
 
   TMagicItem::lowCheck();
@@ -252,7 +234,7 @@ int TStaff::useMe(TBeing *ch, const char * argument)
     sleepTag = TRUE;
   }
   if (!discArray[the_spell]) {
-    vlogf(10,"doUse (%s) called spell (%d) that does not exist! - Don't do that!", getName(), the_spell);
+    vlogf(LOG_BUG,"doUse (%s) called spell (%d) that does not exist! - Don't do that!", getName(), the_spell);
     return FALSE;
   }
   act("$n taps $p three times on the $g.", TRUE,  ch, this, 0, TO_ROOM);

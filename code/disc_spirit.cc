@@ -123,7 +123,7 @@ int slumber(TBeing *caster, TBeing *victim, int level, byte bKnown)
         caster->sendTo("You can not use that staff here.\n\r");
         return SPELL_FAIL;
       }
-      vlogf(5, "Sleep Tag Staff: %s just got slept by %s",
+      vlogf(LOG_MISC, "Sleep Tag Staff: %s just got slept by %s",
                victim->getName(), caster->getName());
       rc = victim->rawSleep(level, (4 + level/2) * UPDATES_PER_TICK, crit, save);
 //      if (IS_SET(rc, DELETE_THIS)) {
@@ -722,7 +722,7 @@ int polymorph(TBeing *caster, int level, byte bKnown)
  
   discNumT das = getDisciplineNumber(SPELL_POLYMORPH, FALSE);
   if (das == DISC_NONE) {
-    vlogf(5, "Bad disc for SPELL_POLYMORPH");
+    vlogf(LOG_BUG, "Bad disc for SPELL_POLYMORPH");
     return SPELL_FAIL;
   }
   for (i = 0; *PolyList[i].name != '\n'; i++) {
@@ -752,7 +752,7 @@ int polymorph(TBeing *caster, int level, byte bKnown)
   // Check to make sure that there is no snooping going on. 
   if (!caster->desc || caster->desc->snoop.snooping) {
     caster->nothingHappens();
-    vlogf(5,"PC tried to poly while being snooped");
+    vlogf(LOG_BUG,"PC tried to poly while being snooped");
     delete mob;
     mob = NULL;
     return SPELL_FAIL;
@@ -878,7 +878,7 @@ int polymorph(TBeing *caster, const char * buffer)
   // Check to make sure that there is no snooping going on.
   if (!caster->desc || caster->desc->snoop.snooping) {
     caster->nothingHappens();
-    vlogf(5,"PC tried to poly while being snooped");
+    vlogf(LOG_BUG,"PC tried to poly while being snooped");
     return SPELL_FAIL;
   }
 

@@ -94,6 +94,11 @@ Descriptor::Descriptor(TSocket *s) :
   client(FALSE),
   bad_login(0),
   severity(0),
+  office(0),
+  blockastart(0),
+  blockaend(0),
+  blockbstart(0),
+  blockbend(0),
   last(),
   poof(),
   deckSize(0),
@@ -144,6 +149,11 @@ Descriptor::Descriptor(const Descriptor &a) :
   client(a.client),
   bad_login(a.bad_login),
   severity(a.severity),
+  office(a.office),
+  blockastart(a.blockastart),
+  blockaend(a.blockaend),
+  blockbstart(a.blockbstart),
+  blockbend(a.blockbend),
   last(a.last),
   poof(a.poof),
   deckSize(a.deckSize),
@@ -158,7 +168,7 @@ Descriptor::Descriptor(const Descriptor &a) :
   // not sure how this is being used, theoretically correct, but watch
   // for duplication stuff
   // str may also be prolematic
-  vlogf(10, "Inform Batopr immediately that Descriptor copy constructor was called.");
+  vlogf(LOG_BUG, "Inform Batopr immediately that Descriptor copy constructor was called.");
 
   showstr_head = mud_str_dup(a.showstr_head);
 //  str = mud_str_dup(a.str);
@@ -181,7 +191,7 @@ Descriptor & Descriptor::operator=(const Descriptor &a)
   // not sure how this is being used, theoretically correct, but watch
   // for duplication stuff
   // str is most likely also screwy
-  vlogf(10, "Inform Batopr immediately that Descriptor operator= was called.");
+  vlogf(LOG_BUG, "Inform Batopr immediately that Descriptor operator= was called.");
 
   socket = a.socket;
   edit = a.edit;
@@ -211,6 +221,11 @@ Descriptor & Descriptor::operator=(const Descriptor &a)
   client = a.client;
   bad_login = a.bad_login;
   severity = a.severity;
+  office = a.office;
+  blockastart = a.blockastart;
+  blockaend = a.blockaend;
+  blockbstart = a.blockbstart;
+  blockbend = a.blockbend;
   last = a.last;
   poof = a.poof;
   deckSize = a.deckSize;
@@ -294,7 +309,7 @@ bool Descriptor::checkForMultiplay()
     if (!strcmp(d->account->name, account->name)) {
       total += 1;
       if (total > max_multiplay_chars) {
-        vlogf(8, "MULTIPLAY: %s and %s from same account[%s]",
+        vlogf(LOG_CHEAT, "MULTIPLAY: %s and %s from same account[%s]",
               character->name, ch->name, account->name);
 #if FORCE_MULTIPLAY_COMPLIANCE
         character->sendTo("Player Load: %d, Current MultiPlay Limit: %d\n\r",
@@ -339,7 +354,7 @@ bool Descriptor::checkForMultiplay()
         const int trigger_minutes = 1;
         if (((now - talkCount) > ((trigger_minutes + character->getTimer()) * SECS_PER_REAL_MIN)) &&
             ((now - ch->desc->talkCount) > ((trigger_minutes + ch->getTimer()) * SECS_PER_REAL_MIN))) {
-          vlogf(7, "MULTIPLAY: Players %s and %s are possibly multiplaying.", character->getName(), ch->getName());
+          vlogf(LOG_CHEAT, "MULTIPLAY: Players %s and %s are possibly multiplaying.", character->getName(), ch->getName());
 
           time_t ct = time(0);
           struct tm * lt = localtime(&ct);
@@ -367,7 +382,7 @@ bool Descriptor::checkForMultiplay()
           FILE *fp;
           if (!(fp = fopen(cmd_buf.c_str(), "a+"))) {
             perror("doComment");
-            vlogf(9, "Could not open the comment-file (%s).", cmd_buf.c_str());
+            vlogf(LOG_FILE, "Could not open the comment-file (%s).", cmd_buf.c_str());
           } else {
             fputs(tmpstr.c_str(), fp);
             fclose(fp);
@@ -440,9 +455,9 @@ int Descriptor::outputProcessing()
 
   if (output.getEnd() && !output.getBegin()) {
     if (character && character->name)
-      vlogf(5, "%s's output has end and no begin (client: %d).", character->getName(), client ? 1 : 0);
+      vlogf(LOG_BUG, "%s's output has end and no begin (client: %d).", character->getName(), client ? 1 : 0);
     else
-      vlogf(5, "output has end and no begin.");
+      vlogf(LOG_BUG, "output has end and no begin.");
 // kludge, seems like it may lead to memory leaks but better than
 // leaving an end in here cos -4/2/98
     output.setEnd(NULL);
@@ -459,8 +474,8 @@ int Descriptor::outputProcessing()
     if (counter >= 5000) {
       char buf2[MAX_STRING_LENGTH + MAX_STRING_LENGTH];
       strcpy(buf2, i);
-      vlogf(5, "Tell a coder, bad loop in outputProcessing, please investigate %s", character ? character->getName() : "'No char for desc'");
-      vlogf(5, "i = %s, last i= %s", buf2, buf); 
+      vlogf(LOG_BUG, "Tell a coder, bad loop in outputProcessing, please investigate %s", character ? character->getName() : "'No char for desc'");
+      vlogf(LOG_BUG, "i = %s, last i= %s", buf2, buf); 
       // Set everything to NULL, might lose memory but we dont wanna try
       // a delete cause it might crash/ - Russ
       output.setBegin(NULL);
@@ -503,7 +518,7 @@ Descriptor::~Descriptor()
   TRoom *rp;
 
   if (close(socket->sock))
-    vlogf(10, "Close() exited with errno (%d) return value in ~Descriptor", errno);
+    vlogf(LOG_BUG, "Close() exited with errno (%d) return value in ~Descriptor", errno);
   
   // clear out input/output buffers
   flush();
@@ -548,7 +563,7 @@ Descriptor::~Descriptor()
       }
 
       act("$n has lost $s link.", TRUE, character, 0, 0, TO_ROOM);
-      vlogf(0, "Closing link to: %s.", character->getName());
+      vlogf(LOG_PIO, "Closing link to: %s.", character->getName());
 
       // this is partly a penalty for losing link (lose followers)
       // the more practical reason is that the mob and items are saved
@@ -579,7 +594,7 @@ Descriptor::~Descriptor()
           num++;
         }
       }
-      vlogf(0, "Link Lost for %s: [%d talens/%d bank/%.2f xps/%d items/%d age-mod/%d rent]",
+      vlogf(LOG_PIO, "Link Lost for %s: [%d talens/%d bank/%.2f xps/%d items/%d age-mod/%d rent]",
             character->getName(), character->getMoney(), character->getBank(),
             character->getExp(), num, character->age_mod, 
             dynamic_cast<TPerson *>(character)->last_rent);
@@ -603,7 +618,7 @@ Descriptor::~Descriptor()
       if (connected == CON_PWDNRM)
         bad_login++;
       if (character->getName())
-        vlogf(1, "Losing player: %s [%s].", character->getName(), host);
+        vlogf(LOG_PIO, "Losing player: %s [%s].", character->getName(), host);
 
       // shove into list so delete works OK
       character->desc = NULL;
@@ -695,7 +710,7 @@ void Descriptor::cleanUpStr()
                    connected == CON_SEDITING)) {
       // the str is attached to the mob/obj/room, so this is OK
     } else
-      vlogf(6, "Descriptor::cleanUpStr(): Probable memory leak");
+      vlogf(LOG_BUG, "Descriptor::cleanUpStr(): Probable memory leak");
   }
 }
 
@@ -732,7 +747,7 @@ void TPerson::autoDeath()
 {
   char buf[1024];
 
-  vlogf(6,"%s reconnected with negative hp, auto death occurring.", 
+  vlogf(LOG_PIO, "%s reconnected with negative hp, auto death occurring.", 
                         getName());
   sendTo("You reconnected with negative hit points, automatic death occurring.");
   sprintf(buf, "%s detected you reconnecting with %d hit points.\n\r", MUD_NAME, getHit());
@@ -1067,10 +1082,10 @@ int Descriptor::nanny(const char *arg)
             objCost cost;
 
             if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
-              vlogf(0, "%s[*masked*] has reconnected  (account: *masked*).",
+              vlogf(LOG_PIO, "%s[*masked*] has reconnected  (account: *masked*).",
                      character->getName());
             } else {
-              vlogf(0, "%s[%s] has reconnected  (account: %s).", 
+              vlogf(LOG_PIO, "%s[%s] has reconnected  (account: %s).", 
                      character->getName(), host, account->name);
             }
 
@@ -1089,9 +1104,9 @@ int Descriptor::nanny(const char *arg)
       }
       if (should_be_logged(character)) {
         if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) {
-          vlogf(0, "%s[*masked*] has connected  (account: *masked*).", character->getName());
+          vlogf(LOG_PIO, "%s[*masked*] has connected  (account: *masked*).", character->getName());
         } else {
-          vlogf(0, "%s[%s] has connected  (account: %s).", character->getName(), host, account->name);
+          vlogf(LOG_PIO, "%s[%s] has connected  (account: %s).", character->getName(), host, account->name);
         }
       }
       
@@ -1183,9 +1198,9 @@ int Descriptor::nanny(const char *arg)
                 objCost cost;
 
                 if (IS_SET(account->flags, ACCOUNT_IMMORTAL)) 
-                  vlogf(0, "%s[*masked*] has reconnected  (account: *masked*).", tmp_ch->getName());
+                  vlogf(LOG_PIO, "%s[*masked*] has reconnected  (account: *masked*).", tmp_ch->getName());
                 else 
-                  vlogf(0, "%s[%s] has reconnected  (account: %s).", tmp_ch->getName(), host, account->name);
+                  vlogf(LOG_PIO, "%s[%s] has reconnected  (account: %s).", tmp_ch->getName(), host, account->name);
                 
                 tmp_ch->recepOffer(NULL, &cost);
                 dynamic_cast<TPerson *>(tmp_ch)->saveRent(&cost, FALSE, 1);
@@ -1633,7 +1648,7 @@ int Descriptor::nanny(const char *arg)
       }
       character->convertAbilities();
       character->affectTotal();
-      vlogf(9, "%s [%s] new player.", character->getName(), host);
+      vlogf(LOG_PIO, "%s [%s] new player.", character->getName(), host);
 
       character->saveChar(ROOM_AUTO_RENT);
       accStat.player_count++;
@@ -2307,7 +2322,7 @@ int Descriptor::nanny(const char *arg)
     case CON_HELP:
     case CON_WRITING:
     case CON_SEDITING:
-      vlogf(0, "Nanny: illegal state of con'ness");
+      vlogf(LOG_BUG, "Nanny: illegal state of con'ness");
       abort();
       break;
   }
@@ -2326,7 +2341,7 @@ int TPerson::genericLoadPC()
 #endif
 
   if (should_be_logged(this))
-    vlogf(0, "Loading %s's equipment", name);
+    vlogf(LOG_PIO, "Loading %s's equipment", name);
   resetChar();
   BatoprsResetCharFlags(this);
   loadRent();
@@ -2342,7 +2357,7 @@ int TPerson::genericLoadPC()
   character_list = this;
 
 #if SPEEF_MAKE_BODY
-  vlogf(5,"Loading a body for %s\n\r", name);
+  vlogf(LOG_MISC, "Loading a body for %s\n\r", name);
   body = new Body(race->getBodyType(), points.maxHit);
 #endif
   if (in_room == ROOM_NOWHERE || in_room == ROOM_AUTO_RENT) {
@@ -2354,7 +2369,7 @@ int TPerson::genericLoadPC()
       if (player.hometown >= 0) {
         rp = real_roomp(player.hometown);
         if (!rp) {
-          vlogf(LOW_ERROR, "Player (%s) had non-existant hometown (%d)", getName(), player.hometown);
+          vlogf(LOG_LOW, "Player (%s) had non-existant hometown (%d)", getName(), player.hometown);
           rp = real_roomp(ROOM_CS);
         }
         *rp += *this;
@@ -2364,6 +2379,8 @@ int TPerson::genericLoadPC()
         player.hometown = ROOM_CS;
       }
     } else {
+      rp = real_roomp((d ? d->office : ROOM_IMPERIA));
+      /*
       if (!strcmp(name, "Bump"))
         rp = real_roomp(3);
       else if (!strcmp(name, "Kriebly"))
@@ -2447,15 +2464,16 @@ int TPerson::genericLoadPC()
 
       else
         rp = real_roomp(ROOM_IMPERIA);
+      */
 
       if (!rp) {
-        vlogf(9, "Attempting to place %s in room that does not exist.\n\r", name);
+        vlogf(LOG_BUG, "Attempting to place %s in room that does not exist.\n\r", name);
         rp = real_roomp(ROOM_VOID);
       }
       in_room = ROOM_NOWHERE;  // change it so it doesn't error in +=
       *rp += *this;
       player.hometown = ROOM_IMPERIA;
-      wizFileRead();        // Immort bamfins 
+      wizFileRead();
       if (!isImmortal())   // they turned it off
         doImmortal();
 
@@ -2637,7 +2655,7 @@ void Descriptor::go_back_menu(connectStateT con_state)
     case CON_SEDITING:
     case CON_HELP:
     case CON_WRITING:
-      vlogf(10, "Bad connected state in go_back_menu() [%d], BUG BRUTIUS!!!!", con_state);
+      vlogf(LOG_BUG, "Bad connected state in go_back_menu() [%d], BUG BRUTIUS!!!!", con_state);
       break;
   }
 }
@@ -3220,7 +3238,7 @@ bool Descriptor::canChooseClass(int Class, bool multi, bool triple)
   TBeing *ch;
 
   if (!(ch = character)) {
-    vlogf(10, "Descriptor got to canChooseClass with no character!!! BUG BRUTIUS!");
+    vlogf(LOG_BUG, "Descriptor got to canChooseClass with no character!!! BUG BRUTIUS!");
     return FALSE;
   }
 
@@ -3366,7 +3384,7 @@ bool Descriptor::page_file(const char *the_input)
 
   for (lines = 0; lines < (cur_page - 1) * lines_per_page; lines++) {
     if (!fgets(buffer, 255, fp)) {
-      vlogf(5, "Error paging file: %s, %d", pagedfile, cur_page);
+      vlogf(LOG_FILE, "Error paging file: %s, %d", pagedfile, cur_page);
       delete [] pagedfile;
       pagedfile = NULL;
       cur_page = tot_pages = 0;
@@ -3733,7 +3751,7 @@ char *Descriptor::badRaceMessage(int race)
   *buf = '\0';
 
   if (!(ch = character)) {
-    vlogf(10, "Descriptor got to badClassMessage with no character!!! BUG BRUTIUS!");
+    vlogf(LOG_BUG, "Descriptor got to badClassMessage with no character!!! BUG BRUTIUS!");
     return NULL;
   }
 
@@ -3789,7 +3807,7 @@ const string Descriptor::badClassMessage(int Class, bool multi, bool triple)
   *buf = '\0';
 
   if (!(ch = character)) {
-    vlogf(10, "Descriptor got to badClassMessage with no character!!! BUG BRUTIUS!");
+    vlogf(LOG_BUG, "Descriptor got to badClassMessage with no character!!! BUG BRUTIUS!");
     return ("");
   }
   if (multi && !IS_SET(account->flags, ACCOUNT_ALLOW_DOUBLECLASS)) {
@@ -4153,7 +4171,7 @@ void setPrompts(fd_set out)
         (&d->output)->putInQ(promptbuf);
       } else if (!d->connected) {
         if (!ch) {
-          vlogf(6, "Descriptor in connected mode with NULL desc->character.");
+          vlogf(LOG_BUG, "Descriptor in connected mode with NULL desc->character.");
           continue;
         }
         if (d->showstr_head && (d->prompt_mode != DONT_SEND)) {
@@ -4566,7 +4584,7 @@ void processAllInput()
             } else {
               // either descriptor_list hit end, or d is the next guy to process
               // in all likelihood, this descriptor has already been deleted and we point to free'd memory
-              vlogf(9, "Descriptor not found in list after parseCommand called.  (%s).  VERY BAD!", comm);
+              vlogf(LOG_BUG, "Descriptor not found in list after parseCommand called.  (%s).  VERY BAD!", comm);
             }
             continue;
           }
@@ -4647,7 +4665,7 @@ int Descriptor::sendLogin(const char *arg)
   } else if (*arg == '1') {
     FILE * fp = fopen("txt/version", "r");
     if (!fp) {
-      vlogf(10, "No version file found");
+      vlogf(LOG_FILE, "No version file found");
     } else {
       fgets(buf, 79, fp);
       // strip off the terminating newline char
@@ -4918,7 +4936,7 @@ int Descriptor::doAccountStuff(char *arg)
       if (!*arg || strcasecmp(arg, WIZLOCK_PASSWORD)) 
         return DELETE_THIS;
 
-      vlogf(9, "Person making new character after entering wizlock password.");
+      vlogf(LOG_MISC, "Person making new character after entering wizlock password.");
 
       output.putInQ("Enter a login name for your account -> ");
       connected = CON_NEWLOG;
@@ -4927,7 +4945,7 @@ int Descriptor::doAccountStuff(char *arg)
       if (!*arg || strcasecmp(arg, WIZLOCK_PASSWORD)) 
         return DELETE_THIS;
       
-      vlogf(9, "Person entering game by entering wizlock password.");
+      vlogf(LOG_MISC, "Person entering game by entering wizlock password.");
 
       account->status = TRUE;
       if (!IS_SET(account->flags, ACCOUNT_BOSS)) {
@@ -5107,7 +5125,7 @@ int Descriptor::doAccountStuff(char *arg)
         break;
       }
       writeToQ("Character deleted.\n\r");
-      vlogf(1, "Character %s self-deleted. (%s account)", delname, account->name);
+      vlogf(LOG_PIO, "Character %s self-deleted. (%s account)", delname, account->name);
       DeleteHatreds(NULL, delname);
       autobits = 0;
 
@@ -5116,7 +5134,7 @@ int Descriptor::doAccountStuff(char *arg)
       wipeFollowersFile(delname);
 
       while (has_mail(delname)) {
-        vlogf(1, "Deleting mail for character %s.", delname);
+        vlogf(LOG_PIO, "Deleting mail for character %s.", delname);
         char *tmpp = read_delete(delname, delname);
         delete [] tmpp;
       }
@@ -5124,7 +5142,7 @@ int Descriptor::doAccountStuff(char *arg)
       sprintf(buf, "account/%c/%s/%s", LOWER(account->name[0]), 
            lower(account->name).c_str(), delname);
       if (unlink(buf) != 0)
-        vlogf(9, "error in unlink (3) (%s) %d", buf, errno);
+        vlogf(LOG_FILE, "error in unlink (3) (%s) %d", buf, errno);
       account->status = TRUE;
       rc = doAccountMenu("");
       if (IS_SET_DELETE(rc, DELETE_THIS))
@@ -5285,9 +5303,9 @@ int Descriptor::doAccountStuff(char *arg)
     case CON_SEDITING:
     case CON_HELP:
     case CON_WRITING:
-      vlogf(10, "Bad connectivity in doAccountStuff() (%d, %s, %s)", 
+      vlogf(LOG_BUG, "Bad connectivity in doAccountStuff() (%d, %s, %s)", 
           connected, (character ? character->getName() : "false"), "0");
-      vlogf(10, "Trying to delete it.");
+      vlogf(LOG_BUG, "Trying to delete it.");
       return DELETE_THIS;
   }
   return FALSE;
@@ -5305,7 +5323,7 @@ int Descriptor::doAccountMenu(const char *arg)
     return DELETE_THIS;
   }
   if (!connected) {
-    vlogf(10, "DEBUG: doAM with !connected");
+    vlogf(LOG_BUG, "DEBUG: doAM with !connected");
     return DELETE_THIS;
   }
 #if 1
@@ -5436,18 +5454,18 @@ void Descriptor::saveAccount()
   accountFile afp;
 
   if (!account || !account->name) {
-    vlogf(10, "Bad descriptor in saveAccount");
+    vlogf(LOG_BUG, "Bad descriptor in saveAccount");
     return;
   }
   sprintf(buf, "account/%c/%s/account", LOWER(account->name[0]), lower(account->name).c_str());
   if (!(fp = fopen(buf, "w"))) {
     sprintf(buf2, "account/%c/%s", LOWER(account->name[0]), lower(account->name).c_str());
     if (mkdir(buf2, 0770)) {
-      vlogf(10, "Can't make directory for saveAccount (%s)", lower(account->name).c_str());
+      vlogf(LOG_FILE, "Can't make directory for saveAccount (%s)", lower(account->name).c_str());
       return;
     }
     if (!(fp = fopen(buf, "w"))) {
-      vlogf(10, "Big problems in saveAccount (s)", lower(account->name).c_str());
+      vlogf(LOG_FILE, "Big problems in saveAccount (s)", lower(account->name).c_str());
       return;
     }
   }
@@ -5475,7 +5493,7 @@ void Descriptor::deleteAccount()
 
   sprintf(buf, "account/%c/%s", LOWER(account->name[0]), lower(account->name).c_str());
   if (!(dfd = opendir(buf))) {
-    vlogf(10, "Unable to walk directory for delete account (%s account)", account->name);
+    vlogf(LOG_FILE, "Unable to walk directory for delete account (%s account)", account->name);
     return;
   }
   while ((dp = readdir(dfd))) {
@@ -5484,7 +5502,7 @@ void Descriptor::deleteAccount()
 
     sprintf(buf, "account/%c/%s/%s", LOWER(account->name[0]), lower(account->name).c_str(), dp->d_name);
     if (unlink(buf) != 0)
-      vlogf(9, "error in unlink (4) (%s) %d", buf, errno);
+      vlogf(LOG_FILE, "error in unlink (4) (%s) %d", buf, errno);
 
     // these are in the dir, but are not "players"
     if (!strcmp(dp->d_name, "comment") ||
@@ -5526,7 +5544,7 @@ int Descriptor::inputProcessing()
           break;
         
       } else {
-        vlogf(1, "EOF encountered on socket read.");
+        vlogf(LOG_PIO, "EOF encountered on socket read.");
         return (-1);
       }
     }
@@ -5645,7 +5663,7 @@ void Descriptor::sendMotd(int wiz)
   strcat(motd, version.c_str());
 
   if (stat(NEWS_FILE, &timestat)) {
-    vlogf(0,"bad call to news file");
+    vlogf(LOG_BUG, "bad call to news file");
     return;
   }
 
@@ -5657,7 +5675,7 @@ void Descriptor::sendMotd(int wiz)
     version = colorString(character, this, version.c_str(), NULL, COLOR_BASIC,  false);
     strcat(motd, version.c_str());
     if (stat(WIZNEWS_FILE, &timestat)) {
-      vlogf(0,"bad call to wiznews file");
+      vlogf(LOG_BUG, "bad call to wiznews file");
       return;
     }
     sprintf(wizmotd + strlen(wizmotd), 
@@ -5694,7 +5712,7 @@ bool textQ::takeFromQ(char *dest)
   if (begin->getText())
     strcpy(dest, begin->getText());
   else {
-    vlogf(5, "There was a begin with no text but a next");
+    vlogf(LOG_BUG, "There was a begin with no text but a next");
     return (0);
   }
   // store it off for later
@@ -5705,7 +5723,7 @@ bool textQ::takeFromQ(char *dest)
     if (begin->getNext() == begin) {
       begin->setNext(NULL);
       begin = NULL;
-      vlogf(5, "Tell a coder, begin->next = begin");
+      vlogf(LOG_BUG, "Tell a coder, begin->next = begin");
     }
   } else {
     begin = NULL;
@@ -5725,7 +5743,7 @@ void textQ::putInQ(const char *txt)
  
   n = new commText();
   if (!n) {
-    vlogf(10, "Failed mem alloc in putInQ()");
+    vlogf(LOG_BUG, "Failed mem alloc in putInQ()");
     return;
   }
   char *tx = mud_str_dup(txt);
@@ -5743,7 +5761,7 @@ void textQ::putInQ(const char *txt)
 int TBeing::applyAutorentPenalties(int secs)
 {
 #if PENALIZE_FOR_AUTO_RENTING
-  vlogf(0, "%s was autorented for %d secs", getName() ? getName() : "Unknown name", secs);
+  vlogf(LOG_PIO, "%s was autorented for %d secs", getName() ? getName() : "Unknown name", secs);
 
 #endif
   return FALSE;
@@ -5759,7 +5777,7 @@ int TBeing::applyRentBenefits(int secs)
   local_tics = secs * ONE_SECOND / PULSE_TICKS;
   local_tics /= 3;  // arbitrary
 
-  vlogf(0, "%s was rented for %d secs, counting as %d tics out-of-game",
+  vlogf(LOG_PIO, "%s was rented for %d secs, counting as %d tics out-of-game",
         getName(), secs, local_tics);
 
   setHit(min((int) hitLimit(), getHit() + (local_tics * hitGain())));

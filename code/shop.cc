@@ -815,46 +815,6 @@ bool TObj::fitsSellType(tObjectManipT tObjectManip,
   return false;
 }
 
-bool TContainer::fitsSellType(tObjectManipT tObjectManip,
-                              TBeing *ch, TMonster *tKeeper,
-                              string tStString, itemTypeT tItemType,
-                              int & tCount, int tShop)
-{
-  TThing         *tThing,
-                 *tThingTemp;
-  TObj           *tObj;
-  TRealContainer *tContainer = dynamic_cast<TRealContainer *>(this);
-
-  if ((tObjectManip == OBJMAN_FIT ||
-       tObjectManip == OBJMAN_NOFIT ||
-       tObjectManip == OBJMAN_TYPE) &&
-      (!tContainer || !tContainer->isClosed())) {
-    for (tThing = stuff; tThing; tThing = tThingTemp) {
-      tThingTemp = tThing->nextThing;
-
-      if (!ch->sameRoom(*tKeeper) || !ch->awake())
-        break;
-
-      if (!(tObj = dynamic_cast<TObj *>(tThing)))
-        continue;
-
-      if (tObj->fitsSellType(tObjectManip, ch, tKeeper, tStString, tItemType, tCount, tShop)) {
-        --(*tObj);
-        *ch += *tObj;
-        generic_sell(ch, tKeeper, tObj, tShop);
-      }
-    }
-  }
-
-  // This is sort of a kludge but we don't really want to weight this. It is
-  // better to not try and sell bags/containers with 'all' instead of picking
-  // out all the ones that we should/shouln't.
-  if (tObjectManip == OBJMAN_FIT)
-    return false;
-  else
-    return TObj::fitsSellType(tObjectManip, ch, tKeeper, tStString, tItemType, tCount, tShop);
-}
-
 int shopping_sell(const char *tString, TBeing *ch, TMonster *tKeeper, int shop_nr)
 {
   char argm[100], buf[512],

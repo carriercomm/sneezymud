@@ -1040,9 +1040,15 @@ void TObj::valueMe(TBeing *ch, TMonster *keeper, int shop_nr)
   int cost;
   char buf[256];
   int discount = 100;
-
+  int willbuy=0;
+  
+#if 0
   if (sellMeCheck(ch, keeper))
     return;
+#else
+  willbuy=!sellMeCheck(ch, keeper);
+#endif
+
   if (!trade_with(this, shop_nr)) {
     char buf[256];
     sprintf(buf, shop_index[shop_nr].do_not_buy, ch->getName());
@@ -1076,7 +1082,11 @@ void TObj::valueMe(TBeing *ch, TMonster *keeper, int shop_nr)
 #endif
   }
   max(cost, 1);  // at least 1 talen
-  sprintf(buf, "%s I'll give you %d talens for %s!", ch->name, cost, getName());
+  if(willbuy){
+    sprintf(buf, "%s I'll give you %d talens for %s!", ch->name, cost, getName());
+  } else {
+    sprintf(buf, "%s Normally, I'd give you %d talens for %s!", ch->name, cost, getName());
+  }
   keeper->doTell(buf);
 
   if (keeper->getMoney() < cost) {

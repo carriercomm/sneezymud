@@ -561,10 +561,26 @@ void TBeing::postmasterReceiveMail(TMonster *me)
     return;
   }
   while (has_mail(recipient)) {
+#if 1
+// builder port uses stripped down database which was causing problems
+// hence this setup instead.
+    int robj = real_object(GENERIC_NOTE);
+    if (robj < 0 || robj >= (signed int) obj_index.size()) {
+      vlogf(LOG_BUG, "postmasterReceiveMail(): No object (%d) in database!", 
+            GENERIC_NOTE);
+      return;
+    }
+
+    if (!(note = read_object(robj, REAL))) {
+      vlogf(LOG_BUG, "Couldn't make a note removed from board!");
+      return;
+    }
+#else
     if (!(note = read_object(GENERIC_NOTE, VIRTUAL))) {
       vlogf(LOG_BUG, "Couldn't make a note removed from board!");
       return;
     }
+#endif
     note->swapToStrung();
     delete [] note->name;
     note->name = mud_str_dup("mail paper letter");

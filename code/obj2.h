@@ -1275,8 +1275,8 @@ class TTrap : public TObj {
     virtual void dropMe(TBeing *, showMeT, showRoomT);
     virtual int throwMe(TBeing *, dirTypeT, const char *);
     virtual int detonateGrenade();
-    virtual void makeTrapLand(TBeing *, trap_t, const char *);
-    virtual void makeTrapGrenade(TBeing *, trap_t, const char *);
+    virtual void makeTrapLand(TBeing *, doorTrapT, const char *);
+    virtual void makeTrapGrenade(TBeing *, doorTrapT, const char *);
     virtual bool canDrop() const;
 
     void armGrenade(TBeing *);

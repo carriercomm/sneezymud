@@ -84,7 +84,7 @@ int TBeing::doSetTraps(const char *arg)
   char string[512], trap_type[40], direct[20];
   int field, dir;
   dirTypeT door;
-  trap_t type;
+  doorTrapT type;
   int rc;
   TObj *obj;
 
@@ -1707,7 +1707,7 @@ void TBeing::informMess()
 
 // may return DELETE_THIS
 // ch->task is still valid here, use it to parse for stuff as needed
-int TBeing::goofUpTrap(trap_t trap_type, trap_targ_t goof_type)
+int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
 {
   int trapdamage;
   int rc;
@@ -3698,7 +3698,7 @@ int TObj::grenadeHit(TTrap *o)
   return FALSE;
 }
 
-int TBeing::getDoorTrapDam(trap_t trap_type)
+int TBeing::getDoorTrapDam(doorTrapT trap_type)
 {
   // this is number of d8 to use when calculating damage
   // base range: 10 - 35
@@ -3757,7 +3757,7 @@ int TBeing::getDoorTrapDam(trap_t trap_type)
   return damage;
 }
 
-int TBeing::getContainerTrapDam(trap_t trap_type)
+int TBeing::getContainerTrapDam(doorTrapT trap_type)
 {
   // this is number of d8 to use when calculating damage
   // base range: 20 - 36
@@ -3816,7 +3816,7 @@ int TBeing::getContainerTrapDam(trap_t trap_type)
   return damage;
 }
 
-int TBeing::getMineTrapDam(trap_t trap_type)
+int TBeing::getMineTrapDam(doorTrapT trap_type)
 {
   // this is number of d8 to use when calculating damage
   // base range: 20 - 45
@@ -3875,7 +3875,7 @@ int TBeing::getMineTrapDam(trap_t trap_type)
   return damage;
 }
 
-int TBeing::getGrenadeTrapDam(trap_t trap_type)
+int TBeing::getGrenadeTrapDam(doorTrapT trap_type)
 {
   // because grenades are highly portable, and nail everyone in room
   // i kept the damage on them lower then other traps.
@@ -3936,7 +3936,7 @@ int TBeing::getGrenadeTrapDam(trap_t trap_type)
   return damage;
 }
 
-int TBeing::getDoorTrapLearn(trap_t)
+int TBeing::getDoorTrapLearn(doorTrapT)
 {
   int learn;
 
@@ -3951,7 +3951,7 @@ int TBeing::getDoorTrapLearn(trap_t)
   return learn;
 }
 
-int TBeing::getContainerTrapLearn(trap_t)
+int TBeing::getContainerTrapLearn(doorTrapT)
 {
   int learn;
 
@@ -3965,7 +3965,7 @@ int TBeing::getContainerTrapLearn(trap_t)
   return learn;
 }
 
-int TBeing::getMineTrapLearn(trap_t)
+int TBeing::getMineTrapLearn(doorTrapT)
 {
   int learn;
 
@@ -3980,7 +3980,7 @@ int TBeing::getMineTrapLearn(trap_t)
   return learn;
 }
 
-int TBeing::getGrenadeTrapLearn(trap_t)
+int TBeing::getGrenadeTrapLearn(doorTrapT)
 {
   int learn;
 
@@ -4034,7 +4034,7 @@ int TRealContainer::trapMe(TBeing *ch, const char *trap_type)
       return DELETE_VICT;
   }
 
-  trap_t type;
+  doorTrapT type;
   if (is_abbrev(trap_type, "fire")) {
     type = DOOR_TRAP_FIRE;
   } else if (is_abbrev(trap_type, "explosive")) {
@@ -4129,12 +4129,12 @@ void TTrap::addTrapEffectType(unsigned int r)
   trap_effect |= r;
 }
 
-trap_t TTrap::getTrapDamType() const
+doorTrapT TTrap::getTrapDamType() const
 {
   return trap_dam_type;
 }
 
-void TTrap::setTrapDamType(trap_t r)
+void TTrap::setTrapDamType(doorTrapT r)
 {
   trap_dam_type = r;
 }
@@ -4186,7 +4186,7 @@ void TTrap::assignFourValues(int x1, int x2, int x3, int x4)
 {
   setTrapLevel(x1);
   setTrapEffectType(x2);
-  setTrapDamType((trap_t) x3);
+  setTrapDamType(mapFileToDoorTrap(x3));
   setTrapCharges(x4);
 }
 
@@ -4194,7 +4194,7 @@ void TTrap::getFourValues(int *x1, int *x2, int *x3, int *x4) const
 {
   *x1 = getTrapLevel();
   *x2 = getTrapEffectType();
-  *x3 = (int) getTrapDamType();
+  *x3 = mapDoorTrapToFile(getTrapDamType());
   *x4 = getTrapCharges();
 }
 

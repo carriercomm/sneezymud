@@ -1083,7 +1083,7 @@ class TBeing : public TThing {
     bool willBumpHeadDoor(roomDirData *, int *) const;
     void sendTrapMessage(const char *, trap_targ_t, int);
     bool hasTrapComps(const char *, trap_targ_t, int);
-    int goofUpTrap(trap_t, trap_targ_t);
+    int goofUpTrap(doorTrapT, trap_targ_t);
     int springTrap(TTrap *);
     int triggerTrap(TTrap *);
     int triggerDoorTrap(dirTypeT);
@@ -1105,14 +1105,14 @@ class TBeing : public TThing {
     virtual bool addHated(TBeing *);
     virtual void setHunting(TBeing *) {}
     void throwGrenade(TTrap *, dirTypeT);
-    int getDoorTrapDam(trap_t);
-    int getContainerTrapDam(trap_t);
-    int getMineTrapDam(trap_t);
-    int getGrenadeTrapDam(trap_t);
-    int getDoorTrapLearn(trap_t);
-    int getContainerTrapLearn(trap_t);
-    int getMineTrapLearn(trap_t);
-    int getGrenadeTrapLearn(trap_t);
+    int getDoorTrapDam(doorTrapT);
+    int getContainerTrapDam(doorTrapT);
+    int getMineTrapDam(doorTrapT);
+    int getGrenadeTrapDam(doorTrapT);
+    int getDoorTrapLearn(doorTrapT);
+    int getContainerTrapLearn(doorTrapT);
+    int getMineTrapLearn(doorTrapT);
+    int getGrenadeTrapLearn(doorTrapT);
     bool canDoSummon() const;
     bool isSummonable() const;
     bool isTanking();

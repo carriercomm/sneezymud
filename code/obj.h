@@ -464,8 +464,8 @@ class TObj : public TThing {
     virtual int disarmMe(TBeing *);
     virtual void changeTrapValue2(TBeing *, const char *, editorEnterTypeT) {}
     virtual void changeTrapValue3(TBeing *, const char *, editorEnterTypeT) {}
-    virtual void makeTrapLand(TBeing *, trap_t, const char *) {}
-    virtual void makeTrapGrenade(TBeing *, trap_t, const char *) {}
+    virtual void makeTrapLand(TBeing *, doorTrapT, const char *) {}
+    virtual void makeTrapGrenade(TBeing *, doorTrapT, const char *) {}
     virtual void purgeMe(TBeing *);
     virtual int boardHandler(TBeing *, cmdTypeT, const char *);
     virtual void changeComponentValue4(TBeing *, const char *, editorEnterTypeT) {}

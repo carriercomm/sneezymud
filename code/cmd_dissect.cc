@@ -59,8 +59,8 @@ int determineDissectionItem(TBaseCorpse *corpse, int *amount, char *msg, char *g
         break;
       case RACE_DEER:
         num = OBJ_VENISON;
-        sprintf(msg, "You carve a piece of $p from $N.");
-        sprintf(gl_msg, "$n carves a piece of $p from $N.");
+        sprintf(msg, "You carve $p from $N.");
+        sprintf(gl_msg, "$n carves $p from $N.");
         *amount = 50;
         break;
       default:

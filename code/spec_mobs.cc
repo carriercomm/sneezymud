@@ -3518,7 +3518,7 @@ int dagger_thrower(TBeing *pch, cmdTypeT cmd, const char *, TMonster *me, TObj *
     
         if (!(dagger = read_object(robj, REAL))) {
           vlogf(LOG_BUG, "Couldn't make a dagger for dagger_thrower()!");
-          return;
+          return FALSE;
         }
 #else
         dagger = read_object(GENERIC_DAGGER, VIRTUAL);
@@ -3541,6 +3541,7 @@ int dagger_thrower(TBeing *pch, cmdTypeT cmd, const char *, TMonster *me, TObj *
   return TRUE;
 }
 
+// XXX
 int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
 {
   TBeing *vict;
@@ -3556,20 +3557,20 @@ int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
       if (robj < 0 || robj >= (signed int) obj_index.size()) {
         vlogf(LOG_BUG, "horse(): No object (%d) in database!",
               OBJ_PILE_OFFAL);
-        return;
+        return FALSE;
       }
 
-      if (!(note = read_object(robj, REAL))) {
-        vlogf(LOG_BUG, "Couldn't make a pile of horse poop!");
-        return;
-      }
+      //      if (!(note = read_object(robj, REAL))) {
+      //  vlogf(LOG_BUG, "Couldn't make a pile of horse poop!");
+      //  return FALSE;
+      // }
 #else
       obj = read_object(OBJ_PILE_OFFAL, VIRTUAL);
 #endif
 
       if (obj) {
         *me->roomp += *obj;
-        act("$n defecates on the $g.",
+        act("$n <o>defecates<z> on the $g.",
              TRUE, me, NULL, NULL, TO_ROOM);
       }
     }

@@ -413,6 +413,26 @@ void bootWorld(void)
     allocate_room(virtual_nr);
     rp = real_roomp(virtual_nr);
     rp->loadOne(room_f, true);
+
+    int i;
+    TRoom *temp;
+    
+    for(i=0;i<WORLD_SIZE;i++){
+      if((temp=real_roomp(i)) &&
+	 (rp->getXCoord() == temp->getXCoord()) &&
+	 (rp->getYCoord() == temp->getYCoord()) &&
+	 (rp->getZCoord() == temp->getZCoord()) &&
+	 !((rp->getXCoord() == 0) &&
+	   (rp->getYCoord() == 0) &&
+	   (rp->getZCoord() == 0)) &&
+	 temp->number != rp->number){
+	vlogf(LOG_LOW, "%s room %d has duplicate coordinates with room %d (%d, %d, %d)",
+	      rp->name, rp->number, temp->number, 
+	      rp->getXCoord(), rp->getYCoord(), rp->getZCoord());
+      }
+    }
+
+
 #if 0
 // modified weather stuff, not used yet, BAT
     rp->initWeather();

@@ -11,8 +11,10 @@
 enum skillUseTypeT {
      SPELL_UNDEFINED,
      SPELL_CASTER,
+     SPELL_DANCER,
      SPELL_PRAYER,
      SKILL_CASTER ,
+     SKILL_DANCER,
      SKILL_PRAYER ,
      SKILL_FIGHTER,
 };

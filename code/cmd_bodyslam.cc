@@ -72,7 +72,7 @@ bool TBeing::canBodyslam(TBeing *victim, silentTypeT silent)
       sendTo("You are too busy fending off other attackers!\n\r");
     return FALSE;
   }
-  if (!canUseArm(TRUE) || !canUseArm(FALSE)) {
+  if (!canUseArm(HAND_PRIMARY) || !canUseArm(HAND_SECONDARY)) {
     if (!silent)
       sendTo("You need two working arms to bodyslam someone.\n\r");
     return FALSE;

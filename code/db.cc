@@ -2829,12 +2829,13 @@ int dbquery(MYSQL_RES **res, const char *dbname, const char *msg, const char *qu
 
   if(!strcmp(dbname, "sneezy")){
     if(!sneezydb){
+      const char * dbconnectstr = NULL;
       if(gamePort == PROD_GAMEPORT){
-	char dbconnectstr[]="sneezy";
+	dbconnectstr="sneezy";
       } else if(gamePort == BUILDER_GAMEPORT){
-	char dbconnectstr[]="sneezybuilder";
+	dbconnectstr="sneezybuilder";
       } else {
-	char dbconnectstr[]="sneezybeta";
+	dbconnectstr="sneezybeta";
       }
 
       vlogf(LOG_MISC, "%s: Initializing database '%s'.", msg,

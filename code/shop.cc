@@ -1624,7 +1624,35 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
     return FALSE;
   }
 
-  if (cmd == CMD_GENERIC_INIT) {
+  if (cmd == CMD_GENERIC_PULSE) {
+    TThing *t;
+    TBeing *tbt;
+
+    // Toss out idlers
+    for(t=myself->roomp->stuff;t;t=t->nextThing){
+      if((tbt=dynamic_cast<TBeing *>(t)) &&
+	 tbt->getTimer()>1){
+	myself->doSay("Hey, no loitering!  Make room for the other customers.");
+	for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
+	  if (exit_ok(myself->exitDir(dir), NULL)) {
+	    // at least one valid dir exists
+	    // select the true direction at random
+	    do {
+	      dir = dirTypeT(::number(MIN_DIR, MAX_DIR-1));
+	    } while (!exit_ok(myself->exitDir(dir), NULL));
+	    
+	    act("$n throws you from $s shop.",
+		FALSE, myself, 0, tbt, TO_VICT);
+	    act("$n throws $N from $s shop.",
+		FALSE, myself, 0, tbt, TO_NOTVICT);
+	    myself->throwChar(tbt, dir, FALSE, SILENT_NO, true);
+	    return TRUE;
+	  }
+	}
+      }
+    }
+    return TRUE;
+  } else if (cmd == CMD_GENERIC_INIT) {
     if (!myself->isUnique()) {
       vlogf(LOG_BUG, "Warning!  %s attempted to be loaded, when not unique.", myself->getName());
       return TRUE;

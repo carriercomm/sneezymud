@@ -220,14 +220,15 @@ int TRealContainer::openMe(TBeing *ch)
              !isContainerFlag(CONT_EMPTYTRAP) ||
              isContainerFlag(CONT_GHOSTTRAP)) {
     if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
-      if (detectTrapObj(ch, this)) {
+      if (detectTrapObj(ch, this) || isContainerFlag(CONT_GHOSTTRAP)) {
         sprintf(buf, "You start to open $p, but then notice an insideous %s trap...",
               good_uncap(trap_types[getContainerTrapType()]).c_str());
         act(buf, TRUE, ch, this, NULL, TO_CHAR);
+
         return FALSE;
       } else if (!isContainerFlag(CONT_TRAPPED) &&
                  !bSuccess(ch, ch->getSkillValue(SKILL_DETECT_TRAP), SKILL_DETECT_TRAP)) {
-        setContainerTrapType(doorTrapT(::number(DOOR_TRAP_NONE+1, (MAX_TRAP_TYPES - 1))));
+        setContainerTrapType(doorTrapT(::number((DOOR_TRAP_NONE + 1), (MAX_TRAP_TYPES - 1))));
         setContainerTrapDam(0);
         addContainerFlag(CONT_GHOSTTRAP);
 
@@ -238,6 +239,7 @@ int TRealContainer::openMe(TBeing *ch)
         return FALSE;
       }
     }
+
     act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
     act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);
     remContainerFlag(CONT_CLOSED);
@@ -247,18 +249,19 @@ int TRealContainer::openMe(TBeing *ch)
     if (isContainerFlag(CONT_TRAPPED)) {
       int rc = ch->triggerContTrap(this);
       int res = 0;
-      if (IS_SET_DELETE(rc, DELETE_ITEM)) {
+      if (IS_SET_DELETE(rc, DELETE_ITEM))
         ADD_DELETE(res, DELETE_THIS);
-      }
-      if (IS_SET_DELETE(rc, DELETE_THIS)) {
+
+      if (IS_SET_DELETE(rc, DELETE_THIS))
         ADD_DELETE(res, DELETE_VICT);
-      }
+
       return res;
     }
 
     return TRUE;
   } else {
     remContainerFlag(CONT_CLOSED);
+    remContainerFlag(CONT_GHOSTTRAP);
     addContainerFlag(CONT_EMPTYTRAP);
     act("You open $p.", TRUE, ch, this, NULL, TO_CHAR);
     act("$n opens $p.", TRUE, ch, this, 0, TO_ROOM);

@@ -112,6 +112,8 @@
 - Having a cudgel knowledge of 80 or higher will now allow cudgelling with
   an offhand weapon.  The cost is -10 to the attack level and -20 to the
   attack skill.
+- If a thief is being stolen from, and he/she/it is perceptive.  They will
+  get a vague message telling them something occured, not what but something.
 
 01-27-00 - Bat
 - For clarity and consistency with other obj classes, I renamed:

@@ -978,7 +978,7 @@ static const string getWhoLevel(const TBeing *ch, TBeing *p)
       tmpstring = "Anonymous";
     } else {
 #if 1
-      sprintf(tempbuf, "%-4s Lev %2d", p->getProfAbbrevName(), p->GetMaxLevel());
+      sprintf(tempbuf, "%-5s Lev %2d", p->getProfAbbrevName(), p->GetMaxLevel());
       tmpstring += tempbuf;
 #else
       tmpstring = p->getProfAbbrevName();

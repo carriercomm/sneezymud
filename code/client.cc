@@ -4,9 +4,7 @@
 //
 //      "client.cc" - All functions and routines related to client/server 
 //
-//      The client/server protocol coded by Russ Russell, Februrary 1994,
-//      Changed to c++ October 1994
-//      Last revision, August 2, 1999.
+//      The client/server protocol coded by Russ Russell
 //
 //////////////////////////////////////////////////////////////////////////
 

@@ -288,8 +288,12 @@ int TRealContainer::detectMe(TBeing *thief) const
   if (!isContainerFlag( CONT_TRAPPED))
     return FALSE;
 
+#if 0
+// this is apparently legit.  ghost traps.
+
   // to track down reports that detect is turning up "none traps"
   mud_assert(getContainerTrapType() != DOOR_TRAP_NONE, "Bad trap type in detectMe");
+#endif
 
   // opening a trapped item
   if (bSuccess(thief, bKnown, SKILL_DETECT_TRAP)) {

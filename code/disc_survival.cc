@@ -44,7 +44,7 @@ int forage(TBeing *caster, byte bKnown)
    }
 
   if (caster->affectedBySpell(SKILL_FORAGE)) {
-    act("You can only forage once per half-day.", FALSE, caster, NULL, NULL, TO_CHAR);
+    act("You must wait before foraging again.", FALSE, caster, NULL, NULL, TO_CHAR);
     return SPELL_FAIL;
   }
   int forage_move = ::number(5,15);

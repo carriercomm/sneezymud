@@ -356,9 +356,16 @@ void TBeing::makeDiseasedPart(wearSlotT pos)
        TRUE,this,corpse,0,TO_ROOM);
   *roomp += *corpse;
 
-  if (!isPc())
+  if (!isPc()) {
     // leprosy causing parts to go missing = cheap, easy kills
-    setExp(getExp() / 2);
+    double tExp = (getExp() / 2.0);
+
+    // Make sure this mob is no longer deralict.
+    if (!canUseArm(HAND_PRIMARY) && !canUseArm(HAND_SECONDARY))
+      tExp = 0.0;
+
+    setExp(tExp);
+  }
 }
 
 bool TBeing::banished() const

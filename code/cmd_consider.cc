@@ -40,8 +40,7 @@ void TBeing::doConsider(const char *argument)
     strcpy(namebuf, victim->getName());
   }
   if (victim == this) {
-    if (!isImmortal()) {
-      sendTo("You consider your equipment...\n\r");
+      sendTo("You consider yourself...\n\r");
       int armor = 1000 - getArmor();
       int suggest = suggestArmor();
       diff = suggest - armor;
@@ -59,11 +58,30 @@ void TBeing::doConsider(const char *argument)
              (diff >= - 80 ? "great" :
              (diff >= -150 ? "fantastic" :
              (diff >= -200 ? "superb" : "incredibly good"))))))))))))));
+
+      int vis=visibility();
+      sendTo("You are %s.\n\r",
+	     (vis >= 50 ? "only a shadow to the eyes of most mortals" :
+	      (vis >= 40 ? "barely visible at all" :
+	       (vis >= 30 ? "very well hidden" :
+		(vis >= 20 ? "well hidden" :
+		 (vis >= 10 ? "fairly well hidden" :
+		  (vis >= 5  ? "slightly hidden" :
+		   (vis >= 0 ? "not especially hidden or visible" :
+		    "as visible as a christmas tree"))))))));
+      
+      int n=noise(this);
+      sendTo("You are %s.\n\r",
+	     (n >= 500 ? "too noisy to sneak up on a deaf man" :
+	      (n >= 300 ? "making more noise than a herd of stampeding elephants" :
+	       (n >= 200  ? "making a lot of noise" :
+		(n >= 100 ? "making some noise" :
+		 (n >= 50 ? "making a little noise" :
+		 (n >= 25 ? "somewhat quiet" :
+		 (n >= 0 ? "quiet" :
+		  (n >= -25 ? "very quiet" :
+		   "walking in silence, like a shadow")))))))));
       return;
-    } else {
-      sendTo("You're funny...  You're a god, what do you need armor for??\n\r");
-      return;
-    }
   }
   if (victim->isPc() && victim->isImmortal()) {
     sendTo("You must sure have a big ego to contemplate fighting gods.\n\r");

@@ -864,8 +864,8 @@ void checkGoldStats()
 {
   // insure we have enough data to take accurate reading
   unsigned int pos_gold = getPosGoldGlobal();
-//  if (pos_gold < 5000000U)
-  if (pos_gold < 2000000U)
+  if (pos_gold < 5000000U)
+//  if (pos_gold < 2000000U)
     return;
 
   int net_gold = getNetGoldGlobal();

@@ -1951,6 +1951,7 @@ void TBeing::throwChar(TBeing *v, dirTypeT dir, bool also, silentTypeT silent, b
   }
 }
 
+// Bulge's proc
 int payToll(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *)
 {
   dirTypeT dir;
@@ -1993,10 +1994,10 @@ int payToll(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *)
   } else
     dir=dirTypeT(atoi(arg));
 
-  switch(myself->roomp->number){
-    case 1024:  // room number
+  switch(myself->inRoom()){
+    case 1024:
       if(!myself->canSee(ch) || myself==ch || ch->isAnimal() || 
-         !myself->awake()) {
+         !myself->awake() || myself->fight()) {
 	return FALSE;
       } else if(rev_dir[dir]==ch->specials.last_direction){
 	act("$n growls but lets you return the way you came.",
@@ -2046,7 +2047,8 @@ int payToll(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *)
     case 22736:
     case 22738:
     case 22748:
-      if(((!myself->canSee(ch) || myself==ch)) || ch->isAnimal()){
+      if(((!myself->canSee(ch) || myself==ch)) || ch->isAnimal() ||
+         myself->fight()){
 	return FALSE;
       } else if(rev_dir[dir]==ch->specials.last_direction){
 	return FALSE;

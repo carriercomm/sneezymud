@@ -227,10 +227,15 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Ranger L21 Quest: Finished Ranger L21 Quest", MOB_RANGER_AMBER},
   {"Faction Membership: eligible", MOB_NONE},
   {"Caldonia: bought her a shot of whisky", MOB_CALDONIA},
+  {"", MOB_NONE},
+  {"", MOB_NONE},
+  {"", MOB_NONE},
+  {"", MOB_NONE},
+  {"", MOB_NONE},
   {"Warrior L40 Quest: Eligable", MOB_NONE},                            //215
   {"Warrior L40 Quest: Started", MOB_CHIEF_MALE_VILLAGER},
   {"Warrior L40 Quest: Killing Shaman", MOB_ELDERLY_SHAMAN},
   {"Warrior L40 Quest: Finished Warrior", MOB_CHIEF_MALE_VILLAGER},
-  {"", MOB_NONE}, //219
+  {"", MOB_NONE}, //224
 };
 

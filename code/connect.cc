@@ -5747,8 +5747,8 @@ int TBeing::applyRentBenefits(int secs)
   affectedData *af = NULL, *next_af_dude = NULL;
   int amt, transFound = FALSE;
 
-  // award healing for every 3 mins gone
-  local_tics = secs * ONE_SECOND / PULSE_TICKS;
+  // award healing for every 3 ticks gone gone
+  local_tics = secs / SECS_PER_UPDATE;
   local_tics /= 3;  // arbitrary
 
   vlogf(LOG_PIO, "%s was rented for %d secs, counting as %d tics out-of-game",

@@ -65,6 +65,7 @@ class TThing {
     TThing *parent;          // Room, Obj, Being etc. that I am inside of.
     TThing *stuff;           // The stuff inside me
     TThing *nextThing;       // The next thing in the list I am inside of
+    TThing *nextBorn;        // The next thing born in my room(mobiles)
     TRoom *roomp;
     Descriptor *desc;
     extraDescription *ex_description;  // extra descriptions 

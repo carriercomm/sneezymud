@@ -3202,12 +3202,17 @@ int keyInKnife(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
 {
   if (!(ch = dynamic_cast<TBeing *>(o->parent)))
     return FALSE;
-  TObj *key = read_object(17211, VIRTUAL); 
+  TObj *key = NULL; 
   char buf[256];
 
   if (cmd != CMD_PUSH && cmd != CMD_PRESS) 
     return FALSE;
-  
+ 
+  if (!key = read_object(17211, VIRTUAL)) {
+    vlogf(LOG_PROC, "Key in Knife -- bad read of object (%s)", ch->getName());
+    return FALSE;
+  }
+ 
   one_argument(arg, buf);
   
   

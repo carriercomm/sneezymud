@@ -1467,6 +1467,34 @@ int specificCode(TMonster *mob, TBeing *ch, int which, const resp * respo)
       }
 
       return FALSE;
+    case 7:
+      if (mob->mobVnum() != 5131) {
+        vlogf(LOG_LOW, "Bad mob (%s:%d) calling specificCode(%d)",
+              mob->getName(), mob->mobVnum(), which);
+        return RET_STOP_PARSING;
+      }
+
+      if (!ch)
+        return RET_STOP_PARSING;
+
+      TRoom *rp;
+      TThing *t;
+      if (!(rp = real_roomp(526)))
+	break;
+
+      --(*ch);
+      if (ch->riding) {
+        --(*(ch->riding));
+        *rp += *(ch->riding);
+      }
+      for (t = ch->rider; t; t = t->nextRider) {
+        --(*t);
+        *rp += *t;
+      }
+      *rp += *ch;
+      act("$n arrives from a puff of smoke.", FALSE, ch, 0, 0, TO_ROOM);
+      ch->doLook("", CMD_LOOK);
+      break;
     default:
       vlogf(LOG_MOB_RS, "Undefined response segment: %d", which);
       break;

@@ -246,8 +246,8 @@ int TMonster::hitGain()
   
   // base1 is the % for level 1, base50 is the percent for level 50, for easy adjusting
 
-  double base1 = 0.075; // yeash complain complain making this much lower etc
-  double base50 = 0.025;
+  double base1 = 0.125; // yeash complain complain making this much lower etc
+  double base50 = 0.05;
 
 
   double level = (double)(min(50, (int)GetMaxLevel()));
@@ -487,14 +487,14 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
 
 
   if (!desc) {
-    learnrate = plotStat(STAT_CURRENT, STAT_INT, minlearn, maxlearn, avlearn, 1.4);
+    learnrate = plotStat(STAT_CURRENT, STAT_INT, minlearn, maxlearn, avlearn, 1.2);
   } else {
-    learnrate = plotStat(STAT_NATURAL, STAT_INT, minlearn, maxlearn, avlearn, 1.4);
+    learnrate = plotStat(STAT_NATURAL, STAT_INT, minlearn, maxlearn, avlearn, 1.2);
   }
 
 
 
-  double advancedlevel = (double)((int)(avbasic+(deviation*((avlearn - learnrate)/(avlearn-minlearn)))));
+  double advancedlevel = (double)((avbasic+(deviation*((avlearn - learnrate)/(avlearn-minlearn)))));
   //  double advancedlevel = (90.0/(8.0*learnrate));
   double basicpracs = (200.0/advancedlevel);
   double advancedpracs = (discs * 60.0 * learnrate)/(50.0 - advancedlevel);
@@ -604,6 +604,7 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
 #endif
 
   prac = (int) num;
+  temp = prac;
   num = num - prac;
   if (isTripleClass()) {
     prac *= 4;
@@ -616,15 +617,15 @@ sh_int TBeing::calcNewPracs(classIndT Class, bool forceBasic)
     num *= 3;
     num /= 4;
   } 
-
-  if ((100.0*num) >= (::number(1,99))) {
+  int roll = ::number(1,99);
+  if ((100.0*num) >= roll) {
     prac++;
   }
   if(isPc()) {
-    vlogf(LOG_DASH, "%s gaining %d pracs (%4.2f + %4.2f) lev: %d, advancedlev: %d", getName(),
-	  prac, temp, num, getLevel(Class), (int)advancedlevel);
-    vlogf(LOG_JESUS, "%s gaining %d pracs (%4.2f + %4.2f) lev: %d, advancedlev: %d", getName(),
-          prac, temp, num, getLevel(Class), (int)advancedlevel);
+    vlogf(LOG_DASH, "%s gaining %d pracs roll = %d (%d + %4.2f) lev: %d, advancedlev: %5.2f", getName(),
+	  prac, roll, (int)temp, num, getLevel(Class), advancedlevel);
+    vlogf(LOG_JESUS, "%s gaining %d pracs roll = %d (%d + %4.2f) lev: %d, advancedlev: %5.2f", getName(),
+          prac, roll, (int)temp, num, getLevel(Class), advancedlevel);
 
   }
   return prac;

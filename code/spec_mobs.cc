@@ -1751,6 +1751,8 @@ int janitor(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
       act("$n picks up some trash.", FALSE, myself, 0, 0, TO_ROOM);
       --(*obj);
       *myself += *obj; 
+      if(obj->objVnum() == 10030)
+	delete obj;
     }
     return TRUE;
   }
@@ -3523,7 +3525,7 @@ int horse(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
   TObj *obj=NULL;
 
   if(cmd == CMD_GENERIC_PULSE){
-    if(!::number(0,100) && me->roomp && 
+    if(!::number(0,500) && me->roomp && 
        (obj = read_object(10030, VIRTUAL))){
       *me->roomp += *obj;
       act("$n defecates on the $g.",

@@ -1,3 +1,4 @@
+
 //////////////////////////////////////////////////////////////////////////
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
@@ -17,6 +18,7 @@ extern "C" {
 #include "stdsneezy.h"
 #include "components.h"
 #include "dirsort.h"
+#include "statistics.h"
 
 static void update_obj_menu(const TBeing *ch, const TObj *obj)
 {

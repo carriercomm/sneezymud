@@ -140,7 +140,7 @@ static int grapple(TBeing *c, TBeing *victim, spellNumT skill)
                 TRUE, c, 0, victim, TO_CHAR);
             act("$n now turns $s attention to $N!", 
                 TRUE, c, 0, victim, TO_NOTVICT);
-            act("$n has turned $s attention to You!", 
+            act("$n has turned $s attention to you!", 
                 TRUE, c, 0, victim, TO_VICT);
           }
           c->stopFighting();
@@ -155,11 +155,11 @@ static int grapple(TBeing *c, TBeing *victim, spellNumT skill)
               TRUE, c, 0, victim, TO_CHAR);
           act("$n now turns $s attention to $N!",
               TRUE, c, 0, victim, TO_NOTVICT);
-          act("$n has turned $s attention to You!",
+          act("$n has turned $s attention to you!",
               TRUE, c, 0, victim, TO_VICT);
         }
         if (victim->fight() && (victim->fight() != c)) {
-          act("$N now turns $S attention to You!", 
+          act("$N now turns $S attention to you!", 
               TRUE, c, 0, victim, TO_CHAR);
           act("$N now turns $S attention to $n!", 
               TRUE, c, 0, victim, TO_NOTVICT);
@@ -251,4 +251,7 @@ int TBeing::doGrapple(const char *argument, TBeing *vict)
   }
   return rc;
 }
+
+
+
 

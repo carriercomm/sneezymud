@@ -418,6 +418,7 @@ extern void comify(char *);
 extern bool checkAttuneUsage(TBeing *, int *, int *, TVial **, TSymbol *);
 extern const string getWizPowerName(wizPowerT); 
 extern void setWizPowers(const TBeing *, TBeing *, const char *);
+extern void remWizPowers(const TBeing *, TBeing *, const char *);
 extern void assign_drink_types();
 extern void assign_drug_info();
 extern drugTypeT mapFileToDrug(int);

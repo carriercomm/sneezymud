@@ -368,6 +368,7 @@ void update_time(void)
   fprintf(f1, "#\n");
 
   fprintf(f1, "%ld\n", current_time);
+  fprintf(f1, "%d\n", time_info.minutes);
   fprintf(f1, "%d\n", time_info.hours);
   fprintf(f1, "%d\n", time_info.day);
   fprintf(f1, "%d\n", time_info.month);

@@ -393,7 +393,7 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
   return FALSE;
 }
 
-string TBow::showModifier(showModeT, const TBeing *) const
+string TBow::showModifier(showModeT mode, const TBeing *ch) const
 {
   string a;
 
@@ -402,6 +402,18 @@ string TBow::showModifier(showModeT, const TBeing *) const
   else
     a = " (unloaded)";
 
+  if (mode == SHOW_MODE_SHORT_PLUS ||
+       mode == SHOW_MODE_SHORT_PLUS_INV ||
+       mode == SHOW_MODE_SHORT) {
+    a = " (";
+    a += equip_condition(-1);
+    a += ")";
+    if (ch->hasWizPower(POWER_IMM_EVAL) || TestCode2) {
+      char buf[256];
+      sprintf(buf, " (L%d)", (int) (objLevel() + 0.5));
+      a += buf;
+    }
+  }
   return a;
 }
 

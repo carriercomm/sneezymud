@@ -287,6 +287,12 @@ int TPerson::hitGain()
   int gain;
   int num;
 
+  if (hasClass(CLASS_SHAMAN)) {
+    if (0 >= getLifeforce()) {
+      return 0;
+    }
+  }
+
   if (!desc)
     return 0;
 

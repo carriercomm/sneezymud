@@ -2,32 +2,6 @@
 //
 // SneezyMUD - All rights reserved, SneezyMUD Coding Team
 //
-// $Log: skill_dam.cc,v $
-// Revision 5.1.1.2  1999/10/16 21:21:41  batopr
-// typo fix
-//
-// Revision 5.1.1.1  1999/10/16 04:32:20  batopr
-// new branch
-//
-// Revision 5.1  1999/10/16 04:31:17  batopr
-// new branch
-//
-// Revision 1.5  1999/10/16 02:50:23  batopr
-// Added bonus for spells needing special weather-conditions
-//
-// Revision 1.4  1999/10/09 05:39:50  batopr
-// typo
-//
-// Revision 1.3  1999/10/09 05:38:21  batopr
-// Added OUTDOOR_ONLY elsewhere it was needed
-//
-// Revision 1.2  1999/10/09 05:31:44  batopr
-// Added OUTDOOR_ONLY trigger for meteorswarm
-//
-// Revision 1.1  1999/09/12 17:24:04  sneezy
-// Initial revision
-//
-//
 //////////////////////////////////////////////////////////////////////////
 
 

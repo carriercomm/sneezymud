@@ -2267,10 +2267,11 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
       stormySkies(caster,victim,obj);
       break;
     case SPELL_ATOMIZE:
-      /*
-      atomize(caster,victim,obj);
+      rc = atomize(caster,victim,obj);
       break;
-      */
+    case SPELL_ENERGY_DRAIN:
+      rc = energyDrain(caster,victim,obj);
+      break;
     default:
       vlogf(5,"Object (%s) with uncoded spell (%d)!", obj->getName(), spell);
       break;

@@ -661,9 +661,9 @@ void TMonster::checkMobStats(tinyfileTypeT forReal)
   int sumstat;
   char *s;
 
-  if (player.getLongDesc() && (strlen(player.getLongDesc()) > 2) &&
-      ((player.getLongDesc()[strlen(player.getLongDesc()) - 1] != '\r') ||
-      (player.getLongDesc()[strlen(player.getLongDesc()) - 2] != '\n'))) {
+  if (getLongDesc() && (strlen(getLongDesc()) > 2) &&
+      ((getLongDesc()[strlen(getLongDesc()) - 1] != '\r') ||
+      (getLongDesc()[strlen(getLongDesc()) - 2] != '\n'))) {
     vlogf(LOG_LOW, "%s (%d) has bad format of longDescr",
           getName(), mobVnum());
   }

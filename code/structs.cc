@@ -1259,7 +1259,7 @@ TBeing::TBeing(const TBeing &a) :
   if (IS_SET(a.specials.act,ACT_STRINGS_CHANGED)) {
     name = mud_str_dup(a.name);
     shortDescr = mud_str_dup(a.shortDescr);
-    player.longDescr = mud_str_dup(a.player.getLongDesc());
+    player.longDescr = mud_str_dup(a.getLongDesc());
     setDescr(mud_str_dup(a.getDescr()));
 
     if (ex_description)

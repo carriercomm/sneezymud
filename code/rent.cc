@@ -3486,9 +3486,9 @@ bool TBeing::saveFollowers(bool rent_time)
       temp[j] = '\0';
       fprintf(fp, "%s~\n", temp);
 
-      for (j = 0, k = 0; k <= (int) strlen(mob->player.getLongDesc()); k++) {
-        if (mob->player.getLongDesc()[k] != 13)
-          temp[j++] = mob->player.getLongDesc()[k];
+      for (j = 0, k = 0; k <= (int) strlen(mob->getLongDesc()); k++) {
+        if (mob->getLongDesc()[k] != 13)
+          temp[j++] = mob->getLongDesc()[k];
       }
       temp[j] = '\0';
       fprintf(fp, "%s~\n", temp);

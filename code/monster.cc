@@ -295,7 +295,7 @@ TMonster::~TMonster()
     char *tc = mud_str_dup(getDescr());
     setDescr(tc);
     shortDescr = mud_str_dup(shortDescr);
-    player.longDescr = mud_str_dup(player.getLongDesc());
+    player.longDescr = mud_str_dup(getLongDesc());
 
     if (ex_description)
       ex_description = new extraDescription(*ex_description);
@@ -314,7 +314,7 @@ TMonster::~TMonster()
   if (shortDescr && shortDescr == mob_index[getMobIndex()].short_desc) 
     vlogf(LOG_BUG, "TMonster delete: after allocation, monster still had shared string (%s) : short", getName());
 
-  if (player.getLongDesc() && player.longDescr == mob_index[getMobIndex()].long_desc)
+  if (getLongDesc() && player.longDescr == mob_index[getMobIndex()].long_desc)
     vlogf(LOG_BUG, "TMonster delete: after allocation, monster still had shared string (%s) : long", getName());
 
 // Just a placemarker end of desctructor

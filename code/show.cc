@@ -657,7 +657,7 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
     const TMonster *tm = dynamic_cast<const TMonster *>(this);
     if (riding || spelltask || fight() ||
         (roomp->isWaterSector() && !isAffected(AFF_WATERBREATH)) ||
-        !(player.getLongDesc()) ||
+        !(getLongDesc()) ||
         (tm && tm->getPosition() != tm->default_pos)) {
       // A player char or a mobile without long descr, or not in default pos. 
       if (hasColorStrings(NULL, getName(), 2)) {
@@ -815,7 +815,7 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
         *buffer = '\0';
 
       sprintf(capbuf, "%s",
-              addNameToBuf(ch, ch->desc, this, player.getLongDesc(), COLOR_MOBS).c_str());
+              addNameToBuf(ch, ch->desc, this, getLongDesc(), COLOR_MOBS).c_str());
       string Strng = capbuf;
       // let's concat the name of a loser god that didn't put it in their
       // long desc
@@ -1118,7 +1118,7 @@ void TBeing::show_me_mult_to_char(TBeing *ch, showModeT, unsigned int num) const
   const TMonster *tm = dynamic_cast<const TMonster *>(this);
   if (riding || spelltask || fight() ||
         (roomp->isWaterSector() && !isAffected(AFF_WATERBREATH)) ||
-        !(player.getLongDesc()) ||
+        !(getLongDesc()) ||
         (tm && tm->getPosition() != tm->default_pos)) {
     // A player char or a mobile without long descr, or not in default pos. 
     strcpy(buffer, getName());
@@ -1244,7 +1244,7 @@ void TBeing::show_me_mult_to_char(TBeing *ch, showModeT, unsigned int num) const
     else 
       *buffer = '\0';
     
-    sprintf(capbuf, "%s", addNameToBuf(ch, ch->desc, this, player.getLongDesc(), COLOR_MOBS).c_str());
+    sprintf(capbuf, "%s", addNameToBuf(ch, ch->desc, this, getLongDesc(), COLOR_MOBS).c_str());
     string cStrbuf = capbuf;
     while (cStrbuf.find("$$g") != string::npos)
       cStrbuf.replace(cStrbuf.find("$$g"), 3,

@@ -1020,6 +1020,9 @@ int antigravity(TBeing *caster, int, affectedData *aff, byte bKnown)
 
 int antigravity(TBeing * caster)
 {
+  caster->sendTo("The antigravity spell has been disabled due to a crash bug.\n\r");
+  return FALSE;
+
   if (!bPassMageChecks(caster, SPELL_ANTIGRAVITY, NULL))
     return FALSE;
 

@@ -687,6 +687,9 @@ void TPerson::setTitle(bool tForm)
 
 // NOTE, gainmod is defined in multiple places, if you change it, change all of them please
 // adding a small change so that low levs don't have a cap of 0 (max(lev*2,newgain))
+// it looks like my logic for multiclasses isn't right, they're getting 1/#c as much exp as
+// they should, even with the multiclass penalty... 01/01 - dash
+
 
 void gain_exp(TBeing *ch, double gain, int dam)
 {
@@ -715,7 +718,7 @@ void gain_exp(TBeing *ch, double gain, int dam)
           if (ch->getLevel(i)) {
             // intentionally avoid having L50's get this message
             if ((ch->getExp() >= peak2) && (ch->GetMaxLevel() < MAX_MORT)) {
-              ch->sendTo("<R>You must gain at a guild or your exp will max 1 short of next level.<1>\n\r");
+              ch->sendTo("You must gain at a guild or your exp will max 1 short of next level.\n\r");
               ch->setExp(peak2);
               return;
             } else if (ch->getExp() >= peak) {
@@ -733,12 +736,17 @@ void gain_exp(TBeing *ch, double gain, int dam)
 	    if (!been_here && gain > (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000)+2 && dam > 0) { 
 	      been_here = TRUE; // don't show multiple logs for multiclasses
 	      // the 100 turns dam into a %
-	      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*ch->howManyClasses()*10000) + 2;
+	      newgain = (dam*(peak-curr))/(gainmod*ch->howManyClasses()*10000) + 2;
 
-	      vlogf(LOG_DASH, "%s reached cap: Lev: %d, Dam: %d, Exp: %d, Cap: %d, MKPL: %d, #Class: %d",
-		    ch->getName(), ch->getLevel(i), dam/100, (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
-              vlogf(LOG_JESUS, "%s reached cap: Lev: %d, Dam: %d, Exp: %d, Cap: %d, MKPL: %d, #Class: %d",
-                    ch->getName(), ch->getLevel(i), dam/100, (int)gain, (int)newgain, (int)gainmod, ch->howManyClasses());
+	      vlogf(LOG_DASH, "%s(L%d) vs %s(L%d) cap: D: %d, E: %d, C: %d (%dx), MK: %d, %d classes",
+		    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a", 
+		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, (int)gain,	
+		    (int)newgain, (int)(gain/newgain), (int)gainmod, ch->howManyClasses());
+	      vlogf(LOG_JESUS, "%s(L%d) vs %s(L%d) cap: Dam: %d, Exp: %d, Cap: %d (%dx), MK: %d, %d classes",
+		    ch->getName(), ch->getLevel(i), (ch->specials.fighting) ?  ch->specials.fighting->getName() : "n/a",
+		    (ch->specials.fighting) ?  ch->specials.fighting->GetMaxLevel() : -1, dam/100 + 1, (int)gain,
+		    (int)newgain, (int)(gain/newgain), (int)gainmod, ch->howManyClasses());
+
 
 	    }  
 	  }

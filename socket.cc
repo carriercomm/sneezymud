@@ -201,7 +201,8 @@ int updateWholist()
 
   for (p = descriptor_list; p; p = p->next) {
     if (p && p->connected == CON_PLYNG || p->connected > MAX_CON_STATUS && p->character && 
-	p->character->name && p->character->isPc() && !p->character->isLinkdead() && p->character->polyed == POLY_TYPE_NONE) {
+	!p->character->name.empty() && p->character->isPc() && 
+	!p->character->isLinkdead() && p->character->polyed == POLY_TYPE_NONE){
       if ((p2 = dynamic_cast<TPerson *>(p->character))) {
 	wholist += p2->getName();
       }
@@ -219,9 +220,9 @@ int updateWholist()
     //  vlogf(LOG_DASH, fmt("Updating who table for port %d") %  gamePort);
   for (p = descriptor_list; p; p = p->next) {
     if (p && p->connected == CON_PLYNG || p->connected > MAX_CON_STATUS && p->character &&
-        p->character->name && p->character->isPc() && !p->character->isLinkdead() && p->character->polyed == POLY_TYPE_NONE) {
+        !p->character->name.empty() && p->character->isPc() && !p->character->isLinkdead() && p->character->polyed == POLY_TYPE_NONE) {
       if ((p2 = dynamic_cast<TPerson *>(p->character))) {
-	  db.query("insert into wholist (name, title, port, invis) VALUES('%s', '%s', %i, %i)", p2->getName(), p2->title,  gamePort, (p2->getInvisLevel() >MAX_MORT)?1:0);
+	  db.query("insert into wholist (name, title, port, invis) VALUES('%s', '%s', %i, %i)", p2->getName().c_str(), p2->title.c_str(),  gamePort, (p2->getInvisLevel() >MAX_MORT)?1:0);
 	  count++;
 	}
       }
@@ -1153,7 +1154,7 @@ int TMainSocket::gameLoop()
 
         if (tmons && IS_SET(tmons->hatefield, HATE_CHAR) && tmons->hates.clist)
           for (list = tmons->hates.clist; list; list = list->next)
-            if (list->name) {
+            if (!list->name.empty()) {
               list->iHateStrength--;
 
               if (list->iHateStrength <= 0) {

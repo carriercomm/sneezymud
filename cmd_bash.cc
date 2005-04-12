@@ -350,15 +350,14 @@ int TBeing::bashSuccess(TBeing *victim, spellNumT skill)
   return FALSE;
 }
 
-int TBeing::doBash(const char *argument, TBeing *vict)
+int TBeing::doBash(const sstring &argument, TBeing *vict)
 {
   int rc;
   TBeing *victim;
-  char name_buf[256];
+  sstring name_buf=argument;
 
   spellNumT skill = getSkillNum(SKILL_BASH);
 
-  strcpy(name_buf, argument);
 
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, name_buf))) {

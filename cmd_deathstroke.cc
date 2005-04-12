@@ -223,11 +223,11 @@ static int deathstroke(TBeing *caster, TBeing *victim)
   return TRUE;
 }
 
-int TBeing::doDeathstroke(const char *argument, TBeing *vict)
+int TBeing::doDeathstroke(const sstring &argument, TBeing *vict)
 {
   int rc;
   TBeing *victim;
-  char v_name[MAX_INPUT_LENGTH];
+  sstring v_name=argument;
   
   if (checkBusy()) {
     return FALSE;
@@ -236,7 +236,6 @@ int TBeing::doDeathstroke(const char *argument, TBeing *vict)
     sendTo("You know nothing about making deathstrokes.\n\r");
     return FALSE;
   }
-  strcpy(v_name, argument);
   
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, v_name))) {

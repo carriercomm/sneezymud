@@ -215,10 +215,10 @@ static int grapple(TBeing *c, TBeing *victim, spellNumT skill)
   return TRUE;
 }
 
-int TBeing::doGrapple(const char *argument, TBeing *vict)
+int TBeing::doGrapple(const sstring &argument, TBeing *vict)
 {
   int rc;
-  char name_buf[30];
+  sstring name_buf=argument;
   TBeing *victim;
 
   spellNumT skill = getSkillNum(SKILL_GRAPPLE);
@@ -226,7 +226,6 @@ int TBeing::doGrapple(const char *argument, TBeing *vict)
   if (checkBusy()) {
     return FALSE;
   }
-  strcpy(name_buf, argument);
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, name_buf)))  {
       if (!(victim = fight())) {

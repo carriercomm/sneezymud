@@ -493,7 +493,7 @@ const char *statBonusDescr(int percent)
 
 
 
-void TBeing::doAttribute(const char *arg)
+void TBeing::doAttribute(const sstring &arg)
 {
   sstring buf, buf2, cmdbuf;
   struct time_info_data playing_time;

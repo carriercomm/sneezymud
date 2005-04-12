@@ -67,7 +67,7 @@ TObj * findForCompare(TBeing *ch, sstring StObject)
   return (dynamic_cast<TObj *>(tObj));
 }
 
-void TBeing::doMortalCompare(const char *tArg)
+void TBeing::doMortalCompare(const sstring &tArg)
 {
   sstring    StObject1(""),
              StObject2(""),

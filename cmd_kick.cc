@@ -353,13 +353,12 @@ static int kick(TBeing *ch, TBeing *victim, spellNumT skill)
   return TRUE;
 }
 
-int TBeing::doKick(const char *argument, TBeing *vict)
+int TBeing::doKick(const sstring &argument, TBeing *vict)
 {
   int rc;
   TBeing *victim;
-  char namebuf[256];
+  sstring namebuf=argument;
 
-  strcpy(namebuf, argument);
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, namebuf))) {
       if (!(victim = fight())) {

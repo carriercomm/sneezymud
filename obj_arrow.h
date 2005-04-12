@@ -50,7 +50,7 @@ class TArrow : public TBaseWeapon {
     virtual void evaluateMe(TBeing *) const;
     virtual bool engraveMe(TBeing *, TMonster *, bool);
     virtual void bloadBowArrow(TBeing *, TThing *);
-    virtual int throwMe(TBeing *, dirTypeT, const char *);
+    virtual int throwMe(TBeing *, dirTypeT, const sstring &);
     virtual int putMeInto(TBeing *, TOpenContainer *);
     virtual sstring compareMeAgainst(TBeing *, TObj *);
     virtual void changeObjValue3(TBeing *);

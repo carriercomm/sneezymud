@@ -18,7 +18,7 @@ class TBaseClothing : public virtual TObj
     virtual void getFourValues(int *, int *, int *, int *) const = 0;
     virtual sstring statObjInfo() const = 0;
 
-    virtual int editAverageMe(TBeing *, const char *);
+    virtual int editAverageMe(TBeing *, const sstring &);
     virtual sstring showModifier(showModeT, const TBeing *) const;
     virtual void objMenu(const TBeing *) const;
     virtual int rentCost() const;

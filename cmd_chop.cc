@@ -224,11 +224,11 @@ static int chop(TBeing *c, TBeing *v)
   return TRUE;
 }
 
-int TBeing::doChop(const char *arg, TBeing *vict)
+int TBeing::doChop(const sstring &arg, TBeing *vict)
 {
   int rc;
   TBeing *victim;
-  char v_name[MAX_INPUT_LENGTH];
+  sstring v_name=arg;
 
   if (checkBusy()) {
     return FALSE;
@@ -238,7 +238,6 @@ int TBeing::doChop(const char *arg, TBeing *vict)
     return FALSE;
   }
 
-  strcpy(v_name, arg);
 
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, v_name))) {

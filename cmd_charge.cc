@@ -241,7 +241,7 @@ vict->getName());
   return TRUE;
 }
 
-int TBeing::doCharge(const char *arg, TBeing *victim)
+int TBeing::doCharge(const sstring &arg, TBeing *victim)
 {
   TBeing   *vict;
   char      tmp[80],
@@ -261,12 +261,12 @@ int TBeing::doCharge(const char *arg, TBeing *victim)
     sendTo("You know nothing about charging.\n\r");
     return FALSE;
   }
-  half_chop(arg, tmp, tString);
+  half_chop(arg.c_str(), tmp, tString);
   if (!victim) {
     Direction = getDirFromChar(tmp);
 
     if (Direction > DIR_NONE && Direction < MAX_DIR) {
-      startChargeTask(this, arg);
+      startChargeTask(this, arg.c_str());
       return FALSE;
     }
   }

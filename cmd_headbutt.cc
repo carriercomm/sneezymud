@@ -289,13 +289,11 @@ static int headbutt(TBeing *caster, TBeing *victim)
   return TRUE;
 }
 
-int TBeing::doHeadbutt(const char *argument, TBeing *vict)
+int TBeing::doHeadbutt(const sstring &argument, TBeing *vict)
 {
   int rc;
   TBeing *v;
-  char name_buf[256];
-  
-  strcpy(name_buf, argument);
+  sstring name_buf=argument;
   
   if (!(v = vict)) {
     if (!(v = get_char_room_vis(this, name_buf))) {

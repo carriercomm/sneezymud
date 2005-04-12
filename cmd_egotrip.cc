@@ -15,7 +15,7 @@
 #include "disease.h"
 #include "obj_portal.h"
 
-void TBeing::doEgoTrip(const char *arg)
+void TBeing::doEgoTrip(const sstring &arg)
 {
   if (powerCheck(POWER_EGOTRIP))
     return;
@@ -400,7 +400,7 @@ void TBeing::doEgoTrip(const char *arg)
                  *tAffLast;
 
     for (tBeing = character_list; tBeing; tBeing = tBeing->next) {
-      if (!tBeing->name) {
+      if (tBeing->name.empty()) {
         vlogf(LOG_BUG, "Something with NULL name in world being list.");
         continue;
       }

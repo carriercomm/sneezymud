@@ -1232,7 +1232,7 @@ void TBeing::throwChar(TBeing *v, dirTypeT dir, bool also, silentTypeT silent, b
 {
   TRoom *rp;
   int oldr;
-  char buf[256];
+  sstring buf;
 
   rp = v->roomp;
   if (rp && rp->dir_option[dir] &&
@@ -1282,7 +1282,7 @@ void TBeing::throwChar(TBeing *v, dirTypeT dir, bool also, silentTypeT silent, b
     if(!silent){
       sendTo(COLOR_MOBS, fmt("You push %s %s out of the room.\n\r") % v->getName() % dirs[dir]);
       v->sendTo(COLOR_MOBS, fmt("%s pushes you %s out of the room.\n\r") % sstring(getName()).cap() % dirs[dir]);
-      sprintf(buf, "$N is pushed %s out of the room by $n.", dirs[dir]);
+      buf = fmt("$N is pushed %s out of the room by $n.") % dirs[dir];
       act(buf, TRUE, this, 0, v, TO_NOTVICT);
     }
     oldr = v->in_room;
@@ -6477,9 +6477,11 @@ extern int paralyzeGaze(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int poisonBite(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 
 // misc external procs
+extern int auctioneer(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int propertyClerk(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int signMaker(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int paladinPatrol(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int leperHunter(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int taxman(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int banker(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
 extern int loanShark(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
@@ -6705,6 +6707,8 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {FALSE, "garbage convoy", garbageConvoy},
   {FALSE, "signmaker", signMaker},
   {TRUE, "butler", receptionist},
+  {FALSE, "leper hunter", leperHunter},
+  {FALSE, "auctioneer", auctioneer}
 // replace non-zero, bogus_mob_procs above before adding
 };
 

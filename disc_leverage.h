@@ -63,7 +63,7 @@ private:
 };
 
   int shoulderThrow(TBeing *, TBeing *);
-  int hurl(TBeing *, TBeing *, char *);
+  int hurl(TBeing *, TBeing *, sstring &);
 
 #endif
 

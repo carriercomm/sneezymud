@@ -83,6 +83,7 @@ const int SPEC_TRAINER_RANGED   =85;
 const int SPEC_QUAKETUNNELER    =86;
 const int SPEC_TRAINER_DEIKHAN  =87;
 const int SPEC_LAMPBOY          =96;
+const int SPEC_LEPER            =97;
 const int SPEC_AIR_MAGI         =98;
 const int SPEC_WATER_MAGI       =99;
 const int SPEC_EARTH_MAGI      =100;
@@ -184,7 +185,9 @@ const int SPEC_BRIGHTMOON_JANITOR =198;
 const int SPEC_GARBAGE_CONVOY     =199;
 const int SPEC_SIGNMAKER          =200;
 const int SPEC_BUTLER             =201;
-const int NUM_MOB_SPECIALS        =201;
+const int SPEC_LEPER_HUNTER       =202;
+const int SPEC_AUCTIONEER         =203;
+const int NUM_MOB_SPECIALS        =203;
 
 extern const int GET_MOB_SPE_INDEX(int d);
 

@@ -116,7 +116,7 @@ public:
 private:
 };
 
-    int task_yoginsa(TBeing *, cmdTypeT, const char *, int, TRoom *, TObj *);
+    int task_yoginsa(TBeing *, cmdTypeT, const sstring &, int, TRoom *, TObj *);
     int grappleMonk(TBeing *, TBeing *, int);
     int springleap(TBeing *, TBeing *, bool);
     int chiMe(TBeing *);

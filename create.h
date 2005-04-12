@@ -13,22 +13,22 @@ enum editorEnterTypeT {
     ENTER_CHECK
 };
 
-extern void change_obj_values(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_arrow_value3(TBeing *, TArrow *, const char *, editorEnterTypeT);
-extern void change_arrow_value4(TBeing *, TArrow *, const char *, editorEnterTypeT);
-extern void change_component_value4(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_portal_value1(TBeing *, TPortal *, const char *, editorEnterTypeT);
-extern void change_portal_value3(TBeing *, TPortal *, const char *, editorEnterTypeT);
-extern void change_portal_value4(TBeing *, TPortal *, const char *, editorEnterTypeT);
-extern void change_chest_value2(TBeing *, TOpenContainer *, const char *, editorEnterTypeT);
-extern void change_magicitem_value1(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_bed_value1(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_trap_value2(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_trap_value3(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_weapon_value1(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_weapon_value2(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_weapon_value3(TBeing *, TObj *, const char *, editorEnterTypeT);
-extern void change_egg_value1(TBeing *, TEgg *, const char *, editorEnterTypeT);
+extern void change_obj_values(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_arrow_value3(TBeing *, TArrow *, const sstring &, editorEnterTypeT);
+extern void change_arrow_value4(TBeing *, TArrow *, const sstring &, editorEnterTypeT);
+extern void change_component_value4(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_portal_value1(TBeing *, TPortal *, const sstring &, editorEnterTypeT);
+extern void change_portal_value3(TBeing *, TPortal *, const sstring &, editorEnterTypeT);
+extern void change_portal_value4(TBeing *, TPortal *, const sstring &, editorEnterTypeT);
+extern void change_chest_value2(TBeing *, TOpenContainer *, const sstring &, editorEnterTypeT);
+extern void change_magicitem_value1(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_bed_value1(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_trap_value2(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_trap_value3(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_weapon_value1(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_weapon_value2(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_weapon_value3(TBeing *, TObj *, const sstring &, editorEnterTypeT);
+extern void change_egg_value1(TBeing *, TEgg *, const sstring &, editorEnterTypeT);
 
 
 enum editorChangeTypeT {

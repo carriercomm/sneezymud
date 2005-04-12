@@ -36,7 +36,7 @@ enum body_t {
    MAX_BODY_TYPES
 };
 
-extern const char *bodyNames[MAX_BODY_TYPES];
+extern const sstring bodyNames[MAX_BODY_TYPES];
 
 class Body : public Limb {
 private:

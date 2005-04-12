@@ -22,7 +22,7 @@ class TMoney : public TObj {
     virtual int scavengeMe(TBeing *, TObj **);
     virtual int getMe(TBeing *, TThing *);
     virtual int moneyMeMoney(TBeing *, TThing *);
-    virtual void logMe(const TBeing *, const char *) const {}
+    virtual void logMe(const TBeing *, const sstring &) const {}
     virtual int rentCost() const;
     virtual void moneyMove(TBeing *);
     virtual bool canCarryMe(const TBeing *, silentTypeT) const;

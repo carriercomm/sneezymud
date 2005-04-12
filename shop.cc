@@ -71,19 +71,21 @@ float shopData::getProfitSell(const TObj *obj, const TBeing *ch)
   if(shop_index[shop_nr].isOwned()){
     TDatabase db(DB_SNEEZY);
 
-    db.query("select profit_sell from shopownedratios where shop_nr=%i and obj_nr=%i", shop_nr, obj->objVnum());
-
-    if(db.fetchRow())
-      profit_sell=convertTo<float>(db["profit_sell"]);
-    else {
-      // ok, shop is owned and there is no ratio set for this specific object
-      // so check keywords
-      db.query("select match, profit_sell from shopownedmatch where shop_nr=%i", shop_nr);
-
-      while(db.fetchRow()){
-	if(isname(db["match"], obj->name)){
-	  profit_sell=convertTo<float>(db["profit_sell"]);
-	  break;
+    if(obj){
+      db.query("select profit_sell from shopownedratios where shop_nr=%i and obj_nr=%i", shop_nr, obj->objVnum());
+      
+      if(db.fetchRow())
+	profit_sell=convertTo<float>(db["profit_sell"]);
+      else {
+	// ok, shop is owned and there is no ratio set for this specific object
+	// so check keywords
+	db.query("select match, profit_sell from shopownedmatch where shop_nr=%i", shop_nr);
+	
+	while(db.fetchRow()){
+	  if(isname(db["match"], obj->name)){
+	    profit_sell=convertTo<float>(db["profit_sell"]);
+	    break;
+	  }
 	}
       }
     }
@@ -1741,7 +1743,7 @@ void TMonster::autoCreateShop(int shop_nr)
 // if they are looking at something else (shopkeeper, etc) return FALSE
 static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
 {
-  const char *tmp_desc;
+  sstring tmp_desc;
   int value;
   TObj *temp1;
 
@@ -1774,8 +1776,8 @@ static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int sho
 
   act(str, FALSE, ch, temp1, keeper, TO_CHAR);
 
-  tmp_desc = NULL;
-  if ((tmp_desc = temp1->ex_description->findExtraDesc(fname(temp1->name).c_str()))) {
+  tmp_desc = temp1->ex_description->findExtraDesc(fname(temp1->name));
+  if (!tmp_desc.empty()) {
     ch->desc->page_string(tmp_desc);
   } else {
     ch->sendTo("You see nothing special.\n\r");

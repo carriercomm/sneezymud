@@ -640,8 +640,7 @@ void TBeing::doTrack(const char *argument)
 
   if (code <= 9) {
     if (code >= 0 && desc && (desc->autobits & AUTO_HUNT)) {
-      strcpy(buf, dirs[code]);
-      addCommandToQue(buf);
+      addCommandToQue(dirs[code].c_str());
     }
   } else if (desc && (desc->autobits & AUTO_HUNT) && t) {
       strcpy(buf, t->name);
@@ -722,8 +721,7 @@ int TBeing::track(TBeing *vict)
       sendTo(fmt("%s###You track %s %s.%s\n\r") % purple() %
              (isSW ? "some water" : "your target") % dirs_to_blank[code] % norm());
       if (desc && (desc->autobits & AUTO_HUNT)) {
-        strcpy(buf, dirs[code]);
-        addCommandToQue(buf);
+        addCommandToQue(dirs[code].c_str());
       }
     } else {
       int count = code - 9, seen = 0;

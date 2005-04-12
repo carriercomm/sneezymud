@@ -22,19 +22,19 @@ enum thingTypeT {
 };
 
 extern bool isname(const sstring &str, const sstring &namelist);
-extern const sstring fname(const char *namelist);
+extern const sstring fname(const sstring &namelist);
 
 class extraDescription {
   public:
-    const char *keyword;
-    const char *description;
+    sstring keyword;
+    sstring description;
     extraDescription *next;
     extraDescription();
     ~extraDescription();
     extraDescription & operator= (const extraDescription &a);
     extraDescription(const extraDescription &a);
 
-    const char *findExtraDesc(const char *word);
+    sstring findExtraDesc(const sstring word);
 };
 
 class TThing {
@@ -47,8 +47,8 @@ class TThing {
     TBeing * the_caster;
     TThing *stuff;           // The stuff inside me
   public:
-    const char *descr;             // Description of thing
-    const char *real_descr;        // used with disguise/polymorph
+    sstring descr;             // Description of thing
+    sstring real_descr;        // used with disguise/polymorph
     TBeing *stuckIn;
     TThing *equippedBy;
     wearSlotT eq_pos;                 // what is the equip. pos?
@@ -66,10 +66,10 @@ class TThing {
     int number;              // Number of thing
     int height;              // Height in centimeters
     byte canBeSeen;          
-    const char *name;              // Name of thing
-    const char *real_name;         // used with disguise/polymorph
-    const char *shortDescr;
-    const char *real_shortDescr;   // used with disguise/polymorph
+    sstring name;              // Name of thing
+    sstring real_name;         // used with disguise/polymorph
+    sstring shortDescr;
+    sstring real_shortDescr;   // used with disguise/polymorph
     bool is_disguised;
     int disguise_level;
     int disguise_zone;
@@ -99,14 +99,14 @@ class TThing {
     }
     
     // VIRTUAL FUNCTIONS
-    virtual int editAverageMe(TBeing *, const char *);
+    virtual int editAverageMe(TBeing *, const sstring &);
     virtual int chiMe(TBeing *);
     virtual void eatMe(TBeing *);
     virtual const char *hshr() const { return "its"; }
     virtual const char *hssh() const { return "it"; }
     virtual const char *hmhr() const { return "it"; }
-    virtual int checkSpec(TBeing *, cmdTypeT, const char *, TThing *) { return 0; }
-    virtual const char *getName() const { return name; }
+    virtual int checkSpec(TBeing *, cmdTypeT, const sstring &, TThing *) { return 0; }
+    virtual const sstring getName() const { return name; }
     virtual bool shouldntBeShown(wearSlotT) const;
     virtual int checkFalling() { return 0;}
     virtual float carryWeightLimit() const { return 0.0; }
@@ -128,7 +128,7 @@ class TThing {
     virtual int  getSnum() const { return snum; };
 
     // ch can not be const due to showTo()
-    virtual void lookAtObj(TBeing *, const char *, showModeT) const;
+    virtual void lookAtObj(TBeing *, const sstring &, showModeT) const;
 
     // this can not be const, due to show_me_to_char
     virtual void showTo(const TThing *, showModeT) {}
@@ -147,8 +147,8 @@ class TThing {
     // END VIRTUAL FUNCTIONS
 
     // INLINE FUNCTIONS
-    const char * getDescr() const { return descr; }
-    void setDescr(const char *s) { descr = s; }
+    const sstring getDescr() const { return descr; }
+    void setDescr(const sstring &s) { descr = s; }
     int getHeight() const{ return height; }
     void setHeight(int h) { height = h; }
     void setCaster(TBeing *c) { the_caster = c; }
@@ -258,10 +258,10 @@ class TThing {
     virtual int scavengeMe(TBeing *, TObj **) { return FALSE; }
     virtual int moneyMeBeing(TThing *, TThing *) { return FALSE; }
     virtual int moneyMeMoney(TBeing *, TThing *) { return FALSE; }
-    virtual void logMe(const TBeing *, const char *) const;
+    virtual void logMe(const TBeing *, const sstring &) const;
     virtual int powerstoneMe(TBeing *, int, byte);
     virtual int divineMe(TBeing *, int, byte);
-    virtual void postMe(TBeing *, const char *, boardStruct *);
+    virtual void postMe(TBeing *, const sstring &, boardStruct *);
     virtual void giveToRepairNote(TMonster *, TBeing *, int *) {}
     virtual void describeMe(TBeing *) const {}
 
@@ -273,7 +273,7 @@ class TThing {
     virtual void listMeExcessive(TBeing *) const;
 
     virtual void dropMe(TBeing *, showMeT, showRoomT);
-    virtual int throwMe(TBeing *, dirTypeT, const char *);
+    virtual int throwMe(TBeing *, dirTypeT, const sstring &);
     virtual int moveTrapCheck(TBeing *, dirTypeT) { return FALSE; }
     virtual int insideTrapCheck(TBeing *, TThing *) { return FALSE; }
     virtual int anyTrapCheck(TBeing *) { return FALSE; }
@@ -303,10 +303,10 @@ class TThing {
     virtual int garotteMe(TBeing *, TBeing *);
     virtual void sstringMeBow(TBeing *, TThing *);
     virtual void sstringMeString(TBeing *, TBow *);
-    virtual void skinMe(TBeing *, const char *);
-    virtual void butcherMe(TBeing *, const char *);
-    virtual void sacrificeMe(TBeing *, const char *);
-    virtual int pickWithMe(TBeing *, const char *, const char *, const char *);
+    virtual void skinMe(TBeing *, const sstring &);
+    virtual void butcherMe(TBeing *, const sstring &);
+    virtual void sacrificeMe(TBeing *, const sstring &);
+    virtual int pickWithMe(TBeing *, const sstring &, const sstring &, const sstring &);
     virtual void repairMeHammer(TBeing *, TObj *);
     virtual int garottePulse(TBeing *, affectedData *);
     virtual int ChargePulse(TBeing *);
@@ -325,8 +325,8 @@ class TThing {
     virtual void makeScraps() {}
     virtual void attunerValue(TBeing *, TMonster *);
     virtual void attunerGiven(TBeing *, TMonster *);
-    virtual int reciteMe(TBeing *, const char *);
-    virtual int useMe(TBeing *, const char *);
+    virtual int reciteMe(TBeing *, const sstring &);
+    virtual int useMe(TBeing *, const sstring &);
     virtual void findVialAttune(TVial **, int *) {}
     virtual void getBestVial(TVial **) {}
     virtual int damageMe(TBeing *, TBeing *, wearSlotT) { return FALSE; }
@@ -342,7 +342,7 @@ class TThing {
     virtual int catchSmack(TBeing *, TBeing **, TRoom *, int, int);
     virtual void specializationCheck(TBeing *, float *) {}
     virtual int expelPrice(const TBeing *, int) const;
-    virtual int wieldMe(TBeing *, char *);
+    virtual int wieldMe(TBeing *, sstring &);
     virtual void curseMe() {}
     virtual int poisonWeaponWeapon(TBeing *, TThing *);
     virtual int smiteWithMe(TBeing *, TBeing *);

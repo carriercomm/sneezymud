@@ -76,8 +76,8 @@ private:
     void heroesFeast(TBeing *);
     int heroesFeast(TBeing *, int, byte, spellNumT);
 
-    void portal(TBeing *, const char *);
-    int portal(TBeing *, const char *, int, byte);
+    void portal(TBeing *, const sstring &);
+    int portal(TBeing *, const sstring &, int, byte);
 
 
 

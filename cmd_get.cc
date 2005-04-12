@@ -53,7 +53,7 @@ int TTrap::getMe(TBeing *ch, TThing *sub)
   // erase the trap setter
   for (ed = ex_description, prev = ed; ed; ed = ed2) {
     ed2 = ed->next;
-    if (!strcmp(ed->keyword, TRAP_EX_DESC)) {
+    if (ed->keyword == TRAP_EX_DESC) {
       if (ed == ex_description) {
         // it is the first extra desc, move all pointers to next and delete
         ex_description = ed2;
@@ -238,10 +238,9 @@ static bool getAllObjChecks(TBeing *ch)
 }
 
 // might return DELETE_THIS (for traps)
-int TBeing::doGet(const char *argument)
+int TBeing::doGet(const sstring &argument)
 {
   char arg1[160], arg2[160], newarg[100];
-  const char *tmp_desc = NULL;
   char *tptr;
   TObj *sub;
   TThing *t;
@@ -409,7 +408,7 @@ int TBeing::doGet(const char *argument)
           found = TRUE;
         }
       } else {
-        if ((tmp_desc = roomp->ex_description->findExtraDesc(arg1)))
+        if (!roomp->ex_description->findExtraDesc(arg1).empty())
           sendTo(fmt("You can't get a %s.\n\r") % arg1);
         else
           sendTo(fmt("You don't see a %s here.\n\r") % arg1);

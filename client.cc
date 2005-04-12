@@ -283,30 +283,29 @@ int Descriptor::read_client(char *str2)
       dirTypeT door;
       roomDirData *exitdata;
       extraDescription *exptr;
-      char tmpBuf[MAX_STRING_LENGTH] = "\0";
-      char tmpBuf2[MAX_STRING_LENGTH] = "\0";
+      sstring tmpBuf = "";
+      sstring tmpBuf2 = "";
 
       if (!character || !(rp = character->roomp))
         break;
 
       for (door = MIN_DIR; door < MAX_DIR; door++) {
         if ((exitdata = character->exitDir(door))) 
-          sprintf(tmpBuf + strlen(tmpBuf), "|1|%d|%d|%s|%s", exitdata->to_room, 
-                  exitdata->door_type, exitdata->keyword, exitdata->description);
+          tmpBuf += fmt("|1|%d|%d|%s|%s") % exitdata->to_room %
+            exitdata->door_type % exitdata->keyword % exitdata->description;
         else 
-          sprintf(tmpBuf + strlen(tmpBuf), "|0");
+          tmpBuf += "|0";
       }
       if (rp->ex_description) {
         for (exptr = rp->ex_description; exptr; exptr = exptr->next) {
-          sprintf(tmpBuf2 + strlen(tmpBuf2), "|%s|%s", exptr->keyword, exptr->description); 
+          tmpBuf2 += fmt("|%s|%s") % exptr->keyword % exptr->description; 
         }      
       }
-      char tmpbuf[25000];
-      sprintf(tmpbuf, "%d|%s|%s|%d|%d|%d%s%s", CLIENT_CURRENTROOM, rp->name, rp->getDescr(),
-              rp->getSectorType(),
-              rp->getMoblim(), rp->getRoomHeight(), tmpBuf, tmpBuf2);
+      sstring sb;
+      sb = fmt("%d|%s|%s|%d|%d|%d%s%s") % CLIENT_CURRENTROOM % rp->name %
+        rp->getDescr() % rp->getSectorType() % rp->getMoblim() %
+        rp->getRoomHeight() % tmpBuf % tmpBuf2;
 
-      sstring sb = tmpbuf;
       processStringForClient(sb);
 
       clientf(sb);
@@ -374,7 +373,7 @@ int Descriptor::read_client(char *str2)
       rp->setRoomHeight(convertTo<int>(buf));
       break;
     case CLIENT_ROOMDESC: {
-      char descrBuf[MAX_STRING_LENGTH];
+      sstring descrBuf;
       if (!character)
         break;
 
@@ -382,13 +381,12 @@ int Descriptor::read_client(char *str2)
         character->sendTo("You cannot do this as a mortal. If this is a client bug report to Brutius. Otherwise stop trying to hack the client because the server double checks everything. Thanks. Brutius.\n\r");
         break;
       }
-      strcpy(descrBuf, nextToken('|', MAX_STRING_LENGTH, str2).c_str());
-      strcat(descrBuf, "\n\r");
+      descrBuf = nextToken('|', MAX_STRING_LENGTH, str2);
+      descrBuf += "\n\r";
       if (!(rp = character->roomp))
         break;
 
-      delete [] rp->getDescr();
-      rp->setDescr(mud_str_dup(descrBuf));
+      rp->setDescr(descrBuf);
 
       break;
     }

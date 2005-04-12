@@ -38,6 +38,7 @@ TObj *get_obj_vis_accessible(TBeing *ch, const sstring &name);
 TBeing *get_char_room(const sstring &name, int room, int *count = NULL);
 TBeing *get_char_num(int nr);
 TBeing *get_char(const char *name, exactTypeT exact);
+TBeing *get_char(const sstring name, exactTypeT exact);
 
 /* find if character can see */
 TBeing *get_char_room_vis(const TBeing *ch, const sstring &name, int *count = NULL, exactTypeT exact = EXACT_NO, infraTypeT = INFRA_NO);
@@ -49,6 +50,7 @@ TBeing * get_best_char_room(const TBeing *, const char *, visibleTypeT vis = VIS
 TObj *generic_find_obj(sstring, int, TBeing *);
 TBeing *generic_find_being(sstring, int, TBeing *);
 int generic_find(const char *, int, TBeing *, TBeing**, TObj**);
+int get_number(sstring &);
 
 const unsigned int FIND_CHAR_ROOM     =(1<<0);
 const unsigned int FIND_CHAR_WORLD    =(1<<1);

@@ -90,7 +90,7 @@ void spread_affect(TBeing *ch, int chance_to_spread, bool race, bool not_race, a
 
 typedef struct {
   int (*code)(TBeing *, int, affectedData *);
-  char name[40];
+  sstring name;
   int cure_cost;  
 } DISEASEINFO;
 

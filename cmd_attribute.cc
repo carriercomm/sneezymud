@@ -796,7 +796,7 @@ void TBeing::doAttribute(const char *arg)
         case POSITION_SLEEPING:
           if (riding) {
             buf="You are sleeping on ";
-            if (riding->getName())
+            if (!riding->getName().empty())
               buf+=objs(riding);
             else
               buf+="A bad object";
@@ -809,7 +809,7 @@ void TBeing::doAttribute(const char *arg)
         case POSITION_RESTING:
           if (riding) {
             buf="You are resting on ";
-            if (riding->getName())
+            if (!riding->getName().empty())
               buf+=objs(riding);
             else
               buf+="A horse with a bad short description, BUG THIS!";
@@ -824,7 +824,7 @@ void TBeing::doAttribute(const char *arg)
         case POSITION_SITTING:
           if (riding) {
             buf="You are sitting on ";
-            if (riding->getName())
+            if (!riding->getName().empty())
               buf+=objs(riding);
             else
               buf+="A bad object!";

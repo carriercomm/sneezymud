@@ -134,10 +134,10 @@ private:
 
     int sneak(TBeing *, spellNumT);
     int subterfuge(TBeing *, TBeing *);
-    int pickLocks(TBeing *, const char *, const char *, const char *);
+    int pickLocks(TBeing *, const sstring &, const sstring &, const sstring &);
     int spy(TBeing *);
     int hide(TBeing *, spellNumT);
-    int disguise(TBeing *, char *);
+    int disguise(TBeing *, sstring &);
 
 #endif
 

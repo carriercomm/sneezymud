@@ -88,7 +88,7 @@ static void test_fight_start(bool same_time)
     }
     // just to be safe
     rp->name = mud_str_dup("A test fighting room");
-    rp->setDescr(mud_str_dup("A room for testing fights.\n\r"));
+    rp->setDescr("A room for testing fights.\n\r");
     rp->setRoomFlagBit(ROOM_INDOORS | ROOM_ALWAYS_LIT);
     rp->setSectorType(SECT_TEMPERATE_BUILDING);
     rp->putInDb(vnum);

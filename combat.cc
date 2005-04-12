@@ -220,20 +220,24 @@ void TBeing::deathCry()
 {
   int new_room;
   TRoom *newR;
-  char buf[256];
+  sstring deathcry = "Your blood freezes as you hear $N's death cry.";
+  sstring buf;
   TThing *i;
   dirTypeT door;
 
   if ((in_room == ROOM_NOWHERE) || !roomp)
     return;
 
-#if 1
-  strcpy(buf, ((ex_description && ex_description->findExtraDesc("deathcry")) ?
-               ex_description->findExtraDesc("deathcry") : 
-               "Your blood freezes as you hear $N's death cry."));
-#else
-  sprintf(buf, "Your blood freezes as you hear %s's death cry.\n\r", getName());
-#endif
+  if (ex_description) {
+    sstring tmp = ex_description->findExtraDesc("deathcry");
+    if (tmp.empty()) {
+      buf = deathcry;
+    } else {
+      buf = tmp;
+    }
+  } else {
+    buf = deathcry;
+  }
 
   for (door = MIN_DIR; door < MAX_DIR; door++) {
 #if 1
@@ -282,7 +286,7 @@ void TBeing::deathCry()
       new_room = roomp->dir_option[door]->to_room;
       newR = real_roomp(new_room);
       if (in_room != new_room) {
-        sendrpf(COLOR_MOBS, newR, buf);
+        sendrpf(COLOR_MOBS, newR, buf.c_str());
 
 	if (!inGrimhaven()) {
 	  for (i = newR->getStuff(); i; i = i->nextThing) {
@@ -1044,8 +1048,7 @@ void TObj::makeScraps()
 {
   TTrash *o = NULL;
   TThing *x = NULL, *tmp = NULL, *ch = NULL;
-  char buf[256];
-  char buf2[256];
+  sstring buf, buf2;
   TBaseCup *tbc=dynamic_cast<TBaseCup *>(this);
   TBeing *cht;
 
@@ -1076,11 +1079,11 @@ void TObj::makeScraps()
 
   if (((ch = parent) && parent->roomp) || (ch = equippedBy) || (ch = stuckIn)) {
     if (isMineral()) {
-      sprintf(buf, "$p shatters and falls to the $g.");
-      sprintf(buf2, "Your $o shatters and falls to the $g.");
+      buf = "$p shatters and falls to the $g.";
+      buf2 = "Your $o shatters and falls to the $g.";
     } else {
-      sprintf(buf, "$p falls to the $g, scrapped.");
-      sprintf(buf2, "Your $o falls to the $g, scrapped.");
+      buf = "$p falls to the $g, scrapped.";
+      buf2 = "Your $o falls to the $g, scrapped.";
     } 
     act(buf, TRUE, ch, this, NULL, TO_ROOM);
     act(buf2, FALSE, ch, this, NULL, TO_CHAR, ANSI_RED);
@@ -1089,11 +1092,11 @@ void TObj::makeScraps()
   } else {
     if ((parent && (tmp = parent->equippedBy)) || (tmp = parent))  {
       if (isMineral()) {
-        sprintf(buf, "$p shatters and is destroyed.");
-        sprintf(buf2, "Your $o shatters and is destroyed.");
+        buf = "$p shatters and is destroyed.";
+        buf2 = "Your $o shatters and is destroyed.";
       } else {
-        sprintf(buf, "$p is destroyed.");
-        sprintf(buf2, "Your $o is destroyed.");
+        buf = "$p is destroyed.";
+        buf2 = "Your $o is destroyed.";
       }
       while (tmp) {
         if (tmp->roomp) {
@@ -1105,9 +1108,9 @@ void TObj::makeScraps()
       }
     } else if (roomp) {
       if (isMineral())
-        sprintf(buf, "$n shatters and is destroyed.");
+        buf = "$n shatters and is destroyed.";
       else
-        sprintf(buf, "$n is destroyed.");
+        buf = "$n is destroyed.";
       act(buf, TRUE, this, NULL, NULL, TO_ROOM);
     } else 
       vlogf(LOG_COMBAT, fmt("Something in make scraps isnt in a room %s.") %  getName());
@@ -1118,13 +1121,13 @@ void TObj::makeScraps()
   if (isMineral()) {
     o->name = mud_str_dup("shattered pile");
     o->shortDescr = mud_str_dup("something shattered");
-    sprintf(buf, "What used to be %s lies here, shattered.", getName());
-    o->setDescr(mud_str_dup(buf));
+    buf = fmt("What used to be %s lies here, shattered.") % getName();
+    o->setDescr(buf);
   } else {
     o->name = mud_str_dup("scraps pile");
     o->shortDescr = mud_str_dup("a pile of scraps");
-    sprintf(buf, "What used to be %s lies here, scrapped.", shortDescr);
-    o->setDescr(mud_str_dup(buf));
+    buf = fmt("What used to be %s lies here, scrapped.") % shortDescr;
+    o->setDescr(buf);
   }
   o->obj_flags.wear_flags = obj_flags.wear_flags;
   o->setWeight(getWeight() / 2.0);
@@ -4355,7 +4358,7 @@ int TBeing::tellStatus(int dam, bool same, bool flying)
 
 void TBeing::catchLostLink(TBeing *vict)
 {
-  char buf[1024];
+  sstring buf;
   TObj *note, *bag;
   TMoney *money;
   TThing *o;
@@ -4367,8 +4370,6 @@ void TBeing::catchLostLink(TBeing *vict)
       vict->affectedBySpell(AFFECT_PLAYERLOOT)) {
     return;
   }
-
-  *buf = '\0';
 
   act("$n is rescued by divine forces.", TRUE, vict, 0, 0, TO_ROOM);
   vlogf(LOG_COMBAT, fmt("%s lost link while fighting %s (%d)") %  vict->getName() % getName() % in_room);
@@ -4385,18 +4386,18 @@ void TBeing::catchLostLink(TBeing *vict)
     ct = time(0);
     tmstr = asctime(localtime(&ct));
     *(tmstr + strlen(tmstr) - 1) = '\0';
-    sprintf(buf, "Current time is: %s (PST)\n\r", tmstr);
+    buf = fmt("Current time is: %s (PST)\n\r") % tmstr;
 
-    sprintf(buf + strlen(buf), "%s hp when link lost : %d/%d\n\r", vict->getName(), vict->getHit(), vict->hitLimit());
+    buf += fmt("%s hp when link lost : %d/%d\n\r") % vict->getName() % vict->getHit() % vict->hitLimit();
     if (vict->isCombatMode(ATTACK_BERSERK))
-      sprintf(buf + strlen(buf), "%s was berserking (link loss is only way to flee)\n\r", vict->getName());
+      buf += fmt("%s was berserking (link loss is only way to flee)\n\r") % vict->getName();
     if (vict->eitherArmHurt())
-      sprintf(buf + strlen(buf), "%s had at least one busted arm.\n\r", vict->getName());
+      buf += fmt("%s had at least one busted arm.\n\r") % vict->getName();
     if (vict->eitherLegHurt())
-      sprintf(buf + strlen(buf), "%s had at least one busted leg.\n\r", vict->getName());
+      buf += fmt("%s had at least one busted leg.\n\r") % vict->getName();
 
-    sprintf(buf + strlen(buf), "Opponent (%s) hp when link lost : %d/%d.\n\r", getName(), getHit(), hitLimit());
-    sprintf(buf + strlen(buf), "Time was %s when this happened.\n\r", tmstr);
+    buf += fmt("Opponent (%s) hp when link lost : %d/%d.\n\r") % getName() % getHit() % hitLimit();
+    buf += fmt("Time was %s when this happened.\n\r") % tmstr;
 
     if (!(note = read_object(GENERIC_NOTE, VIRTUAL))) {
       vlogf(LOG_COMBAT, "Had trouble loading note in catch_lost_link(). Returning out.");
@@ -4418,9 +4419,8 @@ void TBeing::catchLostLink(TBeing *vict)
     delete [] note->name;
     note->name = mud_str_dup("note check link lost");
 
-    sprintf(buf, "A linkbag containing %s's belongings sits here.", vict->getName());
-    delete [] bag->getDescr();
-    bag->setDescr(mud_str_dup(buf));
+    buf = fmt("A linkbag containing %s's belongings sits here.") % vict->getName();
+    bag->setDescr(buf);
     sprintf(buf, "linkbag %s", sstring(vict->getName()).lower().c_str());
     delete [] bag->name;
     bag->name = mud_str_dup(buf);

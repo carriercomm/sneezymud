@@ -182,13 +182,13 @@ private:
  
     extern       bool shaman_create_deny(int);
     const int CHRISM_PRICE = 250;
-    int castChrism(TBeing *, const char *);
-    int chrism(TBeing *, const char *);
-    int chrism(TBeing *, TObj **, int, const char *, byte);
+    int castChrism(TBeing *, const sstring &);
+    int chrism(TBeing *, const sstring &);
+    int chrism(TBeing *, TObj **, int, const sstring &, byte);
 
     int castRombler(TBeing *);
-    int rombler(TBeing *, const char *);
-    int rombler(TBeing *, const char *, int, byte);
+    int rombler(TBeing *, const sstring &);
+    int rombler(TBeing *, const sstring &, int, byte);
 
     int intimidate(TBeing *, TBeing *);
     int castIntimidate(TBeing *, TBeing *);

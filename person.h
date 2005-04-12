@@ -20,8 +20,8 @@ class TPerson : public TBeing {
 
   public:
     FILE *tLogFile;
-    char lastHost[40];
-    char *title; 
+    sstring lastHost;
+    sstring title; 
     int last_rent;
     //    bool toggles[MAX_TOG_INDEX];
     bool wizPowers[MAX_POWER_INDEX];
@@ -32,7 +32,7 @@ class TPerson : public TBeing {
     TPerson & operator=(const TPerson &);
     virtual ~TPerson();
 
-    virtual const char *getName() const { return name; }
+    virtual const sstring getName() const { return name; }
 
     void setBaseAge(ush_int num) {
       base_age = num;
@@ -78,35 +78,35 @@ class TPerson : public TBeing {
 
     virtual void raiseLevel(classIndT);
     virtual void doUsers(const sstring &);
-    virtual void doInvis(const char *);
-    virtual void doVisible(const char *, bool);
-    virtual void doMedit(const char *);
-    virtual void doSEdit(const char *);
-    virtual void doOEdit(const char *);
-    virtual void doEdit(const char *);
-    virtual void doRload(const char *);
-    virtual void doRsave(const char *);
-    virtual void doRedit(const char *);
-    virtual void doTrans(const char *);
-    virtual int doAt(const char *, bool);
+    virtual void doInvis(const sstring &);
+    virtual void doVisible(const sstring &, bool);
+    virtual void doMedit(const sstring &);
+    virtual void doSEdit(const sstring &);
+    virtual void doOEdit(const sstring &);
+    virtual void doEdit(const sstring &);
+    virtual void doRload(const sstring &);
+    virtual void doRsave(const sstring &);
+    virtual void doRedit(const sstring &);
+    virtual void doTrans(const sstring &);
+    virtual int doAt(const sstring &, bool);
     virtual void doAccess(const sstring &);
-    virtual void doSet(const char *);
+    virtual void doSet(const sstring &);
     virtual void doLow(const sstring &);
     virtual void doShutdow();
-    virtual void doShutdown(const char *);
-    virtual void doSnoop(const char *);
-    virtual void doSwitch(const char *);
-    virtual void doForce(const char *);
-    virtual void doLoad(const char *);
-    virtual void doCutlink(const char *);
-    virtual void doPurge(const char *);
+    virtual void doShutdown(const sstring &);
+    virtual void doSnoop(const sstring &);
+    virtual void doSwitch(const sstring &);
+    virtual void doForce(const sstring &);
+    virtual void doLoad(const sstring &);
+    virtual void doCutlink(const sstring &);
+    virtual void doPurge(const sstring &);
     virtual short int manaLimit() const;
     virtual short int hitLimit() const;
     virtual void setMaxHit(int);
     virtual int getMaxMove() const;
     virtual void reconcileHelp(TBeing *, double);
     virtual void reconcileHurt(TBeing *, double);
-    virtual void doTitle(const char *);
+    virtual void doTitle(const sstring &);
     virtual sstring parseTitle(Descriptor *);
     virtual void addToWait(int);
     virtual void doBug(const sstring &);
@@ -122,10 +122,10 @@ class TPerson : public TBeing {
     virtual void remWizPower(wizPowerT);
     void saveWizPowers();
     void loadWizPowers();
-    virtual void doColor(const char *);
-    virtual void doChange(const char *);
+    virtual void doColor(const sstring &);
+    virtual void doChange(const sstring &);
     virtual void doStat(const sstring &);
-    virtual void doShow(const char *);
+    virtual void doShow(const sstring &);
     virtual bool isPc() const { return TRUE; }
     virtual void logf(const char *, ...);
     virtual int manaGain();

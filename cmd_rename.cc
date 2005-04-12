@@ -225,12 +225,11 @@ void TBeing::doDescription()
 #endif
   sendTo("Enter your description. Maximum length is 500 characters\n\r");
   sendTo("End the description with a '~'.  Use '`' to cancel.\n\r");
-  if (getDescr()) {
-    delete [] getDescr();
+  if (!getDescr().empty()) {
     setDescr(NULL);
   }
   desc->connected = CON_WRITING;
-  desc->str = &descr;
+  desc->str = descr;
   desc->max_str = 500;
 #if 0
   if (desc->m_bIsClient)

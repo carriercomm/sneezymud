@@ -704,8 +704,7 @@ void TBeing::doSeekwater()
 
   if (code <= 9) {
     if (code >= 0 && desc && (desc->autobits & AUTO_HUNT)) {
-      strcpy(buf, dirs[code]);
-      addCommandToQue(buf);
+      addCommandToQue(dirs[code].c_str());
     }
   } else if (desc && (desc->autobits & AUTO_HUNT) && t) {
       strcpy(buf, t->name);

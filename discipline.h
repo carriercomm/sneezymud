@@ -40,11 +40,11 @@ const byte LEARNEDNESS_STEP=1;
 // pracs to max a disc
 const int PRACS_TO_MAX      = 60;
 
-const char *describe_level(int n);
-const char *describe_damage(int n, const TBeing *);
-const char *describe_armor(int n);
-const char *describe_light(int n);
-const char *what_does_it_open(const TKey *o);
+const sstring describe_level(int n);
+const sstring describe_damage(int n, const TBeing *);
+const sstring describe_armor(int n);
+const sstring describe_light(int n);
+const sstring what_does_it_open(const TKey *o);
 
 // defines for TBEing::discs[] array
 
@@ -178,7 +178,7 @@ struct disc_names_data
 {
   discNumT disc_num;
   int class_num;
-  const char * const practice;
+  const sstring practice;
 };
 
 //const struct pc_class_names_data 
@@ -186,8 +186,8 @@ struct pc_class_names_data
 {
   classIndT class_lev_num;
   int class_num;
-  const char * const name;
-  const char * const capName;
+  const sstring name;
+  const sstring capName;
 };
 
 struct class_info

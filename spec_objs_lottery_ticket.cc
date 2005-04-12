@@ -16,7 +16,6 @@ LotteryPrizes prizes[NUM_LOTTERY_PRIZES] =
   {"lotteryprize9", 2353, 1000},// 5k talen chip
 };
 
-
 int lotteryTicket(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
 {
   sstring buf;
@@ -44,7 +43,7 @@ int lotteryTicket(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
   }
 
   // add the prize identifier to the keywords
-  buf=o->name;
+  buf = o->name;
   buf += " ";
   buf += prizes[which].name;
   delete [] o->name;
@@ -52,8 +51,8 @@ int lotteryTicket(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
 
   // add the prize description to the extra description
   // we just assume that the first extra is the correct one
-  if(which==0){
-    buf="This ticket is a loser.\n\r";
+  if (which == 0){
+    buf = "This ticket is a loser.\n\r";
   } else {
     buf = fmt("This ticket is a winner!  The prize is %s.\n\r") %
 	     obj_index[real_object(prizes[which].vnum)].short_desc;
@@ -67,10 +66,7 @@ int lotteryTicket(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
   ch->sendTo(COLOR_BASIC, buf.c_str());
 
   buf = fmt("%s\n\r%s") % o->ex_description->description % buf;
-  delete o->ex_description->description;
-  o->ex_description->description=mud_str_dup(buf);
-
-  
+  o->ex_description->description = buf;
 
   return TRUE;
 }

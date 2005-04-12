@@ -1244,6 +1244,28 @@ TThing *unequip_char_for_save(TBeing *ch, wearSlotT pos)
   return (o);
 }
 
+int get_number(sstring &name)
+{
+  int num = 1;
+  size_t pos;
+
+  if ((pos = name.find_first_of(".")) != sstring::npos) {
+    if (pos+1 == name.length()) {
+      name = "";
+      num = 1;
+    } else {
+      sstring numx = name.substr(0, pos);
+      name = name.substr(pos+1, name.length()-pos+1);
+      if (numx.isNumber()) {
+        num = (convertTo<int>(numx));
+      } else {
+        num = 0;
+      }
+    }
+  }
+  return num;
+}
+
 int get_number(char **name)
 {
   int i;
@@ -1547,8 +1569,37 @@ TBeing *get_char_room(const sstring &name, int room, int *count)
 }
 
 // search all over the world for a char, and return a pointer if found 
+TBeing *get_char(const sstring name, exactTypeT exact)
+{
+  TBeing *i;
+  int j, numx;
+  sstring tmpname;
+
+  if (name.empty())
+    return NULL;
+
+  tmpname = name;
+  if (!(numx = get_number(tmpname)))
+    return (0);
+
+  for (i = character_list, j = 1; i && (j <= numx); i = i->next) {
+    if (i->name) {
+      if ((exact && is_exact_name(tmpname, i->name)) ||
+          (!exact && isname(tmpname, i->name))) {
+        if (j == numx)
+          return (i);
+        j++;
+      }
+    }
+  }
+  return (0);
+}
+
+// search all over the world for a char, and return a pointer if found 
 TBeing *get_char(const char *name, exactTypeT exact)
 {
+  return get_char(sstring(name), exact);
+  /*
   TBeing *i;
   int j, numx;
   char tmpname[MAX_INPUT_LENGTH], *tmp;
@@ -1572,8 +1623,8 @@ TBeing *get_char(const char *name, exactTypeT exact)
     }
   }
   return (0);
+  */
 }
-
 
 // search all over the world for a char num, and return a pointer if found
 TBeing *get_char_num(int nr)
@@ -2245,7 +2296,7 @@ int generic_find(const char *arg, int bv, TBeing *ch, TBeing **tar_ch, TObj **ob
   }
   if (bv & FIND_ROOM_EXTRA) {
     if (ch->roomp && ch->roomp->ex_description &&
-      ch->roomp->ex_description->findExtraDesc(tmp)) {
+      !ch->roomp->ex_description->findExtraDesc(tmp).empty()) {
       count++;
       if (count == numx)
         return FIND_ROOM_EXTRA;

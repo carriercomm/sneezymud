@@ -5,7 +5,7 @@
 
 int txt2dir(sstring txt)
 {
-  for(int i=0;strcmp(dirs[i], "\n");++i){
+  for(int i=0;dirs[i] != "\n";++i){
     if(txt==dirs[i]){
       return i;
     }

@@ -379,7 +379,7 @@ int TGun::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
 {
   TAmmo *ammo;
   TObj *bullet;
-  char  buf[256];
+  sstring buf;
   
   if (targ &&
       ch->checkPeacefulVictim("They are in a peaceful room. You can't seem to fire the gun.\n\r", targ))
@@ -426,8 +426,8 @@ int TGun::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
 		 capbuf.uncap() % 
 		 capbuf2.uncap());
     
-    sprintf(buf, "$n points $p %swards, and shoots $N out of it.",
-	    dirs[dir]);
+    buf = fmt("$n points $p %swards, and shoots $N out of it.") %
+      dirs[dir];
     act(buf, FALSE, ch, this, bullet, TO_ROOM);
     
     // put the bullet in the room and then "throw" it
@@ -453,7 +453,6 @@ int TGun::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
 
   return FALSE;
 }
-
 
 void TGun::setRounds(int r){
   if(getAmmo()){

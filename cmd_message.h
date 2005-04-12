@@ -61,23 +61,23 @@ const int MSG_REQ_DIR    = (1 << 3); // Direction of travel
 
 struct messageBuffer
 {
-  char *msgImmTitle,
-       *msgPurge,
-       *msgPurgeTarg,
-       *msgRLoad,
-       *msgLoadObj,
-       *msgLoadMob,
-       *msgMEdit,
-       *msgOEdit,
-       *msgSwitchTarg,
-       *msgMoveIn,
-       *msgMoveOut,
-       *msgSlay,
-       *msgSlayTarg,
-       *msgForce,
-       *msgBamfin,
-       *msgBamfout,
-       *msgLongDescr;
+  sstring msgImmTitle,
+       msgPurge,
+       msgPurgeTarg,
+       msgRLoad,
+       msgLoadObj,
+       msgLoadMob,
+       msgMEdit,
+       msgOEdit,
+       msgSwitchTarg,
+       msgMoveIn,
+       msgMoveOut,
+       msgSlay,
+       msgSlayTarg,
+       msgForce,
+       msgBamfin,
+       msgBamfout,
+       msgLongDescr;
 };
 
 class TMessages
@@ -95,7 +95,7 @@ class TMessages
     void operator() (messageTypeT, sstring);
    // TMessages & operator() (messageTypeT, sstring);
     // Sets the fields in message  [Call this to actually Get the messages]
-    sstring operator() (messageTypeT, TThing * = NULL, const char * = NULL, bool = true);
+    sstring operator() (messageTypeT, TThing * = NULL, const sstring & = NULL, bool = true);
     // Used by  : Get message from type
     sstring operator[] (messageTypeT) const;
     void initialize();

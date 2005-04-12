@@ -19,6 +19,8 @@
 #include "obj_wand.h"
 #include "obj_general_weapon.h"
 #include "obj_open_container.h"
+#include "corporation.h"
+#include "shopowned.h"
 
 static const char ROOM_SAVE_PATH[] = "roomdata/saved";
 static const int NORMAL_SLOT   = -1;
@@ -2793,6 +2795,7 @@ void TBeing::makeRentNote(TBeing *recip)
   return;
 }
 
+
 int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TObj *o)
 {
   objCost cost;
@@ -2800,8 +2803,15 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
   char buf[256];
   dirTypeT dir;
   roomDirData *exitp;
+  TDatabase db(DB_SNEEZY);
+  TCorporation corp(21);
 
-  if (cmd == CMD_GENERIC_PULSE){
+  int shop_nr = find_shop_nr(recep->number);
+
+  if (cmd == CMD_WHISPER)
+    return shopWhisper(ch, recep, shop_nr, arg);
+
+  if (cmd == CMD_GENERIC_PULSE) {
     TThing *t;
     TBeing *tbt;
 
@@ -2980,9 +2990,40 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
       ch->sendTo("If you Have to rent out, such as testing, then go mortal first.\n\r");
       ch->sendTo("----------\n\r");
     }
-
     if (ch->recepOffer(recep, &cost)) {
       if (ch->desc && !ch->desc->m_bIsClient) {
+	if (ch->GetMaxLevel() > 5) {
+	  TShopOwned tso(shop_nr, recep, ch);
+	  
+	  float multiplier = (shop_index[shop_nr].getProfitBuy(NULL, ch));
+	  int tax = (int)((float) ch->GetMaxLevel() * multiplier);
+
+	  sstring msg = shop_index[shop_nr].message_buy;
+
+	  if (ch->getMoney() < tax) {
+	    recep->doTell(ch->getName(), 
+			  fmt("The mayor has issued a %d talen hospice tax, which I see you can't afford.") 
+			  % tax);
+	    recep->doAction("", CMD_SIGH);
+	    recep->doTell(ch->getName(), 
+			  fmt("Sorry. Come back when you can pay your taxes."));
+	    for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
+	      if (exit_ok(exitp = recep->exitDir(dir), NULL)) {
+		act("$n throws you from the inn.",
+		    FALSE, recep, 0, ch, TO_VICT);
+		act("$n throws $N from the inn.",
+		    FALSE, recep, 0, ch, TO_NOTVICT);
+		recep->throwChar(ch, dir, FALSE, SILENT_NO, true);
+
+		return TRUE;
+	      }
+	    }
+	  } else {
+	    recep->doTell(ch->getName(), fmt(msg) % tax);
+	    tso.doBuyTransaction(tax, "rent", "paying");
+            vlogf(LOG_PIO, fmt("%s being charged %d talens rent tax by %s") % ch->getName() % tax % recep->getName());
+	  }
+	}
         act("$n stores your stuff in the safe, and shows you to your room.", FALSE, recep, 0, ch, TO_VICT);
         act("$n shows $N to $S room.", FALSE, recep, 0, ch, TO_NOTVICT);
     
@@ -2990,7 +3031,6 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
         save_room = ch->in_room;        // backup what room the PC was in 
         ch->saveChar(save_room);
         ch->in_room = save_room;
-
         ch->cls();
         ch->fullscreen();
 
@@ -3011,12 +3051,21 @@ int receptionist(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *recep, TOb
       if (vict) {
         vict->makeRentNote(ch);
         recep->doTell(ch->getName(), fmt("Here is a note with %s's items listed.") % vict->getName());
-        return TRUE;
+	TShopOwned tso(shop_nr, recep, vict);	
+	float multiplier = (shop_index[shop_nr].getProfitBuy(NULL, vict));
+	int tax = (int)((float) vict->GetMaxLevel() * multiplier);
+
+	recep->doTell(ch->getName(), fmt("In addition to any fees listed on that note, there is a tax of %i talens.") % tax);
+	return TRUE;
       }
     }
+    TShopOwned tso(shop_nr, recep, ch);	
+    float multiplier = (shop_index[shop_nr].getProfitBuy(NULL, ch));
+    int tax = (int)((float) ch->GetMaxLevel() * multiplier);
 
     ch->makeRentNote(ch);
     recep->doTell(ch->getName(), "Here is a note with your items listed.");
+    recep->doTell(ch->getName(), fmt("In addition to any fees listed on that note, there is a tax of %i talens.") % tax);
   }
   return TRUE;
 }

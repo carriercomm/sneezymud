@@ -135,22 +135,22 @@ const int MAX_PORTAL_TYPE = 14;
 class itemInfo
 {
   public:   
-    const char * const name;
-    const char * const common_name;
-    const char * const val0_info;
+    sstring name;
+    sstring common_name;
+    sstring val0_info;
     int  val0_max;
     int  val0_min;
-    const char * const val1_info;
+    sstring val1_info;
     int  val1_max;
     int  val1_min;
-    const char * const val2_info;
+    sstring val2_info;
     int  val2_max;
     int  val2_min;
-    const char * const val3_info;
+    sstring val3_info;
     int  val3_max;
     int  val3_min;
 
-    itemInfo(const char * const n, const char * const cn, const char * const v0, int v0x, int v0n, const char * const v1, int v1x, int v1n, const char * const v2, int v2x, int v2n, const char * const v3, int v3x, int v3n);
+    itemInfo(const sstring &n, const sstring &cn, const sstring &v0, int v0x, int v0n, const sstring &v1, int v1x, int v1n, const sstring &v2, int v2x, int v2n, const sstring &v3, int v3x, int v3n);
     ~itemInfo();
   private:
     //    itemInfo() {} // prevent use
@@ -496,8 +496,8 @@ class TObj : public TThing {
     objFlagData obj_flags;
     objAffData affected[MAX_OBJ_AFFECT];
 
-    const char *action_description;      /* What to write when used          */
-    const char * owners;
+    sstring action_description;      /* What to write when used          */
+    sstring owners;
 
   protected:
     TObj();
@@ -509,9 +509,9 @@ class TObj : public TThing {
 
     // VIRTUAL FUNCTIONS
     virtual sstring showModifier(showModeT, const TBeing *) const { return ""; }
-    virtual bool isPersonalized() { return action_description != NULL; }
+    virtual bool isPersonalized() { return (!action_description.empty()); }
     virtual int getVolume() const { return (obj_flags.volume); }
-    virtual const char *getName() const { return shortDescr; }
+    virtual const sstring getName() const { return shortDescr; }
     virtual int getSnum() const { return (snum > -1 ? snum : objVnum()); };
 
     virtual roomDirData *exitDir(dirTypeT door) const;
@@ -520,14 +520,14 @@ class TObj : public TThing {
     virtual bool isShopSimilar(const TThing *) const;
     virtual bool isSimilar(const TThing *) const;
     virtual bool isLevitating() const;
-    virtual bool fitInShop(const char *, const TBeing *) const;
+    virtual bool fitInShop(const sstring &, const TBeing *) const;
     virtual bool canDrop() const;
-    virtual int checkSpec(TBeing *, cmdTypeT, const char *, TThing *);
+    virtual int checkSpec(TBeing *, cmdTypeT, const sstring &, TThing *);
     virtual itemTypeT itemType() const = 0;
     // END VIRTUAL FUNCTIONS
 
     // INLINE FUNCTIONS
-    bool isMonogrammed() const { return (action_description ? TRUE : FALSE); }
+    bool isMonogrammed() const { return (!action_description.empty()); }
     // END INLINE FUNCTIONS
 
     int objectTickUpdate(int);
@@ -584,7 +584,7 @@ class TObj : public TThing {
     }
     void releaseObject(TBeing *);
     virtual int checkFalling();
-    void describeTreasure(const char *, int, int);
+    void describeTreasure(const sstring &, int, int);
     void checkObjStats();
     virtual void update(int);
     virtual bool isBluntWeapon() const;
@@ -645,22 +645,22 @@ class TObj : public TThing {
     virtual void changeObjValue3(TBeing *);
     virtual void changeObjValue4(TBeing *);
     virtual int disarmMe(TBeing *);
-    virtual void changeTrapValue2(TBeing *, const char *, editorEnterTypeT) {}
-    virtual void changeTrapValue3(TBeing *, const char *, editorEnterTypeT) {}
-    virtual void makeTrapLand(TBeing *, doorTrapT, const char *) {}
-    virtual void makeTrapGrenade(TBeing *, doorTrapT, const char *) {}
+    virtual void changeTrapValue2(TBeing *, const sstring &, editorEnterTypeT) {}
+    virtual void changeTrapValue3(TBeing *, const sstring &, editorEnterTypeT) {}
+    virtual void makeTrapLand(TBeing *, doorTrapT, const sstring &) {}
+    virtual void makeTrapGrenade(TBeing *, doorTrapT, const sstring &) {}
     virtual void purgeMe(TBeing *);
-    virtual int boardHandler(TBeing *, cmdTypeT, const char *);
-    virtual void changeComponentValue4(TBeing *, const char *, editorEnterTypeT) {}
+    virtual int boardHandler(TBeing *, cmdTypeT, const sstring &);
+    virtual void changeComponentValue4(TBeing *, const sstring &, editorEnterTypeT) {}
     virtual void boottimeInit() {}
     virtual void decayMe();
     virtual bool sellMeCheck(TBeing *, TMonster *, int) const;
     virtual bool fitsSellType(tObjectManipT, TBeing *, TMonster *, sstring, itemTypeT, int &, int);
-    virtual int treeMe(TBeing *, const char *, int, int*);
+    virtual int treeMe(TBeing *, const sstring &, int, int*);
     virtual bool canGetMeDeny(const TBeing *, silentTypeT) const;
     virtual bool canGetMe(const TBeing *, silentTypeT) const;
-    virtual void changeBedValue1(TBeing *, const char *, editorEnterTypeT) {}
-    virtual void changeMagicItemValue1(TBeing *, const char *, editorEnterTypeT) {}
+    virtual void changeBedValue1(TBeing *, const sstring &, editorEnterTypeT) {}
+    virtual void changeMagicItemValue1(TBeing *, const sstring &, editorEnterTypeT) {}
     virtual int buyMe(TBeing *, TMonster *, int, int);
     virtual void sellMe(TBeing *, TMonster *, int, int);
     virtual void valueMe(TBeing *, TMonster *, int, int);
@@ -674,10 +674,10 @@ class TObj : public TThing {
     virtual int changeItemVal3Check(TBeing *, int);
     virtual int changeItemVal4Check(TBeing *, int);
     virtual sstring getNameForShow(bool = true, bool = true, const TBeing * = NULL) const;
-    virtual int foodItemUsed(TBeing *ch, const char *arg);
-    virtual void changeBaseWeaponValue1(TBeing *, const char *, editorEnterTypeT) {}
-    //virtual void changeBaseWeaponValue2(TBeing *, const char *, editorEnterTypeT) {}
-    //virtual void changeBaseWeaponValue3(TBeing *, const char *, editorEnterTypeT) {}
+    virtual int foodItemUsed(TBeing *ch, const sstring &arg);
+    virtual void changeBaseWeaponValue1(TBeing *, const sstring &, editorEnterTypeT) {}
+    //virtual void changeBaseWeaponValue2(TBeing *, const sstring &, editorEnterTypeT) {}
+    //virtual void changeBaseWeaponValue3(TBeing *, const sstring &, editorEnterTypeT) {}
     virtual void objMenu(const TBeing *) const;
     virtual int rentCost() const;
     virtual int galvanizeMe(TBeing *, byte);
@@ -692,15 +692,15 @@ class TObj : public TThing {
     virtual void lockMe(TBeing *);
     virtual void unlockMe(TBeing *);
     virtual int enterMe(TBeing *);
-    virtual int getAllFrom(TBeing *, const char *);
-    virtual int getObjFrom(TBeing *, const char *, const char *);
+    virtual int getAllFrom(TBeing *, const sstring &);
+    virtual int getObjFrom(TBeing *, const sstring &, const sstring &);
     virtual void peeOnMe(const TBeing *);
     virtual int dissectMe(TBeing *);
     virtual bool listThingRoomMe(const TBeing *) const;
     virtual bool canSeeMe(const TBeing *, infraTypeT) const;
     virtual void dropMe(TBeing *, showMeT, showRoomT);
     virtual void pickMe(TBeing *);
-    virtual int trapMe(TBeing *, const char *);
+    virtual int trapMe(TBeing *, const sstring &);
     virtual void putMoneyInto(TBeing *, int);
     virtual void show_me_mult_to_char(TBeing *, showModeT, unsigned int) const;
     virtual void show_me_to_char(TBeing *, showModeT) const;
@@ -710,7 +710,7 @@ class TObj : public TThing {
     virtual int drinkMe(TBeing *);
     virtual void sipMe(TBeing *);
     virtual void tasteMe(TBeing *);
-    virtual void logMe(const TBeing *, const char *) const;
+    virtual void logMe(const TBeing *, const sstring &) const;
     virtual void extinguishWater(TBeing *);
     virtual void extinguishWater();
     virtual void setBurning(TBeing *);

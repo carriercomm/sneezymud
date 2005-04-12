@@ -16,7 +16,7 @@ int THandgonne::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirType
 {
   TAmmo *ammo;
   TObj *bullet;
-  char  buf[256];
+  sstring buf;
   
   if (targ &&
       ch->checkPeacefulVictim("They are in a peaceful room. You can't seem to fire the gun.\n\r", targ))
@@ -144,8 +144,8 @@ int THandgonne::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirType
 
     act("<Y>BANG!<1>  A loud blast sounds as $n ignites $p.",
 	FALSE, ch, this, bullet, TO_ROOM);
-    sprintf(buf, "$n points $p %swards, and shoots $N out of it.",
-	    dirs[dir]);
+    buf = fmt("$n points $p %swards, and shoots $N out of it.") %
+      dirs[dir];
     act(buf, FALSE, ch, this, bullet, TO_ROOM);
 
     ch->dropSmoke(::number(1,5));
@@ -175,10 +175,6 @@ int THandgonne::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirType
 
   return FALSE;
 }
-
-
-
-
 
 int task_handgonne_load(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj *o)
 {

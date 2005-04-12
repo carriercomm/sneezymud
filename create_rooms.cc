@@ -299,16 +299,14 @@ void TPerson::doEdit(const char *arg)
         tStr = "\0";
         for (dir = MIN_DIR; dir < MAX_DIR; dir++)
           if (roomp->dir_option[dir]) {
-            sprintf(my_sstring,
-                    "%d) %s %s -To> %d\n\rLock Diff:%d  Weight:%d  Key:%d\n\rTrap Dam: %d\n\r",
-                    dir, dirs[dir],
-                    roomp->dir_option[dir]->keyword,
-                    roomp->dir_option[dir]->to_room,
-                    roomp->dir_option[dir]->lock_difficulty,
-                    roomp->dir_option[dir]->weight,
-                    roomp->dir_option[dir]->key,
-                    roomp->dir_option[dir]->trap_dam);
-            tStr += my_sstring;
+            tStr += fmt("%d) %s %s -To> %d\n\rLock Diff:%d  Weight:%d  Key:%d\n\rTrap Dam: %d\n\r") %
+              dir % dirs[dir] %
+              roomp->dir_option[dir]->keyword %
+              roomp->dir_option[dir]->to_room %
+              roomp->dir_option[dir]->lock_difficulty %
+              roomp->dir_option[dir]->weight %
+              roomp->dir_option[dir]->key %
+              roomp->dir_option[dir]->trap_dam;
           }
         sendTo(tStr);
         return;
@@ -605,7 +603,7 @@ void TPerson::doEdit(const char *arg)
           sendTo("New field.\n\r");
           sendTo("Terminate with a '~' on a NEW LINE.\n\r");
           break;
-        } else if (!strcasecmp(ed->keyword, my_sstring)) {
+        } else if (ed->keyword == my_sstring) {
           sendTo(fmt("Current description:\n\r%s\n\r") % ed->description);
           sendTo("This description has been deleted.  If you needed to modify it, simply readd it.\n\r");
           sendTo("Press return to proceed.\n\r");

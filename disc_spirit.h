@@ -98,7 +98,7 @@ private:
     void dispelInvisible(TBeing *, TObj *, TMagicItem *);
     int dispelInvisible(TBeing *, TObj *, int, byte);
 
-    int polymorph(TBeing *, const char *);
+    int polymorph(TBeing *, const sstring &);
     int castPolymorph(TBeing *);
     int polymorph(TBeing *, int, byte);
 
@@ -146,8 +146,8 @@ private:
     int trueSight(TBeing *, TBeing *, int, byte);
 
     int castTelepathy(TBeing *);
-    int telepathy(TBeing *, const char *);
-    int telepathy(TBeing *, const char *, int, byte);
+    int telepathy(TBeing *, const sstring &);
+    int telepathy(TBeing *, const sstring &, int, byte);
 
     int fear(TBeing *, TBeing *);
     int castFear(TBeing *, TBeing *);

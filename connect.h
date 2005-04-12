@@ -402,16 +402,16 @@ class Descriptor
     TSocket *socket;
     editStuff edit;
     sstring host;                 // hostname
-    char pwd[12];                 // password                   
+    sstring pwd;                 // password                   
     connectStateT connected;                // mode of 'connectedness'    
     int wait;                     // wait for how many loops    
-    char *showstr_head;           // for paging through texts  
+    size_t showstr_head;           // for paging through texts  
     int tot_pages;               // for tracking paged info
     int cur_page;                //       -
-    const char **str;                   // for the modify-str system
+    sstring str;                  // for the modify-str system
     int max_str;
     int prompt_mode;              // control of prompt-printing 
-    char m_raw[4096];               // buffer for raw input    
+    char m_raw[4096];             // buffer for raw input    
     textQ output;                 // q of sstrings to send    
     textQ input;                  // q of unprocessed input  
     sessionData session;          // data for this session
@@ -468,22 +468,22 @@ class Descriptor
     int inputProcessing();
     void flush();
     void flushInput();
-    int sendLogin(const char *);
+    int sendLogin(const sstring &);
     bool checkForMultiplay();
-    bool checkForAccount(char *, bool silent = FALSE);
-    bool checkForCharacter(char *);
-    int doAccountStuff(char *);
-    int clientCreateAccount(char *);
-    int clientCreateChar(char *);
+    bool checkForAccount(sstring &, bool silent = FALSE);
+    bool checkForCharacter(sstring &);
+    int doAccountStuff(sstring &);
+    int clientCreateAccount(sstring &);
+    int clientCreateChar(sstring &);
     bool isEditing();
-    void Edit(char *);
+    void Edit(sstring &);
     void deleteAccount();
     void menuWho();
     void saveAccount();
-    int doAccountMenu(const char *);
-    void add_to_history_list(const char *);
-    int getFreeStat();
-    int nanny(const char *);
+    int doAccountMenu(const sstring &);
+    void add_to_history_list(const sstring &);
+    int getFreeStat(connectStateT);
+    int nanny(const sstring &);
     void sendMotd(int);
     void go_back_menu(connectStateT);
     void EchoOn();
@@ -491,20 +491,20 @@ class Descriptor
     void sendHomeList();
     void sendStartStatList();
     void sendDoneScreen();
-    const char *getStatDescription(int);
+    const sstring getStatDescription(int);
     void sendStatList(int, int);
     void sendStatRules(int);
     void sendRaceList();
     void sendClassList(int);
     void sendTraitsList();
-    bool start_page_file(const char *, const char *);
+    bool start_page_file(const sstring &, const sstring &);
     bool canChooseClass(int, bool multi = FALSE, bool triple = FALSE);
-    int client_nanny(char *);
+    int client_nanny(sstring &);
     void writeToQ(const sstring &arg);
     void clientf(const sstring &msg);
-    bool page_file(const char *);
+    bool page_file(const sstring &);
     void page_string(const sstring &, showNowT = SHOWNOW_NO, allowReplaceT allow = ALLOWREP_NO);
-    void show_string(const char *, showNowT, allowReplaceT);
+    void show_string(const sstring &, showNowT, allowReplaceT);
     const sstring badClassMessage(int Class, bool multi = FALSE, bool triple = FALSE);
 #if 0
     char *badRaceMessage(int race);
@@ -515,17 +515,17 @@ class Descriptor
     void send_client_room_objects();
     void send_client_prompt(int, int);
     void send_client_exits();
-    int read_client(char *);
-    void sstring_add(char *);
+    int read_client(sstring &);
+    void sstring_add(sstring &);
     void fdSocketClose(int);
     void saveAll();
     void worldSend(const sstring &, TBeing *);
-    void sendShout(TBeing *, const char *);
+    void sendShout(TBeing *, const sstring &);
     void updateScreenAnsi(unsigned int update);
     void updateScreenVt100(unsigned int update);
     int move(int, int);
-    void send_bug(const char *, const char *);
-    void add_comment(const char *, const char *);
+    void send_bug(const sstring &, const sstring &);
+    void add_comment(const sstring &, const sstring &);
     void cleanUpStr();
     bool getHostResolved();
     void setHostResolved(bool, const sstring &);

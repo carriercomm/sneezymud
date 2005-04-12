@@ -1604,8 +1604,6 @@ extraDescription::extraDescription() :
 
 extraDescription::~extraDescription()
 {
-  delete [] keyword;
-  delete [] description;
 }
 
 extraDescription & extraDescription::operator= (const extraDescription &a)
@@ -1613,10 +1611,8 @@ extraDescription & extraDescription::operator= (const extraDescription &a)
   if (this == &a)
     return *this;
 
-  delete [] keyword;
-  keyword = mud_str_dup(a.keyword);
-  delete [] description;
-  description = mud_str_dup(a.description);
+  keyword = a.keyword;
+  description = a.description;
 
   extraDescription *ad, *ad2;
   for (ad = next; ad; ad = ad2) {
@@ -1633,8 +1629,8 @@ extraDescription & extraDescription::operator= (const extraDescription &a)
 
 extraDescription::extraDescription(const extraDescription &a)
 {
-  keyword = mud_str_dup(a.keyword);
-  description = mud_str_dup(a.description);
+  keyword = a.keyword;
+  description = a.description;
   if (a.next)
     next = new extraDescription(*a.next);
   else
@@ -2137,14 +2133,13 @@ bool affectedData::shouldGenerateText() const
   return true;
 }
 
-const char * extraDescription::findExtraDesc(const char *word)
+sstring extraDescription::findExtraDesc(const sstring word)
 {
   extraDescription *i;
 
   for (i = this; i; i = i->next) {
-    if (i->keyword && isname(word, i->keyword))
+    if (!i->keyword.empty() && isname(word, i->keyword))
       return (i->description);
   }
   return NULL;
 }
-

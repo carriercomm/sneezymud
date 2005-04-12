@@ -32,7 +32,7 @@ class TOpenContainer : public TBaseContainer {
     virtual int disarmMe(TBeing *);
     virtual int detectMe(TBeing *) const;
     virtual void pickMe(TBeing *);
-    virtual int trapMe(TBeing *, const char *);
+    virtual int trapMe(TBeing *, const sstring &);
     virtual int openMe(TBeing *);
     virtual void closeMe(TBeing *);
     virtual void lockMe(TBeing *);

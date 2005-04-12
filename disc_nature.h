@@ -31,8 +31,8 @@ public:
 private:
 };
 
-    int treeWalk(TBeing *, const char *, int, byte);
-    int treeWalk(TBeing *, const char *);
+    int treeWalk(TBeing *, const sstring &, int, byte);
+    int treeWalk(TBeing *, const sstring &);
 
     int barkskin(TBeing *, TBeing *);
     int castBarkskin(TBeing *, TBeing *);

@@ -39,8 +39,8 @@ private:
     int beastSoother(TBeing *, TBeing *, TMagicItem *);
     int beastSoother(TBeing *, TBeing *, int, byte);
  
-    int beastSummon(TBeing *, const char *);
-    int beastSummon(TBeing *, const char *, int, byte);
+    int beastSummon(TBeing *, const sstring &);
+    int beastSummon(TBeing *, const sstring &, int, byte);
 
 
 #endif

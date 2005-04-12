@@ -856,6 +856,10 @@ const sstring TBeing::addColorRoom(TRoom * rp, int title) const
       buf2="<y>";
       buf3="<R>";
       break;
+    case SECT_DEAD_WOODS:
+      buf2="<k>";
+      buf3="<k>";
+      break;
     case SECT_TEMPERATE_BEACH:
     case SECT_TEMPERATE_BUILDING:
     case SECT_MAKE_FLY:
@@ -2340,6 +2344,11 @@ void TBeing::doInventory(const char *argument)
   one_argument(argument, arg);
 
   if (isImmortal() && *argument) {
+    if (powerCheck(POWER_AT)) {
+      vlogf(LOG_MISC, fmt("%s just tried to do: inventory %s") % getName() % argument);
+      return;
+    }
+
     if (!(victim = get_char_vis_world(this, arg, NULL, EXACT_YES))) {
       victim = get_char_vis_world(this, arg, NULL, EXACT_NO);
     }
@@ -2426,6 +2435,11 @@ void TBeing::doEquipment(const sstring &arg)
       }
     }
   } else {
+    if (powerCheck(POWER_AT)) {
+      vlogf(LOG_MISC, fmt("%s just tried to do: equipment %s") % getName() % arg);
+      return;
+    }
+
     TDatabase db(DB_SNEEZY);
     sstring tattoos[MAX_WEAR];
 

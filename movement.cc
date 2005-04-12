@@ -289,7 +289,7 @@ int TBeing::checkPassWard(dirTypeT cmd) const
 {
   int rp = 0;
   TObj *tmp = NULL;
-  char buf[512];
+  sstring buf;
 
   rp = in_room;
 
@@ -321,8 +321,8 @@ int TBeing::checkPassWard(dirTypeT cmd) const
            act("There is a disturbance in the air around $n.", 
                TRUE, this, 0, 0, TO_ROOM);
            sendTo("You are prevented from moving forward by a magical force.\n\r");
-           sprintf(buf,"$n is stopped by a magical force as $e tries to go %s",
-                   dirs[cmd]);
+           buf = fmt("$n is stopped by a magical force as $e tries to go %s") %
+             dirs[cmd];
            act(buf, TRUE, this, 0, 0, TO_ROOM);
            return FALSE;
          }
@@ -332,8 +332,8 @@ int TBeing::checkPassWard(dirTypeT cmd) const
            act("There is a disturbance in the air around $n.", 
                TRUE, this, 0, 0, TO_ROOM);
            sendTo("You are prevented from moving forward by a magical force.\n\r");
-           sprintf(buf,"$n is stopped by a magical force as $e tries to go %s",
-                   dirs[cmd]);
+           buf = fmt("$n is stopped by a magical force as $e tries to go %s") %
+             dirs[cmd];
            act(buf, TRUE, this, 0, 0, TO_ROOM);
            return FALSE;
 
@@ -341,8 +341,8 @@ int TBeing::checkPassWard(dirTypeT cmd) const
        break;
      default:
        sendTo("**SMACK**  You seem to have slammed into a magical ward.\n\r");
-       sprintf(buf,"$n slams into a magical ward as $e tries to go %s",
-          dirs[cmd]);
+       buf = fmt("$n slams into a magical ward as $e tries to go %s") %
+         dirs[cmd];
        act(buf, TRUE, this, 0, 0, TO_ROOM);
        return FALSE;
    }
@@ -866,14 +866,14 @@ int TBeing::rawMove(dirTypeT dir)
     }
   }
   if (getPosition() == POSITION_CRAWLING) 
-    sendTo(fmt("You crawl %s.\n\r") %dirs[dir]);
+    sendTo(fmt("You crawl %s.\n\r") % dirs[dir]);
   else if (isAffected(AFF_BLIND) && !isImmortal() && !isAffected(AFF_TRUE_SIGHT)) {
     if (dir == DIR_UP || dir == DIR_DOWN) {
       // say nothing on these
     } else if (isSwimming()) {
-      sendTo(fmt("You blindly paddle %s.\n\r") %dirs[dir]);
+      sendTo(fmt("You blindly paddle %s.\n\r") % dirs[dir]);
     } else {
-      sendTo(fmt("You blindly stumble %s.\n\r") %dirs[dir]);
+      sendTo(fmt("You blindly stumble %s.\n\r") % dirs[dir]);
     }
   }
 
@@ -934,11 +934,12 @@ int TBeing::rawMove(dirTypeT dir)
 
   if (riding) {
     // this is here because if mount moves by itself, rider needs to know
-    sprintf(tmp, "You ride %s.", dirs[dir]);
-    act(tmp, 0, this, 0, 0, TO_CHAR);
+    sstring str;
+    str = fmt("You ride %s.") % dirs[dir];
+    act(str, 0, this, 0, 0, TO_CHAR);
 
-    sprintf(tmp, "$n and you ride %s.", dirs[dir]);
-    act(tmp, FALSE, this, 0, riding, TO_VICT);
+    str = fmt("$n and you ride %s.") % dirs[dir];
+    act(str, FALSE, this, 0, riding, TO_VICT);
 
     --(*riding);
     thing_to_room(riding, new_r);
@@ -1266,7 +1267,7 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
   // act() do a for-loop to VICT
 
   TThing *t, *t2;
-  char tmp[256], how[128];
+  sstring tmp, how;
   TRoom *rp1, *rp2;
   int rc;
 
@@ -1281,17 +1282,17 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
     vlogf(LOG_BUG, fmt("NULL rp in displayMove!  (%s)(%d)") %  getName() % was_in);
     return FALSE;
   }
-  strcpy(how, movementType(FALSE).c_str());
+  how = movementType(FALSE);
 
   if (total > 1)
-    sprintf(tmp, "$n %s %s. [%d]", how, dirs[dir], total);
+    tmp = fmt("$n %s %s. [%d]") % how % dirs[dir] % total;
   else {
     if (riding) 
-      sprintf(tmp, "$n leaves %s, riding on $p.", dirs[dir]);
+      tmp = fmt("$n leaves %s, riding on $p.") % dirs[dir];
     else if (eitherLegHurt() && !isFlying()) 
-      sprintf(tmp, "$n hobbles on one leg as $e leaves %s.", dirs[dir]);
+      tmp = fmt("$n hobbles on one leg as $e leaves %s.") % dirs[dir];
     else 
-      sprintf(tmp, "$n %s %s.", how, dirs[dir]);
+      tmp = fmt("$n %s %s.") % how % dirs[dir];
   }
   // at time func called, this is actually in new room
   // temporarily put him back so canSee works properly
@@ -1309,12 +1310,12 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
     // ways to detect it:  be immortal, be able to see it, be able to hear it,
     if (ch->isImmortal() || ch->canSee(this, INFRA_YES) || makesNoise()) {
       if (isImmortal())
-        act(msgVariables(MSG_MOVE_IN, (TThing *)NULL, dirs[dir]),
+        act(msgVariables(MSG_MOVE_IN, (TThing *)NULL, dirs[dir].c_str()),
             FALSE, this, riding, ch, TO_VICT);
       else {
 #if 1
-        if (ex_description && ex_description->findExtraDesc("moveout"))
-          strcpy(tmp, ex_description->findExtraDesc("moveout"));
+        if (ex_description && !ex_description->findExtraDesc("moveout").empty())
+          tmp = ex_description->findExtraDesc("moveout");
 #endif
 
         act(tmp, FALSE, this, riding, ch, TO_VICT);
@@ -1329,47 +1330,48 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
   --(*this);
   *rp2 += *this;
 
-  strcpy(how, movementType(TRUE).c_str());
+  how = movementType(TRUE);
 
   if ((dir < 4) || (dir > 5)) {
     if (total == 1) {
       if (riding) {
-        sprintf(tmp, "$n has arrived from the %s, riding on $p.", dirs[rev_dir[dir]]);
+        tmp = fmt("$n has arrived from the %s, riding on $p.") %
+          dirs[rev_dir[dir]];
       } else if (eitherLegHurt()) {
-        sprintf(tmp, "$n has arrived from the %s, hobbling on one leg.",
-                     dirs[rev_dir[dir]]);
+        tmp = fmt("$n has arrived from the %s, hobbling on one leg.") %
+          dirs[rev_dir[dir]];
       } else {
-        sprintf(tmp, "$n %s from the %s.", how, dirs[rev_dir[dir]]);
+        tmp = fmt("$n %s from the %s.") % how % dirs[rev_dir[dir]];
       }
     } else
-      sprintf(tmp, "$n %s from the %s.", how, dirs[rev_dir[dir]]);
+      tmp = fmt("$n %s from the %s.") % how % dirs[rev_dir[dir]];
   } else if (dir == 4) {
     if (total == 1) {
       if (riding) {
-        sprintf(tmp, "$n has arrived from below, riding on $p.");
+        tmp = "$n has arrived from below, riding on $p.";
       } else if (eitherLegHurt()) {
-        sprintf(tmp, "$n has arrived from below, hobbling on one leg.");
+        tmp = "$n has arrived from below, hobbling on one leg.";
       } else {
-        sprintf(tmp, "$n %s from below.", how);
+        tmp = fmt("$n %s from below.") % how;
       }
     } else
-      sprintf(tmp, "$n %s from below.", how);
+      tmp = fmt("$n %s from below.") % how;
   } else if (dir == 5) {
     if (total == 1) {
       if (riding) {
-        sprintf(tmp, "$n has arrived from above, riding on $p.");
+        tmp = "$n has arrived from above, riding on $p.";
       } else if (eitherLegHurt()) {
-        sprintf(tmp, "$n has arrived from above, hobbling on one leg.");
+        tmp = "$n has arrived from above, hobbling on one leg.";
       } else {
-        sprintf(tmp, "$n %s from above.", how);
+        tmp = fmt("$n %s from above.") % how;
       }
     } else
-      sprintf(tmp, "$n %s from above.", how);
+      tmp = fmt("$n %s from above.") % how;
   } else
-    sprintf(tmp, "$n has arrived from somewhere.");
+    tmp = fmt("$n has arrived from somewhere.");
 
   if (total > 1)
-    sprintf(tmp + strlen(tmp), " [%d]", total);
+    tmp += fmt(" [%d]") % total;
 
   for (t = rp2->getStuff(); t; t = t->nextThing) {
     TBeing *tbt = dynamic_cast<TBeing *>(t);
@@ -1387,21 +1389,21 @@ int TBeing::displayMove(dirTypeT dir, int was_in, int total)
         (tbt->canSee(this, INFRA_YES)) ||
         (makesNoise())) {
       if (isImmortal()) {
-        char dirText[256];
+        sstring dirText;
 
         if ((dir < 4) || (dir > 5))
-          sprintf(dirText, "the %s", dirs[rev_dir[dir]]);
+          dirText = fmt("the %s") % dirs[rev_dir[dir]];
         else if (dir == 4)
-          strcpy(dirText, "below");
+          dirText = "below";
         else
-          strcpy(dirText, "above");
+          dirText = "above";
 
-        act(msgVariables(MSG_MOVE_OUT, (TThing *)NULL, dirText),
+        act(msgVariables(MSG_MOVE_OUT, (TThing *)NULL, dirText.c_str()),
             FALSE, this, riding, tbt, TO_VICT);
       } else {
 #if 1
-        if (ex_description && ex_description->findExtraDesc("movein"))
-          strcpy(tmp, ex_description->findExtraDesc("movein"));
+        if (ex_description && !ex_description->findExtraDesc("movein").empty())
+          tmp = ex_description->findExtraDesc("movein");
 #endif
 
         act(tmp, FALSE, this, riding, tbt, TO_VICT);
@@ -1626,12 +1628,11 @@ int AddToCharHeap(TBeing *heap[50], int *top, int total[50], TBeing *k)
 }
 
 // returns DELETE_THIS or false
-int TBeing::doOpen(const char *argument)
+int TBeing::doOpen(const sstring &argument)
 {
   dirTypeT door;
-  char type[MAX_INPUT_LENGTH], dir[MAX_INPUT_LENGTH];
-  char buf[256];
-  const char *tmpdesc;
+  sstring type, dir;
+  sstring buf;
   roomDirData *exitp;
   TObj *obj;
   int rc;
@@ -1648,17 +1649,17 @@ int TBeing::doOpen(const char *argument)
     return FALSE;
   }
 
-  if (!*type) {
+  if (type.empty()) {
     sendTo("Open what?\n\r");
     return FALSE;
   }
-  if (strlen(type) < 3) {  
+  if ((type.length()) < 3) {  
     sendTo("You need to be more specific about what you wish to open.\n\r");
     return FALSE;
   } 
 
   if ((findDoor(type, dir, DOOR_INTENT_OPEN, SILENT_YES) == DIR_NONE) &&
-             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
+             (!roomp->ex_description->findExtraDesc(argument).empty())) {
     sendTo(fmt("%s: Your attempt to open it seems to have no effect.\n\r") % type);
     return FALSE;
   } 
@@ -1685,9 +1686,11 @@ int TBeing::doOpen(const char *argument)
   // handling would be to find out how many "steels" were found above, and
   // fix things up here, but since findDoor doesn't know "1.stee" syntax
   // anyway, let's just truncate it here
-  char * citer = strchr(type, '.');
-  if (citer && *(citer+1))
-    strcpy(type, ++citer);
+  size_t pos = type.find_first_of(".");
+  if (pos != sstring::npos) {
+    sstring citer = type.substr(pos+1);
+    type = citer;
+  }
 
   door = findDoor(type, dir, DOOR_INTENT_OPEN, SILENT_NO);
   if (door >= MIN_DIR) {
@@ -1715,9 +1718,9 @@ int TBeing::doOpen(const char *argument)
                           (1.5 - (((float)getSkillValue(SKILL_RIDE) / 2) / 100)) : 1.0);
     if ((exitp->weight * tRidingManip) > maxWieldWeight(NULL, HAND_TYPE_PRIM)) {
       sendTo(fmt("The %s is too large and heavy for you to budge it.\n\r") %
-         exitp->getName());
-      sprintf(buf, "$n throws $mself at a %s, but $e can't budge it.",
-         exitp->getName().c_str());
+        exitp->getName());
+      buf = fmt("$n throws $mself at a %s, but $e can't budge it.") %
+        exitp->getName();
       act(buf, TRUE, this, 0, 0, TO_ROOM);
       return FALSE;
     }
@@ -1736,7 +1739,7 @@ int TBeing::doOpen(const char *argument)
       if (doesKnowSkill(SKILL_DETECT_TRAP)) {
         if (detectTrapDoor(this, door)) {
           sendTo(fmt("You start to open the %s, but then notice an insidious %s trap...\n\r") %
-               sstring(exitp->getName()) % sstring(trap_types[exitp->trap_info]).uncap());
+               sstring(exitp->getName()) % trap_types[exitp->trap_info].uncap());
           return FALSE;
         }
       }
@@ -1749,13 +1752,12 @@ int TBeing::doOpen(const char *argument)
   return FALSE;
 }
 
-int TBeing::doRaise(const char *argument, cmdTypeT cmd)
+int TBeing::doRaise(const sstring &argument, cmdTypeT cmd)
 {
   int rc;
   dirTypeT door;
-  char type[MAX_INPUT_LENGTH], dir[MAX_INPUT_LENGTH];
-  char buf[256];
-  const char *tmpdesc;
+  sstring type, dir;
+  sstring buf;
   roomDirData *exitp;
   argument_interpreter(argument, type, dir);
 
@@ -1769,13 +1771,13 @@ int TBeing::doRaise(const char *argument, cmdTypeT cmd)
     return FALSE;
   }
 
-  if (!*type) {
+  if (type.empty()) {
       if (cmd == CMD_LIFT)
         sendTo("Lift what?\n\r");
       else
         sendTo("Raise what?\n\r");
   } else if ((findDoor(type, dir, DOOR_INTENT_RAISE, SILENT_YES) == DIR_NONE) &&
-             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
+             (!roomp->ex_description->findExtraDesc(argument).empty())) {
     sendTo(fmt("%s: Your attempt to raise it seems to have no effect.\n\r") % type);
     return FALSE;
   } else if ((door = findDoor(type, dir, DOOR_INTENT_RAISE, SILENT_NO)) >= MIN_DIR) {
@@ -1799,9 +1801,9 @@ int TBeing::doRaise(const char *argument, cmdTypeT cmd)
                           (1.5 - (((float)getSkillValue(SKILL_RIDE) / 2) / 100)) : 1.0);
     if ((exitp->weight * tRidingManip) > maxWieldWeight(NULL, HAND_TYPE_PRIM)) {
       sendTo(fmt("The %s is too large and heavy for you to budge it.\n\r") %
-         exitp->getName());
-      sprintf(buf, "$n throws $mself at a %s, but $e can't budge it.",
-         exitp->getName().c_str());
+        exitp->getName());
+      buf = fmt("$n throws $mself at a %s, but $e can't budge it.") %
+        exitp->getName();
       act(buf, TRUE, this, 0, 0, TO_ROOM);
       return FALSE;
     }
@@ -1827,7 +1829,8 @@ int TBeing::doRaise(const char *argument, cmdTypeT cmd)
       else if (IS_SET(exitp->condition, EX_TRAPPED)) {
         if (doesKnowSkill(SKILL_DETECT_TRAP)) {
           if (detectTrapDoor(this, door)) {
-            sendTo(fmt("You start to raise the %s, but then notice an insidious %s trap...\n\r") %                 exitp->getName() % sstring(trap_types[exitp->trap_info]).uncap());
+            sendTo(fmt("You start to raise the %s, but then notice an insidious %s trap...\n\r") %
+              exitp->getName() % trap_types[exitp->trap_info].uncap());
             return FALSE;
           }
         }
@@ -1841,18 +1844,17 @@ int TBeing::doRaise(const char *argument, cmdTypeT cmd)
   return FALSE;
 }
 
-void TBeing::doClose(const char *argument)
+void TBeing::doClose(const sstring &argument)
 {
   dirTypeT door;
-  char type[MAX_INPUT_LENGTH], dir[MAX_INPUT_LENGTH];
-  char buf[256];
-  const char *tmpdesc;
+  sstring type, dir;
+  sstring buf;
   roomDirData *exitp;
   TObj *obj;
 
   argument_interpreter(argument, type, dir);
 
-  if (!*type)
+  if (type.empty())
     sendTo("Close what?\n\r");
   else if ((obj = get_obj_vis_accessible(this, argument)) && 
            !dynamic_cast<TBaseCorpse *>(obj)) {
@@ -1863,7 +1865,7 @@ void TBeing::doClose(const char *argument)
     // this is an object */
     obj->closeMe(this);
   } else if ((findDoor(type, dir, DOOR_INTENT_CLOSE, SILENT_YES) == DIR_NONE) &&
-             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
+             (!roomp->ex_description->findExtraDesc(argument).empty())) {
     sendTo(fmt("%s: Your attempt to close it seems to have no effect.\n\r") % type);
     return;
   } else if ((door = findDoor(type, dir, DOOR_INTENT_CLOSE, SILENT_NO)) >= MIN_DIR) {
@@ -1890,9 +1892,9 @@ void TBeing::doClose(const char *argument)
                           (1.5 - (((float)getSkillValue(SKILL_RIDE) / 2) / 100)) : 1.0);
     if ((exitp->weight * tRidingManip) > maxWieldWeight(NULL, HAND_TYPE_PRIM)) {
       sendTo(fmt("The %s is too large and heavy for you to budge it.\n\r") %
-         exitp->getName());
-      sprintf(buf, "$n throws $mself at a %s, but $e can't budge it.",
-         exitp->getName().c_str());
+        exitp->getName());
+      buf = fmt("$n throws $mself at a %s, but $e can't budge it.") %
+        exitp->getName();
       act(buf, TRUE, this, 0, 0, TO_ROOM);
       return;
     }
@@ -1911,13 +1913,12 @@ void TBeing::doClose(const char *argument)
   }
 }
 
-int TBeing::doLower(const char *argument)
+int TBeing::doLower(const sstring &argument)
 {
   dirTypeT door;
   int rc;
-  char type[MAX_INPUT_LENGTH], dir[MAX_INPUT_LENGTH];
-  char buf[256];
-  const char *tmpdesc;
+  sstring type, dir;
+  sstring buf;
   roomDirData *exitp;
  
   argument_interpreter(argument, type, dir);
@@ -1927,10 +1928,10 @@ int TBeing::doLower(const char *argument)
     return FALSE;
   }
 
-  if (!*type) {
+  if (type.empty()) {
     sendTo("Lower what?\n\r");
   } else if ((findDoor(type, dir, DOOR_INTENT_LOWER, SILENT_YES) == DIR_NONE) &&
-             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
+             (!roomp->ex_description->findExtraDesc(argument).empty())) {
     sendTo(fmt("%s: Your attempt to lower it seems to have no effect.\n\r") % type);
     return FALSE;
   } else if ((door = findDoor(type, dir, DOOR_INTENT_LOWER, SILENT_NO)) >= MIN_DIR) {
@@ -1953,9 +1954,9 @@ int TBeing::doLower(const char *argument)
                           (1.5 - (((float)getSkillValue(SKILL_RIDE) / 2) / 100)) : 1.0);
     if ((exitp->weight * tRidingManip) > maxWieldWeight(NULL, HAND_TYPE_PRIM)) {
       sendTo(fmt("The %s is too large and heavy for you to budge it.\n\r") %
-         exitp->getName());
-      sprintf(buf, "$n throws $mself at a %s, but $e can't budge it.",
-         exitp->getName().c_str());
+        exitp->getName());
+      buf = fmt("$n throws $mself at a %s, but $e can't budge it.") %
+        exitp->getName();
       act(buf, TRUE, this, 0, 0, TO_ROOM);
       return FALSE;
     }
@@ -1975,7 +1976,8 @@ int TBeing::doLower(const char *argument)
       else if (IS_SET(exitp->condition, EX_TRAPPED)) {
         if (doesKnowSkill(SKILL_DETECT_TRAP)) {
           if (detectTrapDoor(this, door)) {
-            sendTo(fmt("You start to lower the %s, but then notice an insidious %s trap...\n\r") %                 exitp->getName() %  sstring(trap_types[exitp->trap_info]).uncap());
+            sendTo(fmt("You start to lower the %s, but then notice an insidious %s trap...\n\r") %
+              exitp->getName() % trap_types[exitp->trap_info].uncap());
             return FALSE;
           }
         }
@@ -2043,18 +2045,17 @@ bool has_key(TBeing *ch, int key)
   return (0);
 }
 
-void TBeing::doLock(const char *argument)
+void TBeing::doLock(const sstring &argument)
 {
   dirTypeT door;
-  char type[MAX_INPUT_LENGTH], dir[MAX_INPUT_LENGTH];
-  const char *tmpdesc;
+  sstring type, dir;
   roomDirData *back, *exitp;
   TObj *obj;
   TRoom *rp;
 
   argument_interpreter(argument, type, dir);
 
-  if (!*type)
+  if (type.empty())
     sendTo("Lock what?\n\r");
   else if ((obj = get_obj_vis_accessible(this, argument)) && 
            !dynamic_cast<TBaseCorpse *>(obj) &&
@@ -2062,7 +2063,7 @@ void TBeing::doLock(const char *argument)
     // this is an object */
     obj->lockMe(this);
   } else if ((findDoor(type, dir, DOOR_INTENT_LOCK, SILENT_YES) == DIR_NONE) &&
-             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
+             (!roomp->ex_description->findExtraDesc(argument).empty())) {
     sendTo(fmt("%s: Your attempt to lock it seems to have no effect.\n\r") % type);
     return;
   } else if ((door = findDoor(type, dir, DOOR_INTENT_LOCK, SILENT_NO)) >= MIN_DIR) {
@@ -2075,7 +2076,7 @@ void TBeing::doLock(const char *argument)
     if (IS_SET(exitp->condition, EX_DESTROYED)) {
       sendTo(fmt("The %s has been destroyed; locking it now is a bit silly.\n\r") %
 
-         exitp->getName().c_str());
+        exitp->getName());
       return;
     } else if (IS_SET(exitp->condition, EX_CAVED_IN)) {
       sendTo("How do you expect to find the lock when it's buried under that cave in?\n\r");
@@ -2101,18 +2102,17 @@ void TBeing::doLock(const char *argument)
   }
 }
 
-void TBeing::doUnlock(const char *argument)
+void TBeing::doUnlock(const sstring &argument)
 {
   dirTypeT door;
-  char type[MAX_INPUT_LENGTH], dir[MAX_INPUT_LENGTH];
-  const char *tmpdesc;
+  sstring type, dir;
   roomDirData *back, *exitp;
   TObj *obj;
   TRoom *rp;
 
   argument_interpreter(argument, type, dir);
 
-  if (!*type)
+  if (type.empty())
     sendTo("Unlock what?\n\r");
   else if ((obj = get_obj_vis_accessible(this, argument)) && 
            !dynamic_cast<TBaseCorpse *>(obj) &&
@@ -2120,7 +2120,7 @@ void TBeing::doUnlock(const char *argument)
     // this is an object */
     obj->unlockMe(this);
   } else if ((findDoor(type, dir, DOOR_INTENT_UNLOCK, SILENT_YES) == DIR_NONE) &&
-             (tmpdesc = roomp->ex_description->findExtraDesc(argument))) {
+             (!roomp->ex_description->findExtraDesc(argument).empty())) {
     sendTo(fmt("%s: Your attempt to unlock it seems to have no effect.\n\r") % type);
     return;
   } else if ((door = findDoor(type, dir, DOOR_INTENT_UNLOCK, SILENT_NO)) >= MIN_DIR) {

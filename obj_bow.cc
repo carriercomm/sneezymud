@@ -376,9 +376,10 @@ int TBow::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT dir,
 		 capbuf.uncap() % 
 		 capbuf2.uncap());
     
-    sprintf(buf, "$n points $p %swards, and shoots $N out of it.",
-	    dirs[dir]);
-    act(buf, FALSE, ch, this, the_arrow, TO_ROOM);
+    sstring sbuf;
+    sbuf = fmt("$n points $p %swards, and shoots $N out of it.") %
+      dirs[dir];
+    act(sbuf, FALSE, ch, this, the_arrow, TO_ROOM);
     
     *ch->roomp += *the_arrow;
     

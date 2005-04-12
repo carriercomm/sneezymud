@@ -37,9 +37,9 @@ class TAccount
 {
   public:
     byte status;
-    char email[80];
-    char passwd[11];
-    char name[10];
+    sstring email;
+    sstring passwd;
+    sstring name;
     long birth;
     long login;
     termTypeT term;

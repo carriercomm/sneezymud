@@ -261,7 +261,7 @@ void TVehicle::vehiclePulse(int pulse)
 	   isAllowedPath(troom->dir_option[dir]->to_room)){
 	  setDir(dir);
 
-	  sendrpf(COLOR_OBJECTS, roomp, "%s changes direction to the %s and keeps moving.\n\r", shortdescr, dirs[getDir()]);
+	  sendrpf(COLOR_OBJECTS, roomp, "%s changes direction to the %s and keeps moving.\n\r", shortdescr, dirs[getDir()].c_str());
 
 	  break;
 	}
@@ -286,35 +286,35 @@ void TVehicle::vehiclePulse(int pulse)
   if(getType()==VEHICLE_BOAT){
     if(getSpeed() >= FAST_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s sails rapidly to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     } else if(getSpeed() >= MED_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s sails to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     } else {
       sendrpf(COLOR_OBJECTS, roomp, "%s drifts to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     }
   } else if(getType()==VEHICLE_TROLLEY){
     if(getSpeed() >= FAST_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s rumbles to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     } else if(getSpeed() >= MED_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s rumbles to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     } else {
       sendrpf(COLOR_OBJECTS, roomp, "%s rolls to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     }
   } else {
     if(getSpeed() >= FAST_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s speeds off to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     } else if(getSpeed() >= MED_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s rolls off to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     } else {
       sendrpf(COLOR_OBJECTS, roomp, "%s creeps off to the %s.\n\r",
-	      shortdescr, dirs[getDir()]);
+	      shortdescr, dirs[getDir()].c_str());
     }
   }
 
@@ -326,43 +326,43 @@ void TVehicle::vehiclePulse(int pulse)
   if(getType() == VEHICLE_BOAT){
     if(getSpeed() >= FAST_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s sails rapidly in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p sails %s.") % dirs[getDir()];
     } else if(getSpeed() >= MED_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s sails in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p sails %s.") % dirs[getDir()];
     } else {
       sendrpf(COLOR_OBJECTS, roomp, "%s drifts in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p drifts %s.") % dirs[getDir()];
     }
   } else if(getType() == VEHICLE_TROLLEY){
     if(getSpeed() >= FAST_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s rumbles in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p rumbles %s.") % dirs[getDir()];
     } else if(getSpeed() >= MED_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s rumbles in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p rumbles %s.") % dirs[getDir()];
     } else {
       sendrpf(COLOR_OBJECTS, roomp, "%s rolls in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p drifts %s.") % dirs[getDir()];
     }
   } else {
     if(getSpeed() >= FAST_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s speeds in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p speeds %s.") % dirs[getDir()];
     } else if(getSpeed() >= MED_SPEED){
       sendrpf(COLOR_OBJECTS, roomp, "%s rolls in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p rolls %s.") % dirs[getDir()];
     } else {
       sendrpf(COLOR_OBJECTS, roomp, "%s creeps in from the %s.\n\r",
-	      shortdescr, dirs[rev_dir[getDir()]]);
+	      shortdescr, dirs[rev_dir[getDir()]].c_str());
       buf = fmt("$p creeps %s.") % dirs[getDir()];
     }
   }

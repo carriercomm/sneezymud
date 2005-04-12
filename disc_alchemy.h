@@ -91,9 +91,9 @@ private:
     void divinationObj(TBeing *, TObj *, TMagicItem *);
   
  
-    int eyesOfFertuman(TBeing *, const char *);
-    int castEyesOfFertuman(TBeing *, const char *);
-    int eyesOfFertuman(TBeing *, const char *, int, byte);
+    int eyesOfFertuman(TBeing *, const sstring &);
+    int castEyesOfFertuman(TBeing *, const sstring &);
+    int eyesOfFertuman(TBeing *, const sstring &, int, byte);
  
     int powerstone(TBeing *, TObj *);
     int castPowerstone(TBeing *, TObj *);
@@ -134,14 +134,14 @@ private:
  
     extern       bool alchemy_create_deny(int);
     const int MATERIALIZE_PRICE = 100;
-    int castMaterialize(TBeing *, const char *);
-    int materialize(TBeing *, const char *);
-    int materialize(TBeing *, TObj **, int, const char *, byte);
+    int castMaterialize(TBeing *, const sstring &);
+    int materialize(TBeing *, const sstring &);
+    int materialize(TBeing *, TObj **, int, const sstring &, byte);
  
     const int SPONT_PRICE = 1000;
-    void spontaneousGeneration(TBeing *, const char *);
-    int spontaneousGeneration(TBeing *, TObj **, const char *, int, byte);
-    int castSpontaneousGeneration(TBeing *, const char *);
+    void spontaneousGeneration(TBeing *, const sstring &);
+    int spontaneousGeneration(TBeing *, TObj **, const sstring &, int, byte);
+    int castSpontaneousGeneration(TBeing *, const sstring &);
  
     int copy(TBeing *, TObj *);
     int castCopy(TBeing *, TObj *);

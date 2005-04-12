@@ -107,28 +107,8 @@ const int ERR_BADACCOUNT_PASSWORD = 10;
 const int DELETE        = 0;
 const int ADD           = 1;
 
-extern bool is_client_sstring(char *str);
+extern bool is_client_sstring(sstring &str);
 
 extern bool Clients;
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

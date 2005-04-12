@@ -56,7 +56,7 @@ const sstring trap_types[] =
   "Pebble",
 };
 
-const char *user_trap_types[] =
+const sstring user_trap_types[] =
 {
   "exit",
   "container",
@@ -81,11 +81,10 @@ int TBeing::springTrap(TTrap *obj)
   return FALSE;
 }
 
-int TBeing::doSetTraps(const char *arg)
+int TBeing::doSetTraps(const sstring &arg)
 {
   roomDirData *exitp;
-  char buf[256], task_arg[128];
-  char sstring[512], trap_type[40], direct[20];
+  sstring buf, task_arg, str, trap_type, direct;
   int field, dir;
   dirTypeT door;
   doorTrapT type;
@@ -98,7 +97,7 @@ int TBeing::doSetTraps(const char *arg)
   if (checkPeaceful("You are not permitted to construct traps here.\n\r"))
     return FALSE;
 
-  bisect_arg(arg, &field, sstring, user_trap_types);
+  str = bisect_arg(arg, &field, user_trap_types);
 
   switch (field - 1) {
     case TRAP_TARG_DOOR:  // exit traps
@@ -107,8 +106,9 @@ int TBeing::doSetTraps(const char *arg)
         return FALSE;
       }
 
-      sscanf(sstring, "%s %s", direct, trap_type);
-      if ((dir = old_search_block(direct, 0, strlen(direct), dirs, 0)) <= 0) {
+      direct = str.word(0);
+      trap_type = str.word(1);
+      if ((dir = old_search_block(direct, 0, direct.length(), dirs, 0)) <= 0) {
 	sendTo("No such direction.\n\r");
         sendTo("Syntax: trap exit <direction> <trap-type>\n\r");
 	return FALSE;
@@ -172,17 +172,18 @@ int TBeing::doSetTraps(const char *arg)
       }
  
       sendTo("You start working on your trap.\n\r");
-      sprintf(buf, "$n starts fiddling with the %s.", exitp->getName().uncap().c_str());
+      buf = fmt("$n starts fiddling with the %s.") % exitp->getName().uncap();
       act(buf, TRUE, this, NULL, NULL, TO_ROOM);
-      sprintf(task_arg, "%s %s", direct, trap_type);
-      start_task(this, NULL, NULL, TASK_TRAP_DOOR, task_arg, 3, inRoom(), type, door, 5);
+      task_arg = fmt("%s %s") % direct % trap_type;
+      start_task(this, NULL, NULL, TASK_TRAP_DOOR, task_arg.c_str(), 3, inRoom(), type, door, 5);
       return FALSE;
     case TRAP_TARG_CONT:
       if (!doesKnowSkill(SKILL_SET_TRAP_CONT)) {
         sendTo("You know nothing about making container traps.\n\r");
         return FALSE;
       }
-      sscanf(sstring, "%s %s", direct, trap_type);
+      direct = str.word(0);
+      trap_type = str.word(1);
       if (!(obj = get_obj_vis_accessible(this, direct))) {
 	sendTo("No such item present.\n\r");
         sendTo("Syntax: trap container <item> <trap-type>\n\r");
@@ -203,7 +204,7 @@ int TBeing::doSetTraps(const char *arg)
         return FALSE;
       }
 
-      sscanf(sstring, "%s", trap_type);
+      trap_type = str;
 
       if (is_abbrev(trap_type, "fire")) {
         type = DOOR_TRAP_FIRE;
@@ -246,14 +247,15 @@ int TBeing::doSetTraps(const char *arg)
 
       sendTo("You start working on your trap.\n\r");
       act("$n starts constructing a land-mine.", TRUE, this, 0, 0, TO_ROOM);
-      start_task(this, NULL, NULL, TASK_TRAP_MINE, trap_type, 3, inRoom(), type, 0, 5);
+      start_task(this, NULL, NULL, TASK_TRAP_MINE, trap_type.c_str(), 3, inRoom(), type, 0, 5);
       return FALSE;
     case TRAP_TARG_ARROW:
       if (!doesKnowSkill(SKILL_SET_TRAP_ARROW)) {
         sendTo("You know nothing about making arrow traps.\n\r");
         return FALSE;
       }
-      sscanf(sstring, "%s %s", direct, trap_type);
+      direct = str.word(0);
+      trap_type = str.word(1);
       if (!(obj = get_obj_vis_accessible(this, direct))) {
 	sendTo("No such item present.\n\r");
         sendTo("Syntax: trap arrow <item> <trap-type>\n\r");
@@ -301,7 +303,7 @@ int TBeing::doSetTraps(const char *arg)
 
       sendTo("You start working on your arrow.\n\r");
       act("$n starts trapping an arrow.", TRUE, this, 0, 0, TO_ROOM);
-      start_task(this, obj, NULL, TASK_TRAP_ARROW, trap_type, 3, inRoom(), type, 0, 5);
+      start_task(this, obj, NULL, TASK_TRAP_ARROW, trap_type.c_str(), 3, inRoom(), type, 0, 5);
       break;
     case TRAP_TARG_GRENADE:
       if (!doesKnowSkill(SKILL_SET_TRAP_GREN)) {
@@ -309,7 +311,7 @@ int TBeing::doSetTraps(const char *arg)
         return FALSE;
       }
 
-      sscanf(sstring, "%s", trap_type);
+      trap_type = str;
 
       if (is_abbrev(trap_type, "fire")) {
         type = DOOR_TRAP_FIRE;
@@ -352,7 +354,7 @@ int TBeing::doSetTraps(const char *arg)
 
       sendTo("You start working on your grenade.\n\r");
       act("$n starts constructing a grenade.", TRUE, this, 0, 0, TO_ROOM);
-      start_task(this, NULL, NULL, TASK_TRAP_GRENADE, trap_type, 3, inRoom(), type, 0, 5);
+      start_task(this, NULL, NULL, TASK_TRAP_GRENADE, trap_type.c_str(), 3, inRoom(), type, 0, 5);
       return FALSE;
     default:
       sendTo("Syntax: trap <\"exit\" | \"container\" | \"mine\" | \"grenade\"> ...\n\r");
@@ -932,8 +934,8 @@ int TBeing::triggerDoorTrap(dirTypeT door)
 // returns DELETE_VICT
 int TTrap::moveTrapCheck(TBeing *ch, dirTypeT dir)
 {
-  char buf[256];
-  const char *tmp_desc = NULL;
+  sstring buf;
+  sstring tmp_desc;
   TBeing *c;
   int rc;
 
@@ -944,7 +946,8 @@ int TTrap::moveTrapCheck(TBeing *ch, dirTypeT dir)
       return FALSE;
 
     // if the person who set it is in my group, bypass
-    if ((tmp_desc = ex_description->findExtraDesc(TRAP_EX_DESC))) {
+    tmp_desc = ex_description->findExtraDesc(TRAP_EX_DESC);
+    if (!tmp_desc.empty()) {
       if ((c = get_char(tmp_desc, EXACT_YES)))
         if (ch->inGroup(*c))
           return FALSE;
@@ -952,11 +955,11 @@ int TTrap::moveTrapCheck(TBeing *ch, dirTypeT dir)
 
     if (IS_SET(getTrapEffectType(), TrapDir[dir])) {
       if (ch->springTrap(this)) {
-        sprintf(buf, "$n starts to leave %s when you hear a strange noise...",
-               dirs[dir]);
+        buf = fmt("$n starts to leave %s when you hear a strange noise...") %
+          dirs[dir];
         act(buf, TRUE, ch, 0, 0, TO_ROOM);
-        sprintf(buf, "You start to leave %s when you hear a strange noise...",
-               dirs[dir]);
+        buf = fmt("You start to leave %s when you hear a strange noise...") %
+          dirs[dir];
         act(buf, TRUE, ch, 0, 0, TO_CHAR);
 
         rc = ch->triggerTrap(this);
@@ -2522,7 +2525,7 @@ int TBeing::goofUpTrap(doorTrapT trap_type, trap_targ_t goof_type)
   return FALSE;
 }
 
-bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt, int *price)
+bool TBeing::hasTrapComps(const sstring &type, trap_targ_t targ, int amt, int *price)
 {
   int item1 = 0, item2 = 0, item3 = 0, item4 = 0;
 
@@ -2651,7 +2654,7 @@ bool TBeing::hasTrapComps(const char *type, trap_targ_t targ, int amt, int *pric
       item3 = ST_ATHANOR;
     }
   } else {
-    vlogf(LOG_MISC, fmt("Bad call to hasTrapComps() : %s") %  type);
+    vlogf(LOG_MISC, fmt("Bad call to hasTrapComps() : %s") % type);
     return FALSE;
   }
   item1 = real_object(item1);
@@ -3494,7 +3497,7 @@ void TBeing::sendTrapMessage(const char *type, trap_targ_t targ, int num)
 
 void TBeing::throwGrenade(TTrap *o, dirTypeT dir)
 {
-  char buf[256];
+  sstring buf;
   TRoom *rp = NULL;
 
   if (!clearpath(inRoom(), dir) ||
@@ -3508,9 +3511,9 @@ void TBeing::throwGrenade(TTrap *o, dirTypeT dir)
     return;
   }
 
-  sprintf(buf, "You throw $p %s.", dirs[dir]);
+  buf = fmt("You throw $p %s.") % dirs[dir];
   act(buf, FALSE, this, o, 0, TO_CHAR);
-  sprintf(buf, "$n throws $p %s.", dirs[dir]);
+  buf = fmt("$n throws $p %s.") % dirs[dir];
   act(buf, TRUE, this, o, 0, TO_ROOM);
 
   if (o->equippedBy) {
@@ -3532,7 +3535,7 @@ void TBeing::throwGrenade(TTrap *o, dirTypeT dir)
   }
 
   *rp += *o;
-  sprintf(buf, "$n bounces into the room from the %s.", dirs[rev_dir[dir]]);
+  buf = fmt("$n bounces into the room from the %s.") % dirs[rev_dir[dir]];
   act(buf, TRUE, o, 0, 0, TO_ROOM);
 
   return;
@@ -3692,11 +3695,12 @@ int TMonster::grenadeHit(TTrap *o)
   if (!rc)
     return FALSE;
 
-  const char * tmp_desc;
+  sstring tmp_desc;
   TBeing *ch = NULL;
-  if ((tmp_desc = o->ex_description->findExtraDesc(GRENADE_EX_DESC))) {
+  tmp_desc = o->ex_description->findExtraDesc(GRENADE_EX_DESC);
+  if (!tmp_desc.empty()) {
     if ((ch = get_char(tmp_desc, EXACT_YES)))
-      pissOff(this,ch);
+      pissOff(this, ch);
   }
 
   return TRUE;
@@ -4114,7 +4118,7 @@ int TBeing::getArrowTrapLearn(doorTrapT)
 }
 
 
-int TObj::trapMe(TBeing *ch, const char *trap_type)
+int TObj::trapMe(TBeing *ch, const sstring &trap_type)
 {
   act("$p is not trappable.", FALSE, ch, this, 0, TO_CHAR);
   return FALSE;

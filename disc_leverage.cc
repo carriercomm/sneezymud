@@ -64,7 +64,7 @@ static int hurlHit(TBeing *caster, TBeing *victim, dirTypeT dr)
 {
   int dam;
   int rc, percent = 0;
-  char buf[256];
+  sstring buf;
 
   // default damage
   dam = caster->getSkillDam(victim, SKILL_HURL, caster->getSkillLevel(SKILL_HURL), caster->getAdvLearning(SKILL_HURL));
@@ -105,7 +105,7 @@ static int hurlHit(TBeing *caster, TBeing *victim, dirTypeT dr)
          sstring(victim->getName()).cap() % dirs[dr]);
     victim->sendTo(COLOR_MOBS, fmt("%s hurls you %s out of the room!\n\r") % 
             sstring(caster->getName()).cap() % dirs[dr]);
-    sprintf(buf, "$N is hurled %s out of the room by $n.", dirs[dr]);
+    buf = fmt("$N is hurled %s out of the room by $n.") % dirs[dr];
     act(buf, TRUE, caster, 0, victim, TO_NOTVICT);
 
     caster->throwChar(victim, dr, FALSE, SILENT_YES, false);

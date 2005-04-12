@@ -266,6 +266,35 @@ bool findWater::isTarget(int room) const
 
 
 
+//////////
+
+
+// findLeper
+
+
+findLeper::findLeper(){
+}
+
+bool findLeper::isTarget(int room) const
+{
+  TRoom *rp;
+  TThing *t;
+  rp = real_roomp(room);
+
+  for (t = rp->getStuff(); t; t = t->nextThing) {
+    TMonster *leper = dynamic_cast<TMonster *>(t);
+    if (!leper)
+      continue;
+    if (leper->hasDisease(DISEASE_LEPROSY) || leper->spec==SPEC_LEPER)
+      return true;
+  }
+  return false;
+}
+
+
+//////////
+
+
 ///////////
 
 TPathFinder::~TPathFinder()

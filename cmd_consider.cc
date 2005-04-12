@@ -11,16 +11,16 @@
 #include "stdsneezy.h"
 #include "cmd_trophy.h"
 
-void TBeing::doConsider(const char *argument)
+void TBeing::doConsider(const sstring &argument)
 {
   TBeing *victim;
-  char namebuf[256];
+  sstring namebuf;
   int diff=0;
 
-  strcpy(namebuf, argument);
+  namebuf = argument;
 
   if (is_abbrev(namebuf, "self"))
-    strcpy(namebuf, getNameNOC(this).c_str());
+    namebuf = getNameNOC(this);
 
   if (!(victim = get_char_room_vis(this, namebuf))) {
     if (!isImmortal() || !hasWizPower(POWER_IMM_EVAL)) {
@@ -36,9 +36,9 @@ void TBeing::doConsider(const char *argument)
     }
   }
   if (!canSee(victim) && canSee(victim, INFRA_YES)) {
-    strcpy(namebuf, "a blob");
+    namebuf = "a blob";
   } else {
-    strcpy(namebuf, victim->getName());
+    namebuf = victim->getName();
   }
   if (victim == this) {
       sendTo("You consider yourself...\n\r");

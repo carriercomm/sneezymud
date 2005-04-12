@@ -15,21 +15,21 @@ enum actToParmT {
      TO_CHAR
 };
 
-void sendToAll(char *messg);
-void sendToExcept(char *messg, TBeing *ch);
-void sendToRoom(colorTypeT, const char *messg, int room);
-void sendToRoom(const char *messg, int room);
-void sendToRoomExcept(char *messg, int room, TBeing *ch);
-void sendToRoomExceptTwo(char *, int, TBeing *, TBeing *);
-void perform_to_all(char *messg, TBeing *ch);
-void perform_complex(TBeing *, TBeing *, TObj *, TObj *, char *, byte, int);
+void sendToAll(sstring &messg);
+void sendToExcept(sstring &messg, TBeing *ch);
+void sendToRoom(colorTypeT, const sstring &messg, int room);
+void sendToRoom(const sstring &messg, int room);
+void sendToRoomExcept(sstring &messg, int room, TBeing *ch);
+void sendToRoomExceptTwo(sstring &, int, TBeing *, TBeing *);
+void perform_to_all(sstring &messg, TBeing *ch);
+void perform_complex(TBeing *, TBeing *, TObj *, TObj *, sstring &, byte, int);
 void sendrpf(int, colorTypeT, TRoom *, const char *,...);
 void sendrpf(int, TRoom *, const char *,...);
 void sendrpf(colorTypeT, TRoom *, const char *,...);
 void sendrpf(TRoom *, const char *,...);
 void sendToOutdoor(colorTypeT, const sstring &, const sstring &);
-void colorAct(colorTypeT, const sstring &, bool, const TThing *, const TThing *, const TThing *, actToParmT, const char * color = NULL, int = 0);
-void act(const sstring &, bool, const TThing *, const TThing *, const TThing *, actToParmT, const char * color = NULL, int = 0);
+void colorAct(colorTypeT, const sstring &, bool, const TThing *, const TThing *, const TThing *, actToParmT, const sstring & color = NULL, int = 0);
+void act(const sstring &, bool, const TThing *, const TThing *, const TThing *, actToParmT, const sstring & color = NULL, int = 0);
 void nukeMobs(int);
 bool isEmpty(int);
 

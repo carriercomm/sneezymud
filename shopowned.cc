@@ -32,6 +32,79 @@ bool sameAccount(sstring buf, int shop_nr){
   return FALSE;
 }
 
+// obj is optional
+void TShopOwned::doBuyTransaction(int cashCost, const sstring &name, 
+			       const sstring &action, TObj *obj)
+{
+  // take the expense cut out
+  if(!doExpenses(cashCost, obj))
+    return;
+
+  // buyer gives money to seller
+  ch->giveMoney(keeper, cashCost, GOLD_SHOP);
+
+  // log the sale
+  shoplog(shop_nr, ch, keeper, name, cashCost, action);
+
+  if(owned){
+    doDividend(cashCost, name);
+    doReserve();
+    chargeTax(cashCost, name, obj);
+  }
+  
+  // save
+  keeper->saveItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
+  ch->doSave(SILENT_YES);
+}
+
+bool TShopOwned::doExpenses(int cashCost, TObj *obj)
+{
+  double profit_buy=shop_index[shop_nr].getProfitBuy(obj, ch);
+  double ratio=getExpenseRatio();
+  int sba_nr=160;
+  TMonster *sba;
+  TBeing *t;
+  double value;
+
+  if(ratio == 0)
+    return true;
+
+  if(keeper->getMoney() < cashCost)
+    return false;
+
+// find the sba shopkeeper
+  for(t=character_list;t;t=t->next){
+    if(t->number==shop_index[sba_nr].keeper)
+      break;
+  }
+
+  if(t && (sba=dynamic_cast<TMonster *>(t))){
+    value=((double)cashCost/profit_buy) * ratio;
+    
+    sba->addToMoney((int)value, GOLD_SHOP);
+    shoplog(shop_nr, keeper, sba, "talens", (int)-value, "expenses");
+    shoplog(sba_nr, keeper, sba, "talens", (int)value, "expenses");
+    sba->saveItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
+  }
+
+  return true;
+}
+
+
+double TShopOwned::getExpenseRatio()
+{
+  double ratio=0;
+  TDatabase db(DB_SNEEZY);
+
+  db.query("select expense_ratio from shop where shop_nr=%i", shop_nr);
+  
+  if(db.fetchRow())
+    ratio=convertTo<double>(db["expense_ratio"]);
+
+  return ratio;
+}
+
+
 int TShopOwned::getPurchasePrice(int talens, int value){
   return (int)(((talens+value)*1.15)+1000000);
 }
@@ -70,7 +143,7 @@ TShopOwned::TShopOwned(int shop_nr, TMonster *keeper, TBeing *ch) :
   access=getShopAccess(shop_nr, ch);
 }
 
-void TShopOwned::chargeTax(TObj *o, int cost)
+void TShopOwned::chargeTax(int cost, const sstring &name, TObj *o)
 {
   int tax_office;
   TDatabase db(DB_SNEEZY);
@@ -107,10 +180,10 @@ void TShopOwned::chargeTax(TObj *o, int cost)
   dynamic_cast<TMonster *>(taxman)->saveItems(fmt("%s/%d") % 
 					      SHOPFILE_PATH % tax_office);
   
-  shoplog(shop_nr, keeper, keeper, o->getName(), 
+  shoplog(shop_nr, keeper, keeper, name, 
 	  -cost, "paying tax");
   shoplog(tax_office, keeper, dynamic_cast<TMonster *>(taxman),
-	  o->getName(), cost, "tax");
+	  name, cost, "tax");
 
   TShopOwned tso(tax_office, dynamic_cast<TMonster *>(taxman), keeper);
   tso.doReserve();
@@ -298,7 +371,7 @@ void TShopOwned::setSpeed(sstring arg)
 
 
 
-void TShopOwned::doDividend(TObj *o, int cost)
+void TShopOwned::doDividend(int cost, const sstring &name)
 {
   if(getDividend()){
     int div=(int)((double)cost * getDividend());
@@ -321,7 +394,7 @@ void TShopOwned::doDividend(TObj *o, int cost)
     shoplog(bank_nr, keeper,  dynamic_cast<TMonster *>(banker), "talens", div, "dividend");
 
     keeper->saveItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
-    shoplog(shop_nr, ch, keeper, o->getName(), -div, "dividend");
+    shoplog(shop_nr, ch, keeper, name, -div, "dividend");
     
 
     corp.setMoney(corp.getMoney() + div);
@@ -433,8 +506,12 @@ void TShopOwned::showInfo()
     if(getMinReserve() > 0 || getMaxReserve() > 0)
       keeper->doTell(ch->getName(), fmt("My corporate reserve is %i-%i.") %
 		     getMinReserve() % getMaxReserve());
+    if(getExpenseRatio() > 0)
+      keeper->doTell(ch->getName(), fmt("My expense ratio is %f.") % getExpenseRatio());
 
   }
+
+
 
   if(!isOwned()){
     keeper->doTell(ch->getName(), "This shop is for sale, however the King charges a sales tax and an ownership fee.");
@@ -599,7 +676,9 @@ int TShopOwned::setRates(sstring arg)
     argc++;
 
   if(keeper->spec != SPEC_REPAIRMAN &&
-     keeper->spec != SPEC_LOAN_SHARK){
+     keeper->spec != SPEC_LOAN_SHARK &&
+     keeper->spec != SPEC_RECEPTIONIST &&
+     keeper->spec != SPEC_AUCTIONEER){
     if(profit_buy>5 || profit_buy<0 ||
        profit_sell>5 || profit_sell<0){
       keeper->doTell(ch->getName(), "Due to fraud regulations, I cannot set my profit_sell or profit_buy to more than 5 or less than 0.");

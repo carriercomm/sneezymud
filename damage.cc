@@ -780,8 +780,8 @@ int TBeing::damageEpilog(TBeing *v, spellNumT dmg_type)
             ed = new extraDescription();
             ed->next = grave->ex_description;
             grave->ex_description = ed;
-            ed->keyword = mud_str_dup(grave->name);
-            ed->description = mud_str_dup(graveDesc);
+            ed->keyword = grave->name;
+            ed->description = graveDesc;
 
             *v->roomp += *grave;
           }

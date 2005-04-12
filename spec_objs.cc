@@ -1929,7 +1929,8 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *)
 	      1301, 1302, 1303, -1};
   TRoom *trolleyroom=real_roomp(ROOM_TROLLEY);
   static int timer;
-  char buf[256], shortdescr[256];
+  sstring buf;
+  char shortdescr[256];
 
   if (cmd == CMD_GENERIC_DESTROYED) {
     delete static_cast<int *>(myself->act_ptr);
@@ -1996,21 +1997,22 @@ int trolley(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *)
   
   switch(*job){
     case -1: 
-      sprintf(buf, "$n continues %s towards Grimhaven.",
-	      (i==MAX_DIR)?"on":dirs[i]);
+      buf = fmt("$n continues %s towards Grimhaven.") %
+        ((i==MAX_DIR) ? "on" : dirs[i]);
       act(buf,FALSE, myself, 0, 0, TO_ROOM); 
-      sendrpf(COLOR_OBJECTS, trolleyroom, "%s rumbles %s towards Grimhaven.\n\r",
-	      shortdescr, (i==MAX_DIR)?"on":dirs[i]);
+      buf = fmt("%s rumbles %s towards Grimhaven.\n\r") %
+        shortdescr % ((i==MAX_DIR) ? "on" : dirs[i]);
+      sendrpf(COLOR_OBJECTS, trolleyroom, buf.c_str());
       sendrpf(COLOR_OBJECTS, real_roomp(path[where+*job]), 
 	      "%s enters the room, heading towards Grimhaven.\n\r",
 	      shortdescr);
       break;
     case 1: 
-      sprintf(buf, "$n continues %s towards Brightmoon.",
-	      (i==MAX_DIR)?"on":dirs[i]);
+      buf = fmt("$n continues %s towards Brightmoon.") %
+        ((i==MAX_DIR) ? "on" : dirs[i]);
       act(buf,FALSE, myself, 0, 0, TO_ROOM); 
       sendrpf(COLOR_OBJECTS, trolleyroom, "%s rumbles %s towards Brightmoon.\n\r",
-	      shortdescr, (i==MAX_DIR)?"on":dirs[i]);
+	      shortdescr, (i==MAX_DIR)?"on":dirs[i].c_str());
       sendrpf(COLOR_OBJECTS, real_roomp(path[where+*job]), 
 	      "%s enters the room, heading towards Brightmoon.\n\r",
 	      shortdescr);
@@ -2047,7 +2049,8 @@ int fishingBoat(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *)
 		   "The fishing boat is getting ready to leave.\n\r"};
   TRoom *boatroom=real_roomp(15349);
   static int timer;
-  char buf[256], shortdescr[256];
+  sstring buf;
+  char shortdescr[256];
   TThing *tt;
 
   // docks 15150
@@ -2152,21 +2155,21 @@ int fishingBoat(TBeing *, cmdTypeT cmd, const char *, TObj *myself, TObj *)
   
   switch(*job){
     case -1: 
-      sprintf(buf, "$n continues %s towards the docks.",
-	      (i==MAX_DIR)?"on":dirs[i]);
+      buf = fmt("$n continues %s towards the docks.") %
+        ((i==MAX_DIR) ? "on" : dirs[i]);
       act(buf,FALSE, myself, 0, 0, TO_ROOM); 
       sendrpf(COLOR_OBJECTS, boatroom, "%s sails %s towards land.\n\r",
-	      shortdescr, (i==MAX_DIR)?"on":dirs[i]);
+	      shortdescr, (i==MAX_DIR)?"on":dirs[i].c_str());
       sendrpf(COLOR_OBJECTS, real_roomp(path[where+*job]), 
 	      "%s enters the room, heading towards land.\n\r",
 	      shortdescr);
       break;
     case 1: 
-      sprintf(buf, "$n continues %s out to sea.",
-	      (i==MAX_DIR)?"on":dirs[i]);
+      buf = fmt("$n continues %s out to sea.") %
+        ((i==MAX_DIR) ? "on" : dirs[i]);
       act(buf,FALSE, myself, 0, 0, TO_ROOM); 
       sendrpf(COLOR_OBJECTS, boatroom, "%s sails %s out to sea.\n\r",
-	      shortdescr, (i==MAX_DIR)?"on":dirs[i]);
+	      shortdescr, (i==MAX_DIR)?"on":dirs[i].c_str());
       sendrpf(COLOR_OBJECTS, real_roomp(path[where+*job]), 
 	      "%s enters the room, heading out to sea.\n\r",
 	      shortdescr);
@@ -2911,7 +2914,7 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
   TThing *in_cart, *next_in_cart;
   TBeing *beingic;  
   char arg1[30], arg2[30], arg3[30];
-  char buf[256];
+  sstring buf;
   TObj *switchtrack = NULL, *o = myself;
   class minecart_struct {
   public:
@@ -3063,25 +3066,25 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
       } else if (status == 2) {
 
 	if (job->speed > 8) {
-	  sprintf(buf, "There is a resounding metallic *CLANG* as $n collides with the end of the track at top speed.");
+	  buf = "There is a resounding metallic *CLANG* as $n collides with the end of the track at top speed.";
 	  act(buf,FALSE, myself, 0, 0, TO_ROOM);
 	} else if (job->speed > 5) {
-          sprintf(buf, "There is a metallic *CLANG* as $n hits the end of the track at high speed.");
+          buf = "There is a metallic *CLANG* as $n hits the end of the track at high speed.";
           act(buf,FALSE, myself, 0, 0, TO_ROOM);
 	} else if (job->speed > 2) {
-          sprintf(buf, "There is a soft metallic *CLANG* as $n hits the end of the track.");
+          buf = "There is a soft metallic *CLANG* as $n hits the end of the track.";
           act(buf,FALSE, myself, 0, 0, TO_ROOM);
 	} else if (job->speed > 0) {
-          sprintf(buf, "There is a soft metallic *ping* as $n lightly taps the end of the track.");
+          buf = "There is a soft metallic *ping* as $n lightly taps the end of the track.";
           act(buf,FALSE, myself, 0, 0, TO_ROOM);
 	}
 	if (myself->rider) {
 	  for (in_cart = myself->rider; in_cart; in_cart = next_in_cart) {
 	    next_in_cart = in_cart->nextRider;
 	    if (::number(1,12) < job->speed) {
-	      sprintf(buf, "<r>$n<1><r> loses $s balance and flips forward over the rim of $p<1><r>.  Ouch.<1>");
+	      buf = "<r>$n<1><r> loses $s balance and flips forward over the rim of $p<1><r>.  Ouch.<1>";
 	      act(buf,FALSE, in_cart, myself, 0, TO_ROOM);
-	      sprintf(buf, "<r>You lose your balance and flip forward over the rim of $p<1><r>.  Ouch.<1>");
+	      buf = "<r>You lose your balance and flip forward over the rim of $p<1><r>.  Ouch.<1>";
               act(buf,FALSE, in_cart, myself, 0, TO_CHAR);
 	      dam = job->speed * 2;
 	      
@@ -3116,12 +3119,12 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
             !IS_SET(exitp->condition, EX_CLOSED)) {
 
         } else {	
-	  sprintf(buf, "$n slams into the wall to the east, and it collapses in a shower of rocks!");
+          buf = "$n slams into the wall to the east, and it collapses in a shower of rocks!";
 	  act(buf, FALSE, myself, 0, 0, TO_ROOM);
 	  exitp->destroyDoor(dir, where);
 	  --(*myself);
 	  *real_roomp(nextroom) += *myself;
-	  sprintf(buf, "The wall to the west suddenly explodes inwards in a shower of rocks!");
+	  buf = "The wall to the west suddenly explodes inwards in a shower of rocks!";
           act(buf, FALSE, myself, 0, 0, TO_ROOM);
           --(*myself);
           *real_roomp(where) += *myself; 
@@ -3140,20 +3143,20 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
 	}
       }
       if (job->speed > 8) {
-        sprintf(buf, "$n goes barreling %s down the tracks of the mining %s at breakneck speed.",
-                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        buf = fmt("$n goes barreling %s down the tracks of the mining %s at breakneck speed.") %
+          ((i==MAX_DIR)?"on":dirs[i]) % ((where > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       } else if (job->speed > 5) {
-        sprintf(buf, "$n rolls %s down the tracks of the mining %s at an impressive speed.",
-                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        buf = fmt("$n rolls %s down the tracks of the mining %s at an impressive speed.") %
+          ((i==MAX_DIR)?"on":dirs[i]) % ((where > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       } else if (job->speed > 2) {
-        sprintf(buf, "$n rolls %s down the tracks of the mining %s at a steady rate.",
-                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        buf = fmt("$n rolls %s down the tracks of the mining %s at a steady rate.") %
+          ((i==MAX_DIR)?"on":dirs[i]) % ((where > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       } else if (job->speed > 0) {
-        sprintf(buf, "$n inches its way %s down the tracks of the mining %s.",
-                (i==MAX_DIR)?"on":dirs[i], (where > 18003)?"tunnels":"camp");
+        buf = fmt("$n inches its way %s down the tracks of the mining %s.") %
+          ((i==MAX_DIR)?"on":dirs[i]) % ((where > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       }
       
@@ -3178,35 +3181,35 @@ int minecart(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *myself, TObj *)
 
 
       if (job->speed > 8) {
-        sprintf(buf, "$n comes crashing down the tracks of the %s, barreling down at an incredible speed.",   
-                (nextroom > 18003)?"tunnels":"camp");
+        buf = fmt("$n comes crashing down the tracks of the %s, barreling down at an incredible speed.") %
+          ((nextroom > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       } else if (job->speed > 5) {
-        sprintf(buf, "$n comes rolling down the tracks of the %s at an impressive speed.",
-                (nextroom > 18003)?"tunnels":"camp");
+        buf = fmt("$n comes rolling down the tracks of the %s at an impressive speed.") %
+          ((nextroom > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       } else if (job->speed > 2) {
-        sprintf(buf, "$n comes rolling down the tracks of the %s at a steady speed.",
-                (nextroom > 18003)?"tunnels":"camp");
+        buf = fmt("$n comes rolling down the tracks of the %s at a steady speed.") %
+          ((nextroom > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       } else if (job->speed > 0) {
-        sprintf(buf, "$n inches its way down the tracks of the %s at a steady speed.",
-                (nextroom > 18003)?"tunnels":"camp");
+        buf = fmt("$n inches its way down the tracks of the %s at a steady speed.") %
+          ((nextroom > 18003)?"tunnels":"camp");
         act(buf,FALSE, myself, 0, 0, TO_ROOM);
       }
 
       if (myself->rider) {
         for (in_cart = myself->rider; in_cart; in_cart = next_in_cart) {
           next_in_cart = in_cart->nextRider;
-	  sprintf(buf, "...$n hangs on for dear life as $e rides $p %s.",
-		  (i==MAX_DIR)?"down the tracks":dirs[i]);
+	  buf = fmt("...$n hangs on for dear life as $e rides $p %s.") %
+            ((i==MAX_DIR) ? "down the tracks" : dirs[i]);
           act(buf,FALSE, in_cart, myself, 0, TO_ROOM);
-          sprintf(buf, "...you hang on for dear life as you ride $p %s.",
-                  (i==MAX_DIR)?"down the tracks":dirs[i]);
+          buf = fmt("...you hang on for dear life as you ride $p %s.") %
+            ((i==MAX_DIR) ? "down the tracks" : dirs[i]);
 	  act(buf,FALSE, in_cart, myself, 0, TO_CHAR);
           --(*in_cart);
           *real_roomp(nextroom)+=*in_cart;
-          sprintf(buf, "...$n careens down the tracks, holding onto the $p for dear life.");
+          buf = "...$n careens down the tracks, holding onto the $p for dear life.";
           act(buf,FALSE, in_cart, myself, 0, TO_ROOM);
           if(dynamic_cast<TBeing *>(in_cart))
             dynamic_cast<TBeing *>(in_cart)->doLook("",CMD_LOOK);
@@ -4814,7 +4817,8 @@ int HSPendant(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 // can close the object in the zonefile
 int mobSpawnOpen(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *)
 {
-  
+  sstring buf;
+
   if (cmd != CMD_OBJ_OPENED && cmd != CMD_GENERIC_RESET) 
     return FALSE;
 
@@ -4838,10 +4842,12 @@ int mobSpawnOpen(TBeing *ch, cmdTypeT cmd, const char *, TObj *o, TObj *)
   }
   *ch->roomp += *mob;
 
-  colorAct(COLOR_MOBS, ((mob->ex_description && mob->ex_description->findExtraDesc("repop")) ?
-                        mob->ex_description->findExtraDesc("repop") :
-                        "$n appears suddenly in the room."),
-           TRUE, mob, 0, 0, TO_ROOM);
+  if (mob->ex_description->findExtraDesc("repop").empty()) {
+    buf = "$n appears suddenly in the room.";
+  } else {
+    buf = mob->ex_description->findExtraDesc("repop");
+  }
+  colorAct(COLOR_MOBS, buf, TRUE, mob, 0, 0, TO_ROOM);
 
   return FALSE;
 }

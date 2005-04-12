@@ -25,7 +25,7 @@ const zoneHateT MIN_HATE = OP_SEX;
 
 class charList {
   public:
-  const char *name;
+  sstring name;
   long iHateStrength;
   charList *next;
 
@@ -87,8 +87,8 @@ class TMonster : public TBeing {
     unsigned short fearfield;
     ubyte moneyConst;
 
-    const char *sounds;
-    const char *distantSnds;
+    sstring sounds;
+    sstring distantSnds;
     float hpLevel;
     float damLevel;
     ubyte damPrecision;
@@ -104,10 +104,10 @@ class TMonster : public TBeing {
     // VIRTUAL FUNCTIONS
     virtual double baseDamage() const;
     virtual int grenadeHit(TTrap *);
-    virtual int checkSpec(TBeing *, cmdTypeT, const char *, TThing *);
+    virtual int checkSpec(TBeing *, cmdTypeT, const sstring &, TThing *);
     virtual int mobVnum() const;
 
-    virtual const char *getName() const { return (shortDescr); }
+    virtual const sstring getName() const { return (shortDescr); }
     // END VIRTUAL FUNCTIONS
 
     // pets.cc
@@ -252,7 +252,7 @@ class TMonster : public TBeing {
     int aiMudSex(TBeing *);
     int aiMudSexOther(TBeing *, TBeing *);
     int aiFag(TBeing *, int);
-    int aiSay(TBeing *, char*);
+    int aiSay(TBeing *, sstring &);
     void aiLook(TBeing *);
     int aiWimpCheck(TBeing *);
     int aiWimpSwitch(TBeing *);
@@ -446,12 +446,12 @@ class TMonster : public TBeing {
     int protectionStuff();
     int randomHunt();
     int modifiedDoCommand(cmdTypeT, const sstring &, TBeing *, const resp *);
-    sstring parseResponse(TBeing *, const char *);
-    int remHated(const TBeing *, const char *);
-    int remFeared(const TBeing *, const char *);
+    sstring parseResponse(TBeing *, const sstring &);
+    int remHated(const TBeing *, const sstring &);
+    int remFeared(const TBeing *, const sstring &);
     int remHatred(unsigned short);
-    bool Hates(const TBeing *, const char *) const;
-    bool Fears(const TBeing *, const char *) const;
+    bool Hates(const TBeing *, const sstring &) const;
+    bool Fears(const TBeing *, const sstring &) const;
     TBeing *findAHatee();
     TBeing *findAFearee();
     virtual void setHunting(TBeing *);

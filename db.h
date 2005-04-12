@@ -90,7 +90,7 @@ class resetCom {
 class zoneData
 {
   public:
-    char *name;             // name of this zone                  
+    sstring name;             // name of this zone                  
     int zone_nr;            // number of this zone
     int lifespan;           // how long between resets (minutes)  
     int age;                // current age of this zone (minutes) 
@@ -107,7 +107,7 @@ class zoneData
     bool isEmpty(void);
     void resetZone(bool);
     void closeDoors(void);
-    void logError(char, const char *, int, int);
+    void logError(char, const sstring &, int, int);
     void nukeMobs(void);
     void sendTo(sstring, int exclude_room=-1);
     bool doGenericReset(void);

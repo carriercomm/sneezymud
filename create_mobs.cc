@@ -351,14 +351,14 @@ static void TBeingSave(TBeing *ch, TMonster *mob, int vnum)
   for (tExDescr = mob->ex_description; tExDescr; tExDescr = tExDescr->next) {
     int tMarker = 0;
 
-    if (tExDescr->description) {
-      for (unsigned int tPos = 0; tPos <= strlen(tExDescr->description); tPos++)
+    if (!tExDescr->description.empty()) {
+      for (unsigned int tPos = 0; tPos <= tExDescr->description.length(); tPos++)
         if (tExDescr->description[tPos] != 13)
           temp[tMarker++] = tExDescr->description[tPos];
 
       temp[tMarker] = '\0';
 
-      fprintf(fp, "E\n%s~\n%s~\n", tExDescr->keyword, tExDescr->description);
+      fprintf(fp, (fmt("E\n%s~\n%s~\n") % tExDescr->keyword % tExDescr->description).c_str());
     }
     // No else.  if we didn't have text then something went wrong.  We Do Not save this one.
   }
@@ -2849,13 +2849,13 @@ static void change_mob_sstring_values(TBeing *ch, TMonster *tMob, const char *tS
       "%s6%s) moveout [message when mobile leaves a room]\n\r%s<z>\n\r\n\r"
     };
 
-    const char *exd = NULL;
+    sstring exd;
     if (tHas && tMob->ex_description) {
       exd = tMob->ex_description->findExtraDesc(tMobStringShorts[iter]);
     }
     ch->sendTo(COLOR_MOBS, fmt(tMobStringValues[iter]) %
              ch->cyan() % ch->norm() %
-             (exd ? exd : "Empty"));
+             (!exd.empty() ? exd : "Empty"));
   }
 
   ch->sendTo(fmt(VT_CURSPOS) % 21 % 1);
@@ -2880,10 +2880,10 @@ static void change_mob_sstring_enter(TBeing *ch, TMonster *tMob, const char *tSt
       tExDesc = new extraDescription();
       tExDesc->next = tMob->ex_description;
       tMob->ex_description = tExDesc;
-      tExDesc->keyword = mud_str_dup(tMobStringShorts[tType]);
-      tExDesc->description = mud_str_dup(tStString);
+      tExDesc->keyword = tMobStringShorts[tType];
+      tExDesc->description = tStString;
       break;
-    } else if (tExDesc && !strcmp(tExDesc->keyword, tMobStringShorts[tType]))
+    } else if (tExDesc && tExDesc->keyword == tMobStringShorts[tType])
       if (*tString == '`') {
         if (tExLast)
           tExLast->next = tExDesc->next;
@@ -2894,8 +2894,7 @@ static void change_mob_sstring_enter(TBeing *ch, TMonster *tMob, const char *tSt
         tExDesc = NULL;
         break;
       } else {
-        delete [] tExDesc->description;
-        tExDesc->description = mud_str_dup(tStString);
+        tExDesc->description = tStString;
         break;
       }
 

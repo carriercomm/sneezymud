@@ -545,12 +545,12 @@ void bootWorld(void)
 
     while(convertTo<int>(db_extras["vnum"]) == rp->number){
       new_descr = new extraDescription();
-      new_descr->keyword = mud_str_dup(db_extras["name"]);
-      if (!new_descr->keyword || !*new_descr->keyword)
+      new_descr->keyword = db_extras["name"];
+      if (new_descr->keyword.empty())
 	vlogf(LOG_EDIT, fmt("No keyword in room %d\n") %  rp->number);
       
-      new_descr->description = mud_str_dup(db_extras["description"]);
-      if (!new_descr->description || !*new_descr->description)
+      new_descr->description = db_extras["description"];
+      if (new_descr->description.empty())
 	vlogf(LOG_LOW, fmt("No desc in room %d\n") %  rp->number);
       
       new_descr->next = rp->ex_description;
@@ -887,6 +887,10 @@ void TRoom::colorRoom(int title, int full)
     case SECT_FIRE_ATMOSPHERE:
       buf2 = "<y>";
       buf3 = "<R>";
+      break;
+    case SECT_DEAD_WOODS:
+      buf2 = "<k>";
+      buf3 = "<k>";
       break;
     case MAX_SECTOR_TYPES:
     case SECT_TEMPERATE_BEACH:
@@ -1840,10 +1844,13 @@ static void mobRepop(TMonster *mob, int zone, int tRPNum = 0)
   }
 
 #if 1
-  colorAct(COLOR_MOBS, ((mob->ex_description && mob->ex_description->findExtraDesc("repop")) ?
-                        mob->ex_description->findExtraDesc("repop") :
-                        "$n appears suddenly in the room."),
-           TRUE, mob, 0, 0, TO_ROOM);
+  sstring buf;
+  if (mob->ex_description->findExtraDesc("repop").empty()) {
+    buf = "$n appears suddenly in the room.";
+  } else {
+    buf = mob->ex_description->findExtraDesc("repop");
+  }
+  colorAct(COLOR_MOBS, buf, TRUE, mob, 0, 0, TO_ROOM);
 #else
   act("$n appears suddenly in the room.", TRUE, mob, 0, 0, TO_ROOM);
 #endif
@@ -2647,6 +2654,7 @@ bool zoneData::doGenericReset(void)
   top = zone_table[zone_nr].top;
 
   TObj *o;
+  TTrashPile *pile;
   for(TObjIter iter=object_list.begin();iter!=object_list.end();++iter){
     o=*iter;
     if (o->objVnum() >= bottom && o->objVnum() <= top)
@@ -2660,6 +2668,9 @@ bool zoneData::doGenericReset(void)
           continue;
         }
       }
+
+      if((pile=dynamic_cast<TTrashPile *>(o)))
+	pile->attractVermin();
     }
   }
   return TRUE;

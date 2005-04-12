@@ -48,7 +48,7 @@ int TBeing::slamIntoWall(roomDirData * exitp)
 static int doorbash(TBeing * caster, dirTypeT dir)
 {
   int was_in;
-  char buf[256];
+  sstring buf;
   roomDirData *exitp;
   TRoom *rp;
   int level;
@@ -83,7 +83,7 @@ static int doorbash(TBeing * caster, dirTypeT dir)
       return FALSE;
     }
   }
-  sprintf(buf, "$n charges %swards.", dirs[dir]);
+  buf = fmt("$n charges %swards.") % dirs[dir];
   act(buf, FALSE, caster, 0, 0, TO_ROOM);
   caster->sendTo(fmt("You charge %swards.\n\r") % dirs[dir]);
   
@@ -150,11 +150,11 @@ static int doorbash(TBeing * caster, dirTypeT dir)
       return TRUE;
     } 
 
-    sprintf(buf, "$n slams into the %s, and it bursts open!", 
-                 fname(exitp->keyword).c_str());
+    buf = fmt("$n slams into the %s, and it bursts open!") %
+      fname(exitp->keyword);
     act(buf, FALSE, caster, 0, 0, TO_ROOM);
     caster->sendTo(fmt("You slam into the %s, and it bursts open!\n\r") % 
-            fname(exitp->keyword));
+      fname(exitp->keyword));
     int room = caster->in_room;
     if (IS_SET(exitp->condition, EX_TRAPPED))
     {

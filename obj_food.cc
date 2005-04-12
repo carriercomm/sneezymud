@@ -166,6 +166,7 @@ int TBaseCup::drinkMe(TBeing *ch)
     amount = ::number(6, 20);
 
   amount = max(1, min(amount, getDrinkUnits()));
+
   // Subtract amount, if not a never-emptying container 
   if (!isDrinkConFlag(DRINK_PERM))
     weightChangeObject(-(amount * SIP_WEIGHT));
@@ -176,6 +177,11 @@ int TBaseCup::drinkMe(TBeing *ch)
     // use leftover as chance to go 1 more unit up/down
     if (::number(0,9) < ((abs(getLiqDrunk()) * amount) % 10))
       ch->gainCondition(DRUNK, (getLiqDrunk() > 0 ? 1 : -1));
+
+    if(ch->hasQuestBit(TOG_IS_ALCOHOLIC)){
+      ch->gainCondition(THIRST, (getLiqDrunk() * amount) / 10);
+      ch->sendTo("The deliciously satisfying alcohol quenches your thirst.\n\r");
+    }
 
     if(getLiqDrunk()>0)
       ch->bSuccess(SKILL_ALCOHOLISM);
@@ -191,13 +197,19 @@ int TBaseCup::drinkMe(TBeing *ch)
       if (::number(0,9) < ((abs(getLiqHunger()) * amount) % 10))
 	ch->gainCondition(FULL, (getLiqHunger() > 0 ? 1 : -1));
     }
+
     
-    if (ch->getCond(THIRST) >= 0) {
-      ch->gainCondition(THIRST, (getLiqThirst() * amount) / 10);
-      
-      // use leftover as chance to go 1 more unit up/down
-      if (::number(0,9) < ((abs(getLiqThirst()) * amount) % 10))
-	ch->gainCondition(THIRST, (getLiqThirst() > 0 ? 1 : -1));
+    if(ch->hasQuestBit(TOG_IS_ALCOHOLIC) && !getLiqDrunk() && 
+       ch->getCond(THIRST) > 3){
+      ch->sendTo("Only sweet, sweet alcohol can quench your thirst any further.\n\r");
+    } else {
+      if (ch->getCond(THIRST) >= 0) {
+	ch->gainCondition(THIRST, (getLiqThirst() * amount) / 10);
+	
+	// use leftover as chance to go 1 more unit up/down
+	if (::number(0,9) < ((abs(getLiqThirst()) * amount) % 10))
+	  ch->gainCondition(THIRST, (getLiqThirst() > 0 ? 1 : -1));
+      }
     }
   }
 
@@ -1012,18 +1024,8 @@ void TFood::nukeFood()
 
 void TFood::purchaseMe(TBeing *ch, TMonster *keeper, int cost, int shop_nr)
 {
-  ch->giveMoney(keeper, cost, GOLD_SHOP_FOOD);
-
-  shoplog(shop_nr, ch, keeper, getName(), cost, "buying");
-
-  if(shop_index[shop_nr].isOwned()){
-    TShopOwned tso(shop_nr, keeper, ch);
-
-    tso.doDividend(this, cost);
-    tso.doReserve();
-    tso.chargeTax(this, cost);
-  }
-
+  TShopOwned tso(shop_nr, keeper, ch);
+  tso.doBuyTransaction(cost, getName(), "buying", this);
 }
 
 void TFood::sellMeMoney(TBeing *ch, TMonster *keeper, int cost, int shop_nr)

@@ -136,6 +136,7 @@ enum sectorTypeT {
      SECT_INSIDE_MOB,
      SECT_FIRE_ATMOSPHERE,
      SECT_MAKE_FLY,
+     SECT_DEAD_WOODS,
      MAX_SECTOR_TYPES
 };
 const sectorTypeT MIN_SECTOR_TYPE = sectorTypeT(0);
@@ -150,8 +151,8 @@ class TTerrainInfo {
   int drunk;
   int heat;
   int humidity;
-  const char * const name;
-  TTerrainInfo(int, int, int, int, int, int, int, const char *);
+  sstring name;
+  TTerrainInfo(int, int, int, int, int, int, int, const sstring &);
   ~TTerrainInfo();
   private:
   //    TTerrainInfo() {} // prevent use
@@ -213,8 +214,8 @@ class TRoom : public TThing {
 
     // Code to load the descs straight from the db file instead of
     // storing those big honkers in the memory.
-    void setDescr(const char *);
-    const char * getDescr();
+    void setDescr(const sstring &);
+    const sstring getDescr();
 
     virtual int chiMe(TBeing *);
     int checkPointroll();
@@ -235,7 +236,7 @@ class TRoom : public TThing {
     int outdoorLight();
     int outdoorLightWindow();
     bool putInDb(int vnum);
-    int (*funct)(TBeing *, cmdTypeT, const char *, TRoom *);
+    int (*funct)(TBeing *, cmdTypeT, const sstring &, TRoom *);
     void setRoomFlags(unsigned int flag) {
       roomFlags = flag;
     }
@@ -367,7 +368,7 @@ class TRoom : public TThing {
       hasWindow++;
     }
     bool roomIsEmpty(bool) const;
-    virtual int checkSpec(TBeing *, cmdTypeT, const char *, TThing *);
+    virtual int checkSpec(TBeing *, cmdTypeT, const sstring &, TThing *);
     virtual roomDirData *exitDir(dirTypeT door) const;
     sstring describeGround() const;
 

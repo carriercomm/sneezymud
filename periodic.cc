@@ -118,7 +118,7 @@ int TBeing::riverFlow(int)
 {
   int was_in = inRoom(), rc, resCode = 0;
   TRoom *to_room;
-  char buf[256];
+  sstring buf;
   TThing *t, *t2;
 
   if (!roomp) 
@@ -190,9 +190,9 @@ int TBeing::riverFlow(int)
     }
 
     if (t == rider) 
-      sprintf(buf, "$n drifts in from the %s riding $N.", dirs[rev_dir[rd]]);
+      buf = fmt("$n drifts in from the %s riding $N.") % dirs[rev_dir[rd]];
     else
-      sprintf(buf, "$n also drifts in from the %s riding $N.", dirs[rev_dir[rd]]);
+      buf = fmt("$n also drifts in from the %s riding $N.") % dirs[rev_dir[rd]];
     act(buf, FALSE, t, 0, this, TO_NOTVICT);
 
   }
@@ -203,7 +203,7 @@ int TBeing::riverFlow(int)
   doLook("", CMD_LOOK);
 
   if (!rider) {
-    sprintf(buf, "$n drifts in from the %s.", dirs[rev_dir[rd]]);
+    buf = fmt("$n drifts in from the %s.") % dirs[rev_dir[rd]];
     act(buf, FALSE, this, 0, 0, TO_ROOM);
   }
 
@@ -234,6 +234,7 @@ bool TObj::isTrash()
      roomp->isWaterSector() ||
      roomp->isAirSector() ||
      isObjStat(ITEM_BURNING) ||
+     isname("log commodity wood", getName()) ||
      dynamic_cast<TBaseCorpse *>(this))
     return false;
 
@@ -277,7 +278,7 @@ int TObj::riverFlow(int)
 {
   int rc, was_in = inRoom();
   TRoom *tmprp, *to_room;
-  char buf[256];
+  sstring buf;
   TThing *t, *t2;
 
   if (!roomp)   // this covers carried && equipped
@@ -325,13 +326,13 @@ int TObj::riverFlow(int)
     t2 = t->nextRider;
 
     t->sendTo(fmt("Your %s drifts %s...\n\r") % objn(this) % dirs[rd]);
-    sprintf(buf, "$n drifts %s in $p.", dirs[rd]);
+    buf = fmt("$n drifts %s in $p.") % dirs[rd];
     act(buf, TRUE, t, this, 0, TO_ROOM);
 
     --(*t);
     *to_room += *t;
 
-    sprintf(buf, "$n drifts in from the %s on $p.", dirs[rev_dir[rd]]);
+    buf = fmt("$n drifts in from the %s on $p.") % dirs[rev_dir[rd]];
     act(buf, TRUE, t, this, 0, TO_ROOM);
     TBeing *tbt = dynamic_cast<TBeing *>(t);
     if (tbt)
@@ -339,14 +340,14 @@ int TObj::riverFlow(int)
 
   }
   if (!rider) {
-    sprintf(buf, "$n drifts %s...", dirs[rd]);
+    buf = fmt("$n drifts %s...") % dirs[rd];
     act(buf, TRUE, this, 0, 0, TO_ROOM);
   }
   --(*this);
   *to_room += *this;
 
   if (!rider) {
-    sprintf(buf, "$n drifts in from the %s...", dirs[rev_dir[rd]]);
+    buf = fmt("$n drifts in from the %s...") % dirs[rev_dir[rd]];
     act(buf, TRUE, this, 0, 0, TO_ROOM);
   }
   if (riding) {
@@ -369,7 +370,7 @@ int TObj::riverFlow(int)
 int TBeing::teleportRoomFlow(int pulse)
 {
   TRoom *dest, *tmprp;
-  const char *tmp_desc = NULL;
+  sstring tmp_desc = NULL;
   int rc;
 
   if (!roomp || roomp->getTeleTarg() <= 0 || roomp->getTeleTime() <= 0)
@@ -380,8 +381,8 @@ int TBeing::teleportRoomFlow(int pulse)
     return FALSE;
 
   if (isImmortal()) {
-    if((tmp_desc=roomp->ex_description->findExtraDesc("_tele_")) && 
-       inRoom() == roomp->getTeleTarg()){
+    tmp_desc = roomp->ex_description->findExtraDesc("_tele_");
+    if (!tmp_desc.empty() && inRoom() == roomp->getTeleTarg()) {
       act(tmp_desc, TRUE, this, NULL, NULL, TO_CHAR);
     } else {
     // Change this to use act so it didnt send while in redit - Russ 011397
@@ -399,7 +400,8 @@ int TBeing::teleportRoomFlow(int pulse)
   tmprp = roomp;  // char_from_room will set roomp to NULL
   --(*this);
   thing_to_room(this, tmprp->getTeleTarg());
-  if ((tmp_desc = tmprp->ex_description->findExtraDesc("_tele_"))) {
+  tmp_desc = tmprp->ex_description->findExtraDesc("_tele_");
+  if (!tmp_desc.empty()) {
     if (desc)
       desc->page_string(tmp_desc);
   }
@@ -614,6 +616,36 @@ int TBeing::updateTickStuff()
         return DELETE_THIS;
       }
     }
+
+    if(hasQuestBit(TOG_IS_COMBUSTIBLE) && !::number(0,99)){
+      rc = flameEngulfed();
+      if (IS_SET_DELETE(rc, DELETE_THIS))
+	return DELETE_THIS;
+    }
+
+
+
+    if(hasQuestBit(TOG_IS_NARCOLEPTIC) && awake() && !::number(0,99)){
+      affectedData af;
+      af.type = AFFECT_DUMMY;
+      af.level = 1;
+      af.duration = 30;
+      af.modifier = 0;
+      af.location = APPLY_NONE;
+      af.bitvector = AFF_SLEEP;
+      affectJoin(NULL, &af, AVG_DUR_NO, AVG_EFF_NO);
+      
+      if (getPosition() > POSITION_SLEEPING) {
+	if (riding) {
+	  rc = fallOffMount(riding, POSITION_STANDING);
+	  if (IS_SET_DELETE(rc, DELETE_THIS))
+	    return DELETE_THIS;
+	}
+	doSleep("");
+      }
+    }
+
+
     if (desc && (desc->character != this))
       vlogf(LOG_BUG, fmt("bad desc in updateTickStuff() (%s)(%s)") %
 	    (name ? getName() : "unknown") % 
@@ -865,6 +897,51 @@ int TBeing::updateHalfTickStuff()
     setPosition(POSITION_SLEEPING);
   }
 
+  if(hasQuestBit(TOG_IS_NECROPHOBIC) && !::number(0,3)){
+    TBeing *tb;
+    for(TThing *t=roomp->getStuff();t;t=t->nextThing){
+      if(dynamic_cast<TBaseCorpse *>(t) ||
+	 ((tb=dynamic_cast<TBeing *>(t)) && tb->isUndead())){
+	sendTo(fmt("You lose your cool at the sight of %s and freak out!\n\r")%
+	       t->getName());
+	doFlee("");
+	addCommandToQue("flee");
+	addCommandToQue("flee");
+	break;
+      }
+    }
+  }
+
+  if(hasQuestBit(TOG_HAS_TOURETTES) && !::number(0,3)){
+    sstring buf, buf2;
+    TBeing *tb;
+    TMonster *tm;
+    
+    for(TThing *t=roomp->getStuff();t;t=t->nextThing){
+      if(!::number(0,1))
+	continue;
+
+      if((tb=dynamic_cast<TBeing *>(t))){
+	if(tb==this)
+	  continue;
+
+	buf=getInsult(tb);
+	buf2 = fmt("$n looks at you and says, \"%s\"") %buf;
+	act(buf2,TRUE,this,0,tb,TO_VICT);
+	buf2 = fmt("$n looks at $N and says, \"%s\"") %buf;
+	act(buf2,TRUE,this,0,tb,TO_NOTVICT);
+	buf2 = fmt("You look at $N and say, \"%s\"") %buf;
+	act(buf2,TRUE,this,0,tb,TO_CHAR);
+	
+	if((tm=dynamic_cast<TMonster *>(t)))
+	  tm->aiUpset(this);
+	
+	break;
+      }
+    }
+  }
+
+
   if(inRoom() >= 31800 && inRoom() <= 31899 && getCond(DRUNK) == 0){
     sendTo("Totally sober now, this world seems to fade away like a dream.\n\r");
     setPosition(POSITION_SLEEPING);
@@ -949,7 +1026,7 @@ int TBeing::updateHalfTickStuff()
             act("$n forms in the surrounding air.",
                TRUE, this, 0, 0, TO_ROOM);
 #if 1
-          } else if (ex_description && ex_description->findExtraDesc("bamfin")) {
+          } else if (ex_description && !ex_description->findExtraDesc("bamfin").empty()) {
             act(ex_description->findExtraDesc("bamfin"), TRUE, this, 0, 0, TO_ROOM);
 #endif
           } else if (IS_SET(specials.act, ACT_GHOST)) {
@@ -970,7 +1047,7 @@ int TBeing::updateHalfTickStuff()
           act("$n is dispersed by the coming of morning.", 
               TRUE, this, 0, 0, TO_ROOM);
 #if 1
-        } else if (ex_description && ex_description->findExtraDesc("bamfout")) {
+        } else if (ex_description && !ex_description->findExtraDesc("bamfout").empty()) {
           act(ex_description->findExtraDesc("bamfout"), TRUE, this, 0, 0, TO_ROOM);
 #endif
         } else if (IS_SET(specials.act, ACT_GHOST)) {
@@ -1022,7 +1099,7 @@ int TBeing::updateHalfTickStuff()
            act("$n forms in the surrounding air.", 
                TRUE, this, 0, 0, TO_ROOM);
 #if 1
-          } else if (ex_description && ex_description->findExtraDesc("bamfin")) {
+          } else if (ex_description && !ex_description->findExtraDesc("bamfin").empty()) {
             act(ex_description->findExtraDesc("bamfin"), TRUE, this, 0, 0, TO_ROOM);
 #endif
           } else if (IS_SET(specials.act, ACT_GHOST)) {
@@ -1044,7 +1121,7 @@ int TBeing::updateHalfTickStuff()
           act("$n is dispersed by the coming of morning.", 
               TRUE, this, 0, 0, TO_ROOM);
 #if 1
-        } else if (ex_description && ex_description->findExtraDesc("bamfout")) {
+        } else if (ex_description && !ex_description->findExtraDesc("bamfout").empty()) {
           act(ex_description->findExtraDesc("bamfout"), TRUE, this, 0, 0, TO_ROOM);
 #endif
         } else if (IS_SET(specials.act, ACT_GHOST)) {

@@ -238,7 +238,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
     else if ((tVar = tStNewArg.find(" tank")) != sstring::npos && fight() &&
              !(tStNewArg.size() - tVar - 5) &&
              isAffected(AFF_GROUP) && fight()->fight()) {
-      tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(fight()->fight()).c_str());
+      tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(fight()->fight()));
     } else if ((tVar = tStNewArg.find(" tank")) != sstring::npos &&
                !(tStNewArg.size() - tVar - 5) &&
                cmd == CMD_PRAY && isAffected(AFF_GROUP)) {
@@ -248,7 +248,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
         for (; tF; tF = tF->next)
           if ((ch = tF->follower->specials.fighting) &&
               ch->specials.fighting == tF->follower) {
-            tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(tF->follower).c_str());
+            tStNewArg.replace(tStNewArg.find("tank"), 4, persfname(tF->follower));
             break;
           }
 
@@ -357,13 +357,13 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	vlogf(LOG_SILENT, fmt("%s (%i):%s %s") %  name % in_room % commandArray[cmd]->name % newarg);
 
 	if (tPerson)
-	  tPerson->logf("%s:%s %s", name, commandArray[cmd]->name, newarg.c_str());
+	  tPerson->logf("%s:%s %s", name.c_str(), commandArray[cmd]->name, newarg.c_str());
       } else {
 	vlogf(LOG_SILENT, fmt("%s (%s) (%i):%s %s") %  name % desc->original->name % 
 	      in_room % commandArray[cmd]->name % newarg);
 
 	if (tPerson)
-	  tPerson->logf("%s:%s %s", name,
+	  tPerson->logf("%s:%s %s", name.c_str(),
 			commandArray[cmd]->name, newarg.c_str());
       }
     } else if (ch->isPc() && ch->isPlayerAction(PLR_LOGGED))
@@ -378,7 +378,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
     if (IS_SET(specials.affectedBy, AFF_HIDE) && willBreakHide(cmd, true))
       REMOVE_BIT(specials.affectedBy, AFF_HIDE);
 
-    rc = triggerSpecial(NULL, cmd, newarg.c_str());
+    rc = triggerSpecial(NULL, cmd, newarg);
     if (IS_SET_DELETE(rc, DELETE_THIS)) 
       return DELETE_THIS;
     else if (rc) 
@@ -470,7 +470,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_ORDER:
-	rc = doOrder(newarg.c_str());
+	rc = doOrder(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_HISTORY:
@@ -527,18 +527,18 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_ADJUST:
-	doAdjust(newarg.c_str());
+	doAdjust(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_FACTIONS:
-	doFactions(newarg.c_str());
+	doFactions(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_LIST:
 	if ((rc = handleMobileResponse(this, cmd, newarg)))
 	  break;
 
-	doList(newarg.c_str());
+	doList(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_RENT:
@@ -572,6 +572,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
       case CMD_COVER:
       case CMD_OPERATE:
       case CMD_ABORT:
+      case CMD_BID:
 	doNotHere();
 	addToLifeforce(1);
 	break;
@@ -586,7 +587,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_FILL:
-	doFill(newarg.c_str());
+	doFill(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_BOUNCE:
@@ -760,26 +761,26 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_AS:
-	rc = doAs(newarg.c_str());
+	rc = doAs(newarg);
 	break;
       case CMD_AT:
-	rc = doAt(newarg.c_str(), false);
+	rc = doAt(newarg, false);
 	break;
       case CMD_GIVE:
-	rc = doGive(newarg.c_str());
+	rc = doGive(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TAKE:
       case CMD_GET:
-	rc = doGet(newarg.c_str());
+	rc = doGet(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_DROP:
-	rc = doDrop(newarg.c_str(), vict);
+	rc = doDrop(newarg, vict);
 	addToLifeforce(1);
 	break;
       case CMD_SAVE:
-	doSave(SILENT_NO, newarg.c_str());
+	doSave(SILENT_NO, newarg);
 	addToLifeforce(1);
 	break;
       case CMD_DEATHCHECK:
@@ -789,36 +790,36 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	doSysChecklog(newarg);
 	break;
       case CMD_RECITE:
-	rc = doRecite(newarg.c_str());
+	rc = doRecite(newarg);
 	break;
       case CMD_RESTORE:
-	doRestore(newarg.c_str());
+	doRestore(newarg);
 	break;
       case CMD_EMOTE:
       case CMD_EMOTE2:
       case CMD_EMOTE3:
-	rc = doEmote(newarg.c_str());
+	rc = doEmote(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_ECHO: 
-	doEcho(newarg.c_str());
+	doEcho(newarg);
 	break;
       case CMD_SHOW:
-	doShow(newarg.c_str());
+	doShow(newarg);
 	break;
       case CMD_HIGHFIVE:
 	doHighfive(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TOGGLE:
-	doToggle(newarg.c_str());
+	doToggle(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_WIZLOCK:
-	doWizlock(newarg.c_str());
+	doWizlock(newarg);
 	break;
       case CMD_FLAG:
-	doFlag(newarg.c_str());
+	doFlag(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SYSTEM:
@@ -826,110 +827,110 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_TRANSFER:
-	doTrans(newarg.c_str());
+	doTrans(newarg);
 	break;
       case CMD_SWITCH:
-	doSwitch(newarg.c_str());
+	doSwitch(newarg);
 	break;
       case CMD_CUTLINK:
-	doCutlink(newarg.c_str());
+	doCutlink(newarg);
 	break;
       case CMD_WIZNEWS:
 	doWiznews();
 	break;
       case CMD_NOSHOUT:
-	doNoshout(argument.c_str());
+	doNoshout(argument);
 	addToLifeforce(1);
 	break;
       case CMD_STEAL:
 	rc = doSteal(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_INVISIBLE:
-	doInvis(newarg.c_str());
+	doInvis(newarg);
 	break;
       case CMD_VISIBLE:
-	doVisible(newarg.c_str(), false);
+	doVisible(newarg, false);
 	addToLifeforce(1);
 	break;
       case CMD_LOGLIST:
 	doSysLoglist();
 	break;
       case CMD_LEAVE:
-	rc = doLeave(newarg.c_str());
+	rc = doLeave(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_EXITS:
-	rc = doExits(newarg.c_str(), cmd);
+	rc = doExits(newarg, cmd);
 	addToLifeforce(1);
 	break;
       case CMD_WIPE:
-	doWipe(newarg.c_str());
+	doWipe(newarg);
 	break;
       case CMD_ACCESS:
-	doAccess(newarg.c_str());
+	doAccess(newarg);
 	break;
       case CMD_CLONE:
-	doClone(newarg.c_str());
+	doClone(newarg);
 	break;
       case CMD_OFFICE:
-	doOffice(newarg.c_str());
+	doOffice(newarg);
 	break;
       case CMD_REPLACE:
-	doReplace(newarg.c_str());
+	doReplace(newarg);
 	break;
       case CMD_SETSEV:
-	doSetsev(newarg.c_str());
+	doSetsev(newarg);
 	break;
       case CMD_INFO:
-	doInfo(newarg.c_str());
+	doInfo(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TIMESHIFT:
-	doTimeshift(newarg.c_str());
+	doTimeshift(newarg);
 	break;
       case CMD_LOG:
-	doLog(newarg.c_str());
+	doLog(newarg);
 	break;
       case CMD_HOSTLOG:
-	doHostlog(newarg.c_str());
+	doHostlog(newarg);
 	break;
       case CMD_ASSIST:
-	rc = doAssist(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doAssist(newarg, dynamic_cast<TBeing *>(vict));
 	addToLifeforce(1);
 	break;
       case CMD_WHO:
-	doWho(newarg.c_str());
+	doWho(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_BRUTTEST:
-	doBruttest(newarg.c_str());
+	doBruttest(newarg);
 	break;
       case CMD_PEELPK:
-	doPeelPk(newarg.c_str());
+	doPeelPk(newarg);
 	break;
       case CMD_SHUTDOW:
 	doShutdow();
 	break;
       case CMD_SHUTDOWN:
-	doShutdown(newarg.c_str());
+	doShutdown(newarg);
 	break;
       case CMD_LOAD:
-	doLoad(newarg.c_str());
+	doLoad(newarg);
 	break;
       case CMD_GOTO:
 	rc = doGoto(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SHOUT:
-	doShout(argument.c_str());
+	doShout(argument);
 	addToLifeforce(1);
 	break;
       case CMD_CLIENTMESSAGE:
-	doClientMessage(argument.c_str());
+	doClientMessage(argument);
 	addToLifeforce(1);
 	break;
       case CMD_GT:
-	doGrouptell(argument.c_str());
+	doGrouptell(argument);
 	addToLifeforce(1);
 	break;
       case CMD_SIGN:
@@ -944,7 +945,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_WHISPER:
-	rc = doWhisper(newarg.c_str());
+	rc = doWhisper(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_ASK:
@@ -952,7 +953,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_WRITE:
-	doWrite(newarg.c_str());
+	doWrite(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_WHOZONE:
@@ -960,7 +961,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_EXAMINE:
-	doExamine(newarg.c_str());
+	doExamine(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SCORE:
@@ -974,7 +975,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	doWizlist();
 	break;
       case CMD_INVENTORY:
-	doInventory(newarg.c_str());
+	doInventory(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_STAND:
@@ -987,11 +988,11 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	break;
       case CMD_RAISE:
       case CMD_LIFT:
-	rc = doRaise(newarg.c_str(), cmd);
+	rc = doRaise(newarg, cmd);
 	addToLifeforce(1);
 	break;
       case CMD_OPEN:
-	rc = doOpen(newarg.c_str());
+	rc = doOpen(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_REST:
@@ -999,38 +1000,38 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_LOWER:
-	rc = doLower(newarg.c_str());
+	rc = doLower(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_CLOSE:
-	doClose(newarg.c_str());
+	doClose(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_LOCK:
-	doLock(newarg.c_str());
+	doLock(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_UNLOCK:
-	doUnlock(newarg.c_str());
+	doUnlock(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SLEEP:
 	doSleep(newarg);
 	break;
       case CMD_WAKE:
-	doWake(newarg.c_str());
+	doWake(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TIME:
-	doTime(newarg.c_str());
+	doTime(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_WEATHER:
-	doWeather(newarg.c_str());
+	doWeather(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_USERS:
-	doUsers(newarg.c_str());
+	doUsers(newarg);
 	break;
       case CMD_EQUIPMENT:
 	doEquipment(newarg);
@@ -1049,19 +1050,19 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_NEWS:
-	doNews(newarg.c_str());
+	doNews(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_WHERE:
-	doWhere(newarg.c_str());
+	doWhere(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_LEVELS:
-	doLevels(newarg.c_str());
+	doLevels(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_CONSIDER:
-	doConsider(newarg.c_str());
+	doConsider(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_WORLD:
@@ -1069,23 +1070,23 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_ATTRIBUTE:
-	doAttribute(newarg.c_str());
+	doAttribute(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_CLEAR:
-	doClear(newarg.c_str());
+	doClear(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_ALIAS:
-	doAlias(newarg.c_str());
+	doAlias(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_GLANCE:
-	doGlance(newarg.c_str());
+	doGlance(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_MOTD:
-	doMotd(newarg.c_str());
+	doMotd(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_LIMBS:
@@ -1093,184 +1094,184 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_BREATH:
-	doBreath(newarg.c_str());
+	doBreath(newarg);
 	break;
       case CMD_CHANGE:
-	doChange(newarg.c_str());
+	doChange(newarg);
 	break;
       case CMD_PROMPT:
-	doPrompt(newarg.c_str());
+	doPrompt(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_REMOVE:
-	rc = doRemove(newarg.c_str(), vict);
+	rc = doRemove(newarg, vict);
 	addToLifeforce(1);
 	break;
       case CMD_WEAR:
-	doWear(newarg.c_str());
+	doWear(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_STAT:
-	doStat(newarg.c_str());
+	doStat(newarg);
 	break;
       case CMD_PURGE:
-	doPurge(newarg.c_str());
+	doPurge(newarg);
 	break;
       case CMD_SET:
-	doSet(newarg.c_str());
+	doSet(newarg);
 	break;
       case CMD_COMMAND:
-	doCommand(newarg.c_str());
+	doCommand(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_WIZNET:
 	doCommune(newarg);
 	break;
       case CMD_WIELD:
-	doWield(newarg.c_str());
+	doWield(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_GRAB:
       case CMD_HOLD:
-	doGrab(newarg.c_str());
+	doGrab(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_PUT:
-	rc = doPut(newarg.c_str());
+	rc = doPut(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_KILL:
       case CMD_SLAY:
-	rc = doKill(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doKill(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_HIT:
-	rc = doHit(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doHit(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_ENGAGE:
-	rc = doEngage(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doEngage(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_DISENGAGE:
 	rc = doDisengage();
 	break;
       case CMD_QUEST:
-	doQuest(newarg.c_str());
+	doQuest(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TESTCODE:
-	doTestCode(newarg.c_str());
+	doTestCode(newarg);
 	break;
       case CMD_FOLLOW:
-	doFollow(newarg.c_str());
+	doFollow(newarg);
 	break;
       case CMD_RETURN:
-	doReturn(newarg.c_str(), WEAR_NOWHERE, true);
+	doReturn(newarg, WEAR_NOWHERE, true);
 	break;
       case CMD_REPORT:
-	doReport(newarg.c_str());
+	doReport(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_PRAY:
-	rc = doPray(newarg.c_str());
+	rc = doPray(newarg);
 	break;
       case CMD_CAST:
-	rc = doCast(newarg.c_str());
+	rc = doCast(newarg);
 	break;
       case CMD_CONTINUE:
-	doContinue(newarg.c_str());
+	doContinue(newarg);
 	break;
       case CMD_READ:
-	doRead(newarg.c_str());
+	doRead(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_EAT:
-	doEat(newarg.c_str());
+	doEat(newarg);
 	break;
       case CMD_DRINK:
-	rc = doDrink(newarg.c_str());
+	rc = doDrink(newarg);
 	break;
       case CMD_POUR:
-	rc = doPour(newarg.c_str());
+	rc = doPour(newarg);
 	break;
       case CMD_SIP:
-	doSip(newarg.c_str());
+	doSip(newarg);
 	break;
       case CMD_TASTE:
-	doTaste(newarg.c_str());
+	doTaste(newarg);
 	break;
       case CMD_BERSERK:
 	rc = doBerserk();
 	break;
       case CMD_SHOVE:
-	rc = doShove(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doShove(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_GRAPPLE:
-	rc = doGrapple(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doGrapple(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_RESCUE:
-	rc = doRescue(newarg.c_str());
+	rc = doRescue(newarg);
 	break;
       case CMD_DEATHSTROKE:
-	rc = doDeathstroke(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doDeathstroke(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_BODYSLAM:
-	rc = doBodyslam(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doBodyslam(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_SPIN:
-	rc = doSpin(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doSpin(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_STOMP:
-	rc = doStomp(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doStomp(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_EMAIL:
-	doEmail(newarg.c_str());
+	doEmail(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_HEADBUTT:
-	rc = doHeadbutt(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doHeadbutt(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_KNEESTRIKE:
-	rc = doKneestrike(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doKneestrike(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_DOORBASH:
 	rc = doDoorbash(newarg);
 	break;
       case CMD_TRANCE_OF_BLADES:
-	doTranceOfBlades(newarg.c_str());
+	doTranceOfBlades(newarg);
 	break;
       case CMD_ATTUNE:
-	doAttune(newarg.c_str());
+	doAttune(newarg);
 	break;
       case CMD_AFK:
 	doAfk();
 	addToLifeforce(1);
 	break;
       case CMD_SHARPEN:
-	doSharpen(newarg.c_str());
+	doSharpen(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_DULL:
-	doDull(newarg.c_str());
+	doDull(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_MEND:     // just aliasing this to repair
       case CMD_REPAIR:
-	doRepair(newarg.c_str());
+	doRepair(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SACRIFICE:
-	doSacrifice(newarg.c_str());
+	doSacrifice(newarg);
 	break;
       case CMD_BANDAGE:
-	doBandage(newarg.c_str());
+	doBandage(newarg);
 	break;
       case CMD_SET_TRAP:
-	rc = doSetTraps(newarg.c_str());
+	rc = doSetTraps(newarg);
 	break;
       case CMD_PICK:
-	rc = doPick(newarg.c_str());
+	rc = doPick(newarg);
 	break;
       case CMD_SEARCH:
-	rc = doSearch(newarg.c_str());
+	rc = doSearch(newarg);
 	break;
       case CMD_SPY:
 	rc = doSpy();
@@ -1282,63 +1283,63 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	rc = doDodge();
 	break;
       case CMD_INSULT:
-	doInsult(newarg.c_str());
+	doInsult(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SCRATCH:
-	doScratch(newarg.c_str());
+	doScratch(newarg);
 	break;
       case CMD_PEE:
-	doPee(newarg.c_str());
+	doPee(newarg);
 	break;
       case CMD_POOP:
 	doPoop();
 	break;
       case CMD_COMBINE:
-	doCombine(newarg.c_str());
+	doCombine(newarg);
 	break;
       case CMD_EDIT:
-	doEdit(newarg.c_str());
+	doEdit(newarg);
 	break;
       case CMD_FADD:
-	add_faction(newarg.c_str());
+	add_faction(newarg);
 	break;
       case CMD_FEDIT:
-	edit_faction(newarg.c_str());
+	edit_faction(newarg);
 	break;
       case CMD_JOIN:
-	doJoin(newarg.c_str());
+	doJoin(newarg);
 	break;
       case CMD_DEFECT:
-	doDefect(newarg.c_str());
+	doDefect(newarg);
 	break;
       case CMD_RECRUIT:
-	doRecruit(newarg.c_str());
+	doRecruit(newarg);
 	break;
       case CMD_RLOAD:
-	doRload(newarg.c_str());
+	doRload(newarg);
 	break;
       case CMD_RSAVE:
-	doRsave(newarg.c_str());
+	doRsave(newarg);
 	break;
       case CMD_REDIT:
-	doRedit(newarg.c_str());
+	doRedit(newarg);
 	break;
       case CMD_GROUP:
-	doGroup(newarg.c_str());
+	doGroup(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_FLEE:
-	rc = doFlee(newarg.c_str());
+	rc = doFlee(newarg);
 	break;
       case CMD_BREW:
-	doBrew(newarg.c_str());
+	doBrew(newarg);
 	break;
       case CMD_SCRIBE:
-	doScribe(newarg.c_str());
+	doScribe(newarg);
 	break;
       case CMD_TURN:
-	doTurn(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	doTurn(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_YOGINSA:
 	doYoginsa();
@@ -1350,52 +1351,52 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	doPenance();
 	break;
       case CMD_PRACTICE:
-	doPractice(newarg.c_str());
+	doPractice(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_BLOAD:
-	doBload(newarg.c_str());
+	doBload(newarg);
 	break;
       case CMD_GLOAD:
 	doGload(newarg);
 	break;
       case CMD_THROW:
-	doThrow(newarg.c_str());
+	doThrow(newarg);
 	break;
       case CMD_SHOOT:
-	rc = doShoot(newarg.c_str());
+	rc = doShoot(newarg);
 	break;
       case CMD_TRACK:
-	doTrack(newarg.c_str());
+	doTrack(newarg);
 	break;
       case CMD_SEEKWATER:
 	doSeekwater();
 	break;
       case CMD_MEDIT:
-	doMedit(newarg.c_str());
+	doMedit(newarg);
 	break;
       case CMD_SEDIT:
-	doSEdit(newarg.c_str());
+	doSEdit(newarg);
 	break;
       case CMD_LAYHANDS:
-	rc = doLayHands(newarg.c_str());
+	rc = doLayHands(newarg);
 	break;
       case CMD_STAY:
 	doStay();
 	addToLifeforce(1);
 	break;
       case CMD_PASS:
-	doPass(newarg.c_str());
+	doPass(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_DEAL:
-	doDeal(newarg.c_str());
+	doDeal(newarg);
 	break;
       case CMD_ATTACK:
-	doAttack(newarg.c_str());
+	doAttack(newarg);
 	break;
       case CMD_BET:
-	doBet(newarg.c_str());
+	doBet(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_CALL:
@@ -1405,64 +1406,64 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	doFold(newarg);
 	break;
       case CMD_OEDIT:
-	doOEdit(newarg.c_str());
+	doOEdit(newarg);
 	break;
       case CMD_MAKELEADER:
-	doMakeLeader(newarg.c_str());
+	doMakeLeader(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_NEWMEMBER:
-	doNewMember(newarg.c_str());
+	doNewMember(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SEND:
-	doSend(newarg.c_str());
+	doSend(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_RMEMBER:
-	doRMember(newarg.c_str());
+	doRMember(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_HELP:
-	doHelp(newarg.c_str());
+	doHelp(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_PLAY:
-	doPlay(newarg.c_str());
+	doPlay(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_SORT:
-	doSort(newarg.c_str());
+	doSort(newarg);
 	break;
       case CMD_GAMESTATS:
-	doGamestats(newarg.c_str());
+	doGamestats(newarg);
 	break;
       case CMD_SCAN:
-	doScan(newarg.c_str());
+	doScan(newarg);
 	break;
       case CMD_FEIGNDEATH:
 	rc = doFeignDeath();
 	break;
       case CMD_JUNK:
-	rc = doJunk(newarg.c_str(), dynamic_cast<TObj *>(vict));
+	rc = doJunk(newarg, dynamic_cast<TObj *>(vict));
 	break;
       case CMD_NOJUNK:
-	rc = doNoJunk(newarg.c_str(), dynamic_cast<TObj *>(vict));
+	rc = doNoJunk(newarg, dynamic_cast<TObj *>(vict));
 	break;
       case CMD_KICK:
-	rc = doKick(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doKick(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_SHOULDER_THROW:
-	rc = doShoulderThrow(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doShoulderThrow(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_CHOP:
-	rc = doChop(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doChop(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_HURL:
-	rc = doHurl(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doHurl(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_CHI:
-	rc = doChi(newarg.c_str(), vict);
+	rc = doChi(newarg, vict);
 	break;
       case CMD_LEAP:
 	rc = doLeap(newarg);
@@ -1471,27 +1472,27 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	rc = doVote(newarg);
 	break;
       case CMD_EVALUATE:
-	doEvaluate(newarg.c_str());
+	doEvaluate(newarg);
 	break;
       case CMD_TITLE:
-	doTitle(newarg.c_str());
+	doTitle(newarg);
 	break;
       case CMD_SNOOP:
-	doSnoop(newarg.c_str());
+	doSnoop(newarg);
 	break;
       case CMD_QUIVPALM:
-	rc = doQuiveringPalm(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doQuiveringPalm(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_RIDE:
       case CMD_MOUNT:
       case CMD_DISMOUNT:
-	rc = doMount(newarg.c_str(), cmd, dynamic_cast<TBeing *>(vict));
+	rc = doMount(newarg, cmd, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_FORCE:
-	doForce(newarg.c_str());
+	doForce(newarg);
 	break;
       case CMD_COLOR:
-	doColor(newarg.c_str());
+	doColor(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_CLS:
@@ -1510,11 +1511,11 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	doLow(newarg);
 	break;
       case CMD_ENTER:
-	rc = doEnter(newarg.c_str(), NULL);
+	rc = doEnter(newarg, NULL);
 	addToLifeforce(1);
 	break;
       case CMD_RESIZE:
-	doResize(newarg.c_str());
+	doResize(newarg);
 	break;
       case CMD_DISBAND:
 	doDisband();
@@ -1525,76 +1526,76 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_BASH:
-	rc = doBash(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doBash(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_BACKSTAB:
-	rc = doBackstab(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doBackstab(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_SLIT:
-	rc = doThroatSlit(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doThroatSlit(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_HIDE:
 	rc = doHide();
 	break;
       case CMD_SNEAK:
-	rc = doSneak(newarg.c_str());
+	rc = doSneak(newarg);
 	break;
       case CMD_CRAWL:
 	doCrawl();
 	break;
       case CMD_SUBTERFUGE:
-	rc = doSubterfuge(newarg.c_str());
+	rc = doSubterfuge(newarg);
 	break;
       case CMD_RENAME:
-	doNameChange(newarg.c_str());
+	doNameChange(newarg);
 	break;
       case CMD_MARGINS:
 	doResetMargins();
 	addToLifeforce(1);
 	break;
       case CMD_DISGUISE:
-	rc = doDisguise(newarg.c_str());
+	rc = doDisguise(newarg);
 	break;
       case CMD_DESCRIPTION:
 	addToLifeforce(1);
 	doDescription();
 	break;
       case CMD_POISON_WEAPON:
-	rc = doPoisonWeapon(newarg.c_str());
+	rc = doPoisonWeapon(newarg);
 	break;
       case CMD_GARROTTE:
-	rc = doGarrotte(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doGarrotte(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_STAB:
-	rc = doStab(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doStab(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_CUDGEL:
-	rc = doCudgel(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doCudgel(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_CHARGE:
-	rc = doCharge(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doCharge(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_SPLIT:
-	doSplit(newarg.c_str(), true);
+	doSplit(newarg, true);
 	addToLifeforce(1);
 	break;
       case CMD_TRIP:
-	rc = doTrip(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doTrip(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_SMITE:
-	rc = doSmite(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doSmite(newarg, dynamic_cast<TBeing *>(vict));
 	break;
       case CMD_FORAGE:
 	doForage();
 	break;
       case CMD_APPLY_HERBS:
-	rc = doApplyHerbs(newarg.c_str());
+	rc = doApplyHerbs(newarg);
 	break;
       case CMD_BUTCHER:
-	doButcher(newarg.c_str());
+	doButcher(newarg);
 	break;
       case CMD_SKIN:
-	doSkin(newarg.c_str());
+	doSkin(newarg);
 	break;
       case CMD_TAN:
 	doTan();
@@ -1609,7 +1610,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	doDrive(newarg);
 	break;
       case CMD_WHITTLE:
-	doWhittle(newarg.c_str());
+	doWhittle(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_MESSAGE:
@@ -1617,44 +1618,44 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_FINDEMAIL:
-	doFindEmail(newarg.c_str());
+	doFindEmail(newarg);
 	break;
       case CMD_COMMENT:
-	doComment(newarg.c_str());
+	doComment(newarg);
 	break;
       case CMD_CAMP:
 	rc = doEncamp();
 	break;
       case CMD_SOOTH:
-	rc = doSoothBeast(newarg.c_str());
+	rc = doSoothBeast(newarg);
 	break;
       case CMD_SUMMON:
-	rc = doSummonBeast(newarg.c_str());
+	rc = doSummonBeast(newarg);
 	break;
       case CMD_CHARM:
-	rc = doCharmBeast(newarg.c_str());
+	rc = doCharmBeast(newarg);
 	break;
       case CMD_RETRAIN:
-	rc = doRetrainPet(newarg.c_str(), dynamic_cast<TBeing *>(vict));
+	rc = doRetrainPet(newarg, dynamic_cast<TBeing *>(vict));
 	addToLifeforce(1);
 	break;
       case CMD_BEFRIEND:
-	rc = doBefriendBeast(newarg.c_str());
+	rc = doBefriendBeast(newarg);
 	break;
       case CMD_TRANSFIX:
-	rc = doTransfix(newarg.c_str());
+	rc = doTransfix(newarg);
 	break;
       case CMD_BARKSKIN:
-	rc = doBarkskin(newarg.c_str());
+	rc = doBarkskin(newarg);
 	break;
       case CMD_FERAL_WRATH:
-	rc = doFeralWrath(newarg.c_str());
+	rc = doFeralWrath(newarg);
 	break;
       case CMD_SKY_SPIRIT:
-	rc = doSkySpirit(newarg.c_str());
+	rc = doSkySpirit(newarg);
 	break;
       case CMD_EARTHMAW:
-	rc = doEarthmaw(newarg.c_str());
+	rc = doEarthmaw(newarg);
 	break;
       case CMD_FLY:
 	doFly();
@@ -1663,49 +1664,49 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	doLand();
 	break;
       case CMD_DIVINE:
-	doDivine(newarg.c_str());
+	doDivine(newarg);
 	break;
       case CMD_OUTFIT:
-	doOutfit(newarg.c_str());
+	doOutfit(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TRANSFORM:
-	rc = doTransform(newarg.c_str());
+	rc = doTransform(newarg);
 	break;
       case CMD_EGOTRIP:
-	doEgoTrip(newarg.c_str());
+	doEgoTrip(newarg);
 	break;
       case CMD_SPELLS:
-	doSpells(newarg.c_str());
+	doSpells(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_RITUALS:
-	doRituals(newarg.c_str());
+	doRituals(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_COMPARE:
-	doCompare(newarg.c_str());
+	doCompare(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TEST_FIGHT:
-	doTestFight(newarg.c_str());
+	doTestFight(newarg);
 	break;
       case CMD_DONATE:
-	doDonate(newarg.c_str());
+	doDonate(newarg);
 	break;
       case CMD_ZONES:
-	doZones(newarg.c_str());
+	doZones(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_CREATE:
-	rc = doCreate(newarg.c_str());
+	rc = doCreate(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_POWERS:
-	doPowers(newarg.c_str());
+	doPowers(newarg);
 	break;
       case CMD_SMOKE:
-	doSmoke(newarg.c_str());
+	doSmoke(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_STOP:
@@ -1713,11 +1714,11 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_TRIGGER:
-	doTrigger(newarg.c_str());
+	doTrigger(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_STORE:
-	doStore(newarg.c_str());
+	doStore(newarg);
 	break;
       case CMD_ZONEFILE:
 	doZonefile(newarg);
@@ -1727,38 +1728,38 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_TROPHY:
-	doTrophy(newarg.c_str());
+	doTrophy(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_PTELL:
-	doPTell(argument.c_str(), TRUE);
+	doPTell(argument, TRUE);
 	break;
       case CMD_PSAY:
-	doPSay(argument.c_str());
+	doPSay(argument);
 	break;
       case CMD_PSHOUT:
-	doPShout(argument.c_str());
+	doPShout(argument);
 	break;
       case CMD_TELEVISION:
-	doTelevision(newarg.c_str());
+	doTelevision(newarg);
 	break;
       case CMD_MINDFOCUS:
-	doMindfocus(newarg.c_str());
+	doMindfocus(newarg);
 	break;
       case CMD_PSIBLAST:
-	rc = doPsiblast(newarg.c_str());
+	rc = doPsiblast(newarg);
 	break;
       case CMD_MINDTHRUST:
-	rc = doMindthrust(newarg.c_str());
+	rc = doMindthrust(newarg);
 	break;
       case CMD_PSYCRUSH:
-	rc = doPsycrush(newarg.c_str());
+	rc = doPsycrush(newarg);
 	break;
       case CMD_KWAVE:
-	rc = doKwave(newarg.c_str());
+	rc = doKwave(newarg);
 	break;
       case CMD_PSIDRAIN:
-	rc = doPsidrain(newarg.c_str());
+	rc = doPsidrain(newarg);
 	break;
       case MAX_CMD_LIST:
       case CMD_RESP_TOGGLE:
@@ -2020,9 +2021,9 @@ int TBeing::parseCommand(const sstring &orig_arg, bool typedIn)
 // I tried it this way, but had a memory leak reported by insure from it
 // bat 2/19/99
 // static bool fill_word(sstring & argument)
-static bool fill_word(const char * argument)
+static bool fill_word(const sstring &argument)
 {
-  const char *filler_word[] =
+  const sstring filler_word[] =
   {
     "in",
     "from",
@@ -2251,7 +2252,7 @@ sstring add_bars(const sstring &s){
 }
 
 // returns DELETE_THIS, DELETE_VICT, TRUE or FALSE
-int TBeing::triggerSpecialOnPerson(TThing *ch, cmdTypeT cmd, const char *arg)
+int TBeing::triggerSpecialOnPerson(TThing *ch, cmdTypeT cmd, const sstring &arg)
 {
   wearSlotT j;
   int rc;
@@ -2313,7 +2314,7 @@ int TBeing::triggerSpecialOnPerson(TThing *ch, cmdTypeT cmd, const char *arg)
 // ch is not used now
 // return DELETE_THIS will cause this to be destroyed
 // return DELETE_VICT will cause ch to be destroyed
-int TBeing::triggerSpecial(TThing *ch, cmdTypeT cmd, const char *arg)
+int TBeing::triggerSpecial(TThing *ch, cmdTypeT cmd, const sstring &arg)
 {
   int rc;
   TThing *t, *t2;
@@ -2831,6 +2832,7 @@ void buildCommandArray(void)
   commandArray[CMD_CHI] = new commandInfo("chi", POSITION_FIGHTING, 0);
   commandArray[CMD_LEAP] = new commandInfo("leap", POSITION_STANDING, 0);
   commandArray[CMD_VOTE] = new commandInfo("vote", POSITION_STANDING, 0);
+  commandArray[CMD_BID] = new commandInfo("bid", POSITION_STANDING, 0);
   commandArray[CMD_DIVINE] = new commandInfo("divine", POSITION_STANDING, 0);
   commandArray[CMD_OUTFIT] = new commandInfo("outfit", POSITION_STANDING, 0);
   commandArray[CMD_CLIENTS] = new commandInfo("clients", POSITION_DEAD, GOD_LEVEL1);

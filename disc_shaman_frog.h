@@ -59,7 +59,7 @@ private:
     int aquaticBlast(TBeing *, TBeing *, int, byte, int);
 
     int shapeShift(TBeing *caster, int level, byte bKnown);
-    int shapeShift(TBeing *caster, const char * buffer);
+    int shapeShift(TBeing *caster, const sstring & buffer);
     int castShapeShift(TBeing *caster);
 
     int deathWave(TBeing *, TBeing *);
@@ -68,9 +68,9 @@ private:
     int deathWave(TBeing *, TBeing *, int, byte, int);
 
 
-    int transformLimb(TBeing *, const char *);
+    int transformLimb(TBeing *, const sstring &);
     int castTransformLimb(TBeing *);
-    int transformLimb(TBeing *, const char *, int, byte);
+    int transformLimb(TBeing *, const sstring &, int, byte);
 
 
 #endif

@@ -804,7 +804,7 @@ static const sstring describe_practices(TBeing *ch)
 {
   sstring buf = "";
 
-  for(int i=0;i<MAX_CLASSES;i++){
+  for(int i=0; i<MAX_CLASSES; i++){
     if(ch->hasClass(ch->getClassNum((classIndT)i)) || ch->practices.prac[i]){
       buf += fmt("You have %d %s practice%s left.\n\r") %
         ch->practices.prac[i] % classInfo[i].name %
@@ -2784,6 +2784,15 @@ int doObjSpell(TBeing *caster, TBeing *victim, TMagicItem *obj, TObj *target, co
     case SPELL_RAIN_BRIMSTONE:
       rainBrimstone(caster,victim,obj, spell);
       break;
+    case SPELL_HEROES_FEAST:
+      heroesFeast(caster);
+      break;
+    case SPELL_ANTIGRAVITY:
+      antigravity(caster);
+      break;
+    case SPELL_LEVITATE:
+      levitate(caster, victim);
+      break;
     case SPELL_FLAMESTRIKE:
       flamestrike(caster,victim,obj);
       break;
@@ -3053,18 +3062,18 @@ int TBeing::doRecite(const char *argument)
 
   argument = one_argument(argument, buf);
 
-  if (isAffected(AFF_BLIND)) {
-    sendTo("How do you expect to read something when you are blind???\n\r");
-    return FALSE;
-  }
-
   if (!(t = searchLinkedListVis(this, buf, getStuff()))) {
     t = heldInPrimHand();
     if (!t || !isname(buf, t->name)) {
-      act("You do not have that item.", FALSE, this, 0, 0, TO_CHAR);
+      if (isAffected(AFF_BLIND)) {
+        sendTo("How do you expect to read something when you are blind???\n\r");
+      } else {
+        act("You do not have that item.", FALSE, this, 0, 0, TO_CHAR);
+      }
       return FALSE;
     }
   }
+
   setQuaffUse(true);
   rc = t->reciteMe(this, argument);
   setQuaffUse(false);
@@ -3605,10 +3614,11 @@ void TBeing::doDrag(TBeing *v, dirTypeT tdir)
     return;
 
   // We can drag now. Do necessary checks and make it so. - Brutius 
-  sprintf(buf, "You drag $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, v, TO_CHAR);
-  sprintf(buf, "$n drags $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, v, TO_ROOM);
+  sstring sbuf;
+  sbuf = fmt("You drag $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, v, TO_CHAR);
+  sbuf = fmt("$n drags $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, v, TO_ROOM);
   oldroom = v->in_room;
   oldr = v->roomp->dir_option[tdir]->to_room;
   rp = real_roomp(oldr);
@@ -3742,10 +3752,11 @@ void TBeing::doDrag(TObj *o, dirTypeT tdir)
     return;
 
 
-  sprintf(buf, "You drag $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, o, TO_CHAR);
-  sprintf(buf, "$n drags $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, o, TO_ROOM);
+  sstring sbuf;
+  sbuf = fmt("You drag $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, o, TO_CHAR);
+  sbuf = fmt("$n drags $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, o, TO_ROOM);
   oldroom = o->in_room;
   oldr = o->roomp->dir_option[tdir]->to_room;
   rp = real_roomp(oldr);
@@ -4144,10 +4155,11 @@ void TBeing::doRoll(TBeing *v, dirTypeT tdir)
     return;
 
   // We can drag now. Do necessary checks and make it so. - Brutius 
-  sprintf(buf, "You roll $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, v, TO_CHAR);
-  sprintf(buf, "$n rolls $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, v, TO_ROOM);
+  sstring sbuf;
+  sbuf = fmt("You roll $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, v, TO_CHAR);
+  sbuf = fmt("$n rolls $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, v, TO_ROOM);
   oldroom = v->in_room;
   oldr = v->roomp->dir_option[tdir]->to_room;
   rp = real_roomp(oldr);
@@ -4278,11 +4290,11 @@ void TBeing::doRoll(TObj *o, dirTypeT tdir)
   if(rc==TRUE) // not allowed to move
     return;
 
-
-  sprintf(buf, "You roll $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, o, TO_CHAR);
-  sprintf(buf, "$n rolls $N %s.", dirs[tdir]);
-  act(buf, TRUE, this, NULL, o, TO_ROOM);
+  sstring sbuf;
+  sbuf = fmt("You roll $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, o, TO_CHAR);
+  sbuf = fmt("$n rolls $N %s.") % dirs[tdir];
+  act(sbuf, TRUE, this, NULL, o, TO_ROOM);
   oldroom = o->in_room;
   oldr = o->roomp->dir_option[tdir]->to_room;
   rp = real_roomp(oldr);

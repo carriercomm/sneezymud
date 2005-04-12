@@ -64,12 +64,10 @@ int detectSecret(TBeing * thief)
 {
   int j;
   roomDirData *fdd;
-  char buf[128];
+  sstring buf;
   int move_cost;
 
   move_cost = 30;
-
-  *buf = '\0';
 
   if (thief->getMove() < move_cost) {
     thief->sendTo("You are too tired to search.  Maybe later...\n\r");
@@ -87,7 +85,7 @@ int detectSecret(TBeing * thief)
   for (j = 0; j < 10; j++) {
     if ((fdd = thief->roomp->dir_option[j])) {
       if (((j < 4) || (j > 5))) {
-	sprintf(buf, "$n searches the %s wall for secret doors.", dirs[j]);
+	buf = fmt("$n searches the %s wall for secret doors.") % dirs[j];
 	act(buf, FALSE, thief, 0, 0, TO_ROOM);
       } else if (j == 4)
 	act("$n searches the ceiling for secret doors.",
@@ -104,8 +102,9 @@ int detectSecret(TBeing * thief)
       if (thief->bSuccess(bKnown,SKILL_SEARCH)) {
 	thief->sendTo(fmt("Secret door found %s! Door is named %s.\n\r") %
 	      dirs[j] % (fdd->keyword ? fname(fdd->keyword) : "NO NAME. TELL A GOD"));
-	sprintf(buf, "$n exclaims, \"Look %s! A SECRET door named %s!\"\n\r", dirs[j], 
-                       (fdd->keyword ? fname(fdd->keyword).c_str() : "NO NAME. TELL A GOD"));
+	buf = fmt("$n exclaims, \"Look %s! A SECRET door named %s!\"\n\r") %
+          dirs[j], 
+          (fdd->keyword ? fname(fdd->keyword) : "NO NAME. TELL A GOD");
 	act(buf, FALSE, thief, 0, 0, TO_ROOM);
 	thief->setMove(max(0, (thief->getMove() - 30)));
 	return TRUE;

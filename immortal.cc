@@ -3455,6 +3455,7 @@ void TPerson::doAccess(const sstring &arg)
   struct time_info_data playing_time;
   FILE *fp;
   accountFile afp;
+  TDatabase db(DB_SNEEZY);
 
   if (powerCheck(POWER_ACCESS))
     return;
@@ -3614,6 +3615,12 @@ void TPerson::doAccess(const sstring &arg)
       st.stats[STAT_SPE];
     buf+=tmpbuf;
 
+    db.query("select sum(sob.talens) as bankmoney from shopownedbank sob, player p where sob.player_id=p.id and lower(p.name)=lower('%s')", st.name);
+    
+    if(db.fetchRow()){
+      st.bankmoney=convertTo<int>(db["bankmoney"]);
+    }
+
     tmpbuf = fmt("Gold:  %d,    Bank:  %d,   Exp:  %.3f\n\r") %
           st.money % st.bankmoney % st.exp;
     buf+=tmpbuf;
@@ -3763,7 +3770,7 @@ void TBeing::doSetsev(const char *arg)
     "faction"      , "mobile"  , "mobai" , "mobresp", "object",
     "editor"       , "\n"
   };
-  const char *tHelp[] =
+  const sstring tHelp[] =
   {
     "Anything not found in the others",
     "L.O.W Errors",
@@ -3796,10 +3803,13 @@ void TBeing::doSetsev(const char *arg)
   if (!tMatch) {
     sendTo("Leg Severity Options:\n\r______________________________\n\r");
 
-    for (tMatch = 0; tFields[tMatch][0] != '\n'; tMatch++)
-      sendTo(fmt("%s: %-15s: %s\n\r") %
-             ((d->severity & (1 << tMatch)) ? "On " : "Off") %
-             tFields[tMatch] % tHelp[tMatch]);
+    for (tMatch = 0; tFields[tMatch][0] != '\n'; tMatch++) {
+      if (tMatch == LOG_LOW || hasWizPower(POWER_SETSEV_IMM)) {
+        sendTo(fmt("%s: %-15s: %s\n\r") %
+               ((d->severity & (1 << tMatch)) ? "On " : "Off") %
+               tFields[tMatch] % tHelp[tMatch]);
+      }
+    }
 
     return;
   }
@@ -3876,7 +3886,7 @@ void TBeing::doSetsev(const char *arg)
     } else
       sendTo("Incorrect Log Type.\n\r");
   } else {
-    if ((tMatch - 1) == LOG_LOW && powerCheck(POWER_SETSEV_IMM))
+    if ((tMatch - 1) != LOG_LOW && powerCheck(POWER_SETSEV_IMM))
       return;
 
     if ((d->severity & (1 << (tMatch - 1))))

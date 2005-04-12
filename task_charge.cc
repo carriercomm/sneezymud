@@ -520,7 +520,7 @@ int TBeing::ChargePulse(TBeing *ch)
 {
   roomDirData *rExit;
   TThing      *tMonster;
-  char         nString[256];
+  sstring      nString;
   int          nRc = TRUE;
 
   for (tMonster = ch->roomp->getStuff(); tMonster; tMonster = tMonster->nextThing) {
@@ -554,7 +554,7 @@ int TBeing::ChargePulse(TBeing *ch)
 
     ch->task->timeLeft--;
     ch->sendTo(fmt("You charge %s.\n\r") % dirs[ch->task->flags]);
-    sprintf(nString, "$n charges %s.", dirs[ch->task->flags]);
+    nString = fmt("$n charges %s.") % dirs[ch->task->flags];
     act(nString, FALSE, ch, 0, 0, TO_ROOM);
 
     nRc = ChargeRoom(ch);
@@ -566,7 +566,7 @@ int TBeing::ChargePulse(TBeing *ch)
 
       if (isname(ch->task->orig_arg, tMonster->name)) {
         ch->sendTo("You have found your prey!\n\r");
-        sprintf(nString, "charge %s", ch->task->orig_arg);
+        nString = fmt("charge %s") % ch->task->orig_arg;
         ch->addCommandToQue(nString);
         ch->stopTask();
         return TRUE;
@@ -587,7 +587,7 @@ int TBeing::ChargePulse(TBeing *ch)
       }
 
       ch->sendTo(fmt("You charge %s.\n\r") % dirs[ch->task->flags]);
-      sprintf(nString, "$n charges %s.", dirs[ch->task->flags]);
+      nString = fmt("$n charges %s.") % dirs[ch->task->flags];
       act(nString, FALSE, ch, 0, 0, TO_ROOM);
 
       nRc = ChargeRoom(ch);
@@ -604,9 +604,10 @@ int TBeing::ChargePulse(TBeing *ch)
 
 void startChargeTask(TBeing *ch, const char *tString)
 {
-        char  Name[256]    = "\0",
-              nString[256] = "\0",
-              zString[256] = "\0";
+  sstring buf;
+  char  Name[256]    = "\0",
+        nString[256] = "\0",
+        zString[256] = "\0";
   const char *tArg;
         int   Distance     = -1;
   dirTypeT    Direction    = DIR_NONE;
@@ -664,8 +665,8 @@ void startChargeTask(TBeing *ch, const char *tString)
   }
 
   if (!ch->roomp->dir_option[Direction]) {
-    sprintf(nString, "You point $N %s...Right at a wall, let's not.", dirs[Direction]);
-    act(nString, TRUE, ch, 0, ch->riding, TO_CHAR);
+    buf = fmt("You point $N %s...Right at a wall, let's not.") % dirs[Direction];
+    act(buf, TRUE, ch, 0, ch->riding, TO_CHAR);
     return;
   }
 
@@ -673,10 +674,10 @@ void startChargeTask(TBeing *ch, const char *tString)
   // flags    = Direction of charge
   start_task(ch, NULL, NULL, TASK_MOUNTCHARGING, Name, Distance, ch->in_room, 0, Direction, 40);
 
-  sprintf(nString, "You point $N %s.", dirs[Direction]);
-  act(nString, TRUE, ch, 0, ch->riding, TO_CHAR);
-  sprintf(nString, "$n points $N %s, preparing to charge.", dirs[Direction]);
-  act(nString, FALSE, ch, 0, ch->riding, TO_ROOM);
+  buf = fmt("You point $N %s.") % dirs[Direction];
+  act(buf, TRUE, ch, 0, ch->riding, TO_CHAR);
+  buf = fmt("$n points $N %s, preparing to charge.") % dirs[Direction];
+  act(buf, FALSE, ch, 0, ch->riding, TO_ROOM);
 }
 
 int task_charge(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj *obj)

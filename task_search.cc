@@ -13,7 +13,7 @@ int task_search(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj
       bKnown     = ch->getSkillValue(SKILL_SEARCH),
       tsSuccess  = ch->bSuccess(bKnown, SKILL_SEARCH),
       eDirection = ch->task->flags;
-  char buf[256];
+  sstring buf;
 
   if (ch->isLinkdead() || (ch->in_room < 0) ||
       (ch->getPosition() < POSITION_RESTING)) {
@@ -106,7 +106,8 @@ int task_search(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj
             FALSE, ch, 0, 0, TO_CHAR);
         ch->task->timeLeft++;
       } else {
-        sprintf(buf, "$n searches %s for secret doors.", dirs_to_blank[eDirection]);
+        buf = fmt("$n searches %s for secret doors.") %
+          dirs_to_blank[eDirection];
         act(buf, FALSE, ch, 0, 0, TO_ROOM);
         ch->sendTo(fmt("You search %s for secret doors.\n\r") % dirs_to_blank[eDirection]);
         ch->task->timeLeft++;
@@ -120,11 +121,11 @@ int task_search(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *, TObj
           IS_SET(fdd->condition, EX_CLOSED) &&
           strcmp(fdd->keyword, "_unique_door_")) {
         ch->sendTo(fmt("Secret %s found %s!\n\r") %
-                   (fdd->keyword ? fname(fdd->keyword) : "NO NAME.  TELL A GOD") %
-                   dirs[eDirection]);
-        sprintf(buf, "$n exclaims, \"Look!  A Secret %s found %s!\"\n\r",
-                (fdd->keyword ? fname(fdd->keyword).c_str() : "NO NAME.  TELL A GOD"),
-                dirs[eDirection]);
+          (fdd->keyword ? fname(fdd->keyword) : "NO NAME.  TELL A GOD") %
+          dirs[eDirection]);
+        buf = fmt("$n exclaims, \"Look!  A Secret %s found %s!\"\n\r") %
+          (fdd->keyword ? fname(fdd->keyword) : "NO NAME.  TELL A GOD") %
+          dirs[eDirection];
         act(buf, FALSE, ch, 0, 0, TO_ROOM);
       }
       // We remove the moves here, just in case we checked the last direction.

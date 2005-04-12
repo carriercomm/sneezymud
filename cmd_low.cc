@@ -1315,14 +1315,11 @@ void TBeing::lowPath(const sstring &arg)
       sendTo(fmt("{%i, %i},\n\r") % dir % path.path[i]->room);
     } else {
       sendTo(fmt("{DIR_%s, %i},\n\r") % 
-	     (dir<0?"NONE":sstring(dirs[dir]).upper()) %
+	     (dir<0?"NONE":dirs[dir].upper()) %
 	     path.path[i]->room);
     }
   }
 }
-
-
-
 
 void TBeing::lowRace(const char *arg)
 {

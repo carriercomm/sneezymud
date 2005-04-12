@@ -242,8 +242,7 @@ int task_tracking(TBeing *ch, cmdTypeT cmd, const char *argument, int pulse, TRo
             if (ch->desc && ch->desc->m_bIsClient)
               ch->desc->clientf(fmt("%d|%d") % CLIENT_TRACKING % (1 << code));
             if (ch->desc && (ch->desc->autobits & AUTO_HUNT)) {
-              strcpy(buf, dirs[code]);
-              ch->addCommandToQue(buf);
+              ch->addCommandToQue(dirs[code].c_str());
             }
           } else if (code > 9) {
             // It's above 9, so it's a special exit.  Portal or something.

@@ -150,6 +150,7 @@ bool TRoom::isForestSector() const
     case SECT_ARCTIC_FOREST_ROAD:
     case SECT_TEMPERATE_FOREST_ROAD:
     case SECT_RAINFOREST_ROAD:
+    case SECT_DEAD_WOODS:
       return TRUE;
     default:
       return FALSE;
@@ -293,13 +294,13 @@ byte TRoom::getRiverSpeed() const
   return riverSpeed;
 }
 
-void TRoom::setDescr(const char *tDescription)
+void TRoom::setDescr(const sstring &tDescription)
 {
   descr = tDescription;
 }
 
 
-const char * TRoom::getDescr()
+const sstring TRoom::getDescr()
 {
   return descr;
 }

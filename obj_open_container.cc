@@ -480,9 +480,9 @@ void TOpenContainer::lookObj(TBeing *ch, int bits) const
   ch->makeOutputPaged();
 }
 
-int TOpenContainer::trapMe(TBeing *ch, const char *trap_type)
+int TOpenContainer::trapMe(TBeing *ch, const sstring &trap_type)
 {
-  char buf[256];
+  sstring buf;
 
   if (!isCloseable()) {
     act("$p must be closeable to be trapped.", FALSE, ch, this, 0, TO_CHAR);
@@ -495,8 +495,8 @@ int TOpenContainer::trapMe(TBeing *ch, const char *trap_type)
   if (isContainerFlag(CONT_TRAPPED)) {
     if (ch->doesKnowSkill(SKILL_DETECT_TRAP)) {
       if (detectTrapObj(ch, this)) {
-        sprintf(buf, "You start to trap $p, but then notice an insidious %s trap already present.",
-           sstring(trap_types[getContainerTrapType()]).uncap().c_str());
+        buf = fmt("You start to trap $p, but then notice an insidious %s trap already present.") %
+          trap_types[getContainerTrapType()].uncap();
         act(buf, TRUE, ch, this, NULL, TO_CHAR);
         return FALSE;
       }
@@ -554,7 +554,7 @@ int TOpenContainer::trapMe(TBeing *ch, const char *trap_type)
 
   ch->sendTo("You start working on your trap.\n\r");
   act("$n starts fiddling with $p.", TRUE, ch, this, 0, TO_ROOM);
-  start_task(ch, this, NULL, TASK_TRAP_CONT, trap_type, 3, ch->inRoom(), type, 0, 5);
+  start_task(ch, this, NULL, TASK_TRAP_CONT, trap_type.c_str(), 3, ch->inRoom(), type, 0, 5);
   return FALSE;
 }
 
@@ -562,7 +562,7 @@ int TOpenContainer::disarmMe(TBeing *thief)
 {
   int learnedness;
   int rc;
-  char buf[256], trap_type_buf[80];
+  sstring buf;
   int bKnown = thief->getSkillValue(SKILL_DISARM_TRAP);
 
   if (isContainerFlag(CONT_GHOSTTRAP)) {
@@ -579,12 +579,11 @@ int TOpenContainer::disarmMe(TBeing *thief)
     return TRUE;
   }
 
-  strcpy(trap_type_buf, trap_types[getContainerTrapType()].c_str());
   learnedness = min((int) MAX_SKILL_LEARNEDNESS, 3*bKnown/2);
   addContainerFlag(CONT_EMPTYTRAP);
 
   if (thief->bSuccess(learnedness, SKILL_DISARM_TRAP)) {
-    sprintf(buf, "Click.  You disarm the %s trap in the $o.", trap_type_buf);
+    buf = fmt("Click.  You disarm the %s trap in the $o.") % trap_types[getContainerTrapType()];
     act(buf, FALSE, thief, this, 0, TO_CHAR);
     act("$n disarms $p.", FALSE, thief, this, 0, TO_ROOM);
     remContainerFlag( CONT_TRAPPED);

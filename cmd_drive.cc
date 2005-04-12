@@ -32,11 +32,8 @@ void TBeing::doDrive(sstring arg)
     return;
   }
 
-
   arg=arg.lower();
   arg=one_argument(arg, buf);
-
-
 
   // drive <direction>
   // this is a little wacky, let me explain:

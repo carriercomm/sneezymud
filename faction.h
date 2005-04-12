@@ -132,10 +132,8 @@ class TFaction {
   int getRelation(TFaction *);
   void setRelation(int, int);
   void setRelation(TFaction *, int);
-  const char * getName() {return (proper_name) ? proper_name : "(null)";}
-  const char * getShortName() {return (slang_name) ? slang_name : "(null)";}
-
-
+  const sstring getName() {return (proper_name) ? proper_name : "(null)";}
+  const sstring getShortName() {return (slang_name) ? slang_name : "(null)";}
 
   TFaction() {
     int i;

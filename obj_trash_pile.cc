@@ -182,8 +182,7 @@ void TTrashPile::overFlow()
 	    sstring(getName()).cap().c_str(), dirs_to_blank[dir]);
 
     sendrpf(COLOR_BASIC, rp, "An avalanch of trash cascades in from the %s.\n\r",
-	    dirs[rev_dir[dir]]);
-
+	    dirs[rev_dir[dir]].c_str());
 
     roomp->saveItems("");
     rp->saveItems("");
@@ -200,7 +199,11 @@ void TTrashPile::attractVermin()
   int count=0;
   TPathFinder path;
   
-  if(::number(0,9999) || index<3 || !roomp)
+  if(index<3 || !roomp)
+    return;
+
+  if(roomp->isRoomFlag(ROOM_PEACEFUL) || 
+     roomp->isRoomFlag(ROOM_NO_MOB))
     return;
 
   for(TThing *t=roomp->getStuff();t;t=t->nextThing){
@@ -273,6 +276,22 @@ void TTrashPile::attractVermin()
   
 }
 
+void TTrashPile::doDecay()
+{
+  TObj *o;
+  TThing *t2;
+
+  for(TThing *t=getStuff();t;t=t2){
+    t2=t->nextThing;
+    if((o=dynamic_cast<TObj *>(t)) && !::number(0,3599)){
+      o->addToStructPoints(-1);
+
+      if(o->getStructPoints() < 1)
+	delete o;
+    }
+  }
+}
+
 
 void TTrashPile::doMerge()
 {
@@ -296,10 +315,5 @@ void TTrashPile::doMerge()
       --(*pile);
       delete pile;
     }
-
   }
-
-
-
-
 }

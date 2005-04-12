@@ -13,7 +13,7 @@ int TCannon::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT d
 {
   TAmmo *ammo;
   TObj *bullet;
-  char  buf[256];
+  sstring buf;
   
   if (targ &&
       ch->checkPeacefulVictim("They are in a peaceful room. You can't seem to fire the gun.\n\r", targ))
@@ -141,8 +141,8 @@ int TCannon::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT d
 
     act("<Y>BANG!<1>  A deafening blast sounds as $n ignites $p.",
 	FALSE, ch, this, bullet, TO_ROOM);
-    sprintf(buf, "$n points $p %swards, and shoots $N out of it.",
-	    dirs[dir]);
+    buf = fmt("$n points $p %swards, and shoots $N out of it.") %
+      dirs[dir];
     act(buf, FALSE, ch, this, bullet, TO_ROOM);
 
     ch->dropSmoke(::number(5,15));
@@ -172,9 +172,6 @@ int TCannon::shootMeBow(TBeing *ch, TBeing *targ, unsigned int count, dirTypeT d
 
   return FALSE;
 }
-
-
-
 
 int task_cannon_load(TBeing *ch, cmdTypeT cmd, const char *, int pulse, TRoom *rp, TObj *o)
 {

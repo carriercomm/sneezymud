@@ -79,6 +79,9 @@ void TPerson::resetChar()
   desc->point_roll = 0;
   visionBonus = 0;
 
+  if(hasQuestBit(TOG_HAS_NIGHTVISION))
+    visionBonus+=2;
+
   if (getRace() == RACE_OGRE)
     setMaterial(MAT_OGRE_HIDE);
   else
@@ -1004,18 +1007,9 @@ void do_the_player_stuff(const char *name)
   if (strlen(name) > 8 && !strcmp(&name[strlen(name) - 8], ".strings"))
     return;
 
-  // skip drug data
-  if (strlen(name) > 6 && !strcmp(&name[strlen(name) - 6], ".drugs"))
-    return;
-
   // skip faction data
   if (strlen(name) > 6 && !strcmp(&name[strlen(name) - 8], ".faction"))
     return;
-
-  // skip title data
-  if (strlen(name) > 6 && !strcmp(&name[strlen(name) - 6], ".title"))
-    return;
-
 
   // skip wizpowers data if there was an error up above.
   if (strlen(name) > 9 && !strcmp(&name[strlen(name) - 9], ".wizpower")) {
@@ -1685,119 +1679,63 @@ bool TBeing::isLinkdead() const
 
 void TBeing::saveTitle()
 {
-  FILE *fp;
-  sstring buf;
+  TDatabase db(DB_SNEEZY);
   TPerson *tp;
 
   if(!(tp=dynamic_cast<TPerson *>(this)))
     return;
 
-  buf = fmt("player/%c/%s.title") % LOWER(name[0]) % sstring(name).lower();
-
-  if (!(fp = fopen(buf.c_str(), "w"))) {
-    vlogf(LOG_FILE, fmt("Unable to open file (%s) for saving title (%d)") %  
-	  buf % errno);
-    return;
-  }
-
-  fprintf(fp,"%s\n", tp->title);
-  
-  if (fclose(fp)) 
-      vlogf(LOG_FILE, fmt("Problem closing %s's saveTitle") %  name);
-
+  db.query("update player set title='%s' where id=%i", 
+	   tp->title, getPlayerID());
 }
 
 void TBeing::loadTitle()
 {
-  FILE *fp;
-  sstring buf;
-  char inbuf[1024];
+  TDatabase db(DB_SNEEZY);
   TPerson *tp;
 
   if(!(tp=dynamic_cast<TPerson *>(this)))
     return;
 
-  buf = fmt("player/%c/%s.title") % LOWER(name[0]) % sstring(name).lower();
-
-  if (!(fp = fopen(buf.c_str(), "r"))) {
-    //    vlogf(LOG_FILE, fmt("Unable to open file (%s) for loading title (%d)") %  buf % errno);
-    tp->setTitle(true);
-    return;
+  db.query("select title from player where id=%i",
+	   getPlayerID());
+  if(db.fetchRow()){
+    delete [] tp->title;
+    tp->title = mud_str_dup(db["title"]);
   }
-
-  if (fscanf(fp, "%[^\n]", inbuf) != 1){
-    vlogf(LOG_BUG, fmt("Bad data in drugs stat read (%s)") %  getName());
-    fclose(fp);
-    return;
-  }
-
-  delete [] tp->title;
-  tp->title = mud_str_dup(inbuf);
-
-  if (fclose(fp))
-    vlogf(LOG_FILE, fmt("Problem closing %s's loadTitle") %  name);
 }
 
 
 void TBeing::saveDrugStats()
 {
-  FILE *fp;
-  char buf[160];
-  int current_version = 1;
-  int i, found=0;
+  TDatabase db(DB_SNEEZY);
 
   if (!isPc() || !desc)
     return;
 
-  for(i=MIN_DRUG;i<MAX_DRUG;++i){
-    if(desc->drugs[i].total_consumed){
-      found=1;
-      break;
-    }
-  }
-  if(!found)
-    return;
 
-  sprintf(buf, "player/%c/%s.drugs", LOWER(name[0]), sstring(name).lower().c_str());
-
-  if (!(fp = fopen(buf, "w"))) {
-    vlogf(LOG_FILE, fmt("Unable to open file (%s) for saving drug stats. (%d)") %  buf % errno);
-    return;
-  }
-
-  fprintf(fp, "%u\n", 
-      current_version);
+  db.query("delete from drug_use where player_id=%i", getPlayerID());
   
-  for(i=MIN_DRUG;i<MAX_DRUG;++i){
+  for(int i=MIN_DRUG;i<MAX_DRUG;++i){
     if(desc->drugs[i].total_consumed){
-      fprintf(fp, "%u\n", i);
-      fprintf(fp, "%u %u %u %u %u %u\n", desc->drugs[i].first_use.seconds,
-	      desc->drugs[i].first_use.minutes, desc->drugs[i].first_use.hours,
-	      desc->drugs[i].first_use.day, desc->drugs[i].first_use.month,
-	      desc->drugs[i].first_use.year);
-      fprintf(fp, "%u %u %u %u %u %u\n", desc->drugs[i].last_use.seconds,
-	      desc->drugs[i].last_use.minutes, desc->drugs[i].last_use.hours,
-	      desc->drugs[i].last_use.day, desc->drugs[i].last_use.month,
-	      desc->drugs[i].last_use.year);
-      fprintf(fp, "%u %u\n", desc->drugs[i].total_consumed,
-	      desc->drugs[i].current_consumed);
+      db.query("insert into drug_use values (%i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %i)",
+	       i, getPlayerID(), desc->drugs[i].first_use.seconds,
+	       desc->drugs[i].first_use.minutes, desc->drugs[i].first_use.hours,
+	       desc->drugs[i].first_use.day, desc->drugs[i].first_use.month,
+	       desc->drugs[i].first_use.year, desc->drugs[i].last_use.seconds,
+	       desc->drugs[i].last_use.minutes, desc->drugs[i].last_use.hours,
+	       desc->drugs[i].last_use.day, desc->drugs[i].last_use.month,
+	       desc->drugs[i].last_use.year, desc->drugs[i].total_consumed,
+	       desc->drugs[i].current_consumed);
     }
   }
-
-
-  if (fclose(fp)) 
-      vlogf(LOG_FILE, fmt("Problem closing %s's saveDrugStats") %  name);
-
 }
 
 
 
 void TBeing::loadDrugStats()
 {
-  FILE *fp = NULL;
-  char buf[160];
-  int current_version;
-  unsigned int num1, num2, num3, num4, num5, num6;
+  TDatabase db(DB_SNEEZY);
   int i;
 
   if (!isPc() || !desc)
@@ -1821,60 +1759,25 @@ void TBeing::loadDrugStats()
   }
 
 
-  sprintf(buf, "player/%c/%s.drugs", LOWER(name[0]), sstring(name).lower().c_str());
+  db.query("select drug_id, first_use_sec,first_use_min,first_use_hour,first_use_day,first_use_mon,first_use_year,last_use_sec,last_use_min,last_use_hour,last_use_day,last_use_mon,last_use_year,total_consumed,current_consumed from drug_use where player_id=%i", getPlayerID());
 
-
-  if (!(fp = fopen(buf, "r"))) {
-    // file may not exist
-    return;
+  while(db.fetchRow()){
+    i=convertTo<int>(db["drug_id"]);
+    desc->drugs[i].first_use.seconds=convertTo<int>(db["first_use_sec"]);
+    desc->drugs[i].first_use.minutes=convertTo<int>(db["first_use_min"]);
+    desc->drugs[i].first_use.hours=convertTo<int>(db["first_use_hour"]);
+    desc->drugs[i].first_use.day=convertTo<int>(db["first_use_day"]);
+    desc->drugs[i].first_use.month=convertTo<int>(db["first_use_mon"]);
+    desc->drugs[i].first_use.year=convertTo<int>(db["first_use_year"]);
+    desc->drugs[i].last_use.seconds=convertTo<int>(db["last_use_sec"]);
+    desc->drugs[i].last_use.minutes=convertTo<int>(db["last_use_min"]);
+    desc->drugs[i].last_use.hours=convertTo<int>(db["last_use_hour"]);
+    desc->drugs[i].last_use.day=convertTo<int>(db["last_use_day"]);
+    desc->drugs[i].last_use.month=convertTo<int>(db["last_use_mon"]);
+    desc->drugs[i].last_use.year=convertTo<int>(db["last_use_year"]);
+    desc->drugs[i].total_consumed=convertTo<int>(db["total_consumed"]);
+    desc->drugs[i].current_consumed=convertTo<int>(db["current_consumed"]);
   }
-
-  if (fscanf(fp, "%d\n", 
-      &current_version) != 1) {
-    vlogf(LOG_BUG, fmt("Bad data in drugs stat read (%s)") %  getName());
-    fclose(fp);
-    return;
-  }
-
-  while (fscanf(fp, "%u\n", &i) == 1){
-    if (fscanf(fp, "%u %u %u %u %u %u\n", 
-	       &num1, &num2, &num3, &num4, &num5, &num6) != 6) {
-      vlogf(LOG_BUG, fmt("Bad data in drugs stat read (%s)") %  getName());
-      fclose(fp);
-      return;
-    }
-    desc->drugs[i].first_use.seconds=(byte)num1;
-    desc->drugs[i].first_use.minutes=(byte)num2;
-    desc->drugs[i].first_use.hours=(byte)num3;
-    desc->drugs[i].first_use.day=(byte)num4;
-    desc->drugs[i].first_use.month=(byte)num5;
-    desc->drugs[i].first_use.year=(sh_int)num6;
-
-    if (fscanf(fp, "%u %u %u %u %u %u\n", 
-	       &num1, &num2, &num3, &num4, &num5, &num6) != 6) {
-      vlogf(LOG_BUG, fmt("Bad data in drugs stat read (%s)") %  getName());
-      fclose(fp);
-      return;
-    }
-    desc->drugs[i].last_use.seconds=(byte)num1;
-    desc->drugs[i].last_use.minutes=(byte)num2;
-    desc->drugs[i].last_use.hours=(byte)num3;
-    desc->drugs[i].last_use.day=(byte)num4;
-    desc->drugs[i].last_use.month=(byte)num5;
-    desc->drugs[i].last_use.year=(sh_int)num6;
-
-    if (fscanf(fp, "%u %u\n", 
-	       &num1, &num2) != 2) {
-      vlogf(LOG_BUG, fmt("Bad data in drugs stat read (%s)") %  getName());
-      fclose(fp);
-      return;
-    }
-    desc->drugs[i].total_consumed=num1;
-    desc->drugs[i].current_consumed=num2;
-  }
-  
-
-  fclose(fp);
 }
 
 

@@ -82,7 +82,7 @@ extern const char * const editor_types_medit[];
 extern const sstring immunity_names[MAX_IMMUNES];
 extern const sstring extra_bits[];
 extern const sstring affected_bits[];
-extern const char * const dirs[];
+extern const sstring dirs[];
 extern const char * const dirs_to_leading[];
 extern const char * const dirs_to_blank[];
 extern const char * const connected_types[MAX_CON_STATUS];
@@ -109,7 +109,7 @@ extern const sstring door_types[];
 extern const sstring color_options[10];
 extern const sstring disc_names[];
 extern const char * const auto_name[MAX_AUTO];
-extern const char * const exits[];
+extern const sstring exits[];
 extern const sstring corpse_flags[MAX_CORPSE_FLAGS];
 extern const char * const illegalnames[];
 extern const sstring month_name[12];
@@ -437,6 +437,7 @@ extern void recvTextHandler(const char *);
 extern void mudRecvMessage();
 extern const sstring RandomWord();
 extern void calcBankInterest();
+extern void auctionUpdate();
 }
 
 // these needs C++ linkage to avoid conflict with functions in stdlib

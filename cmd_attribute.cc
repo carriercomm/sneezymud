@@ -453,7 +453,7 @@ static void showStatsTo(const Descriptor *d, const TBeing *ch, bool hidden_stuff
   return;
 }
 
-const char *statBonusDescr(int percent)
+const sstring statBonusDescr(int percent)
 {
   if (percent <= 80)
     return "a terrible";
@@ -490,8 +490,6 @@ const char *statBonusDescr(int percent)
   else
     return "an unknown";
 }
-
-
 
 void TBeing::doAttribute(const sstring &arg)
 {

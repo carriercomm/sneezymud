@@ -42,9 +42,9 @@ bool newsFileSorter::operator() (const newsFileList &x, const newsFileList &y) c
   return  (x.modTime > y.modTime);
 }
 
-void TBeing::doNews(const char *argument)
+void TBeing::doNews(const sstring &argument)
 {
-  char arg[MAX_INPUT_LENGTH];
+  sstring arg;
   one_argument(argument, arg);
 
   // check files mod times and see what has changed recently
@@ -216,7 +216,7 @@ void TBeing::doNews(const char *argument)
 
 #if 1
 
-  if(*arg){
+  if(!arg.empty()){
     ifstream news(NEWS_FILE);
     sstring s;
 

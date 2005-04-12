@@ -46,7 +46,7 @@ void TObj::lookObj(TBeing *ch, int bits) const
   ch->sendTo("That is not a container.\n\r");
 }
 
-void TThing::lookAtObj(TBeing *ch, const char *, showModeT x) const
+void TThing::lookAtObj(TBeing *ch, const sstring &, showModeT x) const
 {
   ch->showTo(this, x);        // Show no-description 
   ch->describeObject(this);

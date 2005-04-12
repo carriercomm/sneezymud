@@ -983,7 +983,7 @@ int antigravity(TBeing *caster, int, affectedData *aff, byte bKnown)
 {
   TThing *t;
   TBeing *vict = NULL;
-  char buf[80];
+  sstring buf;
   
   if (caster->bSuccess(bKnown, SPELL_ANTIGRAVITY)) {
 
@@ -1003,7 +1003,7 @@ int antigravity(TBeing *caster, int, affectedData *aff, byte bKnown)
         continue;
       if ((caster == vict) || (caster->inGroup(*vict))) {
         if (vict->isAffected(AFF_FLYING) || vict->isAffected(AFF_LEVITATING)) {
-          sprintf(buf, "%s is already affected by a flight spell of some sort!\n\r",vict->getName());
+          buf=fmt("%s is already affected by a flight spell of some sort!\n\r") % vict->getName();
 	  caster->sendTo(buf);
           caster->nothingHappens(SILENT_YES);
           continue;

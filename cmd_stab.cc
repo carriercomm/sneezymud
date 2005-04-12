@@ -542,10 +542,10 @@ static int stab(TBeing *thief, TBeing * victim)
   return TRUE;
 }
 
-int TBeing::doStab(const char * argument, TBeing *vict)
+int TBeing::doStab(const sstring &argument, TBeing *vict)
 {
   TBeing *victim;
-  char namebuf[256];
+  sstring namebuf=argument;
   int rc;
 
   if (!doesKnowSkill(SKILL_STABBING)) {
@@ -555,7 +555,6 @@ int TBeing::doStab(const char * argument, TBeing *vict)
   if (checkBusy()) {
     return FALSE;
   }
-  strcpy(namebuf, argument);
 
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, namebuf))) {

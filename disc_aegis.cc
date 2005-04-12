@@ -179,7 +179,7 @@ void cureBlindness(TBeing *c, TBeing *victim)
 
 int cureDisease(TBeing *caster, TBeing * victim, int, byte learn, spellNumT spell)
 {
-  char buf[256];
+  sstring buf;
   bool found = FALSE;
   diseaseTypeT disease = DISEASE_NULL;
   int s1 = 0, u1 = 0, mod;
@@ -226,28 +226,28 @@ int cureDisease(TBeing *caster, TBeing * victim, int, byte learn, spellNumT spel
         found = TRUE;
   
         if (::number(1,100) > mod && spell!=SKILL_WOHLIN) {
-          sprintf(buf, "$d fails to hear your plea to cure %s.",
-                 DiseaseInfo[disease].name);
+          buf=fmt("$d fails to hear your plea to cure %s.") %
+                 DiseaseInfo[disease].name;
           act(buf, FALSE, caster, 0, 0, TO_CHAR);
-          sprintf(buf, "$d fails to hear $s pleas.");
+          buf="$d fails to hear $s pleas.";
           act(buf, FALSE, caster, 0, 0, TO_ROOM);
         } else {
           if (caster == victim) {
-            sprintf(buf, "You remove %s inflicting you.", 
-               DiseaseInfo[disease].name);
+            buf=fmt("You remove %s inflicting you.") %
+               DiseaseInfo[disease].name;
             act(buf, FALSE, caster, 0, 0, TO_CHAR);
-            sprintf(buf, "$n removes %s inflicting $m.", 
-                 DiseaseInfo[disease].name);
+            buf=fmt("$n removes %s inflicting $m.") %
+                 DiseaseInfo[disease].name;
             act(buf, FALSE, caster, 0, 0, TO_ROOM);
           } else {
-            sprintf(buf, "You remove %s inflicting $N.", 
-                 DiseaseInfo[disease].name);
+            buf=fmt("You remove %s inflicting $N.") %
+                 DiseaseInfo[disease].name;
             act(buf, FALSE, caster, 0, victim, TO_CHAR);
-            sprintf(buf, "$n removes %s inflicting you.", 
-                 DiseaseInfo[disease].name);
+            buf=fmt("$n removes %s inflicting you.") %
+                 DiseaseInfo[disease].name;
             act(buf, FALSE, caster, 0, victim, TO_VICT);
-            sprintf(buf, "$n removes %s inflicting $N.", 
-                 DiseaseInfo[disease].name);
+            buf=fmt("$n removes %s inflicting $N.") %
+                 DiseaseInfo[disease].name;
             act(buf, FALSE, caster, 0, victim, TO_NOTVICT);
           }
           victim->diseaseFrom(disease);

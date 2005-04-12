@@ -268,13 +268,11 @@ static int spin(TBeing *caster, TBeing *victim)
   return TRUE;
 }
 
-int TBeing::doSpin(const char *argument, TBeing *vict)
+int TBeing::doSpin(const sstring &argument, TBeing *vict)
 {
   int rc = 0, learning = 0;
   TBeing *victim;
-  char name_buf[256];
-  
-  strcpy(name_buf, argument);
+  sstring name_buf=argument;
   
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, name_buf))) {

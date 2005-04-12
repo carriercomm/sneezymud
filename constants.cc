@@ -71,7 +71,7 @@ const int TrapDir[] =
 };
 
 TTerrainInfo *TerrainInfo[MAX_SECTOR_TYPES];
-TTerrainInfo::TTerrainInfo(int m, int t, int hu, int th, int dr, int h, int hum, const char * const n) :
+TTerrainInfo::TTerrainInfo(int m, int t, int hu, int th, int dr, int h, int hum, const sstring &n) :
   movement(m),
   thickness(t),
   hunger(hu),
@@ -197,7 +197,7 @@ const sstring scandirs[] =
   "\n"
 };
 
-const char * const dirs_to_leading[] =
+const sstring dirs_to_leading[] =
 {
   "to the north",
   "to the east",
@@ -211,7 +211,7 @@ const char * const dirs_to_leading[] =
   "to the southwest"
 };
 
-const char * const dirs_to_blank[] =
+const sstring dirs_to_blank[] =
 {
   "to the north",
   "to the east",
@@ -1931,7 +1931,7 @@ const sstring corpse_flags[MAX_CORPSE_FLAGS] =
   "No-Skinning",
 };
 
-const char * const deities[MAX_DEITIES] =
+const sstring deities[MAX_DEITIES] =
 {
   "none",
   "Mezan, the father",
@@ -1951,7 +1951,7 @@ const char * const deities[MAX_DEITIES] =
   "Salurel, the proud",
 };
 
-const char *shelldesc [] =
+const sstring shelldesc [] =
 {
   "None",                       // 0
   "10mm pistol",                // 1
@@ -1974,7 +1974,7 @@ const char *shelldesc [] =
   "cannon ball",                // 18
 };
 
-const char *shellkeyword [] = 
+const sstring shellkeyword [] = 
 {
   "None",                       // 0
   "10mmPistol",                 // 1

@@ -467,7 +467,7 @@ int TBeing::doAction(const sstring & argument, cmdTypeT cmd)
   return FALSE;
 }
 
-void TBeing::doInsult(const char *argument)
+void TBeing::doInsult(const sstring &argument)
 {
   char buf[100];
   char arg[MAX_INPUT_LENGTH];
@@ -514,7 +514,7 @@ void TBeing::doInsult(const char *argument)
     sendTo("Sure you don't want to insult everybody.\n\r");
 }
 
-void TBeing::doScratch(const char *argument)
+void TBeing::doScratch(const sstring &argument)
 {
   char arg[256];
 

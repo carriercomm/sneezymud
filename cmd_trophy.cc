@@ -101,7 +101,7 @@ float TTrophy::getExpModVal(float count, int mobvnum)
 }
 
 
-const char *TTrophy::getExpModDescr(float count, int mobvnum)
+const sstring TTrophy::getExpModDescr(float count, int mobvnum)
 {
   float f=getExpModVal(count, mobvnum);
 

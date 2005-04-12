@@ -235,7 +235,7 @@ void TBeing::doTan()
 
 // Jesus
 
-void TThing::butcherMe(TBeing *ch, const char *arg)
+void TThing::butcherMe(TBeing *ch, const sstring &arg)
 {
   TObj *obj;
   TBaseCorpse *corpse;
@@ -293,7 +293,7 @@ void TThing::butcherMe(TBeing *ch, const char *arg)
   start_task(ch, corpse, NULL, TASK_BUTCHER, "", pulse, ch->in_room, 1, 0, 40);
 }
 
-void TTool::butcherMe(TBeing *ch, const char *arg)
+void TTool::butcherMe(TBeing *ch, const sstring &arg)
 {
   TObj *obj;
   TBaseCorpse *corpse;
@@ -336,7 +336,7 @@ void TTool::butcherMe(TBeing *ch, const char *arg)
   start_task(ch, corpse, NULL, TASK_BUTCHER, "", pulse, ch->in_room, 1, 0, 40);
 }
 
-void TBeing::doButcher(const char *arg)
+void TBeing::doButcher(const sstring &arg)
 {
   TThing *tobj;
 

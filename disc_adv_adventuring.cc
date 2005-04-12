@@ -452,7 +452,7 @@ int determineSkinningItem(TBaseCorpse * corpse, int * amount, char * msg, char *
   return num;
 }
 
-void TThing::skinMe(TBeing *ch, const char *arg)
+void TThing::skinMe(TBeing *ch, const sstring &arg)
 {
   TObj *obj;
   TBaseCorpse *corpse;
@@ -517,7 +517,7 @@ void TThing::skinMe(TBeing *ch, const char *arg)
   start_task(ch, corpse, NULL, TASK_SKINNING, "", skin_pulses, ch->in_room, 1, 0, 40);
 }
 
-void TTool::skinMe(TBeing *ch, const char *arg)
+void TTool::skinMe(TBeing *ch, const sstring &arg)
 {
   TObj *obj;
   TBaseCorpse *corpse;
@@ -566,7 +566,7 @@ void TTool::skinMe(TBeing *ch, const char *arg)
   start_task(ch, corpse, NULL, TASK_SKINNING, "", skin_pulses, ch->in_room, 1, 0, 40);
 }
 
-void TBeing::doSkin(const char *arg)
+void TBeing::doSkin(const sstring &arg)
 {
   TThing *tobj;
 
@@ -886,7 +886,7 @@ int TDrinkCon::divineMe(TBeing *caster, int, byte bKnown)
   }
 }
 
-void TBeing::doDivine(const char *arg)
+void TBeing::doDivine(const sstring &arg)
 {
   TThing *obj;
   char arg2[256];

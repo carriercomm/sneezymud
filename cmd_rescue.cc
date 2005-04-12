@@ -112,11 +112,11 @@ static int rescue(TBeing * caster, TBeing * victim, spellNumT skill)
   return TRUE;
 }
 
-int TBeing::doRescue(const char *argument)
+int TBeing::doRescue(const sstring &argument)
 {
   int rc;
   TBeing *victim = NULL;
-  char name_buf[240];
+  sstring name_buf;
 
   spellNumT skill = getSkillNum(SKILL_RESCUE);
 
@@ -129,7 +129,8 @@ int TBeing::doRescue(const char *argument)
   }
 
   // Default to the first PC group member who is currently tanking, or the first mobile group member if no PC is.
-  if (isAffected(AFF_GROUP) && (!argument || !*argument) && (followers || (master && master->followers))) {
+  if (isAffected(AFF_GROUP) && argument.empty() && 
+      (followers || (master && master->followers))) {
     followData * tFData    = (master ? master->followers : followers);
     TBeing     * tRescueMe = NULL,
                * tMaybeMe  = NULL;
@@ -151,7 +152,7 @@ int TBeing::doRescue(const char *argument)
 
     victim = tRescueMe; // Since this is NULL'ed above we are safe doing this without a check.
   } else
-    strcpy(name_buf, argument);
+    name_buf=argument;
 
   if (!victim)
     if (!(victim = get_char_room_vis(this, name_buf))) {

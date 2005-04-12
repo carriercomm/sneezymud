@@ -58,7 +58,7 @@ static const char *learn_name(byte num)
     return "very fast";
 }
 
-void TBeing::displayHelpFile(char *helppath, char *namebuf){
+void TBeing::displayHelpFile(sstring &helppath, sstring &namebuf){
   int j;
   struct stat timestat;
   char timebuf[1024];

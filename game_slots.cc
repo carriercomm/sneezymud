@@ -116,7 +116,7 @@ bool TBeing::checkSlotPlayer() const
   return FALSE;
 }
 
-void TBeing::doPlay(const char *arg)
+void TBeing::doPlay(const sstring &arg)
 {
   char game[256], options[256];
   Descriptor *d;

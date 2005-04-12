@@ -372,7 +372,7 @@ int DragonBreath(TBeing *, cmdTypeT cmd, const char *, TMonster *myself, TObj *)
   return TRUE;
 }
 
-void TBeing::doBreath(const char *argument)
+void TBeing::doBreath(const sstring &argument)
 {
   char buf[256];
   TBeing *vict;

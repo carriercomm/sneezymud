@@ -90,7 +90,7 @@ void doSaveMOEdit(TBeing *ch, const char *tArg)
   }
 }
 
-void TBeing::doSave(silentTypeT silent, const char *tArg)
+void TBeing::doSave(silentTypeT silent, const sstring &tArg)
 {
   objCost  tCost;
 
@@ -107,7 +107,7 @@ void TBeing::doSave(silentTypeT silent, const char *tArg)
 #endif
 
   if (isImmortal()) {
-    if (!tArg || !*tArg) {
+    if (tArg.empty()){
       wizFileSave();
 
       if (!IS_SET(desc->account->flags, ACCOUNT_IMMORTAL)) {
@@ -116,7 +116,7 @@ void TBeing::doSave(silentTypeT silent, const char *tArg)
         desc->saveAccount();
       }
     } else {
-      doSaveMOEdit(this, tArg);
+      doSaveMOEdit(this, tArg.c_str());
       return;
     }
   }

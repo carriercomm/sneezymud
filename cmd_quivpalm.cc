@@ -116,18 +116,16 @@ static int quiveringPalm(TBeing *c, TBeing *v)
   return TRUE;
 }
 
-int TBeing::doQuiveringPalm(const char *arg, TBeing *vict)
+int TBeing::doQuiveringPalm(const sstring &arg, TBeing *vict)
 {
   TBeing *victim;
-  char v_name[MAX_INPUT_LENGTH];
+  sstring v_name=arg;
   int rc;
 
   if (!doesKnowSkill(SKILL_QUIV_PALM)) {
     sendTo("You don't know the secret of quivering palm.\n\r");
     return FALSE;
   }
-
-  strcpy(v_name, arg);
 
   if (!(victim = vict)) {
     if (!(victim = get_char_room_vis(this, v_name))) {

@@ -286,12 +286,13 @@ bool getall(const char *name, char *newname)
   return TRUE;
 }
 
-int getabunch(const char *name, char *newname)
+int getabunch(const sstring &name, sstring &newname)
 {
   int num = 0;
   char tmpname[80] = "\0";
+  unsigned int i, j;
 
-  sscanf(name, "%d*%s", &num, tmpname);
+  sscanf(name.c_str(), "%d*%s", &num, tmpname);
   if (tmpname[0] == '\0')
     return FALSE;
   if (num < 1)
@@ -299,12 +300,10 @@ int getabunch(const char *name, char *newname)
   if (num > 1000)
     num = 1000;
 
-  while (*name != '*')
-    name++;
+  for(i=0;i<name.length() && name[i] != '*';++i);
+  ++i;
 
-  name++;
-
-  for (; (*newname = *name); name++, newname++);
+  for (j=0; (newname[j] = name[i]); i++, j++);
 
   return (num);
 }
@@ -1096,7 +1095,7 @@ bool TBeing::canGet(const TThing *t, silentTypeT silent) const
 bool TObj::canGetMe(const TBeing *ch, silentTypeT silent) const
 {
   // sanity check
-  if (!shortDescr) {
+  if (shortDescr.empty()) {
     vlogf(LOG_BUG, "!shortDescr for obj in canGetMe");
     return false;
   }
@@ -1642,11 +1641,11 @@ void TBeing::addToMoney(int money, moneyTypeT type)
         reconcileHelp(NULL, -money * TITHE_FACTOR);
         break;
       case GOLD_GAMBLE:
-	db.query("select 1 from gamblers where getPlayerName(player_id)='%s'", getName());
+	db.query("select 1 from gamblers where getPlayerName(player_id)='%s'", getName().c_str());
 	if(!db.fetchRow()){
-	  db.query("insert into gamblers values (getPlayerID('%s'), %i)", getName(), money);
+	  db.query("insert into gamblers values (getPlayerID('%s'), %i)", getName().c_str(), money);
 	} else {
-	  db.query("update gamblers set money=money+%i where getPlayerName(player_id)='%s'", money, getName());
+	  db.query("update gamblers set money=money+%i where getPlayerName(player_id)='%s'", money, getName().c_str());
 	}
 	// fall through
       case GOLD_REPAIR:
@@ -1693,7 +1692,7 @@ bool TBeing::isSimilar(const TThing *t) const
      !affected && !tb->affected &&
      (tb->fight() == fight())) {
      
-     if (tb->name && name) {
+     if (!tb->name.empty() && !name.empty()) {
        if (is_exact_name(tb->name, name)) {
           return TRUE;
        }
@@ -1727,10 +1726,10 @@ bool TObj::isSimilar(const TThing *t) const
 
   if (number != obj->number)
     return false;
-  if (!getDescr() || !obj->getDescr() ||
-      strcmp(getDescr(), obj->getDescr()))
+  if (getDescr().empty() || obj->getDescr().empty() ||
+      getDescr()==obj->getDescr())
     return false;
-  if (!name || !obj->name ||
+  if (name.empty() || obj->name.empty() ||
        !is_exact_name(name, obj->name))
     return false;
 

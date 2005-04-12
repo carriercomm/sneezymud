@@ -45,8 +45,9 @@ void TFactionInfo::addToMoney(int money){
 
 
 // open recruitment factions in the office are taken care of by the registrar
-void TBeing::doJoin(const char * args) {
-  char buf[256];
+void TBeing::doJoin(const sstring &args) 
+{
+  sstring buf;
   TFaction *f = NULL;
 
   if(!TestCode5) {
@@ -61,25 +62,27 @@ void TBeing::doJoin(const char * args) {
     return;
   }
   if(faction.whichfaction) {
-    sprintf(buf, "You are already a member of %s, you may not join a second faction.\n\r", f->getName());
+    buf=fmt("You are already a member of %s, you may not join a second faction.\n\r") % f->getName();
     sendTo(COLOR_BASIC, buf);
     return;
   }
   if(recentlyDefected()) {
-    sprintf(buf, "You recently defected from your faction, you'll have to wait to join another.");
+    buf="You recently defected from your faction, you'll have to wait to join another.";
      sendTo(buf);
     return;
   }
 
   if(!hasOffer(f)) {
-    sprintf(buf,"%s has not extended a recruitment offer to you.\n\r", f->getName());
+    buf=fmt("%s has not extended a recruitment offer to you.\n\r") %
+      f->getName();
     sendTo(COLOR_BASIC, buf);
     if(IS_SET(f->flags, FACT_OPEN_RECRUITMENT)) {
       sendTo("However, you may join at the Grimhaven Bureau of Faction Affairs.\n\r");
     }
     return;
   }
-  sprintf(buf,"You have accepted %s's offer and joined their faction!\n\r", f->getName());
+  buf=fmt("You have accepted %s's offer and joined their faction!\n\r") %
+    f->getName();
   faction.whichfaction = f->ID;
   faction.rank = f->ranks - 1; // this starts them off as the lowest level rank
   sendTo(COLOR_BASIC, buf);
@@ -89,20 +92,20 @@ void TBeing::doJoin(const char * args) {
 }
 
 
-void TBeing::doDefect(const char * args) {
+void TBeing::doDefect(const sstring &args) {
   if(!TestCode5) {
     sendTo("The new faction system is currently disabled.  You may not defect now.\n\r");
     return;
   }
 
-  char buf[80];
+  sstring buf;
   if(!faction.whichfaction) {
     sendTo("You are not a member of any faction - no need to defect.\n\r");
     return;
   }
   sscanf(args, "%s", buf);
-  if(!strcmp(buf, "yes")) {
-    sprintf(buf, "You have defected from %s.\n\r", newfaction()->getName());
+  if(buf=="yes") {
+    buf=fmt("You have defected from %s.\n\r") % newfaction()->getName();
     sendTo(COLOR_BASIC, buf);
     vlogf(LOG_FACT, fmt("%s defected from %s.") %  getName() % newfaction()->getName());
     faction.whichfaction = 0;
@@ -115,7 +118,7 @@ void TBeing::doDefect(const char * args) {
   return;
 }  
 
-void TBeing::doRecruit(const char * args) {
+void TBeing::doRecruit(const sstring &args) {
   if(!TestCode5) {
     sendTo("The new faction system is currently disabled.  You may not recruit now.\n\r");
     return;
@@ -152,14 +155,15 @@ void TBeing::doRecruit(const char * args) {
     sendTo("Your faction has already extended an offer of recruitment to them.\n\r");
     return;
   }
-  char buf[256];
-  sprintf(buf, "You extend an offer of recruitment to %s.\n\r", targ->getName());
+
+  sstring buf;
+  buf=fmt("You extend an offer of recruitment to %s.\n\r") % targ->getName();
   sendTo(buf);
   
-  sprintf(buf, "<o>%s <o>has extended you an offer of recruitment into %s<o>.<1>\n\r",
-	  this->getName(), newfaction()->getName());
+  buf=fmt("<o>%s <o>has extended you an offer of recruitment into %s<o>.<1>\n\r") %
+    this->getName() % newfaction()->getName();
   targ->sendTo(COLOR_BASIC,buf);
-  sprintf(buf, "You may accept this offer by typing 'join <faction>'. It will expire in one day.\n\r");
+  buf="You may accept this offer by typing 'join <faction>'. It will expire in one day.\n\r";
   targ->sendTo(buf);
   targ->addOffer(newfaction());
 
@@ -222,7 +226,7 @@ void TBeing::setDefected() {
 
 
 
-void TBeing::add_faction(const char * args) {
+void TBeing::add_faction(const sstring &args) {
   int idnum;
   idnum = get_unused_ID();
   TFaction *f = new TFaction;
@@ -232,9 +236,7 @@ void TBeing::add_faction(const char * args) {
     return; // no room for more factions
   }
 
-  if (f->keywords)
-    delete [] f->keywords;
-  f->keywords = mud_str_dup(args);
+  f->keywords = args;
   f->ID = idnum;
 
   int i;
@@ -246,21 +248,15 @@ void TBeing::add_faction(const char * args) {
 	f->permissions[i] = 
 	  (PERM_RECRUIT | PERM_PROMOTE | PERM_TREASURER | PERM_EDIT | PERM_LOCK |
 	   PERM_AMBASSADOR | PERM_SCRIBE);
-        if (f->rank[i])
-          delete [] f->rank[i];
-        f->rank[i] = mud_str_dup("Leader");
+        f->rank[i] = "Leader";
 	break;
       case 1:
         f->permissions[i] = (PERM_RECRUIT);
-	if (f->rank[i])
-	  delete [] f->rank[i];
-	f->rank[i] = mud_str_dup("Member");
+	f->rank[i] = "Member";
 	break;
       case 2:
 	f->permissions[i] = 0;
-        if (f->rank[i])
-          delete [] f->rank[i];
-        f->rank[i] = mud_str_dup("New Recruit");
+        f->rank[i] = "New Recruit";
 	break;
       default:
 	f->permissions[i] = 0;
@@ -280,9 +276,10 @@ void TBeing::add_faction(const char * args) {
   f->power = 0.0;
   f->patron = deityTypeT(0);
   faction_table.push_back(f);
-  char buf[128];
+  sstring buf;
   if (isImmortal()) {
-    sprintf(buf,"Faction: '%s' added with unique ID #%d\n\r", f->keywords, f->ID);
+    buf=fmt("Faction: '%s' added with unique ID #%d\n\r") % f->keywords %
+      f->ID;
     sendTo(buf);
   } else {
     faction.whichfaction = f->ID;
@@ -297,7 +294,7 @@ void TBeing::add_faction(const char * args) {
 
 
 bool TBeing::canCreateFaction(bool silent = false) {
-  char buf[256];
+  sstring buf;
   if(isImmortal())
     return TRUE;
   if(inRoom() != ROOM_FACTION_BUREAU) {
@@ -308,7 +305,7 @@ bool TBeing::canCreateFaction(bool silent = false) {
   }
   if(faction.whichfaction) {
     if (!silent) {
-      sprintf(buf, "You are already a member of %s.\n\r", newfaction()->getName());
+      buf=fmt("You are already a member of %s.\n\r") % newfaction()->getName();
       sendTo(COLOR_BASIC, buf);
       sendTo("You must first disband from that faction before you may create another.\n\r");
     }      
@@ -335,7 +332,7 @@ bool TBeing::canCreateFaction(bool silent = false) {
 int factionRegistrar(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
 {
   char field[80], values[80];
-  char buf[256];
+  sstring buf;
   char tell[256];
 
   strcpy(values, "");
@@ -381,77 +378,77 @@ int factionRegistrar(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself
 	return TRUE;
       }
       if(ch->faction.whichfaction) {
-	sprintf(buf, "Hmmmn.  %s, it appears you are already a member of a faction.", ch->getName());
+	buf=fmt("Hmmmn.  %s, it appears you are already a member of a faction.") % ch->getName();
 	myself->doSay(buf);
 	myself->doAction("", CMD_SHAKE);
-	sprintf(buf, "You must first defect from your current faction before creating another.");
+	buf="You must first defect from your current faction before creating another.";
 	myself->doSay(buf);
-	sprintf(buf, "There is also a twenty-four hour wait period after you disband.");
+	buf="There is also a twenty-four hour wait period after you disband.";
 	myself->doSay(buf);
-	sprintf(buf, "After that, you may come back and create a faction.");
+	buf="After that, you may come back and create a faction.";
 	myself->doAction(fname(ch->name), CMD_SMILE);
 	
 	return TRUE;
       }
       if(ch->recentlyDefected()) {
 	myself->doAction("", CMD_FROWN);
-	sprintf(buf, "You recently defected from your faction, and wont be able to create another.");
+	buf="You recently defected from your faction, and wont be able to create another.";
 	myself->doSay(buf);
-	sprintf(buf, "Well, at least until the waiting period is over.");
+	buf="Well, at least until the waiting period is over.";
 	myself->doSay(buf);
 	//	myself->doActiom("", CMD_SHRUG);
 	return TRUE;
       }
       if(!ch->hasQuestBit(TOG_HAS_PAID_FACT_FEE)) {
 	myself->doAction("", CMD_FROWN);
-	sprintf(buf, "It appears you have not paid the factions registration fee.");
+	buf="It appears you have not paid the factions registration fee.";
 	myself->doSay(buf);
-	sprintf(buf, "The fee is 100000 talens, payable to me.");
+	buf="The fee is 100000 talens, payable to me.";
 	myself->doSay(buf);
 	
 	return TRUE;
       }
       if(ch->hasQuestBit(TOG_HAS_CREATED_FACTION)) {
 	myself->doAction("", CMD_ARCH);
-	sprintf(buf, "My records show that you have already created a faction..");
+	buf="My records show that you have already created a faction..";
 	myself->doSay(buf);
-	sprintf(buf, "The King has forbidden us to let players create more than one faction.");
+	buf="The King has forbidden us to let players create more than one faction.";
 	myself->doSay(buf);
 	
 	return TRUE;
       }
       
     }
-    sprintf(buf, "Well, it appears you check out.");
+    buf="Well, it appears you check out.";
     myself->doSay(buf);
     myself->doAction("", CMD_SMILE);
-    sprintf(buf, "Lets get started on the forms.");
+    buf="Lets get started on the forms.";
     myself->doSay(buf);
     act("$n gets a sheet of paper and a pen from the desk.",
 	FALSE, myself, 0, 0, TO_ROOM);
-    sprintf(buf, "The only thing I need from you are the keywords for your new faction.");
+    buf="The only thing I need from you are the keywords for your new faction.";
     myself->doSay(buf);
-    sprintf(buf, "Keywords will be used to identify your faction, and can be changed later.");
+    buf="Keywords will be used to identify your faction, and can be changed later.";
     myself->doSay(buf);
-    sprintf(buf, "What do you want the keywords for your new faction to be?");
+    buf="What do you want the keywords for your new faction to be?";
     myself->doSay(buf);
     ch->doSay(values);
     ch->removeOffers();
-    sprintf(buf, "Excellent.");
+    buf="Excellent.";
     myself->doSay(buf);
     act("$n jots down a few notes on $s paper.",
 	FALSE, myself, 0, 0, TO_ROOM);
     ch->add_faction(values);
-    sprintf(buf, "Ok, I've created your faction with those keywords, and added you to the roster.");
+    buf="Ok, I've created your faction with those keywords, and added you to the roster.";
     myself->doSay(buf);
-    sprintf(buf, "Naturally, you have been given the top spot.");
+    buf="Naturally, you have been given the top spot.";
     myself->doSay(buf);
     act("$n carefully places the paper into a folder, and files it away in one of the cabinets.",
 	FALSE, myself, 0, 0, TO_ROOM);
-    sprintf(buf, "The rest is up to you.  I suggest you read up on HELP FEDIT and HELP FACTIONS.");
+    buf="The rest is up to you.  I suggest you read up on HELP FEDIT and HELP FACTIONS.";
     myself->doSay(buf);
     myself->doAction(fname(ch->name), CMD_SHAKE);
-    sprintf(buf, "Good luck with your new faction.");
+    buf="Good luck with your new faction.";
     myself->doSay(buf);
     ch->saveFactionStats();
     return TRUE;
@@ -466,7 +463,7 @@ int factionRegistrar(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself
     
     
     TFaction *f = NULL;
-    sprintf(buf, "You wish to join a faction?  Lets see....");
+    buf="You wish to join a faction?  Lets see....";
     myself->doSay(buf);
     act("$n gets a folder from a filing cabinet along the wall.", 0, myself, 0, 0, TO_ROOM);
     act("$n quickly scans a few of the pages from the file.", 0, myself, 0, 0, TO_ROOM);
@@ -502,13 +499,14 @@ int factionRegistrar(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself
       }
       
     }
-    sprintf(buf, "Well it looks like everything checks out, lets add you to the roster.");
+    buf="Well it looks like everything checks out, lets add you to the roster.";
     myself->doSay(buf);
     act("$n carefully places the paper into a folder, and files it away in one of the cabinets.",
 	FALSE, myself, 0, 0, TO_ROOM);
-    sprintf(buf, "Congratulations, your new title is %s of the %s.", f->rank[f->ranks - 1], f->getName());
+    buf=fmt("Congratulations, your new title is %s of the %s.") % 
+      f->rank[f->ranks - 1] % f->getName();
     if (IS_SET(f->flags, FACT_HIDDEN)) {
-      sprintf(tell, "%s %s", fname(ch->name).c_str(), buf);
+      sprintf(tell, "%s %s", fname(ch->name).c_str(), buf.c_str());
       myself->doWhisper(tell);
     } else {
       myself->doSay(buf);

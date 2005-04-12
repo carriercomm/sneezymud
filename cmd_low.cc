@@ -672,15 +672,15 @@ void TMonster::checkMobStats(tinyfileTypeT forReal)
   int sumstat;
   char *s;
 
-  if (getLongDesc() && (strlen(getLongDesc()) > 2) &&
-      ((getLongDesc()[strlen(getLongDesc()) - 1] != '\r') ||
-      (getLongDesc()[strlen(getLongDesc()) - 2] != '\n'))) {
+  if (!getLongDesc().empty() && (getLongDesc().length() > 2) &&
+      ((getLongDesc()[getLongDesc().length() - 1] != '\r') ||
+      (getLongDesc()[getLongDesc().length() - 2] != '\n'))) {
     vlogf(LOG_LOW, fmt("%s (%d) has bad format of longDescr") % 
           getName() % mobVnum());
   }
-  if (getDescr() && (strlen(getDescr()) > 2) &&
-      ((getDescr()[strlen(getDescr()) - 1] != '\r') ||
-      (getDescr()[strlen(getDescr()) - 2] != '\n'))) {
+  if (!getDescr().empty() && (getDescr().length() > 2) &&
+      ((getDescr()[getDescr().length() - 1] != '\r') ||
+      (getDescr()[getDescr().length() - 2] != '\n'))) {
     vlogf(LOG_LOW, fmt("%s (%d) has bad format of descr") % 
           getName() % mobVnum());
   }
@@ -809,9 +809,9 @@ void TObj::checkObjStats()
   int i;
   char *s;
 
-  if (getDescr() && (strlen(getDescr()) > 2) &&
-      (getDescr()[strlen(getDescr()) - 1] == '\r') &&
-      (getDescr()[strlen(getDescr()) - 2] == '\n')) {
+  if (getDescr() && (getDescr().length() > 2) &&
+      (getDescr()[getDescr().length() - 1] == '\r') &&
+      (getDescr()[getDescr().length() - 2] == '\n')) {
     vlogf(LOG_LOW, fmt("%s (%d) has bad format of longDescr") % 
           getName() % objVnum());
   }
@@ -1538,7 +1538,7 @@ void TBeing::lowTasks(const sstring &oarg)
 
 }
 
-void TBeing::lowMobs(const char *arg)
+void TBeing::lowMobs(const sstring &arg)
 {
   TMonster *mob;
   char namebuf2[256],buf2[255];

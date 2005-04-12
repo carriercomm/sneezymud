@@ -64,6 +64,5 @@ const unsigned int FIND_ROOM_EXTRA    =(1<<7);
 extern TThing *searchLinkedListVis(const TBeing *ch, sstring name, TThing *list, int *num = NULL, thingTypeT x = TYPETHING);
 
 extern TThing *searchLinkedList(const sstring &name, TThing *list, thingTypeT x = TYPETHING);
-extern TThing *searchLinkedList(const sstring & name, TThing *list, thingTypeT x = TYPETHING);
 
 #endif

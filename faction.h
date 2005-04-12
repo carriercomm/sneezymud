@@ -132,8 +132,8 @@ class TFaction {
   int getRelation(TFaction *);
   void setRelation(int, int);
   void setRelation(TFaction *, int);
-  const sstring getName() {return (proper_name) ? proper_name : "(null)";}
-  const sstring getShortName() {return (slang_name) ? slang_name : "(null)";}
+  const sstring getName() {return (!proper_name.empty()) ? proper_name : "(null)";}
+  const sstring getShortName() {return (!slang_name.empty()) ? slang_name : "(null)";}
 
   TFaction() {
     int i;
@@ -148,21 +148,7 @@ class TFaction {
     }
   }
   ~TFaction() {
-    int i;
     relations.clear();
-    if (proper_name)
-      delete [] proper_name;
-    if (slang_name)
-      delete [] slang_name;
-    if (keywords)
-      delete [] keywords;
-    if (password)
-      delete [] password;
-
-    for(i = 0; i < NUM_MAX_RANK; i++) {
-      if (rank[i])
-	delete [] rank[i];
-    }
   }
 };
 
@@ -195,11 +181,6 @@ class TFactionInfo {
       leader[i] = NULL;
   }
   ~TFactionInfo() {
-    int i;
-    delete [] faction_name;
-    delete [] faction_password;
-    for (i = 0; i < FACT_LEADER_SLOTS; i++)
-      delete [] leader[i];
   }
 };
 

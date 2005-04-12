@@ -1014,9 +1014,9 @@ class TBeing : public TThing {
     virtual void show_me_mult_to_char(TBeing *, showModeT, unsigned int) const;
     virtual void show_me_to_char(TBeing *, showModeT) const;
 
-    virtual const char *hshr() const;
-    virtual const char *hssh() const;
-    virtual const char *hmhr() const;
+    virtual const sstring hshr() const;
+    virtual const sstring hssh() const;
+    virtual const sstring hmhr() const;
 
     bool isExtraPlanar() const;
     void setRacialStuff();

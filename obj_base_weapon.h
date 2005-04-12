@@ -27,14 +27,14 @@ class TBaseWeapon : public TObj {
     virtual void applyPoison(TBeing *);
     virtual void setPoison(liqTypeT);
     virtual liqTypeT getPoison() const { return poison; }
-    virtual int editAverageMe(TBeing *, const char *);
+    virtual int editAverageMe(TBeing *, const sstring &);
     virtual double baseDamage() const;
     virtual int swungObjectDamage(const TBeing *, const TBeing *) const;
     virtual void lowCheck();
     virtual sstring showModifier(showModeT, const TBeing *) const;
     virtual void divinateMe(TBeing *) const;
     virtual int damageMe(TBeing *, TBeing *, wearSlotT);
-    virtual void changeBaseWeaponValue1(TBeing *, const char *, editorEnterTypeT);
+    virtual void changeBaseWeaponValue1(TBeing *, const sstring &, editorEnterTypeT);
     virtual int sharpenerValueMe(const TBeing *, TMonster *) const;
     virtual int sharpenerGiveMe(TBeing *,TMonster *);
     virtual void sharpenMe(TBeing *, TTool *);
@@ -57,7 +57,7 @@ class TBaseWeapon : public TObj {
     virtual void specializationCheck(TBeing *, float *);
     virtual void descMaxStruct(const TBeing *, int) const;
     virtual int expelPrice(const TBeing *, int) const;
-    virtual int wieldMe(TBeing *, char *);
+    virtual int wieldMe(TBeing *, sstring &);
     virtual void curseMe();
     virtual int poisonWeaponWeapon(TBeing *, TThing *);
     virtual int galvanizeMe(TBeing *, byte);

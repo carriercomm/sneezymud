@@ -116,7 +116,7 @@ class TGun : public TGenWeapon {
     virtual int getMaxSharp() const { return 100; }
     virtual void assignFourValues(int, int, int, int);
     virtual void getFourValues(int *, int *, int *, int *) const;
-    virtual void TGun::changeBaseWeaponValue1(TBeing *, const char *, editorEnterTypeT);
+    virtual void TGun::changeBaseWeaponValue1(TBeing *, const sstring &, editorEnterTypeT);
     virtual void describeObjectSpecifics(const TBeing *) const;
     virtual void describeContains(const TBeing *) const;
 

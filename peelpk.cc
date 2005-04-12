@@ -72,7 +72,7 @@ void TBeing::removeFromPeelPk(TBeing *c)
   }
 }
 
-void TBeing::doPeelPk(const char *argument)
+void TBeing::doPeelPk(const sstring &argument)
 {
   char buf[200], buf2[200];
   int num, i, j;
@@ -81,7 +81,7 @@ void TBeing::doPeelPk(const char *argument)
   Descriptor *idesc;
   TBeing *b;
 
-  half_chop(argument, buf, buf2);
+  half_chop(argument.c_str(), buf, buf2);
 
   if((!*buf && !*buf2) || !hasWizPower(POWER_WIZARD)){
     if(hasWizPower(POWER_WIZARD)){

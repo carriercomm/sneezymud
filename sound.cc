@@ -23,28 +23,28 @@ int RecGetObjRoom(const TThing *obj)
   return ROOM_NOWHERE;
 }
 
-void MakeRoomNoise(TMonster *mob, int room, const char *local_snd, const char *distant_snd)
+void MakeRoomNoise(TMonster *mob, int room, const sstring &local_snd, const sstring &distant_snd)
 {
   dirTypeT door;
   TBeing *ch = NULL;
   TRoom *rp, *orp;
   TThing *t;
-  char buf[256];
+  sstring buf;
 
-  if ((rp = real_roomp(room)) && local_snd && *local_snd) {
+  if ((rp = real_roomp(room)) && !local_snd.empty()) {
     for (t = rp->getStuff(); t; t = t->nextThing) {
       ch = dynamic_cast<TBeing *>(t);
       if (!ch || !ch->desc) {
         continue;
       }
       if (ch->awake()) {
-        sprintf(buf, "%s", addNameToBuf(ch, ch->desc, mob, local_snd, COLOR_MOBS).c_str());
+        buf=addNameToBuf(ch, ch->desc, mob, local_snd, COLOR_MOBS);
         ch->sendTo(COLOR_BASIC, buf);
       }
     }
   }
 
-  if (rp && distant_snd) {
+  if (rp && !distant_snd.empty()) {
     for (door = MIN_DIR; door < MAX_DIR; door++) {
       if (rp->dir_option[door] && (orp = real_roomp(rp->dir_option[door]->to_room))) {
         for (t = orp->getStuff(); t; t = t->nextThing) {
@@ -53,8 +53,7 @@ void MakeRoomNoise(TMonster *mob, int room, const char *local_snd, const char *d
             continue;
           }
           if (ch->desc && !IS_SET(ch->desc->autobits, AUTO_NOSHOUT) && ch->awake()) {
-            sprintf(buf, "%s", addNameToBuf(ch, ch->desc, mob, distant_snd, COLOR_MOBS).c_str());
-//            sprintf(buf, "%s", colorString(ch, ch->desc, distant_snd, NULL, COLOR_BASIC, TRUE));
+            buf=addNameToBuf(ch, ch->desc, mob, distant_snd, COLOR_MOBS);
             ch->sendTo(COLOR_BASIC, buf);
           }
         }
@@ -82,7 +81,7 @@ void MakeNoise(int room, const char *local_snd, const char *distant_snd)
     }
   }
   if (!rp) {
-    vlogf(LOG_MISC, fmt("Testing log: No rp in MakeNoise for %s") %  ((ch->name) ? ch->name : "null"));
+    vlogf(LOG_MISC, fmt("Testing log: No rp in MakeNoise for %s") %  ((!ch->name.empty()) ? ch->name : "null"));
     return;
   }
   for (door = MIN_DIR; door < MAX_DIR; door++) {

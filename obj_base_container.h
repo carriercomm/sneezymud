@@ -21,9 +21,9 @@ class TBaseContainer : public TObj {
     virtual int stealModifier();
     virtual void lookObj(TBeing *, int) const = 0;
     virtual void examineObj(TBeing *) const;
-    virtual void logMe(const TBeing *, const char *) const;
-    virtual int getAllFrom(TBeing *, const char *);
-    virtual int getObjFrom(TBeing *, const char *, const char *);
+    virtual void logMe(const TBeing *, const sstring &) const;
+    virtual int getAllFrom(TBeing *, const sstring &);
+    virtual int getObjFrom(TBeing *, const sstring &, const sstring &);
     virtual int putSomethingInto(TBeing *, TThing *) = 0;
     virtual int putSomethingIntoContainer(TBeing *, TOpenContainer *);
     virtual void findSomeDrink(TDrinkCon **, TBaseContainer **, TBaseContainer *);

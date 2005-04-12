@@ -2910,7 +2910,7 @@ void buildCommandArray(void)
   commandArray[CMD_COMBINE] = new commandInfo("combine", POSITION_RESTING, 0);
 }
 
-bool _parse_name(const char *arg, char *name)
+bool _parse_name(const char *arg, sstring &name)
 {
   sstring buf, argbuf;
   unsigned int i;
@@ -2944,7 +2944,7 @@ bool _parse_name(const char *arg, char *name)
       return TRUE;
   }
 #endif    
-  for (i = 0; (*name = *arg); arg++, i++, name++)
+  for (i = 0; name[i]=*arg ; arg++, i++)
     if ((*arg < 0) || !isalpha(*arg) || i > 15)
       return TRUE;
 

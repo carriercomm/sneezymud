@@ -292,7 +292,7 @@ class TComponent : public TObj {
     spellNumT comp_spell;
     unsigned int comp_type;
   public:
-    virtual bool fitInShop(const char *, const TBeing *) const;
+    virtual bool fitInShop(const sstring &, const TBeing *) const;
     virtual void assignFourValues(int, int, int, int);
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual itemTypeT itemType() const { return ITEM_COMPONENT; }
@@ -304,7 +304,7 @@ class TComponent : public TObj {
     virtual void lowCheck();
     virtual void evaluateMe(TBeing *) const;
     virtual void changeObjValue4(TBeing *);
-    virtual void changeComponentValue4(TBeing *, const char *, editorEnterTypeT);
+    virtual void changeComponentValue4(TBeing *, const sstring &, editorEnterTypeT);
     virtual void boottimeInit();
     virtual void findSomeComponent(TComponent **, TComponent **, TComponent **, spellNumT, int);
     virtual bool allowsCast() { return true; }

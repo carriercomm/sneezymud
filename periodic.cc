@@ -258,7 +258,7 @@ bool TObj::joinTrash()
     return false;
 
   sendrpf(COLOR_BASIC, roomp, "%s merges with %s.\n\r",
-    sstring(this->getName()).cap().c_str(), pile->getName());
+    getName().cap().c_str(), pile->getName().c_str());
 
   // add to trash pile
   --(*this);
@@ -418,19 +418,19 @@ int TBeing::teleportRoomFlow(int pulse)
 
 void TMonster::makeNoise()
 {
-  char buffer[100];
+  sstring buffer;
 
   if (fight() || desc)
     return;
   if (inRoom() == ROOM_NOCTURNAL_STORAGE)
     return;
 
-  if (!isPc() && sounds && !rider) {
+  if (!isPc() && !sounds.empty() && !rider) {
     if (default_pos > POSITION_SLEEPING) {
       if (getPosition() > POSITION_SLEEPING) 
         MakeRoomNoise(this, in_room, sounds, distantSnds);
       else if (getPosition() == POSITION_SLEEPING) {
-        sprintf(buffer, "%s snores loudly.\n\r", getName());
+        buffer=fmt("%s snores loudly.\n\r") % getName();
         MakeRoomNoise(this, in_room, buffer, "You hear a loud snore nearby.\n\r");
       }
     } else if (getPosition() == default_pos)
@@ -648,8 +648,8 @@ int TBeing::updateTickStuff()
 
     if (desc && (desc->character != this))
       vlogf(LOG_BUG, fmt("bad desc in updateTickStuff() (%s)(%s)") %
-	    (name ? getName() : "unknown") % 
-	    (desc->character ? desc->character->name ? desc->character->getName() : "unknown" : "no char"));
+	    (!name.empty() ? getName() : "unknown") % 
+	    (desc->character ? !desc->character->name.empty() ? desc->character->getName() : "unknown" : "no char"));
     if (desc && vt100())
       desc->updateScreenVt100(CHANGED_MUD);
     else if (desc && ansi())
@@ -1394,7 +1394,7 @@ int TObj::objectTickUpdate(int pulse)
   TEgg *egg;
   int rc;
 
-  if (!name) {
+  if (name.empty()) {
     vlogf(LOG_BUG, fmt("Object with NULL name in objectTickUpdate() : %d") %  objVnum());
     return DELETE_THIS;
   }
@@ -1708,12 +1708,10 @@ void do_check_mail()
   for (d = descriptor_list; d; d = d->next) {
     TBeing *ch = d->character;
     if (!no_mail && !d->connected && ch) {
-      char recipient[100], *tmp;
+      sstring recipient;
 
-      _parse_name(ch->getName(), recipient);
-      for (tmp = recipient; *tmp; tmp++)
-        if (isupper(*tmp))
-          *tmp = tolower(*tmp);
+      _parse_name(ch->getName().c_str(), recipient);
+      recipient=recipient.lower();
       if (has_mail(recipient))
         ch->sendTo(fmt("You have %sMAIL!%s\n\r") % ch->cyan() % ch->norm());
     }

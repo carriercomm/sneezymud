@@ -134,7 +134,7 @@ bool TTable::canGetMeDeny(const TBeing *ch, silentTypeT silent) const
   return false;
 }
 
-int TTable::getAllFrom(TBeing *ch, const char *argument)
+int TTable::getAllFrom(TBeing *ch, const sstring &argument)
 {
   int rc;
 

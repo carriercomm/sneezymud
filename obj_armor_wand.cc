@@ -101,12 +101,12 @@ void TArmorWand::generalUseMessage(const TBeing *ch, unsigned int bits, const TB
 
 sstring TArmorWand::getNameForShow(bool useColor, bool useName, const TBeing *ch) const
 {
-  char buf[256];
+  sstring buf;
 
   // put both show names together:  name (level) [spell]
-  sprintf(buf, "%s [%s]",
-      TArmor::getNameForShow(useColor, useName, ch).c_str(),
-      (getSpell() >= 0 ? (discArray[getSpell()] ? discArray[getSpell()]->name : "Unknown") : "None"));
+  buf=fmt("%s [%s]") %
+    TArmor::getNameForShow(useColor, useName, ch) %
+    (getSpell() >= 0 ? (discArray[getSpell()] ? discArray[getSpell()]->name : "Unknown") : "None");
 
   return buf;
 }

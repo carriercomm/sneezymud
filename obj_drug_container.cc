@@ -206,17 +206,16 @@ void TDrugContainer::lowCheck()
 
 sstring TDrugContainer::statObjInfo() const
 {
-  char buf[256];
+  sstring buf;
 
-  sprintf(buf, "DrugContainer: drug: %s, Max drug: %s%d, drug left: %d, Lit? : %s",
-	  drugTypes[getDrugType()].name,
-          (getMaxBurn() <= 0 ? "non-refuelable :" : ""),
-          getMaxBurn(),
-          getCurBurn(),
-          (getLit() ? "Yes" : "No"));
+  buf=fmt("DrugContainer: drug: %s, Max drug: %s%d, drug left: %d, Lit? : %s") %
+    drugTypes[getDrugType()].name %
+    (getMaxBurn() <= 0 ? "non-refuelable :" : "") %
+    getMaxBurn() %
+    getCurBurn() %
+    (getLit() ? "Yes" : "No");
 
-  sstring a(buf);
-  return a;
+  return buf;
 }
 
 int TDrugContainer::objectDecay()
@@ -317,7 +316,7 @@ void TDrugContainer::peeOnMe(const TBeing *ch)
 
 void TDrugContainer::lightMe(TBeing *ch, silentTypeT silent)
 {
-  char buf[256];
+  sstring buf;
 
   if (getLit()) {
     if(!silent)
@@ -336,11 +335,11 @@ void TDrugContainer::lightMe(TBeing *ch, silentTypeT silent)
   }
   setLit(TRUE);
   if(!silent){
-    sprintf(buf, "You light $p, and the %s begins to burn.", 
-	    drugTypes[getDrugType()].name);
+    buf=fmt("You light $p, and the %s begins to burn.") %
+      drugTypes[getDrugType()].name;
     act(buf, FALSE, ch, this, 0, TO_CHAR);
-    sprintf(buf, "$n light $p, and the %s begins to burn.", 
-	    drugTypes[getDrugType()].name);
+    buf=fmt("$n light $p, and the %s begins to burn.") %
+      drugTypes[getDrugType()].name;
     act(buf, TRUE, ch, this, 0, TO_ROOM);
   }
   return;

@@ -186,7 +186,7 @@ void TBeing::doLook(const sstring &argument, cmdTypeT cmd, TThing *specific)
           act(fmt("$n looks %swards.") % dirs[keyword_no], TRUE, this, 0, 0, TO_ROOM);
 
           if (canSeeThruDoor(exitp)) {
-            if (exitp->description)
+            if (!exitp->description.empty())
               sendTo(COLOR_ROOMS, exitp->description);
             else {
               if (exitp->to_room && (rp = real_roomp(exitp->to_room))) {

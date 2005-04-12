@@ -168,8 +168,6 @@ void TPlant::updateDesc()
   }
 
   if (isObjStat(ITEM_STRUNG)) {
-    delete [] shortDescr;
-    delete [] descr;
 
     extraDescription *exd;
     while ((exd = ex_description)) {
@@ -177,8 +175,6 @@ void TPlant::updateDesc()
       delete exd;
     }
     ex_description = NULL;
-    delete [] action_description;
-    action_description = NULL;
   } else {
     addObjStat(ITEM_STRUNG);
     name = mud_str_dup(obj_index[getItemIndex()].name);
@@ -188,24 +184,22 @@ void TPlant::updateDesc()
 
   if(plantindex>=2){
     sprintf(buf, plantkeywords[plantindex], planttypeskeywords[getType()]);
-    delete [] name;
-    name = mud_str_dup(buf);
+    name =buf;
 
     sprintf(buf, plantname[plantindex], planttypes[getType()]);
-    shortDescr = mud_str_dup(buf);
+    shortDescr =buf;
     
     sprintf(buf, plantdesc[plantindex], planttypes[getType()]);
-    setDescr(mud_str_dup(buf));
+    setDescr(buf);
   } else {
     sprintf(buf, plantkeywords[plantindex]);
-    delete [] name;
-    name = mud_str_dup(buf);
+    name = buf;
 
     sprintf(buf, plantname[plantindex]);
-    shortDescr = mud_str_dup(buf);
+    shortDescr = buf;
     
     sprintf(buf, plantdesc[plantindex]);
-    setDescr(mud_str_dup(buf));
+    setDescr(buf);
   }
 
   if(plantindex>=3 && !::number(0,3)){

@@ -153,8 +153,8 @@ bool TArrow::sellMeCheck(TBeing *ch, TMonster *keeper, int) const
 
   for (t = keeper->getStuff(); t; t = t->nextThing) {
     if ((t->number == number) &&
-        (t->getName() && getName() &&
-         !strcmp(t->getName(), getName()))) {
+        (!t->getName().empty() && !getName().empty() &&
+         t->getName()==getName())) {
       total += 1;
       if (total >= max_num) {
         keeper->doTell(ch->name, "I already have plenty of those.");
@@ -265,21 +265,21 @@ int TArrow::putMeInto(TBeing *, TOpenContainer *)
 
 bool TArrow::engraveMe(TBeing *ch, TMonster *me, bool give)
 {
-  char buf[256];
+  sstring buf;
 
   me->doTell(ch->getName(), "Engraving this would destroy its aerodynamics.");
 
   if (give) {
-    strcpy(buf, name);
-    strcpy(buf, add_bars(buf).c_str());
-    sprintf(buf + strlen(buf), " %s", fname(ch->name).c_str());
+    buf=name;
+    buf=add_bars(buf);
+    buf+=fmt(" %s") % fname(ch->name);
     me->doGive(buf);
   }
 
   return TRUE;
 }
 
-int TArrow::throwMe(TBeing *ch, dirTypeT, const char *)
+int TArrow::throwMe(TBeing *ch, dirTypeT, const sstring &)
 {
   act("$p isn't designed to be thrown.", FALSE, ch, this, 0, TO_CHAR);
   return FALSE;

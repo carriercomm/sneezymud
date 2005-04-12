@@ -402,7 +402,7 @@ void TTrap::armGrenade(TBeing *ch)
   }
 }
 
-int TTrap::throwMe(TBeing *ch, dirTypeT dir, const char *)
+int TTrap::throwMe(TBeing *ch, dirTypeT dir, const sstring &)
 {
   // grenade handler
   if (!isTrapEffectType(TRAP_EFF_THROW)) {

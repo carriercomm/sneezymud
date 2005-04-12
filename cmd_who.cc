@@ -21,8 +21,8 @@ sstring TPerson::parseTitle(Descriptor *user)
   sstring buf;
   int flag = FALSE;
 
-  if (!title) {
-    return getName();;
+  if (title.empty()) {
+    return getName();
   }
 
   buf=nameColorString(this, user, title, &flag, COLOR_BASIC, FALSE);
@@ -132,7 +132,7 @@ static const sstring getWhoLevel(const TBeing *ch, TBeing *p)
   return tempbuf;
 }
 
-void TBeing::doWho(const char *argument)
+void TBeing::doWho(const sstring &argument)
 {
   TBeing *k, *p;
   //  char buf[1024] = "\0\0\0";
@@ -522,7 +522,7 @@ void TBeing::doWho(const char *argument)
                 case 'a':
                   if (isImmortal() && hasWizPower(POWER_WIZARD)) {
                     if (p->desc && p->desc->account)
-                      sprintf(tString, " Account[%s]", p->desc->account->name);
+                      sprintf(tString, " Account[%s]", p->desc->account->name.c_str());
                     else
                       sprintf(tString, " Account[Unknown]");
 

@@ -71,14 +71,14 @@ bool TObj::isLevitating() const
   return isObjStat(ITEM_HOVER);
 }
 
-bool TObj::fitInShop(const char *buf3, const TBeing *) const
+bool TObj::fitInShop(const sstring &buf3, const TBeing *) const
 {
-  return (!strcmp(buf3, "yes") || 
-          !strcmp(buf3, "N/A") || 
-          !strcmp(buf3, "paired") ||
-          !strcmp(buf3, "either hand") || 
-          !strcmp(buf3, "secondary only") || 
-          !strcmp(buf3, "primary only"));
+  return (buf3=="yes" || 
+          buf3=="N/A" || 
+          buf3=="paired" ||
+          buf3=="either hand" || 
+          buf3=="secondary only" || 
+          buf3=="primary only");
 }
 
 void TObj::swapToStrung()

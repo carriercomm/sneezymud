@@ -84,7 +84,7 @@ void doSaveZoneFile(TBeing *ch, const sstring & tArg)
     return;
   }
 
-  sprintf(tString, "immortals/%s/zonefile", ch->getName());
+  sprintf(tString, "immortals/%s/zonefile", ch->getName().c_str());
 
   if (!(tFile = fopen(tString, "w"))) {
     ch->sendTo("Something went wrong, tell a coder what you did.\n\r");
@@ -98,7 +98,7 @@ void doSaveZoneFile(TBeing *ch, const sstring & tArg)
 
   sprintf(tString, "#%d\n", roomStart);
   fputs(tString, tFile);
-  sprintf(tString, "%s~\n", zone_table[zValue].name);
+  sprintf(tString, "%s~\n", zone_table[zValue].name.c_str());
   fputs(tString, tFile);
   sprintf(tString, "%d %d %d %d\n", zone_table[zValue].top, 30, 2, 0);
   fputs(tString, tFile);
@@ -263,7 +263,7 @@ void doSaveZoneFile(TBeing *ch, const sstring & tArg)
                 sObj->getSnum(), sObj->max_exist, mapSlotToFile(wearIndex));
         sprintf(tBuffer, "%-25s %s [%s]\n", tString,
                 (sObj->getNameNOC(ch).c_str() ? sObj->getNameNOC(ch).c_str() : "Unknown"),
-                bodyParts[wearIndex]);
+                bodyParts[wearIndex].c_str());
         fputs(tBuffer, tFile);
       }
     }

@@ -90,7 +90,7 @@ int TBoat::putSomethingInto(TBeing *ch, TThing *tThing)
   return 0;
 }
 
-int TBoat::getObjFrom(TBeing *ch, const char *tString, const char *)
+int TBoat::getObjFrom(TBeing *ch, const sstring &tString, const sstring &)
 {
   if (!getStuff()) {
     ch->sendTo("There is nothing in there.\n\r");

@@ -64,7 +64,7 @@ void TPerson::remQuestBit(int value)
   toggles[value] &= ~(0x1);
 }
 
-void TBeing::doMortalQuest(const char *tArg)
+void TBeing::doMortalQuest(const sstring &tArg)
 {
   /********************************************
    Quest information is no longer housed here.
@@ -74,8 +74,8 @@ void TBeing::doMortalQuest(const char *tArg)
   sendTo("Your current quest status:\n\r");
 
   if (GetMaxLevel() > MAX_MORT) {
-    char buf[256];
-    const char * t2 = one_argument(tArg, buf);
+    sstring buf;
+    sstring t2 = one_argument(tArg, buf);
     char   questPath[256];
     sstring tStString("");
 

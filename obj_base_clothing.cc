@@ -136,7 +136,7 @@ void TBaseClothing::evaluateMe(TBeing *ch) const
 
 void TBaseClothing::descMaxStruct(const TBeing *ch, int learn) const
 {
-  char capbuf[80];
+  sstring capbuf;
 
   if (!ch->hasClass(CLASS_RANGER) && !ch->hasClass(CLASS_WARRIOR) &&
       !ch->hasClass(CLASS_DEIKHAN))
@@ -144,7 +144,7 @@ void TBaseClothing::descMaxStruct(const TBeing *ch, int learn) const
 
   int maxstruct = GetApprox(getMaxStructPoints(), learn);
 
-  strcpy(capbuf, ch->objs(this));
+  capbuf=ch->objs(this);
   ch->sendTo(COLOR_OBJECTS,fmt("%s seems to %s.\n\r") %
            sstring(capbuf).cap() %
           ((maxstruct >= 99) ? "be virtually indestructible" :

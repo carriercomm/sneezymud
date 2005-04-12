@@ -9,12 +9,12 @@
 
 #include "stdsneezy.h"
 
-void TBeing::doVisible(const char *, bool)
+void TBeing::doVisible(const sstring &, bool)
 {
   sendTo("Silly monster.  Why do you need to go visible??\n\r");
 }
 
-void TPerson::doVisible(const char *, bool tSilent)
+void TPerson::doVisible(const sstring &, bool tSilent)
 {
 
   /*
@@ -79,12 +79,12 @@ void TPerson::doVisible(const char *, bool tSilent)
   }
 }
 
-void TBeing::doInvis(const char *)
+void TBeing::doInvis(const sstring &)
 {
   sendTo("Silly monster.  You can not control this.\n\r");
 }
 
-void TPerson::doInvis(const char *)
+void TPerson::doInvis(const sstring &)
 {
   if (task || spelltask || fight()) {
     sendTo("You are a little busy to be doing this.\n\r");

@@ -123,7 +123,7 @@ int TBed::putSomethingInto(TBeing *ch, TThing *tThing)
   return 0;
 }
 
-void TBed::changeBedValue1(TBeing *ch, const char *arg, editorEnterTypeT type)
+void TBed::changeBedValue1(TBeing *ch, const sstring &arg, editorEnterTypeT type)
 {
   int update_num;
 

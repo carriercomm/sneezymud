@@ -50,7 +50,7 @@ sstring TTree::statObjInfo() const
   return a;
 }
 
-int TTree::treeMe(TBeing *caster, const char *tmp, int number, int *count)
+int TTree::treeMe(TBeing *caster, const sstring &tmp, int number, int *count)
 {
   if (isname(tmp, name)) {
     if (number == *count) {

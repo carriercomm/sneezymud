@@ -69,10 +69,10 @@ TMoney *create_money(int amount)
 
   obj = read_object(GENERIC_TALEN, VIRTUAL);
   money = dynamic_cast<TMoney *>(obj);
-  mud_assert(money != NULL, "create_money created something that was not TMoney.  obj was: %s", obj ? obj->getName() : "NO OBJECT");
+  mud_assert(money != NULL, "create_money created something that was not TMoney.  obj was: %s", obj ? obj->getName().c_str() : "NO OBJECT");
 
   extraDescription *new_descr;
-  char buf[80];
+  sstring buf;
 
   money->swapToStrung();
 
@@ -84,50 +84,47 @@ TMoney *create_money(int amount)
 
   new_descr = new extraDescription();
 
-  delete [] money->name;
-  delete [] money->shortDescr;
-  delete [] money->getDescr();
   if (amount == 1) {
-    money->name = mud_str_dup("talens money");
-    money->shortDescr = mud_str_dup("a talen");
-    money->setDescr(mud_str_dup("One miserable talen lies here."));
+    money->name = "talens money";
+    money->shortDescr = "a talen";
+    money->setDescr("One miserable talen lies here.");
 
-    new_descr->keyword = mud_str_dup("talen money");
-    new_descr->description = mud_str_dup("One miserable talen.\n\r");
+    new_descr->keyword = "talen money";
+    new_descr->description = "One miserable talen.\n\r";
 
   } else {
-    money->name = mud_str_dup("talens money");
-    money->shortDescr = mud_str_dup("some talens");
+    money->name = "talens money";
+    money->shortDescr = "some talens";
     if (amount > 100000)
-      sprintf(buf, "A tremendously HUGE pile of talens lies here.");
+      buf="A tremendously HUGE pile of talens lies here.";
     else if (amount > 50000)
-      sprintf(buf, "A HUGE pile of talens lies here.");
+      buf="A HUGE pile of talens lies here.";
     else if (amount > 10000)
-      sprintf(buf, "A LARGE pile of talens lies here.");
+      buf="A LARGE pile of talens lies here.";
     else if (amount > 1000)
-      sprintf(buf, "A nice-sized pile of talens lies here.");
+      buf="A nice-sized pile of talens lies here.";
     else if (amount > 500)
-      sprintf(buf, "A pile of talens lies here.");
+      buf="A pile of talens lies here.";
     else if (amount > 100)
-      sprintf(buf, "A small pile of talens lies here.");
+      buf="A small pile of talens lies here.";
     else if (amount > 50)
-      sprintf(buf, "A tiny pile of talens lies here.");
+      buf="A tiny pile of talens lies here.";
     else
-      sprintf(buf, "A few talens have been left in a pile here.");
+      buf="A few talens have been left in a pile here.";
 
-    money->setDescr(mud_str_dup(buf));
-    new_descr->keyword = mud_str_dup("talens money");
+    money->setDescr(buf);
+    new_descr->keyword = "talens money";
     if (amount < 10) {
-      sprintf(buf, "There are %d talens.\n\r", amount);
+      buf=fmt("There are %d talens.\n\r") % amount;
       new_descr->description = mud_str_dup(buf);
     } else if (amount < 100) {
-      sprintf(buf, "There are about %d talens.\n\r", 10 * (amount / 10));
+      buf=fmt("There are about %d talens.\n\r") % (10 * (amount / 10));
       new_descr->description = mud_str_dup(buf);
     } else if (amount < 10000) {
-      sprintf(buf, "You guess there are %d talens.\n\r", 100 * (amount / 100));
-      new_descr->description = mud_str_dup(buf);
+      buf=fmt("You guess there are %d talens.\n\r") % (100 * (amount / 100));
+      new_descr->description = buf;
     } else
-      new_descr->description = mud_str_dup("There are a LOT of talens.\n\r");
+      new_descr->description = "There are a LOT of talens.\n\r";
   }
   new_descr->next = NULL;
   money->ex_description = new_descr;
@@ -252,8 +249,9 @@ void TMoney::onObjLoad()
 
 sstring TMoney::getNameForShow(bool useColor, bool useName, const TBeing *ch) const
 {
-  char buf2[256];
-  sprintf(buf2, "%s [%d talens]", useName ? name : (useColor ? getName() : getNameNOC(ch).c_str()), 
-      getMoney());
-  return buf2;
+  sstring buf;
+  buf=fmt("%s [%d talens]") %
+    (useName ? name.c_str() : (useColor ? getName().c_str() : getNameNOC(ch).c_str())) %
+    getMoney();
+  return buf;
 }

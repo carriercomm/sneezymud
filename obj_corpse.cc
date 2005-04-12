@@ -37,7 +37,7 @@ sstring TCorpse::statObjInfo() const
   char buf[256];
 
   sprintf(buf, "Corpse Flags: %d, Corpse race: %d:%s\n\r", 
-       getCorpseFlags(), getCorpseRace(), RaceNames[getCorpseRace()]);
+       getCorpseFlags(), getCorpseRace(), RaceNames[getCorpseRace()].c_str());
   sprintf(buf + strlen(buf), "Corpse Level: %d, Corpse Vnum: %d\n\r", 
        getCorpseLevel(), getCorpseVnum());
 

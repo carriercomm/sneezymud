@@ -200,18 +200,17 @@ void TLight::lowCheck()
 
 sstring TLight::statObjInfo() const
 {
-  char buf[256];
+  sstring buf;
 
-  sprintf(buf, "Light: %s (%d), Max fuel: %s%d, Fuel left: %d, Lit? : %s",
-          describe_light(getLightAmt()),
-          getLightAmt(),
-          (getMaxBurn() <= 0 ? "non-refuelable :" : ""),
-          getMaxBurn(),
-          getCurBurn(),
-          (isLit() ? "Yes" : "No"));
+  buf=fmt("Light: %s (%d), Max fuel: %s%d, Fuel left: %d, Lit? : %s") %
+    describe_light(getLightAmt()) %
+    getLightAmt() %
+    (getMaxBurn() <= 0 ? "non-refuelable :" : "") %
+    getMaxBurn() %
+    getCurBurn() %
+    (isLit() ? "Yes" : "No");
 
-  sstring a(buf);
-  return a;
+  return buf;
 }
 
 sstring TLight::showModifier(showModeT, const TBeing *) const

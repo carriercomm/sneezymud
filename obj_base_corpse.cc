@@ -189,7 +189,7 @@ int TBaseCorpse::dissectMe(TBeing *caster)
   int num = -1, rnum;
   int amount = 100;
   TObj *obj;
-  char msg[256], gl_msg[256];
+  sstring msg, gl_msg;
   
   if (isCorpseFlag(CORPSE_NO_REGEN)) {
     // a body part or something
@@ -291,7 +291,7 @@ int TBaseCorpse::scavengeMe(TBeing *ch, TObj **)
   TThing *t;
   TObj *obj;
   wearSlotT sl;
-  char buf[256], buf2[256], buf3[256];
+  sstring buf, buf2, buf3;
   int rc;
 
   if (!::number(0, 5) && getStuff()) {
@@ -301,11 +301,11 @@ int TBaseCorpse::scavengeMe(TBeing *ch, TObj **)
         if (dynamic_cast<TBaseClothing *>(obj)) {
           TObj *tobj = dynamic_cast<TObj *>(ch->equipment[sl]);
           if (obj->itemAC() < (tobj ?  tobj->itemAC() : 0)) {
-            strcpy(buf2, obj->name);
-            strcpy(buf3, name);
-            strcpy(buf2, add_bars(buf2).c_str());
-            strcpy(buf3, add_bars(buf3).c_str());
-            sprintf(buf, "%s from %s", buf2, buf3);
+            buf2=obj->name;
+            buf3=name;
+            buf2=add_bars(buf2);
+            buf3=add_bars(buf3);
+            buf=fmt("%s from %s") % buf2 % buf3;
             rc = ch->doGet(buf);
             if (IS_SET_DELETE(rc, DELETE_THIS))
               return DELETE_VICT;
@@ -334,10 +334,11 @@ int TBaseCorpse::objectDecay()
   else if (roomp && roomp->getStuff()) {
     if (getMaterial() == MAT_POWDER) {
       sendrpf(COLOR_OBJECTS, roomp, "A gust of wind scatters %s.\n\r",
-getName());
+	      getName().c_str());
 //      act("A gust of wind scatters $n.", TRUE, this, 0, 0, TO_ROOM);
     } else {
-      sendrpf(COLOR_OBJECTS, roomp, "Flesh-eaters dissolve %s.\n\r", getName());
+      sendrpf(COLOR_OBJECTS, roomp, "Flesh-eaters dissolve %s.\n\r", 
+	      getName().c_str());
 //      act("Flesh-eaters dissolve $n.", TRUE, this, 0, 0, TO_ROOM);
     }
   }

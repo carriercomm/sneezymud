@@ -268,7 +268,7 @@ void test_fight_death(TBeing *ch, TBeing *v, int mod)
   delete rp;
 }
 
-void TBeing::doTestFight(const char *arg)
+void TBeing::doTestFight(const sstring &arg)
 {
   if (!hasWizPower(POWER_WIZARD)) {
     sendTo("Prototype command.  You need to be a developer to use this.\n\r");

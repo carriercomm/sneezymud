@@ -171,8 +171,8 @@ class snoopData {
 
 class aliasData {
   public:
-    char word[12];     // Word for new alias
-    char command[30];  // Command to be aliased
+    sstring word;     // Word for new alias
+    sstring command;  // Command to be aliased
     aliasData();
     aliasData(const aliasData &a);
     aliasData & operator=(const aliasData &a);
@@ -256,8 +256,8 @@ class objAffData {
 
 class roomDirData {
   public:
-    const char *description;         // What you see when you look at the direction
-    const char *keyword;             // keyword for opening and closing doors
+    sstring description;         // What you see when you look at the direction
+    sstring keyword;             // keyword for opening and closing doors
     doorTypeT door_type;           // type of door
     unsigned int condition;           // bitvector for door status
     byte lock_difficulty;      // how hard to open, -1 = unlockable
@@ -283,20 +283,20 @@ class roomDirData {
 
 class wizListInfo {
   public:
-    char *buf1;
-    char *buf2;
-    char *buf3;
+    sstring buf1;
+    sstring buf2;
+    sstring buf3;
     /*
-    char *buf60;
-    char *buf59;
-    char *buf58;
-    char *buf57;
-    char *buf56;
-    char *buf55;
-    char *buf54;
-    char *buf53;
-    char *buf52;
-    char *buf51;
+    sstring buf60;
+    sstring buf59;
+    sstring buf58;
+    sstring buf57;
+    sstring buf56;
+    sstring buf55;
+    sstring buf54;
+    sstring buf53;
+    sstring buf52;
+    sstring buf51;
      */
 
     wizListInfo();

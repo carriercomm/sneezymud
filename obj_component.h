@@ -215,17 +215,17 @@ class compPlace
     int weather;
 
     // message sstring sent to room item loads in or is removed from
-    const char *message;
+    sstring message;
 
     // message sstring sent to entire room range when item loads anywhere
     // in that range.
     // not used for removal at all
-    const char *glo_msg;
+    sstring glo_msg;
 
     soundNumT sound;
     unsigned int sound_loop;
 
-    compPlace(int r, int r2, int m, int mn, int pa, int mx, int v, byte h1, byte h2, byte m1, byte m2, byte d1, byte d2, int w, const char *msg, const char *gm, soundNumT snt = SOUND_OFF, unsigned int sl = 1) :
+    compPlace(int r, int r2, int m, int mn, int pa, int mx, int v, byte h1, byte h2, byte m1, byte m2, byte d1, byte d2, int w, const sstring &msg, const sstring &gm, soundNumT snt = SOUND_OFF, unsigned int sl = 1) :
       room1(r),
       room2(r2),
       mob(m),
@@ -259,15 +259,15 @@ class compInfo
   public:
     int comp_num;
     spellNumT spell_num;
-    const char *to_caster;
-    const char *to_other;
-    const char *to_vict;
-    const char *to_self;
-    const char *to_room;
-    const char *to_self_object;
-    const char *to_room_object;
+    sstring to_caster;
+    sstring to_other;
+    sstring to_vict;
+    sstring to_self;
+    sstring to_room;
+    sstring to_self_object;
+    sstring to_room_object;
 
-    compInfo(spellNumT sn, const char *tc, const char *to, const char *tv, const char *ts, const char *tr, const char *tso, const char *tro);
+    compInfo(spellNumT sn, const sstring &tc, const sstring &to, const sstring &tv, const sstring &ts, const sstring &tr, const sstring &tso, const sstring &tro);
 
     // don't call this ctor
     // must be public due to vector initializer calling it

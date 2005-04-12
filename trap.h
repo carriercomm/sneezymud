@@ -50,7 +50,7 @@ enum trap_targ_t {
 };
 
 extern const sstring trap_types[];
-extern const char * const GRENADE_EX_DESC;
-extern const char * const TRAP_EX_DESC;
+extern const sstring GRENADE_EX_DESC;
+extern const sstring TRAP_EX_DESC;
 
 #endif

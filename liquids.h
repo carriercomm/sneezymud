@@ -10,11 +10,11 @@ class liqEntry {
   int thirst;
   bool potion;
   bool poison;
-  const char * color;
-  const char * name;
+  sstring color;
+  sstring name;
   int price;
 
-  liqEntry(int, int, int, bool, bool, const char *, const char *, int);
+  liqEntry(int, int, int, bool, bool, const sstring &, const sstring &, int);
   liqEntry & operator=(const liqEntry &a);
   ~liqEntry();
 

@@ -44,6 +44,6 @@ void cast_warn_busy(const TBeing *, spellNumT);
 //  This is what it looks like
 //  start_cast(this, victim, objectTarget, room, spell_num, difficulty, targetType, arg, rounds, wasInRoom, status, flags, text, next_update);
 
-extern int start_cast(TBeing *, TBeing *, TThing *, TRoom *, spellNumT, taskDiffT, int, const char *, lag_t, unsigned short, ubyte, int, int, int);
+extern int start_cast(TBeing *, TBeing *, TThing *, TRoom *, spellNumT, taskDiffT, int, const sstring &, lag_t, unsigned short, ubyte, int, int, int);
 
 #endif

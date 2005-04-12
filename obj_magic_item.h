@@ -23,7 +23,7 @@ class TMagicItem : public virtual TObj
 
     virtual void changeObjValue1(TBeing *);
     virtual sstring displayFourValues();
-    virtual void changeMagicItemValue1(TBeing *, const char *, editorEnterTypeT);
+    virtual void changeMagicItemValue1(TBeing *, const sstring &, editorEnterTypeT);
     virtual void evaluateMe(TBeing *) const;
     virtual void divinateMe(TBeing *) const = 0;
     virtual int objectSell(TBeing *, TMonster *);

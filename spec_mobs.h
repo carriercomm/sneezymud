@@ -193,8 +193,8 @@ extern const int GET_MOB_SPE_INDEX(int d);
 
 struct TMobSpecs {
   bool assignable;
-  const char *name;
-  int (*proc) (TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+  sstring name;
+  int (*proc) (TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
 };
 
 extern TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1];
@@ -205,38 +205,38 @@ extern void CallForGuard(TBeing *ch, TBeing *vict, int lev);
 extern TMonster *FindMobInRoomWithProcNum(int room, int num);
 extern bool okForJanitor(TMonster *, TObj *);
 
-extern int tattooArtist(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int payToll(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int meeting_organizer(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int fighter(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int doctor(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int craps_table_man(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int shop_keeper(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int receptionist(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int postmaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int ShamanGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int MageGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int MageThiefGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int DeikhanGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *o);
-extern int MonkGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int WarriorGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int ThiefGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int ClericGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int RangerGuildMaster(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int repairman(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int alignment_deity(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int CDGenericTrainer(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int bounty_hunter(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int DragonBreath(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int tattooArtist(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int payToll(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int meeting_organizer(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int fighter(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int doctor(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int craps_table_man(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int shop_keeper(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int receptionist(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int postmaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int ShamanGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int MageGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int MageThiefGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int DeikhanGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *o);
+extern int MonkGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int WarriorGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int ThiefGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int ClericGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int RangerGuildMaster(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int repairman(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int alignment_deity(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int CDGenericTrainer(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int bounty_hunter(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int DragonBreath(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
 extern int doNewbieEquipLoad(int, int, int);
-extern int doppleganger(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int tunnelerEarthquake(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int tuskGoring(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int fishTracker(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int bankGuard(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int realEstateAgent(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
-extern int shopWhisper(TBeing *, TMonster *, int, const char *);
-extern int archer(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
+extern int doppleganger(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int tunnelerEarthquake(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int tuskGoring(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int fishTracker(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int bankGuard(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int realEstateAgent(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
+extern int shopWhisper(TBeing *, TMonster *, int, const sstring &);
+extern int archer(TBeing *, cmdTypeT, const sstring &, TMonster *, TObj *);
 
 class attune_struct {
   public:
@@ -264,9 +264,9 @@ class attune_struct {
 class bounty_hunt_struct
 {
   public:
-  char *hunted_item;
-  char *hunted_victim;
-  char *last_targ;
+  sstring hunted_item;
+  sstring hunted_victim;
+  sstring last_targ;
   int num_chances;
   int level_command;
   int num_retrieved;
@@ -284,7 +284,7 @@ class bounty_hunt_struct
   private:
     bounty_hunt_struct() {} // prevent use
   public:
-    bounty_hunt_struct(char *hi, char *hv, int chan, int lev);
+    bounty_hunt_struct(sstring &hi, sstring &hv, int chan, int lev);
     ~bounty_hunt_struct();
     void reset();
 };
@@ -293,8 +293,8 @@ class sharp_struct {
   public:
     int wait;
     int cost;
-    char *char_name;
-    char *obj_name;
+    sstring char_name;
+    sstring obj_name;
     byte isBlunt;
     sharp_struct() :
       wait(0),
@@ -304,8 +304,6 @@ class sharp_struct {
       isBlunt(FALSE) {
     }
     ~sharp_struct() {
-      delete [] char_name;
-      delete [] obj_name;
     }
 };
 

@@ -29,9 +29,9 @@ class SystemTask {
       bot(NULL)
     {
     }
-    void AddTask(TBeing *, char, const char *);
+    void AddTask(TBeing *, char, const sstring &);
     void CheckTask();
-    sstring Tasks(TBeing *, const char *);
+    sstring Tasks(TBeing *, const sstring &);
     int	forktask(_task *);
     void remove(_task *);
     void start_task();

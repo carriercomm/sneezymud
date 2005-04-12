@@ -377,7 +377,7 @@ enum discLearnDoT {
 
 class spellInfo {
   public:
-    const char *name;
+    sstring name;
     int start;
     int learn;
     unsigned int uses;
@@ -443,7 +443,7 @@ class spellInfo {
     float minPiety;
     unsigned int targets;
     int holyStrength;
-    const char *fadeAway, *fadeAwayRoom, *fadeAwaySoon, *fadeAwaySoonRoom;
+    sstring fadeAway, fadeAwayRoom, fadeAwaySoon, fadeAwaySoonRoom;
     float alignMod;
     unsigned int comp_types;
     unsigned int toggle;
@@ -463,7 +463,7 @@ class spellInfo {
     spellInfo(skillUseClassT styp, 
          discNumT discipline, 
          discNumT assDiscipline, 
-         const char *n,
+         sstring n,
          taskDiffT cast_diff,
          lag_t l,
          positionTypeT pos,
@@ -472,10 +472,10 @@ class spellInfo {
          pietyCostT align,
          unsigned int t, 
          symbolStressT h, 
-         const char *fa, 
-         const char *far, 
-         const char *fas, 
-         const char *fasr, 
+         sstring fa, 
+         sstring far, 
+         sstring fas, 
+         sstring fasr, 
          discStartT starting,
          discLearnT learning,
          discStartDoT learnDoStarting,
@@ -501,9 +501,9 @@ enum spellTypeT {
 #endif
 
 struct attack_hit_type {
-  const char *singular;
-  const char *plural;
-  const char *hitting;
+  sstring singular;
+  sstring plural;
+  sstring hitting;
 };
 
 const int LEARN_DIFF_UNUSUAL  = -1;
@@ -513,7 +513,7 @@ const int LEARN_DIFF_PRAYERS    = 0;
 const int LEARN_DIFF_SKILLS    = 0;
 
 struct PolyType {
-  const char * const name;
+  sstring name;
   int  level;
   int  learning;
   int  number;

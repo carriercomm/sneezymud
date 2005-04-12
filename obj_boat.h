@@ -20,7 +20,7 @@ class TBoat : public TObj {
     virtual itemTypeT itemType() const { return ITEM_BOAT; }
 
     virtual int  putSomethingInto(TBeing *, TThing *);
-    virtual int  getObjFrom(TBeing *, const char *, const char *);
+    virtual int  getObjFrom(TBeing *, const sstring &, const sstring &);
     virtual int  getLight() const;
     virtual void usingBoat(int *n);
 

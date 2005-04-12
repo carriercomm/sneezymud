@@ -24,8 +24,8 @@ class TTrap : public TObj {
 
     virtual void changeObjValue2(TBeing *);
     virtual void changeObjValue3(TBeing *);
-    virtual void changeTrapValue2(TBeing *, const char *, editorEnterTypeT);
-    virtual void changeTrapValue3(TBeing *, const char *, editorEnterTypeT);
+    virtual void changeTrapValue2(TBeing *, const sstring &, editorEnterTypeT);
+    virtual void changeTrapValue3(TBeing *, const sstring &, editorEnterTypeT);
     virtual int moveTrapCheck(TBeing *, dirTypeT);
     virtual int insideTrapCheck(TBeing *, TThing *);
     virtual int anyTrapCheck(TBeing *);
@@ -39,10 +39,10 @@ class TTrap : public TObj {
 
     virtual int getMe(TBeing *, TThing *);
     virtual void dropMe(TBeing *, showMeT, showRoomT);
-    virtual int throwMe(TBeing *, dirTypeT, const char *);
+    virtual int throwMe(TBeing *, dirTypeT, const sstring &);
     virtual int detonateGrenade();
-    virtual void makeTrapLand(TBeing *, doorTrapT, const char *);
-    virtual void makeTrapGrenade(TBeing *, doorTrapT, const char *);
+    virtual void makeTrapLand(TBeing *, doorTrapT, const sstring &);
+    virtual void makeTrapGrenade(TBeing *, doorTrapT, const sstring &);
     virtual bool canDrop() const;
 
     void armGrenade(TBeing *);

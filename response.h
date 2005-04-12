@@ -30,13 +30,13 @@
 class command {
   public:
     cmdTypeT cmd;
-    char *args;
+    sstring args;
     command *next;
 
   private:
     command();  //intentionally private, so can't be called
   public:
-    command(cmdTypeT c, char *d);
+    command(cmdTypeT c, sstring &d);
     command(const command &a);
     command & operator=(const command &a);
     ~command();
@@ -46,14 +46,14 @@ class command {
 class resp {
   public:
     cmdTypeT cmd;
-    char *args;
+    sstring args;
     command *cmds;
     resp *next;
   
   private:
     resp();  // made private, so intentionally can not be called
   public:
-    resp(cmdTypeT c, char *d);
+    resp(cmdTypeT c, sstring &d);
     resp(const resp &a);
     resp & operator=(const resp &a);
     ~resp();
@@ -61,8 +61,8 @@ class resp {
 
 class RespMemory {
   public:
-    char             *name,
-                     *args;
+    sstring          name,
+                     args;
     cmdTypeT          cmd;
     class RespMemory *next;
 

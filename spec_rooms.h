@@ -1,9 +1,9 @@
 #ifndef __SPEC_ROOMS_H
 #define __SPEC_ROOMS_H
 
-extern int sleepTagControl(TBeing *, cmdTypeT, const char *, TRoom *);
-extern int sleepTagRoom(TBeing *, cmdTypeT, const char *, TRoom *);
-extern int bankRoom(TBeing *, cmdTypeT, const char *, TRoom *);
+extern int sleepTagControl(TBeing *, cmdTypeT, const sstring &, TRoom *);
+extern int sleepTagRoom(TBeing *, cmdTypeT, const sstring &, TRoom *);
+extern int bankRoom(TBeing *, cmdTypeT, const sstring &, TRoom *);
 
 
 /*************************************************************************

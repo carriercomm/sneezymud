@@ -24,8 +24,8 @@ class TTable : public TObj {
     virtual void lookObj(TBeing *, int) const;
     virtual void examineObj(TBeing *) const;
     virtual bool canGetMeDeny(const TBeing *, silentTypeT) const;
-    virtual int getAllFrom(TBeing *, const char *);
-    virtual int getObjFrom(TBeing *, const char *, const char *);
+    virtual int getAllFrom(TBeing *, const sstring &);
+    virtual int getObjFrom(TBeing *, const sstring &, const sstring &);
     virtual int putSomethingInto(TBeing *, TThing *);
     virtual int putSomethingIntoTable(TBeing *, TTable *);
     virtual void getObjFromMeText(TBeing *, TThing *, getTypeT, bool);

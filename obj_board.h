@@ -15,9 +15,9 @@ const unsigned int MAX_MSGS = 50; /* Max number of messages.          */
   
 class boardStruct {
   public:
-  const char *writer[MAX_MSGS];
-  const char *msgs[MAX_MSGS];
-  const char *head[MAX_MSGS];
+  sstring writer[MAX_MSGS];
+  sstring msgs[MAX_MSGS];
+  sstring head[MAX_MSGS];
   unsigned int msg_num;
   const char *filename;
   FILE *file;  /* file that is opened */
@@ -43,7 +43,7 @@ class TBoard : public TObj {
     virtual sstring statObjInfo() const;
 
     virtual void purgeMe(TBeing *);
-    virtual int boardHandler(TBeing *, cmdTypeT, const char *);
+    virtual int boardHandler(TBeing *, cmdTypeT, const sstring &);
 
     int getBoardLevel() const;
     void setBoardLevel(int n);
@@ -55,19 +55,19 @@ class TBoard : public TObj {
 };
 
  
-int board_show_board(TBeing *ch, const char *arg, TBoard *, boardStruct *b);
+int board_show_board(TBeing *ch, const sstring &arg, TBoard *, boardStruct *b);
 void board_fix_long_desc(boardStruct *b);
-int board(TBeing *ch, cmdTypeT cmd, const char *arg, TObj **me, TObj **ob2);
-int board_display_msg(TBeing *ch, const char *arg, TBoard *, boardStruct *b);
+int board(TBeing *ch, cmdTypeT cmd, const sstring &arg, TObj **me, TObj **ob2);
+int board_display_msg(TBeing *ch, const sstring &arg, TBoard *, boardStruct *b);
 void board_reset_board(boardStruct *b);
 void board_load_board(boardStruct *b);
 void post_note_on_board(TBeing *ch, const sstring &arg, boardStruct *b);
-boardStruct *FindBoardInRoom(TBeing *, const char *arg);
+boardStruct *FindBoardInRoom(TBeing *, const sstring &arg);
 void OpenBoardFile(boardStruct *b);
 void InitABoard(TObj *obj);
 void DeleteABoard(TObj *obj);
 void InitBoards();
-extern int get_note_from_board(TBeing *, const char *, boardStruct *, TBoard *);
+extern int get_note_from_board(TBeing *, const sstring &, boardStruct *, TBoard *);
 extern boardStruct *board_list;
 
 

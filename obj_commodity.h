@@ -19,7 +19,7 @@ class TCommodity : public TObj {
     virtual itemTypeT itemType() const { return ITEM_RAW_MATERIAL; }
 
     virtual void lowCheck();
-    virtual void logMe(const TBeing *, const char *) const {}
+    virtual void logMe(const TBeing *, const sstring &) const {}
     virtual int buyMe(TBeing *, TMonster *, int, int);
     virtual void sellMe(TBeing *, TMonster *, int, int);
     virtual int sellCommod(TBeing *, TMonster *, int, TThing *);

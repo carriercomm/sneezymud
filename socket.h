@@ -12,7 +12,7 @@ extern int maxdesc, avail_descs;
 
 const int OPT_USEC = 100000; 
 
-extern char hostlist[MAX_BAN_HOSTS][40];
+extern sstring hostlist[MAX_BAN_HOSTS];
 
 class TPulseList {
 public:  
@@ -99,7 +99,7 @@ class TSocket {
 
  public:
   int m_sock;
-  int writeToSocket(const char *);
+  int writeToSocket(const sstring &);
 
   TSocket();
   ~TSocket();

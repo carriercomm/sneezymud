@@ -18,7 +18,7 @@ class TBook : public TObj {
     virtual void getFourValues(int *, int *, int *, int *) const;
     virtual sstring statObjInfo() const;
     virtual itemTypeT itemType() const { return ITEM_BOOK; }
-    virtual void lookAtObj(TBeing *, const char *, showModeT) const;
+    virtual void lookAtObj(TBeing *, const sstring &, showModeT) const;
 
     TBook();
     TBook(const TBook &a);

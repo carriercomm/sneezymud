@@ -63,13 +63,13 @@ class shopData {
     float profit_sell;            /* Factor to multiply cost with.        */
     vector<unsigned int>type;     /* Which item to trade.                 */
     vector <int> mat_type;       /* Material types to allow              */
-    char *no_such_item1;          /* Message if keeper hasn't got an item */
-    char *no_such_item2;          /* Message if player hasn't got an item */
-    char *missing_cash1;          /* Message if keeper hasn't got cash    */
-    char *missing_cash2;          /* Message if player hasn't got cash    */
-    char *do_not_buy;             /* If keeper dosn't buy such things.    */
-    char *message_buy;            /* Message when player buys item        */
-    char *message_sell;           /* Message when player sells item       */
+    sstring no_such_item1;          /* Message if keeper hasn't got an item */
+    sstring no_such_item2;          /* Message if player hasn't got an item */
+    sstring missing_cash1;          /* Message if keeper hasn't got cash    */
+    sstring missing_cash2;          /* Message if player hasn't got cash    */
+    sstring do_not_buy;             /* If keeper dosn't buy such things.    */
+    sstring message_buy;            /* Message when player buys item        */
+    sstring message_sell;           /* Message when player sells item       */
     int temper1;                  /* How does keeper react if no money    */
     int temper2;                  /* How does keeper react when attacked  */
     int keeper;                   /* The mobil who owns the shop (virtual) */

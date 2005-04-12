@@ -24,7 +24,7 @@ class TFFlame : public TBaseLight {
     virtual itemTypeT itemType() const { return ITEM_FLAME; }
 
     virtual int    chiMe(TBeing *);
-    virtual void   addFlameToMe(TBeing *, const char *, TThing *, bool);
+    virtual void   addFlameToMe(TBeing *, const sstring &, TThing *, bool);
     virtual void   peeOnMe(const TBeing *);
     virtual void   updateFlameInfo();
     virtual void   addFlameMessages();

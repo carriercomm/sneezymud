@@ -27,7 +27,7 @@ class pcorpseObject
   public:
     int corpse_room;
     int num_corpses_room;
-    char charName[20];
+    sstring charName;
     pcorpseObject();
 };
 
@@ -70,7 +70,7 @@ class rentObject
 class rentHeader {
   public:
     unsigned char version;     /* version # of the rent file */
-    char owner[20];    /* Name of player                     */
+    sstring owner;    /* Name of player                     */
     int original_gold; /* For use with total charges on login*/
     int gold_left;     /* Number of goldcoins left at owner  */
     int total_cost;    /* The cost for all items, per day    */

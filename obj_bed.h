@@ -34,7 +34,7 @@ class TBed : public TObj {
     virtual int mobPulseBed(TMonster *, short int);
     void bedRegen(TBeing *, int *, silentTypeT) const;
     virtual void changeObjValue1(TBeing *);
-    virtual void changeBedValue1(TBeing *, const char *, editorEnterTypeT);
+    virtual void changeBedValue1(TBeing *, const sstring &, editorEnterTypeT);
     virtual void lowCheck();
     int putSomethingInto(TBeing *, TThing *);
 

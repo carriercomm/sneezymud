@@ -39,8 +39,8 @@ enum ammoTypeT {
 };
 
 
-extern const char *shelldesc [];
-extern const char *shellkeyword [];
+extern sstring shelldesc [];
+extern sstring shellkeyword [];
 
 
 TThing *findFlint(TThing *stuff);

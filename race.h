@@ -100,7 +100,7 @@ extern race_t & operator++(race_t &, int);
 // /mud/code/lib/races.
 
 const int MAX_NAMELENGTH = 15;
-extern const char *RaceNames[MAX_RACIAL_TYPES];
+extern sstring RaceNames[MAX_RACIAL_TYPES];
 
 const unsigned int DUMBANIMAL  = (1<<0);
 const unsigned int BONELESS    = (1<<1);
@@ -125,7 +125,7 @@ enum lore_t {
   MAX_LORES
 };
 
-extern const char * const Lores[MAX_LORES];
+extern sstring Lores[MAX_LORES];
 
 void listRaces(TBeing *caller);
 
@@ -133,7 +133,7 @@ const unsigned int TALENT_FAST_REGEN = (1<<0);
 
 const unsigned int MAX_TALENTS = 1;  // move and change
 
-extern const char * const talents[MAX_TALENTS];
+extern sstring talents[MAX_TALENTS];
 
 class Race {
   friend class TBeing;
@@ -147,7 +147,7 @@ public:
   ~Race();
 private:
   Race();
-  void initRace(const char *whichRace);
+  void initRace(const sstring &whichRace);
   void initNoRace();
 
 public:
@@ -191,8 +191,8 @@ public:
   bool isRidable() const;
   bool isDumbAnimal() const;
 
-  const char *moveIn() const;
-  const char *moveOut() const;
+  const sstring moveIn() const;
+  const sstring moveOut() const;
 
   int getBaseMaleHeight() const;
   int getMaleHtNumDice() const;

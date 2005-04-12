@@ -23,10 +23,10 @@ const drugTypeT MIN_DRUG = drugTypeT(1);
 class TDrugInfo
 {
   public:
-    const char *name;
+    sstring name;
     int potency; // max units of drug in body that takes affect
     int duration; 
-    TDrugInfo(const char *n, int p, int d);
+    TDrugInfo(const sstring &n, int p, int d);
     TDrugInfo(const TDrugInfo &);
     TDrugInfo & operator=(const TDrugInfo &);
     ~TDrugInfo();

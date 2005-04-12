@@ -24,7 +24,7 @@ class TScroll : public TMagicItem {
     virtual int changeItemVal2Check(TBeing *, int);
     virtual int changeItemVal3Check(TBeing *, int);
     virtual int changeItemVal4Check(TBeing *, int);
-    virtual int reciteMe(TBeing *, const char *);
+    virtual int reciteMe(TBeing *, const sstring &);
     virtual void divinateMe(TBeing *) const;
     virtual sstring getNameForShow(bool, bool, const TBeing *) const;
     virtual void lowCheck();

@@ -102,9 +102,9 @@ class TThing {
     virtual int editAverageMe(TBeing *, const sstring &);
     virtual int chiMe(TBeing *);
     virtual void eatMe(TBeing *);
-    virtual const char *hshr() const { return "its"; }
-    virtual const char *hssh() const { return "it"; }
-    virtual const char *hmhr() const { return "it"; }
+    virtual const sstring hshr() const { return "its"; }
+    virtual const sstring hssh() const { return "it"; }
+    virtual const sstring hmhr() const { return "it"; }
     virtual int checkSpec(TBeing *, cmdTypeT, const sstring &, TThing *) { return 0; }
     virtual const sstring getName() const { return name; }
     virtual bool shouldntBeShown(wearSlotT) const;
@@ -178,11 +178,11 @@ class TThing {
     bool isMineral() const;
 
     void newOwner(TThing *);
-    const char *objs(const TThing *t) const;
+    const sstring objs(const TThing *t) const;
     const sstring objn(const TThing *t) const;
-    const char *ana() const;
-    const char *sana() const;
-    const char *pers(const TThing *t) const;
+    const sstring ana() const;
+    const sstring sana() const;
+    const sstring pers(const TThing *t) const;
     const sstring persfname(const TThing *t) const;
     TThing * dismount(positionTypeT);
     void mount(TThing *);

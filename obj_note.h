@@ -22,7 +22,7 @@ class TNote : public TObj {
     virtual itemTypeT itemType() const { return ITEM_NOTE; }
     virtual void showMe(TBeing *) const;
 
-    virtual void postMe(TBeing *, const char *, boardStruct *);
+    virtual void postMe(TBeing *, const sstring &, boardStruct *);
     virtual int personalizedCheck(TBeing *) { return FALSE; }
     virtual void describeMe(TBeing *) const {}
     virtual void writeMeNote(TBeing *, TPen *);

@@ -34,13 +34,13 @@ const int NUM_OBJ_SPECIALS = 151;
 
 struct TObjSpecs {
   bool assignable;
-  const char *name;
-  int (*proc) (TBeing *, cmdTypeT, const char *, TObj *, TObj *);
+  sstring name;
+  int (*proc) (TBeing *, cmdTypeT, const sstring &, TObj *, TObj *);
 };
 
 TBeing *genericWeaponProcCheck(TBeing *vict, cmdTypeT cmd, TObj *o, int chance);
 
-extern void obj_act(const char *message, const TThing *ch, const TObj *o, const TBeing *ch2, const char *color);
+extern void obj_act(const sstring &message, const TThing *ch, const TObj *o, const TBeing *ch2, const sstring &color);
 
 
 extern const int GET_OBJ_SPE_INDEX(int d);

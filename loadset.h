@@ -38,7 +38,7 @@ enum loadSetTypeT {
 
 class loadSetStruct {
   public:
-    const          char   *name;
+                   sstring name;
                    int     equipment[LST_MAX];
                    race_t  suitRace;
                    double  suitLevel;
@@ -56,9 +56,9 @@ class loadSetClass {
   public:
     map<unsigned short int, loadSetStruct>suits;
 
-    bool suitLoad(const char *, TBeing *, loadSetTypeT, int, int);
+    bool suitLoad(const sstring &, TBeing *, loadSetTypeT, int, int);
     void SetupLoadSetSuits();
-    void suitAdd(const char *, int, int, int, int, int, int,
+    void suitAdd(const sstring &, int, int, int, int, int, int,
                  int, int, int, int, int, int, race_t);
 
     loadSetClass() {}

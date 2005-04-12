@@ -108,12 +108,12 @@ class TRelation {
 
 class TFaction {
  public:
-  char * proper_name;
+  sstring proper_name;
   int ID;
-  char * slang_name;
-  char * keywords;
-  char * password;
-  char * rank[NUM_MAX_RANK];
+  sstring slang_name;
+  sstring keywords;
+  sstring password;
+  sstring rank[NUM_MAX_RANK];
   unsigned int permissions[NUM_MAX_RANK];
   unsigned int flags;
   int treasury;
@@ -168,9 +168,9 @@ class TFaction {
 
 class TFactionInfo {
  public:
-  char * faction_name;
-  char * leader[FACT_LEADER_SLOTS];
-  char * faction_password;
+  sstring faction_name;
+  sstring leader[FACT_LEADER_SLOTS];
+  sstring faction_password;
   double faction_array[MAX_FACTIONS][2];
   double faction_power;
   int corp_id;
@@ -205,7 +205,7 @@ class TFactionInfo {
 
 extern TFactionInfo FactionInfo[MAX_FACTIONS];
 extern double avg_faction_power;
-extern const char * CaravanDestination(int);
+extern const sstring CaravanDestination(int);
 
 const char * const FACTION_FILE      = "faction/faction_info";
 const char * const FACTION_BAK       = "faction/faction_info.bak";
@@ -237,23 +237,23 @@ enum personTypeT {
 extern int load_newfactions();
 extern void save_newfactions();
 extern int get_unused_ID();
-extern TFaction * get_faction(const char *);
+extern TFaction * get_faction(const sstring &);
 extern TFaction * get_faction_by_ID(int);
-extern TFaction * get_faction_by_keywords(const char *);
-extern char * display_permission(unsigned int);
-extern char * display_faction_flags(unsigned int);
+extern TFaction * get_faction_by_keywords(const sstring &);
+extern sstring  display_permission(unsigned int);
+extern sstring  display_faction_flags(unsigned int);
 // end new faction functions
 
 extern int load_factions();
 extern void save_factions();
 extern factionTypeT factionNumber(const sstring);
-extern char *get_faction_leader_name(char *);
+extern sstring get_faction_leader_name(sstring &);
 extern void save_faction_file(TBeing *);
 extern void read_faction_file(TBeing *);
 extern spellNumT your_deity_val;
 extern int bestFactionPower();
 extern void recalcFactionPower();
 extern void launch_caravans();
-extern void sendToFaction(factionTypeT, const char *, const char *);
+extern void sendToFaction(factionTypeT, const sstring &, const sstring &);
 
 #endif

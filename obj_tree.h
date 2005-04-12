@@ -19,7 +19,7 @@ class TTree : public TObj {
     virtual itemTypeT itemType() const { return ITEM_TREE; }
     virtual sstring statObjInfo() const;
 
-    virtual int treeMe(TBeing *, const char *, int, int *);
+    virtual int treeMe(TBeing *, const sstring &, int, int *);
 
     TTree();
     TTree(const TTree &a);

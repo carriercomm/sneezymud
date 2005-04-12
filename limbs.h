@@ -51,7 +51,7 @@ const int LIMB_FOOT	= 20;
 const int MAX_MAIN_LIMBS = 8;
 const int MAX_LIMB_TYPES = 21;
 
-extern const char *limbNames[MAX_LIMB_TYPES];
+extern const sstring limbNames[MAX_LIMB_TYPES];
 
 const int LIMB_USELESS	 = (1<<0);
 const int LIMB_BROKEN	 = (1<<1);
@@ -101,10 +101,10 @@ extern wearSlotT pickRandomLimb(bool = false);
 extern bool VITAL_PART(wearSlotT pos);
 
 struct TransformLimbType {
-  char name[20];
+  sstring name;
   int  level;
   int  learning;
-  char newName[20];
+  sstring newName;
   wearSlotT  limb;
   spellNumT  spell;
   discNumT  discipline;

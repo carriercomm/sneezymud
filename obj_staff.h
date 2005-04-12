@@ -26,9 +26,9 @@ class TStaff : public TMagicItem {
     virtual void descMagicSpells(TBeing *) const;
     virtual void divinateMe(TBeing *) const;
     virtual sstring getNameForShow(bool, bool, const TBeing *) const;
-    virtual int useMe(TBeing *, const char *);
+    virtual int useMe(TBeing *, const sstring &);
     virtual int objectSell(TBeing *, TMonster *);
-    virtual int foodItemUsed(TBeing *ch, const char *arg);
+    virtual int foodItemUsed(TBeing *ch, const sstring &arg);
     virtual void lowCheck();
     virtual bool objectRepair(TBeing *, TMonster *, silentTypeT);
     virtual int rentCost() const;

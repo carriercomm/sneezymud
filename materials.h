@@ -140,7 +140,7 @@ struct material_type_numbers
   int price;
   int availability;
   int (*repair_proc)(TBeing *,TObj *o);
-  char mat_name[20];
+  sstring mat_name;
 };
 
 extern const struct material_type_numbers material_nums[200];

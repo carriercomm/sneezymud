@@ -666,7 +666,6 @@ extern bool _parse_name(const sstring &arg, sstring &name);
 extern bool is_abbrev(const char *, const char *, multipleTypeT multiple = MULTIPLE_NO, exactTypeT exact = EXACT_NO);
 extern bool is_abbrev(const sstring &, const sstring &, multipleTypeT multiple = MULTIPLE_NO, exactTypeT exact = EXACT_NO);
 extern char *fread_string(FILE *);
-extern void trimString(sstring &);
 
 
 template<class T> T convertTo(const sstring s)

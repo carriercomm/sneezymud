@@ -854,8 +854,6 @@ void TBeing::doSign(const sstring &arg)
 {
   sstring word, buf;
   TThing *t;
-  sstring whitespace=" \f\n\r\t\v";
-  
 
   if (arg.empty()) {
     sendTo("Yes, but WHAT do you want to sign?\n\r");

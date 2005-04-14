@@ -5520,8 +5520,11 @@ void TBeing::doHeaven(const sstring &arg)
   }
 
   sendTo("You move the heavens and the world.\n\r");
-  for (int i = 0; i < num; i++)
-    weatherAndTime(1);
+  for (int i = 0; i < num; i++){
+    anotherHour();
+    weatherChange();
+    sunriseAndSunset();
+  }
 }
 
 void TBeing::doAccount(const sstring &arg)

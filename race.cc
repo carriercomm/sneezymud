@@ -297,7 +297,7 @@ void Race::initRace(const char *whichRace)
     size_t end_whitespace = buf_sstring.find_last_of("\n");
     if (end_whitespace != sstring::npos)
       buf_sstring.erase(end_whitespace);
-    trimString(buf_sstring);
+    buf_sstring = buf_sstring.trim();
 
     //Names
     if (!strcasecmp(keyword, "singname")) {

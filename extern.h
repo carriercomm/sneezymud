@@ -114,6 +114,7 @@ extern const sstring corpse_flags[MAX_CORPSE_FLAGS];
 extern const sstring illegalnames[];
 extern const sstring month_name[12];
 extern const sstring weekdays[7];
+extern const sstring whitespace;
 extern int numberhosts;
 extern sstring lockmess;
 extern const byte sharpness[];
@@ -145,14 +146,12 @@ extern void gain_exp(TBeing *, double gain, int rawdamage);
 extern int check_sinking_obj(TObj *obj, int room);
 extern int ctoi(char c);
 extern void update_time(void);
-extern void do_check_mail();
 extern void do_components(int pulse);
 extern void extract_edit_char(TMonster *);
 extern void obj_edit(TBeing *, const sstring &arg);
 extern void room_edit(TBeing *, const sstring &arg);
 extern void mob_edit(TBeing *, const sstring &);
 extern void seditCore(TBeing *, sstring &);
-extern void perform_violence(int pulse);
 extern void help_edit(TBeing *, sstring &arg);
 extern void call_room_specials(void);
 extern int DetermineExp(TBeing *mob);
@@ -229,8 +228,6 @@ extern void DeleteFears(const TBeing *, const sstring &);
 extern int SHARP_PRICE(TObj *);
 extern bool UtilProcs(int);
 extern bool GuildProcs(int);
-extern void deityCheck(int);
-extern void apocCheck();
 
 extern void list_char_in_room(TThing *list, TBeing *ch);
 
@@ -283,7 +280,6 @@ extern int setsockopt(int, int, int, const char *, int);
 extern int getsockopt(int, int, int, char *buf, int *);
 #endif
 
-void   doGlobalRoomStuff(void);
 extern const int spec_skill_array[50];
 unsigned int CountBits(unsigned int);
 extern bool exit_ok(roomDirData *, TRoom **);
@@ -380,7 +376,6 @@ extern sstring displayDifficulty(spellNumT skill);
 extern void generic_dirlist(const sstring &, const TBeing *);
 extern int doLiqSpell(TBeing *, TBeing *, liqTypeT, int);
 extern int doObjSpell(TBeing *, TBeing *, TMagicItem *, TObj *, const sstring &, spellNumT);
-extern void checkGoldStats();
 extern double getSkillDiffModifier(spellNumT);
 extern void getSkillLevelRange(spellNumT, int &, int &, int);
 extern int getSpellCost(spellNumT spell, int lev, int learn);
@@ -435,9 +430,8 @@ extern void closeQueue();
 extern void mudSendMessage(int, int, const sstring &);
 extern void recvTextHandler(const sstring &);
 extern void mudRecvMessage();
+extern void perform_violence(int pulse);
 extern const sstring RandomWord();
-extern void calcBankInterest();
-extern void auctionUpdate();
 }
 
 // these needs C++ linkage to avoid conflict with functions in stdlib

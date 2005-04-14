@@ -15,6 +15,7 @@ extern "C" {
 #include "stdsneezy.h"
 #include "database.h"
 #include "corporation.h"
+#include "process.h"
 
 TFactionInfo FactionInfo[MAX_FACTIONS];
 
@@ -2759,7 +2760,15 @@ int bestFactionPower()
   return cur_best;
 }
 
-void recalcFactionPower()
+
+// procRecalcFactionPower
+procRecalcFactionPower::procRecalcFactionPower(const int &p)
+{
+  trigger_pulse=p;
+  name="procRecalcFactionPower";
+}
+
+void procRecalcFactionPower::run(int pulse) const
 {
   factionTypeT i;
 
@@ -2935,7 +2944,15 @@ const char * CaravanDestination(int which)
   }
 }
 
-void launch_caravans()
+
+// procLaunchCaravans
+procLaunchCaravans::procLaunchCaravans(const int &p)
+{
+  trigger_pulse=p;
+  name="procLaunchCaravans";
+}
+
+void procLaunchCaravans::run(int pulse) const
 {
   factionTypeT i;
   TMonster *mob;

@@ -1,7 +1,7 @@
 #include "stdsneezy.h"
 #include "combat.h"
 
-extern void startChargeTask(TBeing *, const char *);
+extern void startChargeTask(TBeing *, const sstring &);
 
 static int charge(TBeing *ch, TBeing *vict)
 {

@@ -1873,7 +1873,6 @@ int TBeing::parseCommand(const sstring &orig_arg, bool typedIn)
   int i;
   unsigned int pos;
   sstring argument, aliasbuf, arg1, arg2;
-  sstring whitespace=" \f\n\r\t\v";
 
   argument=orig_arg;
 
@@ -2102,11 +2101,10 @@ const char *one_argument(const char *argument, char *first_arg)
   return NULL;
 }
 
-sstring one_argument(sstring argument, sstring & first_arg)
+sstring one_argument(sstring argument, sstring &first_arg)
 {
   size_t bgin, look_at;
   sstring a2;
-  sstring whitespace = " \n\r\t";
   bgin = 0;
 
   do {
@@ -2127,7 +2125,7 @@ sstring one_argument(sstring argument, sstring & first_arg)
       first_arg = "";
       argument = "";
     }
-  } while (fill_word(first_arg.c_str()));
+  } while (fill_word(first_arg));
 
   // strip leading whitespace from argument
   if((bgin = argument.find_first_not_of(whitespace))!= string::npos){
@@ -2153,13 +2151,11 @@ bool is_abbrev(const sstring &arg1, const sstring &arg2, multipleTypeT multiple,
 {
   int spaces1 = 0;
   int spaces2 = 0;
-  const sstring whitespace = " \n\r\t";
 
   // This functionality was added 01/03/98 by me - Russ
   if (multiple) {
     // Do we wanna check for multi word stuff?
-    sstring carg1 = arg1;
-    trimString(carg1);
+    sstring carg1 = arg1.trim();
     sstring::size_type pos = carg1.find_last_not_of(whitespace);
     if (pos != sstring::npos)
       carg1.erase(pos+1);
@@ -2214,11 +2210,10 @@ bool is_abbrev(const sstring &arg1, const sstring &arg2, multipleTypeT multiple,
 
   // do case insenitive matching
   // we create carg2 "short" so that the compare will work properly
-  sstring carg1 = arg1.lower();
+  sstring carg1 = arg1.lower().trim();
   sstring carg2 = arg2.lower();
 
   // check for just garbage whitespace
-  trimString(carg1);
   if (carg1.empty())
     return false;
 
@@ -2238,7 +2233,6 @@ void half_chop(const char *sstring, char *arg1, char *arg2)
 }
 
 sstring add_bars(const sstring &s){
-  sstring whitespace=" \f\n\r\t\v";
   sstring stmp=s;
 
   for(unsigned int pos=stmp.find_first_of(whitespace);
@@ -3292,16 +3286,6 @@ char *mud_str_copy(char *dest, const sstring &src, size_t n)
   }
 
   return dest;
-}
-
-void trimString(sstring &arg)
-{
-  if (arg.empty())
-    return;
-  size_t iter = arg.find_first_not_of(" \n\r");
-  if (iter == sstring::npos)
-    return;
-  arg.erase(0, iter);  // erase the leading whitespace
 }
 
 int sstringncmp(const sstring str1, const sstring str2, unsigned int len)

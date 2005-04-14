@@ -2,14 +2,28 @@
 #include "database.h"
 #include "shop.h"
 #include "shopowned.h"
+#include "process.h"
 
 
-void calcBankInterest()
+// procBankInterest
+procBankInterest::procBankInterest(const int &p)
+{
+  trigger_pulse=p;
+  name="procBankInterest";
+}
+
+void procBankInterest::run(int pulse) const 
 {
   TDatabase db(DB_SNEEZY), in(DB_SNEEZY);
   double profit_sell;
   unsigned int shop_nr;
   int pretalens=0, posttalens=0;
+
+  db.query("update shopownedbank set earned_interest=0 where earned_interest is null");
+  db.query("update shopownedcorpbank set earned_interest=0 where earned_interest is null");
+  db.query("update shopownedbank set talens=0 where talens is null");
+  db.query("update shopownedcorpbank set talens=0 where talens is null");
+
 
   db.query("select shop_nr, keeper from shop");
   

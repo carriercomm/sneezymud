@@ -2,16 +2,15 @@
 #include "sstring.h"
 #include "format.h"
 
-
 // puts commas every 3rd char, for formatting number strings
 const sstring sstring::comify() const
 {
-  sstring tString=*this;
-  int  strCount, charIndex = 0;
+  sstring s=*this;
+  size_t strCount, charIndex = 0;
 
-  tString=fmt("%.0f") % convertTo<float>(*this);
-  strCount = tString.length();
-  tString="";
+  s = fmt("%.0f") % convertTo<float>(*this);
+  strCount = s.length();
+  s = "";
 
   for (; charIndex < strCount; charIndex++) {
     // put commas every 3rd char EXCEPT if next char is '-'
@@ -19,18 +18,16 @@ const sstring sstring::comify() const
     // but don't want "-123" to become "-,123"
     if (!((strCount - charIndex) % 3) && charIndex != 0 &&
         !(charIndex == 1 && (*this)[0] == '-'))
-      tString += ",";
+      s += ",";
 
-    tString += (*this)[charIndex];
+    s += (*this)[charIndex];
   }
 
   for (; (*this)[charIndex]; charIndex++)
-    tString += (*this)[charIndex];
+    s += (*this)[charIndex];
 
-  return tString;
+  return s;
 }
-
-
 
 // converts newlines in the string to CRLF if possible
 // this is for preparation for sending out to a player
@@ -38,10 +35,10 @@ const sstring sstring::comify() const
 const sstring sstring::toCRLF() const
 {
   sstring dosstr = "";
-  unsigned int len;
+  size_t len;
 
   len = (*this).length();
-  for (unsigned int loc=0; loc < len; ++loc){
+  for (size_t loc=0; loc < len; ++loc){
     dosstr += (*this)[loc];
     if ((*this)[loc] == '\n' && (*this)[loc-1] != '\r' &&
       (loc+1) <= len && (*this)[loc+1] != '\r') {
@@ -107,7 +104,6 @@ const sstring sstring::cap() const
   return s;
 }
 
-
 // uncapitalizes first letter, skipping color codes
 const sstring sstring::uncap() const
 {
@@ -131,15 +127,13 @@ const sstring sstring::uncap() const
     }
   }
 
-
   return s;
 }
 
 // splits the string up by whitespace and returns the i'th "word"
 const sstring sstring::word(int i) const
 {
-  unsigned int copy_begin=0, copy_end=0;
-  sstring whitespace=" \f\n\r\t\v"; // taken from isspace() man page
+  size_t copy_begin=0, copy_end=0;
   
   while(1){
     // find first non-whitespace past our last working point
@@ -164,10 +158,26 @@ const sstring sstring::word(int i) const
   return "";
 }
 
+// removes leading whitespace from the string
+const sstring sstring::trim() const
+{
+  sstring s=*this;
+
+  if (s.empty())
+    return "";
+
+  size_t pos = s.find_first_not_of(whitespace);
+
+  if (pos == sstring::npos)
+    return "";
+
+  return s.substr(pos);
+}
+
 // returns true if string has a digit in it
 const bool sstring::hasDigit() const
 {
-  for(unsigned int i=0;i<size();++i){
+  for(size_t i=0;i<size();++i){
     if (isdigit((*this)[i]))
       return true;
   }
@@ -175,11 +185,10 @@ const bool sstring::hasDigit() const
   return false;
 }
 
-
 // returns true if string has only digits in it
 const bool sstring::isNumber() const
 {
-  for(unsigned int i=0;i<size();++i){
+  for(size_t i=0;i<size();++i){
     if (!isdigit((*this)[i]))
       return false;
   }
@@ -189,7 +198,7 @@ const bool sstring::isNumber() const
 
 const bool sstring::isWord() const
 {
-  for(unsigned int i=0;i<size();++i){
+  for(size_t i=0;i<size();++i){
     if (!isalpha((*this)[i]))
       return false;
   }
@@ -198,7 +207,7 @@ const bool sstring::isWord() const
 
 const bool sstring::startsVowel() const
 {
-  for(unsigned int i=0;i<size();++i){
+  for(size_t i=0;i<size();++i){
     if(isspace((*this)[i]))
       continue;
     
@@ -226,6 +235,3 @@ const sstring & sstring::operator=(fmt &a)
   this->assign(a);
   return *this;
 }
-
-
-

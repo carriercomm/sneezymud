@@ -2434,8 +2434,7 @@ void TBeing::doSit(const sstring & argument)
     return FALSE;
 #endif
 
-  sstring arg = argument;
-  trimString(arg);
+  sstring arg = argument.trim();
 
   if (arg.empty() && (!riding || dynamic_cast<TBeing *>(riding))) {
     loseSneak();
@@ -2534,8 +2533,7 @@ void TBeing::doRest(const sstring & argument)
     sendTo("Your berserker rage prevents you from resting at this time.\n\r");
     return;
   }
-  sstring arg = argument;
-  trimString(arg);
+  sstring arg = argument.trim();
 
   if (arg.empty() && (!riding || dynamic_cast<TBeing *>(riding))) {
     loseSneak();
@@ -2631,8 +2629,7 @@ void TBeing::doSleep(const sstring & argument)
     sendTo("Your berserker rage prevents you from resting at this time.\n\r");
     return;
   }
-  sstring arg = argument;
-  trimString(arg);
+  sstring arg = argument.trim();
 
   if (arg.empty() && (!riding || dynamic_cast<TBeing *>(riding))) {
     loseSneak();

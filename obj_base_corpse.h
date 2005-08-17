@@ -35,6 +35,7 @@ class TBaseCorpse : public TBaseContainer {
     virtual int putSomethingInto(TBeing *, TThing *);
     virtual int putMeInto(TBeing *, TOpenContainer *);
     virtual void describeObjectSpecifics(const TBeing *) const {}
+    void getObjFromMeText(TBeing *, TThing *, getTypeT, bool);
 
     void setCorpseFlags(unsigned int);
     unsigned int getCorpseFlags() const;

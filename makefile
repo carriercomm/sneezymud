@@ -19,7 +19,8 @@ VERSION_FILE = lib/txt/version.new
 # GPROFF=1    # Use with care, mud stays up for about 45 minutes with this on.
 # USECRYPT=1  # Uncomment to have all the crypt stuff
 
-CC = /usr/bin/g++
+CC = /usr/local/bin/g++40
+#CC = /usr/local/bin/g++40
 
 ###############################################################################
 #                    Base Values (Do Not Modify/Add Here)                     #
@@ -168,7 +169,8 @@ LIBSYS=	ansi.o		database.o   	socket.o		\
 	comm.o         	indexdata.o				\
 	connect.o      	signals.o    	sstring.o		\
 	format.o	pathfinder.o	process.o		\
-	proc_check_mail.o		proc_check_repo.o
+	proc_check_mail.o		proc_check_repo.o	\
+	rewrite_obj_file.o
 
 LIBSYS := $(sort $(addprefix $(OBJDIR), $(LIBSYS)))
 
@@ -6789,7 +6791,7 @@ objs/cmd_trophy.o: spec_objs.h connect.h obj_drug.h charfile.h being.h
 objs/cmd_trophy.o: person.h monster.h paths.h account.h extern.h handler.h
 objs/cmd_trophy.o: obj_money.h spec_mobs.h materials.h colorstring.h format.h
 objs/cmd_trophy.o: cmd_trophy.h database.h /usr/local/include/libpq-fe.h
-objs/cmd_trophy.o: /usr/local/include/postgres_ext.h
+objs/cmd_trophy.o: /usr/local/include/postgres_ext.h process.h
 objs/cmd_visible.o: stdsneezy.h /usr/include/c++/3.4/cstdio
 objs/cmd_visible.o: /usr/include/c++/3.4/bits/c++config.h
 objs/cmd_visible.o: /usr/include/c++/3.4/bits/os_defines.h
@@ -18338,7 +18340,7 @@ objs/loadset.o: sound.h create.h thing.h room.h obj.h spec_objs.h connect.h
 objs/loadset.o: obj_drug.h charfile.h being.h person.h monster.h paths.h
 objs/loadset.o: account.h extern.h handler.h obj_money.h spec_mobs.h
 objs/loadset.o: materials.h colorstring.h format.h loadset.h obj_armor.h
-objs/loadset.o: obj_base_clothing.h
+objs/loadset.o: obj_base_clothing.h statistics.h
 objs/lowtools.o: stdsneezy.h /usr/include/c++/3.4/cstdio
 objs/lowtools.o: /usr/include/c++/3.4/bits/c++config.h
 objs/lowtools.o: /usr/include/c++/3.4/bits/os_defines.h

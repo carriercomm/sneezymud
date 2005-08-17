@@ -380,3 +380,30 @@ int TBaseCorpse::chiMe(TBeing *tLunatic)
     return true;
    
 }
+
+void TBaseCorpse::getObjFromMeText(TBeing *tBeing, TThing *tThing, getTypeT tType, bool tFirst)
+{
+  TPCorpse * tCorpse;
+
+
+  if((tCorpse=dynamic_cast<TPCorpse *>(this)) &&
+     ((sstring)tBeing->getName()).lower() == tCorpse->getOwner()){
+    // allow loot
+  } else if(isCorpseFlag(CORPSE_DENY_LOOT) &&
+	    !tBeing->isImmortal()){
+    act("Looting $p isn't allowed.",
+	TRUE, tBeing, this, NULL, TO_CHAR);
+    return;
+  }
+
+
+
+
+  act("You take $p from $P.",
+      FALSE, tBeing, tThing, this, TO_CHAR);
+  act("$n takes $p from $P.",
+      TRUE, tBeing, tThing, this, TO_ROOM);
+
+  --(*tThing);
+  *tBeing += *tThing;
+}

@@ -613,6 +613,19 @@ bool will_not_buy(TBeing *ch, TMonster *keeper, TObj *temp1, int shop_nr)
     return TRUE;
   }
 
+
+  unsigned int counter=0;
+  for(TThing *tt=keeper->getStuff();tt;tt=tt->nextThing)
+    ++counter;
+
+  if(counter >= MAX_SHOP_INVENTORY){
+    keeper->doTell(ch->getName(), "My inventory is full, I can't buy anything!");
+    return TRUE;
+  }
+
+
+
+
   return FALSE;
 }
 
@@ -1917,6 +1930,40 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
       pawnman = myself;
     }
     myself->loadItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
+
+    vector<int>::iterator iter;
+    TObj *o;
+    bool found=false;
+
+    for(iter=shop_index[shop_nr].producing.begin();
+	iter!=shop_index[shop_nr].producing.end();++iter){
+      if(*iter <= -1)
+	continue;
+      
+      found=false;
+      for(TThing *t=myself->getStuff();t;t=t->nextThing){
+	if(t->number == *iter){
+	  found=true;
+	  break;
+	}
+      }
+
+      if(found)
+	continue;
+
+      if (!(o = read_object(*iter, REAL))) {
+        vlogf(LOG_BUG, fmt("Shopkeeper %d couldn't load produced item.") %  
+	      shop_nr);
+        return FALSE;
+      }
+
+      vlogf(LOG_LOW, fmt("%s loading produced object %s") %
+	    myself->getName() % o->getName());
+
+      
+      *myself += *o;
+    }
+
     return FALSE;
   } else if (cmd == CMD_MOB_VIOLENCE_PEACEFUL) {
     myself->doSay("Hey!  Take it outside.");
@@ -2006,20 +2053,16 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
         continue;
 
       if(IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_RECYCLE) &&
-	 !::number(0,24)){
-	int val=(int)(obj->getValue() * shop_index[shop_nr].profit_sell);
-	
-	// no profit for recycling right now
-	// experiment in closed loop economy
-	val=0;
-	//
+	 !shop_index[shop_nr].isProducing(obj) && !::number(0,249)){
+	// resolution 220, the fun restoration initiative
+	int val=(int)(obj->getValue() * 0.25);
 
 	myself->addToMoney(val, GOLD_SHOP);
 	shoplog(shop_nr, myself, myself, obj->getName(), val, "recycling");
-	delete obj;
 
 	vlogf(LOG_OBJ, fmt("shop %s (%i) recycling %s for %i talens") %  myself->getName() % shop_nr % obj->getName() % (int)(obj->getValue() * shop_index[shop_nr].profit_sell));
 
+	delete obj;
 	continue;
       }
 

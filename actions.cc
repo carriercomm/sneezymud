@@ -50,24 +50,16 @@ class socialMessg {
       hide(a.hide),
       minPos(a.minPos)
     {
-      char_no_arg = mud_str_dup(a.char_no_arg);
-      others_no_arg = mud_str_dup(a.others_no_arg);
-      char_found = mud_str_dup(a.char_found);
-      others_found = mud_str_dup(a.others_found);
-      vict_found = mud_str_dup(a.vict_found);
-      not_found = mud_str_dup(a.not_found);
-      char_auto = mud_str_dup(a.char_auto);
-      others_auto = mud_str_dup(a.others_auto);
+      char_no_arg = a.char_no_arg;
+      others_no_arg = a.others_no_arg;
+      char_found = a.char_found;
+      others_found = a.others_found;
+      vict_found = a.vict_found;
+      not_found = a.not_found;
+      char_auto = a.char_auto;
+      others_auto = a.others_auto;
     }
     ~socialMessg() {
-      delete [] char_no_arg;
-      delete [] others_no_arg;
-      delete [] char_found;
-      delete [] others_found;
-      delete [] vict_found;
-      delete [] not_found;
-      delete [] char_auto;
-      delete [] others_auto;
       char_no_arg = NULL;
       others_no_arg = NULL;
       char_found = NULL;
@@ -83,23 +75,14 @@ class socialMessg {
       hide = a.hide;
       minPos = a.minPos;
 
-      delete [] char_no_arg;
-      delete [] others_no_arg;
-      delete [] char_found;
-      delete [] others_found;
-      delete [] vict_found;
-      delete [] not_found;
-      delete [] char_auto;
-      delete [] others_auto;
-
-      char_no_arg = mud_str_dup(a.char_no_arg);
-      others_no_arg = mud_str_dup(a.others_no_arg);
-      char_found = mud_str_dup(a.char_found);
-      others_found = mud_str_dup(a.others_found);
-      vict_found = mud_str_dup(a.vict_found);
-      not_found = mud_str_dup(a.not_found);
-      char_auto = mud_str_dup(a.char_auto);
-      others_auto = mud_str_dup(a.others_auto);
+      char_no_arg = a.char_no_arg;
+      others_no_arg = a.others_no_arg;
+      char_found = a.char_found;
+      others_found = a.others_found;
+      vict_found = a.vict_found;
+      not_found = a.not_found;
+      char_auto = a.char_auto;
+      others_auto = a.others_auto;
 
       return *this;
     }

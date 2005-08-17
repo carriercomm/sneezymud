@@ -520,11 +520,12 @@ struct timeval TMainSocket::handleTimeAndSockets()
 
 void pulseLog(sstring name, TTiming timer, int pulse)
 {
-  if(!gameLoopTiming)
+  if(!toggleInfo[TOG_GAMELOOP]->toggle)
     return;
 
   vlogf(LOG_MISC, fmt("%i %i) %s: %i") % 
-	pulse % (pulse%12) % name % (int)(timer.getElapsedReset()*1000000));
+	(pulse % 2400) % (pulse%12) % name % 
+	(int)(timer.getElapsedReset()*1000000));
 }
 
 
@@ -604,7 +605,7 @@ int TMainSocket::characterPulse(TPulseList &pl, int realpulse)
     }
 
     if (pl.mobstuff) {
-      if (Gravity) {
+      if (toggleInfo[TOG_GRAVITY]->toggle) {
 	tmp_ch->checkSinking(tmp_ch->in_room);
 
 	rc = tmp_ch->checkFalling();
@@ -850,7 +851,7 @@ int TMainSocket::characterPulse(TPulseList &pl, int realpulse)
       }
     }
 
-    if(gameLoopTiming){
+    if(toggleInfo[TOG_GAMELOOP]->toggle){
       rc=(int)(t.getElapsedReset()*1000000);
       
       if(rc>1000){
@@ -1105,6 +1106,39 @@ void procMobHate::run(int pulse) const
 }
 
 
+// Mudadmin Resolution, April 19th 2005
+// 217.) Global load rates will be lowered by 1% per day for 3
+// consecutive months, achieving an end result of 1/10th of the
+// former rates. An additional period of 3 months with no global
+// load rate changes will be observed in order to monitor the
+// results of this change.
+//
+// The global load rate modifier is currently at 0.46, so we will
+// decrease it by 1% (0.0046) per real day. until we arrive at 0.0460
+// but we'll do it per hour (.00019166666666666666)
+
+// procTweakLoadRate
+procTweakLoadRate::procTweakLoadRate(const int &p)
+{
+  trigger_pulse=p;
+  name="procTweakLoadRate";
+}
+
+void procTweakLoadRate::run(int) const
+{
+  if(stats.equip <= 0.046){
+    vlogf(LOG_BUG, "procTweakLoadRate: desired load rate achieved.");
+    return;
+  }
+
+  stats.equip -= 0.00019166666666666666;
+  save_game_stats();
+  vlogf(LOG_LOW, fmt("procTweakLoadRate: adjusted load rate to %f") %
+	stats.equip);
+}
+
+
+
 int TMainSocket::gameLoop()
 {
   Descriptor *point;
@@ -1115,46 +1149,50 @@ int TMainSocket::gameLoop()
   int count;
   struct timeval timespent;
   TTiming t;
-  TProcessList proc_list;
+  TScheduler scheduler;
 
   // pulse every
-  proc_list.add(new procSetZoneEmpty(PULSE_EVERY));
-  proc_list.add(new procCallRoomSpec(PULSE_EVERY));
+  scheduler.add(new procSetZoneEmpty(PULSE_EVERY));
+  scheduler.add(new procCallRoomSpec(PULSE_EVERY));
 
   // pulse update
-  proc_list.add(new procGlobalRoomStuff(PULSE_UPDATE));
-  proc_list.add(new procDeityCheck(PULSE_UPDATE));
-  proc_list.add(new procApocCheck(PULSE_UPDATE));
-  proc_list.add(new procSaveFactions(PULSE_UPDATE));
-  proc_list.add(new procSaveNewFactions(PULSE_UPDATE));
-  proc_list.add(new procWeatherAndTime(PULSE_UPDATE));
-  proc_list.add(new procWholistAndUsageLogs(PULSE_UPDATE));
+  scheduler.add(new procGlobalRoomStuff(PULSE_UPDATE));
+  scheduler.add(new procDeityCheck(PULSE_UPDATE));
+  scheduler.add(new procApocCheck(PULSE_UPDATE));
+  scheduler.add(new procSaveFactions(PULSE_UPDATE));
+  scheduler.add(new procSaveNewFactions(PULSE_UPDATE));
+  scheduler.add(new procWeatherAndTime(PULSE_UPDATE));
+  scheduler.add(new procWholistAndUsageLogs(PULSE_UPDATE));
 
   // pulse wayslow
-  proc_list.add(new procCheckForRepo(PULSE_WAYSLOW));
-  proc_list.add(new procCheckMail(PULSE_WAYSLOW));
+  scheduler.add(new procCheckForRepo(PULSE_WAYSLOW));
+  scheduler.add(new procCheckMail(PULSE_WAYSLOW));
 
   // pulse combat
-  proc_list.add(new procPerformViolence(PULSE_COMBAT));
+  scheduler.add(new procPerformViolence(PULSE_COMBAT));
 
   // pulse mudhour
-  proc_list.add(new procFishRespawning(PULSE_MUDHOUR));
-  proc_list.add(new procZoneUpdate(PULSE_MUDHOUR));
-  proc_list.add(new procLaunchCaravans(PULSE_MUDHOUR));
-  proc_list.add(new procUpdateAvgPlayers(PULSE_MUDHOUR));
-  proc_list.add(new procCheckGoldStats(PULSE_MUDHOUR));
-  proc_list.add(new procAutoTips(PULSE_MUDHOUR));
-  proc_list.add(new procPingData(PULSE_MUDHOUR));
-  proc_list.add(new procRecalcFactionPower(PULSE_MUDHOUR));
-  proc_list.add(new procNukeInactiveMobs(PULSE_MUDHOUR));
-  proc_list.add(new procUpdateTime(PULSE_MUDHOUR));
-  proc_list.add(new procMobHate(PULSE_MUDHOUR));
-  proc_list.add(new procDoComponents(PULSE_MUDHOUR));
+  scheduler.add(new procFishRespawning(PULSE_MUDHOUR));
+  scheduler.add(new procZoneUpdate(PULSE_MUDHOUR));
+  scheduler.add(new procLaunchCaravans(PULSE_MUDHOUR));
+  scheduler.add(new procUpdateAvgPlayers(PULSE_MUDHOUR));
+  scheduler.add(new procCheckGoldStats(PULSE_MUDHOUR));
+  scheduler.add(new procAutoTips(PULSE_MUDHOUR));
+  scheduler.add(new procPingData(PULSE_MUDHOUR));
+  scheduler.add(new procRecalcFactionPower(PULSE_MUDHOUR));
+  scheduler.add(new procNukeInactiveMobs(PULSE_MUDHOUR));
+  scheduler.add(new procUpdateTime(PULSE_MUDHOUR));
+  scheduler.add(new procMobHate(PULSE_MUDHOUR));
+  scheduler.add(new procDoComponents(PULSE_MUDHOUR));
   
   // pulse mudday
-  proc_list.add(new procUpdateAuction(PULSE_MUDDAY));
-  proc_list.add(new procBankInterest(PULSE_MUDDAY));
+  scheduler.add(new procUpdateAuction(PULSE_MUDDAY));
+  scheduler.add(new procBankInterest(PULSE_MUDDAY));
 
+  // pulse realhour
+  scheduler.add(new procTweakLoadRate(PULSE_REALHOUR));
+  scheduler.add(new procTrophyDecay(PULSE_REALHOUR));
+  proc_list.add(new procTrophyDecay(PULSE_REALHOUR));
 
   avail_descs = 150;		
 
@@ -1164,16 +1202,14 @@ int TMainSocket::gameLoop()
     if (!point->m_bIsClient)
       point->sendLogin("1");
 
-  time_t ticktime = time(0);
-
   while (!handleShutdown()) {
     timespent=handleTimeAndSockets();
     
-    if(gameLoopTiming){
+    if(toggleInfo[TOG_GAMELOOP]->toggle){
       count=((timespent.tv_sec*1000000)+timespent.tv_usec);
       
       vlogf(LOG_MISC, fmt("%i %i) handleTimeAndSockets: %i (sleep = %i)") %
-	    pulse % (pulse%12) % 
+	    (pulse % 2400) % (pulse%12) % 
 	    (int)((t.getElapsedReset()*1000000)-count) % count);
     }
     
@@ -1182,10 +1218,10 @@ int TMainSocket::gameLoop()
     pl.init(pulse);
 
 
-    proc_list.run(pulse);
+    scheduler.run(pulse);
 
 
-    if(gameLoopTiming)
+    if(toggleInfo[TOG_GAMELOOP]->toggle)
       vlogf(LOG_MISC, fmt("%i %i) normal pulses: %s") % 
 	    pulse % (pulse%12) % pl.showPulses());
 
@@ -1199,7 +1235,7 @@ int TMainSocket::gameLoop()
     // reset the pulse flags
     pl.init(pulse);
 
-    if(gameLoopTiming){
+    if(toggleInfo[TOG_GAMELOOP]->toggle){
       vlogf(LOG_MISC, fmt("%i %i) split pulses: %s") % 
 	    oldpulse % (oldpulse%12) % pl.showPulses());
 
@@ -1207,19 +1243,19 @@ int TMainSocket::gameLoop()
     }
 
     // handle pulse stuff for objects
-    count=objectPulse(pl, pulse);
+    count=objectPulse(pl, (pulse % 2400));
 
-    if(gameLoopTiming)
+    if(toggleInfo[TOG_GAMELOOP]->toggle)
       vlogf(LOG_MISC, fmt("%i %i) objectPulse: %i, %i objs") % 
-	    oldpulse % (oldpulse%12) % 
+	    (oldpulse % 2400) % (oldpulse%12) % 
 	    (int)(t.getElapsedReset()*1000000) % count);
     
     // handle pulse stuff for mobs and players
-    count=characterPulse(pl, pulse);
+    count=characterPulse(pl, (pulse % 2400));
 
-    if(gameLoopTiming)
+    if(toggleInfo[TOG_GAMELOOP]->toggle)
       vlogf(LOG_MISC, fmt("%i %i) characterPulse: %i, %i chars") %
-	    oldpulse % (oldpulse%12) % 
+	    (oldpulse % 2400) % (oldpulse%12) % 
 	    (int)(t.getElapsedReset()*1000000) % count);
 
     // reset the old values from the artifical pulse
@@ -1241,15 +1277,6 @@ int TMainSocket::gameLoop()
       lag_info.low = min(lag_info.lagtime[which], lag_info.low);
     }
 
-    if (pulse >= 2400) {
-      ticktime = time(0);
-
-      // THIS PULSE = 0 IS NOT SIMPLY FOR LOGGING PURPOSES.
-      // if it gets removed all tasks go into hyper mode. So don't.
-      // (appears to be true: some functions above take the pulse as
-      //  an argument - peel 04/20/04)
-      pulse = 0;
-    }
     pulseLog("lag_info", t, pulse);
 
     systask->CheckTask();

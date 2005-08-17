@@ -256,56 +256,40 @@ unsigned int TBeing::numberInGroupInRoom() const
   return count;
 }
 
-bool getall(const char *name, char *newname)
+bool getall(const sstring &name, sstring &newname)
 {
-  char arg[40], tmpname[80], otname[80];
-  char prd;
-
-  *arg = *tmpname = *otname = '\0';
-
-  sscanf(name, "%s ", otname);	
-  if (strlen(otname) < 5)
+  if (name.length() < 5) {
     return FALSE;
+  }
 
-  sscanf(otname, "%3s%c%s", arg, &prd, tmpname);
-
-  if (prd != '.')
+  if (name.lower().substr(0,4) != "all.") {
     return FALSE;
-  if (!tmpname)
-    return FALSE;
-  if (strcmp(arg, "all"))
-    return FALSE;
+  }
 
-  while (*name != '.')
-    name++;
-
-  name++;
-
-  for (; (*newname = *name); name++, newname++);
-
+  newname = name.substr(4);
   return TRUE;
 }
 
 int getabunch(const sstring &name, sstring &newname)
 {
   int num = 0;
-  char tmpname[80] = "\0";
-  unsigned int i, j;
+  size_t star_pos;
 
-  sscanf(name.c_str(), "%d*%s", &num, tmpname);
-  if (tmpname[0] == '\0')
+  star_pos = name.find_first_of("*");
+  if (star_pos + 1 >= name.length()) {
     return FALSE;
-  if (num < 1)
+  }
+
+  num = convertTo<int>(name.substr(0, star_pos));
+  if (num < 1) {
     return FALSE;
-  if (num > 1000)
+  }
+  if (num > 1000) {
     num = 1000;
+  }
 
-  for(i=0;i<name.length() && name[i] != '*';++i);
-  ++i;
-
-  for (j=0; (newname[j] = name[i]); i++, j++);
-
-  return (num);
+  newname = name.substr(star_pos + 1);
+  return num;
 }
 
 int TMonster::standUp()
@@ -492,9 +476,9 @@ bool TBeing::nomagic(const sstring &msg_ch, const sstring &msg_rm) const
     if (!msg_rm.empty())
       act(msg_rm, FALSE, this, 0, 0, TO_ROOM);
 
-    return 1;
+    return TRUE;
   }
-  return 0;
+  return FALSE;
 }
 
 // please note, this ignores riders

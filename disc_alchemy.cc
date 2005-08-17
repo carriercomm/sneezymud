@@ -282,10 +282,10 @@ int divinationObj(TBeing *caster, const TObj *obj, int, byte bKnown)
             vlogf(LOG_BUG, fmt("BOGUS AFFECT (%d) on %s") %  obj->affected[i].modifier %
                   obj->getName());
         } else if (obj->affected[i].location == APPLY_DISCIPLINE) {
-          if (discNames[obj->affected[i].modifier].practice)
+          if (discNames[obj->affected[i].modifier].name)
             caster->sendTo(fmt("   Affects:  %s: %s by %ld\n\r") %
                 apply_types[obj->affected[i].location].name %
-                discNames[obj->affected[i].modifier].practice %
+                discNames[obj->affected[i].modifier].name %
                 obj->affected[i].modifier2);
           else
             vlogf(LOG_BUG, fmt("BOGUS AFFECT (%d) on %s") %  obj->affected[i].modifier %
@@ -602,7 +602,7 @@ int eyesOfFertuman(TBeing *caster, const char * tofind)
     return FALSE;
 
 //  if (caster->affectedBySpell(SPELL_BLINDNESS)) {
-  if (caster->isAffected(AFF_BLIND)) {
+  if (caster->isAffected(AFF_BLIND) && !caster->isAffected(AFF_TRUE_SIGHT)) {
     act("How do you expect to see while you are blind?",
         FALSE, caster, NULL, NULL, TO_CHAR);
     caster->nothingHappens(SILENT_YES);

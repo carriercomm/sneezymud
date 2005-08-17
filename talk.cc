@@ -545,7 +545,8 @@ void TBeing::doShout(const char *arg)
     }
     return;
   }
-  if (!dynamic_cast<TMonster *>(this) && (Silence == 1) && !isImmortal()) {
+  if (!dynamic_cast<TMonster *>(this) && toggleInfo[TOG_SHOUTING]->toggle && 
+      !isImmortal()) {
     sendTo("Shouting has been banned.\n\r");
     return;
   }
@@ -743,7 +744,8 @@ void TBeing::doCommune(const sstring &arg)
       if (!levnum) {
         str = colorString(this, i, arg, NULL, COLOR_COMM, FALSE);
         convertStringColor("<c>", str);
-        if (critter->GetMaxLevel() >= GOD_LEVEL1 && WizBuild) {
+        if (critter->GetMaxLevel() >= GOD_LEVEL1 && 
+	    toggleInfo[TOG_WIZBUILD]->toggle) {
           buf = fmt ("%s$n: %s%s%s") %
                  i->purple() % i->cyan() %
                  str % i->norm();
@@ -766,7 +768,8 @@ void TBeing::doCommune(const sstring &arg)
           NULL, COLOR_COMM, FALSE);
         convertStringColor("<c>", str);
         
-        if (critter->GetMaxLevel() >= GOD_LEVEL1 && WizBuild &&
+        if (critter->GetMaxLevel() >= GOD_LEVEL1 && 
+	    toggleInfo[TOG_WIZBUILD]->toggle &&
             critter->GetMaxLevel() >= levnum) {
           buf = fmt ("%s[builders] (level: %d) $n: %s%s%s") %
                  i->purple() % levnum % i->cyan() %
@@ -850,35 +853,36 @@ const sstring RandomWord()
 }
 
 
-void TBeing::doSign(const sstring &arg)
+int TBeing::doSign(const sstring &arg)
 {
   sstring word, buf;
-  TThing *t;
+  TThing *t, *t2;
+  int rc;
 
   if (arg.empty()) {
     sendTo("Yes, but WHAT do you want to sign?\n\r");
-    return;
+    return FALSE;
   }
 
   if (!roomp)
-    return;
+    return FALSE;
 
   if (!hasHands() || affectedBySpell(AFFECT_TRANSFORMED_ARMS) ||
                      affectedBySpell(AFFECT_TRANSFORMED_HANDS)) {
     sendTo("Yeah right...WHAT HANDS?!?!?!?!\n\r");
-    return;
+    return FALSE;
   }
   if (eitherArmHurt()) {
     sendTo("You REALLY need working arms to communicate like this...\n\r");
-    return;
+    return FALSE;
   }
   if (heldInPrimHand() || heldInSecHand()) {
     sendTo("You can't sign while holding things.\n\r");
-    return;
+    return FALSE;
   }
   if (fight()) {
     sendTo("You can't sign while fighting.\n\r");
-    return;
+    return FALSE;
   }
 
   // work through the arg, word by word.  if you fail your
@@ -907,7 +911,9 @@ void TBeing::doSign(const sstring &arg)
 
   buf = fmt("$n signs, \"%s\"") % buf;
 
-  for (t = roomp->getStuff(); t; t = t->nextThing) {
+  for (t = roomp->getStuff(); t; t = t2) {
+    t2 = t->nextThing;
+
     TBeing *ch = dynamic_cast<TBeing *>(t);
     if (!ch)
       continue;
@@ -916,13 +922,30 @@ void TBeing::doSign(const sstring &arg)
     if (ch != this && ch->doesKnowSkill(SKILL_SIGN)) {
       if (bSuccess(SKILL_SIGN))
         act(buf, TRUE, this, 0, ch, TO_VICT);
+        if (isPc() && !ch->isPc()) { 
+          TMonster *tmons = dynamic_cast<TMonster *>(ch);
+          tmons->aiSay(this, NULL);
+          rc = tmons->checkResponses(this, 0, buf, CMD_SIGN);
+          if (IS_SET_DELETE(rc, DELETE_THIS)) {
+            delete tmons;
+            tmons = NULL;
+          }
+          if (IS_SET_DELETE(rc, DELETE_VICT)) 
+            return DELETE_THIS;
+        }
       else {
         // thieves are sneaky, others wouldn't see them trying to sign
         if (!hasClass(CLASS_THIEF))
           act("$n makes funny motions with $s hands.", TRUE, this, 0, ch, TO_VICT);
       }
+    } else {
+      // thieves are sneaky, others wouldn't see them trying to sign
+      if (!hasClass(CLASS_THIEF))
+        act("$n makes funny motions with $s hands.", TRUE, this, 0, ch, TO_VICT);
     }
   }
+
+  return FALSE;
 }
 
 

@@ -19,6 +19,18 @@ class TProcess {
 
 //// processes
 
+class procTrophyDecay: public TProcess {
+ public:
+  void run(int) const;
+  procTrophyDecay(const int &);
+};
+
+class procTweakLoadRate : public TProcess {
+ public:
+  void run(int) const;
+  procTweakLoadRate(const int &);
+};
+
 class procGlobalRoomStuff : public TProcess {
  public:
   void run(int) const;
@@ -179,7 +191,7 @@ class procDoComponents : public TProcess {
 
 /////////////////////
 
-class TProcessList {
+class TScheduler {
   vector<TProcess *>procs;
 
  public:

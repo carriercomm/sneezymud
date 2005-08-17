@@ -1871,11 +1871,17 @@ bool TBeing::noHarmCheck(TBeing *vict)
       }
     }
   }
-
+  
+  if(isPc() && vict->isPc() && !isImmortal() && !vict->isValidPkTarget(this)){
+    sendTo("Your victim is not a valid PK target.\n\r");
+    return TRUE;
+  }
+  
   if (desc && !isImmortal() && isPc() && 
           vict->desc && vict->isPc() &&
-          (vict->GetMaxLevel() < 5) && 
-          !vict->isPlayerAction(PLR_KILLABLE) && !NewbiePK) {
+          (vict->GetMaxLevel() <= MAX_NEWBIE_LEVEL) && 
+          !vict->isPlayerAction(PLR_KILLABLE) && 
+      !toggleInfo[TOG_NEWBIEPK]->toggle) {
     sendTo("Your victim is a newbie and protected.\n\r");
     sendTo("If you have a problem with this newbie please see a god for action.\n\r");
     return TRUE;

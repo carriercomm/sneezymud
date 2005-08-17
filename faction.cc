@@ -51,7 +51,7 @@ void TBeing::doJoin(const sstring &args)
   sstring buf;
   TFaction *f = NULL;
 
-  if(!TestCode5) {
+  if(!toggleInfo[TOG_TESTCODE5]->toggle) {
     sendTo("The new faction system is currently disabled.  You may not join a faction now.\n\r");
     return;
   }
@@ -94,7 +94,7 @@ void TBeing::doJoin(const sstring &args)
 
 
 void TBeing::doDefect(const sstring &args) {
-  if(!TestCode5) {
+  if(!toggleInfo[TOG_TESTCODE5]->toggle) {
     sendTo("The new faction system is currently disabled.  You may not defect now.\n\r");
     return;
   }
@@ -120,7 +120,7 @@ void TBeing::doDefect(const sstring &args) {
 }  
 
 void TBeing::doRecruit(const sstring &args) {
-  if(!TestCode5) {
+  if(!toggleInfo[TOG_TESTCODE5]->toggle) {
     sendTo("The new faction system is currently disabled.  You may not recruit now.\n\r");
     return;
   }
@@ -457,7 +457,7 @@ int factionRegistrar(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself
   } else if (cmd == CMD_JOIN) {
     
     
-    if(!TestCode5) {
+    if(!toggleInfo[TOG_TESTCODE5]->toggle) {
       ch->sendTo("The new faction system is currently disabled.  You may not join a faction now.");
       return TRUE;
     }
@@ -576,7 +576,7 @@ void TBeing::edit_faction(const char * args) {
       return;
     }
   } else {
-    if(!TestCode5) {
+    if(!toggleInfo[TOG_TESTCODE5]->toggle) {
       sendTo("The new faction code is currently disabled.  You will not be able to use this command.\n\r");
       return;
     }
@@ -1952,7 +1952,8 @@ void TBeing::doSend(sstring arg)
     }
     return;
   }
-  if (!dynamic_cast<TMonster *>(this) && (Silence == 1) && !isImmortal()) {
+  if (!dynamic_cast<TMonster *>(this) && toggleInfo[TOG_SHOUTING]->toggle && 
+      !isImmortal()) {
     sendTo("Faction messages has been banned.\n\r");
     return;
   }

@@ -63,27 +63,30 @@ bool TProcess::should_run(int p) const
     return false;
 }
 
-void TProcessList::add(TProcess *p)
+void TScheduler::add(TProcess *p)
 {
   procs.push_back(p);
 }
 
 
-void TProcessList::run(int pulse)
+// we have some legacy code here, in that many processes expect pulse
+// to be mod 2400.  So we use the real pulse, but pass mod 2400.
+void TScheduler::run(int pulse)
 {
   TTiming timer;
+  vector<TProcess *>::iterator iter;
 
-  for(unsigned int i=0;i<procs.size();++i){
-    if(procs[i]->should_run(pulse)){
-      if(gameLoopTiming)
+  for(iter=procs.begin();iter!=procs.end();++iter){
+    if((*iter)->should_run(pulse)){
+      if(toggleInfo[TOG_GAMELOOP]->toggle)
 	timer.start();
 
-      procs[i]->run(pulse);
+      (*iter)->run(pulse % 2400);
       
-      if(gameLoopTiming){
+      if(toggleInfo[TOG_GAMELOOP]->toggle){
 	timer.end();
 	vlogf(LOG_MISC, fmt("%i %i) %s: %i") % 
-	      pulse % (pulse%12) % procs[i]->name % 
+	      (pulse % 2400) % (pulse%12) % (*iter)->name % 
 	      (int)(timer.getElapsed()*1000000));
       }
     }

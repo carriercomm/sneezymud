@@ -56,7 +56,7 @@ void TGenWeapon::assignFourValues(int x1, int x2, int x3, int x4)
 
 void TGenWeapon::getFourValues(int *x1, int *x2, int *x3, int *x4) const
 {
-  int x;
+  int x=0;
 
   TBaseWeapon::getFourValues(x1, x2, x3, x4);
   
@@ -134,7 +134,7 @@ sstring TGenWeapon::statObjInfo() const
            (int) damageLevel());
   a += buf;
 
-  if (Twink == 1) {
+  if (toggleInfo[TOG_TWINK]->toggle) {
     sprintf(buf, "Type : %s (%d)\n\r",
 	    attack_hit_text_twink[(getWtype() - TYPE_MIN_HIT)].singular,
 	    getWeaponType());

@@ -10,7 +10,6 @@
 #define __CLIENT_H
 
 const char CLIENT_CODE_CHAR = '\200';
-const char CLIENT_CODE_STR[] = "\200";
 
 const int CLIENT_INIT         = 100;
 const int CLIENT_PROMPT       = 101;
@@ -109,6 +108,5 @@ const int ADD           = 1;
 
 extern bool is_client_sstring(sstring &str);
 
-extern bool Clients;
 
 #endif

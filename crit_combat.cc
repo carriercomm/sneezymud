@@ -645,6 +645,8 @@ int TBeing::critBlunt(TBeing *v, TThing *weapon, wearSlotT *part_hit,
 	  return 0;
 	if (v->isImmune(IMMUNE_BONE_COND))
 	  return 0;
+        if (v->isLimbFlags(WEAR_FINGER_R, PART_BROKEN))
+          return 0;
 	buf = fmt("With your %s, you crush $N's %s!") %
 	  limbStr %
 	  v->describeBodySlot(WEAR_FINGER_R);
@@ -680,6 +682,8 @@ int TBeing::critBlunt(TBeing *v, TThing *weapon, wearSlotT *part_hit,
 	  return 0;
 	if (v->race->hasNoBones())
 	  return 0;
+        if (v->isLimbFlags(WEAR_HAND_R, PART_BROKEN))
+          return 0;
 	buf=fmt("With your %s, you shatter the bones in $N's %s!") %
 	  limbStr %
 	  v->describeBodySlot(WEAR_HAND_R);
@@ -715,6 +719,8 @@ int TBeing::critBlunt(TBeing *v, TThing *weapon, wearSlotT *part_hit,
 	  return 0;
 	if (v->race->hasNoBones())
 	  return 0;
+        if (v->isLimbFlags(WEAR_HAND_L, PART_BROKEN))
+          return 0;
 	*part_hit = WEAR_HAND_L;
 	buf=fmt("With your %s, you shatter the bones in $N's %s!") %
 		limbStr %
@@ -751,6 +757,8 @@ int TBeing::critBlunt(TBeing *v, TThing *weapon, wearSlotT *part_hit,
 	  return 0;
 	if (v->race->hasNoBones())
 	  return 0;
+        if (v->isLimbFlags(v->getPrimaryArm(), PART_BROKEN))
+          return 0;
 	*part_hit = v->getPrimaryArm();
 	buf=fmt("You shatter the bones in $N's forearm with your %s!") %
 	        limbStr;
@@ -784,6 +792,9 @@ int TBeing::critBlunt(TBeing *v, TThing *weapon, wearSlotT *part_hit,
         if (IS_SET(v->specials.act, ACT_SKELETON) || IS_SET(v->specials.act, ACT_GHOST))
           return 0;
 
+        if (v->isLimbFlags(new_slot, PART_USELESS))
+          return 0;
+
         buf=fmt("With your %s, you crush the nerves in $N's shoulder!") %
 		limbStr;
 	act(buf, FALSE, this, 0, v, TO_CHAR, ANSI_ORANGE);
@@ -809,6 +820,9 @@ int TBeing::critBlunt(TBeing *v, TThing *weapon, wearSlotT *part_hit,
 	  return 0;
 	if (v->race->hasNoBones())
 	  return 0;
+        if (v->isLimbFlags(WEAR_LEGS_L, PART_BROKEN))
+          return 0;
+
 	*part_hit = WEAR_LEGS_L;
 buf=fmt("You shatter $N's femur with your %s!") %
 		limbStr;
@@ -839,6 +853,9 @@ buf=fmt("$n's %s shatters $N's femur!") %
 	  return 0;
 
         if (IS_SET(v->specials.act, ACT_SKELETON) || IS_SET(v->specials.act, ACT_GHOST))
+          return 0;
+
+        if (v->isLimbFlags(WEAR_LEGS_L, PART_USELESS))
           return 0;
 
 	*part_hit = WEAR_LEGS_L;
@@ -910,6 +927,9 @@ buf=fmt("$n's %s slams into $N's head, stunning $M completely!") %
 	  return 0;
 	if (v->race->hasNoBones())
 	  return 0;
+        if (v->isLimbFlags(WEAR_BODY, PART_BROKEN))
+          return 0;
+
 	*part_hit = WEAR_BODY;
 buf=fmt("With your %s, you slam $N's chest, breaking a rib!") %
 		limbStr;
@@ -938,6 +958,9 @@ buf=fmt("$n's %s shatters one of $N's ribs!") %
 	  return 0;
 	if (v->hasDisease(DISEASE_HEMORRAGE))
 	  return 0;
+        if (v->isLimbFlags(WEAR_BODY, PART_BROKEN))
+          return 0;
+
 	*part_hit = WEAR_BODY;
 buf=fmt("With your %s, you slam $N's chest, breaking a rib and causing internal damage!") %
 		limbStr;

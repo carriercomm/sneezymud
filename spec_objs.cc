@@ -603,7 +603,7 @@ int statue_of_feeding(TBeing *ch, cmdTypeT cmd, const char *argum, TObj *me, TOb
          TRUE, ch, me, NULL, TO_ROOM);
     act("$p spits on you and calls you a twit.",
          TRUE, ch, me, NULL, TO_CHAR);
-  } else if (ch->GetMaxLevel() > 5)
+  } else if (ch->GetMaxLevel() > MAX_NEWBIE_LEVEL)
     ch->sendTo("A statue lacks the power to help you any longer.\n\r");
   else if (ch->getCond(FULL) == 24)
     ch->sendTo("Nothing happens.\n\r");
@@ -5735,6 +5735,7 @@ extern int chromaticWeapon(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TO
 extern int fireballWeapon(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
 extern int gnomeTenderizer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
 extern int marukalia(TBeing *targ, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
+extern int lightSaber(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
 
 
 
@@ -5884,5 +5885,6 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "switch object", switchObject},
   {FALSE, "gnome tenderizer", gnomeTenderizer}, // 140
   {FALSE, "Marukalia", marukalia},
+  {FALSE, "lightsaber", lightSaber},
   {FALSE, "last proc", bogusObjProc}
 };

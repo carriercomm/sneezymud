@@ -92,8 +92,8 @@ const unsigned long ACT_GHOST     = (1<<18);         // 262144
 const unsigned long ACT_DIURNAL   = (1<<19);         // 524288
 const unsigned long ACT_NOCTURNAL = (1<<20);         // 1048576
 const unsigned long ACT_PROTECTOR = (1<<21);         // 2097152
-
 const unsigned long ACT_PROTECTEE = (1<<22);         // 4194304
+const unsigned long ACT_HIT_BY_PK = (1<<23);
 
 const int MAX_MOB_ACTS    = 24;
 
@@ -125,6 +125,10 @@ const int GOD_LEVEL8    = 58;
 const int GOD_LEVEL9    = 59;
 const int GOD_LEVEL10   = 60;
 const int MAX_IMMORT    = 60;
+
+// this is the parameter for various newbie protection things, like pk
+// protection, food praying at CS, etc
+const int MAX_NEWBIE_LEVEL = 5;
 
 const unsigned int AUTO_NOSPAM         = (1<<0);
 const unsigned int AUTO_EAT            = (1<<1);
@@ -182,6 +186,7 @@ const unsigned long PLR_UNUSED5    = (1<<27);
 const unsigned long PLR_KILLABLE   = (1<<28);   // switch off newbie pro
 const unsigned long PLR_ANONYMOUS  = (1<<29);
 const unsigned long PLR_SHOW_SAVES = (1<<30);
+const unsigned long PLR_DENY_LOOT  = (1<<31);
 
 const unsigned short int PART_BLEEDING     = (1<<0);
 const unsigned short int PART_INFECTED     = (1<<1);
@@ -213,6 +218,8 @@ const ush_int CLASS_SHAMAN       = (1<<4);   // 16
 const ush_int CLASS_DEIKHAN      = (1<<5);   // 32
 const ush_int CLASS_MONK         = (1<<6);   // 64
 const ush_int CLASS_RANGER       = (1<<7);   // 128
+const ush_int CLASS_COMMONER     = (1<<8);   // 256
+const ush_int CLASS_ALL          = (1<<9)-1;
 
 /* Bitvector for 'affected_by' */
 const unsigned long AFF_BLIND             = (1<<0);        // 1
@@ -703,6 +710,9 @@ class TBeing : public TThing {
     attack_mode_t getCombatMode() const;
     bool isCombatMode(attack_mode_t n) const;
     bool inQuest() const;
+    bool isPkChar() const;
+    bool isPking() const;
+    bool isValidPkTarget(const TBeing *) const;
     bool banished() const;
     bool isRightHanded() const;
     bool isPlayerAction(unsigned long num) const;
@@ -1997,11 +2007,18 @@ class TBeing : public TThing {
     sstring blahblah(const sstring &) const;
     void doLook(const sstring &, cmdTypeT, TThing *specific = NULL);
     void doShout(const sstring &);
+    void lookDark();
+    void lookDir(int);
+    void lookInObj(sstring, TThing *, unsigned int, const sstring &, cmdTypeT);
+    void lookRoom();
+    void lookAtRoom();
+    void lookAtBeing(TThing *);
+    void lookingAtObj(TThing *);
     int doWhisper(const sstring &);
     int doTell(const sstring &, const sstring &, bool visible = TRUE);
     int doClientMessage(const sstring &);
     int doAsk(const sstring &);
-    void doSign(const sstring &);
+    int doSign(const sstring &);
     void doGrouptell(const sstring &);
     void doWrite(const sstring &);
     void doExamine(const sstring &, TThing *specific = NULL);

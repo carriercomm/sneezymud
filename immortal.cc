@@ -36,44 +36,74 @@ extern "C" {
 #include "database.h"
 #include "rent.h"
 
-bool Silence = FALSE;
-bool Sleep = TRUE;
 
-// please document what each testcode does if you use it!!!!!
-bool TestCode1 = false;
-// code1 vlogf's main loop pulse times
-bool TestCode2 = false;       // unfinished code 
-  // code2 in use, lets players see level on items
-bool TestCode3 = true;       // unfinished code 
-  // code3 in use, hiding new spell
-bool TestCode4 = true;       // unfinished code 
-  // code4 in use, hiding new spell
-bool TestCode5 = false;
-  // code5 is to disable/enable certain aspects of the new faction code - dash 6/24/01
-bool TestCode6 = false;
-  // not in use
+togEntry *togInfoT::operator[] (const togTypeT i)
+{
+  if(toggles.find(i) == toggles.end()){
+    vlogf(LOG_BUG, fmt("invalid toggle detected: %i") % i);
+    return toggles[TOG_NONE];
+  } else {
+    return toggles[i];
+  }
+}
 
-bool NewbiePK = FALSE;
-bool QuestCode = false;       // spec-procs for quests 
-bool Gravity = TRUE;         // Do we allow gravity, fallen objects etc.
-bool QuestCode2 = FALSE;     // spec-procs for quests 
-bool QuestCode3 = FALSE;     // spec-procs for quests
-bool QuestCode4 = FALSE;     // spec-procs for quests
+togTypeT & operator++(togTypeT &c, int)
+{
+  return c = (c == MAX_TOG_TYPES) ? TOG_NONE : togTypeT(c+1);
+}
 
-bool Clients = true;         // Do we allow clients? 
-bool WizBuild = true;         // can builders hear wiznet
-bool WizInvis = FALSE;
-bool WizShout = FALSE;
-bool WizGoto = FALSE;
-bool AllowPcMobs = TRUE;    // PCs with same name as mob allowed?
-bool Twink = FALSE; // combat twink fun stuff
-bool timeQueries = false; // store db query speeds THIS IS SLOW
-bool gameLoopTiming = false; // spit out game loop info, very spammy
+togInfoT::~togInfoT()
+{
+}
 
-int QuestVar1 = 0; // varibles for changing constants in the code in-game
+togInfoT::togInfoT()
+{
+}
+
+// can't do this in the constructor, because gamePort isn't defined
+// and TDatabase needs that to know what database to go to.
+void togInfoT::loadToggles()
+{
+  TDatabase db(DB_SNEEZY);
+
+  toggles[TOG_NONE]     = new togEntry(false, false, "none", "none");
+
+  db.query("select tog_id, toggle, testcode, name, descr from globaltoggles order by name");
+
+
+  while(db.fetchRow()){
+    togTypeT tog_id=(togTypeT) convertTo<int>(db["tog_id"]);
+    bool toggle=(db["toggle"]=="t") ? true : false;
+    bool testcode=(db["testcode"]=="t") ? true : false;
+
+    toggles[tog_id] = new togEntry(toggle, testcode, db["name"], db["descr"]);
+  }
+}  
+
+
+togEntry::togEntry(bool t, bool t2, const sstring n, const sstring d) :
+  toggle(t),
+  testcode(t2),
+  name(n),
+  descr(d)
+{
+}
+
+togEntry::~togEntry()
+{
+}
+
+
+togInfoT toggleInfo;
+
+
+int QuestVar1 = 0; // variables for changing constants in the code in-game
 int QuestVar2 = 0;
 int QuestVar3 = 0;
 int QuestVar4 = 0;
+
+
+
 
 void TBeing::doChange(const char *argument)
 {
@@ -385,6 +415,10 @@ int TBeing::doEmote(const sstring &argument)
 
   if (isPlayerAction(PLR_GODNOSHOUT)) {
     sendTo("You have been sanctioned by the gods and can't emote!!\n\r");
+    return FALSE;
+  }
+  if (hasQuestBit(TOG_IS_MUTE)) {
+    sendTo("You're mute.  You can't emote.\n\r");
     return FALSE;
   }
   if (getCond(DRUNK) > plotStat(STAT_CURRENT, STAT_CON, 0, 9, 6)) {

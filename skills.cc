@@ -87,6 +87,7 @@
 #include "disc_shaman_armadillo.h"
 #include "disc_nature.h"
 #include "disc_psionics.h"
+#include "disc_commoner.h"
 
 static bool doesKnow(byte know)
 {
@@ -1181,6 +1182,8 @@ CSkill *TBeing::getSkill(spellNumT skill) const
       return &((CDPsionics *) cd)->skPsiDrain;
 
 
+
+
   // disc_combat
     case SKILL_SLASH_PROF: // 1521
       return &((CDCombat *) cd)->skSlash;
@@ -1554,9 +1557,11 @@ bool hideThisSpell(spellNumT spell)
   if (spell == SPELL_ENSORCER)
     return true;
 
-if (TestCode3 && spell == SPELL_GARMULS_TAIL)
-return true;
-if (TestCode4 && spell == SPELL_ETHER_GATE)
-return true;
+  if (spell == SPELL_GARMULS_TAIL)
+    return true;
+
+  if (spell == SPELL_ETHER_GATE)
+    return true;
+
   return false;
 }

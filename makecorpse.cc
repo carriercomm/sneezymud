@@ -51,6 +51,12 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller, float exp_lost
     gen_corpse = pcorpse;
     pcorpse->setCorpseVnum(-2);  // flag for pc
     pcorpse->addCorpseFlag(CORPSE_NO_REGEN);
+
+    if(isPlayerAction(PLR_DENY_LOOT))
+      pcorpse->addCorpseFlag(CORPSE_DENY_LOOT);
+    else
+      pcorpse->remCorpseFlag(CORPSE_DENY_LOOT);
+
   } else {
     corpse = race->makeCorpse();
     gen_corpse = corpse;

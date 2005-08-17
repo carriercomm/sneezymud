@@ -16,25 +16,6 @@
 extern const char * const GRENADE_EX_DESC = "__grenade_puller";
 extern const char * const TRAP_EX_DESC = "__trap_setter";
 
-const int trap_dam_type[] =
-{
-  -1,
-  DAMAGE_TRAP_POISON,
-  DAMAGE_TRAP_PIERCE,
-  DAMAGE_TRAP_SLEEP,
-  DAMAGE_TRAP_TNT,
-  DAMAGE_TRAP_SLASH,
-  DAMAGE_TRAP_FIRE,
-  DAMAGE_TRAP_ACID,
-  DAMAGE_TRAP_DISEASE,
-  DAMAGE_TRAP_BLUNT,
-  DAMAGE_TRAP_FROST,
-  DAMAGE_TRAP_TELEPORT,
-  DAMAGE_TRAP_ENERGY,
-  DAMAGE_TRAP_PIERCE,  // bolt
-  DAMAGE_TRAP_SLASH,   // disk
-  DAMAGE_TRAP_BLUNT,   // pebble
-};
 
 const sstring trap_types[] =
 {
@@ -1422,9 +1403,9 @@ int TBeing::triggerTrap(TTrap *o)
         }
       }
 
-      act("You are devestated by dozens of plasma bolts!",
+      act("You are devastated by dozens of plasma bolts!",
                     FALSE, this, o, 0, TO_CHAR);
-      act("$n is devestated by dozens of plasma bolts.",
+      act("$n is devastated by dozens of plasma bolts.",
                     FALSE, this, o, 0, TO_ROOM);
 
       rc = objDamage(DAMAGE_TRAP_ENERGY, o->getTrapDamAmount(), o);
@@ -3447,7 +3428,7 @@ void TBeing::sendTrapMessage(const char *type, trap_targ_t targ, int num)
         return;
       }
     } else if (num == 2) {
-      sendTo("You center the refined athanor in the center of the pentagram.\n\r");
+      sendTo("You position the refined athanor in the center of the pentagram.\n\r");
       act("$n puts something inside the pentagram.",
                TRUE, this, NULL, NULL, TO_ROOM);
       return;
@@ -3652,9 +3633,9 @@ int TBeing::grenadeHit(TTrap *o)
 
       return TRUE;
     case DOOR_TRAP_ENERGY:
-      act("You are devestated by dozens of plasma bolts!",
+      act("You are devastated by dozens of plasma bolts!",
                     FALSE, this, o, 0, TO_CHAR);
-      act("$n is devestated by dozens of plasma bolts.",
+      act("$n is devastated by dozens of plasma bolts.",
                     FALSE, this, o, 0, TO_ROOM);
 
       rc = objDamage(DAMAGE_TRAP_ENERGY, o->getTrapDamAmount(), o);
@@ -3746,7 +3727,7 @@ int TObj::grenadeHit(TTrap *o)
 
       return TRUE;
     case DOOR_TRAP_ENERGY:
-      act("$n is devestated by dozens of plasma bolts.",
+      act("$n is devastated by dozens of plasma bolts.",
                     FALSE, this, o, 0, TO_ROOM);
 
       return TRUE;

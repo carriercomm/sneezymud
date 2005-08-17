@@ -437,7 +437,7 @@ void TBeing::statObj(const TObj *j)
       if (discNames[j->affected[i].modifier].disc_num) {
         str += fmt("   Affects:  %s: %s by %ld\n\r") %
           apply_types[j->affected[i].location].name %
-          discNames[j->affected[i].modifier].practice %
+          discNames[j->affected[i].modifier].name %
           j->affected[i].modifier2;
       } else {
         vlogf(LOG_BUG, fmt("BOGUS AFFECT (%d) on %s") %
@@ -534,7 +534,7 @@ void TBeing::statObjForDivman(const TObj *j)
      if (discNames[j->affected[i].modifier].disc_num) {
         str += fmt("   Affects:  %s: %s by %ld.\n\r") %
           apply_types[j->affected[i].location].name %
-          discNames[j->affected[i].modifier].practice %
+          discNames[j->affected[i].modifier].name %
           j->affected[i].modifier2;
       } else {
         vlogf(LOG_BUG, fmt("BOGUS AFFECT (%d) on %s") %
@@ -810,8 +810,7 @@ void TBeing::statBeing(TBeing *k)
       (int)((fx*(float)prim_min)+((fy*(float)sec_min))) %
       (int)((fx*(float)prim_max)+((fy*(float)sec_max)));
   }
-
-  if (TestCode5 && k->newfaction()) {
+  if (toggleInfo[TOG_TESTCODE5]->toggle && k->newfaction()) {
     if(k->isPc()) {
       str += fmt("%sFaction:%s %s%s,   %sRank :%s %s%s\n\r") %
         cyan() % norm() % k->newfaction()->getName() % norm() %
@@ -1575,9 +1574,8 @@ void TBeing::statBeing(TBeing *k)
           str += fmt("     Modifies %s by %ld points\n\r") %
             apply_types[aff->location].name % aff->modifier;
         }
-        str += fmt("     Expires in %6d updates, Bits set: %s\n\nr") %
+        str += fmt("     Expires in %6d updates, Bits set: %s\n\r\n\r") %
           aff->duration % sprintbit(aff->bitvector, affected_bits);
-
         break;
 
       case AFFECT_DISEASE:
@@ -2038,7 +2036,7 @@ void TPerson::doStat(const sstring &argument)
         if (!(cd = k->getDiscipline(dnt))) {
           break;
         }
-        sendTo(COLOR_MOBS, fmt("Discpline %20.20s : Current (%d) Natural (%d).\n\r") % discNames[dnt].practice % cd->getLearnedness()  % cd->getNatLearnedness());
+        sendTo(COLOR_MOBS, fmt("Discpline %20.20s : Current (%d) Natural (%d).\n\r") % discNames[dnt].name % cd->getLearnedness()  % cd->getNatLearnedness());
       }
       return;
     } else if (namebuf.empty()) {
@@ -2061,7 +2059,7 @@ void TPerson::doStat(const sstring &argument)
        sendTo(COLOR_MOBS, fmt("%s doesnt appear to have that disipline.\n\r") % k->getName());
        return;
     }
-    sendTo(COLOR_MOBS, fmt("%s's %s Used Learning: Current (%d) Natural (%d).\n\r") % k->getName() % discNames[dnt].practice % cd->getLearnedness() % cd->getNatLearnedness());
+    sendTo(COLOR_MOBS, fmt("%s's %s Used Learning: Current (%d) Natural (%d).\n\r") % k->getName() % discNames[dnt].name % cd->getLearnedness() % cd->getNatLearnedness());
     return;
   } else if (is_abbrev(skbuf, "donebasic")) {
     if (!hasWizPower(POWER_STAT_SKILL)) {

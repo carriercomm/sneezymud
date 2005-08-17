@@ -56,14 +56,14 @@ static const char * const TER_GNOME_HELP = "help/territory help gnome";
 static const char * const TER_OGRE_HELP = "help/territory help ogre";
 static const char * const TER_HOBBIT_HELP = "help/territory help hobbit";
 
-const int MAX_TRAITS=13;
+const int MAX_TRAITS=14;
 
 
 //  {TOG_IS_DEAF, 0, "deaf (not implemented)",   // not implemented
 //   "Your eardrums have been damaged and you are unable to hear."},
 
 // keep this list ordered by point value (for cosmetics)
-struct {
+struct TTraits {
   int tog, points;
   sstring name, desc;
 } traits[MAX_TRAITS+1] = {
@@ -94,6 +94,8 @@ struct {
    "You are able to use both hands with equal facility."},
   {TOG_HAS_NIGHTVISION, -10, "nightvision",
    "You have excellent nightvision."},
+  {TOG_PSIONICIST, -200, "psionics",
+   "You have innate psionic abilities."}
 };
 
 bonusStatPoints::bonusStatPoints() :
@@ -5941,6 +5943,8 @@ int Descriptor::doAccountMenu(const char *arg)
   sstring lStr;
   int count = 1;
   int tss = screen_size;
+
+  bonus_points.total= bonus_points.combat= bonus_points.combat2= bonus_points.learn= bonus_points.util=0;
 
   if (m_bIsClient) {
     clientf(fmt("%d") % CLIENT_MENU);

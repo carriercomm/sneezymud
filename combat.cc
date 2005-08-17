@@ -528,7 +528,11 @@ int TBeing::rawKill(spellNumT dmg_type, TBeing *tKiller, float exp_lost)
     setStuff(NULL);
     setMoney(0);
   }
-  makeCorpse(dmg_type, tKiller, exp_lost);
+
+  if(!IS_SET(specials.act, ACT_HIT_BY_PK))
+    makeCorpse(dmg_type, tKiller, exp_lost);
+
+
   deathCry();
   genericKillFix();
 
@@ -2930,7 +2934,7 @@ const char *describe_dam(int dam, int dam_capacity, spellNumT wtype)
 
   p = ((double) dam) / ((double) dam_capacity);
 
-  if (Twink == 1) {
+  if (toggleInfo[TOG_TWINK]->toggle) {
     if ((p >= 1) || (dam_capacity < 0)) {
       if ((wtype == TYPE_SLASH) || wtype == TYPE_SLICE) 
 	return "into <Y>-=><1><R>BLOODY GOREY SHREDS<1><Y><=-<1>";
@@ -3027,7 +3031,7 @@ void TBeing::normalHitMessage(TBeing *v, TThing *weapon, spellNumT w_type, int d
       namebuf = other->pers(this); 
       victbuf = other->pers(v); 
       buf = namebuf.cap();
-      if (Twink == 1) {
+      if (toggleInfo[TOG_TWINK]->toggle) {
 	buf += fmt(" %s ") % attack_hit_text_twink[w_type].plural;
       } else {
 	buf += fmt(" %s ") % attack_hit_text[w_type].plural;
@@ -3054,7 +3058,7 @@ void TBeing::normalHitMessage(TBeing *v, TThing *weapon, spellNumT w_type, int d
       colorBuf = green();
     }
 
-    if (Twink == 1) {
+    if (toggleInfo[TOG_TWINK]->toggle) {
       buf = fmt("You %s%s%s $N's %s%s%s %s%s%s.") %
         colorBuf % attack_hit_text_twink[w_type].singular % norm() %
         colorBuf % v->describeBodySlot(part_hit) % norm() %
@@ -3081,7 +3085,7 @@ void TBeing::normalHitMessage(TBeing *v, TThing *weapon, spellNumT w_type, int d
     else
       colorBuf = v->red();
 
-    if (Twink == 1) {
+    if (toggleInfo[TOG_TWINK]->toggle) {
       buf = fmt("$n %s%s%s your %s%s%s %s%s%s.") %
         colorBuf % attack_hit_text_twink[w_type].plural % v->norm() %
         colorBuf % v->describeBodySlot(part_hit) % v->norm() %
@@ -5468,6 +5472,9 @@ double TBeing::deathExp()
   // 5.2        : 25 * and mini(xp/5, amt)
   amt = 25.0 * mob_exp((float) GetMaxLevel());
   amt = min( 1*getExp()/5,  amt);
+
+  if(isPking())
+    amt /= 10.0;
 
   return amt;
 }

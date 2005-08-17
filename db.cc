@@ -243,6 +243,9 @@ void bootDb(void)
     vlogf(LOG_MISC, "bad result from init_game_stats");
 //    exit(0);
   }
+  bootPulse("Loading global toggles.");
+  toggleInfo.loadToggles();
+
   bootPulse("Loading Races.");
   for(race_t rindex=RACE_NORACE;rindex<MAX_RACIAL_TYPES;rindex++)
     Races[rindex] = new Race(rindex);
@@ -2520,7 +2523,7 @@ void zoneData::resetZone(bool bootTime)
           break;
         case 'E':                
           if ((obj_index[rs.arg1].getNumber() < obj_index[rs.arg1].max_exist) &&
-              (::number(0,99) < (int) (100 * stats.equip)) &&  
+              (::number(0,999) < (int) (1000 * stats.equip)) &&  
               (obj = read_object(rs.arg1, REAL))) {
             if (!mob) {
               vlogf(LOG_LOW, fmt("no mob for 'E' command.  Obj (%s)") %  obj->getName());
@@ -2671,7 +2674,7 @@ bool zoneData::doGenericReset(void)
   top = zone_table[zone_nr].top;
 
   TObj *o;
-  TTrashPile *pile;
+  //  TTrashPile *pile;
   for(TObjIter iter=object_list.begin();iter!=object_list.end();++iter){
     o=*iter;
     if (o->objVnum() >= bottom && o->objVnum() <= top)
@@ -2686,8 +2689,9 @@ bool zoneData::doGenericReset(void)
         }
       }
 
-      if((pile=dynamic_cast<TTrashPile *>(o)))
-	pile->attractVermin();
+      // disabled via mudadmin resolution 222, April 20th, 2005
+      //      if((pile=dynamic_cast<TTrashPile *>(o)))
+      //	pile->attractVermin();
     }
   }
   return TRUE;

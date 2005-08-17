@@ -1807,7 +1807,7 @@ void TBeing::lowObjs(const char *arg)
         str += fmt("   %s%s: %s by %ld%s") %
           red() %
           apply_types[tbc->affected[i].location].name %
-          discNames[tbc->affected[i].modifier].practice %
+          discNames[tbc->affected[i].modifier].name %
           tbc->affected[i].modifier2 %
           norm();
       } else if (tbc->affected[i].location == APPLY_IMMUNITY) {
@@ -1992,7 +1992,7 @@ void TBeing::lowWeaps(const char *arg)
         str += fmt("   %s%s: %s by %ld%s") %
           red() %
           apply_types[weap->affected[i].location].name %
-          discNames[weap->affected[i].modifier].practice %
+          discNames[weap->affected[i].modifier].name %
           weap->affected[i].modifier2 % norm();
       } else if (weap->affected[i].location == APPLY_IMMUNITY) {
         str += fmt("   %s%s: %s by %ld%s") %

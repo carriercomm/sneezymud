@@ -117,6 +117,7 @@ enum discNumT {
      DISC_SHAMAN_HEALING,
      DISC_IRON_BODY,
      DISC_ADVANCED_ADVENTURING,
+     DISC_COMMONER,
      MAX_DISCS,
      MAX_SAVED_DISCS = 90
 };
@@ -178,7 +179,8 @@ struct disc_names_data
 {
   discNumT disc_num;
   int class_num;
-  const sstring practice;
+  const sstring name;
+  const sstring properName;
 };
 
 //const struct pc_class_names_data 

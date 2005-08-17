@@ -707,7 +707,7 @@ TObj *ItemLoad::raw_read_item()
 
       o->assignFourValues(item.value[0],item.value[1],item.value[2],item.value[3]);
     } else if(version<8 && dynamic_cast<TGenWeapon *>(o)){
-      int x;
+      int x=0;
 
       // damage level and deviation are now merged
       SET_BITS(x, 7, 8, item.value[1]);
@@ -797,7 +797,7 @@ TObj *ItemLoad::raw_read_item()
 
       o->assignFourValues(item.value[0],item.value[1],item.value[2],item.value[3]);
     } else if(version<8 && dynamic_cast<TGenWeapon *>(o)){
-      int x;
+      int x=0;
 
       // damage level and deviation are now merged
       SET_BITS(x, 7, 8, item.value[1]);

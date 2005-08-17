@@ -934,7 +934,7 @@ int TBeing::doCommand(cmdTypeT cmd, const sstring &argument, TThing *vict, bool 
 	addToLifeforce(1);
 	break;
       case CMD_SIGN:
-	doSign(newarg);
+	rc = doSign(newarg);
 	addToLifeforce(1);
 	break;
       case CMD_TELL:
@@ -2924,7 +2924,7 @@ bool _parse_name(const char *arg, sstring &name)
         return TRUE;
     }
   }
-  if (!AllowPcMobs) {
+  if (!toggleInfo[TOG_MOBNAMES]->toggle) {
     for (i= 0; i < mob_index.size(); i++) {
       buf = fname(mob_index[i].name.c_str());
       if (buf == argbuf)
@@ -3171,7 +3171,7 @@ sstring bisect_arg(const sstring arg, int *field, const sstring *array)
 
   i = my_arg.find_first_of(" \t");
   if (i != sstring::npos) {
-    str = my_arg.substr(i, my_arg.length());
+    str = my_arg.substr(i);
   }
   return str;
 }

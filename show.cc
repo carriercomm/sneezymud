@@ -676,12 +676,14 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
   if (mode == SHOW_MODE_DESC_PLUS) {
     if (!ch->canSee(this)) {
       if (ch->canSee(this, INFRA_YES)) {
-        buffer = fmt("A blob of heat is here in the shape of %s %s.\n\r") %
+        buffer = fmt("A blob of heat is here in the shape of %s %s%s.\n\r") %
           (getMyRace()->getSingularName().startsVowel() ? "an" : "a") %
-          getMyRace()->getSingularName();
+          getMyRace()->getSingularName() %
+          (isPkChar() ? " (PK)" : "");
         ch->sendTo(buffer);
       } else if (ch->isAffected(AFF_SENSE_LIFE) && (GetMaxLevel() < 51))
-        ch->sendTo("You sense a hidden life form in the room.\n\r");
+        ch->sendTo(fmt("You sense a hidden life form in the room.%s\n\r") %
+		   (isPkChar() ? " (PK)" : ""));
 
       return;
     }
@@ -699,6 +701,8 @@ void TBeing::show_me_to_char(TBeing *ch, showModeT mode) const
       } else 
         buffer = fmt("%s%s%s") % ch->cyan() % sstring(getName()).cap() % ch->norm();
       
+      if (isPkChar())
+	strcat(buffer, " (PK)");
       if (isAffected(AFF_INVISIBLE) || getInvisLevel() > MAX_MORT)
         buffer +=" (invisible)";
       if (isAffected(AFF_SHADOW_WALK))

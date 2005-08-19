@@ -1151,11 +1151,15 @@ int TMainSocket::gameLoop()
   TTiming t;
   TScheduler scheduler;
 
-  // pulse every
+  // pulse every  (1/10th of a second)
   scheduler.add(new procSetZoneEmpty(PULSE_EVERY));
   scheduler.add(new procCallRoomSpec(PULSE_EVERY));
+  scheduler.add(new procDoRoomSaves(PULSE_EVERY));
 
-  // pulse update
+  // pulse combat  (1.2 seconds)
+  scheduler.add(new procPerformViolence(PULSE_COMBAT));
+
+  // pulse update  (36 seconds)
   scheduler.add(new procGlobalRoomStuff(PULSE_UPDATE));
   scheduler.add(new procDeityCheck(PULSE_UPDATE));
   scheduler.add(new procApocCheck(PULSE_UPDATE));
@@ -1164,15 +1168,9 @@ int TMainSocket::gameLoop()
   scheduler.add(new procWeatherAndTime(PULSE_UPDATE));
   scheduler.add(new procWholistAndUsageLogs(PULSE_UPDATE));
 
-  // pulse wayslow
-  scheduler.add(new procCheckForRepo(PULSE_WAYSLOW));
-  scheduler.add(new procCheckMail(PULSE_WAYSLOW));
-
-  // pulse combat
-  scheduler.add(new procPerformViolence(PULSE_COMBAT));
-
-  // pulse mudhour
+  // pulse mudhour  (144 seconds (2.4 mins))
   scheduler.add(new procFishRespawning(PULSE_MUDHOUR));
+  scheduler.add(new procReforestation(PULSE_MUDHOUR));
   scheduler.add(new procZoneUpdate(PULSE_MUDHOUR));
   scheduler.add(new procLaunchCaravans(PULSE_MUDHOUR));
   scheduler.add(new procUpdateAvgPlayers(PULSE_MUDHOUR));
@@ -1184,13 +1182,17 @@ int TMainSocket::gameLoop()
   scheduler.add(new procUpdateTime(PULSE_MUDHOUR));
   scheduler.add(new procMobHate(PULSE_MUDHOUR));
   scheduler.add(new procDoComponents(PULSE_MUDHOUR));
+
+  // pulse wayslow  (240 seconds (4 mins))
+  scheduler.add(new procCheckForRepo(PULSE_WAYSLOW));
+  scheduler.add(new procCheckMail(PULSE_WAYSLOW));
   
-  // pulse mudday
+  // pulse mudday   (3456 seconds (57.6 mins))
   scheduler.add(new procUpdateAuction(PULSE_MUDDAY));
   scheduler.add(new procBankInterest(PULSE_MUDDAY));
 
   // pulse realhour
-  scheduler.add(new procTweakLoadRate(PULSE_REALHOUR));
+//  scheduler.add(new procTweakLoadRate(PULSE_REALHOUR)); // desired load rate achieved
   scheduler.add(new procTrophyDecay(PULSE_REALHOUR));
   proc_list.add(new procTrophyDecay(PULSE_REALHOUR));
 

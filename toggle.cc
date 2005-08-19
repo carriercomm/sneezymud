@@ -311,6 +311,8 @@ TOGINFO TogIndex[MAX_TOG_INDEX + 1] =
   {"Lightsaber quest: gave essence", 13745},
   {"Lightsaber quest: gave rockfish", 13745},
   {"Lightsaber quest: gave essence", 13745},
+  {"Creation Choice: Fae Touched", MOB_NONE}, 
+  {"Trait: Real Aging", MOB_NONE},
   {"", MOB_NONE}, 
 };
 
@@ -488,14 +490,14 @@ void TBeing::doToggle(const char *arg2)
       }
       if(i%3)
 	sendTo("\n\r");
-  } else if(is_abbrev(arg, "corpse-looting")){
-    if (isPlayerAction(PLR_ALLOW_LOOT)) {
+  } else if(is_abbrev(arg, "deny-corpse-loot")){
+    if (!isPlayerAction(PLR_DENY_LOOT)) {
       sendTo("No one may loot your corpse now, except you.\n\r");
-      remPlayerAction(PLR_ALLOW_LOOT);
+      addPlayerAction(PLR_DENY_LOOT);
       updateCorpseLootFlags(getName(), false);
     } else {
       sendTo("Anyone may loot your corpse now.\n\r");
-      addPlayerAction(PLR_ALLOW_LOOT);
+      remPlayerAction(PLR_DENY_LOOT);
       updateCorpseLootFlags(getName(), true);
     }
     }
@@ -934,7 +936,7 @@ void TBeing::doToggle(const char *arg2)
     }
   } else if (is_abbrev(arg, "engage") ) {
     if (IS_SET(desc->autobits, AUTO_ENGAGE)) {
-      sendTo("You will now default to fighting back if attacked or if casting.\n\r");
+      sendTo(COLOR_BASIC, fmt("You will now default to %sfighting back%s if attacked or if casting.\n\r") % redBold() % norm());
       sendTo("You are still free to engage rather than fight by using the engage command.\n\r");
       REMOVE_BIT(desc->autobits, AUTO_ENGAGE);
     } else {
@@ -943,20 +945,20 @@ void TBeing::doToggle(const char *arg2)
 
       } else {
 
-        sendTo("You will now engage if you start a fight by casting or praying.\n\r");
+        sendTo(COLOR_BASIC, fmt("You will now %sengage%s if you start a fight by casting or praying.\n\r") % greenBold() % norm());
         SET_BIT(desc->autobits, AUTO_ENGAGE);
       }
     }
   } else if (is_abbrev(arg, "engage-all") || is_abbrev(arg, "no-fight") || is_abbrev(arg, "engage-always") ) {
     if (IS_SET(desc->autobits, AUTO_ENGAGE_ALWAYS)) {
-      sendTo("You will now default to fighting back if attacked and when you cast.\n\r");
+      sendTo(COLOR_BASIC, fmt("You will now default to %sfighting back%s if attacked and when you cast.\n\r") % redBold() % norm());
       sendTo("You are still free to engage rather than fight by using the engage command.\n\r");
       REMOVE_BIT(desc->autobits, AUTO_ENGAGE_ALWAYS);
     } else {
       if (IS_SET(desc->autobits, AUTO_ENGAGE)) {
         sendTo("You can not both auto engage and engage-all.\n\r");
       } else {
-        sendTo("You will now default to engaging if attacked and when you cast to start a fight.\n\r");
+        sendTo(COLOR_BASIC, fmt("You will now default to %sengaging%s if attacked and when you cast to start a fight.\n\r") % greenBold() % norm());
         sendTo("You are free to fight rather than engage by using the hit command in battle.\n\r");
         SET_BIT(desc->autobits, AUTO_ENGAGE_ALWAYS);
       }

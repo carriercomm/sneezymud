@@ -37,6 +37,12 @@ class procGlobalRoomStuff : public TProcess {
   procGlobalRoomStuff(const int &);
 };
 
+class procDoRoomSaves : public TProcess {
+ public:
+  void run(int) const;
+  procDoRoomSaves(const int &);
+};
+
 
 class procDeityCheck : public TProcess {
  public:
@@ -97,6 +103,12 @@ class procFishRespawning : public TProcess {
  public:
   void run(int) const;
   procFishRespawning(const int &);
+};
+
+class procReforestation : public TProcess {
+ public:
+  void run(int) const;
+  procReforestation(const int &);
 };
 
 class procZoneUpdate : public TProcess {

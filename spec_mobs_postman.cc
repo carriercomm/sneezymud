@@ -143,14 +143,26 @@ int postman(TBeing *, cmdTypeT cmd, const char *, TMonster *me, TObj *)
     if((obj=dynamic_cast<TObj *>(tt)) && obj->objVnum() == 124)
       count++;
   }
+  
+  if (!tm->isHumanoid())
+    return false;
 
-  if(!::number(0,3) || count > 10){
+  if(!::number(0,5) || count > 10){
     for(TThing *tt=bag->getStuff();tt;tt=tt->nextThing){
       if((obj=dynamic_cast<TObj *>(tt)) && obj->objVnum() == 124){
 	--(*obj);
 	act("$n delivers $p to $N.",
 	    FALSE, me, obj, tm, TO_ROOM);
 	delete obj;
+	if (!::number(0,8)) {
+	  TObj *o2;
+	  o2=read_object(33601, VIRTUAL);
+	  *me += *o2;
+	  me->doSay("You can go ahead and pay me later...");
+	  me->doGive(tm,o2,GIVE_FLAG_IGN_DEX_TEXT);
+	  me->doAction("", CMD_LICK);
+	  me->doAction(add_bars(tm->name), CMD_WINK);
+	}
 	break;
       }
     }

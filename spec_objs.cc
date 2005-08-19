@@ -3626,31 +3626,37 @@ int permaDeathMonument(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *o1, TObj
   if(!found)
     return FALSE;
 
-  TDatabase db(DB_SNEEZY);
-
-  db.query("select name, level, died, killer from permadeath order by level desc limit 10");
-
-  if(!db.isResults()){
-    ch->sendTo("The plaque is empty.\n\r");
-    return TRUE;
-  }
+  TDatabase db_dead(DB_SNEEZY);
+  TDatabase db_living(DB_SNEEZY);
 
   ch->sendTo("You examine the plaque:\n\r");
   ch->sendTo("------------------------------------------------------------\n\r");
   ch->sendTo("-     This monument commemorates the bravest of heroes     -\n\r");
   ch->sendTo("-                 who risk permanent death.                -\n\r");
   ch->sendTo("------------------------------------------------------------\n\r");
+  ch->sendTo("Living:             Dead:\n\r");
+
+  db_dead.query("select name, level, died, killer from permadeath where died=1 order by level desc limit 25");
+  db_living.query("select name, level, died, killer from permadeath where died=0 order by level desc limit 25");
 
   int i=1;
-  while(db.fetchRow()){
-    if(convertTo<int>(db["died"])==1){
-      ch->sendTo(COLOR_BASIC, fmt("%i) %s perished bravely at level %s, killed by %s.\n\r") % i % db["name"] % db["level"] % db["killer"]);
+  while(i<=25){
+    if(db_living.fetchRow()){
+      ch->sendTo(COLOR_BASIC, fmt("%2s| %-13s | ") %
+		 db_living["level"] % db_living["name"]);
     } else {
-      ch->sendTo(COLOR_BASIC, fmt("%i) %s lives on at level %s\n\r") % i % db["name"] % db["level"]);
+      ch->sendTo(COLOR_BASIC, fmt(" 0) %-13s | ") % "no one");
     }
+
+    if(db_dead.fetchRow()){
+      ch->sendTo(COLOR_BASIC, fmt("%2s| %-13s killed by %s.\n\r")%
+		 db_dead["level"] % db_dead["name"] % db_dead["killer"]);
+    } else {
+      ch->sendTo(COLOR_BASIC, fmt(" 0) %-13s\n\r") % "no one");
+    }
+
     ++i;
   }
-
 
   return TRUE;
 }
@@ -5710,6 +5716,7 @@ extern int frostWeapon(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *
 extern int dragonSlayer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
 extern int boneStaff(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
 extern int bloodspike(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
+extern int brokenBottle(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
 extern int wickedDagger(TBeing *vict, cmdTypeT cmd, const char *, TObj *me, TObj *ch_obj);
 extern int poisonSap(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
 extern int daySword(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
@@ -5736,7 +5743,10 @@ extern int fireballWeapon(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TOb
 extern int gnomeTenderizer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
 extern int marukalia(TBeing *targ, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
 extern int lightSaber(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
-
+extern int demonSlayer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *);
+extern int objWornAstralWalk(TBeing *targ, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
+extern int objWornMinorAstralWalk(TBeing *targ, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
+extern int objWornPortal(TBeing *targ, cmdTypeT cmd, const char *arg, TObj *o, TObj *);
 
 
 // assign special procedures to objects
@@ -5886,5 +5896,10 @@ TObjSpecs objSpecials[NUM_OBJ_SPECIALS + 1] =
   {FALSE, "gnome tenderizer", gnomeTenderizer}, // 140
   {FALSE, "Marukalia", marukalia},
   {FALSE, "lightsaber", lightSaber},
+  {FALSE, "broken bottle", brokenBottle},
+  {FALSE, "Demon Slayer", demonSlayer},
+  {FALSE, "Astral Walk", objWornAstralWalk}, //145
+  {FALSE, "Minor Astral Walk", objWornMinorAstralWalk},
+  {FALSE, "Portal", objWornPortal},
   {FALSE, "last proc", bogusObjProc}
 };

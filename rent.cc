@@ -2307,6 +2307,7 @@ void TPerson::loadRent()
   TPerson *tmp;
   sstring lbuf;
   ItemLoad il;
+  int j, actual = 0;
 
   if (desc && desc->original)
     tmp = desc->original;
@@ -2324,8 +2325,15 @@ void TPerson::loadRent()
   if(!il.openFile(buf)){
     if (should_be_logged(this)) {
       vlogf(LOG_PIO, fmt("%s has no equipment.") %  getName());
-      vlogf(LOG_PIO, fmt("Loading %s [%d talens/%d bank/%.2f xps/no items/%d age-mod/no rent]") %  
-         getName() % getMoney() % getBank() % getExp() % age_mod);
+
+      actual = 0;
+      for (j=0;j<10;j++)
+        actual += pracsSoFar();
+      actual /= 10;
+  
+      vlogf(LOG_PIO, fmt("Loading %s [%d talens/%d bank/%.2f xps/no items/%d age-mod/no rent/%d extra pracs (%d-%d)]") %  
+         getName() % getMoney() % getBank() % getExp() % age_mod %
+         (actual-expectedPracs()) % actual % expectedPracs());
     }
     return;
   }
@@ -2467,9 +2475,15 @@ void TPerson::loadRent()
       }
     }
   }
-  vlogf(LOG_PIO, fmt("Loading %s [%d talens/%d bank/%.2f xps/%d items/%d age-mod/%d rent]") %  
+  actual = 0;
+  for (j=0;j<10;j++)
+    actual += pracsSoFar();
+  actual /= 10;
+    
+  vlogf(LOG_PIO, fmt("Loading %s [%d talens/%d bank/%.2f xps/%d items/%d age-mod/%d rent/%d extra pracs (%d-%d)]") %  
        getName() % getMoney() % getBank() % getExp() % il.st.number % 
-       age_mod % il.st.total_cost);
+       age_mod % il.st.total_cost % (actual - expectedPracs()) % 
+       actual % expectedPracs());
 
   // silly kludge
   // because of the way the "stuff" list is saved, it essentially reverses
@@ -3164,7 +3178,7 @@ void printLimitedInRent(void)
           obj_index[i].max_exist % obj_index[i].getNumber();
 	// these have to be lower case
         // autoMail(NULL, "jesus", buf);
-        autoMail(NULL, "damescena", buf);
+        // autoMail(NULL, "damescena", buf);
       }
     }
   }
@@ -4392,6 +4406,12 @@ void TPerson::saveToggles()
 
 int TBeing::doRent(const sstring &argument)
 {
+  sendTo("You're a mob.  You can't rent!\n\r");
+  return FALSE;
+}
+
+int TPerson::doRent(const sstring &argument)
+{
   if (!argument.empty()) {
     if (is_abbrev(argument, "credit")) {
       int lev;
@@ -4615,6 +4635,10 @@ void TBeing::doClone(const sstring &arg)
   int ci, num_read = 0;
   ItemLoad il;
 
+  if (powerCheck(POWER_CLONE)) {
+    return;
+  }
+
   if (!isImmortal())
     return;
 
@@ -4628,7 +4652,7 @@ void TBeing::doClone(const sstring &arg)
     return;
   }
 
-  for(ci = 0;ci <= RANGER_LEVEL_IND;ci++) {
+  for(ci = 0;ci <= MAX_SAVED_CLASSES;ci++) {
     if(st1.level[ci] > GetMaxLevel()) {
       sendTo("You can't clone a player of higher level than you.\n\r");
       return;

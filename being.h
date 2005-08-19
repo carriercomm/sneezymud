@@ -1154,7 +1154,7 @@ class TBeing : public TThing {
     int useLifeforce(spellNumT);
     double usePiety(spellNumT);
     int reconcileDamage(TBeing *, int, spellNumT);
-    int doRent(const sstring &);
+    virtual int doRent(const sstring &);
     void doRestring(const sstring &);
     void doRelease(const sstring &);
     void doCapture(const sstring &);
@@ -1436,6 +1436,7 @@ class TBeing : public TThing {
     void doForage();
     void doTan();
     void doButcher();
+    void doLogging();
     int  doApplyHerbs(const sstring &);
     void doSkin(const sstring &);
     void doButcher(const sstring &);
@@ -1678,6 +1679,9 @@ class TBeing : public TThing {
     ush_int getClass() const;
     void setClass(ush_int num);
 
+    sh_int TBeing::pracsSoFar();
+    sh_int TBeing::expectedPracs();
+
     bool isLinkdead() const;
     double deathExp();
     double deathSkillLoss();
@@ -1896,6 +1900,7 @@ class TBeing : public TThing {
     virtual void doClone(const sstring &);
     virtual void doAccess(const sstring &);
     virtual void doOffice(sstring);
+    virtual void doPracInfo(sstring);
     void doWizlock(const sstring &);
     void doFlag(const sstring &);
     void doSystem(const sstring &);
@@ -2006,7 +2011,6 @@ class TBeing : public TThing {
     sstring PG13filter(const sstring &)const;
     sstring blahblah(const sstring &) const;
     void doLook(const sstring &, cmdTypeT, TThing *specific = NULL);
-    void doShout(const sstring &);
     void lookDark();
     void lookDir(int);
     void lookInObj(sstring, TThing *, unsigned int, const sstring &, cmdTypeT);
@@ -2014,6 +2018,7 @@ class TBeing : public TThing {
     void lookAtRoom();
     void lookAtBeing(TThing *);
     void lookingAtObj(TThing *);
+    void doShout(const sstring &);
     int doWhisper(const sstring &);
     int doTell(const sstring &, const sstring &, bool visible = TRUE);
     int doClientMessage(const sstring &);
@@ -2112,6 +2117,8 @@ class TBeing : public TThing {
     int get_sew_tools(TTool **, TTool **);
     int get_ceramic_tools(TTool **);
     int get_spirit_tools(TTool **, TTool **, TTool **);
+
+    void addToRandomStat(int);
 };
 
 #endif

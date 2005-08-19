@@ -17,6 +17,7 @@ extern vector<zoneData>zone_table;
 // cycling through all the rooms takes too long so just store which rooms
 // actually  have special procs
 extern vector<TRoom *>roomspec_db;
+extern vector<TRoom *>roomsave_db;
 
 // this is used for track range
 const unsigned int MAX_ROOMS   = 5000;
@@ -58,8 +59,10 @@ const unsigned int ROOM_HOSPITAL      = (1<<16);    // 65536
 const unsigned int ROOM_SAVE_ROOM     = (1<<17);    // 131072
 const unsigned int ROOM_NO_AUTOFORMAT = (1<<18);    // 262144
 const unsigned int ROOM_BEING_EDITTED = (1<<19);    // 524288
+const unsigned int ROOM_ON_FIRE       = (1<<20);  
+const unsigned int ROOM_FLOODED       = (1<<21);
 
-const int MAX_ROOM_BITS      = 20;          /* move and change */
+const int MAX_ROOM_BITS      = 22;          /* move and change */
 
 const unsigned int EX_CLOSED       = (1<<0);   // 1
 const unsigned int EX_LOCKED       = (1<<1);   // 2
@@ -197,6 +200,8 @@ class TRoom : public TThing {
     long descPos;           // File offset for the description.
     int x, y, z;            // x,y,z location in the world
     ubyte fished;           // how fished out the room is
+    ubyte logsHarvested;           // how deforested the room is
+    int treetype;          // the kind of tree growing in the room
 
   public:
     TThing *tBornInsideMe;  // List of mobs born inside me.
@@ -217,6 +222,7 @@ class TRoom : public TThing {
     void setDescr(const sstring &);
     const sstring getDescr();
 
+    void flameRoom();
     virtual int chiMe(TBeing *);
     int checkPointroll();
     virtual void sendTo(colorTypeT, const sstring &) const;
@@ -315,6 +321,18 @@ class TRoom : public TThing {
     }
     void setFished(int newfished) {
       fished=newfished;
+    }
+    int getLogsHarvested() const {
+      return logsHarvested;
+    }
+    void setLogsHarvested(int newLogsHarvested) {
+      logsHarvested=newLogsHarvested;
+    }
+    int getTreetype() const {
+      return treetype;
+    }
+    void setTreetype(int newtreetype) {
+      treetype = newtreetype;
     }
 
 

@@ -882,6 +882,7 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller, float exp_lost
       case LAST_ODDBALL_AFFECT:
       case SKILL_ALCOHOLISM:
       case SKILL_FISHING:
+      case SKILL_LOGGING:
       case SKILL_ADVANCED_DEFENSE:
       case SKILL_PSITELEPATHY:
       case SKILL_TELE_SIGHT:
@@ -1032,7 +1033,11 @@ TThing * TBeing::makeCorpse(spellNumT dmg_type, TBeing * tKiller, float exp_lost
     pcorpse->setOwner(sstring(tmpbuf).lower());
     pcorpse->addCorpseToLists();
     pcorpse->saveCorpseToFile();
-    pcorpse->setExpLost(exp_lost);
+    if (hasQuestBit(TOG_PERMA_DEATH_CHAR)) {
+      pcorpse->setExpLost(0);
+    } else {
+      pcorpse->setExpLost(exp_lost);
+    }
   }
 
   if (gamePort != PROD_GAMEPORT)

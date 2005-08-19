@@ -46,7 +46,7 @@ class TAccount
     Descriptor *desc;
     byte time_adjust;
     unsigned int flags;
-
+    
     TAccount();
     TAccount(const TAccount &a);
     TAccount & operator=(const TAccount &a);

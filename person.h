@@ -98,6 +98,7 @@ class TPerson : public TBeing {
     virtual void doSwitch(const sstring &);
     virtual void doForce(const sstring &);
     virtual void doLoad(const sstring &);
+    virtual int doRent(const sstring &);
     virtual void doCutlink(const sstring &);
     virtual void doPurge(const sstring &);
     virtual short int manaLimit() const;
@@ -124,7 +125,7 @@ class TPerson : public TBeing {
     void loadWizPowers();
     virtual void doColor(const sstring &);
     virtual void doChange(const sstring &);
-    virtual void doStat(const sstring &);
+    virtual void doStat(const sstring &argument);
     virtual void doShow(const sstring &);
     virtual bool isPc() const { return TRUE; }
     virtual void logf(const char *, ...);

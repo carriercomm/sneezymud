@@ -735,7 +735,8 @@ int TPerson::doQuit2()
 
   act("Goodbye, friend.. Come back soon!", FALSE, this, 0, 0, TO_CHAR);
   act("$n has left the game.", TRUE, this, 0, 0, TO_ROOM);
-  vlogf(LOG_PIO, fmt("%s quit the game.") %  getName());
+  vlogf(LOG_PIO, fmt("%s quit the game at %s (%d).") %  
+       getName() % roomp->name % inRoom());
   if (!isImmortal() && getMoney()) {
     *roomp += *create_money(getMoney());
     addToMoney(-getMoney(), GOLD_INCOME);
@@ -2415,7 +2416,7 @@ int doLiqSpell(TBeing *ch, TBeing *vict, liqTypeT liq, int amt)
 	vict->age_mod -= ::number(1, 2);
       break;
     case LIQ_POT_STAT:
-      whichStat = statTypeT(number(0, MAX_STATS - 1));
+      whichStat = statTypeT(number(0, MAX_STATS_USED - 1));
       vict->addToStat(STAT_CHOSEN, whichStat, amt);
       
       switch (whichStat) {
@@ -3558,8 +3559,11 @@ void TBeing::doHistory()
     sendTo(fmt("[%d] %s\n\r") % i % d->history[i]);
 
   TDatabase db(DB_SNEEZY);
+
   sendTo("\n\rYour tell history :\n\r\n\r");
+
   db.query("select tellfrom, tell from tellhistory where tellto='%s' order by telltime desc", getName());
+
   for(i=0;i<25 && db.fetchRow();i++){
     sendTo(COLOR_BASIC, fmt("[%d] <p>%s<1> told you, \"<c>%s<1>\"\n\r") %
 	   i % db["tellfrom"] % db["tell"]);
@@ -3921,7 +3925,7 @@ void TBeing::doEmail(const char *arg)
   }
   sendTo(fmt("Changing email address from %s to %s.\n\r") %
            desc->account->email % buf);
-  strcpy(desc->account->email, buf);
+  desc->account->email=buf;
   desc->saveAccount();
 }
 
@@ -4429,5 +4433,33 @@ void TBeing::doRoll(const sstring &arg)
   }
 
   return;
+}
+
+// adds to stats randomly, but in a weighted function that favours the first
+// stats to which points are added
+// ** also does some subtractions -- the idea here is to mix things up 
+// a bit **
+void TBeing::addToRandomStat(int extra_points) {
+  statTypeT whichStat;
+  int amt;
+  unsigned i=0;
+  bool firstPass=TRUE;
+  vector<statTypeT>stats;
+  for (whichStat=MIN_STAT;whichStat<MAX_STATS_USED;whichStat++){
+    stats.push_back(whichStat);
+  }
+  std::random_shuffle(stats.begin(), stats.end());
+  while(extra_points != 0) {
+    if (i >= stats.size()) {
+      i = 0;
+      firstPass=FALSE;
+    }
+    whichStat = stats[i++];
+    if (firstPass) {
+      amt = ::number(-10,extra_points)/2;
+    } else amt = max(1,::number(0,extra_points)/2);
+    addToStat(STAT_CHOSEN, whichStat, amt);
+    extra_points -= amt;
+  }
 }
 

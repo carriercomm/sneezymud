@@ -151,28 +151,33 @@ void TBeing::statRoom(TRoom *rmp)
   }
 
 
-  str = fmt("Room name: %s, Of zone : %d. V-Number : %d, R-number : %d\n\r") %
-    rmp->name % rmp->getZoneNum() % rmp->number % in_room;
+  str = fmt("%sRoom name:%s %s, %sOf zone:%s %d. %sV-Number:%s %d, %sR-number:%s %d\n\r") %
+    cyan() % norm() % rmp->name %
+    cyan() % norm() % rmp->getZoneNum() %
+    cyan() % norm() % rmp->number %
+    cyan() % norm() % in_room;
 
-  str += fmt("Room Coords: %d, %d, %d\n\r") %
+  str += fmt("%sRoom Coords:%s %d, %d, %d\n\r") %
+    cyan() % norm() %
     rmp->getXCoord() % rmp->getYCoord() % rmp->getZCoord();
 
-  str += fmt("Sector type : %s ") % TerrainInfo[rmp->getSectorType()]->name;
+  str += fmt("%sSector type:%s %s") %
+    cyan() % norm() % TerrainInfo[rmp->getSectorType()]->name;
 
-  str += "Special procedure : ";
+  str += fmt("  %sSpecial procedure:%s ") % cyan() % norm();
 
   str += fmt("%s") % ((rmp->funct) ? "Exists\n\r" : "No\n\r");
 
-  str += "Room flags: ";
+  str += fmt("%sRoom flags:%s ") % cyan() % norm();
 
-  str += sprintbit((long) rmp->getRoomFlags(), room_bits);;
+  str += sprintbit((long) rmp->getRoomFlags(), room_bits);
   str += "\n\r";
 
-  str += "Room flag bit vector: ";
+  str += fmt("%sRoom flag bit vector:%s ") % cyan() % norm();
 
   str += fmt("%d\n\r") % ((unsigned int) rmp->getRoomFlags());
 
-  str += "Description:\n\r";
+  str += fmt("%sDescription:%s\n\r") % cyan() % norm();
   tmp_str = rmp->getDescr();
   if (tmp_str.empty()) {
     str += "NO DESCRIPTION\n\r";
@@ -180,7 +185,7 @@ void TBeing::statRoom(TRoom *rmp)
     str += tmp_str.toCRLF();
   }
 
-  str += "Extra description keywords(s): ";
+  str += fmt("%sExtra description keywords(s):%s") % cyan() % norm();
   if (rmp->ex_description) {
     str += "\n\r";
     for (e = rmp->ex_description; e; e = e->next) {
@@ -189,35 +194,42 @@ void TBeing::statRoom(TRoom *rmp)
     }
     str += "\n\r";
   } else {
-    str += "None.\n\r";
+    str += " NONE\n\r";
   }
 
   buf3 = fmt("%d") % rmp->getRoomHeight();
   buf4 = fmt("%d") % rmp->getMoblim();
-  str += fmt("Light : %d   Room Height : %s    Maximum capacity : %s\n\r") %
-    rmp->getLight() %
-    ((rmp->getRoomHeight() <= 0) ? "unlimited" : buf3) %
-    ((rmp->getMoblim()) ? buf4 : "Infinite");
+  str += fmt("%sLight:%s %d   %sRoom Height:%s %s    %sMaximum capacity:%s %s\n\r") %
+    cyan() % norm() % rmp->getLight() %
+    cyan() % norm() % ((rmp->getRoomHeight() <= 0) ? "Unlimited" : buf3) %
+    cyan() % norm() % ((rmp->getMoblim()) ? buf4 : "Infinite");
 
   if (rmp->isWaterSector() || rmp->isUnderwaterSector()) {
-    str += fmt("River direction : %s") % 
+    str += fmt("%sRiver direction:%s %s") % 
+      cyan() % norm() %
       ((rmp->getRiverDir() < 0) ? "None" : dirs[rmp->getRiverDir()]);
 
+    str += fmt("   %sRiver speed:%s ") % cyan() % norm();
     if (rmp->getRiverSpeed() >= 1)
-      str += fmt("   River speed : Every %d heartbeat%s\n\r") %
+      str += fmt("Every %d heartbeat%s\n\r") %
 	rmp->getRiverSpeed() % ((rmp->getRiverSpeed() != 1) ? "s." : ".");
     else
-      str += fmt("   River speed : no current.\n\r");
+      str += fmt("no current.\n\r");
 
-    str += fmt("Fish caught : %i\n\r") % rmp->getFished();
+    str += fmt("%sFish caught:%s %i\n\r") %
+      cyan() % norm() % rmp->getFished();
 
   }
+  if (rmp->isForestSector())
+    str += fmt("Number of logs harvested: %i\n\r")
+      % rmp->getLogsHarvested();
   if ((rmp->getTeleTarg() > 0) && (rmp->getTeleTime() > 0)) {
-    str += fmt("Teleport speed : Every %d heartbeats. To room : %d. Look? %s.\n\r") %
-      rmp->getTeleTime() % rmp->getTeleTarg() %
-      (rmp->getTeleLook() ? "yes" : "no");
+    str += fmt("%sTeleport speed:%s Every %d heartbeats.  %sTo room:%s %d  %sLook?%s %s.\n\r") %
+      cyan() % norm() % rmp->getTeleTime() %
+      cyan() % norm() % rmp->getTeleTarg() %
+      cyan() % norm() % (rmp->getTeleLook() ? "yes" : "no");
   }
-  str += "------- Chars present -------\n\r";
+  str += fmt("%s------- Chars present -------%s\n\r") % cyan() % norm();
   counter = 0;
   for (t = rmp->getStuff(); t; t = t->nextThing) {
     // canSee prevents seeing invis gods of higher level
@@ -233,7 +245,7 @@ void TBeing::statRoom(TRoom *rmp)
       }
     }
   }
-  str += "--------- Born Here ---------\n\r";
+  str += fmt("%s--------- Born Here ---------%s\n\r") % cyan() % norm();
   counter = 0;
   for (t = rmp->tBornInsideMe; t; t = t->nextBorn) {
     TMonster *tMonster;
@@ -249,7 +261,7 @@ void TBeing::statRoom(TRoom *rmp)
       }
     }
   }
-  str += "--------- Contents ---------\n\r";
+  str += fmt("%s--------- Contents ---------%s\n\r") % cyan() % norm();
   counter = 0;
   volume = 0;
   buf2="";
@@ -265,43 +277,58 @@ void TBeing::statRoom(TRoom *rmp)
       }
     }
   }
-  str += fmt("Total Volume: %s\n\r") % volumeDisplay(volume);
+  str += fmt("%sTotal Volume:%s %s\n\r") %
+    cyan() % norm() % volumeDisplay(volume);
   str += buf2;
 
-  str += "------- Exits defined -------\n\r";
+  str += fmt("%s------- Exits defined -------%s\n\r") % cyan() % norm();
   dirTypeT dir;
   for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
     if (!rmp->dir_option[dir]) {
       continue;
     } else {
-      str+=fmt("Direction : %-10s    Door Type : %-12s     To-Room : %d\n\r") %
-	dirs[dir] % door_types[rmp->dir_option[dir]->door_type] %
+      str+=fmt("%sDirection:%s %-10s    %sDoor Type:%s %-12s     %sTo-Room:%s %d\n\r") %
+        cyan() % norm() %
+	dirs[dir] %
+        cyan() % norm() %
+        door_types[rmp->dir_option[dir]->door_type] %
+        cyan() % norm() %
 	rmp->dir_option[dir]->to_room;
       if (rmp->dir_option[dir]->door_type != DOOR_NONE) {
-        str += fmt("Weight : %d      Exit Flags : %s\n\rKeywords : %s\n\r") %
+        str += fmt("%sWeight:%s %d      %sExit Flags:%s %s\n\r%sKeywords:%s %s\n\r") %
+          cyan() % norm() %
           rmp->dir_option[dir]->weight % 
+          cyan() % norm() %
           sprintbit(rmp->dir_option[dir]->condition, exit_bits) %
+          cyan() % norm() %
 	  rmp->dir_option[dir]->keyword;
         if ((rmp->dir_option[dir]->key > 0) || 
              (rmp->dir_option[dir]->lock_difficulty >= 0)) {
-          str += fmt("Key Number : %d     Lock Difficulty: %d\n\r") %
-	    rmp->dir_option[dir]->key % rmp->dir_option[dir]->lock_difficulty;
+          str += fmt("%sKey Number:%s %d     %sLock Difficulty:%s %d\n\r") %
+            cyan() % norm() %
+	    rmp->dir_option[dir]->key %
+            cyan() % norm() %
+            rmp->dir_option[dir]->lock_difficulty;
         }
         if (IS_SET(rmp->dir_option[dir]->condition, EX_TRAPPED)) {
           buf2 = sprinttype(rmp->dir_option[dir]->trap_info, trap_types);
-          str += fmt("Trap type : %s,  Trap damage : %d (d8)\n\r") % 
-	    buf2 % rmp->dir_option[dir]->trap_dam;
+          str += fmt("%sTrap type:%s %s,  %sTrap damage:%s %d (d8)\n\r") % 
+            cyan() % norm() %
+	    buf2 %
+            cyan() % norm() %
+            rmp->dir_option[dir]->trap_dam;
         }
       } else if (IS_SET(rmp->dir_option[dir]->condition, EX_SLOPED_UP)) {
-        str += "Sloped: Up\n\r";
+        str += fmt("%sSloped:%s Up\n\r") % cyan() % norm();
       } else if (IS_SET(rmp->dir_option[dir]->condition, EX_SLOPED_DOWN)) {
-        str += "Sloped: Down\n\r";
+        str += fmt("%sSloped:%s Down\n\r") % cyan() % norm();
       }
-      str += "Description:\n\r  ";
-      if (rmp->dir_option[dir]->description) {
-        str += rmp->dir_option[dir]->description;
-      } else {
+      str += fmt("%sDescription:%s\n\r") % cyan() % norm();
+      tmp_str = rmp->dir_option[dir]->description;
+      if (tmp_str.empty()) {
         str += "UNDEFINED\n\r";
+      } else {
+        str += tmp_str.toCRLF();
       }
     }
   }
@@ -563,7 +590,6 @@ void TBeing::statBeing(TBeing *k)
   sstring buf2, buf3;
   TFaction *f = NULL;
   const TMonster *km = dynamic_cast<const TMonster *>(k);
-  sstring birth_buf, logon_buf;
   resp *respy;
   followData *fol;
   charList *list;
@@ -604,22 +630,24 @@ void TBeing::statBeing(TBeing *k)
 
   str += "-----------------------------------------------------------------------------\n\r";
   if (km) {
-    str += fmt("Short description: %s\n\r") %
-      (km->shortDescr ? km->shortDescr : "None");
-    str += fmt("Long description: %s") %
-      (km->player.longDescr ? km->player.longDescr : "None");
+    str += fmt("%sShort description:%s %s\n\r") %
+      cyan() % norm() %
+      (km->shortDescr ? km->shortDescr : "NONE");
+    str += fmt("%sLong description:%s\n\r%s") %
+      cyan() % norm() %
+      (km->player.longDescr ? km->player.longDescr : "NONE");
   } else {
     Descriptor *d = k->desc;
 
     if (d && k->isPc() && k->GetMaxLevel() > MAX_MORT) {
-      str += fmt("IMM: Office: %d\n\r") % d->office;
+      str += fmt("%sIMM Office  :%s %d\n\r") % cyan() % norm() % d->office;
 
       if (d->blockastart) {
-        str += fmt("IMM: BlockA: %d - %d\n\r") % d->blockastart % d->blockaend;
+        str += fmt("%sIMM Block A :%s %d - %d\n\r") % cyan() % norm() % d->blockastart % d->blockaend;
       }
 
       if (d->blockbstart) {
-        str += fmt("IMM: BlockB: %d - %d\n\r") % d->blockbstart % d->blockbend;
+        str += fmt("%sIMM Block B :%s %d - %d\n\r") % cyan() % norm() % d->blockbstart % d->blockbend;
       }
     }
   }
@@ -632,9 +660,9 @@ void TBeing::statBeing(TBeing *k)
     }
   }
 
-  str += fmt("%sClass:%s %-28s\n\r") % cyan() % norm() % buf2;
+  str += fmt("%sClass       :%s %-28s\n\r") % cyan() % norm() % buf2;
 
-  str += fmt("%sLevel:%s [") % cyan() % norm();
+  str += fmt("%sLevel       :%s [") % cyan() % norm();
   for (classIndT i = MIN_CLASS_IND; i < MAX_CLASSES; i++) {
     str += fmt("%c%c:%d ") %
       classInfo[i].name.cap()[0] % classInfo[i].name.cap()[1] %
@@ -642,18 +670,18 @@ void TBeing::statBeing(TBeing *k)
   }
   str += "]\n\r";
 
-  str += cyan() + "Race:" + norm() + " ";
-  str += k->getMyRace()->getSingularName();
+  str += fmt("%sRace        :%s %-10s") %
+    cyan() % norm() % k->getMyRace()->getSingularName();
 
-  str += fmt("\t%sHome: %s%s") % 
-    cyan() % home_terrains[k->player.hometerrain] % norm();
+  str += fmt("%sHome:%s %-17s") % 
+    cyan() % norm() % home_terrains[k->player.hometerrain];
 
   if (k->desc && k->desc->account) {
     if (IS_SET(k->desc->account->flags, ACCOUNT_IMMORTAL) &&
         !hasWizPower(POWER_VIEW_IMM_ACCOUNTS)) {
-      str += "\tAccount : *** Information Concealed ***\n\r";
+      str += "Account : *** Information Concealed ***\n\r";
     } else {
-      str += fmt("\t%sAccount: %s%s\n\r") % purple() %
+      str += fmt("%sAccount: %s%s\n\r") % purple() %
         k->desc->account->name % norm();
     }
   } else {
@@ -661,13 +689,21 @@ void TBeing::statBeing(TBeing *k)
   }
 
   if (k->isPc()) {
+    sstring birth_buf, logon_buf;
+
     birth_buf = asctime(localtime(&(k->player.time.birth)));
+    // Chop off trailing \n from the output of localtime
+    birth_buf = birth_buf.substr(0, birth_buf.length() - 1);
+
     logon_buf = asctime(localtime(&(k->player.time.logon)));
+    // Chop off trailing \n from the output of localtime
+    logon_buf = logon_buf.substr(0, logon_buf.length() - 1);
+
     realTimePassed((time(0) - k->player.time.logon) +
                     k->player.time.played, 0, &playing_time);
-    str += fmt("%sBirth :%s %s    %sLogon   :%s %s\n\r") %
+    str += fmt("%sBirth       : %s%s     %sLogon:%s %s\n\r") %
       cyan() % norm() % birth_buf % cyan() % norm() % logon_buf;
-    str += fmt("%sPlaying time :%s %d days, %d hours.     %sBase age:%s %d    %sAge Mod:%s %d\n\r") %
+    str += fmt("%sPlaying time:%s %d days, %d hours.      %sBase age:%s %d    %sAge Mod:%s %d\n\r") %
       cyan() % norm() % playing_time.day % playing_time.hours %
       cyan() % norm() % k->getBaseAge() %
       cyan() % norm() % k->age_mod;
@@ -675,116 +711,111 @@ void TBeing::statBeing(TBeing *k)
       str += fmt("%sWARNING%s, player is offline, age will not be accurate.\n\r") % red() % norm();
     }
 
-    str += fmt("%sPlayer age   :%s %d years, %d months, %d days, %d hours\n\r\n\r") %
+    str += fmt("%sPlayer age  :%s %d years, %d months, %d days, %d hours\n\r\n\r") %
       cyan() % norm() % k->age()->year % k->age()->month %
       k->age()->day % k->age()->hours;
   }
 
-  buf3 = fmt("[%.2f]") % k->getExp();
-  buf2 = fmt("[%.2f]") % k->getMaxExp();
-  str += fmt("%sDefRnd:%s [%3d]  %sExp    :%s %-13s  %sMax Exp:%s %-13s\n\r") %
+  buf3 = fmt("[%5.2f]") % k->getExp();
+  buf2 = fmt("[%5.2f]") % k->getMaxExp();
+  str += fmt("%sDef Rnd:%s [%5d]   %sExp      :%s %-16s %sMax Exp :%s %-13s\n\r") %
     cyan() % norm() % k->defendRound(NULL) %
     cyan() % norm() % buf3 %
     cyan() % norm() % buf2;
 
-  buf2 = fmt("[%d]") % k->getMoney();
-  buf3 = fmt("[%d]") % k->getBank();
-  str += fmt("%sVision:%s [%3d]  %sTalens :%s %-13s  %sBank    :%s %-13s\n\r") %
+  buf2 = fmt("[%5d]") % k->getMoney();
+  buf3 = fmt("[%5d]") % k->getBank();
+  str += fmt("%sVision :%s [%5d]   %sTalens   :%s %-16s %sBank Bal:%s %-13s\n\r") %
     cyan() % norm() % k->visionBonus %
     cyan() % norm() % buf2 %
     cyan() % norm() % buf3;
 
-  buf2 = fmt("[%d]") % k->getHitroll();
-  buf3 = fmt("[%d]") % k->getDamroll();
-  str += fmt("%sAttRnd:%s [%3d]  %sHitroll:%s %-13s  %sDamroll :%s %-13s\n\r") %
+  buf2 = fmt("[%5d]") % k->getHitroll();
+  buf3 = fmt("[%5d]") % k->getDamroll();
+  str += fmt("%sAtt Rnd:%s [%5d]   %sHitroll  :%s %-16s %sDamroll :%s %-13s\n\r") %
     cyan() % norm() % k->attackRound(NULL) %
     cyan() % norm() % buf2 %
     cyan() % norm() % buf3;
 
-  buf2 = fmt("[%d]") % k->getHit();
-  buf3 = fmt("[%d]") % k->getMove();
-  if (k->hasClass(CLASS_CLERIC) || k->hasClass(CLASS_DEIKHAN)) {
-    str += fmt("%sPiety :%s [%5.1f]%sHit    :%s %-13s  %sMove    :%s %-13s\n\r") %
-      cyan() % norm() % k->getPiety() %
-      cyan() % norm() % buf2 %
-      cyan() % norm() % buf3;
-  } else if (k->hasClass(CLASS_SHAMAN)) {
-    str += fmt("%sLifef.:%s[%6d]%sHit    :%s %-13s  %sMove    :%s %-13s\n\r") %
-      cyan() % norm() % k->getLifeforce() %
-      cyan() % norm() % buf2 %
-      cyan() % norm() % buf3;
-  } else {
-    str += fmt("%sMana  :%s [%3d]  %sHit    :%s %-13s  %sMove    :%s %-13s\n\r") %
-      cyan() % norm() % k->getMana() %
-      cyan() % norm() % buf2 %
-      cyan() % norm() % buf3;
-  }
+  str += fmt("%sPiety  :%s [%5.1f]   %sLifeForce:%s [%5d]\n\r") %
+    cyan() % norm() % k->getPiety() %
+    cyan() % norm() % k->getLifeforce();
 
-  buf2 = fmt("[%d]") % k->hitLimit();
-  buf3 = fmt("[%d]") % k->moveLimit();
-  str += fmt("%sMxMana:%s [%3d]  %sMaxHit :%s %-13s  %sMaxMove :%s %-13s\n\r") %
+  buf2 = fmt("[%5d]") % k->getHit();
+  buf3 = fmt("[%5d]") % k->getMove();
+  str += fmt("%sMana   :%s [%5d]   %sHP       :%s %-16s %sMove    :%s %-13s\n\r") %
+    cyan() % norm() % k->getMana() %
+    cyan() % norm() % buf2 %
+    cyan() % norm() % buf3;
+
+  buf2 = fmt("[%5d]") % k->hitLimit();
+  buf3 = fmt("[%5d]") % k->moveLimit();
+  str += fmt("%sMaxMana:%s [%5d]   %sMax HP   :%s %-16s %sMax Move:%s %-13s\n\r") %
     cyan() % norm() % k->manaLimit() %
     cyan() % norm() % buf2 %
     cyan() % norm() % buf3;
 
   if(dynamic_cast<TPerson *>(k)){
-    buf2 = fmt("[%d]") % ageHpMod(dynamic_cast<TPerson *>(k));
+    buf2 = fmt("[%5d]") % ageHpMod(dynamic_cast<TPerson *>(k));
     buf3 = fmt("[%f]") % k->getConHpModifier();
-    str += fmt("%sEqHp  :%s [%3d]  %sAgeHp  :%s %-13s  %sConHpMod:%s %-13s\n\r") %
+    str += fmt("%sEq HP  :%s [%5d]   %sAge HP   :%s %-16s %sConHpMod:%s %-13s\n\r") %
       cyan() % norm() % eqHpBonus(dynamic_cast<TPerson *>(k)) %
       cyan() % norm() % buf2 %
       cyan() % norm() % buf3;
   }
 
-  buf2 = fmt("[%d]") % k->visibility();
-  buf3 = fmt("[%5.1f lbs]") % k->getWeight();
-  str += fmt("%sHeight:%s [%3d]  %sWeight :%s %-13s %sVisibility :%s %-13s\n\r") %
+  buf2 = fmt("[%5d]") % k->visibility();
+  buf3 = fmt("[%5.1f]") % k->getWeight();
+  str += fmt("%sHeight :%s [%5d]   %sWt. (lbs):%s %-14s %sVisibility:%s %-13s\n\r") %
     cyan() % norm() % k->getHeight() %
     cyan() % norm() % buf3 %
     cyan() % norm() % buf2;
 
-  buf2 = fmt("[%d]") % k->specials.conditions[FULL];
-  buf3 = fmt("[%d]") % k->specials.conditions[DRUNK];
-  str += fmt("%sThirst:%s [%3d]  %sHunger :%s %-13s  %sDrunk   :%s %-13s\n\r") %
+  buf2 = fmt("[%5d]") % k->specials.conditions[FULL];
+  buf3 = fmt("[%5d]") % k->specials.conditions[DRUNK];
+  str += fmt("%sThirst :%s [%5d]   %sHunger   :%s %-16s %sDrunk   :%s %-13s\n\r") %
     cyan() % norm() % k->specials.conditions[THIRST] %
     cyan() % norm() % buf2 %
     cyan() % norm() % buf3;
 
-  buf3 = fmt("[%d]") % k->specials.conditions[POOP];
-  str += fmt("%sPee   :%s [%3d]  %sPoop   :%s %-13s\n\r") %
+  str += fmt("%sPee    :%s [%5d]   %sPoop     :%s [%5d]\n\r") %
     cyan() % norm() % k->specials.conditions[PEE] %
-    cyan() % norm() % buf3;
+    cyan() % norm() % k->specials.conditions[POOP];
 
-  buf2 = fmt("[%d]") % k->getArmor();
-  buf3 = fmt("[%d]") % noise(k);
-  str += fmt("%sLight :%s [%3d]  %sNoise  :%s %-13s  %sArmor   :%s %-13s\n\r") %
+  buf2 = fmt("[%5d]") % k->getArmor();
+  buf3 = fmt("[%5d]") % noise(k);
+  str += fmt("%sLight  :%s [%5d]   %sNoise    :%s %-16s %sArmor   :%s %-13s\n\r") %
     cyan() % norm() % k->getLight() %
     cyan() % norm() % buf3 %
     cyan() % norm() % buf2;
 
-  buf2 = fmt("[%d]") % k->eyeSight(k->roomp);
-  buf3 = fmt("[%d]") % k->getSpellHitroll();
-  str += fmt("%sProt. :%s [%3d]  %sEyesight:%s %-13s %sSpell Hitroll: %s %-13s\n\r") %
+  buf2 = fmt("[%5d]") % k->eyeSight(k->roomp);
+  buf3 = fmt("[%5d]") % k->getSpellHitroll();
+  str += fmt("%sProt.  :%s [%5d]   %sEyesight :%s %-11s %sSpell Hitroll:%s %-13s\n\r") %
     cyan() % norm() % k->getProtection() %
     cyan() % norm() % buf2 %
     cyan() % norm() % buf3;
 
   if (km && !(polyed == POLY_TYPE_DISGUISE)) {
-    str += fmt("Number of attacks : %.1f") % km->getMult();
-    str += fmt("        NPC Damage: %.1f+%d%%.\n\r") %
-      km->getDamLevel() % km->getDamPrecision();
+    str += fmt("%sNumber of attacks :%s %.1f") %
+      cyan() % norm() % km->getMult();
+    str += fmt("        %sNPC Damage:%s %.1f+%d%%.\n\r") %
+      cyan() % norm() % km->getDamLevel() % km->getDamPrecision();
     double bd = km->baseDamage();
     int chg = (int) (bd * km->getDamPrecision() / 100);
-    str += fmt("  NPC Damage range: %d-%d.\n\r") %
+    str += fmt("%sNPC Damage range  :%s %d-%d.\n\r") % cyan() % norm() %
       max(1, (int) bd-chg) % max(1, (int) bd+chg);
   } else {
     if (k->hasClass(CLASS_MONK)) {
-      str += fmt("Number of attacks : %.2f\n\r") % k->getMult();
+      str += fmt("%sNumber of attacks:%s %.2f\n\r") %
+        cyan() % norm() % k->getMult();
     }
 
     float fx, fy;
     k->blowCount(false, fx, fy);
-    str += fmt("Prim attacks: %.2f, Off attacks: %.2f\n\r") % fx % fy;
+    str += fmt("%sPrim attacks:%s %.2f, %sOff attacks:%s %.2f\n\r") %
+      cyan() % norm() % fx %
+      cyan() % norm() % fy;
 
     int dam=0;
     int prim_min=9999, prim_max=0;
@@ -803,10 +834,12 @@ void TBeing::statBeing(TBeing *k)
 	sec_max=dam;
     }
 
-    str += fmt("Prim damage: %i-%i, Off damage: %i-%i\n\r") %
-      prim_min % prim_max % sec_min % sec_max;
+    str += fmt("%sPrim damage:%s %i-%i, %sOff damage:%s %i-%i\n\r") %
+      cyan() % norm() % prim_min % prim_max %
+      cyan() % norm() % sec_min % sec_max;
 
-    str += fmt("Approximate damage per round: %i-%i\n\r") %
+    str += fmt("%sApproximate damage per round:%s %i-%i\n\r") %
+      cyan() % norm() %
       (int)((fx*(float)prim_min)+((fy*(float)sec_min))) %
       (int)((fx*(float)prim_max)+((fy*(float)sec_max)));
   }
@@ -817,7 +850,7 @@ void TBeing::statBeing(TBeing *k)
         cyan() % norm() % k->rank() % norm();
     }
   } else {
-    str += fmt("%sFaction:%s %s,   %sFaction Percent :%s %.4f\n\r") %
+    str += fmt("%sFaction:%s %s,   %sFaction Percent:%s %.4f\n\r") %
       cyan() % norm() % FactionInfo[k->getFaction()].faction_name %
       cyan() % norm() % k->getPerc();
 #if FACTIONS_IN_USE
@@ -900,12 +933,12 @@ void TBeing::statBeing(TBeing *k)
   if (km) {
     buf2 = sprinttype(km->getPosition(), position_types);
     buf3 = sprinttype((km->default_pos), position_types);
-    str += fmt("%sPosition:%s %s, %sFighting:%s %s, %sDefault Position :%s %s\n\r") %
+    str += fmt("%sPosition:%s %s  %sFighting:%s %s  %sDefault Position:%s %s\n\r") %
       cyan() % norm() % buf2 %
       cyan() % norm() % (km->fight() ? km->fight()->getName() : "Nobody") %
       cyan() % norm() % buf3;
 
-    str += "NPC flags: ";
+    str += fmt("%sNPC flags:%s ") % cyan() % norm();
     if (km->specials.act) {
       str += sprintbit(km->specials.act, action_bits);
       str += "\n\r";
@@ -914,18 +947,19 @@ void TBeing::statBeing(TBeing *k)
     }
   } else {
     buf2 = sprinttype(k->getPosition(), position_types);
-    str += fmt("%sPosition:%s %s, %sFighting:%s %s\n\r") %
+    str += fmt("%sPosition:%s %s  %sFighting:%s %s\n\r") %
           cyan() % norm() % buf2 %
           cyan() % norm() % (k->fight() ? k->fight()->getName() : "Nobody");
   } 
   if (k->desc) {
-    str += "\n\rFlags (Specials Act): ";
+    str += fmt("\n\r%sFlags (Specials Act):%s ") % cyan() % norm();
     str += sprintbit(k->desc->plr_act, player_bits);
     str += "\n\r";
   }
 
-  str += fmt("Carried weight: %.1f   Carried volume: %d\n\r") %
-          k->getCarriedWeight() % k->getCarriedVolume();
+  str += fmt("%sCarried weight:%s %.1f   %sCarried volume:%s %d\n\r") %
+          cyan() % norm() % k->getCarriedWeight() %
+          cyan() % norm() % k->getCarriedVolume();
 
   immuneTypeT ij;
   for (ij = MIN_IMMUNE;ij < MAX_IMMUNES; ij++) {
@@ -942,16 +976,22 @@ void TBeing::statBeing(TBeing *k)
 
   if (!k->isPc()) {
     const TMonster *tmons = dynamic_cast<const TMonster *>(k);
-    str += fmt("  Action pointer: %s") % 
+    str += fmt("%sAction pointer:%s %s") % 
+      cyan() % norm() %
       ((tmons->act_ptr ? "YES" : "no") );
-    str += fmt("    Special Procedure:  %s\n\r") %
+    str += fmt("    %sSpecial Procedure:%s %s\n\r") %
+      cyan() % norm() %
       ((tmons->spec) ? mob_specials[GET_MOB_SPE_INDEX(tmons->spec)].name : "none");
-    str += fmt("Anger: %d/%d     Malice: %d/%d     Suspicion: %d/%d   Greed: %d/%d\n\r") %
+    str += fmt("%sAnger:%s %d/%d     %sMalice:%s %d/%d     %sSuspicion:%s %d/%d   %sGreed:%s %d/%d\n\r") %
+      cyan() % norm() %
       tmons->anger() % tmons->defanger() %
+      cyan() % norm() %
       tmons->malice() % tmons->defmalice() %
+      cyan() % norm() %
       tmons->susp() % tmons->defsusp() %
+      cyan() % norm() %
       tmons->greed() % tmons->defgreed();
-    str += "Hates: ";
+    str += fmt("%sHates:%s " ) % cyan() % norm();
     if (IS_SET(tmons->hatefield, HATE_CHAR)) {
       if (tmons->hates.clist) {
         for (list = tmons->hates.clist; list; list = list->next) {
@@ -983,7 +1023,7 @@ void TBeing::statBeing(TBeing *k)
     }
     str += "    ";
 
-    str += "Fears: ";
+    str += fmt("%sFears:%s " ) % cyan() % norm();
     if (IS_SET(tmons->fearfield, FEAR_CHAR)) {
       if (tmons->fears.clist) {
         for (list = tmons->fears.clist; list; list = list->next) {
@@ -1020,35 +1060,54 @@ void TBeing::statBeing(TBeing *k)
        str += fmt("VNUM=%d ") % tmons->fears.vnum;
     }
     if (IS_SET(tmons->specials.act, ACT_HUNTING)) {
-      str += fmt("\n\rHunting: %s, persist: %d, origin: %d, hunt distance: %d") %
+      str += fmt("\n\r%sHunting:%s %s  %spersist:%s %d  %sorigin:%s %d  %shunt distance:%s %d") %
+        cyan() % norm() %
         (tmons->specials.hunting ? tmons->specials.hunting->getName() : "Unknown") %
-        tmons->persist % tmons->oldRoom % tmons->hunt_dist;
+        cyan() % norm() %
+        tmons->persist %
+        cyan() % norm() %
+        tmons->oldRoom %
+        cyan() % norm() %
+        tmons->hunt_dist;
     } else if (tmons->specials.hunting) {
-      str += fmt("\n\rTracking: %s, persist: %d, origin: %d, range: %d") %
-        tmons->specials.hunting->getName() % tmons->persist %
-        tmons->oldRoom % tmons->hunt_dist;
+      str += fmt("\n\r%sTracking:%s %s  %spersist:%s %d  %sorigin:%s %d  %srange:%s %d") %
+        cyan() % norm() %
+        tmons->specials.hunting->getName() %
+        cyan() % norm() %
+        tmons->persist %
+        cyan() % norm() %
+        tmons->oldRoom %
+        cyan() % norm() %
+        tmons->hunt_dist;
     }
-    str += fmt("\n\rAI Target: %s, Random: %s") %
+    str += fmt("\n\r%sAI Target:%s %s  %sRandom:%s %s") %
+      cyan() % norm() %
       (tmons->targ() ? tmons->targ()->getName() : "-") %
+      cyan() % norm() %
       (tmons->opinion.random ? tmons->opinion.random->getName() : "-");
     str += "\n\r";
   } else {
     // PCs only
     if (k->specials.hunting) {
-      str += fmt("Hunting: %s\n\r") % k->specials.hunting->getName();
+      str += fmt("%sHunting:%s %s\n\r") %
+        cyan() % norm() %
+        k->specials.hunting->getName();
     }
     const TPerson *tper = dynamic_cast<const TPerson *>(k);
     if (tper) {
-      str += fmt("Title:\n\r%s%s\n\r") % tper->title % norm();
+      str += fmt("%sTitle:%s\n\r%s%s\n\r") %
+        cyan() % norm() % tper->title % norm();
     }
   }
 
-  str += "Affected by: ";
+  str += fmt("%sAffected by:%s ") % cyan() % norm();
   str += sprintbit(k->specials.affectedBy, affected_bits);
-  str += "\n\r";
+  str += "\n\r\n\r";
 
-  str += "\n\rBody part          Hth Max Flgs StuckIn\n\r";
-  str += "-----------------------------------\n\r";
+  str += fmt("%sBody part          Hth Max Flgs  StuckIn%s\n\r") %
+    cyan() % norm();
+  str += fmt("%s----------------------------------------%s\n\r") %
+    cyan() % norm();
   wearSlotT il;
   for (il = MIN_WEAR; il < MAX_WEAR; il++) {
     if (il == HOLD_RIGHT || il == HOLD_LEFT)
@@ -1065,7 +1124,7 @@ void TBeing::statBeing(TBeing *k)
 
   if (km) {
     if (km->resps && km->resps->respList) {
-      str += "Response(s):\n\r----------\n\r";
+      str += fmt("%sResponse(s):\n\r------------%s\n\r") % cyan() % norm();
       for (respy = km->resps->respList; respy; respy = respy->next) {
         if (respy->cmd < MAX_CMD_LIST) {
           str += fmt("%s %s\n\r") % commandArray[respy->cmd]->name %
@@ -1078,10 +1137,11 @@ void TBeing::statBeing(TBeing *k)
           str += fmt("%d %s\n\r") % respy->cmd % respy->args;
         }
       }
-      str += "----------\n\r";
+      str += fmt("%s------------%s\n\r") % cyan() % norm();
 
       if (km->resps->respMemory) {
-        str += "Response Memory:\n\r----------\n\r";
+        str += fmt("%sResponse Memory:\n\r----------------\n\r%s") %
+          cyan() % norm();
 
         for (RespMemory *rMem = km->resps->respMemory; rMem; rMem = rMem->next)
           if (rMem->cmd < MAX_CMD_LIST) {
@@ -1101,13 +1161,14 @@ void TBeing::statBeing(TBeing *k)
               (rMem->args ? rMem->args : "");
           }
 
-        str += "----------\n\r";
+        str += fmt("----------------\n\r%s") % cyan() % norm();
       }
     } else
-      str += "Response(s): None.\n\r";
+      str += fmt("%sResponse(s):%s None.\n\r") % cyan() % norm();
   }
 
-  str += "\n\rAffecting Spells:\n\r--------------\n\r";
+  str += fmt("\n\r%sAffecting Spells:\n\r-----------------%s\n\r") %
+    cyan() % norm();
   affectedData *aff, *af2;
   for (aff = k->affected; aff; aff = af2) {
     // technically, shouldn't need to save next, but apparently
@@ -1406,6 +1467,7 @@ void TBeing::statBeing(TBeing *k)
       case SKILL_RIDE:
       case SKILL_ALCOHOLISM:
       case SKILL_FISHING:
+      case SKILL_LOGGING:
       case SKILL_CALM_MOUNT:
       case SKILL_TRAIN_MOUNT:
       case SKILL_ADVANCED_RIDING:
@@ -1568,7 +1630,7 @@ void TBeing::statBeing(TBeing *k)
         } else if (aff->location == APPLY_DISCIPLINE) {
           str += fmt("     Modifies %s (%s) by %ld points\n\r" ) %
             apply_types[aff->location].name %
-            (discNames[aff->modifier].disc_num ? discNames[aff->modifier].practice : "BOGUS") %
+            (discNames[aff->modifier].disc_num ? discNames[aff->modifier].properName : "BOGUS") %
             aff->modifier2;
         } else {
           str += fmt("     Modifies %s by %ld points\n\r") %
@@ -1577,6 +1639,7 @@ void TBeing::statBeing(TBeing *k)
         str += fmt("     Expires in %6d updates, Bits set: %s\n\r\n\r") %
           aff->duration % sprintbit(aff->bitvector, affected_bits);
         break;
+
 
       case AFFECT_DISEASE:
         str += fmt("Disease: '%s'\n\r") % DiseaseInfo[affToDisease(*aff)].name;
@@ -1851,7 +1914,9 @@ void TBeing::statBeing(TBeing *k)
   }
   for (i = 1; i < MAX_TOG_INDEX;i++) {
     if (k->hasQuestBit(i))  {
-      str += fmt("Toggle Set: (%d) %s\n\r") % i % TogIndex[i].name;
+      str += fmt("%sToggle Set:%s (%d) %s\n\r") %
+        cyan() % norm() %
+        i % TogIndex[i].name;
     }
   }
 #if 0
@@ -1864,15 +1929,21 @@ void TBeing::statBeing(TBeing *k)
   }
 #endif
   if (k->desc) {
-    str += fmt("Client: %s\n\r") % (k->desc->m_bIsClient ? "Yes" : "No");
+    str += fmt("%sClient:%s %s\n\r") %
+      cyan() % norm() %
+      (k->desc->m_bIsClient ? "Yes" : "No");
   }
   
   if (km) {
     if (km->sounds) {
-      str += fmt("Local Sound:\n\r   %s") % km->sounds;
+      str += fmt("%sLocal Sound:%s\n\r%s") %
+        cyan() % norm() %
+        km->sounds;
     }
     if (km->distantSnds) {
-      str += fmt("Distant Sound:\n\r   %s") % km->distantSnds;
+      str += fmt("%sDistant Sound:%s\n\r%s") %
+        cyan() % norm() %
+        km->distantSnds;
     }
   }
   desc->page_string(str);

@@ -1397,6 +1397,45 @@ int bloodspike(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
 }
 
 
+int brokenBottle(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
+{
+  TBeing *ch;
+  int rc, dam;
+  TObj *obj;
+  wearSlotT slot;
+  sstring buf;
+
+  if(!(ch=genericWeaponProcCheck(vict, cmd, o, 3)))
+    return FALSE;
+
+  o->setMaxStructPoints(o->getMaxStructPoints()-1);
+  o->setStructPoints(o->getStructPoints()-1);
+
+  slot=pickRandomLimb();
+
+  if (!vict->slotChance(wearSlotT(slot)) || 
+      vict->getStuckIn(wearSlotT(slot)) ||
+      notBleedSlot(slot))
+    return FALSE;
+
+  obj = read_object(33468, VIRTUAL);
+  dam = ::number(3,12);
+
+  buf=fmt("$p cracks from the impact and %s breaks off while embedded in $n's %s.") % obj->getName() % vict->describeBodySlot(slot);
+  act(buf, 0, vict, o, 0, TO_ROOM);
+  buf=fmt("$p cracks from the impact and %s breaks off while embedded in your %s.") % obj->getName() % vict->describeBodySlot(slot);
+  act(buf, 0, vict, o, 0, TO_CHAR);
+
+  vict->stickIn(obj, wearSlotT(slot));
+
+  rc = ch->reconcileDamage(vict, dam, TYPE_STAB);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    return DELETE_VICT;
+  return TRUE;
+}
+
+
+
 int boneStaff(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
 {
   TBeing *ch;
@@ -2425,5 +2464,29 @@ int lightSaber(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
 }
 
 
+
+int demonSlayer(TBeing *vict, cmdTypeT cmd, const char *, TObj *o, TObj *)
+{
+  TBeing *ch;
+  int rc, dam;
+
+  ch = genericWeaponProcCheck(vict, cmd, o, 3);
+  if (!ch)
+    return FALSE;
+  if(vict->getRace() != RACE_DEMON || vict->isImmune(IMMUNE_BLEED))
+    return FALSE;
+
+  dam = ch->GetMaxLevel();
+  act("$p cleaves into the flesh of $n, trailing gore and a mist of blood!", 
+      0, vict, o, 0, TO_ROOM, ANSI_WHITE_BOLD);
+  act("$p rends your flesh, leaving a bloody gaping wound!", 
+      0, vict, o, 0, TO_CHAR, ANSI_WHITE_BOLD);
+
+  rc = ch->reconcileDamage(vict, dam, DAMAGE_HEMORRAGE);
+  if (IS_SET_DELETE(rc, DELETE_VICT))
+    return DELETE_VICT;
+  return TRUE;
+
+}
 
 

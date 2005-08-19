@@ -80,8 +80,8 @@ void TBeing::doZonesSingle(sstring tStString)
 
     if (isPc() && trophy) {
       // { -- Deduce zone size --
+/* removed at Damescena's request
         int iRCount = ((zd.top - zd.bottom) + 1);
-
         strcpy(tStats, "This zone is ");
 
         if (iRCount > 500)
@@ -96,6 +96,7 @@ void TBeing::doZonesSingle(sstring tStString)
           strcat(tStats, "small, but has a down home feeling...");
 
         strcat(tStats, "\n\r");
+*/
       // }
 
       // { -- Deduce mobiles fought in this zone, by this player, for both distict fight count and average xp gain --

@@ -25,6 +25,13 @@ const unsigned int PROMPT_LIFEFORCE         = (1<<17);
 const unsigned int PROMPT_CLASSIC_ANSIBAR   = (1<<30);
 const unsigned int PROMPT_CLIENT_PROMPT     = (1<<31);
 
+const int MAX_TRAITS=16;
+
+struct TTraits {
+  int tog, points;
+  sstring name, desc;
+};
+
 enum termTypeT {
      TERM_NONE,  //         = 0;
      TERM_VT100,  //        = 1;
@@ -80,9 +87,11 @@ enum connectStateT {
        CON_HOME_GNOME,
        CON_HOME_OGRE,
        CON_HOME_HOBBIT,
-       CON_PERMA_DEATH,
        CON_MULTIWARN,
-       CON_TRAITS,
+       CON_TRAITS1,
+       CON_TRAITS2,
+       CON_TRAITS3,
+       CON_FAE_TOUCHED,
 // if adding more here, update connected_types array as well
        MAX_CON_STATUS,
 // these are intentionally higher than MAX_CON
@@ -468,7 +477,7 @@ class Descriptor
     int inputProcessing();
     void flush();
     void flushInput();
-    int sendLogin(const sstring &);
+    int sendLogin(const sstring &arg);
     bool checkForMultiplay();
     bool checkForAccount(sstring &, bool silent = FALSE);
     bool checkForCharacter(sstring &);
@@ -491,12 +500,14 @@ class Descriptor
     void sendHomeList();
     void sendStartStatList();
     void sendDoneScreen();
+    void sendFaeMessage(int, bool);
+    void sendPermaDeathMessage();
     const sstring getStatDescription(int);
     void sendStatList(int, int);
     void sendStatRules(int);
     void sendRaceList();
     void sendClassList(int);
-    void sendTraitsList();
+    void sendTraitsList(int);
     bool start_page_file(const sstring &, const sstring &);
     bool canChooseClass(int, bool multi = FALSE, bool triple = FALSE);
     int client_nanny(sstring &);

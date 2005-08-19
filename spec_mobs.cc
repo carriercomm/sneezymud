@@ -56,6 +56,7 @@
 #include "obj_base_corpse.h"
 #include "obj_player_corpse.h"
 #include "obj_tool.h"
+#include "obj_plant.h"
 
 const int GET_MOB_SPE_INDEX(int d)
 {
@@ -5357,7 +5358,7 @@ int gardener(TBeing *, cmdTypeT cmd, const char *, TMonster *mob, TObj *)
   else
     REMOVE_BIT(mob->specials.act, ACT_SENTINEL);
 
-  if(::number(0,149))
+  if(::number(0,100))
     return FALSE;
 
   for(TThing *t=mob->getStuff();t;t=t->nextThing){
@@ -5369,6 +5370,18 @@ int gardener(TBeing *, cmdTypeT cmd, const char *, TMonster *mob, TObj *)
   }
   if(!tool)
     return FALSE;
+  TThing *tcount;
+  int count;
+  for (tcount = mob->roomp->getStuff(), count=0; tcount; tcount = tcount->nextThing) {
+    if (dynamic_cast<TPlant *>(tcount))
+      ++count;
+  }
+  if (count >= 8) {
+    REMOVE_BIT(mob->specials.act, ACT_SENTINEL);
+    mob->doAction("", CMD_GRUMBLE);
+    return FALSE;
+  }
+
   
   // don't wander around while planting
   SET_BIT(mob->specials.act, ACT_SENTINEL);
@@ -6433,6 +6446,22 @@ int cat(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *)
   return TRUE;
 }
 
+int beeDeath(TBeing *ch, cmdTypeT cmd, const char *, TMonster *, TObj *) {
+  TBeing *vict;
+  if (!ch->fight())
+    return FALSE;
+  vict = ch->fight();
+  
+  if (number(0,10) > 7) {
+    act("$n darts directly toward your head!",TRUE,ch,NULL,vict,TO_VICT,NULL);  
+    act("$n misses and smacks into the ground.",TRUE,ch,NULL,vict,TO_VICT,NULL);
+    act("$n flies directly at $N's head, misses, and smacks into the ground.",TRUE,ch,NULL,vict,TO_NOTVICT,NULL);
+    act("A bee is dead! R.I.P.",TRUE,ch,NULL,vict,TO_ROOM,NULL);
+    act("A bee is dead! R.I.P.",TRUE,ch,NULL,vict,TO_CHAR,NULL);  
+    ch->makeCorpse(DAMAGE_NORMAL); // generic type for phony corpse 
+  }
+  return TRUE;
+}
 
 // janitors and trash collectors etc, in spec_mobs_janitors.cc
 extern int janitor(TBeing *, cmdTypeT, const char *, TMonster *, TObj *);
@@ -6710,7 +6739,8 @@ TMobSpecs mob_specials[NUM_MOB_SPECIALS + 1] =
   {TRUE, "butler", receptionist},
   {FALSE, "leper hunter", leperHunter},
   {FALSE, "auctioneer", auctioneer},
-  {FALSE, "loan manager", loanManager}
+  {FALSE, "loan manager", loanManager},
+  {TRUE, "bee death", beeDeath}
 // replace non-zero, bogus_mob_procs above before adding
 };
 

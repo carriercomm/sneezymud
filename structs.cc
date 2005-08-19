@@ -20,6 +20,9 @@
 #include "obj_open_container.h"
 #include "obj_component.h"
 #include "obj_tooth_necklace.h"
+#include "obj_potion.h"
+#include "obj_base_cup.h"
+//#include "liquids.h"
 
 TBeing::TBeing() :
   TThing(),
@@ -443,6 +446,8 @@ TRoom::TRoom(int r) :
   roomFlags(0),
   descPos(-1),
   fished(0),
+  logsHarvested(0),
+  treetype(0),
   tBornInsideMe(NULL)
 {
   funct = NULL;
@@ -552,7 +557,7 @@ bool TObj::checkOwnersList(const TPerson *ch, bool tPreserve)
       if (!load_char(indiv, &st))
         continue;
 
-      if (ch->desc && ch->desc->account && !strcmp(ch->desc->account->name, st.aname)) {
+      if (ch->desc && ch->desc->account && !strcmp(ch->desc->account->name.c_str(), st.aname)) {
         TMoney *tTalens;
         isCheat = true;
 
@@ -752,7 +757,7 @@ TThing& TRoom::operator += (TThing& t)
   TThing::operator += (t);
 
   // Thing put into is a TRoom
-
+  // jesus
   // obj to room
   // char to room
   t.nextThing = getStuff();
@@ -781,6 +786,7 @@ TThing& TRoom::operator += (TThing& t)
     }
     incrementWindow();
   }
+
   if (dynamic_cast<TObj *>(&t) && isRoomFlag(ROOM_SAVE_ROOM))
     saveItems("");
 
@@ -854,7 +860,6 @@ TThing& TRoom::operator += (TThing& t)
     }
 #endif
   }
-
   return *this;
 }
 
@@ -908,6 +913,12 @@ TThing& TThing::operator -- ()
     if(dynamic_cast<TToothNecklace *>(t_in)){
       dynamic_cast<TToothNecklace *>(t_in)->updateDesc();
     }
+
+    if (t_in->roomp &&
+	t_in->roomp->isRoomFlag(ROOM_SAVE_ROOM)){
+      roomsave_db.push_back(t_in->roomp);
+    }
+
   } else if ((rp = dynamic_cast<TRoom *> (roomp))) {
     // obj from room
     // char from room

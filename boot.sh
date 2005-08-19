@@ -1,5 +1,7 @@
 #!/usr/local/bin/bash
 
+FLAGS="";
+
 case $USER in
   peel)
     PORT=6968
@@ -13,11 +15,26 @@ case $USER in
   damescena)
     PORT=6969
     ;;
+  maror)
+    PORT=6960
+    ;;
 esac
+
+if [ "$2" = "beta" ]
+then
+  PORT=5678;
+elif [ "$2" = "lite" ]
+then
+  FLAGS="-t";
+elif [ "$2" ]
+then
+ echo "Usage: $0 <start|stop> <beta|lite (optional)>";
+ exit
+fi
 
 if [ "$1" = "" ]
 then
-  echo "Usage: $0 <start|stop>";
+  echo "Usage: $0 <start|stop> <beta|lite (optional)>";
 elif [ "$1" = "start" ]
 then
   pid=$(pgrep -U $USER -f "sneezy $PORT")
@@ -25,8 +42,9 @@ then
   then
     mv -f sneezy.2 sneezy >& /dev/null
     rm -f file
+    cp lib/tinyworld.mob lib/tinymob.use
     echo "Booting ./sneezy $PORT."
-    ./sneezy $PORT >& file &
+    ./sneezy $FLAGS $PORT >& file &
     pid=$(pgrep -U $USER -f "sneezy $PORT")
     echo "Running as process $pid.";
   else

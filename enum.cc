@@ -1070,6 +1070,8 @@ int mapWizPowerToFile(wizPowerT att)
       return 109;
     case POWER_NO_LIMITS:
       return 110;
+    case POWER_CLONE:
+      return 111;
     case MAX_POWER_INDEX:
       break;
   }
@@ -1302,6 +1304,8 @@ wizPowerT mapFileToWizPower(int att)
       return POWER_IDLED;
     case 110:
       return POWER_NO_LIMITS;
+    case 111:
+      return POWER_CLONE;
     default:
       break;
   }
@@ -1323,6 +1327,8 @@ int mapDrugToFile(drugTypeT d)
       return 1;
     case DRUG_OPIUM:
       return 2;
+    case DRUG_POT:
+      return 3;
     case MAX_DRUG:
       break;
   }
@@ -1339,6 +1345,8 @@ drugTypeT mapFileToDrug(int d)
       return DRUG_PIPEWEED;
     case 2:
       return DRUG_OPIUM;
+    case 3:
+      return DRUG_POT;
     default:
       break;
   }

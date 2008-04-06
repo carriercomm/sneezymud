@@ -442,8 +442,6 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
 	"%%" % buf % "%%";
     }
 
-    vlogf(LOG_PEEL, fmt("query: %s") % query);
-
     db.query(query.c_str(), shop_nr);
     db.fetchRow();
     rent_id=convertTo<int>(db["rent_id"]);
@@ -537,6 +535,7 @@ int TObj::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
   int tmp;
   float chr;
   int i;
+  float swindle;
 
   if ((ch->getCarriedVolume() + (num * getTotalVolume())) > ch->carryVolumeLimit()) {
     ch->sendTo(fmt("%s: You can't carry that much volume.\n\r") % fname(name));
@@ -559,7 +558,8 @@ int TObj::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
   strcpy(argm, name);
   
   strcpy(argm, add_bars(argm).c_str());
-  chr = ch->getChaShopPenalty() - ch->getSwindleBonus();
+  swindle=ch->getSwindleBonus();
+  chr = ch->getChaShopPenalty() - swindle;
   chr = max((float)1.0,chr);
   
   cost = shopPrice(1, shop_nr, chr, ch);
@@ -568,9 +568,6 @@ int TObj::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
     TThing *t_temp1 = searchLinkedListVis(ch, argm, keeper->getStuff());
     TObj *temp1 = dynamic_cast<TObj *>(t_temp1);
 
-    vlogf(LOG_PEEL, fmt("argm='%s', t_temp1=%s, temp1=%s") %
-	  argm % (t_temp1?"true":"false") % (temp1?"true":"false"));
-      
 #if !(NO_DAMAGED_ITEMS_SHOP)
     while (!temp1->isShopSimilar(this)) {
       // it's the same item, but in a different condition
@@ -621,6 +618,7 @@ int TObj::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
   if (!count)
     return -1;
 
+  //  ch->sendTo(fmt("You manage to swindle the shopkeeper into a %i%s discount.\n\r") % (int)(swindle*100) % "%");
   keeper->doTell(ch->name, fmt(shop_index[shop_nr].message_buy) %
 		 (cost * count));
 
@@ -1701,17 +1699,20 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 {
   TDatabase db(DB_SNEEZY);
   sstring buf;
+  float price;
 
   // hurray for stream of consciousness SQL!
   db.query("select * from \
               (select r.rent_id as rent_id, count(*) as count, \
-                o.short_desc as short_desc, r.list_price as price \
+                o.short_desc as short_desc, r.price as price, \
+                r.cur_struct as cur_struct, r.max_struct as max_str \
               from rent r, obj o \
               where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
                 rent_id not in (select rent_id from rent_strung) \
               group by o.vnum \
             union select r.rent_id as rent_id, count(*) as count, \
-              rs.short_desc as short_desc, r.list_price as price \
+              rs.short_desc as short_desc, r.price as price, \
+              r.cur_struct as cur_struct, r.max_struct as max_str \
             from rent r, rent_strung rs, obj o \
             where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
               r.rent_id=rs.rent_id group by o.vnum) \
@@ -1719,11 +1720,19 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 
   keeper->doTell(ch->getName(), "You can buy:");
   while(db.fetchRow()){
+    price=((convertTo<int>(db["max_struct"]) <= 0) ? 
+	   convertTo<int>(db["price"]) :
+	   (int) (convertTo<int>(db["price"]) *
+		  convertTo<int>(db["cur_struct"]) /
+		  convertTo<int>(db["max_struct"])));
+    price *= shop_index[shop_nr].getProfitBuy(NULL, ch);
+    price *= max((float)1.0, ch->getChaShopPenalty());
+
     buf+=fmt("[%8i] %-50s [%3i]  %i\n\r") %
       convertTo<int>(db["rent_id"]) %
       db["short_desc"] %
       convertTo<int>(db["count"]) %
-      (int)(convertTo<float>(db["price"]) * shop_index[shop_nr].profit_buy);
+      (int)(max((float)1.0, price));
   }
   
   if(ch->desc)

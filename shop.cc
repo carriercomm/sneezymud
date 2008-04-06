@@ -434,6 +434,7 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
   if(!(rent_id=convertTo<int>(argm))){
     sstring query="select r.rent_id from rent r, obj o where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
     sstring arg_words=argm;
+    arg_words=arg_words.replaceString("-"," ");
 
     for(int i=0;!arg_words.word(i).empty();++i){
       mysql_escape_string(buf, arg_words.word(i).c_str(), arg_words.word(i).length());
@@ -1979,8 +1980,10 @@ void TMonster::autoCreateShop(int shop_nr)
 static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
 {
   const char *tmp_desc;
-  int value;
   TObj *temp1;
+  int rent_id;
+  TDatabase db(DB_SNEEZY);
+  char buf[256];
 
   if (!*arg) 
     return FALSE;   // generic: look
@@ -1988,20 +1991,28 @@ static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int sho
   if (!(shop_index[shop_nr].willTradeWith(keeper, ch)) || !ch->desc)
     return FALSE;
 
-  TThing *t_temp1 = searchLinkedListVis(ch, arg, keeper->getStuff());
-  temp1 = dynamic_cast<TObj *>(t_temp1);
-  if (!temp1) {
-    // check for 4.xxx syntax, we already know anything like that is NOT
-    // in shopkeepers possession
-    if (strchr(arg, '.'))
-      return FALSE;
-    value = convertTo<int>(arg);
-    if (!value || 
-    !(temp1 = get_num_obj_in_list(ch, value, keeper->getStuff(), shop_nr))) {
-      // it's not one of my objects so see if the look thing is in room
-      return FALSE;
+  if(!(rent_id=convertTo<int>(arg))){
+    sstring query="select r.rent_id from rent r, obj o where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
+    sstring arg_words=arg;
+    arg_words=arg_words.replaceString("-"," ");
+
+    for(int i=0;!arg_words.word(i).empty();++i){
+      mysql_escape_string(buf, arg_words.word(i).c_str(), arg_words.word(i).length());
+
+      query += fmt("and o.name like '%s%s%s'") % 
+	"%%" % buf % "%%";
     }
+
+    db.query(query.c_str(), shop_nr);
+    db.fetchRow();
+    rent_id=convertTo<int>(db["rent_id"]);
   }
+
+  temp1=keeper->loadItem(shop_nr, rent_id);
+
+  if (!temp1) 
+    return FALSE;
+
   sstring str = "You examine ";
   str += temp1->getName();
   str += " sold by $N.";
@@ -2016,6 +2027,8 @@ static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int sho
   }
   ch->describeObject(temp1);
   ch->showTo(temp1, SHOW_MODE_PLUS);  // tack on glowing, humming, etc
+
+  delete temp1;
   return TRUE;
 }
 
@@ -2026,6 +2039,9 @@ static bool shopping_evaluate(const char *arg, TBeing *ch, TMonster *keeper, int
   char newarg[100];
   int num;
   TObj *temp1;
+  char buf[256];
+  int rent_id;
+  TDatabase db(DB_SNEEZY);
 
   if (!*arg) 
     return FALSE;   // generic: look
@@ -2039,17 +2055,33 @@ static bool shopping_evaluate(const char *arg, TBeing *ch, TMonster *keeper, int
   if (!num)
     num = 1;
 
-  TThing *t_temp1 = searchLinkedListVis(ch, newarg, keeper->getStuff());
-  temp1 = dynamic_cast<TObj *>(t_temp1);
-  if (!temp1) {
-    if (!(temp1 = get_num_obj_in_list(ch, convertTo<int>(newarg), keeper->getStuff(), shop_nr))) {
-      // it's not one of my objects so see if the look thing is in room
-      return FALSE;
+  if(!(rent_id=convertTo<int>(arg))){
+    sstring query="select r.rent_id from rent r, obj o where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
+    sstring arg_words=arg;
+    arg_words=arg_words.replaceString("-"," ");
+
+    for(int i=0;!arg_words.word(i).empty();++i){
+      mysql_escape_string(buf, arg_words.word(i).c_str(), arg_words.word(i).length());
+
+      query += fmt("and o.name like '%s%s%s'") % 
+	"%%" % buf % "%%";
     }
+
+    db.query(query.c_str(), shop_nr);
+    db.fetchRow();
+    rent_id=convertTo<int>(db["rent_id"]);
   }
+
+  temp1=keeper->loadItem(shop_nr, rent_id);
+
+  if (!temp1) 
+    return FALSE;
+
   act("You evaluate $p sold by $N.", FALSE, ch, temp1, keeper, TO_CHAR);
 
   ch->genericEvaluateItem(temp1);
+
+  delete temp1;
   return TRUE;
 }
 

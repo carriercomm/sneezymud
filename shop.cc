@@ -25,9 +25,6 @@
 // -removed pawnguy code; he isn't used anymore anyway
 // -replaced item production code with saveItem()/delete (L2013)
 // 
-// -replaced shopping_list with a very bare bones version
-//
-// -should store sell price when object is saved?
 
 
 extern int kick_mobs_from_shop(TMonster *myself, TBeing *ch, int from_room);
@@ -1696,6 +1693,53 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
 
 #if SHOP_DB_INV
 
+sstring equip_cond(int cur_str, int max_str)
+{
+  double p = ((double) cur_str) / ((double) max_str);
+
+  if(p > 1.0){
+    // shouldn't happen theoretically
+    sstring a("<W>better than new<1>");
+    return a;
+  } else if (p == 1) {
+    sstring a("<C>brand new<1>");
+    return a;
+  } else if (p > .9) {
+    sstring a("<c>like new<1>");
+    return a;
+  } else if (p > .8) {
+    sstring a("<B>excellent<1>");
+    return a;
+  } else if (p > .7) {
+    sstring a("<b>very good<1>");
+    return a;
+  } else if (p > .6) {
+    sstring a("<P>good<1>");
+    return a;
+  } else if (p > .5) {
+    sstring a("<p>fine<1>");
+    return a;
+  } else if (p > .4) {
+    sstring a("<G>fair<1>");
+    return a;
+  } else if (p > .3) {
+    sstring a("<g>poor<1>");
+    return a;
+  } else if (p > .2) {
+    sstring a("<y>very poor<1>");
+    return a;
+  } else if (p > .1) {
+    sstring a("<o>bad<1>");
+    return a;
+  } else if (p > .001) {
+    sstring a("<R>very bad<1>");
+    return a;
+  } else {
+    sstring a("<r>destroyed<1>");
+    return a;
+  }
+}
+
 void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 {
   TDatabase db(DB_SNEEZY);
@@ -1706,14 +1750,14 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
   db.query("select * from \
               (select r.rent_id as rent_id, count(*) as count, \
                 o.short_desc as short_desc, r.price as price, \
-                r.cur_struct as cur_struct, r.max_struct as max_str \
+                r.cur_struct as cur_struct, r.max_struct as max_struct \
               from rent r, obj o \
               where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
                 rent_id not in (select rent_id from rent_strung) \
               group by o.vnum \
             union select r.rent_id as rent_id, count(*) as count, \
               rs.short_desc as short_desc, r.price as price, \
-              r.cur_struct as cur_struct, r.max_struct as max_str \
+              r.cur_struct as cur_struct, r.max_struct as max_struct \
             from rent r, rent_strung rs, obj o \
             where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
               r.rent_id=rs.rent_id group by o.vnum) \
@@ -1729,9 +1773,11 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
     price *= shop_index[shop_nr].getProfitBuy(NULL, ch);
     price *= max((float)1.0, ch->getChaShopPenalty());
 
-    buf+=fmt("[%8i] %-50s [%3i]  %i\n\r") %
+    buf+=fmt("[%8i] %-32s %10s [%3i]  %i\n\r") %
       convertTo<int>(db["rent_id"]) %
-      db["short_desc"] %
+      db["short_desc"] % 
+      equip_cond(convertTo<int>(db["cur_struct"]),
+		 convertTo<int>(db["max_struct"])) %
       convertTo<int>(db["count"]) %
       (int)(max((float)1.0, price));
   }

@@ -23,6 +23,7 @@
 #include "shopowned.h"
 #include "materials.h"
 #include "combat.h"
+#include "timing.h"
 
 static const char ROOM_SAVE_PATH[] = "roomdata/saved";
 static const int NORMAL_SLOT   = -1;
@@ -676,9 +677,8 @@ int ItemSaveDB::raw_write_item(TObj *o, int slot, int container)
   int a0, a1, a2,a3;
   o->getFourValues(&a0, &a1, &a2, &a3);
 
-  db.query("insert into rent (owner_type, owner, list_price, vnum, slot, container, val0, val1, val2, val3, extra_flags, weight, bitvector, decay, cur_struct, max_struct, material, volume, price, depreciation) values ('%s', %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %f, %i, %i, %i, %i, %i, %i, %i, %i)",
+  db.query("insert into rent (owner_type, owner, vnum, slot, container, val0, val1, val2, val3, extra_flags, weight, bitvector, decay, cur_struct, max_struct, material, volume, price, depreciation) values ('%s', %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %f, %i, %i, %i, %i, %i, %i, %i)",
 	   owner_type.c_str(), owner, 
-	   ((owner_type=="shop")?o->shopPrice(1, owner, -1, NULL):o->obj_flags.cost),
 	   obj_index[o->getItemIndex()].virt, slot,
 	   container,
 	   a0, a1, a2, a3, o->getObjStat(), (float) o->getWeight(),
@@ -709,8 +709,11 @@ int ItemSaveDB::raw_write_item(TObj *o, int slot, int container)
 
   if (IS_SET(o->getObjStat(), ITEM_STRUNG)) {
     db.query("insert into rent_strung (rent_id, name, short_desc, long_desc, action_desc) values (%i, '%s', '%s', '%s', '%s')",
-	     rent_id, o->name, o->shortDescr, o->getDescr(),
-	     o->action_description);
+	     rent_id, 
+	     (o->name?o->name:""), 
+	     (o->shortDescr?o->shortDescr:""),
+	     (o->getDescr()?o->getDescr():""),
+	     (o->action_description?o->action_description:""));
   }
   return rent_id;
 }
@@ -922,7 +925,7 @@ TObj *ItemLoadDB::raw_read_item(int rent_id, int &slot)
 {
   TDatabase db(DB_SNEEZY);
   TObj *o;
-  
+
   db.query("select owner_type, owner, vnum, slot, container, val0, val1, val2, val3, extra_flags, weight, bitvector, decay, cur_struct, max_struct, material, volume, price, depreciation from rent where rent_id=%i", rent_id);
 
   if(!db.fetchRow()){
@@ -954,7 +957,7 @@ TObj *ItemLoadDB::raw_read_item(int rent_id, int &slot)
 		      convertTo<int>(db["val3"]));
   
   o->obj_flags.cost = convertTo<int>(db["price"]);
-  
+
   o->updateDesc();
   
   db.query("select type, level, duration, renew, modifier, location, modifier2, bitvector from rent_obj_aff where rent_id=%i", rent_id);
@@ -974,6 +977,7 @@ TObj *ItemLoadDB::raw_read_item(int rent_id, int &slot)
     o->affected[j].modifier2 = convertTo<int>(db["modifier2"]);
     o->affected[j].bitvector = convertTo<int>(db["bitvector"]);
   }
+
   
   db.query("select name, short_desc, long_desc, action_desc from rent_strung where rent_id=%i", rent_id);
 
@@ -1015,6 +1019,7 @@ TObj *ItemLoadDB::raw_read_item(int rent_id, int &slot)
     o->obj_flags.cost = tmpcost;
   }
 
+  
   return o;
 }
 

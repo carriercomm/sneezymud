@@ -1740,6 +1740,34 @@ sstring equip_cond(int cur_str, int max_str)
   }
 }
 
+// truncate string to len without counting color codes,
+// and with a terminating <1>, and pad with blanks
+// eg, if len is "7", then "<b>a shirt<1>" is acceptable
+sstring list_string(sstring buf, int len)
+{
+  sstring obuf="";
+
+  for(unsigned int i=0;i<buf.length() && len;++i){
+    if(buf[i]=='<'){
+      obuf+=buf[i++];
+      obuf+=buf[i++];
+      obuf+=buf[i];
+      continue;
+    }
+    obuf+=buf[i];    
+    --len;
+  }
+
+  while(len>0){
+    obuf+=" ";
+    --len;
+  }
+
+  obuf += "<1>";
+  
+  return obuf;
+}
+
 void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 {
   TDatabase db(DB_SNEEZY);
@@ -1773,11 +1801,11 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
     price *= shop_index[shop_nr].getProfitBuy(NULL, ch);
     price *= max((float)1.0, ch->getChaShopPenalty());
 
-    buf+=fmt("[%8i] %-32s %10s [%3i]  %i\n\r") %
+    buf+=fmt("[%8i] %s %s [%3i] %6i\n\r") %
       convertTo<int>(db["rent_id"]) %
-      db["short_desc"] % 
-      equip_cond(convertTo<int>(db["cur_struct"]),
-		 convertTo<int>(db["max_struct"])) %
+      list_string(db["short_desc"], 40) % 
+      list_string(equip_cond(convertTo<int>(db["cur_struct"]),
+			     convertTo<int>(db["max_struct"])), 10) %
       convertTo<int>(db["count"]) %
       (int)(max((float)1.0, price));
   }

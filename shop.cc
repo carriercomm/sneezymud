@@ -1772,20 +1772,27 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 {
   TDatabase db(DB_SNEEZY);
   sstring buf;
-  float price;
+  float price, perc;
+  bool fit=true;
+  int extra_flags;
+  wearSlotT slot;
 
   // hurray for stream of consciousness SQL!
   db.query("select * from \
               (select r.rent_id as rent_id, count(*) as count, \
                 o.short_desc as short_desc, r.price as price, \
-                r.cur_struct as cur_struct, r.max_struct as max_struct \
+                r.cur_struct as cur_struct, r.max_struct as max_struct, \
+                r.volume as volume, r.extra_flags as extra_flags, \
+                o.wear_flag as wear_flag \
               from rent r, obj o \
               where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
                 rent_id not in (select rent_id from rent_strung) \
               group by o.vnum \
             union select r.rent_id as rent_id, count(*) as count, \
               rs.short_desc as short_desc, r.price as price, \
-              r.cur_struct as cur_struct, r.max_struct as max_struct \
+              r.cur_struct as cur_struct, r.max_struct as max_struct, \
+              r.volume as volume, r.extra_flags as extra_flags, \
+              o.wear_flag as wear_flag \
             from rent r, rent_strung rs, obj o \
             where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
               r.rent_id=rs.rent_id group by o.vnum) \
@@ -1801,13 +1808,45 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
     price *= shop_index[shop_nr].getProfitBuy(NULL, ch);
     price *= max((float)1.0, ch->getChaShopPenalty());
 
-    buf+=fmt("[%8i] %s %s [%3i] %6i\n\r") %
-      convertTo<int>(db["rent_id"]) %
-      list_string(db["short_desc"], 40) % 
-      list_string(equip_cond(convertTo<int>(db["cur_struct"]),
-			     convertTo<int>(db["max_struct"])), 10) %
-      convertTo<int>(db["count"]) %
-      (int)(max((float)1.0, price));
+    extra_flags = convertTo<int>(db["extra_flags"]);
+
+    fit=true;
+    if(ch->hasClass(CLASS_MAGE) && (extra_flags & ITEM_ANTI_MAGE))
+      fit=false;
+    if(ch->hasClass(CLASS_CLERIC) && (extra_flags & ITEM_ANTI_CLERIC))
+      fit=false;
+    if(ch->hasClass(CLASS_WARRIOR) && (extra_flags & ITEM_ANTI_WARRIOR))
+      fit=false;
+    if(ch->hasClass(CLASS_THIEF) && (extra_flags & ITEM_ANTI_THIEF))
+      fit=false;
+    if(ch->hasClass(CLASS_SHAMAN) && (extra_flags & ITEM_ANTI_SHAMAN))
+      fit=false;
+    if(ch->hasClass(CLASS_DEIKHAN) && (extra_flags & ITEM_ANTI_DEIKHAN))
+      fit=false;
+    if(ch->hasClass(CLASS_MONK) && (extra_flags & ITEM_ANTI_MONK))
+      fit=false;
+
+    slot = slot_from_bit(convertTo<int>(db["wear_flag"]));
+
+    perc=(((double) ch->getHeight()) * 
+	  (double) race_vol_constants[mapSlotToFile(slot)]);
+
+    if ((slot != WEAR_NECK) && (slot != WEAR_FINGER_R) && 
+	(slot != WEAR_FINGER_L) && (slot != WEAR_NOWHERE)) {
+      if (convertTo<int>(db["volume"]) > (int) (perc/0.85) ||
+	  convertTo<int>(db["volume"]) < (int) (perc/1.15))
+	fit=false;
+    }
+
+    if(fit || argument=="all"){
+      buf+=fmt("[%8i] %s %s [%3i] %6i\n\r") %
+	convertTo<int>(db["rent_id"]) %
+	list_string(db["short_desc"], 40) % 
+	list_string(equip_cond(convertTo<int>(db["cur_struct"]),
+			       convertTo<int>(db["max_struct"])), 10) %
+	convertTo<int>(db["count"]) %
+	(int)(max((float)1.0, price));
+    }
   }
   
   if(ch->desc)

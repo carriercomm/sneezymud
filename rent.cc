@@ -677,7 +677,7 @@ int ItemSaveDB::raw_write_item(TObj *o, int slot, int container)
   int a0, a1, a2,a3;
   o->getFourValues(&a0, &a1, &a2, &a3);
 
-  db.query("insert into rent (owner_type, owner, vnum, slot, container, val0, val1, val2, val3, extra_flags, weight, bitvector, decay, cur_struct, max_struct, material, volume, price, depreciation) values ('%s', %i, %i, %i, %i, %i, %i, %i, %i, %i, %i, %f, %i, %i, %i, %i, %i, %i, %i)",
+  db.query("insert into rent (owner_type, owner, vnum, slot, container, val0, val1, val2, val3, extra_flags, weight, bitvector, decay, cur_struct, max_struct, material, volume, price, depreciation) values ('%s', %i, %i, %i, %i, %i, %i, %i, %i, %i, %f, %i, %i, %i, %i, %i, %i, %i, %i)",
 	   owner_type.c_str(), owner, 
 	   obj_index[o->getItemIndex()].virt, slot,
 	   container,

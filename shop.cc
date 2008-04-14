@@ -19,7 +19,6 @@
 #include "obj_potion.h"
 #include "spec_rooms.h"
 
-#define SHOP_DB_INV 1
 // -removed item recycling; this should be redone to convert to commods
 //   at maurice or something anyway
 // -removed pawnguy code; he isn't used anymore anyway
@@ -402,7 +401,6 @@ static int number_objects_in_list(const TObj *item, const TObj *list)
   return (count);
 }
 
-#if SHOP_DB_INV
 
 void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
 {
@@ -470,58 +468,6 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
 
   temp1->buyMe(ch, keeper, num, shop_nr);
 }
-
-#else
-
-
-void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
-{
-  char argm[MAX_INPUT_LENGTH], newarg[MAX_INPUT_LENGTH];
-  int num = 1;
-  TObj *temp1 = NULL;
-  TThing *tt;
-
-  *argm = '\0';
-
-  if (!(shop_index[shop_nr].willTradeWith(keeper, ch)))
-    return;
-
-  strcpy(argm, arg);
-  if (!*argm) {
-    keeper->doTell(ch->name, "What do you want to buy??");
-    return;
-  }
-  if ((num = getabunch(argm, newarg)))
-    strcpy(argm, newarg);
-
-  if (!num)
-    num = 1;
-
-  tt = searchLinkedListVis(ch, argm, keeper->getStuff());
-  if (!tt || !(temp1 = dynamic_cast<TObj *>(tt))) {
-    if (!(temp1 = get_num_obj_in_list(ch, convertTo<int>(argm), keeper->getStuff(), shop_nr))) {
-      keeper->doTell(ch->name, shop_index[shop_nr].no_such_item1);
-      return;
-    }
-  }
-
-  if (temp1->getValue() <= 0) {
-    keeper->doTell(ch->name, shop_index[shop_nr].no_such_item1);
-    delete temp1;
-    temp1 = NULL;
-    return;
-  }
-  if (temp1->isObjStat(ITEM_PROTOTYPE | ITEM_NEWBIE)) {
-    keeper->doSay("Where did this piece of junk come from???");
-    delete temp1;
-    temp1 = NULL;
-    return;
-  }
-
-  temp1->buyMe(ch, keeper, num, shop_nr);
-}
-
-#endif
 
 
 int TObj::buyMe(TBeing *ch, TMonster *keeper, int num, int shop_nr)
@@ -792,7 +738,6 @@ void generic_sell(TBeing *ch, TMonster *keeper, TObj *obj, int shop_nr)
   // obj may be invalid here
 }
 
-#if SHOP_DB_INV
 
 int TObj::sellMe(TBeing *ch, TMonster *keeper, int shop_nr, int num = 1)
 {
@@ -865,91 +810,6 @@ int TObj::sellMe(TBeing *ch, TMonster *keeper, int shop_nr, int num = 1)
   return DELETE_THIS;
 }
 
-#else
-
-int TObj::sellMe(TBeing *ch, TMonster *keeper, int shop_nr, int num = 1)
-{
-  int cost;
-  sstring buf;
-  float chr;
-
-  if (!shop_index[shop_nr].profit_sell) {
-    keeper->doTell(ch->getName(), shop_index[shop_nr].do_not_buy);
-    return false;
-  }
-  
-  
-  if (getValue() <= 1 || isObjStat(ITEM_NEWBIE)) {
-    keeper->doTell(ch->getName(), "I'm sorry, I don't buy valueless items.");
-    return false;
-  }
-  if (sellMeCheck(ch, keeper, num))
-    return false;
-  
-  chr = ch->getChaShopPenalty() - ch->getSwindleBonus();
-  chr = max((float)1.0,chr);
-  cost = sellPrice(1, shop_nr, chr, ch);
-
-  if (getStructPoints() != getMaxStructPoints()) {
-    cost *= 6;    /* base deduction of 60% */
-    cost /= 10;
-    if (getMaxStructPoints() > 0) {
-      cost *= getStructPoints();
-      cost /= getMaxStructPoints();
-    }
-#if NO_DAMAGED_ITEMS_SHOP
-    buf = fmt("%s It's been damaged, but I guess I can buy it as scrap.") %
-      fname(ch->name);
-    keeper->doTell(buf);
-#endif
-  }
-  max(cost, 1);   // at least 1 talen 
-  if (keeper->getMoney() < cost) {
-    keeper->doTell(ch->getName(), shop_index[shop_nr].missing_cash1);
-    return false;
-  }
-  if (obj_index[getItemIndex()].max_exist <= 10) {
-    keeper->doTell(ch->name, "Wow!  This is one of those limited items.");
-    keeper->doTell(ch->name, "You should really think about auctioning it.");
-  }
-  act("$n sells $p.", FALSE, ch, this, 0, TO_ROOM);
-
-  keeper->doTell(ch->getName(), fmt(shop_index[shop_nr].message_sell)% cost);
-
-  ch->sendTo(COLOR_OBJECTS, fmt("The shopkeeper now has %s.\n\r") % sstring(getName()).uncap());
-  ch->logItem(this, CMD_SELL);
-
-  --(*this);
-  *keeper += *this;
-
-  sellMeMoney(ch, keeper, cost, shop_nr);
-
-  if (ch->isAffected(AFF_GROUP) && ch->desc &&
-           IS_SET(ch->desc->autobits, AUTO_SPLIT) && 
-          (ch->master || ch->followers)){
-    buf = fmt("%d") % cost;
-    ch->doSplit(buf.c_str(), false);
-  }
-
-#if NO_DAMAGED_ITEMS_SHOP
-  else if (getStructPoints() != getMaxStructPoints()) {
-    // delete it as its "scrap"
-    buf = fmt("%s/%d") % SHOPFILE_PATH % shop_nr;
-    keeper->saveItems(buf);
-    ch->doSave(SILENT_YES);
-    return DELETE_THIS;
-  }
-#endif
-
-
-  buf = fmt("%s/%d") % SHOPFILE_PATH % shop_nr;
-  keeper->saveItems(buf);
-  ch->doSave(SILENT_YES);
-  return true;
-}
-
-
-#endif
 
 int TThing::componentSell(TBeing *ch, TMonster *keeper, int shop_nr, TThing *)
 {
@@ -1691,7 +1551,6 @@ const sstring TObj::shopList(const TBeing *ch, const sstring &arg, int iMin, int
     return "";
 }
 
-#if SHOP_DB_INV
 
 sstring equip_cond(int cur_str, int max_str)
 {
@@ -1777,6 +1636,9 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
   int extra_flags;
   wearSlotT slot;
 
+  if(is_number(argument))
+    buf=fmt("and r.rent_id=%s") % argument;
+  
   // hurray for stream of consciousness SQL!
   db.query("select * from \
               (select r.rent_id as rent_id, count(*) as count, \
@@ -1786,7 +1648,7 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 o.wear_flag as wear_flag \
               from rent r, obj o \
               where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
-                rent_id not in (select rent_id from rent_strung) \
+                rent_id not in (select rent_id from rent_strung) %s \
               group by o.vnum \
             union select r.rent_id as rent_id, count(*) as count, \
               rs.short_desc as short_desc, r.price as price, \
@@ -1795,10 +1657,11 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
               o.wear_flag as wear_flag \
             from rent r, rent_strung rs, obj o \
             where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
-              r.rent_id=rs.rent_id group by o.vnum) \
-            as foo order by rent_id", shop_nr, shop_nr);
+              r.rent_id=rs.rent_id %s group by o.vnum) \
+            as foo order by rent_id", shop_nr, buf.c_str(), shop_nr, buf.c_str());
 
   keeper->doTell(ch->getName(), "You can buy:");
+  buf="";
   while(db.fetchRow()){
     price=((convertTo<int>(db["max_struct"]) <= 0) ? 
 	   convertTo<int>(db["price"]) :
@@ -1830,6 +1693,8 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 
     perc=(((double) ch->getHeight()) * 
 	  (double) race_vol_constants[mapSlotToFile(slot)]);
+    if(extra_flags & ITEM_PAIRED)
+      perc *= 2;
 
     if ((slot != WEAR_NECK) && (slot != WEAR_FINGER_R) && 
 	(slot != WEAR_FINGER_L) && (slot != WEAR_NOWHERE)) {
@@ -1838,7 +1703,7 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 	fit=false;
     }
 
-    if(fit || argument=="all"){
+    if(argument!="fit" || fit){
       buf+=fmt("[%8i] %s %s [%3i] %6i\n\r") %
 	convertTo<int>(db["rent_id"]) %
 	list_string(db["short_desc"], 40) % 
@@ -1854,208 +1719,6 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 
   return;
 }
-
-#else 
-
-void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
-{
-  vector<TObj *>cond_obj_vec;
-  vector<int>cond_tot_vec;
-  TObj *i = NULL;
-  unsigned int k;
-  unsigned long int FitT = 0;
-  int iMin = 999999, iMax = 0;
-  int found_obj, counter, rc;
-  bool found = FALSE;
-  vector <sstring> args;
-  sstring buf, sb, arg;
-  bool hasComponents = false;
-  bool owned=shop_index[shop_nr].isOwned();
-
-#if 0
-  if (gamePort != PROD_GAMEPORT) {
-    if (ch->desc && ch->desc->m_bIsClient)
-      desc->clientShoppingList(arg, keeper, shop_nr);
-  }
-#endif
-
-  if (!shop_index[shop_nr].willTradeWith(keeper, ch))
-    return;
-
-  if (!ch->desc)
-    return;
-
-  // Here we rip apart what they might have passed.  We do it
-  // this way to allow them to form it in any fashion they want.
-  // For numbers.  First number found is givin to iMax.  Second
-  // number found is givin to iMax and iMin is givin the old iMax
-  // value.  So:
-  //   1 number : No floor value, value is considered max.
-  //   2 numbers: First is floor, 2nd is max.
-  for(int i=0;!argument.word(i).empty();++i){
-         if (is_abbrev(argument.word(i), "fit")    ) FitT |= (1 <<  0);
-    else if (is_abbrev(argument.word(i), "slash")  ) FitT |= (1 <<  1);
-    else if (is_abbrev(argument.word(i), "pierce") ) FitT |= (1 <<  2);
-    else if (is_abbrev(argument.word(i), "blunt")  ) FitT |= (1 <<  3);
-    else if (is_abbrev(argument.word(i), "body")   ) FitT |= (1 <<  4);
-    else if (is_abbrev(argument.word(i), "finger") ) FitT |= (1 <<  5);
-    else if (is_abbrev(argument.word(i), "wrist")  ) FitT |= (1 <<  6);
-    else if (is_abbrev(argument.word(i), "legs")   ) FitT |= (1 <<  7);
-    else if (is_abbrev(argument.word(i), "arms")   ) FitT |= (1 <<  8);
-    else if (is_abbrev(argument.word(i), "neck")   ) FitT |= (1 <<  9);
-    else if (is_abbrev(argument.word(i), "feet")   ) FitT |= (1 << 10);
-    else if (is_abbrev(argument.word(i), "hands")  ) FitT |= (1 << 11);
-    else if (is_abbrev(argument.word(i), "head")   ) FitT |= (1 << 12);
-    else if (is_abbrev(argument.word(i), "back")   ) FitT |= (1 << 13);
-    else if (is_abbrev(argument.word(i), "waist")  ) FitT |= (1 << 14);
-    else if (is_abbrev(argument.word(i), "glowing")) FitT |= (1 << 15);
-    else if (is_abbrev(argument.word(i), "shadowy")) FitT |= (1 << 16);
-    else if (is_abbrev(argument.word(i), "paired") ) FitT |= (1 << 17);
-    else if (is_abbrev(argument.word(i), "stab")) {
-      if ((ch->doesKnowSkill(SKILL_STABBING)) || ch->isImmortal()) {
-        FitT |= (1 << 18);
-        FitT |= (1 <<  2);
-      }
-    } else if (is_abbrev(argument.word(i), "cudgel")) {
-      if ((ch->doesKnowSkill(SKILL_CUDGEL)) || ch->isImmortal()) {
-        FitT |= (1 << 19);
-        FitT |= (1 <<  3);
-      }
-    } else if (is_abbrev(argument.word(i), "backstab")) {
-      if ((ch->doesKnowSkill(SKILL_BACKSTAB)) || ch->isImmortal()) {
-        FitT |= (1 << 20);
-        FitT |= (1 <<  2);
-      }
-    } else if (is_abbrev(argument.word(i), "slit")) {
-      if ((ch->doesKnowSkill(SKILL_THROATSLIT)) || ch->isImmortal()) {
-        FitT |= (1 << 20);
-        FitT |= (1 <<  2);
-      }
-    } else if (is_number(argument.word(i))) {
-      if (iMin == 999999) {
-        iMin = 0;
-        iMax = convertTo<int>(argument.word(i));
-      } else if (iMin == 0) {
-        iMin = iMax;
-        iMax = convertTo<int>(argument.word(i));
-      }
-    } else if (!argument.word(i).empty()) {
-      arg=argument.word(i);
-    }
-    if (argument.empty())
-      break;
-  }
-
-  int max_trade=0;
-  max_trade=shop_index[shop_nr].type.size()-1;
-
-  keeper->doTell(ch->getName(), "You can buy:");
-  for (counter = 0; counter < max_trade; counter++) {
-    if (shop_index[shop_nr].type[counter] == ITEM_COMPONENT)
-      hasComponents = true;
-
-    if (shop_index[shop_nr].type[counter] == ITEM_WORN || 
-        shop_index[shop_nr].type[counter] == ITEM_ARMOR || 
-        shop_index[shop_nr].type[counter] == ITEM_JEWELRY || 
-        shop_index[shop_nr].type[counter] == ITEM_WEAPON || 
-        shop_index[shop_nr].type[counter] == ITEM_MARTIAL_WEAPON || 
-        shop_index[shop_nr].type[counter] == ITEM_HOLY_SYM || 
-        shop_index[shop_nr].type[counter] == ITEM_BOW) {
-      sb += "     Item Name                          Condition Price    Number      Fit?\n\r";
-      found = TRUE;
-      break;
-    }
-  }
-  if (!found)
-    if (!hasComponents || gamePort == PROD_GAMEPORT)
-      sb += "     Item Name                            Condition Price     Number\n\r";
-    else
-      sb += "     Item Name                            Condition Price     Number\n\r";
-
-  found = FALSE;
-  sb += "-------------------------------------------------------------------------------\n\r";
-
-  found_obj = FALSE;
-
-  TThing *t, *t2;
-  for (t = keeper->getStuff(); t; t = t2) {
-    t2 = t->nextThing;
-    i = dynamic_cast<TObj *>(t);
-    if (!i)
-      continue;
-    if (ch->canSee(i)) {
-      if ((i->getValue() > 1) &&
-          !i->isObjStat(ITEM_NEWBIE) &&
-#if NO_DAMAGED_ITEMS_SHOP
-          (i->getMaxStructPoints() == i->getStructPoints()) &&
-#endif
-          shop_index[shop_nr].willBuy(i)) {
-        found = FALSE;
-        for (k = 0; (k < cond_obj_vec.size() && !found); k++) {
-          if (cond_obj_vec.size() > 0) {
-            if (i->isShopSimilar(cond_obj_vec[k])) {
-	      cond_tot_vec[k] += 1;
-	      found = TRUE;
-            }
-          }
-        }
-        if (!i)
-          continue;
-
-        if (!found) {
-          cond_obj_vec.push_back(i);
-          cond_tot_vec.push_back(1);
-        }
-      } else {
-        if (i->isPersonalized()) {
-          keeper->doSay("Hmmm, I didn't notice this monogram before...");
-          keeper->doSay("Well, no one's going to buy it now.");
-          // emote the junk since doJunk aborts on monogram
-          act("$n junks $p.", FALSE, keeper, i, 0, TO_ROOM);
-          delete i;
-          i = NULL;
-          continue;
-        }
-        // pawn shop shouldn't junk
-        if (shop_index[shop_nr].in_room != 562 || owned) {
-          keeper->doSay("How did I get this piece of junk?!?!");
-          rc = keeper->doJunk("", i);
-          // doJunk might fail (cursed, etc), delete regardless
-          delete i;
-          i = NULL;
-          continue;
-        }
-      }
-    }
-  }                             // for loop 
-  if (cond_obj_vec.size()) {
-    found_obj = TRUE;
-    for (k = 0; k < cond_obj_vec.size(); k++) 
-      sb += cond_obj_vec[k]->shopList(ch, arg, iMin, iMax, cond_tot_vec[k], shop_nr, k, FitT);
-  }
-  if (!found_obj) {
-    buf = "Nothing!\n\r";
-    sb += buf;
-
-    if (ch->desc)
-      ch->desc->page_string(sb, SHOWNOW_NO, ALLOWREP_YES);
-
-    keeper->autoCreateShop(shop_nr);
-    buf = fmt("%s/%d") % SHOPFILE_PATH % shop_nr;
-    keeper->saveItems(buf);
-    return;
-  }
-  if (ch->desc) {
-    if (!ch->desc->m_bIsClient)
-      ch->desc->page_string(sb, SHOWNOW_NO, ALLOWREP_YES);
-    else 
-      ch->desc->page_string(sb, SHOWNOW_NO, ALLOWREP_YES);
-  }
-  return;
-}
-
-
-#endif
 
 void TMonster::autoCreateShop(int shop_nr)
 {
@@ -2128,7 +1791,9 @@ static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int sho
 
   sstring str = "You examine ";
   str += temp1->getName();
-  str += " sold by $N.";
+  str += " sold by $N.\n\r";
+
+  str += temp1->shopList(ch, "", 0, 999999, 0, shop_nr, rent_id-1, 0);
 
   act(str, FALSE, ch, temp1, keeper, TO_CHAR);
 
@@ -2223,7 +1888,6 @@ void waste_shop_file(int shop_nr)
   unlink(buf.c_str());
 }
 
-#if SHOP_DB_INV
 
 int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
 {
@@ -2458,278 +2122,6 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
   return FALSE;
 }
 
-#else
-
-int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TObj *o)
-{
-  int rc;
-  dirTypeT dir = DIR_NONE;
-  unsigned int shop_nr;
-  TBeing *tbt = NULL;
-
-  if (cmd == CMD_GENERIC_PULSE) {
-    TThing *t;
-    TBeing *tbt;
-
-    // Toss out idlers
-    for(t=myself->roomp->getStuff();t;t=t->nextThing){
-      if((tbt=dynamic_cast<TBeing *>(t)) && 
-	 tbt->getTimer()>1 && !tbt->isImmortal()){
-        if ((tbt->master) && tbt->master->inRoom() == tbt->inRoom()) {
-          //vlogf(LOG_DASH, fmt("saving %s from loitering code, master is %s, room is (%d == %d)") % tbt->getName() %
-          //      tbt->master->getName() % tbt->inRoom() % tbt->master->inRoom());
-	  continue;
-	}
-	myself->doSay("Hey, no loitering!  Make room for the other customers.");
-	for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
-	  if (exit_ok(myself->exitDir(dir), NULL)) {
-	    // at least one valid dir exists
-	    // select the true direction at random
-	    do {
-	      dir = dirTypeT(::number(MIN_DIR, MAX_DIR-1));
-	    } while (!exit_ok(myself->exitDir(dir), NULL));
-	    
-	    act("$n throws you from $s shop.",
-		FALSE, myself, 0, tbt, TO_VICT);
-	    act("$n throws $N from $s shop.",
-		FALSE, myself, 0, tbt, TO_NOTVICT);
-	    myself->throwChar(tbt, dir, FALSE, SILENT_NO, true);
-	    return TRUE;
-	  }
-	}
-      }
-    }
-    return TRUE;
-  }  
-
-  // determine shop_nr here to avoid overhead before CMD_GENERIc_PULSE
-  for (shop_nr = 0; (shop_nr < shop_index.size()) && (shop_index[shop_nr].keeper != (myself)->number); shop_nr++);
-
-  if (shop_nr >= shop_index.size()) {
-    vlogf(LOG_BUG, fmt("Warning... shop # for mobile %d (real nr) not found.") %  mob_index[myself->number].virt);
-    return FALSE;
-  }
-
-  if (cmd == CMD_GENERIC_INIT) {
-    if (!myself->isUnique()) {
-      vlogf(LOG_BUG, fmt("Warning!  %s attempted to be loaded, when not unique.") %  myself->getName());
-      return TRUE;
-    } else
-      return FALSE;
-  } else if (cmd == CMD_GENERIC_CREATED) {
-    // Little kludge I put in to set pawnman is set for rent stuff - Russ 
-    if (myself->mobVnum() == MOB_PAWNGUY) {
-      vlogf(LOG_MISC, "Setting Pawn Broker pointer for rent functions!");
-      pawnman = myself;
-    }
-    myself->loadItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
-
-    return FALSE;
-  } else if (cmd == CMD_MOB_VIOLENCE_PEACEFUL) {
-    myself->doSay("Hey!  Take it outside.");
-    // o is really a being, so downcast, and then bring it back up
-    TThing *ttt = o;
-    tbt = dynamic_cast<TBeing *>(ttt);
-
-    for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
-      if (exit_ok(myself->exitDir(dir), NULL)) {
-        // at least one valid dir exists
-        // select the true direction at random
-        do {
-          dir = dirTypeT(::number(MIN_DIR, MAX_DIR-1));
-        } while (!exit_ok(myself->exitDir(dir), NULL));
-
-        act("$n throws you from $s shop.",
-               FALSE, myself, 0, ch, TO_VICT);
-        act("$n throws $N from $s shop.",
-               FALSE, myself, 0, ch, TO_NOTVICT);
-        myself->throwChar(ch, dir, FALSE, SILENT_NO, true);
-        act("$n throws you from $s shop.",
-               FALSE, myself, 0, tbt, TO_VICT);
-        act("$n throws $N from $s shop.",
-               FALSE, myself, 0, tbt, TO_NOTVICT);
-        myself->throwChar(tbt, dir, FALSE, SILENT_NO, true);
-        return TRUE;
-      }
-    }
-    return TRUE;
-  } else if (cmd == CMD_MOB_MOVED_INTO_ROOM &&  (myself->in_room == shop_index[shop_nr].in_room)) {
-
-    return kick_mobs_from_shop(myself, ch, (int)o);
-
-  } else if (cmd == CMD_MOB_ALIGN_PULSE) {
-    // called on a long period....
-    TThing *t, *t2;
-
-    if (::number(0,10))
-      return FALSE;
-
-
-    for (t = myself->getStuff(); t; t = t2) {
-      t2 = t->nextThing;
-      TObj * obj = dynamic_cast<TObj *>(t);
-      if (!obj)
-        continue;
-
-      if(IS_SET(shop_index[shop_nr].flags, SHOP_FLAG_RECYCLE) &&
-	 !shop_index[shop_nr].isProducing(obj) && !::number(0,499) ){
-	// resolution 220, the fun restoration initiative
-	int val=(int)(obj->getValue() * 0.25);
-
-	TShopOwned tso(shop_nr, myself, myself);
-	tso.doBuyTransaction(val, obj->getName(), TX_RECYCLING);
-
-	vlogf(LOG_OBJ, fmt("shop %s (%i) recycling %s for %i talens") %  myself->getName() % shop_nr % obj->getName() % (int)(obj->getValue() * shop_index[shop_nr].profit_sell));
-
-	delete obj;
-	continue;
-      }
-    }
-
-    // produce new items
-    
-    vector<int>::iterator iter;
-    TObj *o;
-    int count=0;
-    // find the sba shopkeeper
-    TMonster *sba=NULL;
-    int sba_nr=160;
-    for(TBeing *t=character_list;t;t=t->next){
-      if(t->number==shop_index[sba_nr].keeper){
-	sba=dynamic_cast<TMonster *>(t);
-	break;
-      }
-    }
-    if(!sba)
-      return FALSE;
-    
-    
-    TShopOwned tso(shop_nr, myself, sba);
-
-    for(iter=shop_index[shop_nr].producing.begin();
-	iter!=shop_index[shop_nr].producing.end();++iter){
-      if(*iter <= -1)
-	continue;
-
-      if (!(o = read_object(*iter, REAL))) {
-        vlogf(LOG_BUG, fmt("Shopkeeper %d couldn't load produced item.") %  
-	      shop_nr);
-        return FALSE;
-      }
-      
-      // count how many shopkeeper has
-      count=0;
-      for(TThing *t=myself->getStuff();t;t=t->nextThing){
-	if(dynamic_cast<TObj *>(t) &&
-	   dynamic_cast<TObj *>(t)->number == *iter){
-	  count++;
-	}
-      }
-      if(count >= tso.getMaxNum(o)){
-	delete o;
-	continue;
-      }
-
-
-      int cost=o->getValue();
-
-      // obviously we shouldn't have to pay a million talens to create a
-      // million talen casino chip
-      if(dynamic_cast<TCasinoChip *>(o))
-	cost=1;
-
-      if(myself->getMoney() < cost)
-	continue;
-
-      //      vlogf(LOG_LOW, fmt("%s loading produced object %s") %
-      //	    myself->getName() % o->getName());
-
-      *myself += *o;
-
-      // money goes to sba
-      tso.doSellTransaction(cost, o->getName(), TX_PRODUCING, o);
-      shoplog(sba_nr, myself, sba, o->getName(), cost, "producing");
-      sba->saveItems(fmt("%s/%d") % SHOPFILE_PATH % sba_nr);
-    }
-
-    return FALSE;
-  } else if (cmd >= MAX_CMD_LIST)
-    return FALSE;
-
-  if ((cmd == CMD_BUY) && (ch->in_room == shop_index[shop_nr].in_room)) {
-    if (!safe_to_save_shop_stuff(myself))
-      return TRUE;
-
-    shopping_buy(arg, ch, myself, shop_nr);
-    return TRUE;
-  }
-  if ((cmd == CMD_SELL) && (ch->in_room == shop_index[shop_nr].in_room)) {
-    if (!safe_to_save_shop_stuff(myself))
-      return TRUE;
-    rc = shopping_sell(arg, ch, myself, shop_nr);
-    if (IS_SET_DELETE(rc, DELETE_THIS))
-      return DELETE_VICT;  // nuke ch
-    return TRUE;
-  }
-  if ((cmd == CMD_VALUE) && (ch->in_room == shop_index[shop_nr].in_room)) {
-    shopping_value(arg, (ch), (myself), shop_nr);
-    return TRUE;
-  }
-  if ((cmd == CMD_LIST) && (ch->in_room == shop_index[shop_nr].in_room)) {
-    shopping_list(arg, (ch), (myself), shop_nr);
-    return TRUE;
-  }
-  if ((cmd == CMD_KILL) || (cmd == CMD_HIT)) {
-    char argm[MAX_INPUT_LENGTH];
-    strcpy(argm, arg);
-
-    if ((myself) == get_char_room(argm, ch->in_room)) {
-      shopping_kill(arg, (ch), myself, shop_nr);
-      return TRUE;
-    }
-    return FALSE;
-  }
-  if ((cmd == CMD_CAST) || (cmd == CMD_RECITE) || 
-      (cmd == CMD_USE) || (cmd == CMD_PRAY)) {
-    if (myself->canSee(ch)) {
-      myself->doTell(ch->getNameNOC(ch), "<r>No magic here - kid!<z>");
-    } else
-      act("I may not be able to see you kid, but there is no magic in here.",
-          FALSE, ch, 0, myself, TO_CHAR);
-    return TRUE;
-  }
-  if (cmd == CMD_LOOK || cmd == CMD_EXAMINE) {
-    return shopping_look(arg, ch, myself, shop_nr);
-  }
-  if (cmd == CMD_EVALUATE) {
-    return shopping_evaluate(arg, ch, myself, shop_nr);
-  }
-
-#if 1
-  // the sweepers should be reasonably efficient about cleaning up, so this
-  // probably isn't needed.  Non-GH might still suffer though....
-  // -Cept they don't Enter shops, simply prevent them from dropping like before.
-
-  if ((cmd == CMD_DROP) && (ch->in_room == shop_index[shop_nr].in_room)) {
-    TRoom * pRoom = real_roomp(ch->in_room);
-
-    if (!pRoom || (pRoom->spec != SPEC_ROOM_GH_DUMP)) {
-      // possible alternative would be to move dropped stuff to ROOM_DONATION
-      act("$N tells you, 'HEY!  Don't clutter up my shop'.", FALSE, ch, 0, myself, TO_CHAR);
-      return TRUE;
-    }
-  }
-#endif
-
-  if(cmd == CMD_WHISPER){
-    return shopWhisper(ch, myself, shop_nr, arg);
-  }
-
-  return FALSE;
-}
-
-
-#endif
 
 void shoplog(int shop_nr, TBeing *ch, TMonster *keeper, const sstring &name, int cost, const sstring &action){
   int value=0, count=0;

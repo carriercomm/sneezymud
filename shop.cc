@@ -420,14 +420,15 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
     num = 1;
 
   if(!(rent_id=convertTo<int>(argm))){
-    sstring query="select r.rent_id from rent r, obj o where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
+    sstring query="select r.rent_id from obj o, rent r left outer join rent_strung rs on (rs.rent_id=r.rent_id) where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
     sstring arg_words=argm;
     arg_words=arg_words.replaceString("-"," ");
 
     for(int i=0;!arg_words.word(i).empty();++i){
       mysql_escape_string(buf, arg_words.word(i).c_str(), arg_words.word(i).length());
 
-      query += fmt("and o.name like '%s%s%s'") % 
+      query += fmt("and ((rs.name is not null and rs.name like '%s%s%s') or (o.name like '%s%s%s'))") % 
+	"%%" % buf % "%%" %
 	"%%" % buf % "%%";
     }
 
@@ -1634,7 +1635,7 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
   // if number is passed as argument, just list that specific object
   if(is_number(argument))
     buf=fmt("and r.rent_id=%s") % argument;
-  
+
   // GENERIC_COMMODITY
 
   db.query("select * from \
@@ -1642,11 +1643,14 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 o.short_desc as short_desc, r.price as price, \
                 r.cur_struct as cur_struct, r.max_struct as max_struct, \
                 r.volume as volume, r.extra_flags as extra_flags, \
-                o.wear_flag as wear_flag \
-              from rent r, obj o \
+                o.wear_flag as wear_flag, o.vnum as vnum \
+              from rent r left outer join rent_strung rs on \
+                (rs.rent_id=r.rent_id), obj o \
               where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
-                rent_id not in (select rent_id from rent_strung) and \
-                o.vnum!=%i \
+                r.rent_id not in (select rent_id from rent_strung) and \
+                o.vnum!=%i and \
+                ((rs.name is not null and rs.name like '%s%s%s') or \
+                (o.name like '%s%s%s')) \
                 %s \
               group by o.vnum \
             union \
@@ -1654,10 +1658,12 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 rs.short_desc as short_desc, r.price as price, \
                 r.cur_struct as cur_struct, r.max_struct as max_struct, \
                 r.volume as volume, r.extra_flags as extra_flags, \
-                o.wear_flag as wear_flag \
+                o.wear_flag as wear_flag, o.vnum as vnum \
               from rent r, rent_strung rs, obj o \
               where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
-                r.rent_id=rs.rent_id and o.vnum!=%i \
+                r.rent_id=rs.rent_id and o.vnum!=%i and \
+                ((rs.name is not null and rs.name like '%s%s%s') or \
+                (o.name like '%s%s%s')) \
                 %s \
               group by o.vnum \
             union \
@@ -1665,16 +1671,27 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 rs.short_desc as short_desc, r.price/(r.weight*10) as price, \
                 r.cur_struct as cur_struct, r.max_struct as max_struct, \
                 r.volume as volume, r.extra_flags as extra_flags, \
-                o.wear_flag as wear_flag \
+                o.wear_flag as wear_flag, o.vnum as vnum \
               from rent r, rent_strung rs, obj o \
               where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
-                r.rent_id=rs.rent_id and o.vnum=%i \
+                r.rent_id=rs.rent_id and o.vnum=%i and \
+                ((rs.name is not null and rs.name like '%s%s%s') or \
+                (o.name like '%s%s%s')) \
                 %s \
               group by r.material \
             ) as foo order by rent_id", 
-	   shop_nr, GENERIC_COMMODITY, buf.c_str(), 
-	   shop_nr, GENERIC_COMMODITY, buf.c_str(),
-           shop_nr, GENERIC_COMMODITY, buf.c_str());
+	   shop_nr, GENERIC_COMMODITY, 
+	   "%", (argument=="fit"?"":argument.c_str()), "%",
+	   "%", (argument=="fit"?"":argument.c_str()), "%",
+	   buf.c_str(), 
+	   shop_nr, GENERIC_COMMODITY, 
+	   "%", (argument=="fit"?"":argument.c_str()), "%",
+	   "%", (argument=="fit"?"":argument.c_str()), "%",
+	   buf.c_str(),
+           shop_nr, GENERIC_COMMODITY, 
+	   "%", (argument=="fit"?"":argument.c_str()), "%",
+	   "%", (argument=="fit"?"":argument.c_str()), "%",
+	   buf.c_str());
 
   keeper->doTell(ch->getName(), "You can buy:");
   buf="";
@@ -1729,13 +1746,21 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 
     // buffer output
     if(argument!="fit" || fit){
-      buf+=fmt("[%8i] %s %s [%6i] %6i\n\r") %
-	convertTo<int>(db["rent_id"]) %
-	list_string(db["short_desc"], 40) % 
-	list_string(equip_cond(convertTo<int>(db["cur_struct"]),
-			       convertTo<int>(db["max_struct"])), 10) %
-	convertTo<int>(db["count"]) %
-	(int)(max((float)1.0, price));
+      if(convertTo<int>(db["vnum"])==GENERIC_COMMODITY){
+	buf+=fmt("[%8i] %s COMMODITY  [%6i] %7.3f\n\r") %
+	  convertTo<int>(db["rent_id"]) %
+	  list_string(db["short_desc"], 40) % 
+	  convertTo<int>(db["count"]) %
+	  (max((float)1.0, price));
+      } else {
+	buf+=fmt("[%8i] %s %s [%6i] %7i\n\r") %
+	  convertTo<int>(db["rent_id"]) %
+	  list_string(db["short_desc"], 40) % 
+	  list_string(equip_cond(convertTo<int>(db["cur_struct"]),
+				 convertTo<int>(db["max_struct"])), 10) %
+	  convertTo<int>(db["count"]) %
+	  (int)(max((float)1.0, price));
+      }
     }
   }
   
@@ -1793,14 +1818,15 @@ static bool shopping_look(const char *arg, TBeing *ch, TMonster *keeper, int sho
     return FALSE;
 
   if(!(rent_id=convertTo<int>(arg))){
-    sstring query="select r.rent_id from rent r, obj o where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
+    sstring query="select r.rent_id from obj o, rent r left outer join rent_strung rs on (rs.rent_id=r.rent_id) where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
     sstring arg_words=arg;
     arg_words=arg_words.replaceString("-"," ");
 
     for(int i=0;!arg_words.word(i).empty();++i){
       mysql_escape_string(buf, arg_words.word(i).c_str(), arg_words.word(i).length());
 
-      query += fmt("and o.name like '%s%s%s'") % 
+      query += fmt("and ((rs.name is not null and rs.name like '%s%s%s') or (o.name like '%s%s%s'))") % 
+	"%%" % buf % "%%" %
 	"%%" % buf % "%%";
     }
 
@@ -1859,14 +1885,15 @@ static bool shopping_evaluate(const char *arg, TBeing *ch, TMonster *keeper, int
     num = 1;
 
   if(!(rent_id=convertTo<int>(arg))){
-    sstring query="select r.rent_id from rent r, obj o where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
+    sstring query="select r.rent_id from obj o, rent r left outer join rent_strung rs on (rs.rent_id=r.rent_id) where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
     sstring arg_words=arg;
     arg_words=arg_words.replaceString("-"," ");
 
     for(int i=0;!arg_words.word(i).empty();++i){
       mysql_escape_string(buf, arg_words.word(i).c_str(), arg_words.word(i).length());
 
-      query += fmt("and o.name like '%s%s%s'") % 
+      query += fmt("and ((rs.name is not null and rs.name like '%s%s%s') or (o.name like '%s%s%s'))") % 
+	"%%" % buf % "%%" %
 	"%%" % buf % "%%";
     }
 
@@ -1967,6 +1994,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
     } else
       return FALSE;
   } else if(cmd == CMD_GENERIC_CREATED && 0){
+    // this is for conversion to new shop code, only will be run once
     myself->loadItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
 
     TThing *t, *t2;

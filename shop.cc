@@ -19,13 +19,6 @@
 #include "obj_potion.h"
 #include "spec_rooms.h"
 
-// -removed item recycling; this should be redone to convert to commods
-//   at maurice or something anyway
-// -removed pawnguy code; he isn't used anymore anyway
-// -replaced item production code with saveItem()/delete (L2013)
-// 
-
-
 extern int kick_mobs_from_shop(TMonster *myself, TBeing *ch, int from_room);
 
 vector<shopData>shop_index(0);
@@ -451,7 +444,6 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
   }
   
   *keeper += *temp1;
-  keeper->deleteItem(shop_nr, rent_id);
 
   if (temp1->getValue() <= 0) {
     keeper->doTell(ch->name, shop_index[shop_nr].no_such_item1);
@@ -466,7 +458,10 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
     return;
   }
 
-  temp1->buyMe(ch, keeper, num, shop_nr);
+  if(temp1->buyMe(ch, keeper, num, shop_nr) != -1){
+    keeper->deleteItem(shop_nr, rent_id);
+  }
+
 }
 
 
@@ -1636,10 +1631,12 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
   int extra_flags;
   wearSlotT slot;
 
+  // if number is passed as argument, just list that specific object
   if(is_number(argument))
     buf=fmt("and r.rent_id=%s") % argument;
   
-  // hurray for stream of consciousness SQL!
+  // GENERIC_COMMODITY
+
   db.query("select * from \
               (select r.rent_id as rent_id, count(*) as count, \
                 o.short_desc as short_desc, r.price as price, \
@@ -1648,29 +1645,55 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 o.wear_flag as wear_flag \
               from rent r, obj o \
               where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
-                rent_id not in (select rent_id from rent_strung) %s \
+                rent_id not in (select rent_id from rent_strung) and \
+                o.vnum!=%i \
+                %s \
               group by o.vnum \
-            union select r.rent_id as rent_id, count(*) as count, \
-              rs.short_desc as short_desc, r.price as price, \
-              r.cur_struct as cur_struct, r.max_struct as max_struct, \
-              r.volume as volume, r.extra_flags as extra_flags, \
-              o.wear_flag as wear_flag \
-            from rent r, rent_strung rs, obj o \
-            where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
-              r.rent_id=rs.rent_id %s group by o.vnum) \
-            as foo order by rent_id", shop_nr, buf.c_str(), shop_nr, buf.c_str());
+            union \
+              select r.rent_id as rent_id, count(*) as count, \
+                rs.short_desc as short_desc, r.price as price, \
+                r.cur_struct as cur_struct, r.max_struct as max_struct, \
+                r.volume as volume, r.extra_flags as extra_flags, \
+                o.wear_flag as wear_flag \
+              from rent r, rent_strung rs, obj o \
+              where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
+                r.rent_id=rs.rent_id and o.vnum!=%i \
+                %s \
+              group by o.vnum \
+            union \
+              select r.rent_id as rent_id, r.weight*10 as count, \
+                rs.short_desc as short_desc, r.price/(r.weight*10) as price, \
+                r.cur_struct as cur_struct, r.max_struct as max_struct, \
+                r.volume as volume, r.extra_flags as extra_flags, \
+                o.wear_flag as wear_flag \
+              from rent r, rent_strung rs, obj o \
+              where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
+                r.rent_id=rs.rent_id and o.vnum=%i \
+                %s \
+              group by r.material \
+            ) as foo order by rent_id", 
+	   shop_nr, GENERIC_COMMODITY, buf.c_str(), 
+	   shop_nr, GENERIC_COMMODITY, buf.c_str(),
+           shop_nr, GENERIC_COMMODITY, buf.c_str());
 
   keeper->doTell(ch->getName(), "You can buy:");
   buf="";
   while(db.fetchRow()){
-    price=((convertTo<int>(db["max_struct"]) <= 0) ? 
-	   convertTo<int>(db["price"]) :
-	   (int) (convertTo<int>(db["price"]) *
-		  convertTo<int>(db["cur_struct"]) /
-		  convertTo<int>(db["max_struct"])));
+    // base price
+    price=convertTo<float>(db["price"]);
+
+    // modify price for structure damage
+    price *= ((convertTo<int>(db["max_struct"]) <= 0) ? 1 :
+	      (convertTo<int>(db["cur_struct"]) /
+	       convertTo<int>(db["max_struct"])));
+
+    // modify price for the shop profit ratio
     price *= shop_index[shop_nr].getProfitBuy(NULL, ch);
+
+    // modify price for charisma bonus/penalty
     price *= max((float)1.0, ch->getChaShopPenalty());
 
+    // check class restriction
     extra_flags = convertTo<int>(db["extra_flags"]);
 
     fit=true;
@@ -1689,6 +1712,7 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
     if(ch->hasClass(CLASS_MONK) && (extra_flags & ITEM_ANTI_MONK))
       fit=false;
 
+    // check size restriction
     slot = slot_from_bit(convertTo<int>(db["wear_flag"]));
 
     perc=(((double) ch->getHeight()) * 
@@ -1703,8 +1727,9 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 	fit=false;
     }
 
+    // buffer output
     if(argument!="fit" || fit){
-      buf+=fmt("[%8i] %s %s [%3i] %6i\n\r") %
+      buf+=fmt("[%8i] %s %s [%6i] %6i\n\r") %
 	convertTo<int>(db["rent_id"]) %
 	list_string(db["short_desc"], 40) % 
 	list_string(equip_cond(convertTo<int>(db["cur_struct"]),
@@ -1934,12 +1959,24 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
   // determine shop_nr here to avoid overhead before CMD_GENERIc_PULSE
   shop_nr=find_shop_nr(myself->number);
 
+
   if (cmd == CMD_GENERIC_INIT) {
     if (!myself->isUnique()) {
       vlogf(LOG_BUG, fmt("Warning!  %s attempted to be loaded, when not unique.") %  myself->getName());
       return TRUE;
     } else
       return FALSE;
+  } else if(cmd == CMD_GENERIC_CREATED && 0){
+    myself->loadItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
+
+    TThing *t, *t2;
+    for (t = myself->getStuff(); t; t = t2) {
+      t2 = t->nextThing;
+      --(*t);
+      myself->saveItem(shop_nr, dynamic_cast<TObj *>(t));
+      delete t;
+    }      
+    return FALSE;
   } else if (cmd == CMD_MOB_VIOLENCE_PEACEFUL) {
     myself->doSay("Hey!  Take it outside.");
     // o is really a being, so downcast, and then bring it back up

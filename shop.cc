@@ -1629,9 +1629,10 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
   sstring buf, keyword="";
   float price, perc;
   bool fit=true;
-  int extra_flags, volume;
+  int extra_flags, volume, type;
   wearSlotT slot;
   unsigned long int FitT = 0;
+  bool isPierce=false, isBlunt=false, isSlash=false;
 
   for(int i=0;!argument.word(i).empty();++i){
          if (is_abbrev(argument.word(i), "fit")    ) FitT |= (1 <<  0);
@@ -1685,13 +1686,13 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 o.short_desc as short_desc, r.price as price, \
                 r.cur_struct as cur_struct, r.max_struct as max_struct, \
                 r.volume as volume, r.extra_flags as extra_flags, \
-                o.wear_flag as wear_flag, o.vnum as vnum, \
+                o.wear_flag as wear_flag, o.vnum as vnum, o.type as type, \
                 r.val0 as val0, r.val1 as val1, r.val2 as val2, r.val3 as val3\
               from rent r left outer join rent_strung rs on \
                 (rs.rent_id=r.rent_id), obj o \
               where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
                 r.rent_id not in (select rent_id from rent_strung) and \
-                o.vnum!=%i and \
+                o.type!=%i and o.type!=%i and \
                 ((rs.name is not null and rs.name like '%s%s%s') or \
                 (o.name like '%s%s%s')) \
                 %s \
@@ -1701,11 +1702,11 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 rs.short_desc as short_desc, r.price as price, \
                 r.cur_struct as cur_struct, r.max_struct as max_struct, \
                 r.volume as volume, r.extra_flags as extra_flags, \
-                o.wear_flag as wear_flag, o.vnum as vnum, \
+                o.wear_flag as wear_flag, o.vnum as vnum, o.type as type, \
                 r.val0 as val0, r.val1 as val1, r.val2 as val2, r.val3 as val3\
               from rent r, rent_strung rs, obj o \
               where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
-                r.rent_id=rs.rent_id and o.vnum!=%i and \
+                r.rent_id=rs.rent_id and o.type!=%i and o.type!=%i and \
                 ((rs.name is not null and rs.name like '%s%s%s') or \
                 (o.name like '%s%s%s')) \
                 %s \
@@ -1715,25 +1716,45 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
                 rs.short_desc as short_desc, r.price/(r.weight*10) as price, \
                 r.cur_struct as cur_struct, r.max_struct as max_struct, \
                 r.volume as volume, r.extra_flags as extra_flags, \
-                o.wear_flag as wear_flag, o.vnum as vnum, \
+                o.wear_flag as wear_flag, o.vnum as vnum, o.type as type, \
                 r.val0 as val0, r.val1 as val1, r.val2 as val2, r.val3 as val3\
               from rent r, rent_strung rs, obj o \
               where owner_type='shop' and owner=%i and o.vnum=r.vnum and \
-                r.rent_id=rs.rent_id and o.vnum=%i and \
+                r.rent_id=rs.rent_id and o.type=%i and o.type!=%i and \
                 ((rs.name is not null and rs.name like '%s%s%s') or \
                 (o.name like '%s%s%s')) \
                 %s \
               group by r.material \
+            union \
+              select r.rent_id as rent_id, r.val0 as count, \
+                o.short_desc as short_desc, r.price/r.val0 as price, \
+                r.cur_struct as cur_struct, r.max_struct as max_struct, \
+                r.volume as volume, r.extra_flags as extra_flags, \
+                o.wear_flag as wear_flag, o.vnum as vnum, o.type as type, \
+                r.val0 as val0, r.val1 as val1, r.val2 as val2, r.val3 as val3\
+              from rent r left outer join rent_strung rs on \
+                (rs.rent_id=r.rent_id), obj o \
+              where o.vnum=r.vnum and owner_type='shop' and owner=%i and \
+                r.rent_id not in (select rent_id from rent_strung) and \
+                o.type!=%i and o.type=%i and \
+                ((rs.name is not null and rs.name like '%s%s%s') or \
+                (o.name like '%s%s%s')) \
+                %s \
+              group by o.vnum \
             ) as foo order by rent_id", 
-	   shop_nr, GENERIC_COMMODITY, 
+	   shop_nr, ITEM_RAW_MATERIAL, ITEM_COMPONENT,
 	   "%", keyword.c_str(), "%",
 	   "%", keyword.c_str(), "%",
 	   buf.c_str(), 
-	   shop_nr, GENERIC_COMMODITY, 
+	   shop_nr, ITEM_RAW_MATERIAL, ITEM_COMPONENT, 
 	   "%", keyword.c_str(), "%",
 	   "%", keyword.c_str(), "%",
 	   buf.c_str(),
-           shop_nr, GENERIC_COMMODITY, 
+	   shop_nr, ITEM_RAW_MATERIAL, ITEM_COMPONENT, 
+	   "%", keyword.c_str(), "%",
+	   "%", keyword.c_str(), "%",
+	   buf.c_str(),
+           shop_nr, ITEM_RAW_MATERIAL, ITEM_COMPONENT,
 	   "%", keyword.c_str(), "%",
 	   "%", keyword.c_str(), "%",
 	   buf.c_str());
@@ -1744,88 +1765,100 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
     // base price
     price=convertTo<float>(db["price"]);
 
+    vlogf(LOG_PEEL, fmt("price1=%f") % price);
+
     // modify price for structure damage
     price *= ((convertTo<int>(db["max_struct"]) <= 0) ? 1 :
 	      (convertTo<int>(db["cur_struct"]) /
 	       convertTo<int>(db["max_struct"])));
 
+    vlogf(LOG_PEEL, fmt("price2=%f") % price);
     // modify price for the shop profit ratio
     price *= shop_index[shop_nr].getProfitBuy(NULL, ch);
 
+    vlogf(LOG_PEEL, fmt("price3=%f") % price);
     // modify price for charisma bonus/penalty
     price *= max((float)1.0, ch->getChaShopPenalty());
+    vlogf(LOG_PEEL, fmt("price4=%f") % price);
 
     // check class restriction
     extra_flags = convertTo<int>(db["extra_flags"]);
-
-    fit=true;
-    if(ch->hasClass(CLASS_MAGE) && (extra_flags & ITEM_ANTI_MAGE))
-      fit=false;
-    if(ch->hasClass(CLASS_CLERIC) && (extra_flags & ITEM_ANTI_CLERIC))
-      fit=false;
-    if(ch->hasClass(CLASS_WARRIOR) && (extra_flags & ITEM_ANTI_WARRIOR))
-      fit=false;
-    if(ch->hasClass(CLASS_THIEF) && (extra_flags & ITEM_ANTI_THIEF))
-      fit=false;
-    if(ch->hasClass(CLASS_SHAMAN) && (extra_flags & ITEM_ANTI_SHAMAN))
-      fit=false;
-    if(ch->hasClass(CLASS_DEIKHAN) && (extra_flags & ITEM_ANTI_DEIKHAN))
-      fit=false;
-    if(ch->hasClass(CLASS_MONK) && (extra_flags & ITEM_ANTI_MONK))
-      fit=false;
-
-    // check size restriction
-    slot = slot_from_bit(convertTo<int>(db["wear_flag"]));
-
-    perc=(((double) ch->getHeight()) * 
-	  (double) race_vol_constants[mapSlotToFile(slot)]);
-    if(extra_flags & ITEM_PAIRED)
-      perc *= 2;
+    type=convertTo<int>(db["type"]);
+    if(type==ITEM_ARMOR || type==ITEM_ARMOR_WAND ||
+       type==ITEM_WEAPON || type==ITEM_WORN){
+      
+      fit=true;
+      if(ch->hasClass(CLASS_MAGE) && (extra_flags & ITEM_ANTI_MAGE))
+	fit=false;
+      if(ch->hasClass(CLASS_CLERIC) && (extra_flags & ITEM_ANTI_CLERIC))
+	fit=false;
+      if(ch->hasClass(CLASS_WARRIOR) && (extra_flags & ITEM_ANTI_WARRIOR))
+	fit=false;
+      if(ch->hasClass(CLASS_THIEF) && (extra_flags & ITEM_ANTI_THIEF))
+	fit=false;
+      if(ch->hasClass(CLASS_SHAMAN) && (extra_flags & ITEM_ANTI_SHAMAN))
+	fit=false;
+      if(ch->hasClass(CLASS_DEIKHAN) && (extra_flags & ITEM_ANTI_DEIKHAN))
+	fit=false;
+      if(ch->hasClass(CLASS_MONK) && (extra_flags & ITEM_ANTI_MONK))
+	fit=false;
+    }      
 
     volume=convertTo<int>(db["volume"]);
-
-    if ((slot != WEAR_NECK) && (slot != WEAR_FINGER_R) && 
-	(slot != WEAR_FINGER_L) && (slot != WEAR_NOWHERE)) {
-      if (volume > (int) (perc/0.85) ||
-	  volume < (int) (perc/1.15))
-	fit=false;
+    slot = slot_from_bit(convertTo<int>(db["wear_flag"]));
+    if(type==ITEM_ARMOR || type==ITEM_ARMOR_WAND || type==ITEM_WORN){
+      // check size restriction
+      
+      perc=(((double) ch->getHeight()) * 
+	    (double) race_vol_constants[mapSlotToFile(slot)]);
+      if(extra_flags & ITEM_PAIRED)
+	perc *= 2;
+      
+      
+      if ((slot != WEAR_NECK) && (slot != WEAR_FINGER_R) && 
+	  (slot != WEAR_FINGER_L) && (slot != WEAR_NOWHERE)) {
+	if (volume > (int) (perc/0.85) ||
+	    volume < (int) (perc/1.15))
+	  fit=false;
+      }
     }
 
     
     // determine damage type for weapons
-    int x3=convertTo<int>(db["val2"]);
-    int x4=convertTo<int>(db["val3"]);
-
-    weaponT damage_type[3];
-    int damage_freq[3];
-
-    damage_type[0]=(weaponT)GET_BITS(x3, 7, 8);
-    damage_freq[0]=GET_BITS(x3, 15, 8);
-    damage_type[1]=(weaponT)GET_BITS(x3, 23, 8);
-    damage_freq[1]=GET_BITS(x3, 31, 8);
-    damage_type[2]=(weaponT)GET_BITS(x4, 7, 8);
-    damage_freq[2]=GET_BITS(x4, 15, 8);
-
-    int count_pierce=0, count_blunt=0, count_slash=0, total=0;
-    bool isPierce=false, isBlunt=false, isSlash=false;
-    
-    for(int i=0;i<3;++i){
-      if(pierceType(getWtype_kluge(damage_type[i])))
-	count_pierce+=damage_freq[i];
-      if(bluntType(getWtype_kluge(damage_type[i])))
-	count_blunt+=damage_freq[i];      
-      if(slashType(getWtype_kluge(damage_type[i])))
-	count_slash+=damage_freq[i];      
-      total+=damage_freq[i];
+    isPierce=isBlunt=isSlash=false;
+    if(type==ITEM_WEAPON){
+      int x3=convertTo<int>(db["val2"]);
+      int x4=convertTo<int>(db["val3"]);
+      
+      weaponT damage_type[3];
+      int damage_freq[3];
+      
+      damage_type[0]=(weaponT)GET_BITS(x3, 7, 8);
+      damage_freq[0]=GET_BITS(x3, 15, 8);
+      damage_type[1]=(weaponT)GET_BITS(x3, 23, 8);
+      damage_freq[1]=GET_BITS(x3, 31, 8);
+      damage_type[2]=(weaponT)GET_BITS(x4, 7, 8);
+      damage_freq[2]=GET_BITS(x4, 15, 8);
+      
+      int count_pierce=0, count_blunt=0, count_slash=0, total=0;
+      
+      for(int i=0;i<3;++i){
+	if(pierceType(getWtype_kluge(damage_type[i])))
+	  count_pierce+=damage_freq[i];
+	if(bluntType(getWtype_kluge(damage_type[i])))
+	  count_blunt+=damage_freq[i];      
+	if(slashType(getWtype_kluge(damage_type[i])))
+	  count_slash+=damage_freq[i];      
+	total+=damage_freq[i];
+      }
+      
+      if(count_pierce > (total/3.0*2.0))
+	isPierce=true;
+      if(count_blunt > (total/3.0*2.0))
+	isBlunt=true;
+      if(count_slash > (total/3.0*2.0))
+	isSlash=true;
     }
-    
-    if(count_pierce > (total/3.0*2.0))
-      isPierce=true;
-    if(count_blunt > (total/3.0*2.0))
-      isBlunt=true;
-    if(count_slash > (total/3.0*2.0))
-      isSlash=true;
-
 
     // check restrictions
     if(((FitT & (1 << 0)) && !fit) ||
@@ -1856,12 +1889,22 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
 
 
     // buffer output
-    if(convertTo<int>(db["vnum"])==GENERIC_COMMODITY){
+    if(type==ITEM_RAW_MATERIAL){
       buf+=fmt("[%8i] %s COMMODITY  [%6i] %7.3f\n\r") %
 	convertTo<int>(db["rent_id"]) %
 	list_string(db["short_desc"], 40) % 
 	convertTo<int>(db["count"]) %
 	(max((float)1.0, price));
+    } else if(type==ITEM_COMPONENT){
+      sstring spell="";
+      if(ch->doesKnowSkill(mapFileToSpellnum(convertTo<int>(db["val2"]))))
+	spell=discArray[mapFileToSpellnum(convertTo<int>(db["val2"]))]->name;
+      buf+=fmt("[%8i] %s %s [%6i] %7i\n\r") %
+	convertTo<int>(db["rent_id"]) %
+	list_string(db["short_desc"], 30) % 
+	list_string(spell, 20) %
+	convertTo<int>(db["count"]) %
+	(int)(max((float)1.0, price));      
     } else {
       buf+=fmt("[%8i] %s %s [%6i] %7i\n\r") %
 	convertTo<int>(db["rent_id"]) %
@@ -2083,6 +2126,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
 		FALSE, myself, 0, tbt, TO_VICT);
 	    act("$n throws $N from $s shop.",
 		FALSE, myself, 0, tbt, TO_NOTVICT);
+
 	    myself->throwChar(tbt, dir, FALSE, SILENT_NO, true);
 	    return TRUE;
 	  }

@@ -419,6 +419,9 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
   if (!num)
     num = 1;
 
+  vector<int>objects;
+  vector<TObj *>objects_p;
+
   if(!(rent_id=convertTo<int>(argm))){
     sstring query="select r.rent_id from obj o, rent r left outer join rent_strung rs on (rs.rent_id=r.rent_id) where r.vnum=o.vnum and r.owner_type='shop' and r.owner=%i ";
     sstring arg_words=argm;
@@ -434,17 +437,35 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
 
     db.query(query.c_str(), shop_nr);
     db.fetchRow();
-    rent_id=convertTo<int>(db["rent_id"]);
-  }
+    for(int i=0;i<num && db.fetchRow();++i){
+      rent_id=convertTo<int>(db["rent_id"]);
+      temp1=keeper->loadItem(shop_nr, rent_id);
+      *keeper += *temp1;
+      objects.push_back(rent_id);
+      objects_p.push_back(temp1);
+    }
+  } else if(num > 1){
+    db.query("select rent_id from rent where vnum in (select vnum from rent where rent_id=%i) and owner_type='shop' and owner=%i", rent_id, shop_nr);
 
-  temp1=keeper->loadItem(shop_nr, rent_id);
+    for(int i=0;i<num && db.fetchRow();++i){
+      rent_id=convertTo<int>(db["rent_id"]);
+      temp1=keeper->loadItem(shop_nr, rent_id);
+      *keeper += *temp1;
+      objects.push_back(rent_id);
+      objects_p.push_back(temp1);
+    }
+  } else {
+    if((temp1=keeper->loadItem(shop_nr, rent_id))){
+      *keeper += *temp1;
+      objects.push_back(rent_id);
+      objects_p.push_back(temp1);      
+    }
+  }
 
   if(!temp1){
     keeper->doTell(ch->name, shop_index[shop_nr].no_such_item1);
     return;
   }
-  
-  *keeper += *temp1;
 
   if (temp1->getValue() <= 0) {
     keeper->doTell(ch->name, shop_index[shop_nr].no_such_item1);
@@ -460,7 +481,12 @@ void shopping_buy(const char *arg, TBeing *ch, TMonster *keeper, int shop_nr)
   }
 
   if(temp1->buyMe(ch, keeper, num, shop_nr) != -1){
-    keeper->deleteItem(shop_nr, rent_id);
+    for(unsigned int i=0;i<objects.size();++i)
+      keeper->deleteItem(shop_nr, objects[i]);
+  } else {
+    for(unsigned int i=0;i<objects_p.size();++i){
+      delete objects_p[i];
+    }
   }
 
 }
@@ -1765,21 +1791,16 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
     // base price
     price=convertTo<float>(db["price"]);
 
-    vlogf(LOG_PEEL, fmt("price1=%f") % price);
-
     // modify price for structure damage
     price *= ((convertTo<int>(db["max_struct"]) <= 0) ? 1 :
 	      (convertTo<int>(db["cur_struct"]) /
 	       convertTo<int>(db["max_struct"])));
 
-    vlogf(LOG_PEEL, fmt("price2=%f") % price);
     // modify price for the shop profit ratio
     price *= shop_index[shop_nr].getProfitBuy(NULL, ch);
 
-    vlogf(LOG_PEEL, fmt("price3=%f") % price);
     // modify price for charisma bonus/penalty
     price *= max((float)1.0, ch->getChaShopPenalty());
-    vlogf(LOG_PEEL, fmt("price4=%f") % price);
 
     // check class restriction
     extra_flags = convertTo<int>(db["extra_flags"]);
@@ -1807,8 +1828,7 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
     volume=convertTo<int>(db["volume"]);
     slot = slot_from_bit(convertTo<int>(db["wear_flag"]));
     if(type==ITEM_ARMOR || type==ITEM_ARMOR_WAND || type==ITEM_WORN){
-      // check size restriction
-      
+      // check size restriction      
       perc=(((double) ch->getHeight()) * 
 	    (double) race_vol_constants[mapSlotToFile(slot)]);
       if(extra_flags & ITEM_PAIRED)
@@ -1823,6 +1843,11 @@ void shopping_list(sstring argument, TBeing *ch, TMonster *keeper, int shop_nr)
       }
     }
 
+    // class restrictions
+    if((ch->hasClass(CLASS_MONK) || ch->hasClass(CLASS_SHAMAN)) &&
+       (type==ITEM_ARMOR || type==ITEM_ARMOR_WAND))
+      fit=false;
+    
     
     // determine damage type for weapons
     isPierce=isBlunt=isSlash=false;
@@ -2146,7 +2171,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
       return TRUE;
     } else
       return FALSE;
-  } else if(cmd == CMD_GENERIC_CREATED && 0){
+  } else if(cmd == CMD_GENERIC_CREATED && 1){
     // this is for conversion to new shop code, only will be run once
     myself->loadItems(fmt("%s/%d") % SHOPFILE_PATH % shop_nr);
 

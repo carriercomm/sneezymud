@@ -987,18 +987,18 @@ TObj *ItemLoadDB::raw_read_item(int rent_id, int &slot)
     else
       o->name = mud_str_dup(obj_index[o->getItemIndex()].name);
     
-    if (!db["shortDescr"].empty())
-      o->shortDescr = mud_str_dup(db["shortDescr"]);
+    if (!db["short_desc"].empty())
+      o->shortDescr = mud_str_dup(db["short_desc"]);
     else
       o->shortDescr = mud_str_dup(obj_index[o->getItemIndex()].short_desc);
     
-    if (!db["description"].empty())
-      o->setDescr(mud_str_dup(db["description"]));
+    if (!db["long_desc"].empty())
+      o->setDescr(mud_str_dup(db["long_desc"]));
     else
       o->setDescr(mud_str_dup(obj_index[o->getItemIndex()].long_desc));
     
-    if (!db["action_description"].empty()) 
-      o->action_description = mud_str_dup(db["action_description"]);
+    if (!db["action_desc"].empty()) 
+      o->action_description = mud_str_dup(db["action_desc"]);
     else if (obj_index[o->getItemIndex()].description) 
       o->action_description = mud_str_dup(obj_index[o->getItemIndex()].description);
     else 

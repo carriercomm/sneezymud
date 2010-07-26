@@ -154,7 +154,7 @@ void TBeing::doWho(const char *argument)
   int which2 = 0;
 
   sstring stmp;
-  unsigned int pos;
+  size_t pos;
 		  
   for (; isspace(*argument); argument++);
 

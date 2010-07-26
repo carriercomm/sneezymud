@@ -1327,8 +1327,8 @@ void TBeing::doBuildhelp(const char* arg)
 void TBeing::doWizhelp(const char *arg)
 {
   sstring sbuf, buf, tString;
-  int       no,
-            tLength = 2;
+  int       no;
+  size_t tLength = 2;
   unsigned int i;
   wizPowerT tPower;
 
@@ -1363,7 +1363,7 @@ void TBeing::doWizhelp(const char *arg)
         (commandArray[i]->minLevel > MAX_MORT) &&
         ((tPower = wizPowerFromCmd(cmdTypeT(i))) == MAX_POWER_INDEX ||
          hasWizPower(tPower)))
-      tLength = max(strlen(commandArray[i]->name), (unsigned) tLength);
+      tLength = max(strlen(commandArray[i]->name), tLength);
   }
 
   tString = format("%c-%ds") % '%' % (tLength + 1);

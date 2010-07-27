@@ -31,25 +31,26 @@ CPPPATH = [
 
 LDFLAGS = [
     '-lstdc++',
-    '/usr/lib/libcrypt.a', # enable for insight
+#    '/usr/lib/libcrypt.a', # enable for insight
     '-g', # enable core debugging
     '-lmysqlclient',
-    '-lares',
+#    '-lcares',
     '-lboost_regex',
     '-lboost_program_options',
     '-lboost_date_time',
     '-lcurl',
-    '-ltcmalloc',
+#    '-ltcmalloc',
 #    '-lprofiler',
     ]
 
 LIBPATH = [
     '/usr/local/lib',
-    '/mud/build/google-perftools/lib'
+    '/usr/lib64/mysql'
     ]
 
 # build environment
-env=Environment(CXXFLAGS=CXXFLAGS,
+env=Environment(CXX='g++34',
+                CXXFLAGS=CXXFLAGS,
                 LINKFLAGS=LDFLAGS,
                 CPPPATH=CPPPATH,
                 LIBPATH=LIBPATH,
@@ -63,7 +64,7 @@ env=Environment(CXXFLAGS=CXXFLAGS,
                 INSTALLSTR = "\033[33mInstalling\033[0m '$SOURCE' as '$TARGET'",
                 )
 
-env['ENV']['LD_LIBRARY_PATH']='/mud/build/google-perftools/lib'
+#env['ENV']['LD_LIBRARY_PATH']='/mud/build/google-perftools/lib'
 
 Export('env')
 
@@ -75,7 +76,7 @@ Default('sneezy')
 
 # go into code and start building
 env.SConscript('code/SConscript',
-               build_dir='objs',
+               variant_dir='objs',
                duplicate=0,
                exports='env')
 

@@ -1266,7 +1266,7 @@ int caravan_wagon(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
     if (ch != car->driver)
       return FALSE;
 
-    int dum = (int) arg;
+    int dum = (long) arg;
     dir = dirTypeT(dum);
 
     if (dir < MIN_DIR || dir >= MAX_DIR) {
@@ -1317,7 +1317,7 @@ int goofersDust(TBeing *ch, cmdTypeT cmd, const char *arg, TObj *me, TObj *)
 {
   dirTypeT dir;
   sstring buf;
-  int dum = (int) arg;
+  int dum = (long) arg;
 
   if (cmd == CMD_OBJ_MOVEMENT) {
     dir = dirTypeT(dum);
@@ -6020,7 +6020,7 @@ int dwarfPower(TBeing *vict, cmdTypeT cmd, const char *arg, TObj *o, TObj *)
     if (!ch->canBoneBreak(vict, SILENT_YES))
       return FALSE;
       
-    wearSlotT part = wearSlotT(int(arg));
+    wearSlotT part = wearSlotT(long(arg));
     
     if (notBreakSlot(part, FALSE))
       return FALSE;

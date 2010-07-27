@@ -835,7 +835,8 @@ int TBeing::doGive(const sstring &oarg, giveTypeT flags)
 {
   sstring obj_name, vict_name, arg, buf, argument=oarg;
   char newarg[100];
-  int amount, num, p, rc = 0;
+  long amount;
+  int num, p, rc = 0;
   TBeing *vict = NULL;
   TObj *obj = NULL;
   bool badWeight = 0, badVol = 0;

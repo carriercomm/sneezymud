@@ -276,7 +276,7 @@ int loanShark(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *o)
 
   /////////////////
   if(cmd==CMD_MOB_GIVEN_COINS){
-    int coins=(int) o;
+    long coins=(long) o;
 
     db.query("select amt, granted_time, term, rate, default_charge from shopownedloans where player_id=%i", ch->getPlayerID());
     

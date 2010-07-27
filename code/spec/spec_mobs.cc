@@ -361,7 +361,7 @@ int rumorMonger(TBeing *ch, cmdTypeT cmd, const char *, TMonster *myself, TObj *
         return TRUE;
       }
     } else if (cmd == CMD_MOB_GIVEN_COINS) {
-      if ((amt = (int) o) < type) {
+      if ((amt = (long) o) < type) {
         myself->doSay("Those that are GENEROUS are often rewarded.");
         fclose(fp);
         return TRUE;
@@ -715,7 +715,7 @@ void move_thing_forshop(TThing *what, int to)
 }
 
 // shared function to kick horses and junk from your shop
-int kick_mobs_from_shop(TMonster *myself, TBeing *ch, int from_room)
+int kick_mobs_from_shop(TMonster *myself, TBeing *ch, long from_room)
 {
   if (dynamic_cast<TBeing *>(ch->riding)) {
     sstring buf;
@@ -3631,7 +3631,7 @@ int sharpener(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *o)
       return FALSE;
     case CMD_MOB_MOVED_INTO_ROOM:
 
-      return kick_mobs_from_shop(me, ch, (int)o);
+      return kick_mobs_from_shop(me, ch, (long)o);
 
     case CMD_MOB_VIOLENCE_PEACEFUL:
       ttt = o;
@@ -4295,7 +4295,7 @@ int engraver(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *o)
       return FALSE;
     case CMD_MOB_MOVED_INTO_ROOM:
 
-        return kick_mobs_from_shop(me, ch, (int)o);
+        return kick_mobs_from_shop(me, ch, (long)o);
 
     case CMD_MOB_VIOLENCE_PEACEFUL:
       ttt = o;
@@ -5509,7 +5509,7 @@ int divman(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *o)
       return FALSE;
     case CMD_MOB_MOVED_INTO_ROOM:
 
-      return kick_mobs_from_shop(me, ch, (int)o);
+      return kick_mobs_from_shop(me, ch, (long)o);
 
     case CMD_MOB_VIOLENCE_PEACEFUL:
       ttt = o;
@@ -7047,12 +7047,12 @@ int cannonLoader(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *
 
 int idCardProvider(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *me, TObj *o)
 {
-  int amt;
+  long amt;
 
   if(cmd != CMD_MOB_GIVEN_COINS)
     return FALSE;
 
-  amt=(int)o;
+  amt=(long)o;
 
   if(amt < 50){
     me->doSay("Uh... thanks for the tip.  If you want an ID card it'll be 50 talens.");

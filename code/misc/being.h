@@ -1044,7 +1044,7 @@ class TBeing : public TThing {
     virtual bool listThingRoomMe(const TBeing *) const;
     //void displayHelpFile(char *, char *);
     void genericKillFix();
-    virtual int genericMovedIntoRoom(TRoom *, int, checkFallingT = CHECK_FALL_YES);
+    virtual int genericMovedIntoRoom(TRoom *, long, checkFallingT = CHECK_FALL_YES);
     int genericItemCheck(TThing *);
     void genericEvaluateItem(const TThing *);
     void preKillCheck(bool rent = FALSE);

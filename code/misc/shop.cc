@@ -29,7 +29,7 @@
 #include "spec_mobs.h"
 #include "weather.h"
 
-extern int kick_mobs_from_shop(TMonster *myself, TBeing *ch, int from_room);
+extern int kick_mobs_from_shop(TMonster *myself, TBeing *ch, long from_room);
 
 std::vector<shopData>shop_index(0);
 
@@ -2315,7 +2315,7 @@ int shop_keeper(TBeing *ch, cmdTypeT cmd, const char *arg, TMonster *myself, TOb
 
     shop_nr=find_shop_nr(myself->number);
     if (myself->in_room == shop_index[shop_nr].in_room)
-      return kick_mobs_from_shop(myself, ch, (int)o);
+      return kick_mobs_from_shop(myself, ch, (long)o);
     return FALSE;
   }
   

@@ -19,7 +19,7 @@
 #include "materials.h"
 #include "spec_mobs.h"
 
-extern int kick_mobs_from_shop(TMonster *myself, TBeing *ch, int from_room);
+extern int kick_mobs_from_shop(TMonster *myself, TBeing *ch, long from_room);
 
 int counter_done;  // Global variable used to count # of done items/repairman 
 int counter_work;  // Global variable used to count # of undone items/man 
@@ -915,9 +915,7 @@ int repairman(TBeing *buyer, cmdTypeT cmd, const char *arg, TMonster *repair, TO
       work->number_finished = counter_done;
       return FALSE;
     case CMD_MOB_MOVED_INTO_ROOM:
-
-      return kick_mobs_from_shop(repair, buyer, (int)o);
-
+      return kick_mobs_from_shop(repair, buyer, (long)o);
     case CMD_MOB_VIOLENCE_PEACEFUL:
       repair->doSay("Hey!  Take it outside.");
       for (dir = MIN_DIR; dir < MAX_DIR; dir++) {
